@@ -1,0 +1,78 @@
+# Parliament is licensed under the BSD License from the Open Source
+# Initiative, http://www.opensource.org/licenses/bsd-license.php
+#
+# Copyright (c) 2001-2009, BBN Technologies, Inc.
+# All rights reserved.
+
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://asio.bbn.com/ont/spatial/ogc-extended#> .
+@prefix rcc: <http://asio.bbn.com/ont/spatial/rcc-extended#> .
+
+<http://asio.bbn.com/ont/spatial/ogc-extended>
+  a owl:Ontology ;
+  owl:versionInfo "$Rev$" ;
+  rdfs:label "Spatial Index Ontology enumerating OGC-extended operands" .
+
+# OpenGIS Simple Features
+# (http://www.opengeospatial.org/standards/sfs)
+#
+:equals
+  a owl:ObjectProperty ;
+  rdfs:subPropertyOf :intersects ;
+  rdfs:subPropertyOf :covers ;
+  rdfs:subPropertyOf :coveredBy ;
+  rdfs:subPropertyOf :within .
+
+:disjoint
+  a owl:ObjectProperty .
+
+:intersects
+  a owl:ObjectProperty ;
+  a owl:SymmetricProperty ;
+  owl:inverseOf :disjoint .
+
+:touches
+  a owl:ObjectProperty ;
+  a owl:SymmetricProperty .
+
+:crosses
+  a owl:ObjectProperty ;
+  a owl:SymmetricProperty ;
+  rdfs:subPropertyOf :intersects .
+
+:within
+  a owl:ObjectProperty ;
+  a owl:SymmetricProperty ;
+  rdfs:subPropertyOf :intersects .
+# :within is not a subPropertyOf :properPart because a point on the boundary of a polygon is not "within" the polygon
+# but it is a properPart of the polygon
+
+:overlaps
+  a owl:ObjectProperty ;
+  a owl:SymmetricProperty ;
+  rdfs:subPropertyOf :intersects .
+
+# not part of OGC standard (see: http://lin-ear-th-inking.blogspot.com/2007/06/subtleties-of-ogc-covers-spatial.html)
+#
+:covers
+  a owl:ObjectProperty ;
+  a owl:SymmetricProperty ;
+  rdfs:subPropertyOf :intersects .
+
+:coveredBy
+  a owl:ObjectProperty ;
+  a owl:SymmetricProperty ;
+  rdfs:subPropertyOf :intersects ;
+  owl:inverseOf :covers .
+
+## Link OGC and RCC predicates
+:equals owl:equivalentProperty rcc:identical .
+:disjoint owl:equivalentProperty rcc:disconnected .
+:touches owl:equivalentProperty rcc:externallyConnected .
+:intersects rdfs:subPropertyOf rcc:connected .
+:covers rdfs:subPropertyOf rcc:invProperPart .
+:coveredBy rdfs:subPropertyOf rcc:properPart .
+

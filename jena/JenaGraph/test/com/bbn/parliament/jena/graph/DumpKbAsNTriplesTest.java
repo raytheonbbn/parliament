@@ -1,0 +1,176 @@
+package com.bbn.parliament.jena.graph;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
+
+import com.bbn.parliament.jena.joseki.client.RDFFormat;
+import com.bbn.parliament.jni.Config;
+import com.bbn.parliament.jni.KbInstance;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+
+@RunWith(Parameterized.class)
+public class DumpKbAsNTriplesTest {
+	private static final File TEST_DATA_DIR = new File("data");
+	private static final File TEST_INPUT = new File(TEST_DATA_DIR, "DumpTestData.ttl");
+	private static final String OUTPUT_DELIMITER = "########## Actual dump output ##########";
+
+	@Parameters
+	public static Collection<Object[]> paramValues() {
+		return Arrays.asList(
+			new Object[]{ false, "DumpTestExpectedResult-utf8.nt" },
+			new Object[]{ true, "DumpTestExpectedResult-ascii.nt" });
+	}
+
+	private Config config;
+	private KbGraph graph;
+	private Model model;
+
+	@Parameter(0)
+	public boolean useAsciiEncoding;
+
+	@Parameter(1)
+	public String expectedOutputFileName;
+
+	@Before
+	public void setUp() {
+		tearDown();
+		config = Config.readFromFile();
+		graph = KbGraphFactory.createDefaultGraph();
+		model = ModelFactory.createModelForGraph(graph);
+	}
+
+	@After
+	public void tearDown() {
+		if (model != null) {
+			model.close();
+		}
+		model = null;
+		if (graph != null) {
+			graph.close();
+		}
+		graph = null;
+		if (config != null) {
+			KbInstance.deleteKb(config, null);
+		}
+		config = null;
+	}
+
+	@Test
+	public void dumpKB() throws IOException {
+		// Set up the KB:
+		try (InputStream in = getRsrcAsStream(TEST_INPUT)) {
+			model.read(in, null, RDFFormat.parseFilename(TEST_INPUT).toString());
+		}
+
+		// Test that inferred statements are present.  The comparison with the
+		// expected result will implicitly test that the inferred statements
+		// are not exported.
+		assertEquals("No inferred statements are present", 2L, countNamedEntities());
+
+		Set<String> expectedOutput;
+		File expectedTestOutput = new File(TEST_DATA_DIR, expectedOutputFileName);
+		try (InputStream in = getRsrcAsStream(expectedTestOutput)) {
+			expectedOutput = getLinesFromFile(in);
+		}
+		String actualOutputStr;
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+			graph.dumpAsNTriples(out, false, false, useAsciiEncoding);
+			actualOutputStr = out.toString(StandardCharsets.UTF_8.name());
+		}
+		System.out.format("%n%1$s%n%2$s%1$s%n%n", OUTPUT_DELIMITER,
+			actualOutputStr);	// for ease of debugging -- look in junit result file
+		Set<String> actualOutput;
+		try (ByteArrayInputStream in = new ByteArrayInputStream(
+			actualOutputStr.getBytes(StandardCharsets.UTF_8))) {
+			actualOutput = getLinesFromFile(in);
+		}
+		assertTrue(setsAreIdentical(expectedOutput, actualOutput));
+	}
+
+	private static InputStream getRsrcAsStream(File rsrcPath) throws FileNotFoundException {
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		InputStream result = cl.getResourceAsStream(rsrcPath.getPath());
+		if (result == null) {
+			throw new FileNotFoundException(String.format(
+				"Could not load resource: '%1$s'", rsrcPath.getPath()));
+		}
+		return result;
+	}
+
+	private long countNamedEntities() {
+		QueryExecution qe = null;
+		try {
+			qe = QueryExecutionFactory.create(
+				"select (count(distinct *) as ?count) where { "
+					+ "?x a <http://example.org/#NamedEntity> }",
+				model);
+			ResultSet rs = qe.execSelect();
+			if (rs.hasNext()) {
+				QuerySolution qs = rs.next();
+				return qs.getLiteral("count").getLong();
+			} else {
+				throw new IllegalStateException("This should never happen");
+			}
+		} finally {
+			if (qe != null) {
+				qe.close();
+			}
+		}
+	}
+
+	private static Set<String> getLinesFromFile(InputStream in) throws IOException {
+		Set<String> result = new TreeSet<>();
+		try (
+			Reader rdr = new InputStreamReader(in, StandardCharsets.UTF_8);
+			BufferedReader brdr = new BufferedReader(rdr);
+		) {
+			brdr.lines().forEach(line -> result.add(line));
+		}
+		return result;
+	}
+
+	private static boolean setsAreIdentical(Set<String> expected, Set<String> actual) {
+		Set<String> eMinusA = new TreeSet<>(expected);
+		eMinusA.removeAll(actual);
+		Set<String> aMinusE = new TreeSet<>(actual);
+		aMinusE.removeAll(expected);
+		if (eMinusA.isEmpty() && aMinusE.isEmpty()) {
+			return true;
+		} else {
+			System.out.format("Sets are not identical.%n");
+			System.out.format("Expected strings not found in actual result:%n");
+			eMinusA.forEach(str -> System.out.format("   %1$s%n", str));
+			System.out.format("Actual strings not found in expected result:%n");
+			aMinusE.forEach(str -> System.out.format("   %1$s%n", str));
+			return false;
+		}
+	}
+}

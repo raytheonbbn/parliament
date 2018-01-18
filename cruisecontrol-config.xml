@@ -1,0 +1,117 @@
+<cruisecontrol>
+
+  <project name="Parliament" buildafterfailed="false">
+    <listeners>
+      <currentbuildstatuslistener
+        file="logs/${project.name}/status.txt" />
+    </listeners>
+    <bootstrappers>
+      <svnbootstrapper file="build.xml" />
+    </bootstrappers>
+    <modificationset quietperiod="30">
+      <svn localWorkingCopy="projects/${project.name}" />
+    </modificationset>
+    <schedule interval="300">
+      <ant anthome="apache-ant-1.7.0"
+        buildfile="projects/${project.name}/build.xml"
+        target="continuous-build"
+        uselogger="true"
+        usedebug="false" />
+    </schedule>
+    <log>
+      <merge dir="projects/${project.name}/target/reports/" />
+    </log>
+    <publishers>
+<!--
+      <onsuccess>
+        <artifactspublisher dest="artifacts/${project.name}"
+          dir="projects/${project.name}/target/distro/" />
+      </onsuccess>
+-->
+      <htmlemail mailhost="smtp.bbn.com"
+        xsldir="webapps/cruisecontrol/xsl"
+        css="webapps/cruisecontrol/css/cruisecontrol.css"
+        returnaddress="parliament-autobuild@bbn.com"
+        spamwhilebroken="false"
+        defaultsuffix="@bbn.com"
+        subjectprefix="[BUILD REPORT]">
+        <failure address="tself@bbn.com" reportWhenFixed="true"/>
+        <failure address="dkolas@bbn.com" reportWhenFixed="true"/>
+        <failure address="iemmons@bbn.com" reportWhenFixed="true"/>
+        <failure address="sallen@bbn.com" reportWhenFixed="true"/>
+      </htmlemail>
+    </publishers>
+  </project>
+
+  <project name="Parliament-nightly" buildafterfailed="false">
+    <listeners>
+      <currentbuildstatuslistener
+        file="logs/${project.name}/status.txt" />
+    </listeners>
+    <bootstrappers>
+      <svnbootstrapper file="build.xml" />
+    </bootstrappers>
+    <modificationset quietperiod="30">
+      <svn localWorkingCopy="projects/${project.name}" />
+    </modificationset>
+    <schedule>
+      <ant anthome="apache-ant-1.7.0"
+        buildfile="projects/${project.name}/build.xml"
+        target="nightly-build"
+        uselogger="true"
+        usedebug="false"
+        time="0200" />
+    </schedule>
+    <log>
+      <merge dir="projects/${project.name}/target/reports/" />
+    </log>
+    <publishers>
+      <onsuccess>
+        <artifactspublisher dest="artifacts/${project.name}"
+          dir="projects/${project.name}/target/distro/" />
+      </onsuccess>
+      <htmlemail mailhost="smtp.bbn.com"
+        xsldir="webapps/cruisecontrol/xsl"
+        css="webapps/cruisecontrol/css/cruisecontrol.css"
+        returnaddress="parliament-autobuild@bbn.com"
+        spamwhilebroken="false"
+        defaultsuffix="@bbn.com"
+        subjectprefix="[NIGHTLY BUILD REPORT]">
+        <failure address="tself@bbn.com" reportWhenFixed="true"/>
+        <failure address="dkolas@bbn.com" reportWhenFixed="true"/>
+        <failure address="iemmons@bbn.com" reportWhenFixed="true"/>
+        <failure address="sallen@bbn.com" reportWhenFixed="true"/>
+      </htmlemail>
+    </publishers>
+  </project>
+
+<!--
+  <project name="buildtest" buildafterfailed="false">
+    <listeners>
+      <currentbuildstatuslistener
+        file="logs/${project.name}/status.txt" />
+    </listeners>
+    <bootstrappers>
+    </bootstrappers>
+    <modificationset quietperiod="30">
+      <cvs localWorkingCopy="projects/${project.name}" />
+    </modificationset>
+    <schedule interval="120">
+      <ant anthome="apache-ant-1.6.5"
+        buildfile="projects/${project.name}/build.xml"
+        target="rebuild-from-source-control"
+        uselogger="true"
+        usedebug="false" />
+    </schedule>
+    <log>
+      <merge dir="projects/${project.name}/target/reports/" />
+    </log>
+    <publishers>
+      <onsuccess>
+        <artifactspublisher dest="artifacts/${project.name}"
+          file="projects/${project.name}/target/${project.name}.jar" />
+      </onsuccess>
+    </publishers>
+  </project>
+-->
+</cruisecontrol>

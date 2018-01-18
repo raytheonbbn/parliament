@@ -1,0 +1,321 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = XeLaTeX
+% !TEX root = ParliamentUserGuide.tex
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Building \protect\pmnt}
+\label{chapter-building-parliament}
+
+Parliament is a cross-platform, mixed-language library.  It's core is written in portable C++, but it also has a Java interface.  As a result of both the cross-platform and multi-language requirements, the build infrastructure for Parliament requires a little bit of work to configure.  This chapter is your guide through that process.
+
+Parliament's build infrastructure has two main parts.  The top-level portion is based on ant, an XML-based build tool widely used in the Java development community.  This portion of the infrastructure builds the Java half of the Parliament code base, and it also invokes the second portion, which is based on Boost.Build.  Boost.Build is a system that is well-adapted to building C++ code.  It has the advantages of being portable and much simpler to use than make files.  It is also the standard build system of the Boost project, whose libraries are used by the C++ portion of Parliament.
+
+This chapter will step through the libraries and tools that Parliament depends upon and show you how to configure them on your system.  At the end of this chapter, you should have a working copy of the Parliament source code from which you can build Parliament binaries.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Platforms and Prerequisites}
+
+You will need to acquire and install one or more appropriate compilers for each operating system on which you wish to build.  Parliament has been tested on the platform and compiler combinations shown in Table~\ref{platforms-and-compilers}.  Note that the last column shows the corresponding Boost.Build toolset name, which will be used extensively in the sections below as we configure the Parliament build infrastructure.
+
+\begin{table}[htbp]
+	\centering
+	\begin{tabular}{lll}
+		\toprule
+		\textbf{Operating System} & \textbf{Compiler} & \textbf{Toolset} \\
+		\headingrule
+		Windows (32- and 64-bit) & Visual Studio 2017 & msvc-14.1 \\
+		\midrule
+		MacOS 10.10.3 & Xcode 6.3.1 & clang \\
+		\midrule
+		Ubuntu 15.10 (64-bit) & GCC 5.2.1 & gcc \\
+		\midrule
+		Centos 6.6 (64-bit) & GCC 4.4.7 & gcc \\
+		\bottomrule
+	\end{tabular}
+	\caption{Supported Platforms and Compilers}
+	\label{platforms-and-compilers}
+\end{table}
+
+Windows versions 7 and above are supported.  The 64-bit build has been tested on AMD-64 or EM64T hardware (often collectively known as x64), but not Itanium (IA64).  Parliament's capacity is much higher when running as a 64-bit process\footnote{On 32-bit Windows Parliament runs out of virtual address space after storing 5 to 10 million statements.}, so one of those compilers is highly recommended.
+
+On Macintosh, Parliament builds as a universal binary (for the x64 and x86 architectures) using Apple's Xcode development tools.
+
+Parliament assumes the presence of the Java Developer Kit (JDK), version 8 or above.  Furthermore, you will need a 64-bit JVM in order to run a 64-bit build of Parliament.
+\begin{itemize}
+	\item On Windows, download and install the JDK from Oracle.  The 32-bit and 64-bit versions are separate downloads and installations.
+
+	\item On Macintosh, download and install the JDK from Oracle.
+
+	\item On Linux, you may need to install one or more packages, depending on your particular distribution.
+\end{itemize}
+
+On Windows and Linux, choosing whether to invoke 32- or 64-bit Java is straightforward --- just invoke the appropriate version of the \verb|java| executable.  On Macintosh, there are several ways to switch between 32- and 64-bit Java because MacOS uses universal binaries.  One is to use the \verb|-d32| and \verb|-d64| command line switches to the \verb|java| command.  See the Java documentation for details.
+
+You will need Apache Ant version 1.9.3 or later.  Ant is easy to acquire from the Apache web site\urlcite{http://ant.apache.org/}.
+
+Finally, you need to install a client for the Subversion version control system\urlcite{http://subversion.apache.org}.  There are several different clients, depending on your operating system and your preferred mode of usage, but any of them are fine for our purposes here.  On Macintosh the command line client is built-in.
+
+Once you have a working Subversion client, you can check out a working copy of the Parliament code base like so:
+{\footnotesize
+% Pre-open source URL:  svn+ssh://loki.bbn.com/var/svn/kb-repo/trunk
+\begin{verbatim}
+   svn --username «name» co
+      https://projects.semwebcentral.org/svn/parliament/trunk «dir»
+\end{verbatim}}
+Change \path|«dir»| to a convenient location on your local machine.  For anonymous access, change \verb|«name»| to ``anonsvn'' and use the password ``anonsvn''.  For project developer access via DAV, substitute your user ID for \verb|«name»| and enter your site password when prompted.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Configuring Eclipse}
+
+The Parliament code base includes Eclipse projects for all of the Java and C++ code.  These are useful for inspecting and editing code, but it is important to note that they are not the official build mechanism.  In fact, as of this writing, the C++ Eclipse projects will not build at all.  This may be corrected in the future, but the JNI interface between Java and native code makes this complex.  Therefore the C++ projects are merely an editing convenience.
+
+To setup Eclipse, you need the Kepler version or later of the Eclipse IDE for Java Developers, plus the Eclipse C/C++ Developers Toolkit (CDT) plug-ins.  One way to acquire this set of components is to download the Eclipse IDE for Java Developers\urlcite{http://www.eclipse.org/}, install it, run it, and then use the ``Install New Software'' menu item to download and install the CDT.  The procedure for this changes between Eclipse releases, but you can find instructions on the CDT web site\urlcite{http://www.eclipse.org/cdt/}.
+
+To use Eclipse with your Parliament working copy, first choose (or create) an Eclipse workspace.  Then import all existing projects from within your Parliament working copy.  To do so, choose Import from the File menu and select ``Existing Projects into Workspace'' under the General category.  Press the Next button, and enter the root directory of your Parliament working copy in the ``Select root directory'' box.  Press the Select All button, make sure that ``Copy projects into workspace'' is unchecked, and press the Finish button.  At this point all of the Parliament projects will be displayed in the Package Explorer view.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Building Berkeley DB}
+\label{sec:BuildingBerkeleyDB}
+
+Parliament uses Berkeley DB (often abbreviated BDB), an embedded database manager from Oracle\urlcite{http://www.oracle.com/us/products/database/berkeley-db/}.  Because Parliament is open source, this use of Berkeley DB also falls under an open source license.  The following procedures are based on BDB version 5.3.28.
+
+Note that Parliament versions 2.7.6 through 2.7.9 was released with Berkeley DB 6.1, but we have rolled back to 5.3 because Oracle sneakily changed their open source license from a BSD-like license to AGPL, which is too draconian for Parliament.
+
+\subsection{Building BDB for Windows}
+
+The build infrastructure for Berkeley DB is not particularly friendly for Windows.  Therefore, the Parliament source code repository includes pre-built Berkeley DB libraries (both 32- and 64-bit) for all supported versions of Visual Studio\footnote{Note that Oracle does provide an already-compiled distribution, but it includes only a 32-bit build.}.  If you need to update the pre-built libraries, e.g., for a new version of Berkeley DB or to build with a different compiler, see Appendix~\ref{chapter-building-bdb-for-windows}.
+
+Define the following environment variables so that the Parliament build infrastructure can find the libraries:
+\begin{verbatim}
+BDB_VERSION=53
+BDB_HOME=«dir»\lib\bdb
+\end{verbatim}
+where \path|«dir»| is the absolute path of your Parliament working copy.
+
+
+\subsection{Building BDB for Macintosh}
+
+On Macintosh, Berkeley DB follows the usual pattern of software based on the autoconf/automake/libtool suite.  Specifically, expand the BDB distribution archive file, and change to the \path|build_unix| subdirectory.  Then issue the following commands:
+\begin{verbatim}
+env CC=clang CFLAGS="-fvisibility=default -arch x86_64
+     -arch i386" ../dist/configure
+make
+sudo make install
+\end{verbatim}
+The \verb|CFLAGS| setting above causes the build to produce universal binaries.  You can tidy up after the build with the command \verb|make realclean|.  Once you have built and installed Berkeley DB, define the following environment variables so that the Parliament build infrastructure can find the libraries:
+\begin{verbatim}
+BDB_VERSION=5.3
+BDB_HOME=/usr/local/BerkeleyDB.5.3
+\end{verbatim}
+
+With recent Apple compiler versions, the \texttt{make} command above may fail with an error message about \verb|__atomic_compare_exchange|.  If so, replace all instances of that identifier with \verb|__atomic_compare_exchange_db| in the file \path|src/dbinc/atomic.h|.  Then run the \texttt{make} command again.
+
+\subsection{Building BDB for Linux}
+
+On Linux, Berkeley DB follows the usual pattern of software based on the autoconf/automake/libtool suite.  Here we modify that procedure slightly to create both 32- and 64-bit builds.  (For Linux distributions that only support 64-bits, skip the 32-bit commands below.)  First, decompress and un-archive the BDB distribution, and change to the \path|build_unix| subdirectory.  Next decide where you want to install Berkeley DB.  The default location is \path|/usr/local/BerkeleyDB.5.3|, but whatever location you choose will be called \path|«dir»| in the instructions below.  Once you have chosen this location, issue the following commands:
+\begin{verbatim}
+env CFLAGS="-m32" ../dist/configure --prefix=«dir»/32
+make
+sudo make install
+make realclean
+env CFLAGS="-m64" ../dist/configure --prefix=«dir»/64
+make
+sudo make install
+\end{verbatim}
+You can tidy up after the build with the command \verb|make realclean|.  Once you have built and installed Berkeley DB, define the following environment variables so that the Parliament build infrastructure can find the libraries:
+\begin{verbatim}
+BDB_VERSION=5.3
+BDB_HOME=«dir»
+\end{verbatim}
+
+With the newest GCC compiler, the \texttt{make} command above may fail with an error message about \verb|__atomic_compare_exchange|.  If so, replace all instances of that identifier with \verb|__atomic_compare_exchange_db| in the file \path|src/dbinc/atomic.h|.  Then run the \texttt{make} command again.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Building the Boost Libraries}
+\label{sec:BuildingBoost}
+
+Since the Boost project is unfamiliar to many, here is an introduction taken from the Boost web site:\urlcite{http://boost.org/}
+\begin{quote}\small
+Boost provides free peer-reviewed portable C++ source libraries.
+
+We emphasize libraries that work well with the C++ Standard Library. Boost libraries are intended to be widely useful, and usable across a broad spectrum of applications. The \href{http://www.boost.org/users/license.html}{Boost license} encourages both non-commercial and commercial use.
+
+We aim to establish ``existing practice'' and provide reference implementations so that Boost libraries are suitable for eventual standardization. Ten Boost libraries are already included in the \href{http://www.open-std.org/jtc1/sc22/wg21/}{C++ Standards Committee's} Library Technical Report (\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1745.pdf}{TR1}) and in the new C++11 Standard.  C++11 also includes several more Boost libraries in addition to those from TR1.  More Boost libraries are proposed for \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1810.html}{TR2}.
+\end{quote}
+
+To get started, download the Boost source distribution (version 1.66.0 or later) from the Boost web site.  Unpack this to a handy location on your disk.  This location may be anywhere you like, but note that it is not temporary.  We will call this location \verb|BOOST_ROOT|, and you need to define an environment variable pointing there, such as
+\begin{verbatim}
+export BOOST_ROOT=~/boost_1_66_0
+\end{verbatim}
+or
+\begin{verbatim}
+set BOOST_ROOT=C:\boost_1_66_0
+\end{verbatim}
+From Parliament's point of view, there are two primary components contained within \verb|BOOST_ROOT|.  The first (and most obvious) is the boost libraries themselves.  Most of these are so-called ``header-only'' libraries, meaning that there is no pre-compiled library code or shared or dynamic library.  All of the code of such libraries is referenced via \verb|#include| directives and compiled along with the calling code.  Such libraries are extremely convenient, because they require virtually zero setup.  Parliament uses several Boost libraries that are not header-only.  We will discuss how to build these libraries below.
+
+The second major Boost component is Boost.Build.  This is a cross-platform build system (located in the sub-directory \path|tools/build|) that is written in a specialized interpreted language whose interpreter is a command line program called \verb|b2|.  The Boost community does not provide \verb|b2| binaries.  Rather, the Boost distribution contains a bootstrapping script that builds \verb|b2| from source on your platform.  At a command line, go to the \verb|BOOST_ROOT| directory and issue the appropriate one of these commands:
+
+{
+	%\renewcommand{\arraystretch}{1.5}
+	\renewcommand{\tabcolsep}{0pt}
+	\begin{tabular}{l@{\hspace{2em}}l}
+		\texttt{bootstrap.bat}
+			& (on Windows)\\
+		\texttt{./bootstrap.sh --with-toolset=clang}
+			& (on Macintosh)\\
+		\texttt{./bootstrap.sh}
+			& (on Linux)\\
+	\end{tabular}
+}
+
+Once the script finishes, you will find the executable \verb|b2| (or \verb|b2.exe| on Windows) in \verb|BOOST_ROOT|.  Move this binary to any location on your path.
+
+Building the Boost libraries using Boost.Build is relatively simple.  To build the minimal set of libraries required for Parliament, follow the directions below for your platform.
+
+\subsection{Building Boost on Windows}
+
+Open a Command Prompt and change to the \verb|BOOST_ROOT| directory and issue the following command:
+{\small\begin{verbatim}
+b2 -q --build-dir=build-msvc --stagedir=stage-msvc --with-atomic
+--with-chrono --with-date_time --with-filesystem --with-locale
+--with-log --with-regex --with-system --with-test --with-thread
+toolset=msvc-14.1 define=BOOST_TEST_ALTERNATIVE_INIT_API
+address-model=64,32 variant=debug,release threading=multi
+link=shared,static runtime-link=shared stage
+\end{verbatim}}
+
+The build process may issue warnings about missing components, such as Python and ICU.  These warnings are innocuous.  When the build finishes, the libraries will be located in \path|stage-msvc/lib|.  The directory \path|build-msvc| contains the intermediate build products and can be deleted to save disk space.
+
+\subsection{Building Boost on Macintosh}
+
+Open a Terminal window, change to the \verb|BOOST_ROOT| directory, and issue the following command:
+{\small\begin{verbatim}
+b2 -q --build-dir=build-clang --stagedir=stage-clang --with-atomic
+--with-chrono --with-date_time --with-filesystem --with-locale
+--with-log --with-regex --with-system --with-test --with-thread
+--layout=versioned threading=multi toolset=clang
+define=BOOST_TEST_ALTERNATIVE_INIT_API address-model=32_64
+variant=debug,release link=shared,static runtime-link=shared
+cxxflags="-std=c++14 -fvisibility=default" linkflags=-std=c++14
+stage
+\end{verbatim}}
+The build process may issue warnings about missing components, such as Python and ICU.  These warnings are innocuous.  When the build finishes, the libraries will be located under \path|stage-clang/lib|.  The directory \path|build-clang| contains the intermediate build products and can be deleted to save disk space.
+
+\subsection{Building Boost on Linux}
+
+At a shell, change to the \verb|BOOST_ROOT| directory and issue the following command:
+{\small\begin{verbatim}
+b2 -q --build-dir=build-gcc --stagedir=stage-gcc --layout=versioned
+--with-atomic --with-chrono --with-date_time --with-filesystem
+--with-locale --with-log --with-regex --with-system --with-test
+--with-thread define=BOOST_TEST_ALTERNATIVE_INIT_API
+address-model=64,32 variant=debug,release threading=multi
+link=shared,static runtime-link=shared cxxflags=-std=c++14
+linkflags=-std=c++14 stage
+\end{verbatim}}
+If your compiler does not support the C++14 standard, change ``14'' to ``11'' in the above command (in two places).  The build process may issue warnings about missing components, such as Python and ICU.  These warnings are innocuous.  When the build finishes, the libraries will be located in \path|stage-gcc/lib|.  The directory \path|build-gcc| contains the intermediate build products and can be deleted to save disk space.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Configuring Boost.Build}
+
+Next we need to configure Boost.Build so that it can build Parliament.  Start by defining the following environment variables:
+\begin{itemize}
+	\item\verb|BDB_VERSION|: As described above in Section~\ref{sec:BuildingBerkeleyDB}.
+
+	\item\verb|BDB_HOME|: As described above in Section~\ref{sec:BuildingBerkeleyDB}.
+
+	\item\verb|BOOST_VERSION|: The version of Boost (currently 1\_66\_0).
+
+	\item\verb|BOOST_ROOT|: As described above in Section~\ref{sec:BuildingBoost}.
+
+	\item\verb|BOOST_BUILD_PATH|: The sub-directory \path|tools/build| of \verb|BOOST_ROOT|.
+
+	\item\verb|BOOST_TEST_LOG_LEVEL|: Controls the output volume of the C++ unit tests.  Possible values and their meanings are listed in Table~\ref{boost-test-log-level-values}.
+
+	\begin{table}[htbp]
+		\centering
+		\begin{tabular}{ll}
+			\toprule
+			\textbf{Value} & \textbf{Meaning} \\
+			\headingrule
+			\verb|all|           & report all log messages \\
+			\verb|success|       & the same as all \\
+			\verb|test_suite|    & show test suite messages \\
+			\verb|message|       & show user messages \emph{(useful default)} \\
+			\verb|warning|       & report warnings issued by user \\
+			\verb|error|         & report all error conditions \\
+			\verb|cpp_exception| & report uncaught C++ exceptions \\
+			\verb|system_error|  & report system-originated non-fatal errors \\
+			\verb|fatal_error|   & report only fatal errors \\
+			\verb|nothing|       & do not report any information \\
+			\bottomrule
+		\end{tabular}
+		\caption{Possible Values of \texttt{BOOST\_TEST\_LOG\_LEVEL}}
+		\label{boost-test-log-level-values}
+	\end{table}
+
+	\item\verb|JAVA_HOME|: The location of your JDK installation, which must be version 8 or higher.
+\end{itemize}
+
+Next we create two Boost.Build configuration files, \path|site-config.jam| and \path|user-config.jam|.  Boost.Build reads these files on startup.  The two are separate so that the first one can be installed and maintained by a system administrator, and the second by the individual user.  These files can be placed in a number of locations. Table~\ref{boost-build-config-search} explains where Boost.Build searches to find these files.
+
+\begin{table}[htbp]
+	\centering
+	\begin{tabular}{>{\small}l>{\RaggedRight\small}p{49mm}>{\RaggedRight\small}p{49mm}}
+		\toprule
+		OS & \path|site-config.jam| & \path|user-config.jam| \\
+		\headingrule
+		Unix-like:
+			&	\path|/etc| \newline
+				\verb|$HOME| \newline
+				\verb|$BOOST_BUILD_PATH|
+			&	\verb|$HOME| \newline
+				\verb|$BOOST_BUILD_PATH| \\
+		\midrule
+		Windows:
+			&	\verb|%SystemRoot%| \newline
+				\verb|%HOMEDRIVE%%HOMEPATH%| \newline
+				\verb|%HOME%| \newline
+				\verb|%BOOST_BUILD_PATH%|
+			&	\verb|%HOMEDRIVE%%HOMEPATH%| \newline
+				\verb|%HOME%| \newline
+				\verb|%BOOST_BUILD_PATH%| \\
+		\bottomrule
+	\end{tabular}
+	\caption{Boost.Build Search Paths for Configuration Files}
+	\label{boost-build-config-search}
+\end{table}
+
+Some people prefer to keep these files together with their Boost.Build installation, placing them in \verb|BOOST_BUILD_PATH|.  There are example \path|site-config.jam| and \path|user-config.jam| files in that directory, and so you will have to replace (or rename) them if you choose this option.  Others prefer to separate the configuration files from the Boost.Build installation so that they can update to a new version of Boost.Build without having to first save \path|site-config.jam| and \path|user-config.jam| and then restore them after the update is complete.  On Windows, using the \verb|HOME| location requires defining the environment variable \verb|HOME|, because Windows does not define it by default.
+
+Within your working copy of the Parliament repository, in the directories \path|doc/MacOS|, \path|doc/Windows|, and \path|doc/Linux|, you will find example configuration files for Macintosh, Windows, and Linux respectively that you can copy and customize.  The most important customization that you need to make is to remove (or comment out) any lines in \path|user-config.jam| for compiler versions that you have not installed.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Building \protect\pmnt{} Itself}
+
+You are now ready to build Parliament.  To do so, issue the command \path|ant| from the root directory of your Parliament working copy --- \emph{but don't try this until you have read the next couple of paragraphs.}  This command will build the entire repository, including both native and Java code, and create a distribution-ready package in this directory:
+\begin{quote}
+	\texttt{targets/Parliament-v\textbf{\textit{X.Y.Z}}-\textbf{\textit{toolset}}}
+\end{quote}
+where \texttt{\textbf{\textit{X.Y.Z}}} is the Parliament version number and \texttt{\textbf{\textit{toolset}}} indicates the platform on which the distribution runs, as shown in Table~\ref{tbl:ToolsetPlatformCorrespondence}.  The \path|ant clean| command will delete all build products.
+
+The file \path|build.properties|, located in the root of your working copy, controls the Parliament build.  This file does not exist by default.  If the build does not find it, it uses \path|build.properties.default| instead.  The latter contains the build options used to create an official release of Parliament, which typically includes several different release builds.  To build a single debug variant, copy \path|build.properties.default| to \path|build.properties| and then customize the latter.  The file itself contains instructions.  Please change \path|build.properties.default| directly only if you intend to update the official release build options.
+
+The \path|build.properties| file also contains an option that disables the native code unit tests, \verb|skipNativeUnitTest|.  This is important when cross-compiling, e.g., building 64-bit binaries on 32-bit Windows.  If you use this option, be sure to re-enable the unit tests before you commit any changes to the Subversion repository.
+
+For more targeted builds, ant can be run from many sub-directories in your working copy.  Here is a road map to the various sub-projects:
+\begin{itemize}
+	\item\path|jena/JenaGraph|: Enables Jena to use Parliament for storing models
+	\item\path|jena/JosekiExtensions|: Extensions to Joseki that, together with JenaGraph, create a SPARQL endpoint on top of Parliament
+	\item\path|jena/JosekiParliamentClient|: A client-side Java library for communicating with a Joseki-Parliament SPARQL endpoint
+	\item\path|jena/SpatialIndexProcessor|: A JenaGraph add-on for processing spatial queries efficiently
+	\item\path|jena/TemporalIndexProcessor|: A similar add-on to speed up temporal queries
+	\item\path|LUBM|: A customized version of the Lehigh University Benchmark\urlcite{http://swat.cse.lehigh.edu/projects/lubm/} for easy performance testing of Parliament
+	\item\path|Parliament|: The native code at the heart of Parliament and its JNI interface
+\end{itemize}
+
+When working on the native code portions of Parliament, it can be useful to run the \path|b2| portion of the build directly.  To do so, change directory to \path|KbCore| (for the Parliament DLL itself), \path|AdminClient| (for the command line interface to Parliament), or \path|Test| (for the unit tests).  These directories are located within the \path|Parliament| sub-directory of your working copy.  Then issue the command
+\begin{verbatim}
+b2 -q «build-options»
+\end{verbatim}
+Here \verb|«build-options»| is a placeholder for one set of build options from \path|build.properties|, described above.  The \verb|-q| option causes \path|b2| to quit immediately whenever an error occurs, so that you do not have to scroll up through the build output to verify that the build was successful.

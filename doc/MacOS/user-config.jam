@@ -1,0 +1,11 @@
+
+# This file is used to configure the Boost.Build installation.
+
+# Toolset declarations (the first one is the default):
+
+using clang
+	: # version
+	: # c++-compile-command
+	:	<cxxflags>"-std=c++14 -fvisibility=default -Wall -Wno-deprecated-register"
+		<linkflags>"-std=c++14 -headerpad_max_install_names"
+	;

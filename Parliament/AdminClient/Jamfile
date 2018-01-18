@@ -1,0 +1,33 @@
+# Parliament is licensed under the BSD License from the Open Source
+# Initiative, http://www.opensource.org/licenses/bsd-license.php
+#
+# Copyright (c) 2001-2009, BBN Technologies, Inc.
+# All rights reserved.
+
+import os ;
+
+project /KB/AdminClient ;
+
+InstallLocation = [ os.environ ADMIN_CLIENT_INSTALL_DIR ] ;
+InstallLocation ?= $(JamRootDir)/target/drop-box ;
+
+install distribution
+	:	ParliamentAdmin
+	:	<location>$(InstallLocation)
+		<install-dependencies>on
+		<install-type>EXE
+		<install-type>SHARED_LIB
+	:	# default build
+	:	# usage requirements
+	;
+
+exe ParliamentAdmin
+	:	[ glob *.cpp ]
+		/KB/KbCore//Parliament
+		/site-config//BoostFileSystem
+		/site-config//BoostSystem
+	:	<include>.
+		<os>NT:<source>Version.rc
+	:	# default build
+	:	# usage requirements
+	;

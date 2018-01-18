@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<project name="ParliamentJosekiBridge" default="prepareDeployableServers">
+	<description>Builds the Joseki Bridge for the Parliament KB</description>
+
+	<import file="${basedir}/../../build-common.xml"/>
+
+	<property name="bridgeBinDir" value="${targetDir}/bin/${ant.project.name}-bridge"/>
+	<property name="serverBinDir" value="${targetDir}/bin/${ant.project.name}-server"/>
+	<property name="testBinDir" value="${targetDir}/test-bin/${ant.project.name}"/>
+	<property name="genSrcDir"
+		location="${basedir}/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab"/>
+	<property name="configDir" location="${basedir}/resources/conf"/>
+	<property name="libDir" value="${basedir}/lib"/>
+	<property name="josekiLibDir" value="${parliamentDependenciesDir}/joseki"/>
+	<property name="openMapLibDir" value="${parliamentDependenciesDir}/openmap"/>
+	<property name="deegreeLibDir" value="${parliamentDependenciesDir}/deegree"/>
+	<property name="serverJarFile" value="${artifactsDir}/ParliamentServer.jar"/>
+	<property name="bridgeJarFile" value="${artifactsDir}/${ant.project.name}.jar"/>
+	<property name="warFile" value="${artifactsDir}/parliament.war"
+		description="This file name becomes the base URL of the service, so don't add a version number to it!"/>
+
+	<property name="parliamentClientDir" value="${kbRootDir}/jena/JosekiParliamentClient"/>
+	<property name="jenaParliamentDir" location="${kbRootDir}/jena/JenaGraph"/>
+	<property name="numericIndexDir" location="${kbRootDir}/jena/NumericIndex"/>
+	<property name="spatialIndexDir" location="${kbRootDir}/jena/SpatialIndexProcessor"/>
+	<property name="temporalIndexDir" location="${kbRootDir}/jena/TemporalIndexProcessor"/>
+
+	<target name="clean">
+		<delete dir="${serverBinDir}"/>
+		<delete dir="${bridgeBinDir}"/>
+		<delete dir="${testBinDir}"/>
+		<delete dir="${genSrcDir}"/>
+		<delete dir="${baseDir}/lib"/>
+		<delete file="${serverJarFile}"/>
+		<delete file="${bridgeJarFile}"/>
+		<delete file="${warFile}"/>
+	</target>
+
+	<target name="buildDependencies">
+		<ant dir="${parliamentClientDir}" target="jar" inheritAll="false"/>
+		<ant dir="${jenaParliamentDir}" target="jar" inheritAll="false"/>
+		<ant dir="${numericIndexDir}" target="jar" inheritall="false"/>
+		<ant dir="${spatialIndexDir}" target="jar" inheritall="false"/>
+		<ant dir="${temporalIndexDir}" target="jar" inheritall="false"/>
+	</target>
+
+	<target name="compileServer" depends="buildDependencies,resolve">
+		<mkdir dir="${serverBinDir}"/>
+		<javac destdir="${serverBinDir}" debug="on" deprecation="on" srcdir="${basedir}/src"
+				includeAntRuntime="false">
+			<include name="com/bbn/parliament/jena/jetty/**"/>
+			<classpath>
+				<fileset dir="${libDir}/server" includes="**/*.jar"/>
+			</classpath>
+			<compilerarg value="-Xlint:all"/>
+		</javac>
+	</target>
+
+	<target name="jarServer" depends="compileServer">
+		<jar destfile="${serverJarFile}" basedir="${serverBinDir}"/>
+	</target>
+
+	<target name="schemagenUpToDateCheck">
+		<uptodate property="isSchemagenUpToDate"
+			srcfile="${basedir}/resources/ontology/config-ont.ttl"
+			targetfile="${genSrcDir}/ConfigOnt.java"/>
+	</target>
+
+	<!-- See https://jena.apache.org/documentation/tools/schemagen.html -->
+	<target name="schemagen" depends="resolve,schemagenUpToDateCheck"
+		unless="isSchemagenUpToDate">
+		<mkdir dir="${genSrcDir}"/>
+		<java classname="jena.schemagen" failonerror="true">
+			<classpath>
+				<fileset dir="${libDir}/bridge" includes="**/*.jar"/>
+			</classpath>
+			<arg value="-i"/>
+			<arg value="${basedir}/resources/ontology/config-ont.ttl"/>
+			<arg value="-o"/>
+			<arg value="${basedir}/src"/>
+			<arg value="--ontology"/>
+			<arg value="-n"/>
+			<arg value="ConfigOnt"/>
+			<arg value="--package"/>
+			<arg value="com.bbn.parliament.jena.joseki.bridge.configuration.vocab"/>
+		</java>
+	</target>
+
+	<target name="compileBridge" depends="jarServer,schemagen">
+		<copy todir="${bridgeBinDir}/ontology">
+			<fileset dir="${basedir}/resources/ontology" includes="**/*"/>
+		</copy>
+
+		<copy todir="${bridgeBinDir}/conf">
+			<fileset file="${configDir}/joseki-config.ttl"/>
+			<fileset file="${configDir}/parliament-config.ttl"/>
+		</copy>
+
+		<javac destdir="${bridgeBinDir}" debug="on" deprecation="on" srcdir="${basedir}/src"
+				includeAntRuntime="false">
+			<exclude name="com/bbn/parliament/jena/jetty/*.java"/>
+			<classpath>
+				<fileset dir="${libDir}/bridge" includes="**/*.jar"/>
+				<fileset dir="${josekiLibDir}" includes="**/joseki-*.jar"/>
+				<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
+				<fileset dir="${artifactsDir}" includes="JenaParliament.jar"/>
+				<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
+				<fileset file="${serverJarFile}"/>
+			</classpath>
+			<compilerarg value="-Xlint:all"/>
+		</javac>
+	</target>
+
+	<target name="jarBridge" depends="compileBridge">
+		<jar destfile="${bridgeJarFile}" basedir="${bridgeBinDir}"/>
+	</target>
+
+	<target name="war" depends="jarBridge">
+		<war destfile="${warFile}" webxml="${basedir}/resources/WEB-INF/web.xml">
+			<lib dir="${libDir}/bridge" includes="**/*.jar" excludes="**/javax.servlet-api-*.jar"/>
+			<lib dir="${josekiLibDir}" includes="**/joseki-*.jar"/>
+			<lib dir="${openMapLibDir}" includes="**/*.jar"/>
+			<lib dir="${deegreeLibDir}" includes="**/*.jar"/>
+			<lib file="${bridgeJarFile}"/>
+			<lib dir="${artifactsDir}">
+				<include name="Parliament.jar"/>
+				<include name="JenaParliament.jar"/>
+				<include name="JosekiParliamentClient.jar"/>
+				<include name="NumericIndex.jar"/>
+				<include name="SpatialIndexProcessor.jar"/>
+				<include name="TemporalIndexProcessor.jar"/>
+			</lib>
+			<fileset dir="www"/>
+		</war>
+	</target>
+
+	<target name="prepareDeployableServers" depends="war,jarServer,buildDeployableServerList">
+		<foreach target="prepareDeployableServer" param="deployableSvrDir"
+			list="${deployableServerList}" delimiter="|" inheritall="true"/>
+	</target>
+
+	<!-- Expects deployableSvrDir as a parameter -->
+	<target name="prepareDeployableServer">
+		<copy todir="${deployableSvrDir}/conf">
+			<fileset dir="${configDir}">
+				<include name="jetty.xml"/>
+				<include name="webdefault.xml"/>
+				<include name="log4j.properties"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${deployableSvrDir}/lib" flatten="true">
+			<fileset file="${serverJarFile}"/>
+			<fileset dir="${libDir}/server" includes="**/*.jar"/>
+			<fileset dir="${artifactsDir}" includes="commons-daemon-*.jar"/>
+		</copy>
+
+		<copy todir="${deployableSvrDir}/webapps">
+			<fileset file="${warFile}"/>
+		</copy>
+
+		<copy todir="${deployableSvrDir}/clientJars">
+			<fileset dir="${parliamentClientDir}/lib/default" includes="*.jar"/>
+			<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
+		</copy>
+
+		<if>
+			<os family="windows"/>
+			<then>
+				<copy todir="${deployableSvrDir}">
+					<fileset dir="${configDir}/windows" includes="*.bat"/>
+				</copy>
+			</then>
+			<else>
+				<copy todir="${deployableSvrDir}">
+					<fileset dir="${configDir}/unix" includes="*.sh"/>
+				</copy>
+				<chmod file="${deployableSvrDir}/*.sh" perm="ugo+rx" verbose="true"/>
+			</else>
+		</if>
+	</target>
+
+	<target name="compileTests" depends="jarBridge,jarServer">
+		<copy todir="${testBinDir}">
+			<fileset dir="test" excludes="**/*.java"/>
+		</copy>
+		<javac destdir="${testBinDir}" srcdir="${basedir}/test" debug="on" deprecation="on"
+				includeAntRuntime="false">
+			<classpath>
+				<fileset dir="${libDir}/test" includes="**/*.jar"/>
+				<fileset file="${bridgeJarFile}"/>
+				<fileset file="${serverJarFile}"/>
+				<fileset dir="${artifactsDir}" includes="JenaParliament.jar"/>
+				<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
+			</classpath>
+			<compilerarg value="-Xlint:all"/>
+		</javac>
+	</target>
+
+	<target name="runTests" depends="createTestConfig,prepareDeployableServers,compileTests">
+		<mkdir dir="${reportsDir}/${ant.project.name}"/>
+		<foreach target="runTestsForOneNativeDir" param="nativeArtifactsDir"
+			list="${antRunnableServerList}" delimiter="|" inheritall="true"/>
+	</target>
+
+	<!-- Runs unit tests for a specific native directory (the name of which
+		is expected as a parameter) -->
+	<target name="runTestsForOneNativeDir">
+		<echo message="nativeArtifactsDir = '${nativeArtifactsDir}'"/>
+		<delete dir="${basedir}/tmp-server"/>
+		<copy todir="${basedir}/tmp-server/webapps">
+			<fileset file="${warFile}"/>
+		</copy>
+		<copy todir="${basedir}/tmp-server/conf">
+			<fileset file="${basedir}/resources/conf/webdefault.xml"/>
+		</copy>
+		<mkdir dir="${basedir}/tmp-server/log"/>
+
+		<junit fork="yes" printsummary="yes" haltonfailure="${haltUnitTestsOnFailure}" showoutput="yes" dir="${basedir}/tmp-server">
+			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
+			<!-- This used to use jetty-test.xml, but that was written for Jetty 6.  Now
+				that we're using Jetty 9, we'll just use jetty.xml rather than bothering to
+				port the test configuration. -->
+			<sysproperty key="jettyConfig" value="${basedir}/resources/conf/jetty.xml"/>
+			<sysproperty key="jetty.port" value="8586"/>
+			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
+			<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
+			<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
+			<env key="PARLIAMENT_CONFIG_PATH" value="${testConfigFile}"/>
+			<classpath>
+				<fileset dir="${libDir}/test" includes="**/*.jar"/>
+				<fileset dir="${josekiLibDir}" includes="**/joseki-*.jar"/>
+				<fileset dir="${openMapLibDir}" includes="**/*.jar"/>
+				<fileset dir="${deegreeLibDir}" includes="**/*.jar"/>
+				<fileset file="${bridgeJarFile}"/>
+				<fileset file="${serverJarFile}"/>
+				<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
+				<fileset dir="${artifactsDir}" includes="JenaParliament.jar"/>
+				<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
+				<fileset dir="${artifactsDir}" includes="NumericIndex.jar"/>
+				<fileset dir="${artifactsDir}" includes="SpatialIndexProcessor.jar"/>
+				<fileset dir="${artifactsDir}" includes="TemporalIndexProcessor.jar"/>
+				<pathelement location="${testBinDir}"/>
+			</classpath>
+			<formatter type="xml"/>
+			<batchtest fork="yes" todir="${reportsDir}/${ant.project.name}">
+				<fileset dir="${basedir}/test" includes="**/*TestCase.java"/>
+			</batchtest>
+		</junit>
+		<delete dir="${basedir}/tmp-server"/>
+	</target>
+</project>

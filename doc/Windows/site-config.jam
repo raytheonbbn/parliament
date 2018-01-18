@@ -1,0 +1,264 @@
+
+import os ;
+
+project site-config ;
+
+path-constant BdbDir : [ os.environ BDB_HOME ] ;
+path-constant BoostDir : [ os.environ BOOST_ROOT ] ;
+path-constant JavaDir : [ os.environ JAVA_HOME ] ;
+
+constant BoostVersion : [ os.environ BOOST_VERSION ] ;
+constant BoostVersionComponents : [ MATCH "([0-9]+)_([0-9]+)_([0-9]+)" : $(BoostVersion) ] ;
+constant BoostVersionDotted : $(BoostVersionComponents:J=.) ;
+constant BoostVersionAbbrvAlternatives : [ MATCH "([0-9]+_[0-9]+)_0" "([0-9]+_[0-9]+_[0-9]+)" : $(BoostVersion) ] ;
+constant BoostVersionAbbrv : $(BoostVersionAbbrvAlternatives[1]) ;
+constant BdbVersion : [ os.environ BDB_VERSION ] ;
+
+constant COMPILER : vc141 ;
+#constant COMPILER : vc140 ;
+#constant COMPILER : vc120 ;
+#constant COMPILER : vc110 ;
+#constant COMPILER : vc100 ;
+#constant COMPILER : vc90 ;
+
+constant BdbLibDir : $(BdbDir)/msvc-14.1 ;
+
+constant BoostLibDir : $(BoostDir)/stage-msvc/lib ;
+
+constant BoostDyPfx : <source>$(BoostLibDir)/boost_ ;
+constant BoostStPfx : <source>$(BoostLibDir)/libboost_ ;
+
+constant Boost64DyDbgLibPfx : <address-model>64,<link>shared,<variant>debug:$(BoostDyPfx) ;
+constant Boost64DyRlsLibPfx : <address-model>64,<link>shared,<variant>release:$(BoostDyPfx) ;
+constant Boost64StDbgLibPfx : <address-model>64,<link>static,<variant>debug:$(BoostStPfx) ;
+constant Boost64StRlsLibPfx : <address-model>64,<link>static,<variant>release:$(BoostStPfx) ;
+constant Boost32DyDbgLibPfx : <address-model>32,<link>shared,<variant>debug:$(BoostDyPfx) ;
+constant Boost32DyRlsLibPfx : <address-model>32,<link>shared,<variant>release:$(BoostDyPfx) ;
+constant Boost32StDbgLibPfx : <address-model>32,<link>static,<variant>debug:$(BoostStPfx) ;
+constant Boost32StRlsLibPfx : <address-model>32,<link>static,<variant>release:$(BoostStPfx) ;
+
+constant Boost64DyDbgLibSfx : -$(COMPILER)-mt-gd-x64-$(BoostVersionAbbrv).dll ;
+constant Boost64DyRlsLibSfx : -$(COMPILER)-mt-x64-$(BoostVersionAbbrv).dll ;
+constant Boost64StDbgLibSfx : -$(COMPILER)-mt-gd-x64-$(BoostVersionAbbrv).lib ;
+constant Boost64StRlsLibSfx : -$(COMPILER)-mt-x64-$(BoostVersionAbbrv).lib ;
+constant Boost32DyDbgLibSfx : -$(COMPILER)-mt-gd-x32-$(BoostVersionAbbrv).dll ;
+constant Boost32DyRlsLibSfx : -$(COMPILER)-mt-x32-$(BoostVersionAbbrv).dll ;
+constant Boost32StDbgLibSfx : -$(COMPILER)-mt-gd-x32-$(BoostVersionAbbrv).lib ;
+constant Boost32StRlsLibSfx : -$(COMPILER)-mt-x32-$(BoostVersionAbbrv).lib ;
+
+alias BoostHeaderOnlyLibraries
+	:	# no sources
+	:	# no build requirements
+	:	# no default build
+	:	<include>$(BoostDir)
+		<define>_SCL_SECURE_NO_WARNINGS
+	;
+
+alias BoostAtomic
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)atomic$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)atomic$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)atomic$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)atomic$(Boost64StRlsLibSfx)
+		$(Boost32DyDbgLibPfx)atomic$(Boost32DyDbgLibSfx)
+		$(Boost32DyRlsLibPfx)atomic$(Boost32DyRlsLibSfx)
+		$(Boost32StDbgLibPfx)atomic$(Boost32StDbgLibSfx)
+		$(Boost32StRlsLibPfx)atomic$(Boost32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+		<link>shared:<define>BOOST_ATOMIC_DYN_LINK
+		<define>_SCL_SECURE_NO_WARNINGS
+		<library-path>$(BoostLibDir)
+		<dll-path>$(BoostLibDir)
+	;
+
+alias BoostChrono
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)chrono$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)chrono$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)chrono$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)chrono$(Boost64StRlsLibSfx)
+		$(Boost32DyDbgLibPfx)chrono$(Boost32DyDbgLibSfx)
+		$(Boost32DyRlsLibPfx)chrono$(Boost32DyRlsLibSfx)
+		$(Boost32StDbgLibPfx)chrono$(Boost32StDbgLibSfx)
+		$(Boost32StRlsLibPfx)chrono$(Boost32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+		<link>shared:<define>BOOST_CHRONO_DYN_LINK
+		<define>_SCL_SECURE_NO_WARNINGS
+		<library-path>$(BoostLibDir)
+		<dll-path>$(BoostLibDir)
+	;
+
+alias BoostDateTime
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)date_time$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)date_time$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)date_time$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)date_time$(Boost64StRlsLibSfx)
+		$(Boost32DyDbgLibPfx)date_time$(Boost32DyDbgLibSfx)
+		$(Boost32DyRlsLibPfx)date_time$(Boost32DyRlsLibSfx)
+		$(Boost32StDbgLibPfx)date_time$(Boost32StDbgLibSfx)
+		$(Boost32StRlsLibPfx)date_time$(Boost32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+		<link>shared:<define>BOOST_DATE_TIME_DYN_LINK
+		<define>_SCL_SECURE_NO_WARNINGS
+		<library-path>$(BoostLibDir)
+		<dll-path>$(BoostLibDir)
+	;
+
+alias BoostFileSystem
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)filesystem$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)filesystem$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)filesystem$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)filesystem$(Boost64StRlsLibSfx)
+		$(Boost32DyDbgLibPfx)filesystem$(Boost32DyDbgLibSfx)
+		$(Boost32DyRlsLibPfx)filesystem$(Boost32DyRlsLibSfx)
+		$(Boost32StDbgLibPfx)filesystem$(Boost32StDbgLibSfx)
+		$(Boost32StRlsLibPfx)filesystem$(Boost32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+		<link>shared:<define>BOOST_FILESYSTEM_DYN_LINK
+		<define>_SCL_SECURE_NO_WARNINGS
+		<library-path>$(BoostLibDir)
+		<dll-path>$(BoostLibDir)
+	;
+
+alias BoostLog
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)log$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)log$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)log$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)log$(Boost64StRlsLibSfx)
+		$(Boost32DyDbgLibPfx)log$(Boost32DyDbgLibSfx)
+		$(Boost32DyRlsLibPfx)log$(Boost32DyRlsLibSfx)
+		$(Boost32StDbgLibPfx)log$(Boost32StDbgLibSfx)
+		$(Boost32StRlsLibPfx)log$(Boost32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+		<link>shared:<define>BOOST_LOG_DYN_LINK
+		<define>BOOST_LOG_NO_SHORTHAND_NAMES
+		<define>_SCL_SECURE_NO_WARNINGS
+		<library-path>$(BoostLibDir)
+		<dll-path>$(BoostLibDir)
+	;
+
+alias BoostLogSetup
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)log_setup$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)log_setup$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)log_setup$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)log_setup$(Boost64StRlsLibSfx)
+		$(Boost32DyDbgLibPfx)log_setup$(Boost32DyDbgLibSfx)
+		$(Boost32DyRlsLibPfx)log_setup$(Boost32DyRlsLibSfx)
+		$(Boost32StDbgLibPfx)log_setup$(Boost32StDbgLibSfx)
+		$(Boost32StRlsLibPfx)log_setup$(Boost32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+		<link>shared:<define>BOOST_LOG_DYN_LINK
+		<define>BOOST_LOG_NO_SHORTHAND_NAMES
+		<define>_SCL_SECURE_NO_WARNINGS
+		<library-path>$(BoostLibDir)
+		<dll-path>$(BoostLibDir)
+	;
+
+alias BoostRegex
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)regex$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)regex$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)regex$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)regex$(Boost64StRlsLibSfx)
+		$(Boost32DyDbgLibPfx)regex$(Boost32DyDbgLibSfx)
+		$(Boost32DyRlsLibPfx)regex$(Boost32DyRlsLibSfx)
+		$(Boost32StDbgLibPfx)regex$(Boost32StDbgLibSfx)
+		$(Boost32StRlsLibPfx)regex$(Boost32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+		<link>shared:<define>BOOST_REGEX_DYN_LINK
+		<define>_SCL_SECURE_NO_WARNINGS
+		<library-path>$(BoostLibDir)
+		<dll-path>$(BoostLibDir)
+	;
+
+alias BoostSystem
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)system$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)system$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)system$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)system$(Boost64StRlsLibSfx)
+		$(Boost32DyDbgLibPfx)system$(Boost32DyDbgLibSfx)
+		$(Boost32DyRlsLibPfx)system$(Boost32DyRlsLibSfx)
+		$(Boost32StDbgLibPfx)system$(Boost32StDbgLibSfx)
+		$(Boost32StRlsLibPfx)system$(Boost32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+		<link>shared:<define>BOOST_SYSTEM_DYN_LINK
+		<define>_SCL_SECURE_NO_WARNINGS
+		<library-path>$(BoostLibDir)
+		<dll-path>$(BoostLibDir)
+	;
+
+alias BoostThread
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)thread$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)thread$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)thread$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)thread$(Boost64StRlsLibSfx)
+		$(Boost32DyDbgLibPfx)thread$(Boost32DyDbgLibSfx)
+		$(Boost32DyRlsLibPfx)thread$(Boost32DyRlsLibSfx)
+		$(Boost32StDbgLibPfx)thread$(Boost32StDbgLibSfx)
+		$(Boost32StRlsLibPfx)thread$(Boost32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+		<link>shared:<define>BOOST_THREAD_DYN_LINK
+		<define>_SCL_SECURE_NO_WARNINGS
+		<library-path>$(BoostLibDir)
+		<dll-path>$(BoostLibDir)
+	;
+
+alias BoostUnitTest
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)unit_test_framework$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)unit_test_framework$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)unit_test_framework$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)unit_test_framework$(Boost64StRlsLibSfx)
+		$(Boost32DyDbgLibPfx)unit_test_framework$(Boost32DyDbgLibSfx)
+		$(Boost32DyRlsLibPfx)unit_test_framework$(Boost32DyRlsLibSfx)
+		$(Boost32StDbgLibPfx)unit_test_framework$(Boost32StDbgLibSfx)
+		$(Boost32StRlsLibPfx)unit_test_framework$(Boost32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+		<link>shared:<define>BOOST_TEST_DYN_LINK
+		<define>BOOST_TEST_ALTERNATIVE_INIT_API
+		<define>_SCL_SECURE_NO_WARNINGS
+		<library-path>$(BoostLibDir)
+		<dll-path>$(BoostLibDir)
+	;
+
+alias JavaJNI
+	:	# no sources
+	:	# no build requirements
+	:	# no default build
+	:	<include>"$(JavaDir)/include"
+		<include>"$(JavaDir)/include/win32"
+	;
+
+alias BerkeleyDB
+	:	# no sources
+	:	<address-model>64,<variant>debug:<source>$(BdbLibDir)/64/libdb$(BdbVersion)d.dll
+		<address-model>64,<variant>debug:<source>$(BdbLibDir)/64/libdb$(BdbVersion)d.lib
+		<address-model>64,<variant>release:<source>$(BdbLibDir)/64/libdb$(BdbVersion).dll
+		<address-model>64,<variant>release:<source>$(BdbLibDir)/64/libdb$(BdbVersion).lib
+		<address-model>32,<variant>debug:<source>$(BdbLibDir)/32/libdb$(BdbVersion)d.dll
+		<address-model>32,<variant>debug:<source>$(BdbLibDir)/32/libdb$(BdbVersion)d.lib
+		<address-model>32,<variant>release:<source>$(BdbLibDir)/32/libdb$(BdbVersion).dll
+		<address-model>32,<variant>release:<source>$(BdbLibDir)/32/libdb$(BdbVersion).lib
+	:	# no default build
+	:	<include>"$(BdbDir)/include"
+		<address-model>64:<library-path>"$(BdbLibDir)/64"
+		<address-model>32:<library-path>"$(BdbLibDir)/32"
+		<address-model>64:<dll-path>"$(BdbLibDir)/64"
+		<address-model>32:<dll-path>"$(BdbLibDir)/32"
+	;

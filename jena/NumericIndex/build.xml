@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<project name="NumericIndex" default="jar">
+	<description>Builds the Numeric Index</description>
+
+	<import file="${basedir}/../../build-common.xml"/>
+
+	<property name="binDir" value="${targetDir}/bin/${ant.project.name}"/>
+	<property name="testBinDir" value="${targetDir}/test-bin/${ant.project.name}"/>
+	<property name="jarFile" value="${artifactsDir}/${ant.project.name}.jar"/>
+
+	<path id="compileClassPath">
+		<fileset dir="${basedir}/lib/default" includes="*.jar"/>
+		<fileset dir="${artifactsDir}" includes="JenaParliament.jar"/>
+	</path>
+
+	<path id="testClassPath">
+		<fileset dir="${basedir}/lib/test" includes="*.jar"/>
+		<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
+		<fileset dir="${artifactsDir}" includes="JenaParliament.jar"/>
+		<fileset dir="${artifactsDir}" includes="JenaParliament-tests.jar"/>
+		<fileset file="${jarFile}"/>
+	</path>
+
+	<target name="clean">
+		<delete dir="${binDir}" includeEmptyDirs="true"/>
+		<delete dir="${reportsDir}" includeEmptyDirs="true"/>
+		<delete file="${jarFile}"/>
+		<delete dir="${baseDir}/lib"/>
+	</target>
+
+	<target name="buildDependencies">
+		<ant dir="${kbRootDir}/jena/JenaGraph" target="jar" inheritall="false"/>
+	</target>
+
+	<target name="buildTestDependencies">
+		<ant dir="${kbRootDir}/jena/JenaGraph" target="jarTests" inheritall="false"/>
+	</target>
+
+	<target name="compile" depends="buildDependencies, resolve">
+		<mkdir dir="${binDir}"/>
+		<javac destdir="${binDir}" srcdir="${basedir}/src" debug="on" deprecation="on"
+				includeAntRuntime="false">
+			<include name="**/*.java"/>
+			<classpath refid="compileClassPath"/>
+			<compilerarg value="-Xlint:all"/>
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile">
+		<jar destfile="${jarFile}" basedir="${binDir}"/>
+	</target>
+
+	<target name="compileTests" depends="buildTestDependencies,jar">
+		<delete dir="${testBinDir}" includeemptydirs="true"/>
+		<mkdir dir="${testBinDir}"/>
+		<javac destdir="${testBinDir}" srcdir="${basedir}/test" debug="on" deprecation="on"
+				includeAntRuntime="false">
+			<include name="**/*.java"/>
+			<classpath refid="testClassPath"/>
+			<compilerarg value="-Xlint:all"/>
+		</javac>
+	</target>
+
+	<target name="runTests" depends="createTestConfig,compileTests,buildDeployableServerList">
+		<mkdir dir="${reportsDir}/${ant.project.name}"/>
+		<foreach target="runTestsForOneNativeDir" param="nativeArtifactsDir"
+			list="${antRunnableServerList}" delimiter="|" inheritall="true"/>
+	</target>
+
+	<!-- Runs unit tests for a specific native directory (the name of which
+		is expected as a parameter) -->
+	<target name="runTestsForOneNativeDir">
+		<echo message="nativeArtifactsDir = '${nativeArtifactsDir}'"/>
+		<mkdir dir="${reportsDir}"/>
+		<junit fork="yes" printsummary="yes" haltonfailure="${haltUnitTestsOnFailure}" showoutput="yes" dir="${testBinDir}">
+			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
+			<sysproperty key="test.data.path" value="${basedir}/resources"/>
+			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
+			<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
+			<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
+			<env key="PARLIAMENT_CONFIG_PATH" value="${testConfigFile}"/>
+			<classpath refid="testClassPath"/>
+			<classpath path="${testBinDir}"/>
+			<formatter type="xml"/>
+			<batchtest fork="yes" todir="${reportsDir}/${ant.project.name}">
+				<fileset dir="${basedir}/test" includes="**/*Test.java"/>
+			</batchtest>
+		</junit>
+	</target>
+</project>

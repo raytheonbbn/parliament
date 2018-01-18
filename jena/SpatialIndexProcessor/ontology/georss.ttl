@@ -1,0 +1,232 @@
+# Parliament is licensed under the BSD License from the Open Source
+# Initiative, http://www.opensource.org/licenses/bsd-license.php
+#
+# Copyright (c) 2001-2009, BBN Technologies, Inc.
+# All rights reserved.
+
+@prefix : <http://www.georss.org/georss/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl2xml: <http://www.w3.org/2006/12/owl2-xml#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix georss: <http://www.georss.org/georss/> .
+@prefix gml: <http://www.opengis.net/gml/> .
+@base <http://www.georss.org/georss/> .
+
+<http://www.georss.org/georss/> rdf:type owl:Ontology .
+
+
+#################################################################
+#
+#    Object Properties
+#
+#################################################################
+
+
+###  http://www.georss.org/georss/where
+
+:where rdf:type owl:ObjectProperty ;
+  rdfs:label "where" .
+
+
+
+###  http://www.opengis.net/gml/exterior
+
+gml:exterior rdf:type owl:ObjectProperty ;
+  rdfs:label "exterior" .
+
+
+
+###  http://www.opengis.net/gml/interior
+
+gml:interior rdf:type owl:ObjectProperty ;
+  rdfs:label "interior" .
+
+
+
+
+#################################################################
+#
+#    Data properties
+#
+#################################################################
+
+
+###  http://www.georss.org/georss/box
+
+:box rdf:type owl:DatatypeProperty ;
+  rdfs:label "box" .
+
+
+
+###  http://www.georss.org/georss/line
+
+:line rdf:type owl:DatatypeProperty ;
+  rdfs:label "line" .
+
+
+
+###  http://www.georss.org/georss/point
+
+:point rdf:type owl:DatatypeProperty ;
+  rdfs:label "point" .
+
+
+
+###  http://www.georss.org/georss/polygon
+
+:polygon rdf:type owl:DatatypeProperty ;
+  rdfs:label "polygon" .
+
+
+
+###  http://www.opengis.net/gml/lowerCorner
+
+gml:lowerCorner rdf:type owl:DatatypeProperty ;
+  rdfs:label "lowerCorner" .
+
+
+
+###  http://www.opengis.net/gml/pos
+
+gml:pos rdf:type owl:DatatypeProperty ;
+  rdfs:label "pos" .
+
+
+
+###  http://www.opengis.net/gml/posList
+
+gml:posList rdf:type owl:DatatypeProperty ;
+  rdfs:label "posList" .
+
+
+
+###  http://www.opengis.net/gml/radius
+
+gml:radius rdf:type owl:DatatypeProperty ;
+  rdfs:label "radius" .
+
+
+
+###  http://www.opengis.net/gml/upperCorner
+
+gml:upperCorner rdf:type owl:DatatypeProperty ;
+  rdfs:label "upperCorner" .
+
+
+
+
+
+#################################################################
+#
+#    Classes
+#
+#################################################################
+
+
+###  http://www.georss.org/georss/Geometry
+
+:Geometry rdf:type owl:Class ;
+
+          rdfs:subClassOf owl:Thing ;
+          rdfs:label "Geometry" .
+
+
+
+###  http://www.opengis.net/gml/Circle
+
+gml:Circle rdf:type owl:Class ;
+           rdfs:label "Circle" ;
+           rdfs:subClassOf :Geometry ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty gml:radius ;
+                             owl:allValuesFrom xsd:double
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty gml:pos ;
+                             owl:maxCardinality "1"^^xsd:nonNegativeInteger
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty gml:radius ;
+                             owl:maxCardinality "1"^^xsd:nonNegativeInteger
+                           ] .
+
+
+
+###  http://www.opengis.net/gml/Envelope
+
+gml:Envelope rdf:type owl:Class ;
+             rdfs:label "Envelope" ;
+             rdfs:subClassOf :Geometry ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty gml:lowerCorner ;
+                               owl:cardinality "1"^^xsd:nonNegativeInteger
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty gml:upperCorner ;
+                               owl:cardinality "1"^^xsd:nonNegativeInteger
+                             ] .
+
+
+
+###  http://www.opengis.net/gml/LineString
+
+gml:LineString rdf:type owl:Class ;
+               rdfs:label "LineString" ;
+               rdfs:subClassOf :Geometry ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty gml:posList ;
+                                 owl:cardinality "1"^^xsd:nonNegativeInteger
+                               ] .
+
+
+
+###  http://www.opengis.net/gml/LinearRing
+
+gml:LinearRing rdf:type owl:Class ;
+               rdfs:label "LinearRing" ;
+               rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                 owl:onProperty gml:posList ;
+                                 owl:cardinality "1"^^xsd:nonNegativeInteger
+                               ] .
+
+
+
+###  http://www.opengis.net/gml/Point
+
+gml:Point rdf:type owl:Class ;
+          rdfs:label "Point" ;
+          rdfs:subClassOf :Geometry ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty gml:pos ;
+                            owl:cardinality "1"^^xsd:nonNegativeInteger
+                          ] .
+
+
+
+###  http://www.opengis.net/gml/Polygon
+
+gml:Polygon rdf:type owl:Class ;
+            rdfs:label "Polygon" ;
+            rdfs:subClassOf :Geometry ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty gml:exterior ;
+                              owl:cardinality "1"^^xsd:nonNegativeInteger
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty gml:exterior ;
+                              owl:allValuesFrom gml:LinearRing
+                            ] .
+
+
+
+###  http://www.w3.org/2002/07/owl#Thing
+
+owl:Thing rdf:type owl:Class .
+
+
+
+
+###  Generated by the OWL API (version 2.2.1.1042) http://owlapi.sourceforge.net
+

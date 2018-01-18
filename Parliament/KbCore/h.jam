@@ -1,0 +1,18 @@
+
+import type ;
+import generators ;
+import regex ;
+
+type.register JAR : jar ;
+
+generators.register-standard h.GenerateJniHeader : JAR : H ;
+
+rule GenerateJniHeader
+{
+	ClassName on $(<) = [ regex.replace $(<:B) _ . ] ;
+}
+
+actions GenerateJniHeader
+{
+	javah -force -classpath $(>) -o $(<) $(ClassName)
+}

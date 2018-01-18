@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<sparql xmlns="http://www.w3.org/2005/sparql-results#">
+  <head>
+    <variable name="f" />
+  </head>
+  <results>
+    <result>
+      <binding name="f">
+        <uri>http://example.org/ApplicationSchema#A</uri>
+      </binding>
+    </result>
+    <!-- switched E and D because E has a distance of 9.2km while D has a
+      distance of 11km -->
+    <result>
+      <binding name="f">
+        <uri>http://example.org/ApplicationSchema#E</uri>
+      </binding>
+    </result>
+    <result>
+      <binding name="f">
+        <uri>http://example.org/ApplicationSchema#D</uri>
+      </binding>
+    </result>
+
+  </results>
+</sparql>

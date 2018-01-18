@@ -1,0 +1,90 @@
+// Parliament is licensed under the BSD License from the Open Source
+// Initiative, http://www.opensource.org/licenses/bsd-license.php
+//
+// Copyright (c) 2001-2009, BBN Technologies, Inc.
+// All rights reserved.
+
+package com.bbn.parliament.jena.graph.index.temporal.index;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
+import com.bbn.parliament.jena.graph.index.temporal.AbstractTemporalTestClass;
+import com.bbn.parliament.jena.graph.index.temporal.Constants;
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.vocabulary.RDF;
+
+/** @author dkolas */
+public class DuplicateEntriesTest extends AbstractTemporalTestClass {
+	private static final String NS = "http://foo/#";
+	private static final String INSTANT_NS = "http://foo/Instant#";
+	private static final String INSTANT_1 = "2001-07-21T00:00:01";
+	private static final String INSTANT_2 = "2001-07-21T00:00:02";
+	private static final String QUERY = ""
+		+ "prefix foo: <%1$s>%n"
+		+ "prefix ins: <%2$s>%n"
+		+ "prefix time: <%3$s>%n"
+		+ "prefix xsd: <%4$s#>%n"
+		+ "select ?thing where {%n"
+		+ "	?thing foo:atTime ?temporal .%n"
+		+ "	?before a time:DateTimeInterval ;%n"
+		+ "		time:xsdDateTime \"2006-02-16T00:00:01\"^^xsd:dateTime .%n"
+		+ "	?temporal a time:DateTimeInterval ;%n"
+		+ "		time:xsdDateTime ?retired ;%n"
+		+ "		time:intervalBefore ?before .%n"
+		+ "}";
+
+	private static final Resource dtInterval = ResourceFactory.createResource(
+		Constants.TIME_NS + "DateTimeInterval");
+	private static final Property atTime = ResourceFactory.createProperty(NS + "atTime");
+	private static final Property xsdDateTime = ResourceFactory.createProperty(
+		Constants.TIME_NS + "xsdDateTime");
+
+	private static int counter = -1;
+
+	@Override
+	public void doSetup() {
+	}
+
+	@Test
+	public void testDuplicateEntries() throws Exception {
+		addThingWithTime(model, INSTANT_1);
+		addThingWithTime(model, INSTANT_1);
+		addThingWithTime(model, INSTANT_2);
+		addThingWithTime(model, INSTANT_2);
+
+		String query = String.format(QUERY, NS, INSTANT_NS, Constants.TIME_NS, XSDDatatype.XSD);
+		LOG.debug("DuplicateEntriesTest query:\n{}", query);
+		QueryExecution qe = QueryExecutionFactory.create(query, model);
+		try {
+			ResultSet resultSet = qe.execSelect();
+			int count = 0;
+			while (resultSet.hasNext()){
+				resultSet.next();
+				++count;
+			}
+			assertEquals("Count did not equal expected count.", 4, count);
+		} finally {
+			qe.close();
+		}
+	}
+
+	private static void addThingWithTime(Model model, String lexicalForm) {
+		Resource thing = ResourceFactory.createResource(NS + (++counter));
+		Resource temporal = ResourceFactory.createResource(INSTANT_NS + (++counter));
+		Literal lit = ResourceFactory.createTypedLiteral(lexicalForm, XSDDatatype.XSDdateTime);
+
+		model.add(thing, atTime, temporal);
+		model.add(temporal, RDF.type, dtInterval);
+		model.add(temporal, xsdDateTime, lit);
+	}
+}

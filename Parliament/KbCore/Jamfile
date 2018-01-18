@@ -1,0 +1,77 @@
+# Parliament is licensed under the BSD License from the Open Source
+# Initiative, http://www.opensource.org/licenses/bsd-license.php
+#
+# Copyright (c) 2001-2009, BBN Technologies, Inc.
+# All rights reserved.
+
+import common ;
+import h ;
+import make ;
+import os ;
+import path ;
+
+project /KB/KbCore ;
+
+path-constant JavaSrcDir : ../java ;
+path-constant JenaLibDir : ../lib/default ;
+
+lib Parliament
+	:	[ glob *.cpp : Utf8StaticInitGen.cpp ]
+		/site-config//BerkeleyDB
+		/site-config//BoostHeaderOnlyLibraries
+		/site-config//BoostAtomic
+		/site-config//BoostChrono
+		/site-config//BoostDateTime
+		/site-config//BoostFileSystem
+		/site-config//BoostLog
+		/site-config//BoostLogSetup
+		/site-config//BoostRegex
+		/site-config//BoostSystem
+		/site-config//BoostThread
+		/site-config//JavaJNI
+		Parliament.jar
+	:	<include>.
+		<define>BUILDING_KBCORE
+		<threading>multi
+		<os>NT:<source>Version.rc
+		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_Config.h
+		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_KbInstance.h
+		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_StmtIterator.h
+		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_ReificationIterator.h
+	:	# default build
+	:	<include>.
+		<threading>multi
+	;
+
+explicit parliament/generated/com_bbn_parliament_jni_Config.h ;
+explicit parliament/generated/com_bbn_parliament_jni_KbInstance.h ;
+explicit parliament/generated/com_bbn_parliament_jni_StmtIterator.h ;
+explicit parliament/generated/com_bbn_parliament_jni_ReificationIterator.h ;
+
+h parliament/generated/com_bbn_parliament_jni_Config.h : Parliament.jar ;
+h parliament/generated/com_bbn_parliament_jni_KbInstance.h : Parliament.jar ;
+h parliament/generated/com_bbn_parliament_jni_StmtIterator.h : Parliament.jar ;
+h parliament/generated/com_bbn_parliament_jni_ReificationIterator.h : Parliament.jar ;
+
+explicit Parliament.jar ;
+make Parliament.jar : [ path.glob-tree $(JavaSrcDir) : *.java ] : @BuildJar ;
+rule BuildJar
+{
+	ClassPath = [ glob $(JenaLibDir)/*.jar ] ;
+	PathSep = [ os.path-separator ] ;
+	RmCmd = [ common.rm-command ] ;
+}
+actions BuildJar
+{
+	mkdir $(<)-build
+	javac -Xlint:all -cp $(ClassPath:J=$(PathSep)) -d $(<)-build $(>)
+	$(RmCmd) $(<)
+	jar cf $(<) -C $(<)-build .
+}
+
+exe Utf8StaticInitGen
+	:	Utf8StaticInitGen.cpp
+	:	<include>.
+		<define>PARLIAMENT_SUPPRESS_AUTOLINK
+		<threading>multi
+	;

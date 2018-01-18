@@ -1,0 +1,49 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = XeLaTeX
+
+\documentclass[12pt,letterpaper,draft]{article}
+\usepackage{parskip}		% Begin paragraphs with empty line, not indent
+
+\usepackage{fontspec,xltxtra,xunicode}
+\defaultfontfeatures{Mapping=tex-text,Numbers=Uppercase}
+\setmainfont{TeX Gyre Bonum}
+\setsansfont[Scale=MatchLowercase]{TeX Gyre Heros}
+\setmonofont[Scale=0.9,Mapping=]{TeX Gyre Cursor}
+
+\title{Parliament Implementation Choices}
+\author{Ian Emmons}
+\date{September 2, 2009}
+
+%\hyphenation{da-ta-base da-ta-bas-es}
+
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Duplicate Statements}
+
+\paragraph{Q:}When checking for duplicate statements, should the source be included in the comparison?
+
+\paragraph{A:}No.  Since the source is extra-RDF, we have chosen to leave the source out of the comparison.  For a given (subject, predicate, object) triple, the first source to insert it will be stored with the statement, and subsequent sources will be ignored.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Statement Flags}
+
+\paragraph{Q:}What do the various statement flags mean?
+
+\paragraph{A:}The following points describe the statement flags, though they do not represent a complete exposition of the state transition diagram (which we should probably map out in its entirety).
+\begin{itemize}
+	\item Valid:  The statement record is in use.  In other words, the record is not part of the file's ``tail'' of blank space that has not yet been used to store anything.
+
+	\item Deleted:  The statement has been retracted, and is therefore ignored in lookup operations.  If the same statement is later reasserted, the record will be reused by clearing the deleted flag.  (In other words, a new record will not be allocated.)  However, in this case neither the source nor the literal and inferred flags are updated to reflect the new assertion.
+
+	\item Literal:  The object of the statement is a literal.
+
+	\item Inferred:  The statement was first asserted as the result of forward chaining.  Note that if the statement is later asserted explicitly (or deleted and then asserted explicitly), this flag is not cleared.
+
+	One alternate way to handle this situation is to clear the inferred flag when an inferred statement is later explicitly asserted.  However, handling the explicit retraction of an inferred statement is harder, because there must be some way to handle the re-inferral of the statement.
+
+	A second alternate approach is to create separate flags for explicit and inferred statements.  This makes it possible to record that a statement has been both inferred and explicitly asserted.  In this case, an explicit retraction could clear the ``explicit assertion'' flag, but leave the inferred flag set (but not set the deleted flag).
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,564 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = XeLaTeX
+% !TEX root = ParliamentUserGuide.tex
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Deploying and Using \protect\pmnt}
+\label{chapter-deploying-and-using}
+
+There are several ways to use Parliament.  By far the most common is as a server application that exposes a SPARQL endpoint.  The binary distributions directly support this usage, running Parliament within the included Jetty servlet engine.  See Section~\ref{section-std-server-deploy} for complete instructions.
+
+Parliament can also be used with other servlet engines such as Tomcat and Glassfish (see Section~\ref{section-parliament-with-jena-and-tomcat}) or as an in-process library (Section~\ref{section-parliament-in-process}).
+
+Pre-built binaries for common platforms are available on the Parliament Web site\urlcite{http://parliament.semwebcentral.org/}.  You can also build Parliament yourself (see Chapter~\ref{chapter-building-parliament}).
+
+This chapter starts with instructions for installing a Parliament server (Section~\ref{section-std-server-deploy}), followed by a discussion of the Parliament configuration file (Section~\ref{section-parliament-config-file}).  Then comes a detailed discussion of each of the less common deployment scenarios.  The chapter concludes with discussions of Parliament utilities and troubleshooting (Sections~\ref{section-parliamentadmin-utility} and~\ref{section-troubleshooting}).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Deploying a \protect\pmnt{} Server}
+\label{section-std-server-deploy}
+
+A Parliament distribution is a compressed archive containing a ready-to-run Parliament Server, with the following naming convention:
+\begin{quote}
+	\texttt{Parliament-v\textbf{\textit{X.Y.Z}}-\textbf{\textit{toolset}}.zip}
+\end{quote}
+Here \texttt{\textbf{\textit{X.Y.Z}}} is the Parliament version number and \texttt{\textbf{\textit{toolset}}} indicates the platform on which the distribution runs, as shown in Table~\ref{tbl:ToolsetPlatformCorrespondence}.
+\begin{table}[htbp]
+	\centering
+	\begin{tabular}{l>{\RaggedRight}p{90mm}}
+		\toprule
+		\emph{Toolset}		& \emph{Corresponding Platform}\\
+		\headingrule
+		\path|msvc141-64|	& 64-bit Windows, built with Visual Studio 2017\\
+		\path|msvc141-32|	& 32-bit Windows, built with Visual Studio 2017\\
+		\path|clang|		& Universal binaries for MacOS\\
+		\path|gcc-64|		& 64-bit Ubuntu Linux\\
+		\path|gcc-32|		& 32-bit Ubuntu Linux\\
+		\bottomrule
+	\end{tabular}
+	\caption{Toolset-to-Platform Correspondence}
+	\label{tbl:ToolsetPlatformCorrespondence}
+\end{table}
+If you are building Parliament yourself according to the instructions in Chapter~\ref{chapter-building-parliament}, then these archives appear in the \path|target/distro| directory at the end of the build process.
+
+As shown in Table~\ref{tbl:ToolsetPlatformCorrespondence}, most platforms require that you choose between 32-bit and 64-bit builds.  Whenever possible, use the 64-bit version, because 32-bit Parliament is limited to 5 to 10 million statements.
+
+\subsection{Installing for the First Time}
+\label{section-std-server-init-deploy}
+
+Once you have downloaded the appropriate distribution, these steps will yield a functioning server:
+\begin{enumerate}
+	\item Extract the archive contents to whatever location you choose.  On UNIX-like systems, \path|/usr/opt/ParliamentKB| is a likely choice.  On Windows, \path|C:\Program Files\ParliamentKB| is customary.  The instructions that follow refer to this directory as \path|ParliamentKB|.
+
+	\item On Windows, install the C and C++ run-time libraries.  You can find installers for these in the following directory:
+	\begin{quote}
+		\path|ParliamentKB/RedistributablePackages|
+	\end{quote}
+
+	\item From the \path|ParliamentKB| directory, invoke the startup script to start the Parliament server.  This is called \path|StartParliament.bat| on Windows and \path|StartParliament.sh| on other platforms\footnote{On all platforms, these scripts locate your Java installation by simply invoking the command \path|java| and relying on the operating system's native facilities for locating the JVM executable.  See Section~\ref{section-troubleshooting} for more information.}.
+\end{enumerate}
+
+\subsection{Upgrading an Existing Installation}
+\label{section-std-server-upgrade}
+
+When upgrading an existing Parliament installation to a newer version, the procedures of Section~\ref{section-std-server-init-deploy} are generally not sufficient because they ignore the migration of the data.  The Parliament development team strives to maintain compatibility of file formats whenever possible.  In such cases, all that is required is to move the \path|data| subdirectory of your Parliament installation into the new Parliament installation.  (Of course, if you have customized Parliament's configuration, you will also need to make those changes in the new installation as well.)
+
+However, from time to time Parliament's file formats do change, and in such cases a different migration procedure is required.  Following this procedure even in those cases where it is not required has some benefits as well, since it frees up any unused space in the Parliament files.  This is the way to perform such a migration:
+
+\begin{enumerate}
+	\item Before upgrading, point your browser at your Parliament server.  The URL for this looks like \nolinkurl{http://<host>:<port>/parliament/}.  By default this will be \nolinkurl{http://localhost:8089/parliament/}.
+
+	\item Click on the ``Export'' link.
+
+	\item\label{item-export-download}Click on the ``Export Repository'' button.  This will start a download whose file name looks like this:
+\begin{quote}\path|parliament-export-localhost-<date>-<time>.zip|\end{quote}
+
+	\item When the download finishes, shut down Parliament.  Rename the Parliament installation directory if you want your upgraded installation to reside in the same place.
+
+	\item Unzip the new version of Parliament and move the resulting installation directory to your desired location.
+
+	\item Customize the new installation's settings as required.  The most common customizations are the host and port, which are easily modified in the startup script, and the settings in the ParliamentConfig.txt file.
+
+	\item Start up the new Parliament installation.
+
+	\item Point your browser at the new Parliament server.  As above, the URL for this looks like \nolinkurl{http://<host>:<port>/parliament/}, or \nolinkurl{http://localhost:8089/parliament/} by default.
+
+	\item Click on the ``Insert Data'' link.
+
+	\item In the ``Import Repository'' section, press the ``Choose File'' button and select the file you downloaded in Step~\ref{item-export-download} above.  Then press the ``Import Repository'' button.
+\end{enumerate}
+
+Once you see the ``Insert operation successful'' message, your upgraded Parliament server is ready for business.
+
+\subsection{Usage}
+\label{section-std-server-usage}
+
+\emph{Important note:}  When you shut down Parliament, it is important to shut it down gracefully.  Otherwise, the Parliament files may not be flushed to disk before they are closed, and they may be badly corrupted.  If you run Parliament as a Windows service or UNIX Daemon (see Section~\ref{section-std-server-config}), this is generally not a problem, because the operating system sends a shut-down message at the appropriate times.  If, however, you run Parliament explicitly via \path|StartParliament.sh| (or \path|StartParliament.bat| on Windows), you will need to shut it down yourself by typing the command ``exit'' followed by «return» or «enter».
+
+To use the Parliament server, you will need the the connection URLs listed in Table~\ref{table-pmnt-connect-urls}.  (See Section~\ref{section-std-server-config} to configure your server to run on a host name and port other than ``localhost'' and ``8089''.)
+\begin{table}[htbp]
+	\centering\small
+	\begin{tabular}{ll}
+		HTTP interface: & \nolinkurl{http://localhost:8089/parliament}\\
+		SPARQL endpoint: & \nolinkurl{http://localhost:8089/parliament/sparql}\\
+		Bulk loader: & \nolinkurl{http://localhost:8089/parliament/bulk}\\
+	\end{tabular}
+	\caption{Joseki Server Connection URL's}
+	\label{table-pmnt-connect-urls}
+\end{table}
+You can use the Parliament server interactively by pointing your web browser at the HTTP interface URL from Table~\ref{table-pmnt-connect-urls}.  This simple and (hopefully) self-explanatory web interface is useful for initial data loading, experimenting with queries, exploring a collection of data, troubleshooting, and similar tasks.
+
+In order to issue queries programmatically, you will need to write some code to send SPARQL-compliant HTTP requests.  One library that can send such requests on your behalf is Jena itself.  Figure~\ref{figure-sparql-select-query-with-jena} shows sample code for issuing a SPARQL select query.
+\begin{figure}[htbp]
+	\footnotesize
+	\begin{verbatim}
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.ResultSet;
+
+void issueSelectQuery(String sparqlSelectQuery)
+{
+  QueryExecution exec = QueryExecutionFactory.sparqlService(
+    "http://localhost:8089/parliament/sparql",
+    sparqlSelectQuery);
+  for (ResultSet rs = exec.execSelect(); rs.hasNext(); rs.next())
+  {
+    // Do something useful with the result set here
+  }
+}
+	\end{verbatim}
+	\caption{Issuing a SPARQL select query with Jena}
+	\label{figure-sparql-select-query-with-jena}
+\end{figure}
+Note that this code uses the SPARQL endpoint URL from Table~\ref{table-pmnt-connect-urls}.
+
+Parliament also provides a Java library to help programmers interact with the Parliament server, which can be found here:
+\begin{quote}
+	\path|ParliamentKB/lib/JosekiParliamentClient.jar|
+\end{quote}
+This library leverages the Jena functionality shown above, but exposes a few extra features of the Parliament server that are not accessible within the bounds of SPARQL.  To use this approach, first add the above jar file to your class path.  Then create a \verb|RemoteModel| object as shown in Figure~\ref{figure-using-remote-jena-model}.  This object allows you to access and manipulate the Parliament repository identified by the URLs passed to the constructor, which are again taken from Table~\ref{table-pmnt-connect-urls}.
+\begin{figure}[htbp]
+	\footnotesize
+	\centering
+	\begin{verbatim}
+import com.bbn.parliament.jena.joseki.client.RemoteModel;
+
+void useRemoteParliamentModel()
+{
+  // Create model:
+  RemoteModel rmParliament = new RemoteModel(
+    "http://localhost:8089/parliament/sparql",
+    "http://localhost:8089/parliament/bulk");
+
+  // Insert contents of another Jena Model:
+  rmParliament.insertStatements(myPopulatedJenaModel);
+
+  // Perform SPARQL SELECT query:
+  ResultSet results = rmParliament.selectQuery(myQueryString);
+
+  // Add statements using SPARQL-UPDATE:
+  rmParliament.updateQuery(mySparqlUpdateQueryString);
+}
+	\end{verbatim}
+	\caption{Using \protect\pmnt{} Via a Remote Jena Model}
+	\label{figure-using-remote-jena-model}
+\end{figure}
+Note that the query strings passed to the remote model in Figure~\ref{figure-using-remote-jena-model} follow standard SPARQL and SPARQL-UPDATE formats, including support for named graphs.  Also note that the \verb|RemoteModel| class exposes the bulk loading feature of the Parliament server, allowing the loading of large bodies of RDF efficiently.
+
+\subsection{Configuration}
+\label{section-std-server-config}
+
+This section explores the most important configuration options for your Parliament server.  The installation procedure in Section~\ref{section-std-server-init-deploy} simply accepts the defaults for these options, but most deployments will require some level of customization.
+
+Section~\ref{section-std-server-init-deploy} mentions Parliament's start script, which is used to directly start the server.  However, in many cases it is preferable to run Parliament as a Windows service or as a UNIX daemon.
+
+The script \path|InstallParliamentService.bat| installs Parliament as a Windows service.  In order for this script to have the permissions it requires, you usually need to right-click the Command Prompt shortcut and choose ``Run as Administrator.''  This script locates your Java installation by using the \verb|JAVA_HOME| environment variable\footnote{See Section~\ref{section-troubleshooting} for information about choosing among multiple Java installations.}.  After running this script, use the Services management console to start and stop Parliament and to run Parliament automatically upon system startup.  Uninstall the service with \path|UninstallParliamentService.bat|.
+
+The \path|StartParliamentDaemon.sh| script will start Parliament as a daemon on UNIX-like systems.  The exact method for wiring this into the operating system's infrastructure for starting and stopping daemon processes varies from platform to platform, and is not covered here.
+
+You can change the host name (or IP address) and port of the SPARQL endpoint by setting \verb|JETTY_HOST| and \verb|JETTY_PORT| in the start script.  These default to \verb|localhost| and 8089, respectively.  Also, you can control the amount of memory set aside for the Java virtual machine's heap by setting \verb|MIN_MEM| and \verb|MAX_MEM| in the same location.  While it is important to allow the JVM sufficient memory, it is also important to realize that a significant portion of Parliament is native code, and therefore does not use the Java heap.  Java programmers are often inclined to set \verb|MAX_MEM| close to the total memory of the machine, but this will starve Parliament's native code of the memory it needs to achieve good performance.  The default heap size ranges from 128 MB to 512 MB, which is reasonable for machines with 4 to 8 GB of total memory.
+
+Note that if you are running the server as a Windows service, you must change these parameters in the install script, and you will have to uninstall the service and reinstall it to make your changes effective.
+
+The file \path|ParliamentKB/conf/jetty.xml| configures the Jetty servlet container.  Generally, there is no need to modify this file.  The Parliament configuration file (\path|ParliamentConfig.txt|) is discussed in Section~\ref{section-parliament-config-file}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The \protect\pmnt{} Configuration File}
+\label{section-parliament-config-file}
+
+Like many pieces of software, Parliament has a configuration file.  It is typically called \path|ParliamentConfig.txt|, but it can be named anything.  Here is how Parliament finds its configuration:
+
+\begin{enumerate}
+	\item If the environment variable \verb|PARLIAMENT_CONFIG_PATH| is set, then its value is assumed to be the absolute path of the configuration file.  The Parliament server startup scripts use this method to locate the file in the root directory of the server installation.
+
+	\item \emph{On Windows only:}  If this environment variable is not set, then Parliament looks for the file \path|ParliamentConfig.txt| in the same directory as the Parliament DLL.
+
+	\item Otherwise, Parliament looks for the file \path|ParliamentConfig.txt| in the current working directory of the server process.
+\end{enumerate}
+
+The configuration file is a plain text file containing name-value pairs.  Blank lines and comment lines (preceded by a `\#') are ignored.  Many of the settings are Boolean values, in which case the value is case-insensitive and may be ``true'', ``t'', ``yes'', ``y'', ``on'', or ``1'' (for true), or ``false'', ``f'', ``no'', ``n'', ``off'', or ``0'' (for false).
+
+The recognized settings are as follows.  Setting names are case-insensitive.
+\begin{description}
+	\item[logToConsole] Indicates whether to log to the console. \emph{Default: ``yes''}
+
+	\item[logConsoleAsynchronous] Indicates whether to log asynchronously to the console. \emph{Default: ``no''}
+
+	\item[logConsoleAutoFlush] Indicates whether console log entries should be flushed after each log operation. \emph{Default: ``yes''}
+
+	\item[logToFile] Indicates whether to log to a file. \emph{Default: ``yes''}
+
+	\item[logFilePath] The path of the log file.  May include the following placeholders to add contextual information to the file name:
+	\begin{description}[noitemsep]
+		\item[\texttt{\%N}]Cardinal number of the log file.  A number between the \% and the N will left-pad with zeros to that many places.
+		\item[\texttt{\%Y}]Year
+		\item[\texttt{\%m}]Month
+		\item[\texttt{\%d}]Day
+		\item[\texttt{\%H}]Hours
+		\item[\texttt{\%M}]Minutes
+		\item[\texttt{\%S}]Seconds
+	\end{description}
+	\emph{Default:} \texttt{log/ParliamentNative\%3N\_\%Y-\%m-\%d\_\%H-\%M-\%S.log}
+
+	\item[logFileAsynchronous] Indicates whether to log asynchronously to the file. \emph{Default: ``no''}
+
+	\item[logFileAutoFlush] Indicates whether file log entries should be flushed after each log operation. \emph{Default: ``yes''}
+
+	\item[logFileRotationSize] The maximum approximate size (in bytes) of the log file.  When this value is exceeded, the log file will be rotated. \emph{Default: 10 MB}
+
+	\item[logFileMaxAccumSize] The maximum accumulated size of rotated log files.  When this value is exceeded, the oldest log file is deleted. \emph{Default: 150 MB}
+
+	\item[logFileMinFreeSpace] The minimum amount of free space on the volume where log files are stored.  When the free space dips below this value, old log files will be deleted so as to free up enough space. \emph{Default: 100 MB}
+
+	\item[logFileRotationTimePoint] The time of day at which the log file should be rotated regardless of its size.  Must be in the format ``HH:MM:SS''. \emph{Default: 2:00 AM}
+
+	\item[logLevel] The global logging level.  Must be one of TRACE, DEBUG, INFO, WARN, and ERROR. \emph{Default: ``INFO''}
+
+	\item[logChannelLevel] Overrides the global logging level for a single channel.  (Generally a channel is equivalent to a class in the source code.)  The value of this setting takes the form \begin{quote}\emph{«channel-name» = «log-level»}\end{quote} where \emph{«log-level»} takes one of the values listed for the global logging level above.  This option may be repeated to override the level for multiple channels. \emph{Default: None}
+
+	\item[kbDirectoryPath] The path of the Parliament knowledge base files.  (If they do not yet exist, they will be created here.)  Note that this directory must exist before Parliament is started, or an exception will be thrown. \emph{Default: The current working directory, ``.''}
+
+	\item[stmtFileName] The name of the memory-mapped file containing records of statements. \emph{Default: \path|statements.mem|}
+
+	\item[rsrcFileName] The name of the memory-mapped file that contains resource records. \emph{Default: \path|resources.mem|}
+
+	\item[uriTableFileName] The name of the memory-mapped file containing resource strings (URIs and literals). \emph{Default: \path|uris.mem|}
+
+	\item[uriToIntFileName] The name of the file containing the mapping from numeric resource identifiers to resource strings.  This file is managed by Berkeley DB. \emph{Default: \path|u2i.db|}
+
+	\item[stmtToIdFileName] This obsolete setting is now ignored.  It indicated the name of a file that mapped tuples of numeric resource identifiers to numeric statement identifiers.  This file was omitted by default, and was included only if the setting ``keepDupStmtIdx'' was turned on.  The default value was \path|stmt2id.db|.  If your configuration had ``keepDupStmtIdx'' turned off, then you can safely delete these two settings from your configuration file.  If it was turned on, then delete the file named by this setting and then delete these two settings from your configuration file.
+
+	\item[keepDupStmtIdx] This obsolete setting is now ignored.  If set to ``yes'', Parliament would maintain an extra file (named by the ``stmtToIdFileName'' option).  It was intended to be a performance optimization, but it rarely helped.  It defaulted to ``no''.  If you had this turned off then you can simply delete this and the ``stmtToIdFileName'' options from your configuration.  If it was turned on, then delete the file named by the ``stmtToIdFileName'' option and then delete these two settings from your configuration file.
+
+	\item[readOnly] When set to ``yes'', prevents Parliament from changing the underlying storage files in any way. \emph{Default: ``no''}
+
+	\item[fileSyncTimerDelay] The number of milliseconds between flushings of the KB files to disk.  The flush is performed asynchronously, and so has minimal impact on overall performance.  This decreases the chances of a file corruption, and it limits the amount of time required to shut down Parliament gracefully. Set to zero to disable flushing the files to disk.  This setting applies only to Parliament deployed as a server using Jena, Joseki, and Jetty.  Any other deployment will ignore this setting. \emph{Default: ``15000''}
+
+	\item[initialRsrcCapacity] The number of resources Parliament should allocate space for when creating a new KB. \emph{Default: ``100000''}
+
+	\item[avgRsrcLen] The average resource length (in characters) that Parliament should anticipate when allocating space in a new KB. \emph{Default: ``64''}
+
+	\item[rsrcGrowthFactor] The factor by which to increase the resource table size when Parliament runs out of space in the file.  This must be larger than one. \emph{Default: ``1.25''}
+
+	\item[initialStmtCapacity] The number of statements Parliament should allocate space for when creating a new KB. \emph{Default: ``500000''}
+
+	\item[stmtGrowthFactor] The factor by which to increase the statement table size when Parliament runs out of space in the file.  This must be larger than one. \emph{Default: ``1.25''}
+
+	\item[bdbCacheSize] The amount of memory to be devoted to the Berkeley DB cache.  The portion before the comma is the total cache size (with a k for kilobytes, m for megabytes, g for gigabytes).  The portion after the comma specifies how many segments the memory should be broken across, for compatibility with systems that limit the size of single memory allocations.  On systems with 4GB or more of memory, setting this to ``256m,1'' generally seems to be optimal. \emph{Default: ``32m,1''}
+
+	\item[runAllRulesAtStartup] Causes Parliament to evaluate each of the enabled rules at startup against the existing statements in the KB to see if any new statements should be materialized.  Generally, this is unnecessary, because the rules are always evaluated against each statement as it is asserted.  However, if some of the rules were initially disabled when statements were being asserted, and are then enabled, it may be necessary to turn this on for one startup of Parliament to ensure that the state of the KB is in sync with the rule settings.  Alternately, in such a case this setting may be left off and the ParliamentAdmin tool may be run against the KB with the ``guaranteeEntailments'' option.  Note that when this setting is turned on, KB the startup time may be lengthy. \emph{Default: ``no''}
+
+	\item[normalizeTypedStringLiterals] Instructs Parliament to convert typed string literals to plain literals, both upon insert and at query time, as mandated in RDF 1.1.  In Parliament versions before the implementation of this option (versions~2.7.9 and prior), the behavior was as if the option were set to ``no''.  Therefore, if you are migrating a Parliament installation originally created with one of these older versions to a newer version, you must do one of two things:
+	\begin{enumerate}
+		\item Either before or after the upgrade, create an export of the entire triple store.  To do this, use the ``Export Repository'' option on the Export page of Parliament's Web-based administrative interface.  Then shut down Parliament and delete its \path|data| directory.  This is the location identified by the \texttt{kbDirectoryPath} setting in the configuration file.  Then, after upgrading, import the backup using the ``Import Repository'' option on the Insert Data page of the administrative interface.
+
+		\item Set this option to ``no''.
+	\end{enumerate}
+	The first option is highly recommended.  It requires some effort, but will bring your triple store into compliance with RDF 1.1 and deliver slightly better performance to boot.  \emph{Default: ``yes''}
+
+	\item[SubclassRule] Enables the following inference rules:
+\[A \subset B \land B \subset C \Rightarrow A \subset C\]
+\[X \in A \land A \subset B \Rightarrow X \in B\]
+where $\subset$ means ``is a sub-class of'' and $\in$ means ``is of type''. \emph{Default: ``on''}
+
+	\item[inferRdfsClass] When both this setting and ``SubclassRule'' are turned on, this enables the following inference rule:
+\[A \subset B \Rightarrow A \in \text{rdfs:Class} \land B \in \text{rdfs:Class}\]
+where $\subset$ means ``is a sub-class of'' and $\in$ means ``is of type''. \emph{Default: ``off''}
+
+	\item[inferOwlClass] When both this setting and ``SubclassRule'' are turned on, this enables the following inference rule:
+\[A \subset B \Rightarrow A \in \text{owl:Class} \land B \in \text{owl:Class}\]
+where $\subset$ means ``is a sub-class of'' and $\in$ means ``is of type''. \emph{Default: ``off''}
+
+	\item[inferRdfsResource] When both this and the ``SubclassRule'' settings are turned on, the following inference rule is enabled:
+\[A \subset B \Rightarrow A \subset \text{rdfs:Resource} \land B \subset \text{rdfs:Resource}\]
+where $\subset$ means ``is a sub-class of''. \emph{Default: ``off''}
+
+	\item[inferOwlThing] When both this setting and ``SubclassRule'' are turned on, this enables the following inference rule:
+\[A \subset B \Rightarrow A \subset \text{owl:Thing} \land B \subset \text{owl:Thing}\]
+where $\subset$ means ``is a sub-class of''. \emph{Default: ``off''}
+
+	\item[SubpropertyRule] Enables the following inference rules:
+\[P \sqsubset Q \land Q \sqsubset R \Rightarrow P \sqsubset R\]
+\[P \sqsubset Q \land P(X, Y) \Rightarrow Q(X, Y)\]
+where $\sqsubset$ means ``is a sub-property of''. \emph{Default: ``on''}
+
+	\item[DomainRule] Enables the following inference rule:
+\[\text{rdfs:domain}(P,C) \land P(X, Y) \Rightarrow X \in C\]
+\emph{Default: ``on''}
+
+	\item[RangeRule] Enables the following inference rule:
+\[\text{rdfs:range}(P,C) \land P(X, Y) \Rightarrow Y \in C\]
+\emph{Default: ``on''}
+
+	\item[EquivalentClassRule] Enables the following inference rule:
+\[\text{owl:equivalentClass}(A,B) \Rightarrow A \subset B \land B \subset A\]
+where $\subset$ means ``is a sub-class of''. \emph{Default: ``on''}
+
+	\item[EquivalentPropRule] Enables the following inference rule:
+\[\text{owl:equivalentProperty}(P,Q) \Rightarrow P \sqsubset Q \land Q \sqsubset P\]
+where $\sqsubset$ means ``is a sub-property of''. \emph{Default: ``on''}
+
+	\item[InverseOfRule] Enables the following inference rule:
+\[\text{owl:inverseOf}(P, Q) \land P(X, Y) \Rightarrow Q(Y, X)\]
+\emph{Default: ``on''}
+
+	\item[SymmetricPropRule] Enables the following inference rule:
+\[P \in \text{owl:SymmetricProperty} \land P(X, Y) \Rightarrow P(Y, X)\]
+\emph{Default: ``on''}
+
+	\item[FunctionalPropRule] Enables the following inference rule:
+\[P \in \text{owl:FP} \land P(Z, X) \land P(Z, Y) \Rightarrow \text{owl:sameAs}(X, Y)\]
+where ``FP'' stands for ``FunctionalProperty''. \emph{Default: ``on''}
+
+	\item[InvFunctionalPropRule] Enables the following inference rule:
+\[P \in \text{owl:IFP} \land P(X, Z) \land P(Y, Z) \Rightarrow \text{owl:sameAs}(X, Y)\]
+where ``IFP'' stands for ``InverseFunctionalProperty''. \emph{Default: ``on''}
+
+	\item[TransitivePropRule] Enables the following inference rule:
+\[P \in \text{owl:TransitiveProperty} \land P(X, Y) \land P(Y, Z) \Rightarrow P(X, Z)\]
+\emph{Default: ``on''}
+\end{description}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Parliament in Other Servlet Containers}
+\label{section-parliament-with-jena-and-tomcat}
+
+The most common way to deploy Parliament uses the Jetty servlet container.  This scenario is discussed above in Section~\ref{section-std-server-deploy}.  However, the Parliament distribution contains a war file that can be deployed in any servlet container.  This section discusses how to deploy Parliament in other servlet containers, such as Apache Tomcat.
+
+\begin{enumerate}
+	\item First acquire and install Apache Tomcat\urlcite{http://tomcat.apache.org/} according to its own installation instructions.  This will result in a directory containing your Tomcat installation, which, in keeping with the customary nomenclature of Tomcat, we will call \path|CATALINA_HOME| here.
+
+	\item Create a directory for the native Parliament binaries.  This can reside anywhere on your machine, but just to be concrete we will call this directory \path|CATALINA_HOME/bin/parliament|.
+
+	\item Copy the native binaries into this directory from the \path|bin| directory of the Parliament binary distribution.
+
+	\item On Windows only, install the run-time libraries by running the installer in the \path|RedistributablePackages| subdirectory of your Parliament distribution.
+
+	\item Once you have chosen your build directory, copy all of the files from it into the \path|CATALINA_HOME/bin/parliament| directory.
+
+	\item In your favorite text editor, open the file
+{\footnotesize\begin{verbatim}
+CATALINA_HOME/bin/parliament/ParliamentConfig.txt
+\end{verbatim}}
+	and change the following line:
+{\footnotesize\begin{verbatim}
+kbDirectoryPath        = .
+\end{verbatim}}
+	to point to a directory suitable for storing your knowledge base.  In an operational deployment of Parliament, this is often set to a large drive dedicated to the storage of the knowledge base, such as a RAID array, NAS, or SAN.  For testing purposes, set it to a relative path, such as:
+{\footnotesize\begin{verbatim}
+kbDirectoryPath        = data
+\end{verbatim}}
+	This stores the knowledge base in \path|CATALINA_HOME/bin/data|.
+
+	\item If you have not already done so while installing Tomcat, create a file called \path|setenv.sh| in \path|CATALINA_HOME/bin| and within it set the environment variable \path|CATALINA_OPTS| like so:
+{\footnotesize\begin{verbatim}
+MIN_MEM=128m
+MAX_MEM=512m
+PARLIAMENT_BIN="$CATALINA_HOME/bin/parliament"
+export CATALINA_OPTS=-Djava.library.path=$PARLIAMENT_BIN
+export CATALINA_OPTS="$CATALINA_OPTS -Xms$MIN_MEM -Xmx$MAX_MEM"
+export PARLIAMENT_CONFIG_PATH=$PARLIAMENT_BIN/ParliamentConfig.txt
+export LD_LIBRARY_PATH=$PARLIAMENT_BIN
+\end{verbatim}}
+	On Windows, the file name should be \path|setenv.bat| and its content should look like this:
+{\footnotesize\begin{verbatim}
+set MIN_MEM=128m
+set MAX_MEM=512m
+set PARLIAMENT_BIN=%CATALINA_HOME%\bin\parliament
+set CATALINA_OPTS=-Xms%MIN_MEM% -Xmx%MAX_MEM%
+set PARLIAMENT_CONFIG_PATH=%PARLIAMENT_BIN%\ParliamentConfig.txt
+set PATH=%PARLIAMENT_BIN%;%PATH%
+\end{verbatim}}
+	Note that you can control the amount of memory set aside for the Java virtual machine by changing \verb|MIN_MEM| and \verb|MAX_MEM| in the scripts above.  While it is important to allow the JVM sufficient memory, it is also important to realize that Parliament is native code, and therefore does not use the Java heap.  Java programmers are often inclined to set \verb|MAX_MEM| close to the total memory of the machine, but this will starve Parliament of the memory it needs to achieve good performance.  The default values given above, 128 MB and 512 MB, are reasonable values for machines with 4 to 8 GB of total memory.
+
+	\item Copy \path|parliament.war| from the Parliament general distribution into Tomcat's appbase directory.  This location defaults to the directory \path|CATALINA_HOME/webapps|.
+
+	\item Start Tomcat according to its documentation.  For instructions on using your Parliament server, see Section~\ref{section-std-server-usage}.
+
+	\item If you redeploy Parliament into a running Tomcat instance, the server will need to be restarted.
+
+	\item\emph{Please note:}  When you want to shut down the KB, it is important to shut it down gracefully.  Otherwise, the Parliament files may not be flushed to disk before they are closed, and they may be badly corrupted.  If you run Tomcat as a Windows service or UNIX Daemon, this is generally not a problem, because the operating system sends a shut-down message at the appropriate time.  If, however, you run Tomcat explicitly via its startup script, you will need to shut it down yourself with Tomcat's stop script.
+\end{enumerate}
+
+\subsubsection{Glassfish Notes}
+\label{section-glassfish-notes}
+When deploying Parliament to Glassfish, note the following:
+\begin{itemize}
+	\item Glassfish sets it's own \verb|java.library.path| property.  The Parliament libraries must either be copied into \path|«Glassfish install dir»/lib| or you must alter the Glassfish configuration such that the libraries are available on \verb|java.library.path|.
+
+	\item By default, Parliament stores it's data files in the current working directory.  In the case of Glassfish, this will be \path|«Glassfish install dir»/domains/domain1/config|.  To change this, edit the configuration file, \path|ParliamentConfig.txt|, to set \verb|kbDirectoryPath| to the location (absolute path) where you would like your files to reside.
+
+	\item If Parliament is redeployed into a running instance of Glassfish, the server will need to be restarted.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Using \protect\pmnt{} In-Process}
+\label{section-parliament-in-process}
+
+Jena is a popular toolkit for manipulating RDF data in Java programs.  The central concept in the Jena class library is the Model interface.  An object of type Model represents a graph of RDF data, and features many methods for manipulating that data.  With just a few lines of code, you can create a Jena Model that is backed by an instance of Parliament, as demonstrated by Figure~\ref{figure-creating-jena-model}.
+	\begin{figure}[htbp]
+		\footnotesize
+		\centering
+		\begin{verbatim}
+import java.io.File;
+import com.bbn.parliament.jena.graph.KbGraph;
+import com.bbn.parliament.jena.graph.KbGraphFactory;
+import com.bbn.parliament.jni.Config;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+
+private Model createParliamentModel()
+{
+  KbGraph baseGraph = KbGraphFactory.createDefaultGraph();
+  return ModelFactory.createModelForGraph(baseGraph);
+}
+		\end{verbatim}
+		\caption{Creating a Jena Model backed by \protect\pmnt}
+		\label{figure-creating-jena-model}
+	\end{figure}
+The \verb|createParliamentModel| method returns a Jena model backed by a Parliament instance.  With this model, you can do any of the things you normally do with a Jena model, such as call \verb|read| on it to load a file into it, or query it.
+
+The \verb|useParliamentModel| method shown in Figure~\ref{figure-using-jena-model} demonstrates how to call \verb|createParliamentModel|.  The important thing to note here is the try-finally construct.  This guarantees that the model is closed properly, even if an exception is thrown.  Closing the model is crucial, because if you don't, the Parliament files will not be flushed to disk before they are closed, and they will almost certainly be badly corrupted.
+
+	\begin{figure}[htbp]
+		\footnotesize
+		\centering
+		\begin{verbatim}
+import com.hp.hpl.jena.rdf.model.Model;
+
+void useParliamentModel()
+{
+  Model kbModel = createParliamentModel();
+  try
+  {
+    // Use the model according to the Jena documentation.
+    // For instance, to issue a SPARQL query:
+    QueryExecution exec = QueryExecutionFactory.create(
+      sparqlQueryString, kbModel);
+    for (ResultSet rs = exec.execSelect(); rs.hasNext(); rs.next())
+    {
+      // Do something useful with the result set here
+    }
+  }
+  finally
+  {
+    if (kbModel != null && !kbModel.isClosed())
+    {
+      kbModel.close();
+      kbModel = null;
+    }
+  }
+}
+		\end{verbatim}
+		\caption{Using a Jena Model backed by \protect\pmnt}
+		\label{figure-using-jena-model}
+	\end{figure}
+
+Naturally, there is some setup required to make this work:
+\begin{enumerate}
+	\item You will need \path|JenaParliament.jar| and \path|Parliament.jar| from your binary distribution, along with the Jena jar files, which you can download from the Jena web site\urlcite{https://jena.apache.org/}.  Place all of these jar files in a convenient location and ensure that they are added to your class path.  (If you are using Eclipse, add them to the build path.)
+
+	\item Copy the following files from the \path|bin| directory of the Parliament binary distribution to a convenient location, such as the directory used for the jar files above:
+	\begin{itemize}[noitemsep]
+		\item All of the DLL's or shared libraries.
+		\item \path|ParliamentAdmin| (\path|ParliamentAdmin.exe| on Windows)
+		\item \path|ParliamentConfig.txt|
+	\end{itemize}
+
+	\item Ensure that the JVM can find the DLL's or shared libraries at run-time.  For Mac OS, add their directory to the Java system property \verb|java.library.path|.  On Windows, add the directory to the \verb|Path| environment variable.  On Linux, it's \verb|LD_LIBRARY_PATH|.  Many flavors of UNIX also use \verb|LD_LIBRARY_PATH|, though some differ.  Consult your operating system documentation to be sure you use the correct variable.
+
+	\item On Windows only, install the run-time libraries by running the installer in the \path|RedistributablePackages| subdirectory of your Parliament distribution.
+
+	\item Customize the configuration file \path|ParliamentConfig.txt| as desired.  In particular, the \texttt{kbDirectoryPath} setting defaults to the current working directory.  To place your Parliament KB files in a different location, change this setting to the directory of your choice.  This is especially useful for placing the KB files on a drive array, or for maintaining several KB's and switching between them.
+
+	\item Set the \verb|PARLIAMENT_CONFIG_PATH| environment variable to the configuration file's path.  On Windows, if this is not set the file will be loaded from the same directory as the Parliament DLL, which is often a useful default.  On other platforms there is no default, and so this environment variable must be set.
+\end{enumerate}
+
+If you do not wish to use the Parliament configuration file to configure your application, you can replace the first line of the method in Figure~\ref{figure-creating-jena-model}, \verb|createParliamentModel|, with a line that creates a Config instance using the default constructor and then set the Config fields yourself.  This may be useful for centralizing your application's configuration in a single file.
+
+If \verb|createParliamentModel| throws an \verb|UnsatisfiedLinkError| exception, see Section~\ref{section-troubleshooting} for possible resolutions.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Configuring Indexes}
+\label{section-indexes}
+
+\emph{[Yet to be written]}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The ParliamentAdmin Utility}
+\label{section-parliamentadmin-utility}
+
+\emph{[Yet to be written]}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Troubleshooting}
+\label{section-troubleshooting}
+
+Because Parliament is most often used within a Java environment, the most common problem is the dreaded ``Unsatisfied Link Error''.  This error is generated by the Java Virtual Machine (JVM) when the Java code requests the loading of a DLL\footnote{On UNIX-like systems, these are called ``shared libraries'', but for the sake of brevity, we will use DLL (Dynamically Linked Library) as a generic term for all operating systems.}, but the JVM is unable to load that DLL.  There are quite a few reasons why you may encounter an unsatisfied link error, and unfortunately, the JVM is not very good about generating an illuminating error message.  So, should you encounter this problem, here are some things to keep in mind:
+\begin{itemize}
+	\item Double-check that you have followed all the deployment instructions correctly for your chosen mode of deployment.
+
+	\item Make sure that your system is up-to-date with respect to patches.  For Windows, this means a visit to the Windows Update web site\urlcite{http://windowsupdate.microsoft.com/}.  Most other operating systems have a similar facility.
+
+	\item Be sure that a 64-bit build of Parliament is loaded by a 64-bit version of Java, and that a 32-bit build of Parliament is loaded by a 32-bit version of Java.  On Macintosh, this is not a problem, because Parliament is built as a universal binary.
+
+	\item When the JVM loads the Parliament DLL, Parliament itself loads several other DLL's.  Even if the JVM is able to load Parliament, an unsatisfied link error will result if Parliament cannot load one of its subsidiary DLL's.  Furthermore, the error message accompanying the unsatisfied link error usually does not indicate which DLL caused the load failure.  The subsidiary DLL's fall into the following three categories:
+	\begin{itemize}
+		\item The Berkeley DB and Boost DLLs:  In the deployment procedures detailed in this document, these DLLs should reside in the same location as Parliament itself.
+		\item The C and C++ run-time libraries:  On Unix-like systems these should be available automatically.  On Windows you may need to install the Visual Studio run-time libraries.  You can find installers for these in the \path|RedistributablePackages| subdirectory of your binary distribution of Parliament.
+		\item Various operating system DLL's:  These are rarely a problem, because the OS needs to be able to find these to function.
+	\end{itemize}
+
+	\item The Java system property \verb|java.library.path| is a list of paths that Java searches when loading native libraries.  This suggests that all of the operating system-specific rules for locating DLLs can be circumvented by providing a suitable definition for this system property.  Unfortunately, when Java loads a library that itself loads other libraries (as Parliament does), Java can consult \verb|java.library.path| only when loading the top-level library, because the loading process for its dependents is managed entirely within the operating system.  Thus, this property does not solve the problem for Parliament.
+
+	\item Running \path|ParliamentAdmin| helps to diagnose unsatisfied link errors, because this tool also loads the Parliament DLL, but it does so without involving Java (because \path|ParliamentAdmin| is written in C++).  This technique can be used to isolate the error to either the operating system level (when \path|ParliamentAdmin| fails to load the DLL) or to the Java level (when \path|ParliamentAdmin| succeeds).  Even running ``\path|ParliamentAdmin -v|'' to get the version requires loading the Parliament DLL, so this is an easy test.
+
+	\item Multiple Java installations can confuse the DLL loading process.  The scripts \path|StartParliament.sh| and \path|StartParliament.bat| find Java by simply invoking the command \path|java| and relying on the operating system to locate the installation.  In these cases, the \verb|JAVA_HOME| environment variable is not used, unless the operating system uses it.  On Windows, the process by which the \path|java| command finds and loads the JVM is quite complex.  The following web page sheds some light on how you can manage this process:
+\begin{quote}\small
+	\url{http://mindprod.com/jgloss/javaexe.html#MULTIPLES}
+\end{quote}
+In the case of the \path|InstallParliamentService| script, the situation is quite different.  The \path|java| command is not used at all, and instead the service executable directly loads the \path|jvm.dll| library.  This is located by using the \verb|JAVA_HOME| environment variable at the time the service is installed.  (This means that if you upgrade your Java installation after installing the service, you will have to uninstall and reinstall the service in order for it to find the \path|jvm.dll| library.)
+
+	\item The process by which Windows searches for DLL's is somewhat complex, so understanding it can often help pinpoint the problem.  The search process is as follows:
+
+	\begin{itemize}
+		\item The Windows system directory
+		\item The Windows directory
+		\item The directory where the executable module for the current process is located
+		\item The current directory
+		\item The directories listed in the \verb|PATH| environment variable
+	\end{itemize}
+
+Note that placing DLL's in the Windows or Windows system directories is strongly discouraged.
+
+Both the graphical tool Dependency Walker\urlcite{http://dependencywalker.com/} and the command-line tool \path|dumpbin| (part of the Visual Studio installation) show from where Windows is trying to load subsidiary DLL's.  (Note that the operating system DLL \path|advapi.dll| itself loads many other libraries, some by magic, and that it therefore confuses Dependency Walker, which reports that \path|X| and \path|Y| are missing.  These error messages are, however, red herrings and should be ignored.)
+
+	\item On Mac OS, the JVM finds the Parliament shared library by consulting the Java system property \verb|java.library.path|, and the operating system looks for its dependencies in the same directory.  The command ``\path|otool -L|'' will show from where the operating system is trying to load subsidiary shared libraries.
+
+	\item Other UNIX-like systems find shared libraries by searching the directories in the library search path environment variable.  The name of this variable differs by system:  On Linux and several others it is \verb|LD_LIBRARY_PATH|, though some differ.  On most UNIX-like systems the command \path|ldd| will show from where the operating system is trying to load subsidiary shared libraries.
+
+	\item A debug build of Parliament will not work on Windows unless the corresponding version of Visual Studio is installed.  This is because the debug versions of the C and C++ run-time libraries are included only with Visual Studio.
+
+	\item More rarely, unsatisfied link errors can result from a bad build of Parliament that causes the symbols exported from the DLL to be named incorrectly.  If this happen, the JVM will succeed in loading the DLL, but fail to find the entry points it needs.  This results in an unsatisfied link error that is indistinguishable from the cases where the JVM cannot load the DLL at all.  This condition is more likely to occur on Windows, and usually has something to do with the symbol \verb|BUILDING_KBCORE| not being defined on the compiler command line.
+\end{itemize}

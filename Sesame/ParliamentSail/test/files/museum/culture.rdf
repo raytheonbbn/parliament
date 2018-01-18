@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+
+<rdf:RDF xml:lang="en"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:cult="http://www.icom.com/schema.rdf#"
+  xmlns:adm="http://www.oclc.org/schema.rdf#">
+
+  <cult:Cubist rdf:about="http://www.european-history.com/picasso.html">
+    <cult:paints>
+      <cult:Painting rdf:about="http://www.european-history.com/jpg/guernica03.jpg">
+	<cult:technique>oil on canvas</cult:technique>
+	<cult:exhibited>
+	  <cult:Museum rdf:about="http://www.museum.es/"/>
+	</cult:exhibited>
+      </cult:Painting>
+    </cult:paints>
+    <cult:paints>
+      <cult:Painting rdf:about="http://www.museum.es/woman.qti">
+	<cult:technique>oil on canvas</cult:technique>
+      </cult:Painting>
+    </cult:paints>
+    <cult:first_name>Pablo</cult:first_name>
+    <cult:last_name>Picasso</cult:last_name>
+  </cult:Cubist>
+
+  <cult:Flemish
+    rdf:about="http://www.european-history.com/rembrandt.html">
+    <cult:paints>
+      <cult:Painting rdf:about="http://www.artchive.com/rembrandt/abraham.jpg">
+	<cult:technique>oil on canvas</cult:technique>
+      </cult:Painting>
+    </cult:paints>
+    <cult:paints>
+      <cult:Painting rdf:about="http://www.artchive.com/rembrandt/artist_at_his_easel.jpg">
+	<cult:technique>oil on canvas</cult:technique>
+	<cult:exhibited>
+	  <cult:Museum rdf:about="http://www.louvre.fr/"/>
+	</cult:exhibited>
+      </cult:Painting>
+    </cult:paints>
+    <cult:first_name>Rembrandt</cult:first_name>
+    <cult:last_name>van Rijn</cult:last_name>
+  </cult:Flemish>
+
+
+  <cult:Sculptor rdf:about="http://www.ibiblio.org/wm/paint/auth/rodin/">
+    <cult:first_name>Auguste</cult:first_name>
+    <cult:last_name>Rodin</cult:last_name>
+    <cult:creates>
+      <cult:Sculpture rdf:about="http://www.artchive.com/crucifixion.jpg"/>
+    </cult:creates>
+  </cult:Sculptor>
+
+  <cult:Sculptor rdf:about="http://www.michelangelo.com/buon/bio-index2.html">
+    <cult:first_name>Michelangelo</cult:first_name>
+    <cult:last_name>Buonarroti</cult:last_name>
+    <cult:sculpts>
+      <cult:Sculpture rdf:about="http://www.photojournal.com/classicart/italmasters/michelangelo/sculptur/theslave.jpg">
+	<cult:exhibited>
+	  <cult:Museum rdf:about="http://www.louvre.fr/"/>
+	</cult:exhibited>
+      </cult:Sculpture>
+    </cult:sculpts>
+    <cult:sculpts>
+      <cult:Sculpture rdf:about="http://www.photojournal.com/classicart/italmasters/michelangelo/sculptur/descent.jpg"/>
+    </cult:sculpts>
+  </cult:Sculptor>
+
+  <cult:Painter rdf:about="http://www.european-history.com/goya.html">
+    <cult:last_name>Goya</cult:last_name>
+    <cult:paints>
+      <cult:Painting
+	rdf:about="http://192.41.13.240/artchive/graphics/saturn_zoom1.jpg">
+	<cult:technique>wall painting (oil)</cult:technique>
+      </cult:Painting>
+    </cult:paints>
+  </cult:Painter>
+
+  <adm:ExtResource rdf:about="http://www.artchive.com/crucifixion.jpg">
+    <cult:exhibited> <cult:Museum rdf:about="http://www.rodin.fr/"/> </cult:exhibited>
+  </adm:ExtResource>
+
+  <adm:ExtResource rdf:about="http://www.artchive.com/crucifixion.jpg">
+    <adm:title>Crucifixion</adm:title>
+  </adm:ExtResource>
+
+  <adm:ExtResource
+    rdf:about="http://192.41.13.240/artchive/graphics/saturn_zoom1.jpg">
+    <cult:exhibited>
+      <cult:Museum
+	rdf:about="http://usuarios.lycos.es/alerian/quintadelsordo.html"/>
+    </cult:exhibited>
+  </adm:ExtResource>
+
+  <adm:ExtResource
+    rdf:about="http://usuarios.lycos.es/alerian/quintadelsordo.html">
+    <adm:title xml:lang="es">Quinta del Sordo</adm:title>
+  </adm:ExtResource>
+
+  <adm:ExtResource rdf:about="http://www.museum.es/">
+    <adm:title>Reina Sofia Museum</adm:title>
+    <adm:last_modified>2000-06-09T12:30:34Z</adm:last_modified>
+  </adm:ExtResource>
+
+  <adm:ExtResource rdf:about="http://www.rodin.fr/">
+    <adm:title>Rodin Museum</adm:title>
+    <adm:last_modified>2000-02-01T02:59:00+12:00</adm:last_modified>
+  </adm:ExtResource>
+
+  <adm:ExtResource rdf:about="http://www.artchive.com/rembrandt/abraham.jpg">
+    <adm:title>Abraham and Isaac</adm:title>
+    <adm:file_size>17</adm:file_size>
+  </adm:ExtResource>
+
+  <adm:ExtResource rdf:about="http://www.louvre.fr/">
+    <adm:title>Louvre Museum</adm:title>
+  </adm:ExtResource>
+
+  <adm:ExtResource rdf:about="http://www.photojournal.com/classicart/italmasters/michelangelo/sculptur/descent.jpg">
+    <adm:title>Descent</adm:title>
+  </adm:ExtResource>
+
+</rdf:RDF>

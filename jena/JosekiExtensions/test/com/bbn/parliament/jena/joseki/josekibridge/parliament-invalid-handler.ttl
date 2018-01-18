@@ -1,0 +1,20 @@
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix par:   <http://parliament.semwebcentral.org/parliament-config#> .
+@prefix :      <http://parliament.semwebcentral.org/parliament-config-example#> .
+
+[]
+   a par:Configuration ;
+   par:configurationHandler :externalHandler .
+
+## example external handler that implements a new ConfigurationHandler class
+:externalHandler
+   a
+   [
+      rdfs:subClassOf par:ConfigurationHandler ;
+      par:implementationClass "my.custom.jetty.ServletConfigurationHandler"^^xsd:string
+   ] ;
+   par:factoryClass "this.does.not.exist.ExternalProcessorFactory"^^xsd:string ;
+   par:contextPath "/extproc"^^xsd:string .

@@ -1,0 +1,17 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.w3.org/2006/time#> .
+
+:intervalStartsBefore a owl:ObjectProperty ;
+	rdfs:label "interval starts before" .
+
+:intervalFinishesAfter a owl:ObjectProperty ;
+	rdfs:label "interval finishes after" .
+
+:TemporalEntity rdfs:label "Temporal Entity" .
+
+:ProperInterval rdfs:label "Proper Interval" .
+
+:DateTimeInterval rdfs:label "DateTime Interval" .

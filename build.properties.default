@@ -1,0 +1,47 @@
+
+#################################################
+# These properties are used by the ant scripts under the Sesame directory
+tomcat=/Program Files/Apache Software Foundation/Tomcat 5.5
+sesameAppName=sesame
+kbSailStressTestDataDir=data
+
+#################################################
+# The following are the build parameters for the native components on various
+# supported platforms.  All uncommented values for nativeBuildParams that are
+# valid on the current platform will be used.  The options as presented in this
+# file (build.properties.default) are the ones used for building "official"
+# releases, so please do not change them simply to suit your current development
+# needs.  For temporary changes, you can tinker with what gets built by creating
+# a copy of this file called "build.properties" and commenting and uncommenting
+# various lines.  The toolset parameter can take on the following values:
+#
+#    msvc for Microsoft Visual Studio 2017
+#    clang for clang on MacOS 10.7 and later
+#    gcc for GCC on CentOS or Ubuntu Linux
+
+#nativeBuildParams=toolset=msvc address-model=64 variant=debug
+#nativeBuildParams=toolset=msvc address-model=32 variant=debug
+nativeBuildParams=toolset=msvc address-model=64 variant=release
+nativeBuildParams=toolset=msvc address-model=32 variant=release
+
+#nativeBuildParams=toolset=clang address-model=32_64 variant=debug
+nativeBuildParams=toolset=clang address-model=32_64 variant=release
+
+#nativeBuildParams=toolset=gcc address-model=64 variant=debug
+#nativeBuildParams=toolset=gcc address-model=32 variant=debug
+nativeBuildParams=toolset=gcc address-model=64 variant=release
+#nativeBuildParams=toolset=gcc address-model=32 variant=release
+
+#################################################
+# Uncomment this line to cause the build to skip the native unit tests.  (Only
+# do this in "build.properties" -- "build.properties.default" should always
+# contain the official release build parameters, and such a release should
+# always run the unit tests.)
+#skipNativeUnitTest=This value does not matter.
+
+#################################################
+# Set to "no" to halt the build whenever a Java-based unit test does not succeed.
+# (Only do this in "build.properties" -- "build.properties.default" should always
+# contain the official release build parameters, and we want to ensure that all
+# unit tests succeed in a release.
+haltUnitTestsOnFailure=yes

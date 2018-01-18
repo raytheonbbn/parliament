@@ -1,0 +1,46 @@
+# Parliament is licensed under the BSD License from the Open Source
+# Initiative, http://www.opensource.org/licenses/bsd-license.php
+#
+# Copyright (c) 2001-2009, BBN Technologies, Inc.
+# All rights reserved.
+
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix rcc:  <http://asio.bbn.com/ont/spatial/rcc-extended#> .
+@prefix ogc:  <http://asio.bbn.com/ont/spatial/ogc-extended#> .
+
+@prefix : <http://asio.bbn.com/ont/spatial/buffer#> .
+
+
+<http://asio.bbn.com/ont/spatial/buffer>
+  a owl:Ontology ;
+  owl:imports <http://asio.bbn.com/ont/spatial/rcc-extended> ;
+  owl:imports <http://asio.bbn.com/ont/spatial/ogc-extended> ;
+  owl:versionInfo "$Rev$" ;
+  rdfs:label "Spatial Index Spatial Ontology enumerating spatial query objects" ;
+  rdfs:comment "This ontology also links rcc-extended and ogc-extended operands together" .
+
+:Buffer
+  a owl:Class ;
+  rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty :distance ;
+    owl:cardinality 1
+  ] ;
+  rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty :distance ;
+    owl:allValuesFrom xsd:double
+  ] ;
+  rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty :extent ;
+    owl:cardinality 1
+  ] .
+
+:distance a owl:DatatypeProperty .
+:extent a owl:ObjectProperty .
+

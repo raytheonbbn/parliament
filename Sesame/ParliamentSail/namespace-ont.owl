@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE rdf:RDF [
+  <!ENTITY owl 'http://www.w3.org/2002/07/owl#'>
+  <!ENTITY xsd 'http://www.w3.org/2001/XMLSchema#'>
+]>
+
+<rdf:RDF
+  xmlns:rdf ="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:owl="&owl;"
+  xml:base="http://parliament.semwebcentral.org/2004/10/namespace-ont">
+
+<owl:Ontology rdf:about="">
+  <owl:versionInfo>$Id: namespace-ont.owl 737 2009-06-01 23:03:08Z iemmons $</owl:versionInfo>
+  <rdfs:comment>Namespace Ontology</rdfs:comment>
+</owl:Ontology>
+
+<owl:Class rdf:ID="Namespace">
+  <rdfs:comment>URI is namespace itself</rdfs:comment>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#prefix"/>
+      <owl:allValuesFrom rdf:resource="&xsd;string"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#prefix"/>
+      <owl:cardinality>1</owl:cardinality>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:DatatypeProperty rdf:ID="prefix"/>
+
+</rdf:RDF>

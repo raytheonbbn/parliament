@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<project name="Parliament" default="deliverArtifacts">
+	<description>Invokes Visual Studio to build Parliament.</description>
+
+	<import file="${basedir}/../build-common.xml"/>
+
+	<property name="binDir" value="${targetDir}/bin/${ant.project.name}"/>
+	<property name="windowsServiceDir" value="${parliamentDependenciesDir}/daemon/windows"/>
+	<property name="daemonArchiveDir" value="${parliamentDependenciesDir}/daemon/unix"/>
+	<property name="daemonBinDir" value="${targetDir}/bin/daemon"/>
+	<property name="testBinDir" value="${targetDir}/test-bin/${ant.project.name}"/>
+	<property name="jarFile" value="${artifactsDir}/${ant.project.name}.jar"/>
+	<property name="jniHdrDir" value="${basedir}/KbCore/parliament/generated"/>
+	<property name="junitFlagFile" value="${binDir}/junitFlagFile.txt"/>
+	<condition property="osFamilyIsUnix">
+		<os family="unix"/>
+	</condition>
+
+	<target name="deliverArtifacts" depends="jar">
+		<!-- Find the boost.build toolset to use for the current platform -->
+		<condition property="genericToolset" value="msvc">
+			<os family="winnt"/>
+		</condition>
+		<condition property="genericToolset" value="${defaultMacToolset}">
+			<os family="mac"/>
+		</condition>
+		<condition property="genericToolset" value="gcc">
+			<and>
+				<os family="unix"/>
+				<not><os family="mac"/></not>
+			</and>
+		</condition>
+
+		<!-- Extract the list of build params from the build.properties file -->
+		<loadfile property="buildParamList" srcFile="${buildPropFile}">
+			<filterchain>
+				<striplinecomments>
+					<comment value="#"/>
+				</striplinecomments>
+				<tokenfilter delimoutput="|">
+					<containsregex pattern="nativeBuildParams[ \t]*=" replace="" flags="g"/>
+					<containsregex pattern="toolset=${genericToolset}"/>
+					<trim/>
+					<ignoreblank/>
+				</tokenfilter>
+			</filterchain>
+		</loadfile>
+
+		<!-- Run the native build for each set of build parameters -->
+		<delete file="${deployableServersFile}"/>
+		<delete file="${antRunnableServersFile}"/>
+		<foreach list="${buildParamList}" target="deliverArtifactsForOneParamSet"
+			param="buildParams" delimiter="|" inheritall="true"/>
+	</target>
+
+	<!-- Expects buildParams as a parameter -->
+	<target name="deliverArtifactsForOneParamSet">
+		<mkdir dir="${binDir}"/>
+		<echo message="Build params:     '${buildParams}'"/>
+
+		<!-- Extract the toolset and toolsetAbbrev from the build parameters -->
+		<propertyregex property="toolset"
+			input="${buildParams}"
+			regexp="^.*toolset=([a-zA-Z0-9_]*(-[0-9\.]*)?)\b.*$"
+			select="\1"
+			casesensitive="false"/>
+		<propertyregex property="toolsetAbbrev"
+			input="${toolset}"
+			regexp="^([a-z0-9]+)(-([0-9]+)((\.0)|(\.([0-9]+)))?)?$"
+			replace="\1\3\7"
+			casesensitive="false"/>
+		<echo message="toolset:          '${toolset}'"/>
+		<echo message="toolsetAbbrev:    '${toolsetAbbrev}'"/>
+
+		<!-- Extract the variant (debug or release) and variantSuffix from the build parameters -->
+		<propertyregex property="variant"
+			input="${buildParams}"
+			regexp="^.*variant=(debug|release)\b.*$"
+			select="\1"
+			casesensitive="false"/>
+		<condition property="variantSuffix" value="-d" else="">
+			<equals arg1="${variant}" arg2="debug"/>
+		</condition>
+		<echo message="variant:          '${variant}'"/>
+		<echo message="variantSuffix:    '${variantSuffix}'"/>
+
+		<!-- Extract the bitness (32 or 64) from the build parameters -->
+		<propertyregex property="addrModel"
+			input="${buildParams}"
+			regexp="^.*address-model=(64|32)\b.*$"
+			replace="\1"
+			casesensitive="false"
+			defaultValue="universal"/>
+		<switch value="${addrModel}">
+			<case value="32">
+				<property name="addrModelSuffix" value="-x32"/>
+			</case>
+			<case value="64">
+				<property name="addrModelSuffix" value="-x64"/>
+			</case>
+			<default>
+				<property name="addrModelSuffix" value="-x32_64"/>
+			</default>
+		</switch>
+		<echo message="addrModel:        '${addrModel}'"/>
+		<echo message="addrModelSuffix:  '${addrModelSuffix}'"/>
+
+		<!-- Compute the deployable server directory name under artifacts -->
+		<condition property="deployableSvrDir"
+				value="Parliament-v${parliamentVersion}-${toolsetAbbrev}${variantSuffix}"
+				else="Parliament-v${parliamentVersion}-${toolsetAbbrev}${variantSuffix}-${addrModel}">
+			<equals arg1="${addrModel}" arg2="universal"/>
+		</condition>
+		<echo message="${deployableSvrDir}${line.separator}"
+			file="${deployableServersFile}"
+			append="true"/>
+		<if>
+			<or>
+				<equals arg1="${addrModel}" arg2="universal"/>
+				<equals arg1="${addrModel}" arg2="${sun.arch.data.model}"/>
+			</or>
+			<then>
+				<echo message="${deployableSvrDir}${line.separator}"
+					file="${antRunnableServersFile}"
+					append="true"/>
+			</then>
+		</if>
+
+		<!-- Run the actual native build -->
+		<antcall target="buildNativeForOneParamSet"/>
+
+		<if>
+			<os family="windows"/>
+			<then>
+				<condition property="microsoftAddrModel" value="x64" else="x86">
+					<equals arg1="${addrModel}" arg2="64"/>
+				</condition>
+				<echo message="microsoftAddrModel:  '${microsoftAddrModel}'"/>
+
+				<!-- Copy redistributable packages to the deployable server directory -->
+				<copy todir="${targetDir}/${deployableSvrDir}/RedistributablePackages">
+					<fileset dir="${parliamentDependenciesDir}/MSRedistributables"
+						includes="${toolset}*/**/*${microsoftAddrModel}*.exe"/>
+				</copy>
+
+				<!-- Copy service EXE to the deployable server directory -->
+				<copy todir="${targetDir}/${deployableSvrDir}/bin">
+					<fileset dir="${windowsServiceDir}/${addrModel}"/>
+				</copy>
+			</then>
+			<else>
+				<!-- Copy daemon app to the deployable server directory -->
+				<antcall target="buildDaemonApp"/>
+				<copy todir="${targetDir}/${deployableSvrDir}/bin"
+					file="${daemonBinDir}/${toolset}/${addrModel}/jsvc"/>
+				<chmod file="${targetDir}/${deployableSvrDir}/bin/jsvc" perm="ugo+rx" verbose="true"/>
+			</else>
+		</if>
+
+		<!-- Run the tests, if needed and if possible -->
+		<uptodate property="junitResultIsUpToDate" targetfile="${junitFlagFile}">
+			<srcfiles dir="${targetDir}/${deployableSvrDir}"/>
+		</uptodate>
+		<if>
+			<and>
+				<not><isset property="junitResultIsUpToDate"/></not>
+				<or>
+					<equals arg1="${addrModel}" arg2="universal"/>
+					<equals arg1="${addrModel}" arg2="${sun.arch.data.model}"/>
+				</or>
+			</and>
+			<then>
+				<antcall target="runTests"/>
+			</then>
+			<else>
+				<if>
+					<isset property="junitResultIsUpToDate"/>
+					<then>
+						<echo message="Java unit test result is up-to-date"/>
+					</then>
+					<else>
+						<echo message="Skipping the Java unit tests because the native"/>
+						<echo message="binaries are not compatible with the current JVM"/>
+					</else>
+				</if>
+			</else>
+		</if>
+	</target>
+
+	<!-- Expects buildParams and deployableSvrDir to be set -->
+	<target name="buildNativeForOneParamSet">
+		<exec executable="b2" dir="${basedir}/KbCore" failonerror="true">
+			<arg value="-q"/>
+			<arg line="${buildParams}"/>
+		</exec>
+		<delete dir="${targetDir}/drop-box" quiet="true"/>
+		<exec executable="b2" dir="${basedir}/AdminClient" failonerror="true">
+			<arg value="-q"/>
+			<arg line="${buildParams}"/>
+			<env key="ADMIN_CLIENT_INSTALL_DIR" value="${targetDir}/${deployableSvrDir}/bin"/>
+		</exec>
+		<antcall target="fixMacOSInstallNames">
+			<param name="dylibDir" value="${targetDir}/${deployableSvrDir}/bin"/>
+		</antcall>
+		<if>
+			<isset property="skipNativeUnitTest"/>
+			<then>
+				<echo message="##############################################"/>
+				<echo message="#####   Skipping the native unit tests   #####"/>
+				<echo message="##############################################"/>
+			</then>
+			<else>
+				<exec executable="b2" dir="${basedir}/Test" failonerror="true">
+					<arg value="-q"/>
+					<arg line="${buildParams}"/>
+				</exec>
+			</else>
+		</if>
+
+		<antcall target="fixupNativeArtifacts">
+			<param name="toDir" value="${targetDir}/${deployableSvrDir}"/>
+			<param name="resetKbDir" value="true"/>
+		</antcall>
+	</target>
+
+	<target name="testWhetherIsMacOS">
+		<condition property="isOsMacintosh">
+			<os family="mac"/>
+		</condition>
+	</target>
+
+	<!-- Expects dylibDir to be set -->
+	<target name="fixMacOSInstallNames" depends="testWhetherIsMacOS" if="isOsMacintosh">
+		<propertyregex property="boostVer"
+			input="${env.BOOST_VERSION}"
+			regexp="_0$$"
+			replace=""
+			casesensitive="false"
+			defaultValue="${env.BOOST_VERSION}"/>
+		<property name="boostLibSuffix"
+			value="-clang-darwin42-mt${variantSuffix}${addrModelSuffix}-${boostVer}.dylib"/>
+
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="ParliamentAdmin"/>
+			<param name="calledBinary" value="libParliament.dylib"/>
+		</antcall>
+
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libParliament.dylib"/>
+			<param name="calledBinary" value="libdb-${env.BDB_VERSION}.dylib"/>
+			<param name="oldCalledBinaryDir" value="${env.BDB_HOME}/lib"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libParliament.dylib"/>
+			<param name="calledBinary" value="libboost_atomic${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libParliament.dylib"/>
+			<param name="calledBinary" value="libboost_chrono${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libParliament.dylib"/>
+			<param name="calledBinary" value="libboost_date_time${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libParliament.dylib"/>
+			<param name="calledBinary" value="libboost_filesystem${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libParliament.dylib"/>
+			<param name="calledBinary" value="libboost_log${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libParliament.dylib"/>
+			<param name="calledBinary" value="libboost_log_setup${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libParliament.dylib"/>
+			<param name="calledBinary" value="libboost_regex${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libParliament.dylib"/>
+			<param name="calledBinary" value="libboost_system${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libParliament.dylib"/>
+			<param name="calledBinary" value="libboost_thread${boostLibSuffix}"/>
+		</antcall>
+
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_atomic${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_chrono${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_date_time${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_filesystem${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_log${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_regex${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_system${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_thread${boostLibSuffix}"/>
+		</antcall>
+
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_log${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_atomic${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_log${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_chrono${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_log${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_date_time${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_log${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_filesystem${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_log${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_regex${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_log${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_system${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_log${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_thread${boostLibSuffix}"/>
+		</antcall>
+
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_chrono${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_system${boostLibSuffix}"/>
+		</antcall>
+
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_filesystem${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_system${boostLibSuffix}"/>
+		</antcall>
+
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="libboost_thread${boostLibSuffix}"/>
+			<param name="calledBinary" value="libboost_system${boostLibSuffix}"/>
+		</antcall>
+	</target>
+
+	<!-- Expects dylibDir, callingBinary, calledBinary, and oldCalledBinaryDir to be set -->
+	<target name="changeInstallName">
+		<condition property="oldCalledBinaryDir" value="${oldCalledBinaryDir}" else="@rpath">
+			<isset property="oldCalledBinaryDir"/>
+		</condition>
+		<!--
+		<echo message="   ${oldCalledBinaryDir}/${calledBinary}"/>
+		<echo message="   @loader_path/${calledBinary}"/>
+		<echo message="   ${callingBinary}"/>
+		-->
+		<exec executable="install_name_tool" dir="${dylibDir}" failonerror="true" osfamily="mac">
+			<arg value="-change"/>
+			<arg value="${oldCalledBinaryDir}/${calledBinary}"/>
+			<arg value="@loader_path/${calledBinary}"/>
+			<arg value="${callingBinary}"/>
+		</exec>
+	</target>
+
+	<!--
+		Performs a few "fixup" actions on a native build products directory
+		(as specified by ${toDir}) after that directory has been created by
+		the buildNativeForOneParamSet target.  Expects parameters toDir and
+		resetKbDir.
+	-->
+	<target name="fixupNativeArtifacts">
+		<copy todir="${toDir}" preservelastmodified="true" flatten="true"
+			file="${basedir}/KbCore/ParliamentConfig.txt"/>
+		<chmod file="${toDir}/ParliamentAdmin" perm="ugo+rx" osfamily="unix" verbose="true"/>
+		<if>
+			<equals arg1="${resetKbDir}" arg2="true" casesensitive="false" trim="true"/>
+			<then>
+				<replace file="${toDir}/ParliamentConfig.txt"
+					token="kbDirectoryPath        = ."
+					value="kbDirectoryPath        = data"/>
+			</then>
+		</if>
+	</target>
+
+	<target name="jar" depends="compileJava">
+		<mkdir dir="${artifactsDir}"/>
+		<jar destfile="${jarFile}" basedir="${binDir}"/>
+	</target>
+
+	<target name="compileJava" depends="resolve">
+		<mkdir dir="${binDir}"/>
+		<javac srcdir="${basedir}/java" destdir="${binDir}" debug="on" deprecation="on"
+				includeAntRuntime="false">
+			<classpath>
+				<fileset dir="${basedir}/lib/default" includes="*.jar"/>
+			</classpath>
+			<compilerarg value="-Xlint:all"/>
+			<compilerarg value="-h"/>
+			<compilerarg value="${jniHdrDir}"/>
+		</javac>
+	</target>
+
+	<target name="compileJavaTests" depends="jar">
+		<mkdir dir="${testBinDir}"/>
+		<javac destdir="${testBinDir}" srcdir="${basedir}/javaTest" debug="on" deprecation="on"
+				includeAntRuntime="false">
+			<include name="**/*.java"/>
+			<classpath>
+				<pathelement location="${jarFile}"/>
+				<fileset dir="${basedir}/lib/test" includes="*.jar"/>
+			</classpath>
+			<compilerarg value="-Xlint:all"/>
+		</javac>
+	</target>
+
+	<!-- called from deliverArtifactsForOneParamSet - do not invoke externally -->
+	<target name="runTests" depends="compileJavaTests">
+		<echo message="Native artifacts directory:  '${deployableSvrDir}'"/>
+		<mkdir dir="${reportsDir}/${deployableSvrDir}"/>
+		<junit fork="yes" printsummary="yes" haltonfailure="${haltUnitTestsOnFailure}">
+			<env key="LD_LIBRARY_PATH" path="${targetDir}/${deployableSvrDir}/bin;${env.LD_LIBRARY_PATH}"/>
+			<env key="PATH" path="${targetDir}/${deployableSvrDir}/bin;${env.PATH}"/>
+			<sysproperty key="java.library.path" value="${targetDir}/${deployableSvrDir}/bin"/>
+			<sysproperty key="test.data.path" value="${basedir}/data"/>
+			<classpath>
+				<pathelement location="${testBinDir}"/>
+				<pathelement location="${jarFile}"/>
+				<fileset dir="${basedir}/lib/test" includes="*.jar"/>
+			</classpath>
+
+			<formatter type="xml"/>
+
+			<batchtest fork="yes" todir="${reportsDir}/${deployableSvrDir}">
+				<fileset dir="${basedir}/javaTest" includes="**/*Test.java"/>
+			</batchtest>
+		</junit>
+		<touch file="${junitFlagFile}" mkdirs="true"/>
+	</target>
+
+	<target name="daemonAppUpToDateCheck">
+		<uptodate property="isDaemonAppUpToDate">
+			<srcfiles dir="${daemonArchiveDir}" includes="commons-daemon-*-src.tar.gz"/>
+			<compositemapper>
+				<mergemapper to="${daemonBinDir}/${toolset}/${addrModel}/jsvc"/>
+				<regexpmapper from="^commons-daemon-([0-9.]+)[abc]?-src\.tar\.gz$$"
+					to="${artifactsDir}/commons-daemon-\1.jar"/>
+			</compositemapper>
+		</uptodate>
+	</target>
+
+	<!-- Build the jsvc daemon executable.  Expects toolset and addrModel to be set. -->
+	<target name="buildDaemonApp" depends="daemonAppUpToDateCheck" if="osFamilyIsUnix"
+		unless="isDaemonAppUpToDate">
+		<condition property="flags" value="-arch x86_64 -arch i386" else="-m${addrModel}">
+			<equals arg1="${addrModel}" arg2="universal"/>
+		</condition>
+		<condition property="ccValue" value="clang" else="">
+			<and>
+				<os family="mac"/>
+				<equals arg1="${defaultMacToolset}" arg2="clang"/>
+			</and>
+		</condition>
+
+		<mkdir dir="${daemonBinDir}/${toolset}/${addrModel}"/>
+
+		<!-- Get tar archive name -->
+		<delete file="${daemonBinDir}/ls.txt"/>
+		<exec executable="ls" dir="${daemonArchiveDir}" output="${daemonBinDir}/ls.txt"/>
+		<loadfile property="tarArchive" srcFile="${daemonBinDir}/ls.txt">
+			<filterchain>
+				<tokenfilter delimoutput="">
+					<containsregex pattern="^(commons-daemon-.*-src)\.tar\.gz$"
+						replace="\1"/>
+				</tokenfilter>
+			</filterchain>
+		</loadfile>
+		<delete file="${daemonBinDir}/ls.txt"/>
+
+		<delete dir="${daemonBinDir}/${tarArchive}"/>
+		<untar src="${daemonArchiveDir}/${tarArchive}.tar.gz" dest="${daemonBinDir}"
+			compression="gzip"/>
+		<chmod file="${daemonBinDir}/${tarArchive}/src/native/unix/configure" perm="ugo+rx"
+			osfamily="unix" verbose="true"/>
+		<exec executable="./configure" dir="${daemonBinDir}/${tarArchive}/src/native/unix">
+			<env key="CFLAGS" value="${flags}"/>
+			<env key="LDFLAGS" value="${flags}"/>
+			<env key="CC" value="${ccValue}"/>
+		</exec>
+		<exec executable="make" dir="${daemonBinDir}/${tarArchive}/src/native/unix"/>
+		<move file="${daemonBinDir}/${tarArchive}/src/native/unix/jsvc"
+			todir="${daemonBinDir}/${toolset}/${addrModel}"/>
+		<ant antfile="${daemonBinDir}/${tarArchive}/build.xml"
+				dir="${daemonBinDir}/${tarArchive}" target="jar" inheritAll="false">
+			<property name="build.sysclasspath" value="ignore"/>
+		</ant>
+		<move todir="${artifactsDir}">
+			<fileset dir="${daemonBinDir}/${tarArchive}/dist" includes="commons-daemon-*.jar"/>
+		</move>
+		<delete dir="${daemonBinDir}/${tarArchive}"/>
+	</target>
+</project>

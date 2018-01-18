@@ -1,0 +1,80 @@
+# Parliament is licensed under the BSD License from the Open Source
+# Initiative, http://www.opensource.org/licenses/bsd-license.php
+#
+# Copyright (c) 2001-2009, BBN Technologies, Inc.
+# All rights reserved.
+
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix : <http://asio.bbn.com/ont/spatial/rcc-extended#> .
+
+
+<http://asio.bbn.com/ont/spatial/rcc-extended>
+  a owl:Ontology ;
+  owl:versionInfo "$Rev$" ;
+  rdfs:label "Spatial Index Ontology enumerating RCC-extended operands" .
+
+# The RCC-8 relations
+#
+:disconnected
+	a owl:ObjectProperty ;
+	a owl:SymmetricProperty .
+
+:externallyConnected
+	a owl:ObjectProperty ;
+	a owl:SymmetricProperty ;
+	rdfs:subPropertyOf :connected .
+
+:identical
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf :properPart .
+
+:tangentialProperPart
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf :properPart .
+
+:invTangentialProperPart
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf :invProperPart ;
+	owl:inverseOf :tangentialProperPart .
+
+:nonTangentialProperPart
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf :properPart .
+
+:invNonTangentialProperPart
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf :invProperPart ;
+	owl:inverseOf :nonTangentialProperPart .
+
+:partiallyOverlaps
+	a owl:ObjectProperty ;
+	a owl:SymmetricProperty ;
+	rdfs:subPropertyOf :overlaps .
+
+
+# RCC extended relations
+#
+:properPart
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf :part .
+
+:invProperPart
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf :invPart ;
+	owl:inverseOf :properPart .
+
+:connected
+	a owl:ObjectProperty ;
+	a owl:SymmetricProperty .
+
+:part
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf :connected .
+
+:invPart
+	a owl:ObjectProperty ;
+	owl:inverseOf :part .

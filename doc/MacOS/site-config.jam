@@ -1,0 +1,157 @@
+
+import os ;
+
+project site-config ;
+
+path-constant BdbDir : [ os.environ BDB_HOME ] ;
+path-constant BoostDir : [ os.environ BOOST_ROOT ] ;
+path-constant JavaDir : [ os.environ JAVA_HOME ] ;
+
+constant BoostVersion : [ os.environ BOOST_VERSION ] ;
+constant BoostVersionComponents : [ MATCH "([0-9]+)_([0-9]+)_([0-9]+)" : $(BoostVersion) ] ;
+constant BoostVersionDotted : $(BoostVersionComponents:J=.) ;
+constant BoostVersionAbbrvAlternatives : [ MATCH "([0-9]+_[0-9]+)_0" "([0-9]+_[0-9]+_[0-9]+)" : $(BoostVersion) ] ;
+constant BoostVersionAbbrv : $(BoostVersionAbbrvAlternatives[1]) ;
+constant BdbVersion : [ os.environ BDB_VERSION ] ;
+
+constant Compiler : clang-darwin42 ;
+
+constant BoostPfx : <source>$(BoostDir)/stage-clang/lib/libboost_ ;
+
+constant BoostDyDbgLibPfx : <variant>debug,<link>shared:$(BoostPfx) ;
+constant BoostDyRlsLibPfx : <variant>release,<link>shared:$(BoostPfx) ;
+constant BoostStDbgLibPfx : <variant>debug,<link>static:$(BoostPfx) ;
+constant BoostStRlsLibPfx : <variant>release,<link>static:$(BoostPfx) ;
+
+constant BoostDyDbgLibSfx : -$(Compiler)-mt-d-x32_64-$(BoostVersionAbbrv).dylib ;
+constant BoostDyRlsLibSfx : -$(Compiler)-mt-x32_64-$(BoostVersionAbbrv).dylib ;
+constant BoostStDbgLibSfx : -$(Compiler)-mt-d-x32_64-$(BoostVersionAbbrv).a ;
+constant BoostStRlsLibSfx : -$(Compiler)-mt-x32_64-$(BoostVersionAbbrv).a ;
+
+alias BoostHeaderOnlyLibraries
+	:	# no sources
+	:	# no build requirements
+	:	# no default build
+	:	<include>$(BoostDir)
+	;
+
+alias BoostAtomic
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)atomic$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)atomic$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)atomic$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)atomic$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir) <threading>multi
+	;
+
+alias BoostChrono
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)chrono$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)chrono$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)chrono$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)chrono$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir) <threading>multi
+	;
+
+alias BoostDateTime
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)date_time$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)date_time$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)date_time$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)date_time$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir) <threading>multi
+	;
+
+alias BoostFileSystem
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)filesystem$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)filesystem$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)filesystem$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)filesystem$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir) <threading>multi
+	;
+
+alias BoostLog
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)log$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)log$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)log$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)log$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir) <threading>multi
+		<link>shared:<define>BOOST_LOG_DYN_LINK
+		<define>BOOST_LOG_NO_SHORTHAND_NAMES
+	;
+
+alias BoostLogSetup
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)log_setup$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)log_setup$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)log_setup$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)log_setup$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir) <threading>multi
+		<link>shared:<define>BOOST_LOG_DYN_LINK
+		<define>BOOST_LOG_NO_SHORTHAND_NAMES
+	;
+
+alias BoostRegex
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)regex$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)regex$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)regex$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)regex$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir) <threading>multi
+	;
+
+alias BoostSystem
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)system$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)system$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)system$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)system$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir) <threading>multi
+	;
+
+alias BoostThread
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)thread$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)thread$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)thread$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)thread$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir) <threading>multi
+	;
+
+alias BoostUnitTest
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)unit_test_framework$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)unit_test_framework$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)unit_test_framework$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)unit_test_framework$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir) <threading>multi
+		<define>BOOST_TEST_ALTERNATIVE_INIT_API
+		<link>shared:<define>BOOST_TEST_DYN_LINK
+	;
+
+alias JavaJNI
+	:	# no sources
+	:	# no build requirements
+	:	# no default build
+	:	<include>$(JavaDir)/include
+		<include>$(JavaDir)/include/darwin
+	;
+
+alias BerkeleyDB
+	:	$(BdbDir)/lib/libdb-$(BdbVersion).dylib
+	:	# no requirements
+	:	# no default build
+	:	<include>$(BdbDir)/include
+	;

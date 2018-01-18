@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ivy-module version="2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+
+	<info organisation="com.bbn.parliament" module="ParliamentDB-macos">
+		<description>Mac OS-X Native Implementation of the Parliament Graph Store</description>
+	</info>
+	<configurations>
+		<conf name="default"
+			description="Provides this module and its runtime deps."
+			visibility="public"
+			extends="master, runtime"/>
+		<conf name="master"
+			description="Provides only the artifacts of this module."
+			visibility="public"/>
+		<conf name="compile-ide"
+			visibility="public"
+			description="Includes all external deps required to compile this module"
+			transitive="false"/>
+		<conf name="compile"
+			visibility="public"
+			description="Includes external and internal deps required to compile this module"
+			extends="compile-ide"
+			transitive="false"/>
+		<conf name="runtime-ide"
+			description="Includes all runtime deps, excluding inter-project."
+			visibility="public"/>
+		<conf name="runtime"
+			description="Includes all runtime deps, including external and inter-project."
+			extends="runtime-ide"
+			visibility="public"/>
+		<conf name="test"
+			description="Adds JUnit to dependencies."
+			extends="runtime"
+			visibility="public"/>
+	</configurations>
+	<publications>
+		<artifact type="zip"/>
+	</publications>
+</ivy-module>

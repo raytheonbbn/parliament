@@ -1,0 +1,350 @@
+Version 2.7.12 (?, revision ?):
+
+* Updated to Boost 1.66.0 and MSVC 14.1 (Visual Studio 2017)
+
+* Updated C++ code to use Boost.FileSystem and the Win32 wide character (UTF-16) API
+
+* Numerous updates to C++ code to modernize towards C++14
+
+* Fixed bug in rule engine, in which trigger lists were updated from within
+  a loop over those lists' contents
+
+* Merged into the trunk the SWRL rules engine created by Carl Andersen and Doug Reid
+
+* Removed the old-style binary zip file from the build infrastructure and documentation,
+  and renamed the "quick start" binaries to indicate their status as the new standard.
+  Also added javadoc and source distribution files.
+
+
+
+=================================================
+
+Version 2.7.11 (7/17/2017, revision 751):
+
+* Changed the default settings so that the inference rules for functional and
+  inverse functional properties are disabled.  This is because these rules
+  result in owl:sameAs statements, which Parliament does not act upon.  These
+  rules can be reenabled via the ParliamentConfig.txt configuration file.
+
+* Added logging to the native code layer.
+
+* Updated to Berkeley DB Java Edition version 5.0.73.
+
+* Updated to Microsoft Visual Studio 2013 Update 5 and 2015 Update 3.
+
+* Decreased the size of the Windows binary packages by including only the Microsoft
+  Visual C++ redistributable installers required by each one.
+
+* Fixed a RemoteModel bug, in which the deleteStatements() methods ignored the
+  named graph argument.
+
+* Fixed the Jetty configuration to set a temporary directory local to the server
+  directory.  This ensures that Jetty does not use the system temp location, which
+  causes problems on managed servers that auto-clear their tmp directory on a
+  scheduled basis.  Also fixed the startup code to ensure the tmp directory exists
+  before Jetty needs it.
+
+* Fixed a bug in the startup batch files for Windows.  In particular, this bug
+  prevented the InstallParliamentService.bat script to fail.
+
+* Added support for media types to the RDFFormat enum.
+
+* Removed the need for the JNI_HEADERS environment variable on MacOS.
+
+* Eliminated commons-logging.jar from the distribution so that slf4j can reliably
+  intercept commons logging and reroute it into the Parliament log file.
+
+* Deprecated the obsolete keepDupStmtIdx and stmtToIdFileName settings in the
+  configuration file.  These settings are now ignored.  If the setting
+  keepDupStmtIdx was turned on, then Parliament would maintain the file named by
+  stmtToIdFileName.  If your configuration has keepDupStmtIdx turned on, delete
+  the file named by stmtToIdFileName.  Then delete these two settings from your
+  configuration file.  If your configuration has keepDupStmtIdx turned off,
+  simply these two settings from your configuration file.
+
+* Fixed the native code's N-Triples export, added tests for it, and exposed it
+  to the Java code via the KbGraph class.
+
+* Made numerous enhancements to the C++ code to begin the migration to C++11.
+
+
+
+=================================================
+
+Version 2.7.10 (1/6/2016, revision 709):
+
+======================   Important -- Please Read !!!   =====================
+===                                                                       ===
+===  The file format of version 2.7.10 is not backwards compatible with   ===
+===  older versions.  To upgrade the data stored in a prior release of    ===
+===  Parliament, please follow the procedure in Section 2.1.2,            ===
+===  "Upgrading an Existing Installation", in the Parliament User Guide.  ===
+===  This can be found in your Parliament download, and it is also        ===
+===  available here:                                                      ===
+===                                                                       ===
+===     http://parliament.semwebcentral.org/ParliamentUserGuide.pdf       ===
+===                                                                       ===
+=============================================================================
+
+Parliament 2.7.10 change list:
+
+* Downgraded Berkeley DB from version 6.1.19 to version 5.3.28 in order to avoid
+  Oracle's sneaky switch to the draconian AGPL open source license.  This change
+  is not backward compatible with prior versions of Parliament.
+
+* Implemented equivalence of typed and plain string literals, as mandated in RDF 1.1.
+  The option "normalizeTypedStringLiterals" (in the ParliamentConfig.txt file) instructs
+  Parliament to convert typed string literals to plain literals, both upon insert and at
+  query time.  For the sake of standards compliance, this option defaults to "yes".
+  However, if you require backward compatible behavior, you will need to change this
+  setting to "no".  The "yes" setting is highly recommended, both because it conforms to
+  RDF 1.1 and because it delivers better performance.
+
+* Parliament 2.7.10 includes a new implementation of the temporal index.  This should
+  be considered a beta implementation.  In a future version of Parliament this will be
+  fully supported (and documented).
+
+* Fixed a bug in the check of the content type of HTTP requests sent to Parliament.
+
+* Fixed dylib install names on Macintosh so that Parliament runs properly on El Capitan.
+
+* Changed default port from 8080 to 8089.  This can be changed in the startup script
+  via the JETTY_PORT environment variable.
+
+* Changed default listening interface from 0.0.0.0 (meaning that Parliament is reachable
+  from every network interface on the machine) to localhost (so that Parliament is
+  reachable only from the machine on which it runs) to enhance the default security
+  stance.  This can be changed in the startup script via the JETTY_HOST environment
+  variable.
+
+* Added support for Visual Studio 2015 (msvc-14.0)
+
+* Updated to Boost version 1.60.0
+
+* Updated to Jetty version 9.3.6.
+
+* Parliament is now built with (and requires) Java 8.
+
+* The C++ unit tests now use the static variant of the Boost.Test library.  If you are
+  building Parliament yourself, be sure to rebuild the Boost libraries according to the
+  instructions in the Parliament User Guide, Section 3.4, "Building the Boost Libraries".
+
+=================================================
+
+Version 2.7.9 (4/24/2015, revision 632) of Parliament includes the following changes:
+
+* Fixed a build infrastructure bug that caused some jars to be placed in subdirectories
+  of the war file's WEB-INF/lib directory rather than in WEB-INF/lib directly.
+
+* Sped up the build in the case of a rebuild after a small change.
+
+* Improved the build to handle multiple Linux distributions more gracefully.
+
+=================================================
+
+Version 2.7.8 (3/28/2015, revision 628) of Parliament includes the following changes:
+
+* Upgraded Parliament to use Jetty version 9.2.10.  This in turn means that
+  Parliament is now compatible with Java 8.
+
+* Enabled control of Jetty's host and port settings from the startup scripts.
+
+* Fixed the omission of the Microsoft redistributable libraries installer.
+
+* Updated the versions of various third-party open source libraries used in Parliament.
+
+=================================================
+
+Version 2.7.7 (1/19/2015, revision 613) of Parliament includes the following changes:
+
+* Fixed a bug that prevented proper return of SELECT query results in CSV format
+
+* Fixed a bug in Parliament's query web page.  When set to show the results as
+  HTML and the query caused an error (such as with a malformed query), the
+  result was an unhelpful exception trace related to an XSLT failure.  Now
+  Parliament will show the error message associated with the original error.
+
+* Improved logging of the text of SPARQL queries and updates.  By default, Parliament
+  logs only malformed queries and updates to keep logs from becoming enormous.  If you
+  wish to log every query and update, uncomment the line containing "SparqlStmtLogger"
+  in log4j.properties.
+
+* Improved Parliament's support of the SPARQL protocol to handle non-form POST
+  requests.  Support for SPARQL-over-HTTP is still uncompleted.
+
+* Changed Visual Studio support to include only the latest version of the compiler
+  (Visual Studio 2013, a.k.a. msvc-12), and updated the redistributable packages to
+  Visual Studio 2013 Update 4.
+
+* Updated Berkeley DB to version 6.1.19.
+
+* Updated Boost library support to version 1.57.0.
+
+* Added a new adapter to the LUBM benchmark that connects to a remote repository
+  using only standard SPARQL.
+
+* Added a RemoteExporter class to the client-side jar that sends a backup request
+  to a Parliament server and downloads the resulting zip file.
+
+* Other minor fixes and updates.
+
+=================================================
+
+Version 2.7.6 (3/24/2013, revision 584) of Parliament includes the following changes:
+
+* Switched to the clang compiler on MacOS
+
+* Added support for msvc-11 (Microsoft Visual Studio 2012) and msvc-12
+  (Visual Studio 2013), deprecated msvc-9 (Microsoft Visual Studio 2008),
+  and updated Visual Studio redistributable packages.
+
+* Upgraded to Java 1.7
+
+* Upgraded to Jena 2.7.4, ARQ 2.9.4, and Joseki 3.4.4
+
+* Updated to Berkeley DB 5.3.21
+
+* Made StartParliament.bat and InstallParliamentService.bat more reliable
+
+* Upgraded JavaService to version 2.0.10
+
+* Upgraded Apache Commons Daemon to version 1.0.15a, adding support for
+  Java 1.7 on MacOS
+
+* Added support for JSON-LD content type on construct and describe queries
+  and on file inserts
+
+* Fixed the namespaces used in the GeoSPARQL implementation to fully match
+  the standard.  (The previous namespaces are also supported for backwards
+  compatibility.)
+
+=================================================
+
+Version 2.7.4 (11/9/2012, revision 524) of Parliament includes the following changes:
+
+* Implements the new GeoSPARQL standard
+
+* Changed the outputs of the build process to produce one ready-to-go
+  Parliament server for each hardware architecture and compiler
+
+* Added support for several Boost libraries (Date_Time, Filesystem,
+  Regex, System, and Thread)
+
+* Updated to Boost 1.52.0
+
+* Updated to Berkeley DB 5.3.15
+
+* Updated the Redistributable Packages for Microsoft's compilers
+
+* Linux version is now built on Ubuntu 12 and CentOS 6.3
+
+* Enhanced Linux Daemon support (though this is not yet finished)
+
+* Major updates to the User Guide to support all of the above
+
+* Minor enhancements, primarily to the C++ unit tests
+
+=================================================
+
+Version 2.7.1 of Parliament includes the following changes:
+
+* Added support for Ubuntu Linux 10.10
+
+* Improved web interface
+
+* New inference rules for RDFS domain and range, and for OWL equivalent class and property
+
+* Upgraded to Berkeley DB 5.0.26 and Boost 1.46.1
+
+* Updated to Jetty 6.1.25, Joseki 3.4.2, Jena 2.6.4, and ARQ 2.8.7.
+
+* Retired support for Microsoft Visual C++ 7.1 and 8.0 (Visual Studio 2003 and 2005)
+
+* Added support for Microsoft Visual C++ 10.0 (Visual Studio 2010)
+
+* Changed to 3-segment version number
+
+* Numerous minor enhancements and bug fixes
+
+
+=================================================
+
+Release Notes for Parliament v2.6.9.0
+
+This release of Parliament includes these improvements:
+
+(1) Improved reliability at shutdown:  Long-running queries are now reliably
+terminated so that Parliament may shut down gracefully.
+
+(2) The ability to terminate a runaway query:  One benefit of the improved
+query termination code is that Parliament can now terminate individual queries.
+Thus the web interface of Parliament now has a page that lists the outstanding
+operations and allows termination of selected queries.  This feature is also
+accessible via JMX.
+
+(3) SPARQL-compliant management of named graphs:  Parliament now supports
+standard SPARQL Update statements to create and delete named graphs:
+
+    CREATE GRAPH <uri>
+    DROP GRAPH <uri>
+
+Note that the internal structure of Parliament's file storage has changed
+slightly.  Previously, the directory containing Parliament's files had a
+subdirectory called "graphs".  This subdirectory is now named "master".
+Parliament will rename the directory the first time it opens an older KB.
+Also, backups exported from previous versions will be recognized and
+properly imported into the new structure.
+
+(4) Reduced memory usage for select queries:  Parliament will now use less
+memory while processing select queries.  For select queries that do not use the
+"distinct" keyword, Parliament will process query with a constant amount of
+memory, no matter how many results are returned.  In the case of distinct
+queries, memory consumption is higher because Parliament must maintain a hash
+table of results seen so far.
+
+(5) The Home page of the Parliament web interface now shows the JVM memory
+usage statistics.
+
+=================================================
+
+Version 2.6.7.0 of Parliament includes the following changes:
+
+* Updates the ARQ version from 2.8.3-RC-1 to 2.8.3.
+
+* Fixes a Java-side memory leak in the Joseki integration code.
+
+=================================================
+
+The 2.6.6 release of Parliament fixes two bugs:
+
+* Version 2.8.1 of the ARQ query processor mangled ends of lines in XML
+literals in SPARQL XML results (see
+http://tech.groups.yahoo.com/group/jena-dev/message/43296).  This version of
+Parliament includes ARQ version 2.8.3-RC-1.
+
+* Changes to the locking scheme in the previous version of Parliament
+introduced a bug that causes deadlock.  This version corrects that issue.
+
+=================================================
+
+New Parliament release v2.6.5.0
+
+Version 2.6.5.0 of Parliament has been released. This version incorporates
+the following changes:
+
+* Updated to Jena 2.6.2, ARQ 2.8.1, and Joseki 3.4.1.  As a result, Java 1.6
+  is now required.
+
+* Fixed the read/write locking in the Joseki integration so that the lock
+  scope includes the whole of the request processing.
+
+* Added tracking of in-flight queries so that they can be quickly and safely
+  aborted on server shutdown.
+
+* Added periodic asynchronous flushing of the memory mapped files to help
+  avoid file corruption at shutdown.
+
+* Fixed a bug in the way UTF-8 text was passed between the Java and C++ code
+  across the JNI boundary.
+
+* Improved the unit tests.

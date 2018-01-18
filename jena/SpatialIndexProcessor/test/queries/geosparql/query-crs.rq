@@ -1,0 +1,18 @@
+PREFIX my:  <http://example.org/ApplicationSchema#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+PREFIX sf:  <http://www.opengis.net/ont/sf#>
+
+SELECT  ?f ?x
+WHERE {
+ ?f my:hasExactGeometry ?fGeom .
+        ?fGeom geo:asWKT ?fWKT .
+#        LET (?fWKT := sf:wktLiteral(?fWKT_s)) .
+        LET (?aWKT := '''<http://www.opengis.net/def/crs/EPSG/0/4326>
+        	Polygon((34.1 -83.5, 34.1 -83.2, 34.5 -83.2,
+                 34.5 -83.5, 34.1 -83.5))'''^^geo:wktLiteral) .
+        FILTER (geof:sfContains(?aWKT, ?fWKT))
+        LET (?x := geof:intersection(?aWKT, ?fWKT)) .
+
+}
+#LIMIT 500

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ivy-module version="2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+
+	<info organisation="com.bbn.parliament" module="JosekiParliamentClient">
+		<description>Client library for accessing Joseki Parliament server</description>
+	</info>
+
+	<configurations>
+		<conf name="default"
+			description="Provides this module and its runtime deps."
+			visibility="public"
+			extends="master, runtime"/>
+		<conf name="master"
+			description="Provides only the artifacts of this module."
+			visibility="public"/>
+		<conf name="compile-ide"
+			visibility="public"
+			description="Includes all external deps required to compile this module"
+			transitive="false"/>
+		<conf name="compile"
+			visibility="public"
+			description="Includes external and internal deps required to compile this module"
+			extends="compile-ide"
+			transitive="false"/>
+		<conf name="runtime-ide"
+			description="Includes all runtime deps, excluding inter-project."
+			visibility="public"/>
+		<conf name="runtime"
+			description="Includes all runtime deps, including external and inter-project."
+			extends="runtime-ide"
+			visibility="public"/>
+		<conf name="test"
+			description="Adds JUnit to dependencies."
+			extends="runtime"
+			visibility="public"/>
+	</configurations>
+
+	<dependencies>
+		<dependency org="org.apache.jena" name="jena-arq" rev="2.9.4"
+			conf="compile-ide->master;runtime-ide->default"/>
+		<dependency org="org.slf4j" name="slf4j-log4j12" rev="1.7.7"
+			conf="compile-ide->master;runtime-ide->default"/>
+		<dependency org="org.slf4j" name="jcl-over-slf4j" rev="1.7.7"
+			conf="compile-ide->master;runtime-ide->default"/>
+		<dependency org="org.apache.httpcomponents" name="httpclient" rev="4.3.6"
+			conf="compile-ide->master;runtime-ide->default"/>
+		<dependency name="junit" org="junit" rev="4.12"
+			conf="test->default"/>
+	</dependencies>
+</ivy-module>

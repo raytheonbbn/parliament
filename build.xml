@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+// Parliament is licensed under the BSD License from the Open Source
+// Initiative, http://www.opensource.org/licenses/bsd-license.php
+//
+// Copyright (c) 2001-2009, BBN Technologies, Inc.
+// All rights reserved.
+-->
+
+<project name="KBMasterBuild" default="createDistro" xmlns:ivy="antlib:org.apache.ivy.ant">
+	<description>Master build script for the KB repository.</description>
+
+	<import file="${basedir}/build-common.xml"/>
+
+	<property name="distroDir" value="${targetDir}/distro"/>
+	<property name="javadocDir" value="${targetDir}/bin/javadoc"/>
+	<property name="javadocZip" value="${distroDir}/parliament-javadoc.zip"/>
+	<property name="srcZip" value="${distroDir}/parliament-src.zip"/>
+	<property name="windowsReleaseDir" value="${artifactsDir}/msvc-14.0/release"/>
+	<property name="macosReleaseDir" value="${artifactsDir}/clang/release/universal"/>
+
+	<target name="clean" description="Cleans up after the ant build">
+		<echo message="Using JDK ${ant.java.version}"/>
+
+		<delete dir="${targetDir}" deleteonexit="true"/>
+		<delete file="${basedir}/Parliament/Test/ParliamentConfig.txt"/>
+		<delete dir="${basedir}/data"/>
+		<delete dir="${basedir}/indexes"/>
+		<delete dir="${basedir}/log"/>
+		<delete dir="${basedir}/Parliament/log"/>
+		<delete dir="${basedir}/Parliament/Test/log"/>
+
+		<delete dir="${basedir}/jena/JenaGraph/lib"/>
+		<delete dir="${basedir}/jena/JosekiExtensions/lib"/>
+		<delete dir="${basedir}/jena/JosekiParliamentClient/lib"/>
+		<delete dir="${basedir}/jena/NumericIndex/lib"/>
+		<delete dir="${basedir}/jena/SpatialIndexProcessor/lib"/>
+		<delete dir="${basedir}/jena/TemporalIndexProcessor/lib"/>
+		<delete dir="${basedir}/jena/TemporalIndexProcessor_old/lib"/>
+		<delete dir="${basedir}/Parliament/lib"/>
+		<delete dir="${basedir}/Parliament/KbCore/parliament/generated"/>
+		<delete dir="${basedir}/Sesame/CSameAsSail/lib"/>
+		<delete dir="${basedir}/Sesame/LuceneSail/lib"/>
+		<delete dir="${basedir}/Sesame/ParliamentSail/lib"/>
+		<delete dir="${basedir}/Sesame/SameAsSail/lib"/>
+		<delete dir="${basedir}/Sesame/Swrl2Sesame/lib"/>
+
+		<ant dir="${basedir}/jena/JosekiExtensions" target="clean" inheritAll="false"/>
+	</target>
+
+	<target name="cleanEclipseBuild" description="Cleans up the Eclipse build directories">
+		<delete dir="${basedir}/jena/JenaGraph/bin"/>
+		<delete dir="${basedir}/jena/JosekiExtensions/bin"/>
+		<delete file="${basedir}/jena/JosekiExtensions/build.log"/>
+		<delete dir="${basedir}/jena/JosekiParliamentClient/bin"/>
+		<delete dir="${basedir}/jena/SpatialIndexProcessor/bin"/>
+		<delete dir="${basedir}/jena/TemporalIndexProcessor/bin"/>
+		<delete dir="${basedir}/jena/TemporalIndexProcessor_old/bin"/>
+		<delete dir="${basedir}/jena/NumericIndex/bin"/>
+		<delete dir="${basedir}/Parliament/bin"/>
+		<delete dir="${basedir}/Parliament/JniAssessments/bin"/>
+		<delete dir="${basedir}/Sesame/CSameAsSail/bin"/>
+		<delete dir="${basedir}/Sesame/LuceneSail/bin"/>
+		<delete dir="${basedir}/Sesame/ParliamentSail/bin"/>
+		<delete dir="${basedir}/Sesame/SameAsSail/bin"/>
+		<delete dir="${basedir}/Sesame/Swrl2Sesame/bin"/>
+
+		<delete>
+			<fileset dir="${basedir}/Parliament/KbCore" includes="Debug_with_*/*"/>
+			<dirset dir="${basedir}/Parliament/KbCore" includes="Debug_with_*"/>
+			<fileset dir="${basedir}/Parliament/KbCore" includes="Release_with_*/*"/>
+			<dirset dir="${basedir}/Parliament/KbCore" includes="Release_with_*"/>
+			<fileset dir="${basedir}/Parliament/AdminClient" includes="Debug_with_*/*"/>
+			<dirset dir="${basedir}/Parliament/AdminClient" includes="Debug_with_*"/>
+			<fileset dir="${basedir}/Parliament/AdminClient" includes="Release_with_*/*"/>
+			<dirset dir="${basedir}/Parliament/AdminClient" includes="Release_with_*"/>
+			<fileset dir="${basedir}/Parliament/Test" includes="Debug_with_*/*"/>
+			<dirset dir="${basedir}/Parliament/Test" includes="Debug_with_*"/>
+			<fileset dir="${basedir}/Parliament/Test" includes="Release_with_*/*"/>
+			<dirset dir="${basedir}/Parliament/Test" includes="Release_with_*"/>
+		</delete>
+	</target>
+
+	<target name="resolveAll" description="Run ivy resolve on all projects">
+		<ant dir="${basedir}/jena/JenaGraph" target="resolve" inheritAll="false"/>
+		<ant dir="${basedir}/jena/JosekiExtensions" target="resolve" inheritAll="false"/>
+		<ant dir="${basedir}/jena/JosekiParliamentClient" target="resolve" inheritAll="false"/>
+		<ant dir="${basedir}/jena/NumericIndex" target="resolve" inheritAll="false"/>
+		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="resolve" inheritAll="false"/>
+		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="resolve" inheritAll="false"/>
+		<ant dir="${basedir}/Parliament" target="resolve" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/CSameAsSail" target="resolve" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/LuceneSail" target="resolve" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/ParliamentSail" target="resolve" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/SameAsSail" target="resolve" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="resolve" inheritAll="false"/>
+	</target>
+
+	<target name="createDistro" description="Create the binary distribution"
+		depends="buildCode,zipJavadocs,zipSources,buildDeployableServerList">
+		<foreach target="copyDocs" param="toDir" list="${deployableServerList}"
+			delimiter="|" inheritall="true"/>
+		<foreach target="zipDeployableServer" param="srcDir" list="${deployableServerList}"
+			delimiter="|" inheritall="true"/>
+	</target>
+
+	<!-- Copy docs to the ${toDir} directory.  Expects parameter toDir. -->
+	<target name="copyDocs">
+		<copy todir="${toDir}" file="${kbRootDir}/doc/UserGuide/ParliamentUserGuide.pdf"/>
+		<copy todir="${toDir}/License">
+			<fileset dir="${basedir}/License"/>
+		</copy>
+	</target>
+
+	<!-- Copy docs to the ${srcDir} directory.  Expects parameter srcDir. -->
+	<target name="zipDeployableServer">
+		<basename property="zipName" file="${srcDir}"/>
+		<delete file="${distroDir}/${zipName}.zip"/>
+		<mkdir dir="${distroDir}"/>
+		<zip
+			basedir="${srcDir}"
+			destfile="${distroDir}/${zipName}.zip"
+			encoding="UTF8"
+			level="9"
+			compress="true"
+			whenempty="create"/>
+	</target>
+
+	<target name="reportAll" depends="init" description="Runs ivy reports on all projects">
+		<ant dir="${basedir}/Parliament" target="report" inheritAll="false"/>
+		<ant dir="${basedir}/jena/JosekiParliamentClient" target="report" inheritAll="false"/>
+		<ant dir="${basedir}/jena/JenaGraph" target="report" inheritAll="false"/>
+		<ant dir="${basedir}/jena/JosekiExtensions" target="report" inheritAll="false"/>
+		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="report" inheritAll="false"/>
+		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="report" inheritAll="false"/>
+		<ant dir="${basedir}/jena/NumericIndex" target="report" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/CSameAsSail" target="report" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/ParliamentSail" target="report" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/LuceneSail" target="report" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/SameAsSail" target="report" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="report" inheritAll="false"/>
+	</target>
+
+	<target name="buildCode" depends="init">
+		<ant dir="${basedir}/Parliament" target="deliverArtifacts" inheritAll="false"/>
+		<ant dir="${basedir}/jena/JosekiParliamentClient" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/jena/JenaGraph" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/jena/JosekiExtensions" target="prepareDeployableServers" inheritAll="false"/>
+		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/jena/NumericIndex" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/CSameAsSail" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/ParliamentSail" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/LuceneSail" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/SameAsSail" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="jar" inheritAll="false"/>
+	</target>
+
+	<target name="runTests" depends="createDistro" description="Runs extended unit and integration tests">
+		<ant dir="${basedir}/jena/JosekiParliamentClient" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/jena/JenaGraph" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/jena/JosekiExtensions" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/jena/NumericIndex" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="runTests" inheritAll="false"/>
+		<!--
+		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/CSameAsSail" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/ParliamentSail" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/LuceneSail" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/SameAsSail" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="runTests" inheritAll="false"/>
+		-->
+
+		<xslt destdir="${reportsDir}/junit-summaries" style="junit-test-outcomes.xsl"
+			filedirparameter="fileDir">
+			<fileset dir="${reportsDir}">
+				<include name="**/TEST-*.xml"/>
+			</fileset>
+			<mapper>
+				<chainedmapper>
+					<flattenmapper/>
+					<globmapper from="TEST-*.xml" to="*.txt"/>
+				</chainedmapper>
+			</mapper>
+		</xslt>
+		<concat destfile="${reportsDir}/junit-summary.txt">
+			<fileset dir="${reportsDir}/junit-summaries" includes="*.txt"/>
+		</concat>
+		<delete dir="${reportsDir}/junit-summaries"/>
+	</target>
+
+	<fileset dir="${kbRootDir}" id="javadocSrcPath">
+		<include name="Parliament/java/**/*.java"/>
+		<!--include name="Parliament/JniAssessments/**/*.java"/-->
+
+		<include name="jena/JenaGraph/src/**/*.java"/>
+		<include name="jena/JosekiExtensions/src/**/*.java"/>
+		<include name="jena/JosekiParliamentClient/src/**/*.java"/>
+		<include name="jena/SpatialIndexProcessor/src/**/*.java"/>
+		<include name="jena/TemporalIndexProcessor/src/**/*.java"/>
+		<include name="jena/NumericIndex/src/**/*.java"/>
+
+		<!-- include name="Sesame/CSameAsSail/src/**/*.java"/>
+		<include name="Sesame/LuceneSail/src/**/*.java"/>
+		<include name="Sesame/ParliamentSail/src/**/*.java"/>
+		<include name="Sesame/SameAsSail/src/**/*.java"/>
+		<include name="Sesame/Swrl2Sesame/src/**/*.java"/ -->
+	</fileset>
+
+	<target name="javadoc" depends="init">
+		<delete dir="${javadocDir}"/>
+		<mkdir dir="${javadocDir}"/>
+		<javadoc
+			destdir="${javadocDir}"
+			defaultexcludes="yes"
+			author="true"
+			version="true"
+			use="true"
+			windowtitle="Parliament API Documentation"
+			doctitle="Parliament&amp;trade; API Documentation"
+			header="Parliament&amp;trade;"
+			footer="Parliament&amp;trade;"
+			encoding="UTF-8"
+			charset="UTF-8"
+			docencoding="UTF-8"
+			verbose="false"
+			noqualifier="java.lang:java.util:java.io"
+			useexternalfile="yes">
+			<bottom>
+				Copyright &amp;copy; 2001-2009 by BBN Technologies, Inc.&amp;nbsp;
+				All rights reserved.&amp;nbsp;
+				Use is subject to &lt;a
+					href=&quot;http://opensource.org/licenses/bsd-license.php&quot;
+					&gt;license terms&lt;/a&gt;.&amp;nbsp;
+				BBN&amp;reg; is a registered trademark of BBN Technologies, Inc.&amp;nbsp;
+				Parliament&amp;trade; is a trademark of BBN Technologies, Inc.
+			</bottom>
+			<sourcefiles>
+				<fileset refid="javadocSrcPath"/>
+			</sourcefiles>
+			<classpath>
+				<fileset dir="${basedir}/jena/JosekiExtensions/lib/bridge" includes="**/*.jar"/>
+				<fileset dir="${basedir}/jena/JosekiExtensions/lib/server" includes="**/*.jar"/>
+				<fileset dir="${parliamentDependenciesDir}/deegree" includes="**/*.jar"/>
+				<fileset dir="${parliamentDependenciesDir}/joseki" includes="**/*.jar"/>
+				<fileset dir="${parliamentDependenciesDir}/openmap" includes="**/*.jar"/>
+				<fileset dir="${parliamentDependenciesDir}/swrl-jaxb" includes="swrl-jaxb*.jar"/>
+				<!-- fileset dir="${basedir}/Sesame/LuceneSail/lib" includes="**/*.jar"/ -->
+			</classpath>
+			<arg value="-quiet"/>
+			<arg value="-Xdoclint:all,-missing"/>
+		</javadoc>
+	</target>
+
+	<target name="javadocUpToDateCheck">
+		<uptodate property="javadocUpToDate" targetfile="${javadocZip}">
+			<srcfiles refid="javadocSrcPath"/>
+		</uptodate>
+	</target>
+
+	<target name="zipJavadocs" depends="javadocUpToDateCheck,javadoc" unless="javadocUpToDate"
+		description="Builds the javadocs">
+		<delete file="${javadocZip}"/>
+		<mkdir dir="${distroDir}"/>
+		<zip
+			basedir="${javadocDir}"
+			destfile="${javadocZip}"
+			encoding="UTF8"
+			level="9"
+			compress="true"
+			whenempty="create"/>
+	</target>
+
+	<target name="init">
+		<echo message="Using JDK ${ant.java.version}"/>
+		<mkdir dir="${artifactsDir}"/>
+		<mkdir dir="${reportsDir}"/>
+	</target>
+
+	<target name="zipSources">
+		<delete file="${srcZip}"/>
+		<mkdir dir="${distroDir}"/>
+		<zip destfile="${srcZip}" encoding="UTF8" compress="true" level="9" duplicate="fail">
+			<zipfileset dir="${basedir}/Parliament" prefix="Parliament"
+				includes="**/*.java **/*.h **/*.cpp"/>
+			<zipfileset dir="${parliamentDependenciesDir}/bdb" prefix="bdb" includes="**/*.h"/>
+			<fileset dir="${basedir}/jena" includes="**/*.java"/>
+			<!-- fileset dir="${basedir}/Sesame" includes="**/*.java"/ -->
+		</zip>
+	</target>
+
+	<target name="continuous-build" depends="svn-update, createDistro"
+		description="Performs the continuous build"/>
+
+	<target name="nightly-build" depends="svn-update, runTests, publish-integration"
+		description="Performs the nightly build"/>
+
+	<target name="svn-update" depends="clean">
+		<echo message="Updating from Subversion..."/>
+		<exec executable="svn">
+			<arg line="update"/>
+		</exec>
+	</target>
+
+	<!-- ======= IVY PUBLISHING TASKS ============= -->
+
+	<property name="project.organization" value="com.bbn.parliament"/>
+	<property name="artifacts.dir" value="${artifactsDir}"/>
+	<property name="ivy.repo" value="tools-ke-publish"/>
+	<property name="ivy.log.level" value="quiet"/>
+
+	<target name="publish-integration" description="Publish the Parliament components as an Ivy integration build">
+		<antcall target="publish">
+			<param name="overwrite" value="true"/>
+			<param name="release.status" value="integration"/>
+			<param name="release.version" value="${parliamentVersion}-SNAPSHOT"/>
+		</antcall>
+	</target>
+
+	<target name="publish-release" description="Publish the Parliament components as an Ivy release">
+		<antcall target="publish">
+			<param name="overwrite" value="false"/>
+			<param name="release.status" value="release"/>
+			<param name="release.version" value="${parliamentVersion}"/>
+		</antcall>
+	</target>
+
+	<target name="publish" depends="checkForNatives">
+		<fail
+			unless="release.version"
+			message="Publishing requires a version. Set the release.version property (e.g. ant publish-release -Drelease.version=1.0) - ${release.version}"/>
+		<fail
+			unless="overwrite"
+			message="Property, 'overwrite' must be set to true or false"/>
+		<fail
+			unless="release.status"
+			message="Property, 'release.status' must be set to integration or release"/>
+
+		<echo level="info">
+#### Publishing Parliament Components to tools-ke repository as ${release.status} build with version ${release.version}. ####
+		</echo>
+
+		<!-- Parliament JNI -->
+		<ivy:resolve log="${ivy.log.level}" file="${ivyDir}/ivy-parliamentjni.xml"/>
+		<ivy:publish
+			organisation="${project.organization}"
+			module="Parliament"
+			pubrevision="${release.version}"
+			forcedeliver="true"
+			resolver="${ivy.repo}"
+			overwrite="${overwrite}"
+			status="${release.status}"
+			artifactspattern="${artifacts.dir}/[artifact].[ext]"/>
+
+		<!-- JenaParliament -->
+		<ivy:resolve log="${ivy.log.level}" file="${ivyDir}/ivy-jenaparliament.xml"/>
+		<ivy:publish
+			organisation="${project.organization}"
+			module="JenaParliament"
+			pubrevision="${release.version}"
+			forcedeliver="true"
+			resolver="${ivy.repo}"
+			overwrite="${overwrite}"
+			status="${release.status}"
+			artifactspattern="${artifacts.dir}/[artifact].[ext]"/>
+
+		<!-- Joseki Parliament Client -->
+		<ivy:resolve log="${ivy.log.level}" file="${ivyDir}/ivy-josekiparliamentclient.xml"/>
+		<ivy:publish
+			organisation="${project.organization}"
+			module="JosekiParliamentClient"
+			pubrevision="${release.version}"
+			forcedeliver="true"
+			resolver="${ivy.repo}"
+			overwrite="${overwrite}"
+			status="${release.status}"
+			artifactspattern="${artifacts.dir}/[artifact].[ext]"/>
+
+		<!-- Win32 Natives -->
+		<antcall target="publishWin32">
+			<param name="overwrite" value="${overwrite}"/>
+			<param name="release.status" value="${release.status}"/>
+			<param name="release.version" value="${release.version}"/>
+		</antcall>
+
+		<!-- Win64 Natives -->
+		<antcall target="publishWin64">
+			<param name="overwrite" value="${overwrite}"/>
+			<param name="release.status" value="${release.status}"/>
+			<param name="release.version" value="${release.version}"/>
+		</antcall>
+		<!-- MacOs Natives -->
+		<antcall target="publishMacOs">
+			<param name="overwrite" value="${overwrite}"/>
+			<param name="release.status" value="${release.status}"/>
+			<param name="release.version" value="${release.version}"/>
+		</antcall>
+	</target>
+
+	<target name="checkForNatives">
+		<available file="${windowsReleaseDir}/32" type="dir" property="win32.exists"/>
+		<available file="${windowsReleaseDir}/64" type="dir" property="win64.exists"/>
+		<available file="${macosReleaseDir}" type="dir" property="macos.exists"/>
+	</target>
+
+	<target name="publishWin32" if="win32.exists">
+		<zip destfile="${artifactsDir}/ParliamentDB-win32.zip">
+			<fileset dir="${windowsReleaseDir}/32" includes="*"/>
+		</zip>
+		<ivy:resolve log="${ivy.log.level}" file="${ivyDir}/ivy-parliamentdb-win32.xml"/>
+		<ivy:publish
+		organisation="${project.organization}"
+		module="ParliamentDB-win32"
+		pubrevision="${release.version}"
+		forcedeliver="true"
+		resolver="${ivy.repo}"
+		overwrite="${overwrite}"
+		status="${release.status}"
+		artifactspattern="${artifacts.dir}/[artifact].[ext]"/>
+	</target>
+
+	<target name="publishWin64" if="win64.exists">
+		<zip destfile="${artifactsDir}/ParliamentDB-win64.zip">
+			<fileset dir="${windowsReleaseDir}/64" includes="*"/>
+		</zip>
+		<ivy:resolve log="${ivy.log.level}" file="${ivyDir}/ivy-parliamentdb-win64.xml"/>
+		<ivy:publish
+		organisation="${project.organization}"
+		module="ParliamentDB-win64"
+		pubrevision="${release.version}"
+		forcedeliver="true"
+		resolver="${ivy.repo}"
+		overwrite="${overwrite}"
+		status="${release.status}"
+		artifactspattern="${artifacts.dir}/[artifact].[ext]"/>
+	</target>
+
+	<target name="publishMacOs" if="macos.exists">
+		<zip destfile="${artifactsDir}/ParliamentDB-macos.zip">
+			<fileset dir="${macosReleaseDir}" includes="*"/>
+		</zip>
+		<ivy:resolve log="${ivy.log.level}" file="${ivyDir}/ivy-parliamentdb-macos.xml"/>
+		<ivy:publish
+		organisation="${project.organization}"
+		module="ParliamentDB-macos"
+		pubrevision="${release.version}"
+		forcedeliver="true"
+		resolver="${ivy.repo}"
+		overwrite="${overwrite}"
+		status="${release.status}"
+		artifactspattern="${artifacts.dir}/[artifact].[ext]"/>
+	</target>
+</project>

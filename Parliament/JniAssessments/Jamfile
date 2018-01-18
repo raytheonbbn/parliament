@@ -1,0 +1,44 @@
+# Parliament is licensed under the BSD License from the Open Source
+# Initiative, http://www.opensource.org/licenses/bsd-license.php
+#
+# Copyright (c) 2001-2009, BBN Technologies, Inc.
+# All rights reserved.
+
+import make ;
+import notfile ;
+import os ;
+
+project /KB/JniAssessments ;
+
+explicit RunJniAssessments ;
+notfile RunJniAssessments : @RunJniAssessments : JniAssessments ;
+rule RunJniAssessments
+{
+	SLPath = [ os.shared-library-path-variable ] ;
+	PathSep = [ os.path-separator ] ;
+}
+actions RunJniAssessments
+{
+	env $(SLPath)="$$(SLPath)$(PathSep)$(>:D)" java -d64 -server -cp $(>:D) JniAssessments > ./results.csv
+}
+
+lib JniAssessments
+	:	[ glob *.cpp ]
+		/site-config//JavaJNI
+	:	<include>.
+		<include>../KbCore
+		<define>_REENTRANT
+		<threading>multi
+		<implicit-dependency>JniAssessments.h
+	:	# default build
+	:	<include>.
+		<define>_REENTRANT
+		<threading>multi ;
+
+explicit JniAssessments.h ;
+make JniAssessments.h : [ glob-tree *.java ] : @BuildJar ;
+actions BuildJar
+{
+	javac -Xlint:all -d $(<:D) $(>)
+	javah -force -classpath $(<:D) -o $(<) JniAssessments
+}

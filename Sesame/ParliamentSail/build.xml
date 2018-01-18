@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<project name="ParliamentSail" default="jar">
+	<description>Parliament Storage and Inference Layer (SAIL) for Sesame</description>
+
+	<import file="${basedir}/../../build-common.xml"/>
+
+	<property name="binDir" value="${targetDir}/bin/${ant.project.name}"/>
+	<property name="testBinDir" value="${targetDir}/test-bin/${ant.project.name}"/>
+	<property name="jarFile" value="${artifactsDir}/${ant.project.name}.jar"/>
+	<property name="testJarFile" value="${artifactsDir}/${ant.project.name}-test.jar"/>
+	<property name="parliamentDir" value="${kbRootDir}/Parliament"/>
+	<property file="${kbRootDir}/build.properties"/>
+
+	<path id="compileClassPath">
+		<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
+		<fileset dir="${basedir}/lib/default" includes="*.jar"/>
+	</path>
+
+	<path id="testClassPath">
+		<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
+		<fileset dir="${basedir}/lib/test" includes="*.jar"/>
+		<fileset dir="${binDir}"/>
+	</path>
+
+	<target name="buildDependencies">
+		<ant dir="${parliamentDir}" target="jar" inheritAll="false"/>
+	</target>
+
+	<target name="compile" depends="buildDependencies,resolve">
+		<mkdir dir="${binDir}"/>
+		<javac srcdir="${basedir}/src" destdir="${binDir}" debug="on" deprecation="on"
+				includeAntRuntime="false">
+			<classpath refid="compileClassPath"/>
+			<compilerarg value="-Xlint:all"/>
+		</javac>
+	</target>
+
+	<target name="compileTests" depends="compile">
+		<mkdir dir="${testBinDir}"/>
+		<javac srcdir="${basedir}/test" destdir="${testBinDir}" debug="on" deprecation="on"
+				includeAntRuntime="false">
+			<classpath refid="testClassPath"/>
+			<compilerarg value="-Xlint:all"/>
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${artifactsDir}"/>
+		<jar destfile="${jarFile}" basedir="${binDir}"/>
+	</target>
+
+	<target name="jarTests" depends="jar, compileTests">
+		<mkdir dir="${artifactsDir}"/>
+		<jar destfile="${testJarFile}" basedir="${testBinDir}"/>
+	</target>
+
+	<target name="install32">
+		<antcall target="install">
+			<param name="architecture" value="Win32-vs2008"/>
+		</antcall>
+	</target>
+
+	<target name="install64">
+		<antcall target="install">
+			<param name="architecture" value="x64-vs2008"/>
+		</antcall>
+	</target>
+
+	<!-- Requires that the variable "architecture" be set -->
+	<target name="install" depends="jar">
+		<copy todir="${tomcat}/webapps/${sesameAppName}/WEB-INF/lib/">
+			<fileset file="${jarFile}"/>
+			<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
+		</copy>
+		<copy todir="${tomcat}/bin/">
+			<fileset dir="${artifactsDir}/${architecture}/Release" includes="*Admin.exe, *.dll, *.txt"/>
+		</copy>
+	</target>
+
+	<target name="buildStressTest">
+		<copy todir="${binDir}/StressTest">
+			<fileset dir="${basedir}/lib/test" includes="*.jar"/>
+			<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
+			<fileset file="${jarFile}"/>
+			<fileset file="${testJarFile}"/>
+			<fileset dir="conf" includes="*"/>
+		</copy>
+		<copy todir="${binDir}/StressTest/Win32-Release">
+			<fileset dir="${artifactsDir}/Win32-vs2008/Release"
+				includes="*Admin.exe, *.dll, *.txt"/>
+		</copy>
+		<copy todir="${binDir}/StressTest/x64-Release">
+			<fileset dir="${artifactsDir}/x64-vs2008/Release"
+				includes="*Admin.exe, *.dll, *.txt"/>
+		</copy>
+		<copy todir="${binDir}/StressTest/${kbSailStressTestDataDir}">
+			<fileset dir="${kbSailStressTestDataDir}" includes="*.owl"/>
+		</copy>
+		<zip destfile="StressTest.zip" compress="true">
+			<zipfileset dir="${binDir}/StressTest"/>
+		</zip>
+	</target>
+
+	<target name="runStressTest" depends="jar">
+		<java classname="com.bbn.parliament.sesame.sail.stresstest.StressTest"
+			newenvironment="true" fork="true">
+			<classpath>
+				<path refid="testClassPath"/>
+				<pathelement location="${testBinDir}"/>
+			</classpath>
+			<arg value="5"/>
+			<arg value="10"/>
+			<arg value="0"/>
+		</java>
+	</target>
+
+	<target name="clean">
+		<delete dir="${binDir}"/>
+		<delete dir="${baseDir}/lib"/>
+	</target>
+</project>

@@ -1,0 +1,103 @@
+# This file is written in N3 / Turtle
+
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix module: <http://joseki.org/2003/06/module#> .
+@prefix joseki: <http://joseki.org/2005/06/configuration#> .
+@prefix ql:     <http://jena.hpl.hp.com/2003/07/query/> .
+@prefix ja:     <http://jena.hpl.hp.com/2005/11/Assembler#> .
+
+## --------------------------------------------------------------
+## This file is written in N3 / Turtle
+## It is an RDF graph - order of RDF triples does not matter
+## to the machine but it does help people who need to edit this file.
+
+## Note: adding rdfs:label to blank nodes will cause Joseki
+## to print that in log messages.
+
+## See also file:joseki-config-example.ttl
+
+
+## --------------------------------------------------------------
+## About this configuration
+
+<> rdfs:label "Joseki Configuration File" .
+
+## --------------------------------------------------------------
+## About this server
+
+[]  rdf:type joseki:Server ;
+    joseki:serverDebug   "true" ;
+    joseki:useContentType "application/rdf+xml" ;
+    .
+
+## --------------------------------------------------------------
+## Services
+
+## Services are best described by a blank node - it's the
+## serviceRef that will be used to match requests to services,
+## not some resource URI for the description.
+
+## Note that the service reference and the routing of incoming
+## requests by URI as defined by web.xml have to align.
+
+# SPARQL service with Parliament dataset
+[]
+    rdf:type            joseki:Service ;
+    rdfs:label          "SPARQL on the parliament dataset" ;
+    joseki:serviceRef   "sparql" ;
+    # dataset part
+    joseki:dataset      _:parliament ;
+    # Service part.
+    # This processor will not allow either the protocol,
+    # nor the query, to specify the datset.
+    joseki:processor    joseki:ProcessorSPARQL_FixedDS ;
+    .
+
+## --------------------------------------------------------------
+## Datasets
+
+
+_:parliament rdf:type ja:RDFDataSet ;
+    rdfs:label "Parliament" ;
+    ja:defaultGraph _:model_inf_1 ;
+    .
+
+_:model_inf_1 rdfs:label "Inf-1" ;
+    ja:baseModel
+        [ a ja:MemoryModel ;
+        ] ;
+    ja:reasoner
+         [ ja:reasonerURL <http://jena.hpl.hp.com/2003/RDFSExptRuleReasoner> ]
+    .
+
+
+
+## --------------------------------------------------------------
+## Processors
+## Usually, this section is empty because only standard
+## processors are used via inclusion of common definitions.
+
+## ----- definitions --------------------------------------------------
+
+joseki:ProcessorSPARQL_FixedDS
+    rdfs:label "SPARQL processor for fixed datasets" ;
+    rdf:type joseki:Processor ;
+    module:implementation joseki:ImplSPARQL ;
+
+    # This processor does not accept queries with FROM/FROM NAMED
+    joseki:allowExplicitDataset       "false"^^xsd:boolean ;
+    joseki:allowWebLoading            "false"^^xsd:boolean ;
+    .
+
+joseki:ImplSPARQL
+    rdf:type   joseki:ServiceImpl ;
+    module:className
+        <java:com.bbn.parliament.jena.joseki.bridge.ActionRouter> .
+
+# Local Variables:
+# tab-width: 4
+# indent-tabs-mode: nil
+# End:

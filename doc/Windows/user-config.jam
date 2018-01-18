@@ -1,0 +1,5 @@
+
+# This file is used to configure the Boost.Build installation.
+
+# Toolset declarations (the first one is the default):
+using msvc : 14.1 ;	# for Visual Studio 2017

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+  <foaf:Person rdf:nodeID="jbroeks">
+    <foaf:surname>Broekstra</foaf:surname>
+    <foaf:name>Jeen Broekstra</foaf:name>
+    <foaf:firstName>Jeen</foaf:firstName>
+    <foaf:gender>male</foaf:gender>
+    <foaf:img rdf:resource="http://www.cs.vu.nl/~jbroeks/jeen.jpg" />
+    <foaf:homepage rdf:resource="http://www.cs.vu.nl/~jbroeks/" />
+    <foaf:workplaceHomepage rdf:resource="http://www.vu.nl/" />
+    <foaf:workplaceHomepage rdf:resource="http://aduna.biz/" />
+    <foaf:mbox_sha1sum>eccb433a4538a22093f6807103e108a88f0f68de</foaf:mbox_sha1sum>
+    <foaf:nick>J1</foaf:nick>
+    <foaf:nick>jeen</foaf:nick>
+    <foaf:title>MSc</foaf:title>
+    <foaf:interest rdf:resource="http://www.openrdf.org/" />
+    <foaf:icqChatID>24640422</foaf:icqChatID>
+    <foaf:currentProject>
+      <foaf:Project>
+	<dc:title>Sesame</dc:title>
+	<dc:description>an RDF/RDFS storage, inferencing and querying system
+	  in Java</dc:description>
+	<dc:identifier rdf:resource="http://www.openrdf.org/"/>
+      </foaf:Project>
+    </foaf:currentProject>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Annette ten Teije</foaf:name>
+	<foaf:mbox_sha1sum>c10984c365331f1d38f649adccbb7aac5873aed2</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Borys Omelayenko</foaf:name>
+	<foaf:mbox_sha1sum>1dfb8bdd675680179a13551e0923d59412975645</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Frank van Harmelen</foaf:name>
+	<foaf:mbox_sha1sum>0830075242a8e9a6426ce6d059a6879955d4fcda</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Guus Schreiber</foaf:name>
+	<foaf:mbox_sha1sum>6640af0b3a6a2a61334a4c6627f11d665340203f</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Hans Akkermans</foaf:name>
+	<foaf:mbox_sha1sum>b04699a63d4a132428c4f5ee799fbaeab8c66b02</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Heiner Stuckenschmidt</foaf:name>
+	<foaf:mbox_sha1sum>6035aea08bfecc1f13ae7d9832036e2c7c86db0c</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Holger Wache</foaf:name>
+	<foaf:mbox_sha1sum>28930c61cad21d8268b3b9b6395b09f0eeece0de</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Jaap Gordijn</foaf:name>
+	<foaf:mbox_sha1sum>ed5bf72a302d885196158c560fd45ecd5cb14a73</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Jan Top</foaf:name>
+	<foaf:mbox_sha1sum>125ac03dc7fd1a7d2d2cabb065dc6441f2b47446</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Joost Schildwacht</foaf:name>
+	<foaf:mbox_sha1sum>d8a1123ede4b55e05a14cad5ea9587cfbb1efcfd</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Jos Schreinemakers</foaf:name>
+	<foaf:mbox_sha1sum>e5389753fec407b59139e4756facf62f3756caed</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Laura Hollink</foaf:name>
+	<foaf:mbox_sha1sum>53e30830049e2c55916ca68b8a0c8417ff31d1ef</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Maarten Menken</foaf:name>
+	<foaf:mbox_sha1sum>bc72e71cfd93e444def71f61dcb3da96b983279b</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Maksym Korotkiy</foaf:name>
+	<foaf:mbox_sha1sum>ebacca66a36c47abaf90f3953a2d0bbcfe1aa8d8</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Mark van Assem</foaf:name>
+	<foaf:mbox_sha1sum>8463e951c582e00ec4a0eeac4657da7818aac781</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Marta Sabou</foaf:name>
+	<foaf:mbox_sha1sum>d2063cf95ead7f1f364538ef6a0a086577713dcd</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Michel Klein</foaf:name>
+	<foaf:mbox_sha1sum>d9084f6454db95ad68579c3e2706cffa1fe9abb3</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Perry Groot</foaf:name>
+	<foaf:mbox_sha1sum>e6ae0800751790fa4d2467a8f29e10ba7d2245ef</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Peter Mika</foaf:name>
+	<foaf:mbox_sha1sum>ffe33bbe8be2a2123f0adb793e61a6d84ae9a739</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Radu Serban</foaf:name>
+	<foaf:mbox_sha1sum>f363b4e657e1dd1a8b34e4c203b93cb2e1c03634</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Ronny Siebes</foaf:name>
+	<foaf:mbox_sha1sum>f3f753148a2b8e437ff744c89382f5d22e031807</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Sander van Splunter</foaf:name>
+	<foaf:mbox_sha1sum>73c9f57498330dc38ff3fc022ebacaf3ce5eabb7</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Warner ten Kate</foaf:name>
+	<foaf:mbox_sha1sum>74a05317a453d06aa34853a0b0314f362b71983f</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Zharko Aleksovski</foaf:name>
+	<foaf:mbox_sha1sum>5fe0eeaf8fdb276dbdbcf5db734deae6bbd3ff79</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Zhisheng Huang</foaf:name>
+	<foaf:mbox_sha1sum>238a59a17bd96fbb93f39aa9dba2f6847a8d261c</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Ziv Baida</foaf:name>
+	<foaf:mbox_sha1sum>b7627a3173c3c25fe22732298f7fe0e62c008f6b</foaf:mbox_sha1sum>
+      </foaf:Person>
+    </foaf:knows>
+    <foaf:knows>
+      <foaf:Person>
+	<foaf:name>Libby Miller</foaf:name>
+	<foaf:mbox rdf:resource="mailto:libby.miller@bristol.ac.uk"/>
+      </foaf:Person>
+    </foaf:knows>
+  </foaf:Person>
+</rdf:RDF>

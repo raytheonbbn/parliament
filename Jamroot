@@ -1,0 +1,17 @@
+# Parliament is licensed under the BSD License from the Open Source
+# Initiative, http://www.opensource.org/licenses/bsd-license.php
+#
+# Copyright (c) 2001-2009, BBN Technologies, Inc.
+# All rights reserved.
+
+project /KB
+	: build-dir target/bin/native
+	: default-build release
+	;
+
+path-constant JamRootDir : . ;
+
+use-project /KB/KbCore : $(JamRootDir)/Parliament/KbCore ;
+use-project /KB/AdminClient : $(JamRootDir)/Parliament/AdminClient ;
+use-project /KB/Test : $(JamRootDir)/Parliament/Test ;
+use-project /KB/JniAssessments : $(JamRootDir)/Parliament/JniAssessments ;

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<project name="CSameAsSail" default="jar">
+	<description>Canonical SameAs Storage and Inference Layer (SAIL) for Sesame</description>
+
+	<import file="${basedir}/../../build-common.xml"/>
+
+	<property name="binDir" value="${targetDir}/bin/${ant.project.name}"/>
+	<property name="jarFile" value="${artifactsDir}/${ant.project.name}.jar"/>
+	<property file="${kbRootDir}/build.properties"/>
+
+	<target name="compile" depends="resolve"> <!-- Added resolve depends -->
+		<mkdir dir="${binDir}"/>
+		<javac srcdir="${basedir}/src" destdir="${binDir}" debug="on" deprecation="on"
+				includeAntRuntime="false">
+			<classpath>
+				<fileset dir="${basedir}/lib/default" includes="*.jar"/>
+			</classpath>
+			<compilerarg value="-Xlint:all"/>
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${artifactsDir}"/>
+		<jar destfile="${jarFile}" basedir="${binDir}"/>
+	</target>
+
+	<target name="install" depends="jar">
+		<copy todir="${tomcat}/webapps/${sesameAppName}/WEB-INF/lib">
+			<fileset file="${jarFile}"/>
+		</copy>
+	</target>
+
+	<target name="clean">
+		<delete dir="${binDir}"/>
+		<delete dir="${baseDir}/lib"/>
+	</target>
+</project>

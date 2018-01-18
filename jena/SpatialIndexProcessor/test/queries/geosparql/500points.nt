@@ -1,0 +1,1000 @@
+<http://example.org/geometry/474> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44321195358032 34.25678804641968)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/366> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/366> .
+<http://example.org/resource/113> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/113> .
+<http://example.org/geometry/221> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.50930789249837 34.19069210750164)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/2> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/2> .
+<http://example.org/geometry/442> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.45428936417957 34.24571063582043)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/334> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/334> .
+<http://example.org/geometry/197> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.42065361426147 34.279346385738535)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/380> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/380> .
+<http://example.org/geometry/79> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.29115932615481 34.40884067384519)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/119> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.57511621506609 34.12488378493391)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/410> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.24969460455873 34.450305395441276)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/302> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/302> .
+<http://example.org/geometry/165> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4299057671104 34.2700942328896)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/47> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.38753809870744 34.312461901292565)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/386> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.47612931588287 34.22387068411713)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/278> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/278> .
+<http://example.org/geometry/93> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.36011061423213 34.33988938576788)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/133> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5893577889201 34.11064221107991)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/308> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.41135006025554 34.28864993974445)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/15> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.24308615460507 34.45691384539494)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/499> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/499> .
+<http://example.org/geometry/354> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.32906261072827 34.370937389271724)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/246> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/246> .
+<http://example.org/geometry/61> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.31163839119436 34.388361608805646)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/101> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.53056177477721 34.16943822522279)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/292> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/292> .
+<http://example.org/resource/467> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/467> .
+<http://example.org/geometry/322> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.48616423389399 34.213835766106016)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/88> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/88> .
+<http://example.org/resource/214> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/214> .
+<http://example.org/resource/260> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/260> .
+<http://example.org/resource/435> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/435> .
+<http://example.org/resource/56> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/56> .
+<http://example.org/geometry/298> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.58275026761872 34.117249732381275)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/481> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/481> .
+<http://example.org/resource/403> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/403> .
+<http://example.org/resource/24> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/24> .
+<http://example.org/resource/158> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/158> .
+<http://example.org/geometry/266> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.37363960767308 34.326360392326926)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/70> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/70> .
+<http://example.org/geometry/487> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.21466213096721 34.48533786903279)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/379> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/379> .
+<http://example.org/resource/126> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/126> .
+<http://example.org/geometry/234> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.32853655220934 34.37146344779066)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/409> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.220042588401 34.479957411598996)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/172> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/172> .
+<http://example.org/geometry/280> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.28298247371292 34.41701752628709)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/455> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.56314631412663 34.13685368587337)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/347> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/347> .
+<http://example.org/geometry/202> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.58923976254496 34.11076023745503)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/8> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.33461819958224 34.365381800417765)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/393> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/393> .
+<http://example.org/resource/140> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/140> .
+<http://example.org/geometry/423> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.40863457069767 34.291365429302324)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/315> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/315> .
+<http://example.org/geometry/178> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59633895429799 34.10366104570201)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/361> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/361> .
+<http://example.org/geometry/399> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5147675438702 34.185232456129796)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/146> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59998194022141 34.10001805977859)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/28> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.43687123272157 34.26312876727844)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/192> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.38206701836654 34.31793298163346)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/367> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.49393729750956 34.20606270249044)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/259> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/259> .
+<http://example.org/geometry/74> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.24308798649083 34.45691201350917)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/114> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.22373344086384 34.47626655913617)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/160> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.3994128240297 34.30058717597031)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/335> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.32920622779685 34.37079377220316)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/42> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5644874386381 34.1355125613619)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/227> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/227> .
+<http://example.org/geometry/381> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.30791718490441 34.39208281509559)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/273> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/273> .
+<http://example.org/resource/448> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/448> .
+<http://example.org/resource/69> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/69> .
+<http://example.org/geometry/10> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.53955485296288 34.16044514703712)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/303> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.3758430114172 34.3241569885828)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/494> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/494> .
+<http://example.org/resource/241> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/241> .
+<http://example.org/resource/416> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/416> .
+<http://example.org/resource/37> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/37> .
+<http://example.org/geometry/279> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54369314553387 34.15630685446614)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/462> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/462> .
+<http://example.org/resource/83> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/83> .
+<http://example.org/resource/139> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/139> .
+<http://example.org/geometry/247> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.32795184785506 34.37204815214494)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/430> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/430> .
+<http://example.org/resource/51> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/51> .
+<http://example.org/resource/185> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/185> .
+<http://example.org/geometry/293> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.50717641011123 34.192823589888775)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/468> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5466420238233 34.15335797617671)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/107> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/107> .
+<http://example.org/geometry/215> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55902634489253 34.14097365510747)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/153> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/153> .
+<http://example.org/geometry/261> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.27017581370288 34.429824186297125)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/436> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.45513306985517 34.24486693014484)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/328> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/328> .
+<http://example.org/geometry/482> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.56675163746345 34.13324836253655)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/374> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/374> .
+<http://example.org/resource/121> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/121> .
+<http://example.org/geometry/404> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.34351314474605 34.35648685525395)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/159> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59476652865096 34.10523347134904)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/450> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.40152474299585 34.29847525700415)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/342> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/342> .
+<http://example.org/geometry/3> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.37246323805944 34.327536761940564)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/87> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4333651569936 34.2666348430064)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/127> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.49899384136658 34.20100615863342)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/310> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/310> .
+<http://example.org/geometry/173> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.31645710822545 34.383542891774546)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/348> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.32848986082007 34.371510139179925)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/55> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.48011310744373 34.219886892556275)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/394> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.45638634786775 34.24361365213225)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/286> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/286> .
+<http://example.org/geometry/141> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.21966453656302 34.48033546343698)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/316> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.24401415791297 34.455985842087024)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/23> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.31364767698099 34.38635232301901)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/208> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/208> .
+<http://example.org/geometry/362> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5781415657231 34.1218584342769)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/254> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/254> .
+<http://example.org/resource/429> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/429> .
+<http://example.org/resource/475> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/475> .
+<http://example.org/geometry/330> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.46077356711238 34.23922643288762)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/96> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/96> .
+<http://example.org/resource/222> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/222> .
+<http://example.org/resource/18> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/18> .
+<http://example.org/resource/443> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/443> .
+<http://example.org/resource/64> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/64> .
+<http://example.org/resource/198> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/198> .
+<http://example.org/geometry/228> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.21512130101404 34.484878698985966)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/411> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/411> .
+<http://example.org/resource/32> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/32> .
+<http://example.org/resource/9> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/9> .
+<http://example.org/resource/166> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/166> .
+<http://example.org/geometry/274> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.26518336009707 34.43481663990294)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/449> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.50644759220803 34.19355240779197)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/495> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.39192354623837 34.30807645376163)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/387> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/387> .
+<http://example.org/resource/134> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/134> .
+<http://example.org/geometry/242> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4457673076124 34.254232692387596)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/417> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.57656396026061 34.12343603973939)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/309> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/309> .
+<http://example.org/resource/180> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/180> .
+<http://example.org/geometry/463> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.32774251732506 34.37225748267495)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/355> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/355> .
+<http://example.org/resource/102> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/102> .
+<http://example.org/geometry/210> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44400162973986 34.255998370260144)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/431> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.33917563024077 34.36082436975923)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/323> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/323> .
+<http://example.org/geometry/186> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4554316859298 34.244568314070214)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/68> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.23797261254904 34.46202738745095)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/108> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.47653623257806 34.22346376742195)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/299> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/299> .
+<http://example.org/geometry/154> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.32649812369993 34.37350187630006)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/329> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.24964573782769 34.45035426217232)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/36> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.31106471799015 34.388935282009854)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/375> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.46539827410976 34.23460172589024)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/82> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.33558794161372 34.364412058386286)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/267> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/267> .
+<http://example.org/geometry/122> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.40070900509606 34.29929099490394)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/488> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/488> .
+<http://example.org/geometry/343> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.45819273536667 34.24180726463333)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/235> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/235> .
+<http://example.org/geometry/50> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.41527100452646 34.28472899547354)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/281> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/281> .
+<http://example.org/resource/456> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/456> .
+<http://example.org/geometry/311> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55675324181088 34.14324675818913)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/77> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/77> .
+<http://example.org/resource/203> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/203> .
+<http://example.org/resource/424> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/424> .
+<http://example.org/resource/45> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/45> .
+<http://example.org/resource/179> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/179> .
+<http://example.org/geometry/287> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.39524855909559 34.30475144090441)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/470> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/470> .
+<http://example.org/resource/91> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/91> .
+<http://example.org/geometry/209> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.56670612530282 34.13329387469719)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/13> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/13> .
+<http://example.org/resource/147> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/147> .
+<http://example.org/geometry/255> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.35033761300446 34.34966238699555)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/193> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/193> .
+<http://example.org/geometry/476> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.56331444726322 34.13668555273678)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/368> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/368> .
+<http://example.org/resource/115> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/115> .
+<http://example.org/geometry/223> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54868888132812 34.151311118671885)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/4> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/4> .
+<http://example.org/resource/161> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/161> .
+<http://example.org/geometry/444> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.43431622314276 34.26568377685725)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/336> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/336> .
+<http://example.org/geometry/199> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.38497367339076 34.315026326609235)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/490> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4602642258299 34.2397357741701)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/382> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/382> .
+<http://example.org/geometry/412> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.52042300233533 34.17957699766466)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/304> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/304> .
+<http://example.org/geometry/167> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.35358063292097 34.34641936707903)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/350> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/350> .
+<http://example.org/geometry/49> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.48822382220882 34.21177617779117)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/388> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.53526484178099 34.16473515821902)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/95> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.24081096872621 34.459189031273795)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/135> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.56294424382529 34.13705575617471)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/17> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59955339716232 34.100446602837685)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/181> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.20822374504621 34.49177625495379)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/356> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.31888143645168 34.38111856354833)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/248> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/248> .
+<http://example.org/geometry/63> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59015232927095 34.10984767072905)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/103> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44469355405624 34.25530644594376)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/294> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/294> .
+<http://example.org/resource/469> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/469> .
+<http://example.org/geometry/324> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59411570943853 34.10588429056148)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/216> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/216> .
+<http://example.org/geometry/31> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.50991884326682 34.19008115673319)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/370> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44447245948551 34.2555275405145)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/262> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/262> .
+<http://example.org/resource/437> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/437> .
+<http://example.org/resource/58> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/58> .
+<http://example.org/resource/483> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/483> .
+<http://example.org/resource/230> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/230> .
+<http://example.org/resource/405> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/405> .
+<http://example.org/resource/26> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/26> .
+<http://example.org/geometry/268> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.21453334660131 34.48546665339868)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/451> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/451> .
+<http://example.org/resource/72> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/72> .
+<http://example.org/geometry/489> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.58295853732174 34.11704146267826)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/128> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/128> .
+<http://example.org/geometry/236> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.53811912536054 34.16188087463947)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/40> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/40> .
+<http://example.org/resource/174> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/174> .
+<http://example.org/geometry/282> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.46938600796558 34.230613992034414)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/457> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.35507789026296 34.344922109737034)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/349> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/349> .
+<http://example.org/geometry/204> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.41361055171645 34.286389448283565)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/395> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/395> .
+<http://example.org/resource/142> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/142> .
+<http://example.org/geometry/250> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.43384362036954 34.26615637963046)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/425> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.3206954389295 34.37930456107049)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/317> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/317> .
+<http://example.org/geometry/471> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.58306312520259 34.116936874797425)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/363> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/363> .
+<http://example.org/resource/110> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/110> .
+<http://example.org/geometry/148> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.53746950410473 34.16253049589527)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/331> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/331> .
+<http://example.org/geometry/194> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.27718513354206 34.42281486645794)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/369> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.58617036950626 34.11382963049374)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/76> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.3673917305873 34.3326082694127)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/116> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55886002940787 34.141139970592135)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/162> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5854373738632 34.11456262613681)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/337> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.39440388634479 34.30559611365522)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/229> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/229> .
+<http://example.org/geometry/44> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.57406377777873 34.12593622222127)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/383> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55587701708079 34.144122982919214)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/90> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.40363744151227 34.29636255848772)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/275> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/275> .
+<http://example.org/geometry/130> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.25509251019149 34.44490748980852)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/12> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.57229593672827 34.12770406327173)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/305> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.39923599060465 34.300764009395344)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/496> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/496> .
+<http://example.org/geometry/351> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.20149261449005 34.49850738550995)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/243> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/243> .
+<http://example.org/resource/418> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/418> .
+<http://example.org/resource/39> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/39> .
+<http://example.org/resource/464> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/464> .
+<http://example.org/resource/85> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/85> .
+<http://example.org/resource/211> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/211> .
+<http://example.org/geometry/249> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.26714375469463 34.43285624530537)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/432> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/432> .
+<http://example.org/resource/53> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/53> .
+<http://example.org/resource/187> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/187> .
+<http://example.org/geometry/295> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.34732730559396 34.35267269440603)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/109> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/109> .
+<http://example.org/geometry/217> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.23523651640653 34.464763483593465)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/400> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/400> .
+<http://example.org/resource/21> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/21> .
+<http://example.org/resource/155> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/155> .
+<http://example.org/geometry/263> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.34499782050469 34.355002179495315)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/438> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.40322712676864 34.29677287323136)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/484> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.29536833661413 34.40463166338588)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/376> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/376> .
+<http://example.org/resource/123> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/123> .
+<http://example.org/geometry/231> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.31903011256667 34.38096988743334)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/406> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.37131182170775 34.328688178292246)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/452> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.505215719895 34.19478428010499)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/344> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/344> .
+<http://example.org/geometry/5> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.37994241126773 34.32005758873226)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/390> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/390> .
+<http://example.org/geometry/89> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54622858551305 34.153771414486954)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/129> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54609462951285 34.15390537048715)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/420> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55688682617078 34.14311317382923)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/312> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/312> .
+<http://example.org/geometry/175> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55167274375424 34.148327256245764)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/57> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59770667130765 34.10229332869236)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/396> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.57517525300467 34.12482474699533)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/288> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/288> .
+<http://example.org/geometry/143> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.24503491914783 34.45496508085217)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/318> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54497758292297 34.155022417077035)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/25> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.30283895256635 34.39716104743366)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/364> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2506461176078 34.44935388239221)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/71> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.24219274251479 34.457807257485214)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/256> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/256> .
+<http://example.org/geometry/111> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.49124137286707 34.20875862713294)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/477> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/477> .
+<http://example.org/geometry/332> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.52464151925068 34.175358480749324)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/98> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/98> .
+<http://example.org/resource/224> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/224> .
+<http://example.org/resource/270> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/270> .
+<http://example.org/resource/445> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/445> .
+<http://example.org/resource/66> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/66> .
+<http://example.org/geometry/300> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.23422148111263 34.46577851888737)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/491> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/491> .
+<http://example.org/resource/413> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/413> .
+<http://example.org/resource/34> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/34> .
+<http://example.org/resource/168> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/168> .
+<http://example.org/geometry/276> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.56289984197642 34.13710015802358)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/80> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/80> .
+<http://example.org/geometry/497> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.56768998408704 34.132310015912964)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/389> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/389> .
+<http://example.org/resource/136> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/136> .
+<http://example.org/geometry/244> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.34007049400529 34.35992950599472)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/419> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2011515841516 34.4988484158484)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/182> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/182> .
+<http://example.org/geometry/290> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.50806889246944 34.19193110753056)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/465> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.23362962694816 34.46637037305185)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/357> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/357> .
+<http://example.org/resource/104> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/104> .
+<http://example.org/geometry/212> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.29096573880817 34.40903426119183)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/150> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/150> .
+<http://example.org/geometry/433> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2760954150463 34.423904584953696)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/325> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/325> .
+<http://example.org/geometry/188> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.43991509449356 34.260084905506446)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/371> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/371> .
+<http://example.org/geometry/401> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.34061102795984 34.35938897204016)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/156> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.36962910559471 34.3303708944053)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/38> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.35112925005849 34.34887074994151)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/0> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.23217902012411 34.46782097987589)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/377> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5016209082254 34.198379091774605)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/84> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.39605426943604 34.303945730563974)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/269> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/269> .
+<http://example.org/geometry/124> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.34251966889408 34.35748033110592)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/170> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.43594045609323 34.26405954390676)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/345> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.27278508436 34.42721491564001)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/52> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.32930855906436 34.37069144093564)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/237> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/237> .
+<http://example.org/geometry/391> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54621896213939 34.15378103786062)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/283> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/283> .
+<http://example.org/resource/458> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/458> .
+<http://example.org/geometry/313> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5668605642891 34.1331394357109)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/205> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/205> .
+<http://example.org/resource/79> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/79> .
+<http://example.org/geometry/20> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4565859199179 34.24341408008211)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/251> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/251> .
+<http://example.org/resource/426> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/426> .
+<http://example.org/resource/47> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/47> .
+<http://example.org/geometry/289> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.39873072378305 34.30126927621695)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/472> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/472> .
+<http://example.org/resource/93> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/93> .
+<http://example.org/resource/15> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/15> .
+<http://example.org/resource/149> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/149> .
+<http://example.org/geometry/257> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.53008839655175 34.16991160344826)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/440> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/440> .
+<http://example.org/resource/61> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/61> .
+<http://example.org/resource/195> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/195> .
+<http://example.org/geometry/478> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.39578653961615 34.30421346038385)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/117> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/117> .
+<http://example.org/geometry/225> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.28471302864955 34.41528697135045)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/6> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/6> .
+<http://example.org/resource/163> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/163> .
+<http://example.org/geometry/271> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.26704317717629 34.43295682282372)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/446> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.42404237979444 34.27595762020555)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/338> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/338> .
+<http://example.org/geometry/492> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.3374386336862 34.3625613663138)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/384> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/384> .
+<http://example.org/resource/131> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/131> .
+<http://example.org/geometry/414> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44765523924791 34.2523447607521)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/306> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/306> .
+<http://example.org/geometry/169> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.41531071026714 34.28468928973286)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/460> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44849078199023 34.25150921800977)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/352> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/352> .
+<http://example.org/geometry/97> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.58687366004553 34.113126339954476)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/137> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.51691764959267 34.18308235040734)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/320> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/320> .
+<http://example.org/geometry/19> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.47691258265596 34.22308741734404)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/183> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.32024184187864 34.37975815812136)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/358> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.41749320655778 34.28250679344223)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/65> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.37968409669472 34.32031590330529)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/105> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.21189794667957 34.488102053320425)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/296> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/296> .
+<http://example.org/geometry/151> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.33895361052704 34.36104638947297)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/326> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55960412466571 34.1403958753343)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/218> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/218> .
+<http://example.org/geometry/33> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.26544542895323 34.43455457104677)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/372> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.39032103902605 34.30967896097395)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/264> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/264> .
+<http://example.org/resource/439> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/439> .
+<http://example.org/resource/485> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/485> .
+<http://example.org/geometry/340> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.26429111475252 34.43570888524748)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/232> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/232> .
+<http://example.org/resource/407> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/407> .
+<http://example.org/resource/28> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/28> .
+<http://example.org/resource/453> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/453> .
+<http://example.org/resource/74> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/74> .
+<http://example.org/resource/200> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/200> .
+<http://example.org/geometry/238> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.29315006110542 34.40684993889458)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/421> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/421> .
+<http://example.org/resource/42> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/42> .
+<http://example.org/resource/176> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/176> .
+<http://example.org/geometry/284> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.31794276062385 34.382057239376145)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/459> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44710978309945 34.25289021690055)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/206> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5929895099019 34.1070104900981)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/10> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/10> .
+<http://example.org/resource/397> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/397> .
+<http://example.org/resource/144> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/144> .
+<http://example.org/geometry/252> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.21593693183776 34.48406306816225)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/427> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.39318123919074 34.30681876080927)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/319> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/319> .
+<http://example.org/resource/190> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/190> .
+<http://example.org/geometry/473> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55575237116034 34.144247628839665)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/365> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/365> .
+<http://example.org/resource/112> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/112> .
+<http://example.org/geometry/220> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.43492849096411 34.2650715090359)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/1> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/1> .
+<http://example.org/geometry/441> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.33958371379848 34.36041628620153)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/333> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/333> .
+<http://example.org/geometry/196> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.27764480610327 34.422355193896735)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/78> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.30752995117605 34.39247004882395)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/118> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55889564758256 34.141104352417436)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/301> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/301> .
+<http://example.org/geometry/164> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59004757885673 34.10995242114328)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/339> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.3581484356437 34.341851564356304)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/46> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.39567078011245 34.304329219887556)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/385> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.38633676801587 34.31366323198413)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/277> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/277> .
+<http://example.org/geometry/92> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.58601426556292 34.11398573443708)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/132> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.40976712094827 34.29023287905173)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/307> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.38595004286917 34.314049957130834)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/14> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.43764457185381 34.2623554281462)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/498> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/498> .
+<http://example.org/geometry/353> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.53837374607305 34.16162625392696)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/60> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4880799929952 34.21192000700481)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/245> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/245> .
+<http://example.org/geometry/100> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5184740148229 34.18152598517711)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/291> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/291> .
+<http://example.org/resource/466> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/466> .
+<http://example.org/geometry/321> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.50619932458828 34.19380067541172)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/87> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/87> .
+<http://example.org/resource/213> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/213> .
+<http://example.org/resource/434> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/434> .
+<http://example.org/resource/55> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/55> .
+<http://example.org/resource/189> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/189> .
+<http://example.org/geometry/297> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4212412294057 34.2787587705943)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/480> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/480> .
+<http://example.org/geometry/219> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.30835831740706 34.39164168259295)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/402> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/402> .
+<http://example.org/resource/23> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/23> .
+<http://example.org/resource/157> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/157> .
+<http://example.org/geometry/265> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.57952651073413 34.120473489265876)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/486> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4975607202364 34.20243927976362)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/378> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/378> .
+<http://example.org/resource/125> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/125> .
+<http://example.org/geometry/233> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.25873004091689 34.44126995908312)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/408> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54062661074269 34.15937338925731)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/171> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/171> .
+<http://example.org/geometry/454> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54730859242386 34.15269140757615)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/346> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/346> .
+<http://example.org/geometry/201> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.45896941626283 34.24103058373717)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/7> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.36457550002734 34.33542449997266)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/392> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/392> .
+<http://example.org/geometry/422> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.29048907109303 34.409510928906975)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/314> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/314> .
+<http://example.org/geometry/177> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.41208057097059 34.28791942902942)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/360> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/360> .
+<http://example.org/geometry/59> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.47233344871285 34.227666551287165)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/398> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.47748274666176 34.22251725333824)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/145> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.34380642862776 34.35619357137224)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/27> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.28547263070715 34.41452736929286)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/191> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.3588082908427 34.34119170915731)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/366> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.3834330987292 34.316566901270804)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/258> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/258> .
+<http://example.org/geometry/73> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.46461370073136 34.23538629926864)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/113> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44139587706378 34.25860412293621)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/479> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/479> .
+<http://example.org/geometry/334> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.47263130431881 34.22736869568119)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/41> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.31260961477021 34.387390385229786)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/226> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/226> .
+<http://example.org/geometry/380> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.26087217686535 34.439127823134655)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/272> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/272> .
+<http://example.org/resource/447> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/447> .
+<http://example.org/resource/68> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/68> .
+<http://example.org/geometry/302> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44041432826006 34.259585671739934)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/493> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/493> .
+<http://example.org/resource/240> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/240> .
+<http://example.org/resource/415> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/415> .
+<http://example.org/resource/36> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/36> .
+<http://example.org/geometry/278> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55257668829859 34.14742331170142)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/461> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/461> .
+<http://example.org/resource/82> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/82> .
+<http://example.org/geometry/499> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.31788755870843 34.38211244129156)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/138> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/138> .
+<http://example.org/geometry/246> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.20122228464412 34.49877771535589)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/50> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/50> .
+<http://example.org/resource/184> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/184> .
+<http://example.org/geometry/292> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.42657291138909 34.27342708861092)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/467> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.51326458152037 34.18673541847962)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/359> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/359> .
+<http://example.org/resource/106> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/106> .
+<http://example.org/geometry/214> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54403335552522 34.15596664447479)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/152> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/152> .
+<http://example.org/geometry/260> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.32279425609904 34.37720574390095)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/435> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.41414426320024 34.28585573679976)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/327> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/327> .
+<http://example.org/geometry/481> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.42381128712024 34.27618871287975)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/373> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/373> .
+<http://example.org/resource/120> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/120> .
+<http://example.org/geometry/403> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.24502376037356 34.45497623962645)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/158> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.24780090596306 34.45219909403694)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/341> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/341> .
+<http://example.org/geometry/2> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55631574453317 34.14368425546684)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/379> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.46454146235993 34.23545853764006)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/86> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.51596018107419 34.18403981892581)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/126> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.46464043330879 34.23535956669121)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/172> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.36897301061104 34.33102698938895)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/347> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.38860751304155 34.311392486958454)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/54> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.58882229783482 34.111177702165186)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/239> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/239> .
+<http://example.org/geometry/393> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.426225809976 34.27377419002399)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/285> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/285> .
+<http://example.org/geometry/140> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.36758408083223 34.33241591916777)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/315> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55464886362093 34.14535113637907)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/22> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44432424523885 34.255675754761164)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/207> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/207> .
+<http://example.org/geometry/361> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59349374769393 34.106506252306076)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/253> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/253> .
+<http://example.org/resource/428> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/428> .
+<http://example.org/resource/49> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/49> .
+<http://example.org/resource/474> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/474> .
+<http://example.org/resource/95> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/95> .
+<http://example.org/resource/221> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/221> .
+<http://example.org/resource/17> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/17> .
+<http://example.org/geometry/259> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59552216665722 34.10447783334278)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/442> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/442> .
+<http://example.org/resource/63> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/63> .
+<http://example.org/resource/197> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/197> .
+<http://example.org/resource/119> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/119> .
+<http://example.org/geometry/227> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.21732532515803 34.482674674841974)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/410> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/410> .
+<http://example.org/resource/31> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/31> .
+<http://example.org/resource/8> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/8> .
+<http://example.org/resource/165> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/165> .
+<http://example.org/geometry/273> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.26972763073759 34.43027236926241)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/448> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.35580541812048 34.34419458187952)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/494> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.38499106773483 34.31500893226517)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/386> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/386> .
+<http://example.org/resource/133> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/133> .
+<http://example.org/geometry/241> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2780300190835 34.4219699809165)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/416> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59822566745922 34.10177433254078)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/308> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/308> .
+<http://example.org/geometry/462> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.36818799891962 34.33181200108037)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/354> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/354> .
+<http://example.org/resource/101> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/101> .
+<http://example.org/geometry/99> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.42131711457942 34.27868288542058)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/139> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.37614012773692 34.323859872263085)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/430> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.32850746402086 34.37149253597914)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/322> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/322> .
+<http://example.org/geometry/185> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4093367755166 34.290663224483396)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/67> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.52205336134735 34.17794663865266)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/107> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.22483292741406 34.47516707258595)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/298> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/298> .
+<http://example.org/geometry/153> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.3754878196556 34.3245121803444)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/328> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.27888766630853 34.42111233369146)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/35> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.20429672085511 34.49570327914489)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/374> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2281753536239 34.471824646376106)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/266> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/266> .
+<http://example.org/geometry/81> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54803872406316 34.151961275936834)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/121> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.53903877077148 34.16096122922852)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/487> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/487> .
+<http://example.org/geometry/342> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5565832726219 34.14341672737809)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/234> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/234> .
+<http://example.org/resource/409> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/409> .
+<http://example.org/resource/280> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/280> .
+<http://example.org/resource/455> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/455> .
+<http://example.org/geometry/310> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.33067466143639 34.36932533856361)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/76> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/76> .
+<http://example.org/resource/202> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/202> .
+<http://example.org/resource/423> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/423> .
+<http://example.org/resource/44> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/44> .
+<http://example.org/resource/178> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/178> .
+<http://example.org/geometry/286> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.56364158214483 34.13635841785518)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/90> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/90> .
+<http://example.org/geometry/208> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.3060587011932 34.39394129880681)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/12> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/12> .
+<http://example.org/resource/399> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/399> .
+<http://example.org/resource/146> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/146> .
+<http://example.org/geometry/254> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.43030746598029 34.26969253401971)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/429> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.46991373669121 34.23008626330879)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/192> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/192> .
+<http://example.org/geometry/475> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.47270121789494 34.227298782105066)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/367> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/367> .
+<http://example.org/resource/114> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/114> .
+<http://example.org/geometry/222> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.46449997822783 34.23550002177217)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/3> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/3> .
+<http://example.org/resource/160> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/160> .
+<http://example.org/geometry/443> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.38053585502352 34.31946414497647)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/335> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/335> .
+<http://example.org/geometry/198> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2854466068276 34.414553393172405)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/381> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/381> .
+<http://example.org/geometry/411> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.46739705948988 34.23260294051012)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/303> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/303> .
+<http://example.org/geometry/166> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.58903556489027 34.110964435109736)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/48> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.47849436523578 34.22150563476423)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/387> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5079977973633 34.1920022026367)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/94> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4499778759523 34.25002212404771)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/279> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/279> .
+<http://example.org/geometry/134> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.57785149718418 34.122148502815826)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/309> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.43503663824298 34.26496336175702)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/16> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.43627305499619 34.26372694500381)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/180> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.35241675742529 34.34758324257471)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/355> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.58324803612808 34.11675196387192)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/247> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/247> .
+<http://example.org/geometry/62> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.41012140661493 34.28987859338507)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/102> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.30428670299611 34.395713297003894)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/293> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/293> .
+<http://example.org/resource/468> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/468> .
+<http://example.org/geometry/323> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4259579032257 34.27404209677431)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/30> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.50470807951578 34.19529192048422)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/89> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/89> .
+<http://example.org/resource/215> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/215> .
+<http://example.org/resource/261> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/261> .
+<http://example.org/resource/436> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/436> .
+<http://example.org/resource/57> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/57> .
+<http://example.org/geometry/299> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.48147750328424 34.21852249671577)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/482> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/482> .
+<http://example.org/resource/404> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/404> .
+<http://example.org/resource/25> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/25> .
+<http://example.org/resource/159> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/159> .
+<http://example.org/geometry/267> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.53868533759312 34.16131466240689)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/450> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/450> .
+<http://example.org/resource/71> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/71> .
+<http://example.org/geometry/488> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.27678725809365 34.42321274190636)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/127> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/127> .
+<http://example.org/geometry/235> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.45142054884948 34.24857945115051)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/173> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/173> .
+<http://example.org/geometry/281> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.36725803017524 34.33274196982477)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/456> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.21085030255666 34.48914969744333)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/348> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/348> .
+<http://example.org/geometry/203> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.23362422212033 34.46637577787967)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/9> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.20369213306078 34.496307866939226)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/394> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/394> .
+<http://example.org/resource/141> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/141> .
+<http://example.org/geometry/424> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2543437481271 34.445656251872904)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/316> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/316> .
+<http://example.org/geometry/179> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.36702412993293 34.332975870067074)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/470> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54015930326744 34.15984069673255)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/362> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/362> .
+<http://example.org/geometry/147> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.56595029983593 34.13404970016406)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/330> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/330> .
+<http://example.org/geometry/29> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2876203921071 34.4123796078929)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/193> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.21062922020427 34.48937077979574)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/368> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.39383182590231 34.306168174097685)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/75> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.26624904477974 34.433750955220255)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/115> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.28275023921194 34.41724976078807)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/161> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.48847108285352 34.211528917146474)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/336> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.49466089465696 34.20533910534305)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/228> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/228> .
+<http://example.org/geometry/43> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.27580278103406 34.424197218965936)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/382> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.34405847665336 34.355941523346644)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/274> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/274> .
+<http://example.org/resource/449> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/449> .
+<http://example.org/geometry/11> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.29207982434812 34.40792017565188)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/304> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.48688983585625 34.21311016414375)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/495> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/495> .
+<http://example.org/geometry/350> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55001777453005 34.14998222546995)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/242> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/242> .
+<http://example.org/resource/417> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/417> .
+<http://example.org/resource/38> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/38> .
+<http://example.org/resource/463> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/463> .
+<http://example.org/resource/84> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/84> .
+<http://example.org/resource/210> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/210> .
+<http://example.org/geometry/248> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2835478096235 34.41645219037651)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/431> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/431> .
+<http://example.org/resource/52> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/52> .
+<http://example.org/resource/186> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/186> .
+<http://example.org/geometry/294> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2056685414716 34.4943314585284)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/469> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2315424583384 34.468457541661614)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/108> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/108> .
+<http://example.org/geometry/216> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5484318970536 34.1515681029464)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/20> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/20> .
+<http://example.org/resource/154> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/154> .
+<http://example.org/geometry/262> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.23506041990933 34.46493958009067)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/437> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.37333741960762 34.32666258039238)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/329> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/329> .
+<http://example.org/geometry/483> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59349770414737 34.106502295852636)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/375> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/375> .
+<http://example.org/resource/122> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/122> .
+<http://example.org/geometry/230> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.56148240118299 34.13851759881701)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/405> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.58503106571335 34.11496893428665)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/451> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.22279276844964 34.47720723155037)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/343> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/343> .
+<http://example.org/geometry/4> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54410467157442 34.15589532842559)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/88> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.26633752430527 34.433662475694724)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/128> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.20583126183935 34.494168738160646)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/311> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/311> .
+<http://example.org/geometry/174> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55332166204866 34.14667833795134)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/349> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.41016586947896 34.289834130521044)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/56> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55180870031971 34.14819129968029)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/395> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.42852114458097 34.271478855419026)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/287> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/287> .
+<http://example.org/geometry/142> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54309501483147 34.156904985168545)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/317> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.56052099386011 34.1394790061399)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/24> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.28348727125407 34.41651272874592)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/209> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/209> .
+<http://example.org/geometry/363> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.27523349064897 34.42476650935103)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/70> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.57287264089405 34.12712735910596)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/255> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/255> .
+<http://example.org/geometry/110> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.49091023650342 34.20908976349658)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/476> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/476> .
+<http://example.org/geometry/331> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.50743302837002 34.192566971629994)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/97> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/97> .
+<http://example.org/resource/223> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/223> .
+<http://example.org/resource/19> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/19> .
+<http://example.org/resource/444> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/444> .
+<http://example.org/resource/65> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/65> .
+<http://example.org/resource/199> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/199> .
+<http://example.org/resource/490> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/490> .
+<http://example.org/geometry/229> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5094559620058 34.190544037994194)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/412> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/412> .
+<http://example.org/resource/33> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/33> .
+<http://example.org/resource/167> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/167> .
+<http://example.org/geometry/275> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4660107252116 34.23398927478841)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/496> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44833532258502 34.25166467741498)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/388> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/388> .
+<http://example.org/resource/135> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/135> .
+<http://example.org/geometry/243> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.383835832589 34.31616416741101)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/418> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.47398924863475 34.22601075136525)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/181> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/181> .
+<http://example.org/geometry/464> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.36998644076843 34.33001355923158)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/356> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/356> .
+<http://example.org/resource/103> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/103> .
+<http://example.org/geometry/211> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.53383170500014 34.16616829499986)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/432> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.27533878991198 34.42466121008802)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/324> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/324> .
+<http://example.org/geometry/187> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.49282911330822 34.20717088669179)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/370> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/370> .
+<http://example.org/geometry/69> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.241773441312 34.45822655868799)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/109> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.3303293559503 34.3696706440497)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/400> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54748096019281 34.15251903980719)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/155> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.30178021978087 34.39821978021914)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/37> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.25603227422148 34.44396772577852)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/376> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59241949863741 34.10758050136259)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/83> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.30273987788061 34.3972601221194)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/268> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/268> .
+<http://example.org/geometry/123> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4004841026383 34.2995158973617)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/489> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/489> .
+<http://example.org/geometry/344> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.58185243004624 34.11814756995377)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/236> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/236> .
+<http://example.org/geometry/51> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.43600836198026 34.26399163801974)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/390> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2222260998217 34.4777739001783)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/282> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/282> .
+<http://example.org/resource/457> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/457> .
+<http://example.org/geometry/312> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.3740561168956 34.3259438831044)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/78> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/78> .
+<http://example.org/resource/204> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/204> .
+<http://example.org/resource/250> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/250> .
+<http://example.org/resource/425> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/425> .
+<http://example.org/resource/46> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/46> .
+<http://example.org/geometry/288> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44815615034145 34.25184384965855)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/471> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/471> .
+<http://example.org/resource/92> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/92> .
+<http://example.org/resource/14> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/14> .
+<http://example.org/resource/148> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/148> .
+<http://example.org/geometry/256> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.52233763897178 34.177662361028226)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/60> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/60> .
+<http://example.org/resource/194> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/194> .
+<http://example.org/geometry/477> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.36573828694333 34.33426171305668)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/369> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/369> .
+<http://example.org/resource/116> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/116> .
+<http://example.org/geometry/224> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59403447054707 34.10596552945293)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/5> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/5> .
+<http://example.org/resource/162> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/162> .
+<http://example.org/geometry/270> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.28074361454216 34.419256385457835)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/445> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.28524306685068 34.41475693314933)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/337> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/337> .
+<http://example.org/geometry/491> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44242326733222 34.257576732667786)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/383> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/383> .
+<http://example.org/resource/130> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/130> .
+<http://example.org/geometry/413> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.35237072650693 34.34762927349306)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/305> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/305> .
+<http://example.org/geometry/168> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54796659004862 34.15203340995138)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/351> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/351> .
+<http://example.org/geometry/389> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.54516925161097 34.15483074838903)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/96> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.30978297349995 34.390217026500046)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/136> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.53225141949905 34.167748580500955)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/18> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.58507926124975 34.11492073875026)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/182> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.3381368964726 34.3618631035274)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/357> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.36846101968335 34.33153898031665)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/64> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.41338907772631 34.286610922273695)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/249> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/249> .
+<http://example.org/geometry/104> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.46308171524579 34.23691828475422)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/295> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/295> .
+<http://example.org/geometry/150> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2430489941566 34.45695100584341)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/325> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.23491252365562 34.46508747634438)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/217> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/217> .
+<http://example.org/geometry/32> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.28479040015172 34.41520959984828)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/371> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.31187365060688 34.38812634939312)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/263> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/263> .
+<http://example.org/resource/438> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/438> .
+<http://example.org/resource/59> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/59> .
+<http://example.org/resource/484> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/484> .
+<http://example.org/resource/231> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/231> .
+<http://example.org/resource/406> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/406> .
+<http://example.org/resource/27> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/27> .
+<http://example.org/geometry/269> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.51790345651207 34.18209654348794)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/452> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/452> .
+<http://example.org/resource/73> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/73> .
+<http://example.org/resource/129> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/129> .
+<http://example.org/geometry/237> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5869093812908 34.113090618709215)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/420> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/420> .
+<http://example.org/resource/41> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/41> .
+<http://example.org/resource/175> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/175> .
+<http://example.org/geometry/283> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.31903705623232 34.38096294376769)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/458> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.36176140738593 34.33823859261408)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/205> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.53263156793716 34.16736843206284)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/396> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/396> .
+<http://example.org/resource/143> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/143> .
+<http://example.org/geometry/251> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.41069069124272 34.28930930875728)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/426> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.37288920324535 34.32711079675465)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/318> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/318> .
+<http://example.org/geometry/472> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.20408710133051 34.495912898669495)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/364> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/364> .
+<http://example.org/resource/111> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/111> .
+<http://example.org/resource/0> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/0> .
+<http://example.org/geometry/149> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.48715701826485 34.21284298173515)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/440> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.20898954406444 34.491010455935566)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/332> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/332> .
+<http://example.org/geometry/195> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44538303263981 34.254616967360185)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/77> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.20207098131354 34.49792901868646)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/117> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.21727152373784 34.48272847626217)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/300> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/300> .
+<http://example.org/geometry/163> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.40508657057408 34.29491342942592)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/338> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.49690532133224 34.20309467866776)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/45> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.29503958248941 34.40496041751059)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/384> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.57310557637604 34.12689442362397)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/276> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/276> .
+<http://example.org/geometry/91> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59474611071857 34.10525388928142)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/131> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.56849074083513 34.13150925916487)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/306> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.48096356390937 34.21903643609063)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/13> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.28216608990614 34.417833910093854)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/497> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/497> .
+<http://example.org/geometry/352> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.57043226136672 34.12956773863329)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/244> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/244> .
+<http://example.org/resource/419> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/419> .
+<http://example.org/resource/290> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/290> .
+<http://example.org/resource/465> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/465> .
+<http://example.org/geometry/320> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.47492135435536 34.22507864564465)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/86> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/86> .
+<http://example.org/resource/212> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/212> .
+<http://example.org/resource/433> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/433> .
+<http://example.org/resource/54> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/54> .
+<http://example.org/resource/188> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/188> .
+<http://example.org/geometry/296> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.43206699486038 34.267933005139625)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/218> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44935985571249 34.250640144287516)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/401> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/401> .
+<http://example.org/resource/22> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/22> .
+<http://example.org/resource/156> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/156> .
+<http://example.org/geometry/264> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.43745198481294 34.262548015187065)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/439> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.34373408973029 34.35626591026971)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/485> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44661704187752 34.25338295812248)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/377> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/377> .
+<http://example.org/resource/124> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/124> .
+<http://example.org/geometry/232> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.48082998626505 34.219170013734946)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/407> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.57242887110802 34.12757112889199)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/170> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/170> .
+<http://example.org/geometry/453> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4593031049974 34.24069689500261)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/345> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/345> .
+<http://example.org/geometry/200> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.56544384391377 34.13455615608623)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/6> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.23371160845494 34.466288391545056)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/391> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/391> .
+<http://example.org/geometry/421> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.56152335975428 34.13847664024573)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/313> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/313> .
+<http://example.org/geometry/176> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.42152580956802 34.27847419043197)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/58> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.51206735637523 34.18793264362477)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/397> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.41725816731923 34.28274183268077)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/289> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/289> .
+<http://example.org/geometry/144> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.39635973635711 34.30364026364289)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/319> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.29091987254753 34.40908012745248)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/26> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.41272472689316 34.287275273106836)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/190> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.47472090552859 34.22527909447142)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/365> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.299006946257 34.40099305374301)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/72> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2800789736515 34.419921026348504)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/257> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/257> .
+<http://example.org/geometry/112> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.46292143002435 34.237078569975644)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/478> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/478> .
+<http://example.org/geometry/333> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59474507508172 34.105254924918285)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/99> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/99> .
+<http://example.org/geometry/40> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.51066308759675 34.18933691240325)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/225> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/225> .
+<http://example.org/resource/271> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/271> .
+<http://example.org/resource/446> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/446> .
+<http://example.org/resource/67> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/67> .
+<http://example.org/geometry/301> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.28438984669113 34.41561015330888)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/492> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/492> .
+<http://example.org/resource/414> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/414> .
+<http://example.org/resource/35> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/35> .
+<http://example.org/resource/169> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/169> .
+<http://example.org/geometry/277> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.42438703675165 34.27561296324835)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/460> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/460> .
+<http://example.org/resource/81> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/81> .
+<http://example.org/geometry/498> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.34272876807243 34.35727123192756)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/137> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/137> .
+<http://example.org/geometry/245> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.41359863902346 34.28640136097654)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/183> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/183> .
+<http://example.org/geometry/291> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.45400227808813 34.24599772191188)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/466> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2365188870567 34.4634811129433)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/358> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/358> .
+<http://example.org/resource/105> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/105> .
+<http://example.org/geometry/213> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.25854378865763 34.44145621134237)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/151> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/151> .
+<http://example.org/geometry/434> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.33502844213315 34.36497155786686)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/326> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/326> .
+<http://example.org/geometry/189> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.58831160198228 34.11168839801771)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/480> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.20121796164251 34.4987820383575)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/372> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/372> .
+<http://example.org/geometry/402> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44087882356655 34.25912117643346)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/157> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.27703627731971 34.422963722680294)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/340> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/340> .
+<http://example.org/geometry/39> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.35177732338995 34.34822267661005)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/1> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.2099016239138 34.49009837608621)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/378> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44783220401409 34.25216779598591)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/85> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.55990235165292 34.14009764834707)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/125> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.37977775881784 34.32022224118217)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/171> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.30167773477895 34.39832226522106)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/346> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.21711223198422 34.48288776801579)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/53> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.27987789975695 34.42012210024305)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/238> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/238> .
+<http://example.org/geometry/392> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5441441972597 34.1558558027403)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/284> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/284> .
+<http://example.org/resource/459> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/459> .
+<http://example.org/geometry/314> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.29531415590061 34.40468584409938)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/206> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/206> .
+<http://example.org/geometry/21> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.47861292015735 34.22138707984265)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/360> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.42695551158447 34.27304448841554)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/252> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/252> .
+<http://example.org/resource/427> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/427> .
+<http://example.org/resource/48> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/48> .
+<http://example.org/resource/473> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/473> .
+<http://example.org/resource/94> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/94> .
+<http://example.org/resource/220> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/220> .
+<http://example.org/resource/16> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/16> .
+<http://example.org/geometry/258> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.47516873181806 34.22483126818195)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/441> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/441> .
+<http://example.org/resource/62> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/62> .
+<http://example.org/resource/196> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/196> .
+<http://example.org/geometry/479> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.40010114981422 34.29989885018579)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/118> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/118> .
+<http://example.org/geometry/226> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.32801059709384 34.371989402906166)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/7> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/7> .
+<http://example.org/resource/30> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/30> .
+<http://example.org/resource/164> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/164> .
+<http://example.org/geometry/272> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.26947160945743 34.43052839054258)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/447> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.47824293469148 34.22175706530853)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/339> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/339> .
+<http://example.org/geometry/493> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.35526432066341 34.344735679336594)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/385> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/385> .
+<http://example.org/resource/132> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/132> .
+<http://example.org/geometry/240> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.44074263219383 34.25925736780617)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/415> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.41726769000348 34.28273230999652)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/307> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/307> .
+<http://example.org/geometry/461> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.36494768958642 34.33505231041359)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/353> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/353> .
+<http://example.org/resource/100> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/100> .
+<http://example.org/geometry/98> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.39271592383453 34.30728407616548)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/138> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.35336255634304 34.34663744365696)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/321> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/321> .
+<http://example.org/geometry/184> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.5936958249047 34.1063041750953)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/359> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.25738681326311 34.44261318673689)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/66> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.30661571220041 34.39338428779959)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/106> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.42897345582665 34.27102654417336)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/297> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/297> .
+<http://example.org/geometry/152> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.48328834397361 34.21671165602638)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/327> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.4005782881441 34.2994217118559)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/34> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.43253358924102 34.26746641075898)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/219> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/219> .
+<http://example.org/geometry/373> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.56343907243075 34.13656092756925)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/265> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/265> .
+<http://example.org/geometry/80> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.34175124175694 34.35824875824306)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/120> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.30769101227115 34.39230898772885)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/486> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/486> .
+<http://example.org/geometry/341> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.34195558810453 34.35804441189548)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/233> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/233> .
+<http://example.org/resource/408> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/408> .
+<http://example.org/resource/29> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/29> .
+<http://example.org/resource/454> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/454> .
+<http://example.org/resource/75> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/75> .
+<http://example.org/resource/201> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/201> .
+<http://example.org/geometry/239> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.46998301288448 34.230016987115526)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/422> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/422> .
+<http://example.org/resource/43> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/43> .
+<http://example.org/resource/177> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/177> .
+<http://example.org/geometry/285> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.20786502347089 34.492134976529115)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/207> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.30436483823347 34.39563516176654)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/11> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/11> .
+<http://example.org/resource/398> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/398> .
+<http://example.org/resource/145> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/145> .
+<http://example.org/geometry/253> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.26191114200974 34.43808885799027)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/geometry/428> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-83.59157672060263 34.10842327939738)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+<http://example.org/resource/191> <http://www.opengis.net/ont/geosparql#hasGeometry> <http://example.org/geometry/191> .

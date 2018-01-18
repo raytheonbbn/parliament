@@ -1,0 +1,18 @@
+
+import os ;
+
+constant LinuxDistro : [ os.environ LINUX_DISTRO ] ;
+
+constant FLAGS_ubuntu16 : <cxxflags>"-std=c++14 -Wall" <linkflags>"-std=c++14" ;
+constant FLAGS_ubuntu17 : <cxxflags>"-std=c++14 -Wall" <linkflags>"-std=c++14" ;
+constant FLAGS_centos   : <cxxflags>"-std=c++11 -Wall" <linkflags>"-std=c++11" ;
+
+
+
+# Toolset declarations (the first one is the default):
+
+using gcc
+	: # version
+	: # c++-compile-command
+	: $(FLAGS_$(LinuxDistro))
+	;

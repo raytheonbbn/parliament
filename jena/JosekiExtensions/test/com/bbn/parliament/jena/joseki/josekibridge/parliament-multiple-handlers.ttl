@@ -1,0 +1,33 @@
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix par:   <http://parliament.semwebcentral.org/parliament-config#> .
+@prefix :      <http://parliament.semwebcentral.org/parliament-config-example#> .
+
+[]
+   a par:Configuration ;
+   par:configurationHandler :handler1 ;
+   par:configurationHandler :handler2 ;
+   par:configurationHandler :handler3 ;
+   par:indexHandler :indexHandler .
+
+
+:indexHandler
+   a par:IndexProcessorConfigurationHandler ;
+   par:processorClass "com.bbn.parliament.jena.graph.index.temporal.TemporalIndexProcessor"^^xsd:string .
+
+:handlerType
+   rdfs:subClassOf par:ConfigurationHandler ;
+   par:implementationClass "com.bbn.parliament.jena.joseki.josekibridge.TestHandler"^^xsd:string .
+
+
+
+:handler1
+   a :handlerType .
+
+:handler2
+   a :handlerType .
+
+:handler3
+   a :handlerType .

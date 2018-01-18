@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<project name="Swrl2Sesame" default="jar">
+	<description>SWRL to Sesame conversion</description>
+
+	<import file="${basedir}/../../build-common.xml"/>
+
+	<property name="binDir" value="${targetDir}/bin/${ant.project.name}"/>
+	<property name="jarFile" value="${artifactsDir}/${ant.project.name}.jar"/>
+
+	<target name="buildDependencies">
+		<ant dir="${basedir}/../ParliamentSail" target="jar" inheritAll="false"/>
+	</target>
+
+	<target name="compile" depends="buildDependencies, resolve">
+		<mkdir dir="${binDir}"/>
+		<javac srcdir="${basedir}/src" destdir="${binDir}" debug="on" deprecation="on"
+				includeAntRuntime="false">
+			<classpath>
+				<fileset dir="${artifactsDir}" includes="ParliamentSail.jar"/>
+				<fileset dir="${basedir}/lib/default" includes="*.jar"/>
+				<fileset dir="${parliamentDependenciesDir}/swrl-jaxb" includes="swrl-jaxb.jar"/>
+			</classpath>
+			<compilerarg value="-Xlint:all"/>
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${artifactsDir}"/>
+		<jar destfile="${jarFile}" basedir="${binDir}"/>
+	</target>
+
+	<target name="clean">
+		<delete dir="${binDir}"/>
+		<delete dir="${baseDir}/lib"/>
+	</target>
+
+	<target name="xjc">
+		<mkdir dir="${binDir}/swrlx-jaxb"/>
+		<java classname="com.sun.tools.internal.xjc.Driver" fork="true" dir="${basedir}">
+			<arg value="-d"/>
+			<arg file="${binDir}/swrlx-jaxb"/>
+			<arg value="-extension"/>
+			<arg file="${basedir}/swrlx.xsd"/>
+			<arg value="-b"/>
+			<arg file="${basedir}/swrlx-jaxb-bindings.xml"/>
+		</java>
+	</target>
+
+	<target name="xjc-help">
+		<mkdir dir="${binDir}/swrlx-jaxb"/>
+		<java classname="com.sun.tools.internal.xjc.Driver" fork="true" dir="${basedir}">
+			<arg value="-help"/>
+		</java>
+	</target>
+</project>

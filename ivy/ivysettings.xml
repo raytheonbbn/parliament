@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ivysettings>
+	<property name="ivy.ssh.keyfile" value="${ivy.default.ivy.user.dir}/loki.keyfile"/>
+	<property name="ivy.retrieve.pattern" value="${ivy.lib.dir}/[conf]/[artifact]-[revision].[ext]"/>
+	<property name="httpclient-cache.version" value="4.3.6"/>
+	<property name="httpclient.version" value="4.3.6"/>
+	<property name="httpcore.version" value="4.3.3"/>
+
+	<!-- If no resolver is specified, use the default chain -->
+	<settings defaultResolver="default"/>
+
+	<!-- Creates the 'public' resolver for http://repo1.maven.org/maven2/ -->
+	<include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
+
+	<!-- Creates the default 'shared' resolver -->
+	<!-- include url="${ivy.default.settings.dir}/ivysettings-shared.xml"/ -->
+
+	<!-- Creates the 'local' resolver which is ${user.home}/.ivy2/local -->
+	<include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>
+
+	<!-- Creates the default 'main' chain resolver -->
+	<!-- include url="${ivy.default.settings.dir}/ivysettings-main-chain.xml"/ -->
+
+	<!-- Creates the default 'default' chain resolver -->
+	<!-- include url="${ivy.default.settings.dir}/ivysettings-default-chain.xml"/ -->
+
+	<resolvers>
+		<!-- Read-only Repository on tools.ke.bbn.com -->
+		<url name="tools-ke">
+			<ivy pattern="http://tools.ke.bbn.com/ivy-public/[organisation]/[module]/[revision]/ivys/ivy.xml"/>
+			<artifact pattern="http://tools.ke.bbn.com/ivy-public/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]"/>
+		</url>
+
+		<!-- Writeable Repository on tools.ke.bbn.com -->
+		<sftp name="tools-ke-publish" user="${user.name}" keyFile="${ivy.ssh.keyfile}" host="tools.ke.bbn.com">
+			<ivy pattern="/var/www/html/ivy-public/[organisation]/[module]/[revision]/ivys/ivy.xml"/>
+			<artifact pattern="/var/www/html/ivy-public/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]"/>
+		</sftp>
+
+		<ibiblio name="geotools" m2compatible="true"
+			root="http://download.osgeo.org/webdav/geotools/"/>
+
+		<chain name="main" returnFirst="true">
+			<resolver ref="tools-ke"/>
+			<resolver ref="geotools"/>
+			<resolver ref="public"/>
+		</chain>
+
+		<!-- Chain resolver that says to check local first, then try tools-ke -->
+		<chain name="default" returnFirst="true">
+			<resolver ref="local"/>
+			<resolver ref="main"/>
+		</chain>
+	</resolvers>
+</ivysettings>

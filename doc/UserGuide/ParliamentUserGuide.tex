@@ -1,0 +1,99 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = XeLaTeX
+% !TEX root = ParliamentUserGuide.tex
+% !TEX useTabsWithFiles
+% !TEX tabbedFile{Introduction.tex}
+% !TEX tabbedFile{DeployingAndUsing.tex}
+% !TEX tabbedFile{Building.tex}
+% !TEX tabbedFile{Appendices.tex}
+
+%TODO: Install Ivy to be available by default within ant
+%TODO: Download X zip files, unzip, set PARLIAMENT_DEPENDENCIES
+%TODO: Create .project in that location with name X
+%TODO: Install Ivy (http://ant.apache.org/ivy/history/latest-milestone/install.html).  Easiest:  Download with-dependencies, unzip, copy all jars into ant's lib directory or ~/.ant/lib.  On Centos:  Use package manager.  http://ant.apache.org/ivy/history/latest-milestone/install.html
+
+\documentclass[12pt,letterpaper,openany,oneside,draft]{book}
+
+\usepackage{parskip}				% Begin paragraphs with empty line, not indent
+\usepackage{color}
+\usepackage{titling}
+\usepackage{fnpct}
+%\usepackage{acro}
+\usepackage[final]{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{relsize}
+%\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{amssymb}
+%\usepackage{tikz}
+\usepackage{path}
+\usepackage{dirtree}
+%\usepackage{xifthen}
+%\usepackage[style=numeric,backref]{biblatex}
+\usepackage{fontspec,xltxtra,xunicode}
+\usepackage{unicode-math}
+\usepackage[final]{hyperref}	% Should be the last use-package command
+
+\newcommand{\headingrule}{\midrule[\heavyrulewidth]}
+\newcommand{\urlcite}[1]{\footnote{\url{#1}}}
+%\newcommand{\pmnt}{\texorpdfstring
+%	{Parliament\raisebox{0.7ex}{\textsmaller[2]{\texttrademark}}}
+%	{Parliament}}
+\newcommand{\pmnt}{Parliament}
+
+\title{\pmnt{} User Guide}
+\author{Ian Emmons}
+\date{\today}
+
+\defaultfontfeatures{Mapping=tex-text}
+\setmainfont{Georgia}
+%\setmainfont[Numbers=Uppercase]{TeX Gyre Termes}
+%\setmainfont[Numbers=Uppercase]{Constantia}
+\setsansfont{Candara}[Scale=MatchLowercase]
+%\setsansfont{Corbel}[Scale=MatchLowercase]
+%\setsansfont[Scale=MatchLowercase]{TeX Gyre Heros}
+%\setmonofont[Scale=MatchLowercase,Mapping=]{Menlo}
+\setmonofont[Scale=MatchLowercase,Mapping=]{Consolas}
+%\setmathfont{STIX Math}
+\setmathfont{Cambria Math}
+
+\pagestyle{headings}
+
+\definecolor{hyperlinkcolor}{rgb}{0,0,0.625}
+\hypersetup{
+	final=true,
+	unicode=true,
+	bookmarksnumbered=true,
+	pdftitle={Parliament User Guide},
+	pdfauthor={\theauthor},
+	colorlinks=true,
+	allcolors=hyperlinkcolor
+}
+
+%\bibliography{references}
+
+\hyphenation{da-ta-base da-ta-bas-es}
+\hyphenation{serv-let serv-lets}
+
+\begin{document}
+
+\frontmatter
+\maketitle
+\tableofcontents
+\listoffigures
+\listoftables
+\mainmatter
+
+\input{Introduction.tex}
+\input{DeployingAndUsing.tex}
+\input{Building.tex}
+
+\appendix
+\input{Appendices.tex}
+
+\backmatter
+%\printbibliography
+\end{document}

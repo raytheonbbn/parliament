@@ -1,0 +1,119 @@
+@prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:	<http://www.w3.org/2002/07/owl#> .
+@prefix xsd:	<http://www.w3.org/2001/XMLSchema#> .
+@prefix par:	<http://parliament.semwebcentral.org/parliament-config#> .
+@prefix :		<http://parliament.semwebcentral.org/parliament-config-example#> .
+
+[]
+	a par:Configuration ;
+	par:deferredFileOutputStreamThreshold "10485760"^^xsd:int ;
+	par:prefixes (
+		[
+			par:prefix "rdf";
+			par:uri <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+		]
+		[
+			par:prefix "rdfs";
+			par:uri <http://www.w3.org/2000/01/rdf-schema#>
+		]
+		[
+			par:prefix "owl";
+			par:uri <http://www.w3.org/2002/07/owl#>
+		]
+		[
+			par:prefix "xsd";
+			par:uri <http://www.w3.org/2001/XMLSchema#>
+		]
+		[
+			par:prefix "xml";
+			par:uri <http://www.w3.org/XML/1998/namespace>
+		]
+		[
+			par:prefix "fn";
+			par:uri <http://www.w3.org/2005/xpath-functions#>
+		]
+		[
+			par:prefix "afn";
+			par:uri <http://jena.hpl.hp.com/ARQ/function#>
+		]
+		[
+			par:prefix "par";
+			par:uri <http://parliament.semwebcentral.org/parliament#>
+		]
+		[
+			par:prefix "dc" ;
+			par:uri <http://purl.org/dc/elements/1.1/>
+		]
+		[
+			par:prefix "ja" ;
+			par:uri <http://jena.hpl.hp.com/2005/11/Assembler#>
+		]
+		[
+			par:prefix "rss" ;
+			par:uri <http://purl.org/rss/1.0/>
+		]
+		[
+			par:prefix "vcard" ;
+			par:uri <http://www.w3.org/2001/vcard-rdf/3.0#>
+		]
+		[
+			par:prefix "dul" ;
+			par:uri <http://www.loa-cnr.it/ontologies/DUL.owl#>
+		]
+		[
+			par:prefix "skos" ;
+			par:uri <http://www.w3.org/2004/02/skos/core#>
+		]
+		[
+			par:prefix "ssn" ;
+			par:uri <http://purl.oclc.org/NET/ssnx/ssn#>
+		]
+		[
+			par:prefix "time" ;
+			par:uri <http://www.w3.org/2006/time#>
+		]
+		[
+			par:prefix "pt" ;
+			par:uri <http://bbn.com/ParliamentTime#>
+		]
+		[
+			par:prefix "ogc" ;
+			par:uri <http://www.opengis.net/>
+		]
+		[
+			par:prefix "geo" ;
+			par:uri <http://www.opengis.net/ont/geosparql#>
+		]
+		[
+			par:prefix "geof" ;
+			par:uri <http://www.opengis.net/def/function/geosparql/>
+		]
+		[
+			par:prefix "geor" ;
+			par:uri <http://www.opengis.net/def/rule/geosparql/>
+		]
+		[
+			par:prefix "sf" ;
+			par:uri <http://www.opengis.net/ont/sf#>
+		]
+		[
+			par:prefix "gml" ;
+			par:uri <http://www.opengis.net/ont/gml#>
+		]
+	) ;
+	par:indexHandler :indexHandler .
+
+:indexHandler
+	a par:IndexProcessorConfigurationHandler ;
+	# change to true to enable indexing whenever a graph is created
+	par:enabledByDefault "false"^^xsd:boolean ;
+	par:index [
+		par:processorFactoryClass "com.bbn.parliament.jena.graph.index.spatial.SpatialIndexFactory"^^xsd:string ;
+		par:indexType "RTree"^^xsd:string ;
+		par:geoSPARQL "true"^^xsd:boolean
+	] ;
+	par:index [
+		par:processorFactoryClass "com.bbn.parliament.jena.graph.index.temporal.TemporalIndexFactory"^^xsd:string ;
+		par:indexType "bdb"^^xsd:string ;
+	].

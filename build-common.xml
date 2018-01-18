@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+// Parliament is licensed under the BSD License from the Open Source
+// Initiative, http://www.opensource.org/licenses/bsd-license.php
+//
+// Copyright (c) 2001-2009, BBN Technologies, Inc.
+// All rights reserved.
+-->
+
+<project name="CommonBuildScriptElements" xmlns:ivy="antlib:org.apache.ivy.ant">
+	<description>
+		Common build script elements.
+		Depends on the property "kbRootDir" (and no others).
+	</description>
+
+	<property environment="env"/>
+	<dirname property="kbRootDir" file="${ant.file.CommonBuildScriptElements}"/>
+	<property name="targetDir" value="${kbRootDir}/target"/>
+	<property name="artifactsDir" value="${targetDir}/artifacts"/>
+	<property name="reportsDir" value="${targetDir}/reports"/>
+	<property name="ivyDir" location="${kbRootDir}/ivy"/>
+	<property name="parliamentDependenciesDir" location="${env.PARLIAMENT_DEPENDENCIES}"/>
+
+	<property name="deployableServersFile" value="${targetDir}/bin/DeployableServerDirs.txt"/>
+	<property name="antRunnableServersFile" value="${targetDir}/bin/AntRunnableServerDirs.txt"/>
+	<property name="testConfigFile" value="${targetDir}/test-bin/ParliamentConfig.txt"/>
+
+	<!-- Include ant-contrib -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<fileset dir="${parliamentDependenciesDir}/ant-contrib" includes="ant-contrib-*.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- Load Ivy setting file -->
+	<ivy:settings file="${ivyDir}/ivysettings.xml"/>
+
+	<target name="resolveUpToDateCheck">
+		<uptodate property="isResolveUpToDate" srcfile="ivy.xml"
+			targetfile="lib/LastResolvePerformedAt.txt"/>
+	</target>
+
+	<target name="resolve" depends="resolveUpToDateCheck" unless="isResolveUpToDate">
+		<ivy:retrieve type="jar,bundle"/>
+		<touch file="lib/LastResolvePerformedAt.txt" mkdirs="true"/>
+	</target>
+
+	<target name="report" depends="resolve">
+		<ivy:report todir="${reportsDir}/ivy"/>
+	</target>
+
+	<target name="clean-cache">
+		<ivy:cleancache/>
+	</target>
+
+	<!-- Compute the Parliament version -->
+	<loadfile property="parliamentVersion"
+		srcFile="${kbRootDir}/Parliament/KbCore/parliament/Version.h">
+		<filterchain>
+			<tokenfilter delimoutput="">
+				<containsregex
+					pattern="^.*PARLIAMENT_VERSION_STRING[ \t]*&quot;([0-9\.]+)\.0&quot;.*$"
+					replace="\1"/>
+				<trim/>
+				<ignoreblank/>
+			</tokenfilter>
+		</filterchain>
+	</loadfile>
+
+	<!-- Compute the Parliament release platform name -->
+	<!-- The test for Ubuntu Linux below isn't specific enough.  How do we improve it? -->
+	<!--condition property="parliamentReleasePlatformName" value="Windows">
+		<os family="winnt"/>
+	</condition>
+	<condition property="parliamentReleasePlatformName" value="Macintosh">
+		<os family="mac"/>
+	</condition>
+	<condition property="parliamentReleasePlatformName" value="UbuntuLinux">
+		<and>
+			<os family="unix"/>
+			<not><os family="mac"/></not>
+		</and>
+	</condition>
+	<condition property="parliamentReleasePlatformName" value="UnknownPlatform">
+		<not><isset property="parliamentReleasePlatformName"/></not>
+	</condition-->
+
+	<!-- Get the default toolset for the Mac platform (used only during Mac builds) -->
+	<condition property="defaultMacToolset" value="darwin" else="clang">
+		<equals arg1="${env.BOOST_MAC_TOOLSET}" arg2="darwin"/>
+	</condition>
+
+	<!-- Load the appropriate properties file -->
+	<condition property="buildPropFile"
+			value="${kbRootDir}/build.properties"
+			else="${kbRootDir}/build.properties.default">
+		<available file="${kbRootDir}/build.properties"/>
+	</condition>
+	<property file="${buildPropFile}"/>
+
+	<target name="buildDeployableServerList">
+		<!-- Extract the list of deployable server dirs from the file left by the native build -->
+		<propertyregex property="escapedTargetDir"
+			input="${targetDir}"
+			regexp="\\"
+			replace="/"
+			casesensitive="false"
+			defaultValue="${targetDir}"/>
+		<loadfile property="deployableServerList" srcFile="${deployableServersFile}">
+			<filterchain>
+				<sortfilter/>
+				<tokenfilter delimoutput="|">
+					<trim/>
+					<ignoreblank/>
+					<uniqfilter/>
+					<replaceregex pattern="^(.*)$" replace="${escapedTargetDir}/\1" flags="s"/>
+				</tokenfilter>
+			</filterchain>
+		</loadfile>
+		<loadfile property="antRunnableServerList" srcFile="${antRunnableServersFile}">
+			<filterchain>
+				<sortfilter/>
+				<tokenfilter delimoutput="|">
+					<trim/>
+					<ignoreblank/>
+					<uniqfilter/>
+					<replaceregex pattern="^(.*)$" replace="${escapedTargetDir}/\1" flags="s"/>
+				</tokenfilter>
+			</filterchain>
+		</loadfile>
+	</target>
+
+	<target name="createTestConfig">
+		<copy todir="${targetDir}/test-bin" preservelastmodified="true" flatten="true"
+			file="${kbRootDir}/Parliament/KbCore/ParliamentConfig.txt"/>
+		<replace file="${testConfigFile}"
+			token="logToConsole             = yes"
+			value="logToConsole             = no"/>
+	</target>
+</project>

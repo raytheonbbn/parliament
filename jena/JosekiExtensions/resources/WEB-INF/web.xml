@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app
+	id="Parliament"
+	version="2.5"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xmlns="http://java.sun.com/xml/ns/javaee">
+
+	<display-name>Parliament</display-name>
+
+	<servlet>
+		<servlet-name>ParliamentServlet</servlet-name>
+		<servlet-class>com.bbn.parliament.jena.joseki.bridge.servlet.ParliamentServlet</servlet-class>
+		<init-param>
+			<param-name>parliament.config</param-name>
+			<param-value>conf/parliament-config.ttl</param-value>
+		</init-param>
+		<init-param>
+			<param-name>org.joseki.rdfserver.config</param-name>
+			<param-value>conf/joseki-config.ttl</param-value>
+		</init-param>
+		<load-on-startup>10</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>BulkServlet</servlet-name>
+		<servlet-class>com.bbn.parliament.jena.joseki.bridge.servlet.BulkServlet</servlet-class>
+		<load-on-startup>20</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>TrackerServlet</servlet-name>
+		<servlet-class>com.bbn.parliament.jena.joseki.bridge.servlet.TrackerServlet</servlet-class>
+		<load-on-startup>20</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ParliamentServlet</servlet-name>
+		<url-pattern>/sparql/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>BulkServlet</servlet-name>
+		<url-pattern>/bulk/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>TrackerServlet</servlet-name>
+		<url-pattern>/tracker</url-pattern>
+	</servlet-mapping>
+
+	<filter>
+		<filter-name>XSLTFilter</filter-name>
+		<filter-class>com.bbn.parliament.jena.joseki.bridge.servlet.XSLTFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>XSLTFilter</filter-name>
+		<servlet-name>ParliamentServlet</servlet-name>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>HeadersFilter</filter-name>
+		<filter-class>com.bbn.parliament.jena.joseki.bridge.servlet.HeadersFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>HeadersFilter</filter-name>
+		<servlet-name>ParliamentServlet</servlet-name>
+	</filter-mapping>
+</web-app>

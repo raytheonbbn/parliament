@@ -1,0 +1,59 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix snap: <http://www.ifomis.org/bfo/1.0/snap#> .
+@prefix span: <http://www.ifomis.org/bfo/1.0/span#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix georss: <http://www.georss.org/georss/> .
+@prefix gml: <http://www.opengis.net/gml/> .
+
+@prefix : <http://parliament.semwebcentral.org/spatial/examples#> .
+
+<http://parliament.semwebcentral.org/spatial/examples>
+  a owl:Ontology ;
+  owl:versionInfo "$Rev$" ;
+  rdfs:label "Example Spatial Ontology" .
+
+:SpatialThing
+  a owl:Class ;
+  rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty georss:where ;
+    owl:cardinality 1
+  ] .
+
+:SpatialPoint
+  rdfs:subClassOf :SpatialThing ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:onProperty georss:where ;
+      owl:allValuesFrom gml:Point
+  ] .
+
+:SpatialRegion
+  rdfs:subClassOf :SpatialThing ;
+  rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty georss:where ;
+    owl:allValuesFrom gml:Polygon
+  ] .
+
+:Campus rdfs:subClassOf :SpatialRegion .
+:Building rdfs:subClassOf :SpatialPoint .
+
+:Car
+  rdfs:subClassOf :SpatialPoint ;
+  rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty :range ;
+    owl:cardinality 1
+  ] ;
+  rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty :range ;
+    owl:allValuesFrom xsd:double
+  ] .
+
+:range a owl:DatatypeProperty .

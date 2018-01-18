@@ -1,0 +1,304 @@
+body {
+    font-family: Verdana, Arial, Helvetica, sans-serif ;
+    font-size: 10pt ;
+    line-height: 18pt ;
+    color: black;
+    background: white ;
+    margin: 0 ;
+}
+
+p { margin-left: 2% ; margin-right: 2% ; }
+
+/* Makes lists a little tighter
+li { line-height: 14pt ; }
+*/
+
+table {
+  font-family: Verdana, Arial, sans-serif ;
+  font-size: 90%;
+  padding: 4px;
+  border-style: none;
+}
+
+td {
+    font-size: 90%;
+    padding: 0px;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-style: solid;
+    border-width: 0px;
+    border-color: #D0F0B0;
+/*    background-color: #DFF0C0; */
+}
+
+.op-list {
+    padding: 0px;
+/*    border: 1px solid #000; */
+    margin-bottom: 0px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+/*    background: #CADFF4; */
+    background: #B3BCC6;
+}
+
+.op-list h2 {
+    margin-top: 0px;
+	 margin-bottom: 0px;
+    padding-left: 1ex;
+    padding-right: 1ex;
+    display: inline;
+    color:#000;
+    background: #B3BCC6;
+    font-size: 105%;
+}
+
+.op-list h2:after {
+    content: ":";
+}
+
+.op-list h3 {
+    margin-top: 0px;
+	 margin-bottom: 0px;
+    padding-left: 1ex;
+    padding-right: 1ex;
+    display: inline;
+    color:#000;
+    background: #B3BCC6;
+    font-size: 105%;
+}
+
+.op-list ul {
+    margin-left: 0;
+    padding-left: 0;
+    display: inline;
+}
+
+.op-list ul li {
+    margin-left: 0;
+    padding: 4px 15px;
+/*    border-left: 1px solid #000; */
+    list-style: none;
+    display: inline;
+}
+
+.op-list A:link {       /* for unvisited links */
+	text-decoration: none;
+	color: rgb(0, 0, 200);
+}
+.op-list A:visited {       /* for visited links */
+	text-decoration: none;
+	color: rgb(0, 0, 200);
+}
+.op-list A:hover {       /* when mouse is over link */
+	text-decoration: underline ;
+	color: rgb(255, 0, 0);
+}
+
+.box
+{ margin-left :     5% ;
+  margin-right :    5% ;
+  border:           solid ;
+  border-width:     thin;
+  background-color: #F0F0F0;
+  padding:          2mm;
+  page-break-inside: avoid ;
+}
+
+.noindent     { margin-left: -5% ; margin-right: -5%; }
+.moreindent   { margin-left:  5% ; margin-right:  5%; }
+
+
+.queryForm {
+	background-color: #F0F0F0 ;
+	margin-top: -5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+/* Use this for the document title as displayed on the page at the top. */
+
+
+h1 {
+    text-align:center ;
+    font-size: 14pt;
+    line-height: 24pt ;
+    font-weight: bold;
+    color:#000;
+    background:#CADFF4;
+    padding: 0 ;
+    margin: 0 ;
+    padding-left: 1ex;
+    padding-right: 1ex;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align:center;
+}
+
+h2 {
+    font-size: 12pt;
+    line-height: 16pt ;
+    font-size: 110%;
+    font-weight: bold;
+    color: #003399;
+    background:#CADFF4;
+    margin-bottom:5px;
+    padding-left: 1ex;
+    padding-right: 1ex;
+}
+
+h3 {
+    font-size: 12pt;
+    line-height: 16pt ;
+    font-size: 110%;
+    font-weight: bold;
+    color: #003399;
+/*    background:#CADFF4;*/
+    margin-bottom:5px;
+    padding-left: 1ex;
+    padding-right: 1ex;
+}
+
+h4, h5 {
+    font-size: 100%;
+    font-weight: bold;
+    margin-bottom:3px;
+}
+
+ul { list-style-type: disc }
+dt { font-weight: bold }
+
+/* Change background/foreground colour on hover */
+
+A:link { color: rgb(0, 0, 255) }        /* for unvisited links */
+A:hover { color: rgb(255, 0, 0) }       /* when mouse is over link */
+
+/* No extra space between paragraphs : inherits from body */
+pre {
+    font-family: monospace;
+    font-size: 10pt ;
+    line-height: 14pt ;
+/*    margin-top: 1 ;
+    margin-bottom: 1 ;*/
+    margin-left: 5ex ;
+    }
+
+/* Some general utility definitions */
+.centered {
+    text-align: center;
+}
+
+.caption {
+    text-align: center;
+    font-size: smaller;
+}
+
+code {
+    font-size: 10pt;
+}
+
+.footnote {
+    font-size: smaller;
+    border-top: thin solid gray;
+}
+
+#queries ul {
+	list-style-type: none;
+
+}
+
+#queries ul li.trackerId {
+	background-color: #CADFF4;
+	color: #003399;
+}
+
+.trackerMetaDataType {
+	font-weight: bold;
+	color: red;
+}
+#queries ul li pre {
+	background-color: #f0f0f0;
+	margin-left: 0px;
+}
+
+.infobox {
+	background-color: #F0F0F0 ;
+}
+
+#indexes {
+
+	margin-left: 10px;
+	border-spacing: 0px;
+
+
+/*
+	border-collapse: collapse;
+	border-spacing: 0px;
+		background-color: #f0f0f0;
+	border-width: 1px;
+	border-style: solid;
+	border-color: black;
+	*/
+}
+
+#indexes th {
+	text-align: left;
+	font-weight: bold;
+	padding-left: 20px;
+}
+
+#indexes tr.alternate {
+	background-color: #f0f0f0;
+}
+
+#indexes td {
+	text-align: left;
+	vertical-align: top;
+}
+
+#indexes td.count {
+	text-align: right;
+}
+
+#indexes td.action {
+	padding-left: 25px;
+}
+
+.disabled {
+	color: #c0c0c0;
+	font-style: italic;
+}
+
+#graph_list table {
+	margin-left: 10px;
+	border-spacing: 0px;
+    font-family: Verdana, Arial, sans-serif ;
+    font-size: 90%;
+    padding: 4px;
+    border-style: none
+}
+
+#graph_list table  th {
+    font-size: 90%;
+    color: black;
+    padding: 0px;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-style: none;
+    border-width: 0px;
+    background-color: transparent;
+}
+
+#graph_list table td {
+	    font-size: 90%;
+    padding: 2px;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-style: solid;
+    border-width: 0px;
+    border-color: #D0F0B0;
+    background-color: transparent;
+}
+
+#graph_list table tr.alternate {
+	background-color: #f0f0f0;
+}

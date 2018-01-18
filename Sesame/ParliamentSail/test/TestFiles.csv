@@ -1,0 +1,17 @@
+# number of instances,url,format,analysis,remote kb?,whether to load the kb
+# format should be one of 'RDFXML', 'NTRIPLES', 'N3', 'TURTLE'
+1000,file:///C:/Temp/frumpy-test-data/1K-instances.nt,TURTLE,http://bbn.com/frumpy-ont#Analysis-Analysis_Test_Analysis-1000,true,TRUE
+2000,file:///C:/Temp/frumpy-test-data/2K-instances.nt,TURTLE,http://bbn.com/frumpy-ont#Analysis-Analysis_Test_Analysis-2000,true,TRUE
+4000,file:///C:/Temp/frumpy-test-data/4K-instances.nt,TURTLE,http://bbn.com/frumpy-ont#Analysis-Analysis_Test_Analysis-4000,true,TRUE
+8000,file:///C:/Temp/frumpy-test-data/8K-instances.nt,TURTLE,http://bbn.com/frumpy-ont#Analysis-Analysis_Test_Analysis-8000,true,TRUE
+16000,file:///C:/Temp/frumpy-test-data/16K-instances.nt,TURTLE,http://bbn.com/frumpy-ont#Analysis-Analysis_Test_Analysis-16000,true,TRUE
+32000,file:///C:/Temp/frumpy-test-data/32K-instances.nt,TURTLE,http://bbn.com/frumpy-ont#Analysis-Analysis_Test_Analysis-32000,true,TRUE
+64000,file:///C:/Temp/frumpy-test-data/64K-instances.nt,TURTLE,http://bbn.com/frumpy-ont#Analysis-Analysis_Test_Analysis-64000,true,TRUE
+# Local tests
+1000,file:///C:/Temp/frumpy-test-data/1K-instances.nt,TURTLE,http://bbn.com/frumpy-ont#Analysis-Analysis_Test_Analysis-1000,false,TRUE
+2000,file:///C:/Temp/frumpy-test-data/2K-instances.nt,TURTLE,http://bbn.com/frumpy-ont#Analysis-Analysis_Test_Analysis-2000,false,TRUE
+4000,file:///C:/Temp/frumpy-test-data/4K-instances.nt,TURTLE,http://bbn.com/frumpy-ont#Analysis-Analysis_Test_Analysis-4000,false,TRUE
+8000,file:///C:/Temp/frumpy-test-data/8K-instances.nt,TURTLE,http://bbn.com/frumpy-ont#Analysis-Analysis_Test_Analysis-8000,false,TRUE
+16000,file:///C:/Temp/frumpy-test-data/16K-instances.nt,TURTLE,http://bbn.com/frumpy-ont#Analysis-Analysis_Test_Analysis-16000,false,TRUE
+32000,file:///C:/Temp/frumpy-test-data/32K-instances.nt,TURTLE,http://bbn.com/frumpy-ont#Analysis-Analysis_Test_Analysis-32000,false,TRUE
+64000,file:///C:/Temp/frumpy-test-data/64K-instances.nt,TURTLE,http://bbn.com/frumpy-ont#Analysis-Analysis_Test_Analysis-64000,false,TRUE

@@ -1,0 +1,18 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex:   <http://example.org/#> .
+
+ex:Person rdfs:subClassOf ex:NamedEntity .
+
+ex:mike a ex:Person ;
+	ex:name "Mike Dean" ;
+	ex:name "Mike Dean"@en ;
+	ex:age "55"^^xsd:integer ;
+	ex:comment "A multi-line\r\nliteral with escapes: '\t', '\"', '\'', and '\\'" ;
+.
+ex:maria a ex:Person ;
+	ex:name "María de la Concepción" ;
+	ex:name "María de la Concepción"@es-mx ;
+	ex:age "23"^^xsd:integer ;
+.

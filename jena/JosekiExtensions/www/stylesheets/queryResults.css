@@ -1,0 +1,234 @@
+body {
+    font-family: Verdana, Arial, Helvetica, sans-serif ;
+    font-size: 10pt ;
+    line-height: 18pt ;
+    color: black;
+    background: white ;
+    margin: 0 ;
+}
+
+p { margin-left: 2% ; margin-right: 2% ; }
+
+/* Makes lists a little tighter
+li { line-height: 14pt ; }
+*/
+
+.explorerIndexTable {
+  font-family: Verdana, Arial, sans-serif ;
+  font-size: 100%;
+  padding: 0px;
+  border-style: none ;
+  line-height: 14pt
+}
+
+.explorerIndexTable th {
+    font-size: 110%;
+    text-align: left;
+    color: black;
+    padding: 4px;
+    border-style: none;
+    background-color: transparent;
+}
+
+.explorerIndexTable td {
+    font-size: 100%;
+    line-height: 150%;
+    padding: 4px;
+    border-style: none;
+    background-color: transparent;
+}
+
+table {
+  font-family: Verdana, Arial, sans-serif ;
+  font-size: 90%;
+  padding: 4px;
+  border-style: none
+}
+
+th {
+    font-size: 90%;
+    color: white;
+    padding: 0px;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-style: solid;
+    border-width: 0px;
+    border-color: #D0F0B0;
+    background-color: #5B9B4B;
+}
+
+td {
+    font-size: 90%;
+    padding: 0px;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-style: solid;
+    border-width: 0px;
+    border-color: #D0F0B0;
+    background-color: #DFF0C0;
+}
+
+td.centered {
+    text-align: center;
+}
+
+tr.odd td {
+    background-color: #DFF0C0;
+}
+
+tr.even td {
+    background-color: #9BD888;
+}
+
+
+.op-list {
+    padding: 0px;
+/*    border: 1px solid #000; */
+    margin-bottom: 0px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+/*    background: #CADFF4; */
+    background: #B3BCC6;
+}
+
+.op-list h2 {
+    margin-top: 0px;
+	 margin-bottom: 0px;
+    padding-left: 1ex;
+    padding-right: 1ex;
+    display: inline;
+    color:#000;
+    font-size: 105%;
+    background: #B3BCC6;
+}
+
+.op-list h2:after {
+    content: ":";
+}
+
+.op-list h3 {
+    margin-top: 0px;
+	 margin-bottom: 0px;
+    padding-left: 1ex;
+    padding-right: 1ex;
+    display: inline;
+    color:#000;
+    background: #B3BCC6;
+    font-size: 105%;
+}
+
+.op-list ul {
+    margin-left: 0;
+    padding-left: 0;
+    display: inline;
+}
+
+.op-list ul li {
+    margin-left: 0;
+    padding: 4px 15px;
+/*    border-left: 1px solid #000; */
+    list-style: none;
+    display: inline;
+}
+
+
+.box
+{ margin-left :     5% ;
+  margin-right :    5% ;
+  border:           solid ;
+  border-width:     thin;
+  background-color: #F0F0F0;
+  padding:          2mm;
+  page-break-inside: avoid ;
+}
+
+.noindent     { margin-left: -5% ; margin-right: -5%; }
+.moreindent   { margin-left:  5% ; margin-right:  5%; }
+.indent   { margin-left:  2% ; margin-right:  2%; }
+
+
+/* Use this for the document title as displayed on the page at the top. */
+
+
+h1 {
+    text-align:center ;
+    /* font-size: 14pt; */
+    font-size: 150%;
+    line-height: 24pt ;
+    font-weight: bold;
+    color:#000;
+    background:#CADFF4;
+    padding: 0 ;
+    margin: 0 ;
+    padding-left: 1ex;
+    padding-right: 1ex;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align:center;
+}
+
+h2 {
+    /* font-size: 12pt; */
+    font-size: 125%;
+    line-height: 16pt ;
+    font-size: 110%;
+    font-weight: bold;
+    color: #003399;
+    background:#CADFF4;
+    margin-bottom:5px;
+    padding-left: 1ex;
+    padding-right: 1ex;
+}
+
+h3, h4, h5 {
+    font-size: 100%;
+    font-weight: bold;
+    margin-bottom:3px;
+}
+
+ul { list-style-type: disc }
+dt { font-weight: bold }
+
+/* Change background/foreground colour on hover */
+
+A:link {       /* for unvisited links */
+	text-decoration: none;
+	color: rgb(0, 0, 200);
+}
+A:visited {       /* for visited links */
+	text-decoration: none;
+	color: rgb(0, 0, 200);
+}
+A:hover {       /* when mouse is over link */
+	text-decoration: underline ;
+	color: rgb(255, 0, 0);
+}
+
+/* No extra space between paragraphs : inherits from body */
+pre {
+    font-family: monospace;
+    font-size: 10pt ;
+    line-height: 14pt ;
+/*    margin-top: 1 ;
+    margin-bottom: 1 ;*/
+    margin-left: 5ex ;
+    }
+
+/* Some general utility definitions */
+.centered {
+    text-align: center;
+}
+
+.caption {
+    text-align: center;
+    font-size: smaller;
+}
+
+code {
+    font-size: 10pt;
+}
+
+.footnote {
+    font-size: smaller;
+    border-top: thin solid gray;
+}
