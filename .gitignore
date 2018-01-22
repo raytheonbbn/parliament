@@ -2,7 +2,11 @@ bin/
 lib/
 log/
 
+/dependencies/
 /jena/JosekiExtensions/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab/
+/Parliament/AdminClient/.settings/language.settings.xml
+/Parliament/KbCore/.settings/language.settings.xml
 /Parliament/KbCore/parliament/generated/
+/Parliament/Test/.settings/language.settings.xml
 /Parliament/Test/ParliamentConfig.txt
 /target/

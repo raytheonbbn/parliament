@@ -1,0 +1,11 @@
+Per the following posts:
+
+https://www.eclipse.org/forums/index.php/t/703039/
+https://www.eclipse.org/forums/index.php/t/1074031/
+
+keeping Eclipse's language.settings.xml file (located in this directory)
+under source control is a problem.  However, deleting and ignoring the
+directory in git would cause any other file that Eclipse wanted to add
+to that directory to be ignored as well.  This file exists to keep the
+.settings directory under source control, even though the only file in
+that directory (language.settings.xml) is not.

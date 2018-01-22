@@ -59,6 +59,9 @@
 		<delete dir="${basedir}/jena/NumericIndex/bin"/>
 		<delete dir="${basedir}/Parliament/bin"/>
 		<delete dir="${basedir}/Parliament/JniAssessments/bin"/>
+		<delete file="${basedir}/Parliament/AdminClient/.settings/language.settings.xml"/>
+		<delete file="${basedir}/Parliament/KbCore/.settings/language.settings.xml"/>
+		<delete file="${basedir}/Parliament/Test/.settings/language.settings.xml"/>
 		<delete dir="${basedir}/Sesame/CSameAsSail/bin"/>
 		<delete dir="${basedir}/Sesame/LuceneSail/bin"/>
 		<delete dir="${basedir}/Sesame/ParliamentSail/bin"/>
