@@ -6,7 +6,7 @@
 \chapter{Building Berkeley DB for Windows}
 \label{chapter-building-bdb-for-windows}
 
-The build infrastructure for Berkeley DB is not particularly friendly for Windows.  Therefore, the Parliament source code repository includes pre-built versions of Berkeley DB for Visual Studio, in both 32- and 64-bit flavors.  (Oracle does provide an already-compiled binary distribution, but it includes only a 32-bit build.)
+The build infrastructure for Berkeley DB is not particularly friendly for Windows.  Therefore, the \ac{pmnt} source code repository includes pre-built versions of Berkeley DB for Visual Studio, in both 32- and 64-bit flavors.  (Oracle does provide an already-compiled binary distribution, but it includes only a 32-bit build.)
 
 This appendix is provided primarily to guide the developer who needs to update the pre-built libraries, e.g., for a new version of Berkeley DB or to build with a different compiler.  If this does not apply to you, then you may skip this appendix.
 
@@ -39,11 +39,11 @@ Allow the Visual Studio Conversion Wizard to convert the projects to its file fo
 
 \item Close Visual Studio.
 
-\item\label{step-creates-dirs}Create the directory hierarchy shown in Figure~\ref{fig:bdbDirTree} at the root level of your Subversion working copy.
+\item\label{step-creates-dirs}Create the directory hierarchy shown in Figure~\ref{fig:bdbDirTree} at the root level of your dependencies directory.
 \begin{figure}[htbp]
 	\centering
 	\begin{minipage}[t]{3in}
-		\dirtree{.1 lib.
+		\dirtree{.1 dependencies.
 			.2 bdb.
 			.3 include.
 			.3 msvc-14.1.
@@ -80,7 +80,7 @@ Allow the Visual Studio Conversion Wizard to convert the projects to its file fo
    build_windows\*.h
 \end{verbatim}
 
-\item Commit the above changes to Parliament's Subversion repository.
+\item Commit the above changes to \acp{pmnt} source code repository.
 
 \item Finally, delete the build directory that you created in Step~\ref{step-download} by unzipping the source code distribution.
 \end{enumerate}

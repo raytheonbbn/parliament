@@ -1,6 +1,6 @@
 % !TEX encoding = UTF-8 Unicode
 % !TEX TS-program = XeLaTeX
-% !TEX root = ParliamentUserGuide.tex
+% !BIB TS-program = biber
 % !TEX useTabsWithFiles
 % !TEX tabbedFile{Introduction.tex}
 % !TEX tabbedFile{DeployingAndUsing.tex}
@@ -14,54 +14,90 @@
 
 \documentclass[12pt,letterpaper,openany,oneside,draft]{book}
 
+%\usepackage{xifthen}
+%\newboolean{enablePortionMarkings}
+%\setboolean{enablePortionMarkings}{true}
+
 \usepackage{parskip}				% Begin paragraphs with empty line, not indent
-\usepackage{color}
+\usepackage{xcolor}
 \usepackage{titling}
 \usepackage{fnpct}
-%\usepackage{acro}
+\usepackage[inline]{enumitem}
+\usepackage{acro}
 \usepackage[final]{graphicx}
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{ragged2e}
-\usepackage{enumitem}
+%\usepackage{colortbl}
+%\usepackage{rotating}
+%\usepackage{marginnote}
 \usepackage{relsize}
-%\usepackage{fancyhdr}
+\usepackage{fancyhdr}
+%\usepackage{lastpage}
+%\usepackage{lipsum}
 \usepackage{amsmath}
 \usepackage{amssymb}
+%\usepackage[retainorgcmds]{IEEEtrantools}
+%\usepackage{skmath}
 %\usepackage{tikz}
 \usepackage{path}
 \usepackage{dirtree}
-%\usepackage{xifthen}
-%\usepackage[style=numeric,backref]{biblatex}
+%\usepackage[firstpage]{draftwatermark}
+%\usepackage{todonotes}
+%\usepackage[T1]{fontenc}		% Enables curly braces in emails within \institute
+\usepackage[style=numeric,backref,backend=biber]{biblatex}
 \usepackage{fontspec,xltxtra,xunicode}
+%\usepackage{iffont}
 \usepackage{unicode-math}
 \usepackage[final]{hyperref}	% Should be the last use-package command
 
-\newcommand{\headingrule}{\midrule[\heavyrulewidth]}
+%\newcommand{\red}[1]{{\color{red}#1}}
+%\newcommand{\paraleader}[1]{\textbf{#1}}
 \newcommand{\urlcite}[1]{\footnote{\url{#1}}}
-%\newcommand{\pmnt}{\texorpdfstring
-%	{Parliament\raisebox{0.7ex}{\textsmaller[2]{\texttrademark}}}
-%	{Parliament}}
-\newcommand{\pmnt}{Parliament}
+\newcommand{\headingrule}{\midrule[\heavyrulewidth]}
+%\newcommand{\classmark}{\textbf{\emph{UNCLASSIFIED}}}
+%\newcommand{\themestatement}[1]{\framebox{\parbox{0.97\columnwidth}{\emph{#1}}}}
+\newcommand{\icm}[1]{}
 
-\title{\pmnt{} User Guide}
+\input{acronyms.tex}
+%\acuse{asio} % We only want long & short forms, never "first appearance"
+\acuse{pmnt} % We only want long & short forms, never "first appearance"
+
+\bibliography{references}
+%\defbibheading{bibliography}[\bibname]{\section{#1}\markboth{#1}{#1}}
+%\defbibheading{bibliography}[\refname]{\section{#1}\markboth{#1}{#1}}
+
+\title{\acl{pmnt} User Guide}
 \author{Ian Emmons}
 \date{\today}
+%\setlength{\droptitle}{-50pt}
+%\pretitle{\begin{center}\LARGE}
+%\posttitle{\par\end{center}\vskip 0.5em}
+%\preauthor{\begin{center}\large\lineskip 0.5em\begin{tabular}[t]{c}}
+%\postauthor{\end{tabular}\par\end{center}}
+%\predate{\begin{center}\large}
+%\postdate{\par\end{center}}
 
 \defaultfontfeatures{Mapping=tex-text}
 \setmainfont{Georgia}
-%\setmainfont[Numbers=Uppercase]{TeX Gyre Termes}
-%\setmainfont[Numbers=Uppercase]{Constantia}
+%\setmainfont{TeX Gyre Pagella}[Numbers=Uppercase]
+%\setmainfont{Constantia}[Numbers=Uppercase]
 \setsansfont{Candara}[Scale=MatchLowercase]
 %\setsansfont{Corbel}[Scale=MatchLowercase]
-%\setsansfont[Scale=MatchLowercase]{TeX Gyre Heros}
-%\setmonofont[Scale=MatchLowercase,Mapping=]{Menlo}
-\setmonofont[Scale=MatchLowercase,Mapping=]{Consolas}
+%\setsansfont{TeX Gyre Heros}[Scale=MatchLowercase]
+%\setmonofont{Menlo}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
+\setmonofont{Consolas}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
+%\setmathfont{TeX Gyre Pagella Math}
 %\setmathfont{STIX Math}
 \setmathfont{Cambria Math}
 
-\pagestyle{headings}
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]
+	{\markboth{\chaptername \ \thechapter.\ #1}{}}
+\fancyhead[L]{\textsl{\leftmark}}\fancyhead[R]{\thepage}
+\setlength{\headheight}{15pt}
 
+%\urlstyle{rm}
 \definecolor{hyperlinkcolor}{rgb}{0,0,0.625}
 \hypersetup{
 	final=true,
@@ -73,18 +109,29 @@
 	allcolors=hyperlinkcolor
 }
 
-%\bibliography{references}
+%\SetWatermarkAngle{45}
+%\SetWatermarkLightness{0.8}		% 1 = white, 0 = black
+%\SetWatermarkFontSize{5cm}
+%\SetWatermarkScale{1.2}
+%\SetWatermarkText{\textsc{Draft}}
 
+\hyphenation{Arc-GIS Arc-Map}
+\hyphenation{co-ref-er-ence co-ref-er-enc-es}
 \hyphenation{da-ta-base da-ta-bas-es}
+\hyphenation{geo-spa-tial}
+\hyphenation{ra-pid-ly}
+\hyphenation{ray-the-on}
 \hyphenation{serv-let serv-lets}
+\hyphenation{trac-ta-ble}
+\hyphenation{war-fight-er war-fight-ers}
 
 \begin{document}
-
 \frontmatter
 \maketitle
 \tableofcontents
 \listoffigures
 \listoftables
+%\input{titlepage.tex}
 \mainmatter
 
 \input{Introduction.tex}
@@ -92,8 +139,18 @@
 \input{Building.tex}
 
 \appendix
+
 \input{Appendices.tex}
 
+\acsetup{
+	list-name=Glossary,
+	list-heading=chapter,
+	extra-style=plain,
+	page-style=paren}
+\printacronyms
+
+\printbibliography[heading=bibnumbered]
+
 \backmatter
-%\printbibliography
+
 \end{document}

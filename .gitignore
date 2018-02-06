@@ -3,6 +3,8 @@ lib/
 log/
 
 /dependencies/
+/doc/UserGuide/acronyms.tex
+/doc/UserGuide/references.bib
 /jena/JosekiExtensions/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab/
 /Parliament/AdminClient/.settings/language.settings.xml
 /Parliament/KbCore/.settings/language.settings.xml
