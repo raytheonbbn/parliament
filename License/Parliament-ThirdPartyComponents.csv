@@ -2,7 +2,7 @@ Component,License,Web Site
 Ant,Apache license 2.0,http://ant.apache.org/license.html
 Berkeley DB,Berkeley DB License (BSD-like),http://www.oracle.com/technology/software/products/berkeley-db/htdocs/licensing.html
 Boost Libraries,Boost software license,http://www.boost.org/users/license.html
-Java Service,Dual license (BSD and LGPL),http://forge.ow2.org/projects/javaservice/
+commons-daemon,Apache license 2.0,http://ant.apache.org/license.html
 JaxB,Dual license (CDDL v1.0 and GPL v2),https://jaxb.dev.java.net/
 Jena,Apache license 2.0,http://jena.apache.org/
 Jetty,Apache license 2.0 or Eclipse Public License 1.0,"http://www.apache.org/licenses/LICENSE-2.0.html, http://www.eclipse.org/legal/epl-v10.html"

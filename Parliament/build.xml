@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<project name="Parliament" default="deliverArtifacts">
+<project name="Parliament" default="deliverArtifacts" xmlns:ivy="antlib:org.apache.ivy.ant">
 	<description>Invokes Visual Studio to build Parliament.</description>
 
 	<import file="${basedir}/../build-common.xml"/>
 
 	<property name="binDir" value="${targetDir}/bin/${ant.project.name}"/>
-	<property name="windowsServiceDir" value="${parliamentDependenciesDir}/daemon/windows"/>
-	<property name="daemonArchiveDir" value="${parliamentDependenciesDir}/daemon/unix"/>
-	<property name="daemonBinDir" value="${targetDir}/bin/daemon"/>
 	<property name="testBinDir" value="${targetDir}/test-bin/${ant.project.name}"/>
 	<property name="jarFile" value="${artifactsDir}/${ant.project.name}.jar"/>
 	<property name="jniHdrDir" value="${basedir}/KbCore/parliament/generated"/>
 	<property name="junitFlagFile" value="${binDir}/junitFlagFile.txt"/>
-	<condition property="osFamilyIsUnix">
-		<os family="unix"/>
-	</condition>
+	<property name="daemonBinDir" value="${targetDir}/bin/daemon"/>
 
 	<target name="deliverArtifacts" depends="jar">
 		<!-- Find the boost.build toolset to use for the current platform -->
@@ -133,28 +128,18 @@
 		<if>
 			<os family="windows"/>
 			<then>
-				<condition property="microsoftAddrModel" value="x64" else="x86">
+				<!-- Copy redistributable packages to the deployable server directory -->
+				<condition property="redistPath" value="${env.VS_REDIST_PATH_64}" else="${env.VS_REDIST_PATH_32}">
 					<equals arg1="${addrModel}" arg2="64"/>
 				</condition>
-				<echo message="microsoftAddrModel:  '${microsoftAddrModel}'"/>
+				<copy todir="${targetDir}/${deployableSvrDir}/RedistributablePackages" file="${redistPath}"/>
 
-				<!-- Copy redistributable packages to the deployable server directory -->
-				<copy todir="${targetDir}/${deployableSvrDir}/RedistributablePackages">
-					<fileset dir="${parliamentDependenciesDir}/MSRedistributables"
-						includes="${toolset}*/**/*${microsoftAddrModel}*.exe"/>
-				</copy>
-
-				<!-- Copy service EXE to the deployable server directory -->
-				<copy todir="${targetDir}/${deployableSvrDir}/bin">
-					<fileset dir="${windowsServiceDir}/${addrModel}"/>
-				</copy>
+				<!-- Build service EXE into the deployable server directory -->
+				<antcall target="buildWinDaemonApp"/>
 			</then>
 			<else>
-				<!-- Copy daemon app to the deployable server directory -->
-				<antcall target="buildDaemonApp"/>
-				<copy todir="${targetDir}/${deployableSvrDir}/bin"
-					file="${daemonBinDir}/${toolset}/${addrModel}/jsvc"/>
-				<chmod file="${targetDir}/${deployableSvrDir}/bin/jsvc" perm="ugo+rx" verbose="true"/>
+				<!-- Build daemon app into the deployable server directory -->
+				<antcall target="buildUnixDaemonApp"/>
 			</else>
 		</if>
 
@@ -180,8 +165,7 @@
 						<echo message="Java unit test result is up-to-date"/>
 					</then>
 					<else>
-						<echo message="Skipping the Java unit tests because the native"/>
-						<echo message="binaries are not compatible with the current JVM"/>
+						<echo message="Skipping the Java unit tests because the native binaries are not compatible with the current JVM"/>
 					</else>
 				</if>
 			</else>
@@ -488,20 +472,50 @@
 		<touch file="${junitFlagFile}" mkdirs="true"/>
 	</target>
 
-	<target name="daemonAppUpToDateCheck">
-		<uptodate property="isDaemonAppUpToDate">
-			<srcfiles dir="${daemonArchiveDir}" includes="commons-daemon-*-src.tar.gz"/>
-			<compositemapper>
-				<mergemapper to="${daemonBinDir}/${toolset}/${addrModel}/jsvc"/>
-				<regexpmapper from="^commons-daemon-([0-9.]+)[abc]?-src\.tar\.gz$$"
-					to="${artifactsDir}/commons-daemon-\1.jar"/>
-			</compositemapper>
-		</uptodate>
+	<!--
+	Build the procrun service executable.  Use only on Windows.
+	Expects addrModel, and deployableSvrDir to be set.
+	-->
+	<target name="buildWinDaemonApp" depends="daemonAppUpToDateCheck,unpackDaemonArchive"
+		unless="isDaemonAppUpToDate">
+
+		<condition property="vsBatPath" value="${env.VS_BAT_PATH_64}" else="${env.VS_BAT_PATH_32}">
+			<equals arg1="${addrModel}" arg2="64"/>
+		</condition>
+		<condition property="nmakeArg" value="CPU=X64" else="CPU=X86">
+			<equals arg1="${addrModel}" arg2="64"/>
+		</condition>
+
+		<exec executable="${env.ComSpec}">
+			<arg value="/c"/>
+			<arg value='"'/>
+			<arg file="${vsBatPath}" prefix='"' suffix='"'/>
+			<arg value="&amp;"/>
+			<arg value="cd"/>
+			<arg value="/d"/>
+			<arg file="${untarPath}/src/native/windows/apps/prunsrv" prefix='"' suffix='"'/>
+			<arg value="&amp;"/>
+			<arg value="nmake"/>
+			<arg value="${nmakeArg}"/>
+			<arg value='"'/>
+		</exec>
+
+		<copy todir="${targetDir}/${deployableSvrDir}/bin" overwrite="true" flatten="true">
+			<fileset dir="${untarPath}/src/native/windows/apps/prunsrv" includes="**/prunsrv.exe"/>
+		</copy>
+		<move file="${targetDir}/${deployableSvrDir}/bin/prunsrv.exe"
+			tofile="${targetDir}/${deployableSvrDir}/bin/ParliamentService.exe"
+			overwrite="true"/>
+		<delete dir="${daemonBinDir}"/>
 	</target>
 
-	<!-- Build the jsvc daemon executable.  Expects toolset and addrModel to be set. -->
-	<target name="buildDaemonApp" depends="daemonAppUpToDateCheck" if="osFamilyIsUnix"
+	<!--
+	Build the jsvc daemon executable.  Use only on UNIX or Linux.
+	Expects addrModel, and deployableSvrDir to be set.
+	-->
+	<target name="buildUnixDaemonApp" depends="daemonAppUpToDateCheck,unpackDaemonArchive"
 		unless="isDaemonAppUpToDate">
+
 		<condition property="flags" value="-arch x86_64 -arch i386" else="-m${addrModel}">
 			<equals arg1="${addrModel}" arg2="universal"/>
 		</condition>
@@ -512,41 +526,60 @@
 			</and>
 		</condition>
 
-		<mkdir dir="${daemonBinDir}/${toolset}/${addrModel}"/>
-
-		<!-- Get tar archive name -->
-		<delete file="${daemonBinDir}/ls.txt"/>
-		<exec executable="ls" dir="${daemonArchiveDir}" output="${daemonBinDir}/ls.txt"/>
-		<loadfile property="tarArchive" srcFile="${daemonBinDir}/ls.txt">
-			<filterchain>
-				<tokenfilter delimoutput="">
-					<containsregex pattern="^(commons-daemon-.*-src)\.tar\.gz$"
-						replace="\1"/>
-				</tokenfilter>
-			</filterchain>
-		</loadfile>
-		<delete file="${daemonBinDir}/ls.txt"/>
-
-		<delete dir="${daemonBinDir}/${tarArchive}"/>
-		<untar src="${daemonArchiveDir}/${tarArchive}.tar.gz" dest="${daemonBinDir}"
-			compression="gzip"/>
-		<chmod file="${daemonBinDir}/${tarArchive}/src/native/unix/configure" perm="ugo+rx"
+		<chmod file="${untarPath}/src/native/unix/configure" perm="ugo+rx"
 			osfamily="unix" verbose="true"/>
-		<exec executable="./configure" dir="${daemonBinDir}/${tarArchive}/src/native/unix">
+		<exec executable="./configure" dir="${untarPath}/src/native/unix">
 			<env key="CFLAGS" value="${flags}"/>
 			<env key="LDFLAGS" value="${flags}"/>
 			<env key="CC" value="${ccValue}"/>
 		</exec>
-		<exec executable="make" dir="${daemonBinDir}/${tarArchive}/src/native/unix"/>
-		<move file="${daemonBinDir}/${tarArchive}/src/native/unix/jsvc"
-			todir="${daemonBinDir}/${toolset}/${addrModel}"/>
-		<ant antfile="${daemonBinDir}/${tarArchive}/build.xml"
-				dir="${daemonBinDir}/${tarArchive}" target="jar" inheritAll="false">
-			<property name="build.sysclasspath" value="ignore"/>
-		</ant>
-		<move todir="${artifactsDir}">
-			<fileset dir="${daemonBinDir}/${tarArchive}/dist" includes="commons-daemon-*.jar"/>
-		</move>
-		<delete dir="${daemonBinDir}/${tarArchive}"/>
+		<exec executable="make" dir="${untarPath}/src/native/unix"/>
+		<move file="${untarPath}/src/native/unix/jsvc"
+			todir="${targetDir}/${deployableSvrDir}/bin"/>
+		<chmod file="${targetDir}/${deployableSvrDir}/bin/jsvc" perm="ugo+rx" verbose="true"/>
+
+		<delete dir="${daemonBinDir}"/>
+	</target>
+
+	<target name="daemonAppUpToDateCheck">
+		<condition property="isDaemonAppUpToDate">
+			<or>
+				<and>
+					<os family="windows"/>
+					<uptodate targetfile="${targetDir}/${deployableSvrDir}/bin/ParliamentService.exe">
+						<srcfiles dir="${basedir}/lib/native" includes="commons-daemon-*.tar.gz"/>
+					</uptodate>
+				</and>
+				<and>
+					<not><os family="windows"/></not>
+					<uptodate targetfile="${targetDir}/${deployableSvrDir}/bin/jsvc">
+						<srcfiles dir="${basedir}/lib/native" includes="commons-daemon-*.tar.gz"/>
+					</uptodate>
+				</and>
+			</or>
+		</condition>
+	</target>
+
+	<target name="unpackDaemonArchive" depends="daemonAppUpToDateCheck"
+		unless="isDaemonAppUpToDate">
+
+		<mkdir dir="${daemonBinDir}"/>
+		<delete>
+			<dirset dir="${daemonBinDir}" includes="commons-daemon-*"/>
+		</delete>
+
+		<for param="tarFile">
+			<fileset dir="${basedir}/lib/native" includes="**/commons-daemon-*.tar.gz"/>
+			<sequential>
+				<untar src="@{tarFile}" dest="${daemonBinDir}" compression="gzip"/>
+			</sequential>
+		</for>
+
+		<for param="tarDir">
+			<dirset dir="${daemonBinDir}" includes="commons-daemon-*"/>
+			<sequential>
+				<property name="untarPath" value="@{tarDir}"/>
+			</sequential>
+		</for>
 	</target>
 </project>
