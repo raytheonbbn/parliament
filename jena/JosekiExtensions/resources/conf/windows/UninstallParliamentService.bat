@@ -1,8 +1,8 @@
 @echo off
 
-setlocal
+setlocal enableextensions enabledelayedexpansion
 
-set EXEC="bin\ParliamentService.exe" -uninstall "Parliament KB"
+set EXEC="bin\ParliamentService.exe" delete
 
 rem echo %EXEC%
 
