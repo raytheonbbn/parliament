@@ -356,24 +356,28 @@ public class RemoteModel implements Serializable {
 	 * @param namedGraphURI The uri of the graph to insert into
 	 * @return The number of statements inserted
 	 */
-	@SuppressWarnings("resource")
 	public long insertStatements(final Model model, String namedGraphURI) throws IOException {
-		final RDFFormat format = RDFFormat.NTRIPLES;
-		final PipedInputStream in = new PipedInputStream();
-		Thread t = new Thread(
-			new Runnable() {
-				@Override
-				public void run() {
-					try (PipedOutputStream out = new PipedOutputStream(in)) {
-						model.write(out, format.toString());
-					} catch (IOException ex) {
+		RDFFormat format = RDFFormat.NTRIPLES;
+		// Pipes can be tricky.  Both in and out must be created in the main thread to prevent
+		// the main thread reading before the pipe has been connected.  Also, the worker thread must
+		// close the PipedOutputStream before it exits, else the PipedInputStream will throw.
+		try (
+			PipedInputStream pipeExtractor = new PipedInputStream(16 * 1024);
+			PipedOutputStream pipeInserter = new PipedOutputStream(pipeExtractor);
+		) {
+			Thread t = new Thread(() -> {
+					try (OutputStream os = pipeInserter) {	// ensure closure
+						model.write(os, format.toString());
+						os.flush();	// not really necessary, since the buffer is in the PipedInputStream
+					} catch (Throwable ex) {
+						System.err.format("Pipe error %1$s:  %2$s%n", ex.getClass().getSimpleName(), ex.getMessage());
 						ex.printStackTrace();
 					}
-				}
-			});
-		t.setDaemon(true);
-		t.start();
-		return internalInsertStatements(in, format, null, namedGraphURI, false);
+				});
+			t.setDaemon(true);
+			t.start();
+			return internalInsertStatements(pipeExtractor, format, null, namedGraphURI, false);
+		}
 	}
 
 	/**

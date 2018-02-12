@@ -106,24 +106,22 @@ public class XSLTFilter implements Filter {
 					try {
 						chain.doFilter(req, wrapper);
 
-						if ("application/xml".equals(resp.getContentType())) {
+						if ("application/xml".equals(resp.getContentType()) && contentType != null) {
 							// We set the content type here because we have to do it after the
 							// Joseki code mistakenly sets it to 'application/xml', and that code
 							// only executes within the filter chain that executes above.
-							if (contentType != null) {
-								LOG.trace("Content-Type for response: {}", contentType) ;
-								resp.setContentType(contentType);
-							}
+							LOG.trace("Content-Type for response: {}", contentType) ;
+							resp.setContentType(contentType);
 						}
-					} catch (IOException e) {
-						LOG.error("IOException writing to PipedServletResponseWrapper", e);
-						_threadIOException = e;
-					} catch (ServletException e) {
-						LOG.error("ServletException writing to PipedServletResponseWrapper", e);
-						_threadServletException = e;
-					} catch (RuntimeException e) {
-						LOG.error("RuntimeException writing to PipedServletResponseWrapper", e);
-						_threadRuntimeException = e;
+					} catch (IOException ex) {
+						LOG.error("IOException writing to PipedServletResponseWrapper", ex);
+						_threadIOException = ex;
+					} catch (ServletException ex) {
+						LOG.error("ServletException writing to PipedServletResponseWrapper", ex);
+						_threadServletException = ex;
+					} catch (RuntimeException ex) {
+						LOG.error("RuntimeException writing to PipedServletResponseWrapper", ex);
+						_threadRuntimeException = ex;
 					} finally {
 						IOUtils.closeQuietly(wrapper.getOutputStream());
 					}

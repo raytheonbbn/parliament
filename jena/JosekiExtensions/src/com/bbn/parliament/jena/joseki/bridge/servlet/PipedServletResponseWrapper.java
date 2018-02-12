@@ -24,35 +24,35 @@ import org.slf4j.LoggerFactory;
 public class PipedServletResponseWrapper extends HttpServletResponseWrapper {
 	private static final Logger log = LoggerFactory.getLogger(PipedServletResponseWrapper.class);
 
-	private PipedInputStream _in;
-	private PipedOutputStream _out;
-
-	private Thread _thread;
+	private PipedInputStream in;
+	private PipedOutputStream out;
+	private Thread worker;
 
 	public PipedServletResponseWrapper(HttpServletResponse response) throws IOException {
 		super(response);
 
-		_in = new PipedInputStream();
-		_out = new PipedOutputStream(_in);
+		in = new PipedInputStream();
+		out = new PipedOutputStream(in);
 	}
 
 	public void run(Runnable task) {
 		// TODO: Use the java.util.concurrent Executors instead of creating a new Thread
-		_thread = new Thread(task);
-		_thread.start();
+		worker = new Thread(task);
+		worker.setDaemon(true);
+		worker.start();
 	}
 
 	public void join() throws InterruptedException {
-		_thread.join();
+		worker.join();
 	}
 
 	public InputStream getInputStream() {
-		return _in;
+		return in;
 	}
 
 	@Override
 	public PrintWriter getWriter() {
-		return new PrintWriter(_out);
+		return new PrintWriter(out);
 	}
 
 	@Override
@@ -61,12 +61,12 @@ public class PipedServletResponseWrapper extends HttpServletResponseWrapper {
 		{
 			@Override
 			public void write(int c) throws IOException {
-				_out.write(c);
+				out.write(c);
 			}
 
 			@Override
 			public void close() throws IOException {
-				_out.close();
+				out.close();
 			}
 
 			@Override
@@ -87,10 +87,9 @@ public class PipedServletResponseWrapper extends HttpServletResponseWrapper {
 	@Override
 	public void flushBuffer() {
 		try {
-			_out.flush();
-		}
-		catch (IOException e) {
-			throw new RuntimeException(e);
+			out.flush();
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
 		}
 	}
 
