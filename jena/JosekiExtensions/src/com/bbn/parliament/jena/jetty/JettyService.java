@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides entry points to use with JavaService.exe to render Parliament
- * running inside Jetty as a Windows Service.
+ * Provides entry points to use with the Apache Commons Daemon package (procrun)
+ * to render Parliament running inside Jetty as a Windows Service.
  *
  * @author iemmons
  */
@@ -19,7 +19,7 @@ public class JettyService {
 	private static Logger _log = LoggerFactory.getLogger(JettyService.class);
 
 	/** Entry point for running as a Windows service. */
-	public static void startWindowsService(String[] args) {
+	public static void start(String[] args) {
 		try {
 			JettyServerCore.initialize();
 			JettyServerCore.getInstance().start();
@@ -29,7 +29,7 @@ public class JettyService {
 	}
 
 	/** Called by the Windows service runner EXE to stop the service. */
-	public static void stopWindowsService(String[] args) {
+	public static void stop(String[] args) {
 		JettyServerCore.getInstance().stop();
 	}
 }

@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides entry points to use with the Apache Commons Daemon package to
- * render Parliament running inside Jetty as a UNIX or Linux Daemon.
+ * Provides entry points to use with the Apache Commons Daemon package (jsvc)
+ * to render Parliament running inside Jetty as a UNIX or Linux Daemon.
  *
  * @author iemmons
  */
@@ -19,7 +19,7 @@ public class JettyDaemon {
 	private static Logger _log = LoggerFactory.getLogger(JettyDaemon.class);
 
 	/**
-	 * Initialize the daemon, possibly running as super-user.  E.g., open
+	 * Initialize the daemon, possibly running as super-user. E.g., open
 	 * configuration files, create log files, create server sockets, create
 	 * threads, etc.
 	 */

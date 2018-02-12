@@ -173,12 +173,13 @@
 		<ant dir="${basedir}/Sesame/SameAsSail" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="runTests" inheritAll="false"/>
 		-->
+	</target>
 
+	<target name="generateTestReport" depends="testSummaryUpToDateCheck"
+		unless="isTestSummaryUpToDate" description="Generates test summary">
 		<xslt destdir="${reportsDir}/junit-summaries" style="junit-test-outcomes.xsl"
 			filedirparameter="fileDir">
-			<fileset dir="${reportsDir}">
-				<include name="**/TEST-*.xml"/>
-			</fileset>
+			<fileset dir="${reportsDir}" includes="**/TEST-*.xml"/>
 			<mapper>
 				<chainedmapper>
 					<flattenmapper/>
@@ -190,6 +191,12 @@
 			<fileset dir="${reportsDir}/junit-summaries" includes="*.txt"/>
 		</concat>
 		<delete dir="${reportsDir}/junit-summaries"/>
+	</target>
+	
+	<target name="testSummaryUpToDateCheck">
+		<uptodate property="isTestSummaryUpToDate" targetfile="${reportsDir}/junit-summary.txt">
+			<srcfiles dir="${reportsDir}" includes="**/TEST-*.xml"/>
+		</uptodate>
 	</target>
 
 	<fileset dir="${kbRootDir}" id="javadocSrcPath">
