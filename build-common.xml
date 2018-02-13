@@ -41,7 +41,7 @@
 	</target>
 
 	<target name="resolve" depends="resolveUpToDateCheck" unless="isResolveUpToDate">
-		<ivy:retrieve type="jar,bundle,src"/>
+		<ivy:retrieve type="jar,bundle,native-src"/>
 		<touch file="lib/LastResolvePerformedAt.txt" mkdirs="true"/>
 	</target>
 

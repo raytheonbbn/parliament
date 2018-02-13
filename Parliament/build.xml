@@ -538,26 +538,12 @@
 			todir="${targetDir}/${deployableSvrDir}/bin"/>
 		<chmod file="${targetDir}/${deployableSvrDir}/bin/jsvc" perm="ugo+rx" verbose="true"/>
 
-		<delete dir="${daemonBinDir}"/>
-	</target>
+		<ant dir="${untarPath}" target="jar" inheritAll="false"/>
+		<move todir="${targetDir}/${deployableSvrDir}/lib">
+			<fileset dir="${untarPath}/dist" includes="commons-daemon-*.jar"/>
+		</move>
 
-	<target name="daemonAppUpToDateCheck">
-		<condition property="isDaemonAppUpToDate">
-			<or>
-				<and>
-					<os family="windows"/>
-					<uptodate targetfile="${targetDir}/${deployableSvrDir}/bin/ParliamentService.exe">
-						<srcfiles dir="${basedir}/lib/native" includes="commons-daemon-*.tar.gz"/>
-					</uptodate>
-				</and>
-				<and>
-					<not><os family="windows"/></not>
-					<uptodate targetfile="${targetDir}/${deployableSvrDir}/bin/jsvc">
-						<srcfiles dir="${basedir}/lib/native" includes="commons-daemon-*.tar.gz"/>
-					</uptodate>
-				</and>
-			</or>
-		</condition>
+		<delete dir="${daemonBinDir}"/>
 	</target>
 
 	<target name="unpackDaemonArchive" depends="daemonAppUpToDateCheck"
@@ -581,5 +567,24 @@
 				<property name="untarPath" value="@{tarDir}"/>
 			</sequential>
 		</for>
+	</target>
+
+	<target name="daemonAppUpToDateCheck">
+		<condition property="isDaemonAppUpToDate">
+			<or>
+				<and>
+					<os family="windows"/>
+					<uptodate targetfile="${targetDir}/${deployableSvrDir}/bin/ParliamentService.exe">
+						<srcfiles dir="${basedir}/lib/native" includes="commons-daemon-*.tar.gz"/>
+					</uptodate>
+				</and>
+				<and>
+					<not><os family="windows"/></not>
+					<uptodate targetfile="${targetDir}/${deployableSvrDir}/bin/jsvc">
+						<srcfiles dir="${basedir}/lib/native" includes="commons-daemon-*.tar.gz"/>
+					</uptodate>
+				</and>
+			</or>
+		</condition>
 	</target>
 </project>

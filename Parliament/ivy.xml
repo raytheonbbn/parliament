@@ -25,7 +25,7 @@
 			conf="default->default"/>
 
 		<dependency org="commons-daemon" name="commons-daemon" rev="1.1.0" conf="native->default">
-			<artifact name="commons-daemon" type="src" ext="tar.gz"
+			<artifact name="commons-daemon" type="native-src" ext="tar.gz"
 				url="https://repo1.maven.org/maven2/commons-daemon/commons-daemon/1.1.0/commons-daemon-1.1.0-src.tar.gz"/>
 		</dependency>
 
