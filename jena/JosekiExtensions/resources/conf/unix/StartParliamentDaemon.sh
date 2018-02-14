@@ -15,7 +15,7 @@ JETTY_HOST=localhost
 JETTY_PORT=8089
 
 #DAEMON_USER=jsmith
-LOG_FILE=$PMNT_DIR/jsvc-log.txt
+LOG_FILE=$PMNT_DIR/log/jsvc-log.txt
 #CLASS_ARGS=
 
 # Uncomment this line to enable remote debugging:
