@@ -50,20 +50,18 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 	private static final String DATA_DB = "data";
 	private static final String CATALOG_DB = "catalog";
 
-	private static ThreadLocal<WKBWriter> WKB_WRITER = new ThreadLocal<WKBWriter>() {
+	private static final ThreadLocal<WKBWriter> WKB_WRITER = new ThreadLocal<WKBWriter>() {
 		@Override
 		protected WKBWriter initialValue() {
 			return new WKBWriter();
 		}
 	};
 
-	private static ThreadLocal<WKBReader> WKB_READER = new ThreadLocal<WKBReader>() {
-
+	private static final ThreadLocal<WKBReader> WKB_READER = new ThreadLocal<WKBReader>() {
 		@Override
 		protected WKBReader initialValue() {
 			return new WKBReader(SpatialGeometryFactory.GEOMETRY_FACTORY);
 		}
-
 	};
 
 	private static final AtomicInteger INDEX_COUNTER = new AtomicInteger(0);
@@ -71,11 +69,9 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 	/**
 	 * Get the <code>Geometry</code> give the well known binary representation.
 	 *
-	 * @param data
-	 *           the indexed data.
+	 * @param data The indexed data.
 	 * @return a <code>Geometry</code>.
-	 * @throws ParseException
-	 *            if an error occurs parsing the data.
+	 * @throws ParseException If an error occurs parsing the data.
 	 */
 	protected static final Geometry getGeometryRepresentation(NodeData data)
 		throws ParseException {
@@ -106,37 +102,34 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 	protected StoredSortedMap<NodeKey, NodeData> nodes;
 	protected StoredSortedMap<Integer, NodeData> idNodes;
 
-	protected String indexDir;
+	protected File indexDir;
 
 	protected long size;
 
 	protected Profile profile;
 
-	public SpatialIndex(Profile profile, Properties configuration,
-		String indexDir) {
+	public SpatialIndex(Profile profile, Properties configuration, String indexDir) {
 		this.profile = profile;
-
 		this.configuration = configuration;
 
-		this.cache = new ThreadLocal<QueryCache<Geometry>>() {
+		cache = new ThreadLocal<QueryCache<Geometry>>() {
 			@Override
 			protected QueryCache<Geometry> initialValue() {
 				return new QueryCache<>(Constants.QUERY_CACHE_SIZE);
 			}
 		};
 
-		this.indexDir = indexDir + File.separatorChar + "spatial"
-			+ File.separatorChar;
-		this.idCounter = new AtomicInteger();
+		this.indexDir = new File(new File(indexDir), "spatial");
+		idCounter = new AtomicInteger();
 
-		this.dbConfig = new DatabaseConfig();
-		this.dbConfig.setTransactional(true);
-		this.dbConfig.setAllowCreate(true);
+		dbConfig = new DatabaseConfig();
+		dbConfig.setTransactional(true);
+		dbConfig.setAllowCreate(true);
 
-		this.secConfig = new SecondaryConfig();
-		this.secConfig.setTransactional(true);
-		this.secConfig.setAllowCreate(true);
-		this.secConfig.setSortedDuplicates(false);
+		secConfig = new SecondaryConfig();
+		secConfig.setTransactional(true);
+		secConfig.setAllowCreate(true);
+		secConfig.setSortedDuplicates(false);
 	}
 
 	/** {@inheritDoc} */
@@ -146,10 +139,9 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 	}
 
 	private void initializeEnvironment() throws SpatialIndexException {
-		File f = new File(indexDir);
-		f.mkdirs();
-
 		try {
+			indexDir.mkdirs();
+
 			EnvironmentConfig envConfig = new EnvironmentConfig();
 			envConfig.setTransactional(true);
 			envConfig.setAllowCreate(true);
@@ -162,18 +154,13 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 			envConfig.setConfigParam(EnvironmentConfig.LOG_FILE_MAX, "10000000"); // 10M
 			envConfig.setConfigParam(EnvironmentConfig.CLEANER_EXPUNGE, "true");
 
-			env = new Environment(f, envConfig);
+			env = new Environment(indexDir, envConfig);
 
 			openDB();
-
-		} catch (EnvironmentLockedException e) {
-			throw new SpatialIndexException(
-				this,
-				"Error while initializing environment",
-				e);
-		} catch (DatabaseException e) {
-			throw new SpatialIndexException(this,
-				"Error while initializaing maps", e);
+		} catch (EnvironmentLockedException ex) {
+			throw new SpatialIndexException(this, "Error while initializing environment", ex);
+		} catch (DatabaseException ex) {
+			throw new SpatialIndexException(this, "Error while initializing maps", ex);
 		}
 	}
 
@@ -210,8 +197,8 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 			if (catalogDb != null) {
 				catalogDb.close();
 			}
-		} catch (DatabaseException e) {
-			throw new SpatialIndexException(this, "Error closing databases", e);
+		} catch (DatabaseException ex) {
+			throw new SpatialIndexException(this, "Error closing databases", ex);
 		}
 	}
 
@@ -220,9 +207,8 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 			try {
 				env.cleanLog();
 				env.close();
-			} catch (DatabaseException e) {
-				throw new SpatialIndexException(this, "Error closing environment",
-					e);
+			} catch (DatabaseException ex) {
+				throw new SpatialIndexException(this, "Error closing environment", ex);
 			}
 		}
 	}
@@ -238,8 +224,8 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 			secConfig.setKeyCreator(new NodeIdKeyCreator(catalog));
 			nodeDb = env.openSecondaryDatabase(t, ID_NODE_INDEX, db, secConfig);
 			t.commit();
-		} catch (Exception e) {
-			throw new SpatialIndexException(this, "Error opening databases", e);
+		} catch (Exception ex) {
+			throw new SpatialIndexException(this, "Error opening databases", ex);
 		}
 		createMaps();
 	}
@@ -274,7 +260,7 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 	public final void doDelete() throws IndexException {
 		synchronized (lock) {
 			indexDelete();
-			FileUtil.delete(new File(indexDir));
+			FileUtil.delete(indexDir);
 		}
 	}
 
@@ -296,12 +282,11 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 	}
 
 	/**
-	 * {@inheritDoc} This calls {@link SpatialIndex#indexAdd(Record)}
-	 * to actually add the record to the spatial index.
+	 * {@inheritDoc} This calls {@link SpatialIndex#indexAdd(Record)} to actually
+	 * add the record to the spatial index.
 	 *
-	 * @throws SpatialIndexException
-	 *            if an error occurs parsing a geometry that already exists in
-	 *            the index for the given key.
+	 * @throws SpatialIndexException if an error occurs parsing a geometry that
+	 *         already exists in the index for the given key.
 	 */
 	@Override
 	protected final boolean doAdd(Record<Geometry> r)
@@ -351,13 +336,10 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 	/**
 	 * Update a record.
 	 *
-	 * @param r
-	 *           the record to update.
-	 * @param previous
-	 *           the previous data.
+	 * @param r the record to update.
+	 * @param previous the previous data.
 	 * @return true if the data was updated.
-	 * @throws SpatialIndexException
-	 *            if an error occurs.
+	 * @throws SpatialIndexException if an error occurs.
 	 */
 	protected boolean indexUpdate(Record<Geometry> r, Record<Geometry> previous)
 		throws SpatialIndexException {
@@ -401,8 +383,7 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 
 	/** {@inheritDoc} */
 	@Override
-	protected void doAdd(Iterator<Record<Geometry>> records)
-		throws IndexException {
+	protected void doAdd(Iterator<Record<Geometry>> records) throws IndexException {
 		synchronized (lock) {
 			bulkLoading = true;
 			while (records.hasNext()) {
@@ -414,8 +395,7 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 
 	/** {@inheritDoc} */
 	@Override
-	protected void doRemove(Iterator<Record<Geometry>> records)
-		throws IndexException {
+	protected void doRemove(Iterator<Record<Geometry>> records) throws IndexException {
 		synchronized (lock) {
 			while (records.hasNext()) {
 				doRemove(records.next());
@@ -426,8 +406,8 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @throws SpatialIndexException
-	 *            if an error occurs while parsing the geometry from the index.
+	 * @throws SpatialIndexException if an error occurs while parsing the
+	 *         geometry from the index.
 	 */
 	@Override
 	public final Record<Geometry> find(Node node) throws SpatialIndexException {
@@ -443,8 +423,8 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 		Geometry g;
 		try {
 			g = getGeometryRepresentation(data);
-		} catch (ParseException e) {
-			throw new SpatialIndexException(this, e);
+		} catch (ParseException ex) {
+			throw new SpatialIndexException(this, ex);
 		}
 		return GeometryRecord.create(node, g);
 
@@ -453,14 +433,11 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 	/** {@inheritDoc} */
 	@Override
 	public final Iterator<Record<Geometry>> doIterator() {
-
 		final Iterator<NodeData> iter = nodes.values().iterator();
 		final SpatialIndex index = this;
 		ClosableIterator<Record<Geometry>> it = new ClosableIterator<Record<Geometry>>() {
-
 			@Override
 			public void remove() {
-
 			}
 
 			@Override
@@ -470,8 +447,8 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 				Geometry g;
 				try {
 					g = getGeometryRepresentation(data);
-				} catch (ParseException e) {
-					throw new SpatialIndexException(index, e);
+				} catch (ParseException ex) {
+					throw new SpatialIndexException(index, ex);
 				}
 				GeometryRecord r = GeometryRecord.create(n, g);
 				return r;
@@ -525,8 +502,7 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 				PrefixRegistry.getInstance().registerPrefixes(prefixes);
 			}
 			// register properties
-			PropertyFunctionRegistry pfuncRegistry = PropertyFunctionRegistry
-				.get();
+			PropertyFunctionRegistry pfuncRegistry = PropertyFunctionRegistry.get();
 			IterablePropertyFunctionFactory pfuncFactory = profile.getPropertyFunctionFactory();
 
 			for (String uri : pfuncFactory) {
@@ -555,8 +531,7 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 			}
 
 			// remove properties
-			PropertyFunctionRegistry pfuncRegistry = PropertyFunctionRegistry
-				.get();
+			PropertyFunctionRegistry pfuncRegistry = PropertyFunctionRegistry.get();
 			IterablePropertyFunctionFactory pfuncFactory = profile.getPropertyFunctionFactory();
 
 			for (String uri : pfuncFactory) {
@@ -577,44 +552,38 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 	/**
 	 * Open this instance.
 	 *
-	 * @throws SpatialIndexException
-	 *            if an error occurs while opening
+	 * @throws SpatialIndexException if an error occurs while opening
 	 */
 	protected abstract void indexOpen() throws SpatialIndexException;
 
 	/**
 	 * Delete any resources handled by this instance.
 	 *
-	 * @throws SpatialIndexException
-	 *            if an error occurs while deleting.
+	 * @throws SpatialIndexException if an error occurs while deleting.
 	 */
 	protected abstract void indexDelete() throws SpatialIndexException;
 
 	/**
 	 * Clear all records.
 	 *
-	 * @throws SpatialIndexException
-	 *            if an error occurs while clearing.
+	 * @throws SpatialIndexException if an error occurs while clearing.
 	 */
 	protected abstract void indexClear() throws SpatialIndexException;
 
 	/**
 	 * Close this instance.
 	 *
-	 * @throws SpatialIndexException
-	 *            if an error occurs while clearing.
+	 * @throws SpatialIndexException if an error occurs while clearing.
 	 */
 	protected abstract void indexClose() throws SpatialIndexException;
 
 	/**
 	 * Add a record to the index. If a previous record exists, delete it.
 	 *
-	 * @param r
-	 *           a record to add.
+	 * @param r a record to add.
 	 * @return <code>true</code> if the record is added; otherwise
 	 *         <code>false</code>.
-	 * @throws SpatialIndexException
-	 *            if an error occurs while adding the record.
+	 * @throws SpatialIndexException if an error occurs while adding the record.
 	 */
 	protected abstract boolean indexAdd(Record<Geometry> r)
 		throws SpatialIndexException;
@@ -622,12 +591,11 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 	/**
 	 * Remove the record from the index.
 	 *
-	 * @param r
-	 *           a record to delete.
+	 * @param r a record to delete.
 	 * @return <code>true</code> if the record is removed; otherwise
 	 *         <code>false</code>.
-	 * @throws SpatialIndexException
-	 *            if an error occurs while removing the record.
+	 * @throws SpatialIndexException if an error occurs while removing the
+	 *         record.
 	 */
 	protected abstract boolean indexRemove(Record<Geometry> r)
 		throws SpatialIndexException;

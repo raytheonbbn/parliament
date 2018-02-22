@@ -155,22 +155,15 @@ public class RTreeIndex extends SpatialIndex {
 				return false;
 			}
 
-			int id = data.getId();
-			Geometry g;
 			try {
-				g = getGeometryRepresentation(data);
-			} catch (ParseException e) {
-				throw new SpatialIndexException(this, e);
-			}
-			if (!g.equals(r.getValue())) {
-				LOG.error("The value for {} is different from the value to be deleted",
-					n);
-				return false;
-			}
-			try {
-				return tree.delete(createBoundingBox(this, g), id);
-			} catch (RTreeException e) {
-				throw new SpatialIndexException(this, e);
+				Geometry g = getGeometryRepresentation(data);
+				if (!g.equals(r.getValue())) {
+					LOG.error("The value for {} is different from the value to be deleted", n);
+					return false;
+				}
+				return tree.delete(createBoundingBox(this, g), data.getId());
+			} catch (ParseException | RTreeException ex) {
+				throw new SpatialIndexException(this, ex);
 			}
 		}
 	}
