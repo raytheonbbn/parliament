@@ -186,6 +186,7 @@ public class PostgresIndex extends SQLGeometryIndex {
 	}
 
 	/** {@inheritDoc} */
+	@SuppressWarnings("resource")
 	@Override
 	public Iterator<Record<Geometry>> iterator(Geometry geometry, Operation operation) {
 		String query = Operation.Helper.isIntersection(operation)
@@ -197,8 +198,7 @@ public class PostgresIndex extends SQLGeometryIndex {
 		try {
 			c = store.getConnection();
 			PreparedStatement intersectionIterator = c.prepareStatement(query);
-			intersectionIterator.setBytes(1, GeometryConverter
-				.convertGeometry(geometry));
+			intersectionIterator.setBytes(1, GeometryConverter.convertGeometry(geometry));
 			LOG.debug("Query = {}", intersectionIterator);
 			ResultSet rs = intersectionIterator.executeQuery();
 			Iterator<Record<Geometry>> it = new ResultSetIterator(c, rs, NODE_COLUMN, GEOMETRY_COLUMN);
@@ -206,8 +206,8 @@ public class PostgresIndex extends SQLGeometryIndex {
 		} catch (SQLException | PersistentStoreException ex) {
 			LOG.error(ex.getClass().getSimpleName() + ": " + tableName, ex);
 			PersistentStore.close(c);
+			return null;
 		}
-		return null;
 	}
 
 	/** {@inheritDoc} */
@@ -281,6 +281,7 @@ public class PostgresIndex extends SQLGeometryIndex {
 	}
 
 	/** {@inheritDoc} */
+	@SuppressWarnings("resource")
 	@Override
 	public Iterator<Record<Geometry>> query(Geometry value) throws SpatialIndexException {
 		Connection c = null;

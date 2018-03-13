@@ -87,12 +87,7 @@ public class JTSIndex extends com.bbn.parliament.jena.graph.index.spatial.Spatia
 		Geometry extent = r.getValue();
 		synchronized (indexLock) {
 			index.insert(extent.getEnvelopeInternal(), extent);
-			List<Node> nodesForExtent = extentsToNodes.get(extent.toText());
-			if (null == nodesForExtent) {
-				nodesForExtent = new ArrayList<>();
-				extentsToNodes.put(extent.toText(), nodesForExtent);
-			}
-			nodesForExtent.add(node);
+			extentsToNodes.computeIfAbsent(extent.toText(), k -> new ArrayList<>()).add(node);
 			return true;
 		}
 	}
@@ -100,17 +95,17 @@ public class JTSIndex extends com.bbn.parliament.jena.graph.index.spatial.Spatia
 	/** {@inheritDoc} */
 	@Override
 	protected boolean indexRemove(Record<Geometry> r) {
-		Node node = r.getKey();
+		boolean result = false;
 		synchronized (indexLock) {
-			Record<Geometry> record = find(node);
-			if (null == record) {
-				return false;
+			Record<Geometry> record = find(r.getKey());
+			if (null != record) {
+				Geometry geom = record.getValue();
+				extentsToNodes.remove(geom.toText());
+				index.remove(geom.getEnvelopeInternal(), geom);
+				result = true;
 			}
-			Geometry geom = record.getValue();
-			extentsToNodes.remove(geom);
-			index.remove(geom.getEnvelopeInternal(), geom);
 		}
-		return true;
+		return result;
 	}
 
 	/** {@inheritDoc} */

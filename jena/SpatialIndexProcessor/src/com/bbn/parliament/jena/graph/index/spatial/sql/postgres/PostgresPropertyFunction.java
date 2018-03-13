@@ -50,46 +50,37 @@ public class PostgresPropertyFunction extends SpatialPropertyFunction {
 		this.operand = getIndex().getSQLFactory().getOperator(opToExecute);
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	protected QueryIterator bindVar(Geometry boundExtent, Node unboundVariable,
-		@SuppressWarnings("hiding") SpatialIndex index, boolean isFirstVarUnbound, ExecutionContext context) {
-		Iterator<Record<Geometry>> extents = null;
-		byte[] bound = GeometryConverter.convertGeometry(boundExtent);
+		SpatialIndex idx, boolean isFirstVarUnbound, ExecutionContext context) {
+
+		String sql = isFirstVarUnbound
+			? operand.getIteratorQuery()
+			: operand.getInverseIteratorQuery();
+
 		Connection c = null;
 
 		try {
-			String sql;
-			if (isFirstVarUnbound) {
-				sql = operand.getIteratorQuery();
-			} else {
-				sql = operand.getInverseIteratorQuery();
-			}
-
 			c = PersistentStore.getInstance().getConnection();
 			PreparedStatement operation = c.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
 				ResultSet.CONCUR_READ_ONLY);
-			for (int i = 1; i <= operation.getParameterMetaData()
-				.getParameterCount(); i += 2) {
+			byte[] bound = GeometryConverter.convertGeometry(boundExtent);
+			for (int i = 1; i <= operation.getParameterMetaData().getParameterCount(); i += 2) {
 				operation.setBytes(i, bound);
 				operation.setInt(i + 1, Constants.WGS84_SRID);
 			}
 
 			ResultSet rs = operation.executeQuery();
-
-			extents = new ResultSetIterator(c, rs, PostgresIndex.NODE_COLUMN,
+			Iterator<Record<Geometry>> extents = new ResultSetIterator(c, rs, PostgresIndex.NODE_COLUMN,
 				PostgresIndex.GEOMETRY_COLUMN);
-		} catch (SQLException e) {
-			LOG.error("SQLException", e);
-			PersistentStore.close(c);
-			return IterLib.noResults(context);
-		} catch (PersistentStoreException e) {
-			LOG.error("PersistentStoreException", e);
+			return new SingleGeometryIterator(unboundVariable, extents,
+				idx.getQueryCache(), context);
+		} catch (SQLException | PersistentStoreException ex) {
+			LOG.error(ex.getClass().getSimpleName(), ex);
 			PersistentStore.close(c);
 			return IterLib.noResults(context);
 		}
-
-		return new SingleGeometryIterator(unboundVariable, extents,
-			index.getQueryCache(), context);
 	}
 
 	@Override
