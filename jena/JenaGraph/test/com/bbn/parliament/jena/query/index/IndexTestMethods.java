@@ -32,7 +32,8 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoCloseable {
 	public enum IndexUnderTest { DEFAULT_GRAPH, NAMED_GRAPH }
 
-	private static final Node namedGraphName = Node.createURI("http://example.org/testGraph");
+	private static final Node NAMED_GRAPH_NAME = Node.createURI("http://example.org/testGraph");
+	private static final File KB_DIR = new File("test-kb-data");
 
 	private KbGraphStore store;
 	private Model defaultModel;
@@ -50,15 +51,12 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 
 	// Call from @BeforeEach
 	public IndexTestMethods() {
-		File kbDir = new File("test-kb-data");
-		if (!kbDir.exists()) {
-			System.out.format("%1$s does not exist%n", kbDir.getPath());
-		} else if (!kbDir.isDirectory()) {
-			System.out.format("%1$s exists but is not a directory%n", kbDir.getPath());
-		} else if (kbDir.listFiles().length <= 0) {
-			System.out.format("%1$s is an empty directory%n", kbDir.getPath());
-		} else {
-			System.out.format("%1$s is a non-empty directory%n", kbDir.getPath());
+		if (KB_DIR.exists() && !KB_DIR.isDirectory()) {
+			throw new RuntimeException(String.format(
+				"%1$s exists but is not a directory%n", KB_DIR.getPath()));
+		} else if (KB_DIR.isDirectory() && KB_DIR.listFiles().length > 0) {
+			throw new RuntimeException(String.format(
+				"%1$s is a non-empty directory%n", KB_DIR.getPath()));
 		}
 
 		@SuppressWarnings("resource")
@@ -68,7 +66,7 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 
 		@SuppressWarnings("resource")
 		KbGraph namedGraph = KbGraphFactory.createNamedGraph();
-		store.addGraph(namedGraphName, namedGraph);
+		store.addGraph(NAMED_GRAPH_NAME, namedGraph);
 
 		defaultModel = ModelFactory.createModelForGraph(defaultGraph);
 		namedModel = ModelFactory.createModelForGraph(namedGraph);
@@ -77,7 +75,7 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 		IndexFactoryRegistry.getInstance().register(indexFactory);
 
 		defaultGraphIndex = IndexManager.getInstance().createAndRegister(defaultGraph, null, indexFactory);
-		namedGraphIndex = IndexManager.getInstance().createAndRegister(namedGraph, namedGraphName, indexFactory);
+		namedGraphIndex = IndexManager.getInstance().createAndRegister(namedGraph, NAMED_GRAPH_NAME, indexFactory);
 
 		try {
 			defaultGraphIndex.open();
@@ -101,6 +99,15 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 		indexFactory = null;
 		defaultGraphIndex = null;
 		namedGraphIndex = null;
+
+		if (KB_DIR.isDirectory()) {
+			if (KB_DIR.listFiles().length > 0) {
+				throw new RuntimeException(String.format(
+					"Unable to delete %1$s (directory is not empty)%n", KB_DIR.getPath()));
+			} else {
+				KB_DIR.delete();
+			}
+		}
 	}
 
 	// =============== Access Methods ===============
@@ -118,14 +125,14 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 	public Graph getGraph(IndexUnderTest iut) {
 		return (iut == IndexUnderTest.DEFAULT_GRAPH)
 			? store.getDefaultGraph()
-			: store.getGraph(namedGraphName);
+			: store.getGraph(NAMED_GRAPH_NAME);
 	}
 
 	@SuppressWarnings("static-method")
 	public Node getGraphName(IndexUnderTest iut) {
 		return (iut == IndexUnderTest.DEFAULT_GRAPH)
 			? null
-			: namedGraphName;
+			: NAMED_GRAPH_NAME;
 	}
 
 	public Model getModel(IndexUnderTest iut) {

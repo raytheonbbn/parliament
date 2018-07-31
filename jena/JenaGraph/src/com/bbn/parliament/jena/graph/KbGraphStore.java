@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.graph.union.KbUnionGraph;
 import com.bbn.parliament.jena.graph.union.KbUnionableGraph;
+import com.bbn.parliament.jena.joseki.client.StreamUtil;
 import com.bbn.parliament.jni.Config;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
@@ -204,32 +206,19 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore { // ext
 	public void clear() {
 		// We create a clone of the graph names so that as the iteration below removes
 		// elements from the named graphs collection, the iteration is not affected.
-		Node[] graphNames = new Node[(int) size()];
-		int i = 0;
-		for ( Iterator<Node> iter = listGraphNodes() ; iter.hasNext() ; )
-		{
-			Node graphName = iter.next() ;
-			graphNames[i] = graphName;
-			i++;
-		}
+		List<Node> graphNames = StreamUtil.asStream(listGraphNodes())
+			.collect(Collectors.toList());
 
 		// Delete all of the KbUnionGraphs first
-		for (Node graphName : graphNames) {
-			Graph graph = getGraph(graphName);
-			if (graph instanceof KbUnionGraph) {
-				removeGraph(graphName);
-			}
-		}
+		graphNames.stream()
+			.filter(graphName -> getGraph(graphName) instanceof KbUnionGraph)
+			.forEach(graphName -> removeGraph(graphName));
 
 		// Then delete all the named graphs except the master graph:
-		for (Node graphName : graphNames) {
-			if (!MASTER_GRAPH.equals(graphName.getURI())) {
-				Graph graph = getGraph(graphName);
-				if (graph instanceof KbGraph) {
-					removeGraph(graphName);
-				}
-			}
-		}
+		graphNames.stream()
+			.filter(graphName -> !MASTER_GRAPH.equals(graphName.getURI()))
+			.filter(graphName -> getGraph(graphName) instanceof KbGraph)
+			.forEach(graphName -> removeGraph(graphName));
 
 		// Remove the default graph
 		removeGraph(null);
@@ -259,11 +248,8 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore { // ext
 			toReturn = getDefaultGraph();
 			setDefaultGraph(null);
 		} else if (MASTER_GRAPH.equals(graphName.getURI())) {
-			Iterator<Node> it = listGraphNodes();
-			while (it.hasNext()) {
-				if (!MASTER_GRAPH.equals(it.next().getURI())) {
-					throw new JenaException("You cannot delete the master graph while other named graphs still exist!");
-				}
+			if (StreamUtil.asStream(listGraphNodes()).anyMatch(gn -> !MASTER_GRAPH.equals(gn.getURI()))) {
+				throw new JenaException("You cannot delete the master graph while other named graphs still exist!");
 			}
 
 			toReturn = getGraph(graphName);
@@ -284,7 +270,9 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore { // ext
 				if (g instanceof KbUnionGraph) {
 					KbUnionGraph unionGraph = (KbUnionGraph)g;
 					if (graphName.equals(unionGraph.getLeftGraphName()) || graphName.equals(unionGraph.getRightGraphName())) {
-						throw new JenaException(String.format("Cannot delete a named graph while it is a member of a KbUnionGraph.  Delete union graph <%1$s> first.", gName));
+						throw new JenaException(String.format(
+							"Cannot delete a named graph while it is a member of a KbUnionGraph.  Delete union graph <%1$s> first.",
+							gName));
 					}
 				}
 			}
@@ -366,23 +354,17 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore { // ext
 			flushGraph(defaultGraph, null);
 		}
 
-		for ( Iterator<Node> iter = listGraphNodes() ; iter.hasNext() ; )
-		{
-			Node graphName = iter.next() ;
-			Graph graph = getGraph(graphName) ;
-			flushGraph(graph, graphName.getURI());
-		}
+		StreamUtil.asStream(listGraphNodes())
+			.forEach(graphName -> flushGraph(getGraph(graphName), graphName.getURI()));
 	}
 
 	private KbGraph getInnerKbGraph(Graph graph) {
 		if (graph instanceof KbGraph) {
 			return (KbGraph) graph;
-		}
-		else if (graph instanceof InfGraph) {
+		} else if (graph instanceof InfGraph) {
 			Graph rawGraph = ((InfGraph) graph).getRawGraph();
 			return getInnerKbGraph(rawGraph);
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
@@ -514,13 +496,9 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore { // ext
 	/** {@inheritDoc} */
 	@Override
 	public void close() {
-		for (Iterator<Node> iter = listGraphNodes(); iter.hasNext();) {
-			Node gn = iter.next();
-			Graph g = getGraph(gn);
-			if (g != null) {
-				closeGraph(g);
-			}
-		}
+		StreamUtil.asStream(listGraphNodes())
+			.map(graphName -> getGraph(graphName))
+			.forEach(KbGraphStore::closeGraph);
 		closeGraph(getDefaultGraph());
 	}
 

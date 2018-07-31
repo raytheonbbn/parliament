@@ -33,8 +33,7 @@ public class FlushHandler extends AbstractHandler {
 
 	@Override
 	public void handleMultipartFormRequest(HttpServletRequest req,
-		HttpServletResponse resp) throws IOException,
-	ServletErrorResponseException {
+		HttpServletResponse resp) throws IOException, ServletErrorResponseException {
 		throw new ServletErrorResponseException("'multipart/form data' requests are not "
 			+ "supported by this handler.");
 	}
