@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/JenaParliament"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Parliament"/>
 	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=TemporalIndexProcessor&amp;ivyXmlPath=ivy.xml&amp;confs=*&amp;ivySettingsPath=%24%7Bworkspace_loc%3Aivy-conf%2Fivysettings.xml%7D&amp;loadSettingsOnDemand=false&amp;ivyUserDir=&amp;propertyFiles=&amp;acceptedTypes=jar%2Cbundle%2Cejb%2Cmaven-plugin&amp;alphaOrder=false&amp;resolveInWorkspace=false&amp;transitiveResolve=true&amp;readOSGiMetadata=false&amp;retrievedClasspath=true&amp;retrievedClasspathPattern=lib%2F%5Bconf%5D%2F%5Bartifact%5D-%5Brevision%5D.%5Bext%5D&amp;retrievedClasspathSync=false&amp;retrievedClasspathTypes=jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JosekiParliamentClient"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

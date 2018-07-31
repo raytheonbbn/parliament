@@ -1,7 +1,16 @@
 
 package com.bbn.parliament.queryoptimization;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.Vector;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jni.Config;
 import com.bbn.parliament.jni.KbInstance;
@@ -11,10 +20,9 @@ import com.bbn.parliament.jni.ReificationIterator.Reification;
 import com.bbn.parliament.jni.StmtIterator;
 import com.bbn.parliament.jni.StmtIterator.Statement;
 
-import junit.framework.TestCase;
-
 /** @author dkolas */
-public class ReificationTest extends TestCase{
+@RunWith(JUnitPlatform.class)
+public class ReificationTest {
 	private Config config;
 	private KbInstance kb;
 
@@ -34,8 +42,8 @@ public class ReificationTest extends TestCase{
 	private long rdfType;
 	private long hasStatementName;
 
-	@Override
-	public void setUp(){
+	@BeforeEach
+	public void beforeEach() {
 		config = new Config();
 		config.m_kbDirectoryPath = ".";
 		config.m_logToConsole = false;
@@ -65,8 +73,8 @@ public class ReificationTest extends TestCase{
 		hasStatementName = kb.uriToRsrcId("http://parliament.semwebcentral.org/parliament#hasStatementName", false, false);
 	}
 
-	@Override
-	public void tearDown() {
+	@AfterEach
+	public void afterEach() {
 		if (kb != null) {
 			kb.finalize();
 		}
@@ -75,6 +83,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testReificationAddOnly(){
 		kb.addStmt(a, b, c, false);
 		try (StmtIterator it = kb.find(KbInstance.NULL_RSRC_ID, KbInstance.NULL_RSRC_ID, KbInstance.NULL_RSRC_ID, 0)) {
@@ -90,6 +99,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testReificationAddAndCheck(){
 		kb.addStmt(a, b, c, false);
 		kb.addReification(d, a, b, c);
@@ -99,6 +109,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testMultipleReifications(){
 		kb.addStmt(a, b, c, false);
 		kb.addReification(d, a, b, c);
@@ -109,7 +120,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
-
+	@Test
 	public void testFindReificationsByName(){
 		kb.addStmt(a, b, c, false);
 		kb.addReification(d, a, b, c);
@@ -131,6 +142,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindReificationsBySubject(){
 		kb.addStmt(a, b, c, false);
 		kb.addReification(d, a, b, c);
@@ -152,6 +164,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindReificationsByPredicate(){
 		kb.addStmt(a, b, c, false);
 		kb.addReification(d, a, b, c);
@@ -169,6 +182,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindReificationsByObject(){
 		kb.addStmt(a, b, c, false);
 		kb.addReification(d, a, b, c);
@@ -185,6 +199,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindReificationsByNone(){
 		kb.addStmt(a, b, c, false);
 		kb.addReification(d, a, b, c);
@@ -197,6 +212,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindReificationsBySubjectObject(){
 		kb.addStmt(a, b, c, false);
 		kb.addReification(d, a, b, c);
@@ -209,6 +225,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testReificationDelete(){
 		kb.addStmt(a, b, c, false);
 		kb.addReification(d, a, b, c);
@@ -225,11 +242,13 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testReificationDeleteNonexistant(){
 		kb.addStmt(a, b, c, false);
 		kb.deleteReification(d,a,b,c);
 	}
 
+	@Test
 	public void testReificationAddByStatements(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -240,6 +259,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testReificationStatementLiteralness(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -251,6 +271,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testRegularStatementLiteralness(){
 		kb.addStmt(a, b, cLiteral, false);
 		kb.addStmt(d, e, f, false);
@@ -260,6 +281,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testReificationsLiteralness(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -276,6 +298,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testReificationCheckNonExistentReification(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -286,6 +309,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testReificationCheckNonExistentReification2(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -300,6 +324,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testReificationListByStatementName(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -314,6 +339,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testReificationMultipleAdd(){
 		kb.addReification(d, a, b, c);
 		kb.addReification(d, a, b, c);
@@ -323,6 +349,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testReificationMultipleAddByStatements(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -337,6 +364,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testReificationDeleteByStatements(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -351,6 +379,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testReificationMultipleDeleteByStatements(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -398,20 +427,22 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testCountVirtualStatements(){
 		CountStmtsResult result = kb.countStmts();
 		checkCount(result, 0, 0, 0);
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
 		kb.addStmt(d, rdfObject, c, false);
-//		printKb();
+		//printKb();
 		kb.addStmt(d, rdfType, rdfStatement, false);
-//		printKb();
+		//printKb();
 		System.out.println(kb.stmtCount());
 		result = kb.countStmts();
 		checkCount(result, 2, 1, 4);
 	}
 
+	@Test
 	public void testFindVirtualStatementsVarRdfTypeVar(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -423,6 +454,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindVirtualStatementsVarRdfTypeVar2(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -441,6 +473,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindVirtualStatementsVarVarStatement(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -452,6 +485,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindVirtualStatementsVarVarStatement2(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -470,6 +504,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindVirtualStatementsVarRdfTypeStatement(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -481,6 +516,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindVirtualStatementsVarRdfTypeStatement2(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -499,6 +535,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindVirtualStatementsVarRdfSubjectVar(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -510,6 +547,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindVirtualStatementsVarRdfSubjectVar2(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -528,6 +566,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindVirtualStatementsNameVarVar(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -539,6 +578,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindVirtualStatementsNameVarVar2(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -557,6 +597,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindVirtualStatementsVarVarVar(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -568,6 +609,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindVirtualStatementsVarVarUri(){
 		kb.addStmt(a, b, c, false);
 		kb.addStmt(d, rdfSubject, a, false);
@@ -592,6 +634,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindVirtualStatementsVarRdfPredicateVar(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -603,6 +646,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindVirtualStatementsVarRdfPredicateVar2(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -621,6 +665,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindVirtualStatementsVarRdfObjectVar(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -632,6 +677,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindVirtualStatementsVarRdfObjectVar2(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -650,6 +696,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testFindRegularStatements(){
 		kb.addStmt(d, rdfSubject, a, false);
 		kb.addStmt(d, rdfPredicate, b, false);
@@ -676,6 +723,7 @@ public class ReificationTest extends TestCase{
 		}
 	}
 
+	@Test
 	public void testNoPartialReifications(){
 		@SuppressWarnings("unused")
 		long x = kb.addStmt(d, rdfSubject, a, false);
@@ -715,7 +763,8 @@ public class ReificationTest extends TestCase{
 			actuals.add(iterator.next());
 		}
 		iterator.finalize();
-		assertEquals("Wrong number of reifications returned ("+reifications.length+ " vs "+ actuals.size()+")",reifications.length, actuals.size());
+		assertEquals(reifications.length, actuals.size(),
+			"Wrong number of reifications returned (" + reifications.length + " vs " + actuals.size() + ")");
 		for (int i=0; i<reifications.length; i++){
 			boolean found = false;
 			for (Reification reification : actuals){
@@ -744,7 +793,8 @@ public class ReificationTest extends TestCase{
 			actuals.add(iterator.next());
 		}
 		iterator.finalize();
-		assertEquals("Wrong number of statements returned ("+statements.length+ " vs "+ actuals+")",statements.length, actuals.size());
+		assertEquals(statements.length, actuals.size(),
+			"Wrong number of statements returned (" + statements.length + " vs " + actuals + ")");
 		for (int i=0; i<statements.length; i++){
 			boolean found = false;
 			for (Statement statement : actuals){
@@ -779,16 +829,16 @@ public class ReificationTest extends TestCase{
 	@SuppressWarnings("unused")
 	private static void checkReification(Reification reification, long statementName, long subject,
 			long predicate, long object) {
-		assertEquals("Incorrect statementName in returned reification",statementName, reification.getStatementName());
-		assertEquals("Incorrect subject in returned reification",subject, reification.getSubject());
-		assertEquals("Incorrect predicate in returned reification",predicate, reification.getPredicate());
-		assertEquals("Incorrect object in returned reification",object, reification.getObject());
+		assertEquals(statementName, reification.getStatementName(), "Incorrect statementName in returned reification");
+		assertEquals(subject, reification.getSubject(), "Incorrect subject in returned reification");
+		assertEquals(predicate, reification.getPredicate(), "Incorrect predicate in returned reification");
+		assertEquals(object, reification.getObject(), "Incorrect object in returned reification");
 	}
 
 	private static void checkCount(CountStmtsResult result, int numStatements, int numDeleted, int numVirtual) {
-		assertEquals("Incorrect number of stored statements",numStatements, result.getTotal());
-		assertEquals("Incorrect number of deleted statements",numDeleted, result.getNumDel());
-		assertEquals("Incorrect number of virtual statements",numVirtual, result.getNumVirtual());
+		assertEquals(numStatements, result.getTotal(), "Incorrect number of stored statements");
+		assertEquals(numDeleted, result.getNumDel(), "Incorrect number of deleted statements");
+		assertEquals(numVirtual, result.getNumVirtual(), "Incorrect number of virtual statements");
 	}
 
 	@SuppressWarnings("unused")

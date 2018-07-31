@@ -8,6 +8,8 @@ package com.bbn.parliament.jena.joseki.bridge.servlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -79,6 +81,21 @@ public class ParliamentServlet extends Servlet {
 	@Override
 	protected Request setupRequest(String serviceURI,
 		HttpServletRequest httpRequest, String opType) throws IOException {
+
+		if (LOG.isDebugEnabled()) {
+			String paramMap = httpRequest.getParameterMap().entrySet().stream()
+				.map(e -> String.format("      %1$s: %2$s%n", e.getKey(),
+					Arrays.stream(e.getValue()).collect(Collectors.joining("|"))))
+				.collect(Collectors.joining());
+			LOG.debug(
+				"HTTP request info:{}   Method: {}{}   Content type: {}{}   Accept: {}{}   Query string: {}{}   Parameters: {}{}",
+				System.lineSeparator(), httpRequest.getMethod(),
+				System.lineSeparator(), httpRequest.getContentType(),
+				System.lineSeparator(), httpRequest.getHeader("Accept"),
+				System.lineSeparator(), httpRequest.getQueryString(),
+				System.lineSeparator(), System.lineSeparator(), paramMap);
+		}
+
 		return new ParliamentRequest(httpRequest, serviceURI, opType);
 	}
 

@@ -6,19 +6,26 @@
 
 package com.bbn.parliament.queryoptimization;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import junit.framework.TestCase;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 /** @author dkolas */
-public class TreeWidthEstimatorTest extends TestCase{
-	@Override
-	public void setUp(){
+@RunWith(JUnitPlatform.class)
+public class TreeWidthEstimatorTest {
+	@SuppressWarnings("static-method")
+	@BeforeEach
+	public void beforeEach() {
 		Logger.getRootLogger().setLevel(Level.DEBUG);
 	}
 
 	@SuppressWarnings("static-method")
+	@Test
 	public void test1(){
 		// Vx = 10
 		// VxVy = 15

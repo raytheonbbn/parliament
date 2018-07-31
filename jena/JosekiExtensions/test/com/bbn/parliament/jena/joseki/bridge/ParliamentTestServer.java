@@ -1,24 +1,20 @@
 package com.bbn.parliament.jena.joseki.bridge;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.bbn.parliament.jena.jetty.JettyServerCore;
 
-public class ParliamentServerBase {
-	private static final Object lock = new Object();
+public class ParliamentTestServer {
+	private static AtomicBoolean errorOcurredDuringServerStart = new AtomicBoolean(false);
 
-	private static boolean errorOcurredDuringServerStart = false;
-
-	@BeforeClass
+	// Call from @BeforeClass
 	public static void createServer() {
 		try {
 			JettyServerCore.initialize();
 		} catch(Exception ex) {
-			ex.printStackTrace();
-			fail();
+			fail(ex.getMessage());
 		}
 		Thread t = new Thread(new Runnable() {
 			@Override
@@ -26,32 +22,26 @@ public class ParliamentServerBase {
 				try {
 					JettyServerCore.getInstance().start();
 				} catch(Exception ex) {
-					synchronized (lock) {
-						errorOcurredDuringServerStart = true;
-					}
-					ex.printStackTrace();
-					fail();
+					errorOcurredDuringServerStart.set(true);
+					fail(ex.getMessage());
 				}
 			}
 		});
 		t.setDaemon(true);
 		t.start();
 		while (!JettyServerCore.getInstance().isStarted()) {
-			synchronized (lock) {
-				if (errorOcurredDuringServerStart) {
-					break;
-				}
+			if (errorOcurredDuringServerStart.get()) {
+				break;
 			}
 			try {
 				Thread.sleep(250);
 			} catch(InterruptedException ex) {
-				ex.printStackTrace();
-				fail();
+				fail(ex.getMessage());
 			}
 		}
 	}
 
-	@AfterClass
+	// Call from @AfterClass
 	public static void stopServer() {
 		JettyServerCore.getInstance().stop();
 	}

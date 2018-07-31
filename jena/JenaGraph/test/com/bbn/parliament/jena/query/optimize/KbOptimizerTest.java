@@ -1,9 +1,11 @@
 package com.bbn.parliament.jena.query.optimize;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryFactory;
@@ -16,15 +18,16 @@ import com.hp.hpl.jena.sparql.sse.SSE;
  *
  * @author rbattle
  */
-public class KbOptimizerTestCase {
-
-	@BeforeClass
-	public static void register() {
+@RunWith(JUnitPlatform.class)
+public class KbOptimizerTest {
+	@BeforeAll
+	public static void beforeAll() {
 		KbOptimize.register();
 	}
 
 	@SuppressWarnings("static-method")
-	@Test public void query_rename_01()
+	@Test
+	public void query_rename_01()
 	{
 		String queryString =
 			"SELECT ?x { ?s ?p ?o . { SELECT ?v { ?x ?y ?v {SELECT ?w { ?a ?y ?w }}} LIMIT 50 } }" ;
@@ -43,7 +46,8 @@ public class KbOptimizerTestCase {
 
 
 	@SuppressWarnings("static-method")
-	@Test public void query_rename_02()
+	@Test
+	public void query_rename_02()
 	{
 		String queryString =
 			"SELECT ?x { ?s ?p ?o . { SELECT ?v { ?x ?y ?v {SELECT * { ?a ?y ?w }}} LIMIT 50 } }"  ;
@@ -60,7 +64,8 @@ public class KbOptimizerTestCase {
 	}
 
 	@SuppressWarnings("static-method")
-	@Test public void query_rename_03()
+	@Test
+	public void query_rename_03()
 	{
 		String queryString = "SELECT ?x { ?s ?p ?o . { SELECT * { ?x ?y ?v {SELECT ?w { ?a ?y ?w }}} LIMIT 50 } }" ;
 		String opExpectedString =
@@ -76,7 +81,8 @@ public class KbOptimizerTestCase {
 	}
 
 	@SuppressWarnings("static-method")
-	@Test public void query_rename_04()
+	@Test
+	public void query_rename_04()
 	{
 		String queryString = "SELECT * { ?s ?p ?o . { SELECT ?v { ?x ?y ?v {SELECT ?w { ?a ?y ?w }}} LIMIT 50 } }" ;
 		String opExpectedString =
@@ -92,7 +98,8 @@ public class KbOptimizerTestCase {
 	}
 
 	@SuppressWarnings("static-method")
-	@Test public void query_rename_05()
+	@Test
+	public void query_rename_05()
 	{
 		String queryString = "SELECT ?v { ?s ?p ?o . { SELECT ?v { ?x ?y ?v {SELECT ?w { ?a ?y ?w }}} LIMIT 50 } }"    ;
 		String opExpectedString =
@@ -109,7 +116,8 @@ public class KbOptimizerTestCase {
 	}
 
 	@SuppressWarnings("static-method")
-	@Test public void query_rename_06()
+	@Test
+	public void query_rename_06()
 	{
 		String queryString = "SELECT ?w { ?s ?p ?o . { SELECT ?w { ?x ?y ?v {SELECT ?w { ?a ?y ?w }}} } } LIMIT 50" ;
 		String opExpectedString =
@@ -127,7 +135,8 @@ public class KbOptimizerTestCase {
 	}
 
 	@SuppressWarnings("static-method")
-	@Test public void query_rename_07()
+	@Test
+	public void query_rename_07()
 	{
 		String queryString = "SELECT * { ?s ?p ?o . { SELECT ?w { ?x ?y ?v }}}"  ;
 		String opExpectedString =

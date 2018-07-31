@@ -5,15 +5,35 @@
 // All rights reserved.
 package com.bbn.parliament.jena.graph.index.temporal.operands;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.Operand;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.query.TestIndexFactory;
 
+@RunWith(JUnitPlatform.class)
 public class IntervalMetByTest extends BaseOperandTestClass {
+	@BeforeEach
+	public void beforeEach() {
+		super.beforeEach();
+	}
+
+	@AfterEach
+	public void afterEach() {
+		super.afterEach();
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -21,22 +41,23 @@ public class IntervalMetByTest extends BaseOperandTestClass {
 		return Operand.INTERVAL_MET_BY;
 	}
 
+	@Test
 	public void testTestExtents() {
-		assertFalse("These intervals overlap.",
-			getOperator().testExtents(TestIndexFactory.THREE, TestIndexFactory.FOUR));
-		assertFalse("One interval starts the other, so 'metBy' does not hold.",
-			getOperator().testExtents(TestIndexFactory.FOUR, TestIndexFactory.TWO));
-		assertFalse("These intervals are equal.", getOperator().testExtents(
-			TestIndexFactory.ONE, TestIndexFactory.SIX));
-		assertFalse("These intervals do not share a boundary.",
-			getOperator().testExtents(TestIndexFactory.ONE, TestIndexFactory.TWO));
-		assertTrue(getOperator().testExtents(TestIndexFactory.FIVE,
-			TestIndexFactory.THREE));
-		assertFalse("This test involves incompatible datatypes and therefore must be false.",
-				pf.testExtents(TestIndexFactory.FIVE, TestIndexFactory.JAN04));
+		assertFalse(getOperator().testExtents(TestIndexFactory.THREE, TestIndexFactory.FOUR),
+			"These intervals overlap.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.FOUR, TestIndexFactory.TWO),
+			"One interval starts the other, so 'metBy' does not hold.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.ONE, TestIndexFactory.SIX),
+			"These intervals are equal.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.ONE, TestIndexFactory.TWO),
+			"These intervals do not share a boundary.");
+		assertTrue(getOperator().testExtents(TestIndexFactory.FIVE, TestIndexFactory.THREE));
+		assertFalse(pf.testExtents(TestIndexFactory.FIVE, TestIndexFactory.JAN04),
+			"This test involves incompatible datatypes and therefore must be false.");
 	}
 
 	/** Calls '?x metBy THREE' which should result in FIVE. */
+	@Test
 	public void testBindFirstVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("five");
@@ -46,6 +67,7 @@ public class IntervalMetByTest extends BaseOperandTestClass {
 	}
 
 	/** Calls 'THREE metBy ?x' which should result in ONE and SIX. */
+	@Test
 	public void testBindSecondVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("one");

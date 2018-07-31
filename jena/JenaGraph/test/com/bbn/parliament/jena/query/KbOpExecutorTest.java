@@ -1,14 +1,20 @@
 package com.bbn.parliament.jena.query;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
+import com.bbn.parliament.jena.TestingDataset;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.query.ARQ;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -21,19 +27,35 @@ import com.hp.hpl.jena.sparql.engine.iterator.QueryIterRoot;
 import com.hp.hpl.jena.sparql.sse.SSE;
 import com.hp.hpl.jena.sparql.util.Context;
 
-public class KbOpExecutorTest extends AbstractKbTestCase {
+@RunWith(JUnitPlatform.class)
+public class KbOpExecutorTest {
+	private static TestingDataset dataset;
+
+	@BeforeAll
+	public static void beforeAll() {
+		dataset = new TestingDataset();
+	}
+
+	@AfterAll
+	public static void afterAll() {
+		dataset.clear();
+	}
 
 	private ExecutionContext execCxt;
 	private KbOpExecutor opExecutor;
 
-	@Override
-	@Before
-	public void setUp() {
-		super.setUp();
+	@BeforeEach
+	public void beforeEach() {
 		Context params = ARQ.getContext();
-		execCxt = new ExecutionContext(params, defaultGraph, dataset,
+		execCxt = new ExecutionContext(params, dataset.getDefaultGraph(), dataset.getGraphStore(),
 			KbOpExecutor.KbOpExecutorFactory);
 		opExecutor = new KbOpExecutor(execCxt);
+	}
+
+	@SuppressWarnings("static-method")
+	@AfterEach
+	public void afterEach() {
+		dataset.reset();
 	}
 
 	protected QueryIterator createInput() {
@@ -53,7 +75,7 @@ public class KbOpExecutorTest extends AbstractKbTestCase {
 
 	@Test
 	public void testExecuteOpBGPSimple() throws IOException {
-		loadResource("data/data-r2/triple-match/data-02.ttl", getGraph());
+		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", dataset.getDefaultGraph());
 
 		QueryIterator it = createIterator(Triple.create(ResourceFactory
 			.createResource("http://example.org/data/x").asNode(), Var
@@ -74,7 +96,7 @@ public class KbOpExecutorTest extends AbstractKbTestCase {
 		QueryIterator it;
 		int count = 0;
 
-		loadResource("data/data-r2/triple-match/dawg-data-01.ttl", getNamedGraph());
+		QueryTestUtil.loadResource("data/data-r2/triple-match/dawg-data-01.ttl", dataset.getNamedGraph());
 
 		// no filter
 		algebra = ""
@@ -117,7 +139,7 @@ public class KbOpExecutorTest extends AbstractKbTestCase {
 
 	@Test
 	public void testFilter() throws IOException {
-		loadResource("data/data-r2/sort/data-sort-numbers.ttl", getGraph());
+		QueryTestUtil.loadResource("data/data-r2/sort/data-sort-numbers.ttl", dataset.getDefaultGraph());
 
 		String algebra = "";
 		algebra = ""
@@ -142,7 +164,7 @@ public class KbOpExecutorTest extends AbstractKbTestCase {
 		QueryIterator it;
 		int count = 0;
 
-		loadResource("data/data-r2/triple-match/dawg-data-01.ttl", getGraph());
+		QueryTestUtil.loadResource("data/data-r2/triple-match/dawg-data-01.ttl", dataset.getDefaultGraph());
 
 		// filter name
 		algebra = ""
@@ -165,12 +187,12 @@ public class KbOpExecutorTest extends AbstractKbTestCase {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testExecuteOpBGPBound() {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testExecuteOpBGPComplex() {
 	}
 }

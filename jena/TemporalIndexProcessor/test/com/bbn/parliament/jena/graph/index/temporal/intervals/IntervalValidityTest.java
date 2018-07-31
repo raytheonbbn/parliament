@@ -1,12 +1,14 @@
 package com.bbn.parliament.jena.graph.index.temporal.intervals;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.graph.index.temporal.pt.TemporalIndexField;
 import com.hp.hpl.jena.datatypes.DatatypeFormatException;
@@ -14,9 +16,10 @@ import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.shared.impl.JenaParameters;
 
+@RunWith(JUnitPlatform.class)
 public class IntervalValidityTest {
 	@SuppressWarnings("static-method")
-	@Before
+	@BeforeEach
 	public void setUp() {
 		JenaParameters.enableEagerLiteralValidation = true;
 	}
@@ -115,16 +118,15 @@ public class IntervalValidityTest {
 			exMsg = ex.getMessage();
 		}
 		if (isValid) {
-			assertFalse(String.format(
-				"Failed to parse '%1$s' into TemporalInterval.  %2$s:  %3$s", lex, exType, exMsg),
-				parseThrewException);
+			assertFalse(parseThrewException, String.format(
+				"Failed to parse '%1$s' into TemporalInterval.  %2$s:  %3$s", lex, exType, exMsg));
 			assertNotNull(literal);
 		} else {
 			String msg = String.format(
 				"Parsed '%1$s' into TemporalInterval '%2$s', but parse should have failed",
 				lex, literal);
-			assertNull(msg, literal);
-			assertTrue(msg, parseThrewException);
+			assertNull(literal, msg);
+			assertTrue(parseThrewException, msg);
 		}
 	}
 }

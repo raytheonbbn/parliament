@@ -310,10 +310,10 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore { // ext
 			}
 		}
 
-		log.debug(String.format("Deleting %1$s graph: <%2$s> (graphDir = \"%3$s\")",
+		log.debug("Deleting {} graph: <{}> (graphDir = \"{}\")",
 			isKbGraph ? "named" : "union",
-				(null == graphName) ? "Default Graph" : graphName.getURI(),
-					isKbGraph ? graphDir : "N/A"));
+			(null == graphName) ? "Default Graph" : graphName.getURI(),
+			isKbGraph ? graphDir : "N/A");
 
 		// Close the graph
 		toReturn.close();

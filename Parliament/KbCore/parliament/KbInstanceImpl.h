@@ -49,7 +49,7 @@ struct KbInstance::Impl
 	using StmtTable = FixRecordTable<KbStmt>;
 
 	Impl(const Config& config, KbInstance* pKB) :
-		m_config(config),
+		m_config(config.ensureKbDirExists()),
 		m_dontNeedToRunAddNewRules(),
 		m_isLogEngineInitialized(Log::init(m_config)),
 		m_log(Log::getSource("KbInstance")),

@@ -1,18 +1,23 @@
 package com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import com.hp.hpl.jena.datatypes.DatatypeFormatException;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
+@RunWith(JUnitPlatform.class)
 public class GMLLiteralTest implements LiteralTestCase {
-
 	private GMLLiteral literal;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		literal = new GMLLiteral();
 	}
@@ -34,31 +39,29 @@ public class GMLLiteralTest implements LiteralTestCase {
 		gml = "<gml:Point srsName=\"urn:x-ogc:def:crs:EPSG:32617\" xmlns:gml=\"http://www.opengis.net/gml\"><gml:pos >630084 4833438</gml:pos></gml:Point>";
 		try {
 			g = literal.parse(gml);
-			Assert.assertTrue(g instanceof Point);
+			assertTrue(g instanceof Point);
 		} catch (DatatypeFormatException e) {
-			Assert.fail(String.format("%s is valid GML", gml));
+			fail(String.format("%s is valid GML", gml));
 			e.printStackTrace();
 			return;
 		}
 
 		distance = location.distance(g);
-		Assert.assertTrue(String.format("%f >= %f", distance, threshold),
-				distance < threshold);
+		assertTrue(distance < threshold, String.format("%f >= %f", distance, threshold));
 
 		// WGS84
 		gml = "<gml:Point srsName=\"urn:x-ogc:def:crs:EPSG:4326\" xmlns:gml=\"http://www.opengis.net/gml\"><gml:pos >43.642567 -79.387139</gml:pos></gml:Point>";
 		try {
 			g = literal.parse(gml);
-			Assert.assertTrue(g instanceof Point);
+			assertTrue(g instanceof Point);
 		} catch (DatatypeFormatException e) {
-			Assert.fail(String.format("%s is valid WKT", gml));
+			fail(String.format("%s is valid WKT", gml));
 			e.printStackTrace();
 			return;
 		}
 
 		distance = location.distance(g);
-		Assert.assertTrue(String.format("%f >= %f", distance, threshold),
-				distance < threshold);
+		assertTrue(distance < threshold, String.format("%f >= %f", distance, threshold));
 	}
 
 	@Test
@@ -71,7 +74,7 @@ public class GMLLiteralTest implements LiteralTestCase {
 		} catch (DatatypeFormatException e) {
 			failed = true;
 		}
-		Assert.assertTrue("Invalid CRS should through a DatatypeFormatException", failed);
+		assertTrue(failed, "Invalid CRS should through a DatatypeFormatException");
 	}
 
 	@Test
@@ -84,8 +87,7 @@ public class GMLLiteralTest implements LiteralTestCase {
 		} catch (DatatypeFormatException e) {
 			failed = true;
 		}
-		Assert.assertTrue("Invalid GML should through a DatatypeFormatException", failed);
-
+		assertTrue(failed, "Invalid GML should through a DatatypeFormatException");
 	}
 
 	@Test
@@ -99,16 +101,16 @@ public class GMLLiteralTest implements LiteralTestCase {
 		try {
 			g = literal.parse(gml);
 		} catch (DatatypeFormatException e) {
-			Assert.fail(String.format("%s is valid GML", gml));
+			fail(String.format("%s is valid GML", gml));
 			e.printStackTrace();
 			return;
 		}
 
-		Assert.assertTrue(g instanceof Point);
+		assertTrue(g instanceof Point);
 
 		Point p = (Point) g;
-		Assert.assertEquals(38.895111, p.getY(), 0.0000001);
-		Assert.assertEquals(-77.036667, p.getX(), 0.0000001);
+		assertEquals(38.895111, p.getY(), 0.0000001);
+		assertEquals(-77.036667, p.getX(), 0.0000001);
 
 		//      assertEquals(gml, literal.unparse(g));
 	}
@@ -121,27 +123,26 @@ public class GMLLiteralTest implements LiteralTestCase {
 		try {
 			g = literal.parse(gml);
 		} catch (DatatypeFormatException e) {
-			Assert.fail(String.format("%s is valid GML", gml));
+			fail(String.format("%s is valid GML", gml));
 			e.printStackTrace();
 			return;
 		}
 
-		Assert.assertTrue(g instanceof Point);
+		assertTrue(g instanceof Point);
 
 		Point p = (Point) g;
-		Assert.assertEquals(38.895111, p.getY(), 0.0000001);
-		Assert.assertEquals(-77.036667, p.getX(), 0.0000001);
+		assertEquals(38.895111, p.getY(), 0.0000001);
+		assertEquals(-77.036667, p.getX(), 0.0000001);
 
 		Geometry g1;
 		String unparse = literal.unparse(g);
 		try {
 			g1 = literal.parse(unparse);
 		} catch (DatatypeFormatException e) {
-			Assert.fail(String.format("%s is valid GML", unparse));
+			fail(String.format("%s is valid GML", unparse));
 			e.printStackTrace();
 			return;
 		}
-		Assert.assertTrue(g.equals(g1));
-
+		assertTrue(g.equals(g1));
 	}
 }

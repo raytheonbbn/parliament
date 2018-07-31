@@ -45,39 +45,39 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 		BasicPattern triples = getTriplesWithSubject(rootNode, pattern);
 		List<String> types = getTypes(triples);
 		Geometry extent = null;
-		if (types.contains(Constants.GML_POINT)) {
+		if (types.contains(StdConstants.GML_POINT)) {
 			extent = extractPoint(rootNode, triples, binding, usedTriples);
-			addTypeTriple(Constants.GML_POINT, rootNode, usedTriples);
-		} else if (types.contains(Constants.GML_POINT_H)) {
+			addTypeTriple(StdConstants.GML_POINT, rootNode, usedTriples);
+		} else if (types.contains(StdConstants.GML_POINT_H)) {
 			extent = extractPoint(rootNode, triples, binding, usedTriples);
-			addTypeTriple(Constants.GML_POINT, rootNode, usedTriples);
-		} else if (types.contains(Constants.GML_LINE_STRING)) {
+			addTypeTriple(StdConstants.GML_POINT, rootNode, usedTriples);
+		} else if (types.contains(StdConstants.GML_LINE_STRING)) {
 			extent = extractLineString(rootNode, triples, binding, usedTriples);
-			addTypeTriple(Constants.GML_LINE_STRING, rootNode, usedTriples);
-		} else if (types.contains(Constants.GML_LINE_STRING_H)) {
+			addTypeTriple(StdConstants.GML_LINE_STRING, rootNode, usedTriples);
+		} else if (types.contains(StdConstants.GML_LINE_STRING_H)) {
 			extent = extractLineString(rootNode, triples, binding, usedTriples);
-			addTypeTriple(Constants.GML_LINE_STRING_H, rootNode, usedTriples);
-		} else if (types.contains(Constants.GML_LINEAR_RING)) {
+			addTypeTriple(StdConstants.GML_LINE_STRING_H, rootNode, usedTriples);
+		} else if (types.contains(StdConstants.GML_LINEAR_RING)) {
 			extent = extractLinearRing(rootNode, pattern, binding, usedTriples);
-			addTypeTriple(Constants.GML_LINEAR_RING, rootNode, usedTriples);
-		} else if (types.contains(Constants.GML_LINEAR_RING_H)) {
+			addTypeTriple(StdConstants.GML_LINEAR_RING, rootNode, usedTriples);
+		} else if (types.contains(StdConstants.GML_LINEAR_RING_H)) {
 			extent = extractLinearRing(rootNode, pattern, binding, usedTriples);
-			addTypeTriple(Constants.GML_LINEAR_RING_H, rootNode, usedTriples);
-		} else if (types.contains(Constants.GML_POLYGON)) {
+			addTypeTriple(StdConstants.GML_LINEAR_RING_H, rootNode, usedTriples);
+		} else if (types.contains(StdConstants.GML_POLYGON)) {
 			extent = extractPolygon(rootNode, triples, pattern, binding, usedTriples);
-			addTypeTriple(Constants.GML_POLYGON, rootNode, usedTriples);
-		} else if (types.contains(Constants.GML_POLYGON_H)) {
+			addTypeTriple(StdConstants.GML_POLYGON, rootNode, usedTriples);
+		} else if (types.contains(StdConstants.GML_POLYGON_H)) {
 			extent = extractPolygon(rootNode, triples, pattern, binding, usedTriples);
-			addTypeTriple(Constants.GML_POLYGON_H, rootNode, usedTriples);
-		} else if (types.contains(Constants.GML_CIRCLE)) {
+			addTypeTriple(StdConstants.GML_POLYGON_H, rootNode, usedTriples);
+		} else if (types.contains(StdConstants.GML_CIRCLE)) {
 			extent = extractCircle(rootNode, pattern, binding, usedTriples);
-			addTypeTriple(Constants.GML_CIRCLE, rootNode, usedTriples);
-		} else if (types.contains(Constants.GML_CIRCLE_H)) {
+			addTypeTriple(StdConstants.GML_CIRCLE, rootNode, usedTriples);
+		} else if (types.contains(StdConstants.GML_CIRCLE_H)) {
 			extent = extractCircle(rootNode, pattern, binding, usedTriples);
-			addTypeTriple(Constants.GML_CIRCLE_H, rootNode, usedTriples);
-		} else if (types.contains(Constants.SPATIAL_BUFFER)) {
+			addTypeTriple(StdConstants.GML_CIRCLE_H, rootNode, usedTriples);
+		} else if (types.contains(StdConstants.SPATIAL_BUFFER)) {
 			extent = extractBuffer(rootNode, triples, pattern, binding, usedTriples);
-			addTypeTriple(Constants.SPATIAL_BUFFER, rootNode, usedTriples);
+			addTypeTriple(StdConstants.SPATIAL_BUFFER, rootNode, usedTriples);
 		}
 
 		// extent can be null
@@ -128,8 +128,7 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 				continue;
 			}
 			String uri = predicate.getURI();
-			if (Constants.GML_POS.equals(uri)
-				|| Constants.GML_POS_H.equals(uri)) {
+			if (StdConstants.GML_POS.equals(uri) || StdConstants.GML_POS_H.equals(uri)) {
 				Node object = t.getObject();
 				if (object.isVariable()) {
 					Var v = Var.alloc(object);
@@ -165,9 +164,7 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 				continue;
 			}
 			String uri = t.getPredicate().getURI();
-			if (Constants.GML_POS_LIST.equals(uri)
-				|| Constants.GML_POS_LIST_H.equals(uri)) {
-
+			if (StdConstants.GML_POS_LIST.equals(uri) || StdConstants.GML_POS_LIST_H.equals(uri)) {
 				Node object = t.getObject();
 				if (object.isVariable()) {
 					Var v = Var.alloc(object);
@@ -201,13 +198,12 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 				continue;
 			}
 			String uri = predicate.getURI();
-			if (Constants.GML_EXTERIOR.equals(uri)
-				|| Constants.GML_EXTERIOR_H.equals(uri)
-				|| Constants.GML_INTERIOR.equals(uri)
-				|| Constants.GML_INTERIOR_H.equals(uri)) {
+			if (StdConstants.GML_EXTERIOR.equals(uri)
+				|| StdConstants.GML_EXTERIOR_H.equals(uri)
+				|| StdConstants.GML_INTERIOR.equals(uri)
+				|| StdConstants.GML_INTERIOR_H.equals(uri)) {
 				boolean isExterior = false;
-				if (Constants.GML_EXTERIOR.equals(uri)
-					|| Constants.GML_EXTERIOR_H.endsWith(uri)) {
+				if (StdConstants.GML_EXTERIOR.equals(uri) || StdConstants.GML_EXTERIOR_H.endsWith(uri)) {
 					isExterior = true;
 				}
 				Node object = t.getObject();
@@ -263,8 +259,7 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 			}
 
 			String uri = predicate.getURI();
-			if (Constants.GML_POS_LIST.equals(uri)
-				|| Constants.GML_POS_LIST_H.equals(uri)) {
+			if (StdConstants.GML_POS_LIST.equals(uri) || StdConstants.GML_POS_LIST_H.equals(uri)) {
 				Node object = t.getObject();
 				Object value = null;
 				if (object.isLiteral()) {
@@ -308,8 +303,7 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 
 			String uri = predicate.getURI();
 			Node object = t.getObject();
-			if (Constants.GML_RADIUS.equals(uri)
-				|| Constants.GML_RADIUS_H.equals(uri)) {
+			if (StdConstants.GML_RADIUS.equals(uri) || StdConstants.GML_RADIUS_H.equals(uri)) {
 				Object value = null;
 				if (object.isLiteral()) {
 					value = object.getLiteralValue();
@@ -328,8 +322,7 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 				radius = ((Number) value).doubleValue() * 1000;
 				hasRadius = true;
 				usedTriples.add(t);
-			} else if (Constants.GML_POS.equals(uri)
-				|| Constants.GML_POS_H.equals(uri)) {
+			} else if (StdConstants.GML_POS.equals(uri) || StdConstants.GML_POS_H.equals(uri)) {
 				Object value = null;
 				if (object.isLiteral()) {
 					value = object.getLiteralValue();
@@ -381,7 +374,7 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 				continue;
 			}
 			String uri = predicate.getURI();
-			if (Constants.SPATIAL_DISTANCE.equals(uri)) {
+			if (StdConstants.SPATIAL_DISTANCE.equals(uri)) {
 				usedTriples.add(t);
 				Object value = null;
 				Node object = t.getObject();
@@ -403,7 +396,7 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 				}
 				distance = (((Number) value).doubleValue()) * 1000;
 				hasDistance = true;
-			} else if (Constants.SPATIAL_EXTENT.equals(uri)) {
+			} else if (StdConstants.SPATIAL_EXTENT.equals(uri)) {
 				Node object = t.getObject();
 				Operand<Geometry> objectOp = createOperand(object, pattern,
 					binding, usedTriples);

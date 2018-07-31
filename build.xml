@@ -53,10 +53,10 @@
 		<delete dir="${basedir}/jena/JosekiExtensions/bin"/>
 		<delete file="${basedir}/jena/JosekiExtensions/build.log"/>
 		<delete dir="${basedir}/jena/JosekiParliamentClient/bin"/>
+		<delete dir="${basedir}/jena/NumericIndex/bin"/>
 		<delete dir="${basedir}/jena/SpatialIndexProcessor/bin"/>
 		<delete dir="${basedir}/jena/TemporalIndexProcessor/bin"/>
 		<delete dir="${basedir}/jena/TemporalIndexProcessor_old/bin"/>
-		<delete dir="${basedir}/jena/NumericIndex/bin"/>
 		<delete dir="${basedir}/Parliament/bin"/>
 		<delete dir="${basedir}/Parliament/JniAssessments/bin"/>
 		<delete file="${basedir}/Parliament/AdminClient/.settings/language.settings.xml"/>
@@ -134,9 +134,9 @@
 		<ant dir="${basedir}/jena/JosekiParliamentClient" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JenaGraph" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JosekiExtensions" target="report" inheritAll="false"/>
-		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="report" inheritAll="false"/>
-		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/jena/NumericIndex" target="report" inheritAll="false"/>
+		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="report" inheritAll="false"/>
+		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/CSameAsSail" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/ParliamentSail" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/LuceneSail" target="report" inheritAll="false"/>
@@ -149,9 +149,9 @@
 		<ant dir="${basedir}/jena/JosekiParliamentClient" target="jar" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JenaGraph" target="jar" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JosekiExtensions" target="prepareDeployableServers" inheritAll="false"/>
-		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="jar" inheritAll="false"/>
-		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="jar" inheritAll="false"/>
 		<ant dir="${basedir}/jena/NumericIndex" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="jar" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/CSameAsSail" target="jar" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/ParliamentSail" target="jar" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/LuceneSail" target="jar" inheritAll="false"/>
@@ -164,9 +164,9 @@
 		<ant dir="${basedir}/jena/JenaGraph" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JosekiExtensions" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/jena/NumericIndex" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="runTests" inheritAll="false"/>
 		<!--
-		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/CSameAsSail" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/ParliamentSail" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/LuceneSail" target="runTests" inheritAll="false"/>
@@ -199,16 +199,16 @@
 		</uptodate>
 	</target>
 
-	<fileset dir="${kbRootDir}" id="javadocSrcPath">
+	<fileset id="javadocSrcPath" dir="${kbRootDir}">
 		<include name="Parliament/java/**/*.java"/>
 		<!--include name="Parliament/JniAssessments/**/*.java"/-->
 
 		<include name="jena/JenaGraph/src/**/*.java"/>
 		<include name="jena/JosekiExtensions/src/**/*.java"/>
 		<include name="jena/JosekiParliamentClient/src/**/*.java"/>
+		<include name="jena/NumericIndex/src/**/*.java"/>
 		<include name="jena/SpatialIndexProcessor/src/**/*.java"/>
 		<include name="jena/TemporalIndexProcessor/src/**/*.java"/>
-		<include name="jena/NumericIndex/src/**/*.java"/>
 
 		<!-- include name="Sesame/CSameAsSail/src/**/*.java"/>
 		<include name="Sesame/LuceneSail/src/**/*.java"/>

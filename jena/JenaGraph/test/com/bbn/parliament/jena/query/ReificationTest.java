@@ -1,16 +1,23 @@
 
 package com.bbn.parliament.jena.query;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
+import com.bbn.parliament.jena.TestingDataset;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -27,11 +34,8 @@ import com.hp.hpl.jena.sparql.engine.iterator.QueryIterPlainWrapper;
 import com.hp.hpl.jena.sparql.resultset.ResultSetCompare;
 
 /** @author dkolas */
-public class ReificationTest extends AbstractKbTestCase{
-
-	private Model jenaDefaultModel;
-
-
+@RunWith(JUnitPlatform.class)
+public class ReificationTest {
 	private static final String PREFIXES = "PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \r\n" +
 			"PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#> \r\n" +
 			"PREFIX  owl:  <http://www.w3.org/2002/07/owl#> \r\n" +
@@ -85,16 +89,31 @@ public class ReificationTest extends AbstractKbTestCase{
 			":Jpartial rdf:subject :A .\n" +
 			"";
 
+	private static TestingDataset dataset;
 
+	@BeforeAll
+	public static void beforeAll() {
+		dataset = new TestingDataset();
+	}
 
+	@AfterAll
+	public static void afterAll() {
+		dataset.clear();
+	}
+
+	private Model jenaDefaultModel;
 	protected Model defaultGraphModel;
 
-	@Override
-	@Before
-	public void setUp(){
-		super.setUp();
-		defaultGraphModel = ModelFactory.createModelForGraph(defaultGraph);
+	@BeforeEach
+	public void beforeEach(){
+		defaultGraphModel = ModelFactory.createModelForGraph(dataset.getDefaultGraph());
 		jenaDefaultModel = ModelFactory.createDefaultModel();
+	}
+
+	@SuppressWarnings("static-method")
+	@AfterEach
+	public void afterEach() {
+		dataset.reset();
 	}
 
 	@Test
@@ -250,7 +269,7 @@ public class ReificationTest extends AbstractKbTestCase{
 		defaultGraphModel.read(new StringReader(INPUT_DATA), "", "TURTLE");
 		jenaDefaultModel.read(new StringReader(INPUT_DATA), "", "TURTLE");
 
-		QueryExecution execution = QueryExecutionFactory.create(query, dataset.toDataset());
+		QueryExecution execution = QueryExecutionFactory.create(query, dataset.getGraphStore().toDataset());
 		ResultSetRewindable resultSet = ResultSetFactory.copyResults(execution.execSelect());
 		execution.close();
 
@@ -258,7 +277,7 @@ public class ReificationTest extends AbstractKbTestCase{
 		ResultSetRewindable jenaResultSet = ResultSetFactory.copyResults(execution2.execSelect());
 		execution2.close();
 
-		Assert.assertTrue("Result sets did not match.", equals(jenaResultSet, resultSet, QueryFactory.create(query)));
+		assertTrue(equals(jenaResultSet, resultSet, QueryFactory.create(query)), "Result sets did not match.");
 	}
 
 	protected static ResultSetRewindable makeUnique(ResultSetRewindable results) {

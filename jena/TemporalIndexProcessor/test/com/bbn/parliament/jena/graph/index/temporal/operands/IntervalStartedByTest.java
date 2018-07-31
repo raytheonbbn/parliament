@@ -5,15 +5,35 @@
 // All rights reserved.
 package com.bbn.parliament.jena.graph.index.temporal.operands;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.Operand;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.query.TestIndexFactory;
 
+@RunWith(JUnitPlatform.class)
 public class IntervalStartedByTest extends BaseOperandTestClass {
+	@BeforeEach
+	public void beforeEach() {
+		super.beforeEach();
+	}
+
+	@AfterEach
+	public void afterEach() {
+		super.afterEach();
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -21,23 +41,23 @@ public class IntervalStartedByTest extends BaseOperandTestClass {
 		return Operand.INTERVAL_STARTED_BY;
 	}
 
+	@Test
 	public void testTestExtents() {
-		assertFalse("These intervals match 'overlappedBy'.",
-			getOperator().testExtents(TestIndexFactory.FOUR,
-				TestIndexFactory.THREE));
-		assertFalse( "These are equal.",
-			getOperator().testExtents(TestIndexFactory.ONE, TestIndexFactory.SIX));
-		assertFalse("These overlap.", getOperator().testExtents(
-			TestIndexFactory.THREE, TestIndexFactory.FOUR));
-		assertFalse("These should only match 'starts'.", getOperator().testExtents(
-			TestIndexFactory.TWO, TestIndexFactory.FOUR));
-		assertTrue(getOperator().testExtents(TestIndexFactory.FOUR,
-			TestIndexFactory.TWO));
-		assertFalse("This test involves incompatible datatypes and therefore must be false.",
-				pf.testExtents(TestIndexFactory.FOUR, TestIndexFactory.JAN03));
+		assertFalse(getOperator().testExtents(TestIndexFactory.FOUR, TestIndexFactory.THREE),
+			"These intervals match 'overlappedBy'.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.ONE, TestIndexFactory.SIX),
+			"These are equal.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.THREE, TestIndexFactory.FOUR),
+			"These overlap.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.TWO, TestIndexFactory.FOUR),
+			"These should only match 'starts'.");
+		assertTrue(getOperator().testExtents(TestIndexFactory.FOUR, TestIndexFactory.TWO));
+		assertFalse(pf.testExtents(TestIndexFactory.FOUR, TestIndexFactory.JAN03),
+			"This test involves incompatible datatypes and therefore must be false.");
 	}
 
 	/** Calls '?x startedBy TWO' which should result in FOUR. */
+	@Test
 	public void testBindFirstVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("four");
@@ -47,6 +67,7 @@ public class IntervalStartedByTest extends BaseOperandTestClass {
 	}
 
 	/** Calls 'FOUR startedBy ?x' which should result in TWO. */
+	@Test
 	public void testBindSecondVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("two");

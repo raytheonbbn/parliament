@@ -1,114 +1,102 @@
 package com.bbn.parliament.jena.graph.index.numeric.composite;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.bbn.parliament.jena.query.index.IndexTestMethods;
 
-import org.junit.Test;
-
-import com.bbn.parliament.jena.graph.index.Index;
-import com.bbn.parliament.jena.graph.index.IndexFactory;
-import com.bbn.parliament.jena.graph.index.IndexFactory.IndexFactoryHelper;
-import com.bbn.parliament.jena.graph.index.Record;
-import com.bbn.parliament.jena.graph.index.Record.TripleRecord;
-import com.bbn.parliament.jena.graph.index.numeric.NumericIndex;
-import com.bbn.parliament.jena.query.index.IndexTestBase;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-
-public class CompositeNumericIndexTest extends IndexTestBase<CompositeNumericIndex, Number> {
-	private static final String INT_URI = "http://example.org#int";
-	private static final String DOUBLE_URI = "http://example.org#double";
-	private static final String EXAMPLE_URI = "http://example.org/";
-
-	private static final double[] double_values = { 5.2d, 1.343d, 99.1d, 10.6d };
-	private static final int[] int_values = { 5, 1, 99, 10 };
-
-	@Override
-	protected IndexFactory<CompositeNumericIndex, Number> getIndexFactory() {
-		return new CompositeNumericIndexFactory();
-	}
-
-	@Override
-	protected Record<Number> createRecord(int seed) {
-		Node key = Node.createURI(EXAMPLE_URI + seed);
-		Number value = null;
-		String predicate = null;
-		if (seed % 2 == 0) {
-			value = new Double(double_values[seed / 2]);
-			predicate = DOUBLE_URI;
-		} else {
-			value = new Integer(int_values[(seed - 1) / 2]);
-			predicate = INT_URI;
+@RunWith(JUnitPlatform.class)
+public class CompositeNumericIndexTest {
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testAddAndRemove(IndexTestMethods.IndexUnderTest iut) {
+		try (CompositeNumericIndexTestMethods testMethods = new CompositeNumericIndexTestMethods()) {
+			testMethods.testAddAndRemove(testMethods.getIndex(iut));
 		}
-		Triple triple = Triple.create(key, Node.createURI(predicate),
-			ResourceFactory.createTypedLiteral(value).asNode());
-		return TripleRecord.create(key, value, triple);
 	}
 
-	@Override
-	protected void doSetup() {
-	}
-
-	@Override
-	protected boolean checkDeleted(CompositeNumericIndex index, Graph graph, Node graphName) {
-		String indexDir = IndexFactoryHelper.getIndexDirectory(graph, graphName);
-
-		indexDir += "/numeric";
-		File f = new File(indexDir);
-		return !f.exists();
-	}
-
-	@Test
-	public void testSubIndexes() {
-		testSubIndexes(defaultGraphIndex);
-		testSubIndexes(namedGraphIndex);
-	}
-
-	private void testSubIndexes(CompositeNumericIndex index) {
-		assertEquals(0, index.getSubIndexes().size());
-		Record<Number> r;
-		List<Index<Number>> indexes;
-		r = createRecord(0);
-		index.add(r);
-		assertEquals(1, index.getSubIndexes().size());
-
-		indexes = new ArrayList<>(index.getSubIndexes());
-		assertEquals(NumericIndex.DoubleIndex.class, indexes.get(0).getClass());
-		Index<Number> doubleIndex = indexes.get(0);
-		assertEquals(1, doubleIndex.size());
-
-		r = createRecord(1);
-		index.add(r);
-		assertEquals(2, index.getSubIndexes().size());
-		indexes = new ArrayList<>(index.getSubIndexes());
-
-		List<?> classes = new ArrayList<Class<? extends NumericIndex<?>>>(
-			Arrays.asList(NumericIndex.DoubleIndex.class, NumericIndex.IntegerIndex.class));
-		Index<Number> intIndex = null;
-		for (Index<Number> subIndex : indexes) {
-			assertEquals(1, subIndex.size());
-			if (classes.contains(subIndex.getClass())) {
-				classes.remove(subIndex.getClass());
-			}
-			if (!subIndex.equals(doubleIndex)) {
-				intIndex = subIndex;
-			}
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testOpenClose(IndexTestMethods.IndexUnderTest iut) {
+		try (CompositeNumericIndexTestMethods testMethods = new CompositeNumericIndexTestMethods()) {
+			testMethods.testOpenClose(testMethods.getIndex(iut));
 		}
-		assertEquals(0, classes.size());
-		if (null == intIndex) {
-			fail("IntIndex is null");
-			return;
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testIterator(IndexTestMethods.IndexUnderTest iut) {
+		try (CompositeNumericIndexTestMethods testMethods = new CompositeNumericIndexTestMethods()) {
+			testMethods.testIterator(testMethods.getIndex(iut));
 		}
-		r = createRecord(2);
-		index.add(r);
-		assertEquals(2, doubleIndex.size());
-		assertEquals(1, intIndex.size());
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testAddClosed(IndexTestMethods.IndexUnderTest iut) {
+		try (CompositeNumericIndexTestMethods testMethods = new CompositeNumericIndexTestMethods()) {
+			testMethods.testAddClosed(testMethods.getIndex(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testRemoveClosed(IndexTestMethods.IndexUnderTest iut) {
+		try (CompositeNumericIndexTestMethods testMethods = new CompositeNumericIndexTestMethods()) {
+			testMethods.testRemoveClosed(testMethods.getIndex(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testIteratorClosed(IndexTestMethods.IndexUnderTest iut) {
+		try (CompositeNumericIndexTestMethods testMethods = new CompositeNumericIndexTestMethods()) {
+			testMethods.testIteratorClosed(testMethods.getIndex(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testDelete(IndexTestMethods.IndexUnderTest iut) {
+		try (CompositeNumericIndexTestMethods testMethods = new CompositeNumericIndexTestMethods()) {
+			testMethods.testDelete(testMethods.getIndex(iut), testMethods.getGraph(iut),
+				testMethods.getGraphName(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testDeleteOpen(IndexTestMethods.IndexUnderTest iut) {
+		try (CompositeNumericIndexTestMethods testMethods = new CompositeNumericIndexTestMethods()) {
+			testMethods.testDeleteOpen(testMethods.getIndex(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testClear(IndexTestMethods.IndexUnderTest iut) {
+		try (CompositeNumericIndexTestMethods testMethods = new CompositeNumericIndexTestMethods()) {
+			testMethods.testClear(testMethods.getIndex(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testSubIndexes(IndexTestMethods.IndexUnderTest iut) {
+		try (CompositeNumericIndexTestMethods testMethods = new CompositeNumericIndexTestMethods()) {
+			testMethods.testSubIndexes(testMethods.getIndex(iut));
+		}
 	}
 }

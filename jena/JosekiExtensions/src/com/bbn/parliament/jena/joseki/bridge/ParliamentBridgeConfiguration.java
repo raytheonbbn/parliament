@@ -237,11 +237,9 @@ public class ParliamentBridgeConfiguration {
 
 	}
 
-	private static Resource getConfigResource(Model m)
-		throws ParliamentBridgeException {
+	private static Resource getConfigResource(Model m) throws ParliamentBridgeException {
 		// get parliament configuration resource
-		ResIterator ri = m.listResourcesWithProperty(RDF.type,
-			ConfigOnt.Configuration);
+		ResIterator ri = m.listResourcesWithProperty(RDF.type, ConfigOnt.Configuration);
 		if (!ri.hasNext()) {
 			throw new ParliamentBridgeException(
 				"Could not find any configuration resources in configuration model");

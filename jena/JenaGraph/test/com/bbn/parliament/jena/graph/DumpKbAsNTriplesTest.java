@@ -1,7 +1,7 @@
 package com.bbn.parliament.jena.graph;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -13,18 +13,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
 
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jni.Config;
@@ -36,39 +33,26 @@ import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-@RunWith(Parameterized.class)
+@RunWith(JUnitPlatform.class)
 public class DumpKbAsNTriplesTest {
 	private static final File TEST_DATA_DIR = new File("data");
 	private static final File TEST_INPUT = new File(TEST_DATA_DIR, "DumpTestData.ttl");
 	private static final String OUTPUT_DELIMITER = "########## Actual dump output ##########";
 
-	@Parameters
-	public static Collection<Object[]> paramValues() {
-		return Arrays.asList(
-			new Object[]{ false, "DumpTestExpectedResult-utf8.nt" },
-			new Object[]{ true, "DumpTestExpectedResult-ascii.nt" });
-	}
-
 	private Config config;
 	private KbGraph graph;
 	private Model model;
 
-	@Parameter(0)
-	public boolean useAsciiEncoding;
-
-	@Parameter(1)
-	public String expectedOutputFileName;
-
-	@Before
-	public void setUp() {
-		tearDown();
+	@BeforeEach
+	public void beforeEach() {
+		afterEach();
 		config = Config.readFromFile();
 		graph = KbGraphFactory.createDefaultGraph();
 		model = ModelFactory.createModelForGraph(graph);
 	}
 
-	@After
-	public void tearDown() {
+	@AfterEach
+	public void afterEach() {
 		if (model != null) {
 			model.close();
 		}
@@ -83,8 +67,12 @@ public class DumpKbAsNTriplesTest {
 		config = null;
 	}
 
-	@Test
-	public void dumpKB() throws IOException {
+	@ParameterizedTest
+	@CsvSource({
+		"false, DumpTestExpectedResult-utf8.nt",
+		"true, DumpTestExpectedResult-ascii.nt",
+	})
+	public void dumpKB(boolean useAsciiEncoding, String expectedOutputFileName) throws IOException {
 		// Set up the KB:
 		try (InputStream in = getRsrcAsStream(TEST_INPUT)) {
 			model.read(in, null, RDFFormat.parseFilename(TEST_INPUT).toString());
@@ -93,7 +81,7 @@ public class DumpKbAsNTriplesTest {
 		// Test that inferred statements are present.  The comparison with the
 		// expected result will implicitly test that the inferred statements
 		// are not exported.
-		assertEquals("No inferred statements are present", 2L, countNamedEntities());
+		assertEquals(2L, countNamedEntities(), "No inferred statements are present");
 
 		Set<String> expectedOutput;
 		File expectedTestOutput = new File(TEST_DATA_DIR, expectedOutputFileName);

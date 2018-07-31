@@ -1,13 +1,15 @@
 package com.bbn.parliament.jena.graph.index.temporal.intervals;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.graph.index.temporal.Constants;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
@@ -18,12 +20,13 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.shared.impl.JenaParameters;
 
 /** @author mhale */
+@RunWith(JUnitPlatform.class)
 public class IntervalRepresentationTest {
 	private static final String MIN = "MIN";
 	private static final String MAX = "MAX";
 	private TemporalInterval expected;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		expected = new TemporalInterval();
 		JenaParameters.enableEagerLiteralValidation = true;
@@ -155,7 +158,7 @@ public class IntervalRepresentationTest {
 			expected.setStart(new TemporalInstant(start));
 			expected.setEnd(new TemporalInstant(end));
 		} catch (DatatypeFormatException ex) {
-			fail();
+			fail(ex.getMessage());
 		}
 		assertTrue(expected.sameAs(actual));
 	}

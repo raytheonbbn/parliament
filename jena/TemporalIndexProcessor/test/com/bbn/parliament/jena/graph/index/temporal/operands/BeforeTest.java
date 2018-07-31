@@ -1,15 +1,34 @@
 package com.bbn.parliament.jena.graph.index.temporal.operands;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.Operand;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.query.TestIndexFactory;
 
+@RunWith(JUnitPlatform.class)
 public class BeforeTest extends BaseOperandTestClass {
+	@BeforeEach
+	public void beforeEach() {
+		super.beforeEach();
+	}
+
+	@AfterEach
+	public void afterEach() {
+		super.afterEach();
+	}
 
 	/** {@inheritDoc}} */
 	@Override
@@ -17,25 +36,27 @@ public class BeforeTest extends BaseOperandTestClass {
 		return Operand.BEFORE;
 	}
 
+	@Test
 	public void testTestExtents() {
-		assertFalse("This case should fail since it comes 'after' the other instant.",
-				getOperator().testExtents(TestIndexFactory.JAN02, TestIndexFactory.JAN01));
-		assertFalse("This case should fail since it comes 'after' the other interval.",
-				getOperator().testExtents(TestIndexFactory.JAN04, TestIndexFactory.ONE));
-		assertFalse("This case should fail since it comes 'after' the other instant.",
-				getOperator().testExtents(TestIndexFactory.FOUR, TestIndexFactory.JAN01));
-		assertFalse("This test involves two equal instants and therefore 'before' does not hold.",
-				getOperator().testExtents(TestIndexFactory.JAN03, TestIndexFactory.JAN03));
-		assertTrue("These datatypes ought to be compatible with this operand.",
-				pf.testExtents(TestIndexFactory.ONE, TestIndexFactory.FOUR));
+		assertFalse(getOperator().testExtents(TestIndexFactory.JAN02, TestIndexFactory.JAN01),
+			"This case should fail since it comes 'after' the other instant.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.JAN04, TestIndexFactory.ONE),
+			"This case should fail since it comes 'after' the other interval.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.FOUR, TestIndexFactory.JAN01),
+			"This case should fail since it comes 'after' the other instant.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.JAN03, TestIndexFactory.JAN03),
+			"This test involves two equal instants and therefore 'before' does not hold.");
+		assertTrue(pf.testExtents(TestIndexFactory.ONE, TestIndexFactory.FOUR),
+			"These datatypes ought to be compatible with this operand.");
 		assertTrue(getOperator().testExtents(TestIndexFactory.JAN01, TestIndexFactory.JAN02));
-		assertTrue("These datatypes ought to be compatible with this operand.",
-				getOperator().testExtents(TestIndexFactory.ONE, TestIndexFactory.JAN03));
-		assertTrue("These datatypes ought to be compatible with this operand.",
-				getOperator().testExtents(TestIndexFactory.JAN02, TestIndexFactory.TWO));
+		assertTrue(getOperator().testExtents(TestIndexFactory.ONE, TestIndexFactory.JAN03),
+			"These datatypes ought to be compatible with this operand.");
+		assertTrue(getOperator().testExtents(TestIndexFactory.JAN02, TestIndexFactory.TWO),
+			"These datatypes ought to be compatible with this operand.");
 	}
 
 	/** Calls '?x before JAN05' which should result in all instants and intervals before JAN05. */
+	@Test
 	public void testBindFirstInstantVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("January 1");
@@ -51,6 +72,7 @@ public class BeforeTest extends BaseOperandTestClass {
 	}
 
 	/** Calls 'JAN01 before ?x' which should result in all instants and intervals after JAN01. */
+	@Test
 	public void testBindSecondInstantVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("January 2");
@@ -68,6 +90,7 @@ public class BeforeTest extends BaseOperandTestClass {
 	}
 
 	/** Calls '?x before FIVE' which should result in all entities before FIVE. */
+	@Test
 	public void testBindFirstIntervalVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("January 1");
@@ -80,6 +103,7 @@ public class BeforeTest extends BaseOperandTestClass {
 	}
 
 	/** Calls 'ONE before ?x' which should result in all entities after ONE. */
+	@Test
 	public void testBindSecondIntervalVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("January 3");

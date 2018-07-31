@@ -5,15 +5,35 @@
 // All rights reserved.
 package com.bbn.parliament.jena.graph.index.temporal.operands;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.Operand;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.query.TestIndexFactory;
 
+@RunWith(JUnitPlatform.class)
 public class IntervalOverlappedByTest extends BaseOperandTestClass {
+	@BeforeEach
+	public void beforeEach() {
+		super.beforeEach();
+	}
+
+	@AfterEach
+	public void afterEach() {
+		super.afterEach();
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -21,24 +41,25 @@ public class IntervalOverlappedByTest extends BaseOperandTestClass {
 		return Operand.INTERVAL_OVERLAPPED_BY;
 	}
 
+	@Test
 	public void testTestExtents() {
-		assertFalse("These intervals overlap.",
-			getOperator().testExtents(TestIndexFactory.THREE, TestIndexFactory.FOUR));
-		assertFalse("One interval starts the other, so 'overlappedBy' does not hold.",
-			getOperator().testExtents(TestIndexFactory.FOUR, TestIndexFactory.TWO));
-		assertFalse("These intervals are equal.", getOperator().testExtents(
-			TestIndexFactory.ONE, TestIndexFactory.SIX));
-		assertFalse("One interval contains the other.", getOperator().testExtents(
-			TestIndexFactory.FIVE, TestIndexFactory.FOUR));
-		assertFalse("These intervals share a boundary.",
-			getOperator().testExtents(TestIndexFactory.THREE, TestIndexFactory.ONE));
-		assertTrue(getOperator().testExtents(TestIndexFactory.FOUR,
-			TestIndexFactory.THREE));
-		assertFalse("This test involves incompatible datatypes and therefore must be false.",
-				pf.testExtents(TestIndexFactory.FOUR, TestIndexFactory.JAN05));
+		assertFalse(getOperator().testExtents(TestIndexFactory.THREE, TestIndexFactory.FOUR),
+			"These intervals overlap.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.FOUR, TestIndexFactory.TWO),
+			"One interval starts the other, so 'overlappedBy' does not hold.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.ONE, TestIndexFactory.SIX),
+			"These intervals are equal.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.FIVE, TestIndexFactory.FOUR),
+			"One interval contains the other.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.THREE, TestIndexFactory.ONE),
+			"These intervals share a boundary.");
+		assertTrue(getOperator().testExtents(TestIndexFactory.FOUR, TestIndexFactory.THREE));
+		assertFalse(pf.testExtents(TestIndexFactory.FOUR, TestIndexFactory.JAN05),
+			"This test involves incompatible datatypes and therefore must be false.");
 	}
 
 	/** Calls '?x overlappedBy THREE' which should result in FOUR. */
+	@Test
 	public void testBindFirstVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("four");
@@ -48,6 +69,7 @@ public class IntervalOverlappedByTest extends BaseOperandTestClass {
 	}
 
 	/** Calls 'FOUR overlappedBy ?x' which should result in THREE. */
+	@Test
 	public void testBindSecondVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("three");

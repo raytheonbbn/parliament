@@ -22,7 +22,6 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.graph.GraphFactory;
 
 public class TestIndexFactory {
-
 	private static TemporalIndex populatedIndex;
 	private static TemporalPropertyFunctionFactory<PersistentTemporalIndex> factory;
 
@@ -104,12 +103,14 @@ public class TestIndexFactory {
 	private static long getTime(Node n) {
 		return ((XSDDateTime)n.getLiteralValue()).asCalendar().getTimeInMillis();
 	}
+
 	private static TemporalInterval createTestInterval(Node start, Node end) {
 		long s = getTime(start);
 		long e = getTime(end);
 		return new TemporalInterval(new TemporalInstant(s, null, true),
 				new TemporalInstant(e, null, false));
 	}
+
 	private static TemporalIndex addTestExtent(TemporalIndex index, TemporalExtent ti, String label) throws IndexException {
 		Record<TemporalExtent> record = Record.create(Node.createURI(label), ti);
 		index.add(record);

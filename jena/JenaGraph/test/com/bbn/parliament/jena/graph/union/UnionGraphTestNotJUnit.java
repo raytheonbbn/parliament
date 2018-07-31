@@ -27,7 +27,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 /** @author dkolas */
-public class UnionGraphTest {
+public class UnionGraphTestNotJUnit {
 	private static final File PMNT_DEPS = new File(System.getenv("PARLIAMENT_DEPENDENCIES"));
 	private static final File ONT_FILE = new File("../JosekiExtensions/test/univ-bench.owl");
 	private static final File INPUT_DATA_DIR = new File(PMNT_DEPS, "gendata-80");

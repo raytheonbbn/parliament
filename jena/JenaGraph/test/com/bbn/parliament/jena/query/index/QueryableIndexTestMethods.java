@@ -1,14 +1,12 @@
 package com.bbn.parliament.jena.query.index;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Iterator;
-
-import org.junit.Test;
 
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.QueryableIndex;
@@ -16,16 +14,9 @@ import com.bbn.parliament.jena.graph.index.Record;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
 
-public abstract class QueryableIndexTestBase<T extends QueryableIndex<I>, I>
-extends IndexTestBase<T, I> {
-
-	@Test
-	public void testLookup() {
-		testLookup(defaultGraphIndex);
-		testLookup(namedGraphIndex);
-	}
-
-	private void testLookup(T index) {
+public abstract class QueryableIndexTestMethods<T extends QueryableIndex<I>, I> extends IndexTestMethods<T, I> {
+	// Test method
+	public void testLookup(T index) {
 		try {
 			index.add(createRecord(0));
 			index.add(createRecord(1));
@@ -34,7 +25,7 @@ extends IndexTestBase<T, I> {
 			index.add(createRecord(4));
 		} catch (IndexException e) {
 			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 
 		Record<I> result;

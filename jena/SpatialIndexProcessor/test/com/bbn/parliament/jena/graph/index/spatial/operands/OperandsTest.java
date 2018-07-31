@@ -6,10 +6,12 @@
 
 package com.bbn.parliament.jena.graph.index.spatial.operands;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.graph.index.spatial.GeometryConverter;
 import com.bbn.parliament.jena.graph.index.spatial.Operation;
@@ -18,8 +20,8 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Polygon;
 
 /** @author gjoiner */
+@RunWith(JUnitPlatform.class)
 public class OperandsTest {
-
 	private static boolean performComparison(Geometry x, Geometry y, Operation operation) {
 		return operation.relate(x, y);
 	}

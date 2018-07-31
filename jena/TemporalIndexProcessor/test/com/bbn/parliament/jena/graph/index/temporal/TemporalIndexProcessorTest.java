@@ -5,10 +5,10 @@
 // All rights reserved.
 package com.bbn.parliament.jena.graph.index.temporal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.StringReader;
 import java.util.Calendar;
@@ -16,7 +16,13 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.TimeZone;
 
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.Record;
@@ -30,13 +36,34 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 /** @author rbattle */
-public class TemporalIndexProcessorTest extends AbstractTemporalTestClass {
+@RunWith(JUnitPlatform.class)
+public class TemporalIndexProcessorTest {
+	private static TemporalTestServer testServer;
 
-	@Override
-	public void doSetup() {
+	@BeforeAll
+	public static void beforeAll() {
+		testServer = new TemporalTestServer();
+	}
+
+	@AfterAll
+	public static void afterAll() {
+		testServer.close();
+	}
+
+	@SuppressWarnings("static-method")
+	@BeforeEach
+	public void beforeEach() {
+		testServer.setupIndex();
+	}
+
+	@SuppressWarnings("static-method")
+	@AfterEach
+	public void afterEach() {
+		testServer.removeIndex();
 	}
 
 	/** Test method for {@link com.bbn.parliament.jena.graph.index.temporal.TemporalIndexProcessor#tripleAdded(com.hp.hpl.jena.graph.Triple, com.hp.hpl.jena.graph.Graph)} */
+	@SuppressWarnings("static-method")
 	@Test
 	public void testTripleAdded() {
 		Resource instant = ResourceFactory.createResource("http://test#dt");
@@ -48,22 +75,22 @@ public class TemporalIndexProcessorTest extends AbstractTemporalTestClass {
 
 		long dateValue = c.getTimeInMillis();
 		try {
-			assertEquals(0, index.size());
-		} catch (IndexException e) {
-			fail();
+			assertEquals(0, testServer.getIndex().size());
+		} catch (IndexException ex) {
+			fail(ex.getMessage());
 		}
 		try	{
-			model.add(instant, INSTANT_PF, date);
-		} catch (DatatypeFormatException e)	{
-			fail();
+			testServer.getModel().add(instant, TemporalTestServer.INSTANT_PF, date);
+		} catch (DatatypeFormatException ex) {
+			fail(ex.getMessage());
 		}
 		try {
-			assertEquals(1, index.size());
-		} catch (IndexException e) {
-			fail();
+			assertEquals(1, testServer.getIndex().size());
+		} catch (IndexException ex) {
+			fail(ex.getMessage());
 		}
 
-		Iterator<Record<TemporalExtent>> it = index.iterator();
+		Iterator<Record<TemporalExtent>> it = testServer.getIndex().iterator();
 		Record<TemporalExtent> nodeExtent = it.next();
 		NiceIterator.close(it);
 
@@ -74,42 +101,32 @@ public class TemporalIndexProcessorTest extends AbstractTemporalTestClass {
 		assertEquals(dateValue, answer.getInstant());
 	}
 
-	// public void testConfigure() {
-	// Model model = ModelFactory.createDefaultModel();
-	//
-	// Resource configuration = model.createResource();
-	// configuration.addProperty(TemporalIndexProcessorFactory.TEMPORAL_INDEX_CLASS_PROPERTY,
-	// model.createTypedLiteral(MockTemporalIndex.class.getCanonicalName()));
-	//
-	// index.configure(configuration);
-	// assertTrue(index.getIndex() instanceof MockTemporalIndex);
-	// }
-
+	@SuppressWarnings("static-method")
 	@Test
 	public void testReadFile() {
 		int count = 100;
 		StringReader reader = new StringReader(TemporalExtentGenerator
 				.generateTestInstantStream(count).toString());
 		assertNotNull(reader);
-		model.read(reader, "", "N-TRIPLE");
+		testServer.getModel().read(reader, "", "N-TRIPLE");
 		try {
 			//Test reading instances
-			assertEquals(count, index.size());
+			assertEquals(count, testServer.getIndex().size());
 
-			index.clear();
-			assertEquals(0, index.size());
-		} catch (IndexException e)	{
-			fail();
+			testServer.getIndex().clear();
+			assertEquals(0, testServer.getIndex().size());
+		} catch (IndexException ex) {
+			fail(ex.getMessage());
 		}
 
 		reader = new StringReader(TemporalExtentGenerator.generateTestIntervalStream(count).toString());
 		assertNotNull(reader);
-		model.read(reader, "", "N-TRIPLE");
+		testServer.getModel().read(reader, "", "N-TRIPLE");
 		try	{
 			//Test reading intervals
-			assertEquals(count, index.size());
-		} catch (IndexException e)	{
-			fail();
+			assertEquals(count, testServer.getIndex().size());
+		} catch (IndexException ex) {
+			fail(ex.getMessage());
 		}
 	}
 }

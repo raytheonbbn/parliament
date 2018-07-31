@@ -1,15 +1,17 @@
 package com.bbn.parliament.jena.joseki.bridge.tracker;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipInputStream;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.joseki.bridge.tracker.management.TrackableMXBean.Status;
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
@@ -17,15 +19,16 @@ import com.bbn.parliament.jena.joseki.handler.Inserter;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.sparql.pfunction.PropertyFunctionRegistry;
 
+@RunWith(JUnitPlatform.class)
 public class TrackerTestCase {
 	@SuppressWarnings("static-method")
-	@Before
+	@BeforeEach
 	public void initialize() {
 		ModelManager.inst().initialize();
 	}
 
 	@SuppressWarnings("static-method")
-	@After
+	@AfterEach
 	public void clearKB() {
 		ModelManager.inst().clearKb();
 	}
@@ -39,9 +42,8 @@ public class TrackerTestCase {
 		try {
 			tq.run();
 		}
-		catch(TrackableException e) {
-			e.printStackTrace();
-			fail();
+		catch(TrackableException ex) {
+			fail(ex.getMessage());
 		}
 		// should be 1 since the result set isn't processed yet
 		assertEquals(1, Tracker.getInstance().getTrackableIDs().size());
@@ -50,9 +52,8 @@ public class TrackerTestCase {
 		try {
 			tq1.run();
 		}
-		catch (TrackableException e) {
-			e.printStackTrace();
-			fail();
+		catch (TrackableException ex) {
+			fail(ex.getMessage());
 		}
 
 		assertEquals(2, Tracker.getInstance().getTrackableIDs().size());
@@ -75,9 +76,8 @@ public class TrackerTestCase {
 		try {
 			tq.run();
 		}
-		catch(TrackableException e) {
-			e.printStackTrace();
-			fail();
+		catch(TrackableException ex) {
+			fail(ex.getMessage());
 		}
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 	}
@@ -134,9 +134,8 @@ public class TrackerTestCase {
 		try {
 			tu.run();
 		}
-		catch(TrackableException e) {
-			e.printStackTrace();
-			fail();
+		catch(TrackableException ex) {
+			fail(ex.getMessage());
 		}
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 
@@ -146,9 +145,8 @@ public class TrackerTestCase {
 		try {
 			tu.run();
 		}
-		catch(TrackableException e) {
-			e.printStackTrace();
-			fail();
+		catch(TrackableException ex) {
+			fail(ex.getMessage());
 		}
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 	}
@@ -176,9 +174,8 @@ public class TrackerTestCase {
 		assertEquals(1, Tracker.getInstance().getTrackableIDs().size());
 		try {
 			ti.run();
-		} catch (TrackableException e) {
-			e.printStackTrace();
-			fail();
+		} catch (TrackableException ex) {
+			fail(ex.getMessage());
 		}
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 	}

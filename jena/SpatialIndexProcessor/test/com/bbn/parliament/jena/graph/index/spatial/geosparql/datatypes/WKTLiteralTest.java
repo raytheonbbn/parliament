@@ -1,18 +1,23 @@
 package com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import com.hp.hpl.jena.datatypes.DatatypeFormatException;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
+@RunWith(JUnitPlatform.class)
 public class WKTLiteralTest implements LiteralTestCase {
-
 	private WKTLiteral literal;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		literal = new WKTLiteral();
 	}
@@ -33,31 +38,29 @@ public class WKTLiteralTest implements LiteralTestCase {
 		wkt = "<http://www.opengis.net/def/crs/EPSG/0/32617> POINT (630084 4833438)";
 		try {
 			g = literal.parse(wkt);
-			Assert.assertTrue(g instanceof Point);
+			assertTrue(g instanceof Point);
 		} catch (DatatypeFormatException e) {
-			Assert.fail(String.format("%s is valid WKT", wkt));
+			fail(String.format("%s is valid WKT", wkt));
 			e.printStackTrace();
 			return;
 		}
 
 		distance = location.distance(g);
-		Assert.assertTrue(String.format("%f >= %f", distance, threshold),
-				distance < threshold);
+		assertTrue(distance < threshold, String.format("%f >= %f", distance, threshold));
 
 		// WGS84
 		wkt = "<http://www.opengis.net/def/crs/EPSG/0/4326> POINT (43.642567 -79.387139)";
 		try {
 			g = literal.parse(wkt);
-			Assert.assertTrue(g instanceof Point);
+			assertTrue(g instanceof Point);
 		} catch (DatatypeFormatException e) {
-			Assert.fail(String.format("%s is valid WKT", wkt));
+			fail(String.format("%s is valid WKT", wkt));
 			e.printStackTrace();
 			return;
 		}
 
 		distance = location.distance(g);
-		Assert.assertTrue(String.format("%f >= %f", distance, threshold),
-				distance < threshold);
+		assertTrue(distance < threshold, String.format("%f >= %f", distance, threshold));
 	}
 
 	@Test
@@ -70,7 +73,7 @@ public class WKTLiteralTest implements LiteralTestCase {
 		} catch (DatatypeFormatException e) {
 			failed = true;
 		}
-		Assert.assertTrue("Invalid CRS should through a DatatypeFormatException", failed);
+		assertTrue(failed, "Invalid CRS should through a DatatypeFormatException");
 	}
 
 	@Test
@@ -83,7 +86,7 @@ public class WKTLiteralTest implements LiteralTestCase {
 		} catch (DatatypeFormatException e) {
 			failed = true;
 		}
-		Assert.assertTrue("Invalid WKT should through a DatatypeFormatException", failed);
+		assertTrue(failed, "Invalid WKT should through a DatatypeFormatException");
 
 	}
 
@@ -97,18 +100,18 @@ public class WKTLiteralTest implements LiteralTestCase {
 		try {
 			g = literal.parse(wkt);
 		} catch (DatatypeFormatException e) {
-			Assert.fail(String.format("%s is valid WKT", wkt));
+			fail(String.format("%s is valid WKT", wkt));
 			e.printStackTrace();
 			return;
 		}
 
-		Assert.assertTrue(g instanceof Point);
+		assertTrue(g instanceof Point);
 
 		Point p = (Point) g;
-		Assert.assertEquals(38.895111, p.getY(), 0.0000001);
-		Assert.assertEquals(-77.036667, p.getX(), 0.0000001);
+		assertEquals(38.895111, p.getY(), 0.0000001);
+		assertEquals(-77.036667, p.getX(), 0.0000001);
 
-		Assert.assertEquals("<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-77.036667 38.895111)",
+		assertEquals("<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-77.036667 38.895111)",
 				literal.unparse(g));
 	}
 
@@ -122,27 +125,27 @@ public class WKTLiteralTest implements LiteralTestCase {
 		try {
 			g = literal.parse(wkt);
 		} catch (DatatypeFormatException e) {
-			Assert.fail(String.format("%s is valid WKT", wkt));
+			fail(String.format("%s is valid WKT", wkt));
 			e.printStackTrace();
 			return;
 		}
 
-		Assert.assertTrue(g instanceof Point);
+		assertTrue(g instanceof Point);
 
 		Point p = (Point) g;
-		Assert.assertEquals(38.895111, p.getY(), 0.0000001);
-		Assert.assertEquals(-77.036667, p.getX(), 0.0000001);
+		assertEquals(38.895111, p.getY(), 0.0000001);
+		assertEquals(-77.036667, p.getX(), 0.0000001);
 
 		Geometry g1;
 		String unparse = literal.unparse(g);
 		try {
 			g1 = literal.parse(unparse);
 		} catch (DatatypeFormatException e) {
-			Assert.fail(String.format("%s is valid WKT", wkt));
+			fail(String.format("%s is valid WKT", wkt));
 			e.printStackTrace();
 			return;
 		}
-		Assert.assertTrue(g.equals(g1));
+		assertTrue(g.equals(g1));
 
 	}
 }

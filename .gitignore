@@ -2,13 +2,17 @@ bin/
 lib/
 log/
 
+/build.properties
 /dependencies/
 /doc/UserGuide/acronyms.tex
 /doc/UserGuide/references.bib
 /jena/JosekiExtensions/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab/
 /Parliament/AdminClient/.settings/language.settings.xml
+/Parliament/AdminClient/Debug_with_MacOSX GCC/
 /Parliament/KbCore/.settings/language.settings.xml
+/Parliament/KbCore/Debug_with_MacOSX GCC/
 /Parliament/KbCore/parliament/generated/
 /Parliament/Test/.settings/language.settings.xml
+/Parliament/Test/Debug_with_MacOSX GCC/
 /Parliament/Test/ParliamentConfig.txt
 /target/

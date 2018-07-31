@@ -1,5 +1,6 @@
 @prefix : <http://example.org/data/> .
 @prefix mock: <http://example.org/mock#> .
+
 :x :p :v1 .
 :x :p :v2 .
 <http://example.org/node> mock:obj 1 .

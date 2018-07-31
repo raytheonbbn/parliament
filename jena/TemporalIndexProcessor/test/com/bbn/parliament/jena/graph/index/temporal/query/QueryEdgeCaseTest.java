@@ -6,21 +6,28 @@
 
 package com.bbn.parliament.jena.graph.index.temporal.query;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.index.temporal.AbstractTemporalTestClass;
 import com.bbn.parliament.jena.graph.index.temporal.Constants;
+import com.bbn.parliament.jena.graph.index.temporal.TemporalTestServer;
 import com.bbn.parliament.jena.graph.index.temporal.pt.TemporalIndexField;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -30,31 +37,51 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 /** @author dkolas */
-public class QueryEdgeCaseTest extends AbstractTemporalTestClass {
+@RunWith(JUnitPlatform.class)
+public class QueryEdgeCaseTest {
 	private static final String NS = "http://foo/#";
 	private static final String EXTENT_NS = "http://foo/Event#";
+	private static final Logger LOG = LoggerFactory.getLogger(QueryEdgeCaseTest.class);
 
+	private static TemporalTestServer testServer;
 	private static int thingCounter;
 
-	@Override
-	public void doSetup() {
+	@BeforeAll
+	public static void beforeAll() {
+		testServer = new TemporalTestServer();
+	}
+
+	@AfterAll
+	public static void afterAll() {
+		testServer.close();
+	}
+
+	@SuppressWarnings("static-method")
+	@BeforeEach
+	public void beforeEach() {
+		testServer.setupIndex();
 		loadContent();
+	}
+
+	@AfterEach
+	public static void afterEach() {
+		testServer.removeIndex();
 	}
 
 	protected static void loadContent() {
 		thingCounter = 0;
-		addThingWithTime(model, "2001-07-21T00:00:01Z");
-		addThingWithTime(model, "2001-07-21T00:00:01Z");
-		addThingWithTime(model, "2001-07-21T00:00:02Z");
-		addThingWithTime(model, "2001-07-21T00:00:02Z");
-		addThingWithTime(model, "1970-01-01T00:00:00Z");
-		addThingWithTime(model, "2006-02-16T00:00:01Z");
+		addThingWithTime(testServer.getModel(), "2001-07-21T00:00:01Z");
+		addThingWithTime(testServer.getModel(), "2001-07-21T00:00:01Z");
+		addThingWithTime(testServer.getModel(), "2001-07-21T00:00:02Z");
+		addThingWithTime(testServer.getModel(), "2001-07-21T00:00:02Z");
+		addThingWithTime(testServer.getModel(), "1970-01-01T00:00:00Z");
+		addThingWithTime(testServer.getModel(), "2006-02-16T00:00:01Z");
 	}
 
 	@SuppressWarnings("static-method")
 	@Test
 	public void testDuplicateEntries() {
-		String query = COMMON_PREFIXES
+		String query = TemporalTestServer.COMMON_PREFIXES
 				+ "PREFIX foo: <"+NS+">\n"
 				+ "SELECT DISTINCT ?thing\n"
 				+ "WHERE {\n"
@@ -62,16 +89,17 @@ public class QueryEdgeCaseTest extends AbstractTemporalTestClass {
 				+ "		?before	pt:asInstant \"2006-02-16T00:00:01Z\"^^xsd:dateTime .\n"
 				+ "		?temporal time:before ?before .\n"
 				+ "}";
-		qExec = QueryExecutionFactory.create(query, graphStore.toDataset());
-		ResultSet resultSet = qExec.execSelect();
-		checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8");
+		try (CloseableQueryExec qExec = new CloseableQueryExec(testServer.getDataset(), query)) {
+			ResultSet resultSet = qExec.execSelect();
+			checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8");
+		}
 	}
 
 	@SuppressWarnings("static-method")
 	@Test
 	/** Tests the query processor's ability to filter through irrelevant triples with similar subjects */
 	public void testIndexFilter() {
-		String query = COMMON_PREFIXES
+		String query = TemporalTestServer.COMMON_PREFIXES
 				+ "PREFIX foo: <"+NS+">\n"
 				+ "SELECT DISTINCT ?thing\n"
 				+ "WHERE {\n"
@@ -81,16 +109,17 @@ public class QueryEdgeCaseTest extends AbstractTemporalTestClass {
 				+ "		?temporal a time:Instant ;\n"
 				+ "			time:before ?before .\n"
 				+ "}";
-		qExec = QueryExecutionFactory.create(query, graphStore.toDataset());
-		ResultSet resultSet = qExec.execSelect();
-		checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8");
+		try (CloseableQueryExec qExec = new CloseableQueryExec(testServer.getDataset(), query)) {
+			ResultSet resultSet = qExec.execSelect();
+			checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8");
+		}
 	}
 
 	@SuppressWarnings("static-method")
 	@Test
 	/** Tests the query processor's ability to filter through irrelevant triples with similar subjects */
 	public void PartialIndexQueryTest() {
-		String query = COMMON_PREFIXES
+		String query = TemporalTestServer.COMMON_PREFIXES
 				+ "PREFIX foo: <"+NS+">\n"
 				+ "SELECT DISTINCT ?thing\n"
 				+ "WHERE {\n"
@@ -101,15 +130,16 @@ public class QueryEdgeCaseTest extends AbstractTemporalTestClass {
 				+ "		?temporal a time:Instant ;\n"
 				+ "			time:before ?before .\n"
 				+ "}";
-		qExec = QueryExecutionFactory.create(query, graphStore.toDataset());
-		ResultSet resultSet = qExec.execSelect();
-		checkResults(resultSet);
+		try (CloseableQueryExec qExec = new CloseableQueryExec(testServer.getDataset(), query)) {
+			ResultSet resultSet = qExec.execSelect();
+			checkResults(resultSet);
+		}
 	}
 
 	@SuppressWarnings("static-method")
 	@Test
 	public void testBlankNodes() {
-		String query = COMMON_PREFIXES
+		String query = TemporalTestServer.COMMON_PREFIXES
 				+ "PREFIX foo: <"+NS+">\n"
 				+ "SELECT DISTINCT ?thing\n"
 				+ "WHERE {\n"
@@ -117,15 +147,16 @@ public class QueryEdgeCaseTest extends AbstractTemporalTestClass {
 				+ "		?temporal time:before [\n"
 				+ "			pt:asInstant \"2006-02-16T00:00:01Z\"^^xsd:dateTime ] .\n"
 				+ "}";
-		qExec = QueryExecutionFactory.create(query, graphStore.toDataset());
-		ResultSet resultSet = qExec.execSelect();
-		checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8");
+		try (CloseableQueryExec qExec = new CloseableQueryExec(testServer.getDataset(), query)) {
+			ResultSet resultSet = qExec.execSelect();
+			checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8");
+		}
 	}
 
 	@SuppressWarnings("static-method")
 	@Test
 	public void testUnboundedOperands() {
-		String query = COMMON_PREFIXES
+		String query = TemporalTestServer.COMMON_PREFIXES
 				+ "PREFIX foo: <"+NS+">\n"
 				+ "SELECT DISTINCT ?thing\n"
 				+ "WHERE {\n"
@@ -133,9 +164,10 @@ public class QueryEdgeCaseTest extends AbstractTemporalTestClass {
 				+ "		?interval pt:asInterval \",\"^^<" + Constants.PT_TIME_INTERVAL + "> .\n"
 				+ "		?interval time:inside ?temporal .\n"
 				+ "}";
-		qExec = QueryExecutionFactory.create(query, graphStore.toDataset());
-		ResultSet resultSet = qExec.execSelect();
-		checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8", NS+"10");
+		try (CloseableQueryExec qExec = new CloseableQueryExec(testServer.getDataset(), query)) {
+			ResultSet resultSet = qExec.execSelect();
+			checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8", NS+"10");
+		}
 	}
 
 	private static void printQuerySolution(QuerySolution querySolution) {
@@ -149,13 +181,13 @@ public class QueryEdgeCaseTest extends AbstractTemporalTestClass {
 	}
 
 	private static void checkResults(ResultSet rs, String... results) {
-		List<String> values = new ArrayList<>(Arrays.asList(results));
+		List<String> values = Arrays.asList(results);
 		int count = 0;
 		try {
 			if (results.length > 0) {
-				assertTrue("No results. Expected " + results.length, rs.hasNext());
+				assertTrue(rs.hasNext(), "No results. Expected " + results.length);
 			} else {
-				assertFalse("Has results when none are expected", rs.hasNext());
+				assertFalse(rs.hasNext(), "Has results when none are expected");
 			}
 		} finally {
 			while (rs.hasNext()) {
@@ -163,7 +195,7 @@ public class QueryEdgeCaseTest extends AbstractTemporalTestClass {
 				printQuerySolution(qs);
 				Resource loc = qs.getResource("thing");
 				values.remove(loc.getURI());
-				count++;
+				++count;
 			}
 			if (values.size() > 0) {
 				LOG.warn("Did not find the following values: {}", values);
@@ -180,7 +212,7 @@ public class QueryEdgeCaseTest extends AbstractTemporalTestClass {
 
 		m.add(thing, atTime, temporal);
 		m.add(temporal, RDF.type, m.createResource(Constants.OT_INSTANT.getURI()));
-		m.add(temporal, INSTANT_PF,
+		m.add(temporal, TemporalTestServer.INSTANT_PF,
 			ResourceFactory.createTypedLiteral(string, TemporalIndexField.INSTANT.getDatatype()));
 	}
 }

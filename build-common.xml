@@ -136,5 +136,8 @@
 		<replace file="${testConfigFile}"
 			token="logToConsole             = yes"
 			value="logToConsole             = no"/>
+		<replace file="${testConfigFile}"
+			token="kbDirectoryPath        = ."
+			value="kbDirectoryPath        = test-kb-data"/>
 	</target>
 </project>

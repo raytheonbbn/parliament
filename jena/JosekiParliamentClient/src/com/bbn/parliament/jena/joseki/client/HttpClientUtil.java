@@ -24,12 +24,7 @@ import java.util.zip.GZIPInputStream;
 
 /** Utility methods for HTTP clients.  Taken from Sesame 1.2.6. */
 public class HttpClientUtil {
-
 	private static final String CRLF = "\r\n";
-
-	/*---------------------+
-| Methods              |
-+---------------------*/
 
 	/**
 	 * Prepares an HttpURLConnection for a POST request that sends the

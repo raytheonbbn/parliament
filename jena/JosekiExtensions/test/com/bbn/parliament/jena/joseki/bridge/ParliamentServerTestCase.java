@@ -1,25 +1,27 @@
 package com.bbn.parliament.jena.joseki.bridge;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.joseki.bridge.tracker.Tracker;
+import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.joseki.client.RemoteModel;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -40,28 +42,8 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 
 import test_util.RdfResourceLoader;
 
-public class ParliamentServerTestCase extends ParliamentServerBase {
-	private static class CloseableQueryExec implements Closeable {
-		private QueryExecution qe;
-
-		public CloseableQueryExec(String sparqlService, String queryFmt, Object... args) {
-			String query = String.format(queryFmt, args);
-			qe = QueryExecutionFactory.sparqlService(sparqlService, query);
-		}
-
-		public ResultSet execSelect() {
-			return qe.execSelect();
-		}
-
-		@Override
-		public void close() {
-			if (qe != null) {
-				qe.close();
-				qe = null;
-			}
-		}
-	}
-
+@RunWith(JUnitPlatform.class)
+public class ParliamentServerTestCase {
 	private static final String HOST = "localhost";
 	private static final String PORT = System.getProperty("jetty.port", "8586");
 	private static final String SPARQL_URL = String.format(RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL, HOST, PORT);
@@ -108,13 +90,23 @@ public class ParliamentServerTestCase extends ParliamentServerBase {
 	private static final RemoteModel rm = new RemoteModel(SPARQL_URL, BULK_URL);
 	private static final Logger log = LoggerFactory.getLogger(ParliamentServerTestCase.class);
 
+	@BeforeAll
+	public static void beforeAll() {
+		ParliamentTestServer.createServer();
+	}
+
+	@AfterAll
+	public static void afterAll() {
+		ParliamentTestServer.stopServer();
+	}
+
 	@SuppressWarnings("static-method")
 	@Test
 	public void generalKBFunctionalityTest() throws IOException {
 		rm.clearAll();
 		ResultSet rs = doQuery(EVERYTHING_QUERY);
 		int count = countResults(rs);
-		assertEquals("Invalid precondition -- triple store is not empty.", 0, count);
+		assertEquals(0, count, "Invalid precondition -- triple store is not empty.");
 
 		loadSampleData();
 
@@ -125,19 +117,19 @@ public class ParliamentServerTestCase extends ParliamentServerBase {
 
 		rs = doQuery(THING_QUERY);
 		count = countResults(rs);
-		assertEquals("Invalid precondition -- triple store already contains data.", 0, count);
+		assertEquals(0, count, "Invalid precondition -- triple store already contains data.");
 
 		doUpdate(THING_INSERT);
 
 		rs = doQuery(THING_QUERY);
 		count = countResults(rs);
-		assertEquals("Data insert failed.", 1, count);
+		assertEquals(1, count, "Data insert failed.");
 
 		doUpdate(THING_DELETE);
 
 		rs = doQuery(THING_QUERY);
 		count = countResults(rs);
-		assertEquals("Data delete failed.", 0, count);
+		assertEquals(0, count, "Data delete failed.");
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 
 		rm.clearAll();
@@ -195,9 +187,8 @@ public class ParliamentServerTestCase extends ParliamentServerBase {
 			QuerySolution qs = rs.nextSolution();
 			RDFNode t = qs.get("thing");
 			RDFNode l = qs.get("label");
-			assertTrue(t != null);
-			assertTrue(l != null);
-			if (t.isURIResource() && TEST_SUBJECT.equals(t.asResource().getURI())
+			if (t != null && l != null
+				&& t.isURIResource() && TEST_SUBJECT.equals(t.asResource().getURI())
 				&& l.isLiteral() && TEST_LITERAL.equals(l.asLiteral().getLexicalForm())
 				&& isStringLiteral(l.asLiteral().getDatatypeURI())) {
 				foundIt = true;
@@ -417,7 +408,7 @@ public class ParliamentServerTestCase extends ParliamentServerBase {
 	}
 
 	private static ResultSet doQuery(String queryFmt, Object... args) {
-		try (CloseableQueryExec qe = new CloseableQueryExec(SPARQL_URL, queryFmt, args)) {
+		try (CloseableQueryExec qe = new CloseableQueryExec(SPARQL_URL, String.format(queryFmt, args))) {
 			return qe.execSelect();
 		}
 	}
@@ -448,8 +439,7 @@ public class ParliamentServerTestCase extends ParliamentServerBase {
 				executeUpdate(exec);
 			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
-			fail();
+			fail(ex.getMessage());
 		}
 	}
 

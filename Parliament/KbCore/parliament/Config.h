@@ -305,6 +305,8 @@ public:
 
 	void disableAllRules();
 
+	const Config& ensureKbDirExists() const;
+
 #if defined(PARLIAMENT_UNIT_TEST)
 	static ::boost::filesystem::path testGetConfigFilePath()
 		{ return getConfigFilePath(); }

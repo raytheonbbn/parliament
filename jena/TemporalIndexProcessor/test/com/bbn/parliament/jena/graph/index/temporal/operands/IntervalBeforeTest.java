@@ -5,15 +5,35 @@
 // All rights reserved.
 package com.bbn.parliament.jena.graph.index.temporal.operands;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.Operand;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.query.TestIndexFactory;
 
+@RunWith(JUnitPlatform.class)
 public class IntervalBeforeTest extends BaseOperandTestClass {
+	@BeforeEach
+	public void beforeEach() {
+		super.beforeEach();
+	}
+
+	@AfterEach
+	public void afterEach() {
+		super.afterEach();
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -21,19 +41,21 @@ public class IntervalBeforeTest extends BaseOperandTestClass {
 		return Operand.INTERVAL_BEFORE;
 	}
 
+	@Test
 	public void testTestExtents() {
-		assertFalse("This case should fail since it comes 'after' the other interval.",
-			getOperator().testExtents(TestIndexFactory.TWO, TestIndexFactory.ONE));
-		assertFalse("These intervals share a common boundary therefore the 'before' relationship does not apply.",
-			getOperator().testExtents(TestIndexFactory.ONE, TestIndexFactory.THREE));
-		assertFalse("This test involves two overlapping intervals and therefore 'before' does not hold.",
-			getOperator().testExtents(TestIndexFactory.THREE, TestIndexFactory.FOUR));
-		assertFalse("This test involves incompatible datatypes and therefore must be false.",
-				pf.testExtents(TestIndexFactory.JAN01, TestIndexFactory.FOUR));
+		assertFalse(getOperator().testExtents(TestIndexFactory.TWO, TestIndexFactory.ONE),
+			"This case should fail since it comes 'after' the other interval.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.ONE, TestIndexFactory.THREE),
+			"These intervals share a common boundary therefore the 'before' relationship does not apply.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.THREE, TestIndexFactory.FOUR),
+			"This test involves two overlapping intervals and therefore 'before' does not hold.");
 		assertTrue(getOperator().testExtents(TestIndexFactory.ONE, TestIndexFactory.TWO));
+		assertFalse(pf.testExtents(TestIndexFactory.JAN01, TestIndexFactory.FOUR),
+			"This test involves incompatible datatypes and therefore must be false.");
 	}
 
 	/** Calls '?x before FIVE' which should result in ONE and SIX */
+	@Test
 	public void testBindFirstVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("one");
@@ -43,6 +65,7 @@ public class IntervalBeforeTest extends BaseOperandTestClass {
 	}
 
 	/** Calls 'ONE before ?x' which should result in TWO, FOUR, and FIVE */
+	@Test
 	public void testBindSecondVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("two");

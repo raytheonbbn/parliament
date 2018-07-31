@@ -40,6 +40,8 @@ import com.sleepycat.je.SecondaryKeyCreator;
 
 /** @author dkolas */
 public class PersistentTemporalIndex extends TemporalIndex {
+	public static final String INDEX_SUB_DIR = "temporal";
+
 	private static final Logger LOG = LoggerFactory.getLogger(PersistentTemporalIndex.class);
 
 	private Database nodeIndexedDatabase;
@@ -95,31 +97,29 @@ public class PersistentTemporalIndex extends TemporalIndex {
 	}
 
 	private void readMinAndMaxes() throws DatabaseException {
+		minStart = 0L;
+		maxStart = Long.MAX_VALUE;
+		minEnd = 0L;
+		maxEnd = Long.MAX_VALUE;
+
 		DatabaseEntry key = new DatabaseEntry();
 		DatabaseEntry value = new DatabaseEntry();
 
-		try (SecondaryCursor cursor1 = startsDatabase.openCursor(null, CursorConfig.READ_UNCOMMITTED)) {
-			OperationStatus status = cursor1.getFirst(key, value, LockMode.READ_UNCOMMITTED);
-
-			// If we get one thing back, there is at least one element in the db
-			if (status == OperationStatus.SUCCESS) {
+		try (SecondaryCursor cursor = startsDatabase.openCursor(null, CursorConfig.READ_UNCOMMITTED)) {
+			if (cursor.getFirst(key, value, LockMode.READ_UNCOMMITTED) == OperationStatus.SUCCESS) {
 				minStart = getLongForBytes(value.getData(), 0);
-				cursor1.getLast(key, value, LockMode.READ_UNCOMMITTED);
-
+			}
+			if (cursor.getLast(key, value, LockMode.READ_UNCOMMITTED) == OperationStatus.SUCCESS) {
 				maxStart = getLongForBytes(value.getData(), 0);
-				cursor1.close();
+			}
+		}
 
-				try (SecondaryCursor cursor2 = endsDatabase.openCursor(null, CursorConfig.READ_UNCOMMITTED)) {
-					cursor2.getFirst(key, value, LockMode.READ_UNCOMMITTED);
-					minEnd = getLongForBytes(value.getData(), 8);
-					cursor2.getLast(key, value, LockMode.READ_UNCOMMITTED);
-					maxEnd = getLongForBytes(value.getData(), 8);
-				}
-			} else {
-				minStart = 0L;
-				maxStart = Long.MAX_VALUE;
-				minEnd = 0L;
-				maxEnd = Long.MAX_VALUE;
+		try (SecondaryCursor cursor = endsDatabase.openCursor(null, CursorConfig.READ_UNCOMMITTED)) {
+			if (cursor.getFirst(key, value, LockMode.READ_UNCOMMITTED) == OperationStatus.SUCCESS) {
+				minEnd = getLongForBytes(value.getData(), 8);
+			}
+			if (cursor.getLast(key, value, LockMode.READ_UNCOMMITTED) == OperationStatus.SUCCESS) {
+				maxEnd = getLongForBytes(value.getData(), 8);
 			}
 		}
 
@@ -376,7 +376,7 @@ public class PersistentTemporalIndex extends TemporalIndex {
 	}
 
 	private void intialize(String indexDir) {
-		dirName = indexDir + File.separatorChar + "temporal";
+		dirName = indexDir + File.separatorChar + INDEX_SUB_DIR;
 	}
 
 	private void initializeEnvironment(boolean newEnvironment)

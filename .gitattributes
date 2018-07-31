@@ -5,10 +5,14 @@
 *.bat text eol=crlf
 
 # Denote all files that are truly binary and should not be modified.
+*.doc binary
+*.docx binary
 *.jpg binary
 *.jpeg binary
 *.pdf binary
 *.png binary
 *.ppt binary
 *.pptx binary
+*.xls binary
+*.xlsx binary
 *.zip binary

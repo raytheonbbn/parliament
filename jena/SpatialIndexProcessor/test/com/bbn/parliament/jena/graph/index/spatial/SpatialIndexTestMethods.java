@@ -1,34 +1,30 @@
 // Parliament is licensed under the BSD License from the Open Source
 // Initiative, http://www.opensource.org/licenses/bsd-license.php
 //
-// Copyright (c) 2001-2009, BBN Technologies, Inc.
+// Copyright (c) 2018, BBN Technologies, Inc.
 // All rights reserved.
 
 package com.bbn.parliament.jena.graph.index.spatial;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 
-import org.junit.Test;
-
 import com.bbn.parliament.jena.graph.index.IndexFactory.IndexFactoryHelper;
 import com.bbn.parliament.jena.graph.index.Record;
-import com.bbn.parliament.jena.query.index.QueryableIndexTestBase;
+import com.bbn.parliament.jena.query.index.QueryableIndexTestMethods;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
-/** @author Robert Battle */
-public abstract class AbstractIndexTest extends QueryableIndexTestBase<SpatialIndex, Geometry> {
+public abstract class SpatialIndexTestMethods extends QueryableIndexTestMethods<SpatialIndex, Geometry> {
 	@Override
 	protected Record<Geometry> createRecord(int seed) {
-		Geometry extent = GeometryConverter
-			.createPoint(new double[] { 53.2 + seed, 23.1 });
+		Geometry extent = GeometryConverter.createPoint(new double[] { 53.2 + seed, 23.1 });
 		Node n = Node.createURI("http://example.org/" + seed);
 		return GeometryRecord.create(n, extent);
 	}
@@ -39,30 +35,22 @@ public abstract class AbstractIndexTest extends QueryableIndexTestBase<SpatialIn
 
 	/** {@inheritDoc} */
 	@Override
-	protected boolean checkDeleted(SpatialIndex index, Graph graph,
-		Node graphName) {
-		String indexDir = IndexFactoryHelper.getIndexDirectory(graph, graphName);
-		indexDir += File.separatorChar + "spatial" + File.separatorChar;
-		return !new File(indexDir).exists();
+	protected boolean checkDeleted(SpatialIndex index, Graph graph, Node graphName) {
+		File indexDir = new File(IndexFactoryHelper.getIndexDirectory(graph, graphName), "spatial");
+		return !indexDir.exists();
 	}
 
-	@Test
-	public void testAddGeometry() {
-		testAddGeometry(defaultGraphIndex);
-		testAddGeometry(namedGraphIndex);
-	}
-
+	// Test method
 	@SuppressWarnings("static-method")
-	private void testAddGeometry(SpatialIndex index) {
+	public void testAddGeometry(SpatialIndex index) {
 		Node n = Node.createURI("http://test.org#test");
 		Geometry extent = GeometryConverter
 			.createPoint(new double[] { 1.0, 1.0 });
 		// test add node
 		try {
 			index.add(Record.create(n, extent));
-		} catch (SpatialIndexException e) {
-			e.printStackTrace();
-			fail();
+		} catch (SpatialIndexException ex) {
+			fail(ex.getMessage());
 		}
 		assertEquals(1, index.size());
 
@@ -71,21 +59,15 @@ public abstract class AbstractIndexTest extends QueryableIndexTestBase<SpatialIn
 		extent = GeometryConverter.createPoint(new double[] { 1.0, 2.0 });
 		try {
 			index.add(Record.create(n, extent));
-		} catch (SpatialIndexException e) {
-			e.printStackTrace();
-			fail();
+		} catch (SpatialIndexException ex) {
+			fail(ex.getMessage());
 		}
 		assertEquals(2, index.size());
 	}
 
-	@Test
-	public void testAddSameNode() {
-		testAddSameNode(defaultGraphIndex);
-		testAddSameNode(namedGraphIndex);
-	}
-
+	// Test method
 	@SuppressWarnings("static-method")
-	private void testAddSameNode(SpatialIndex index) {
+	public void testAddSameNode(SpatialIndex index) {
 		// test add another node
 		Node n = Node.createURI("http://test.org#test2");
 		Geometry extent = GeometryConverter
@@ -94,18 +76,16 @@ public abstract class AbstractIndexTest extends QueryableIndexTestBase<SpatialIn
 		// test add same node twice
 		try {
 			index.add(Record.create(n, extent));
-		} catch (SpatialIndexException e) {
-			e.printStackTrace();
-			fail();
+		} catch (SpatialIndexException ex) {
+			fail(ex.getMessage());
 		}
 		assertEquals(1, index.size());
 
 		// test add same node twice
 		try {
 			index.add(Record.create(n, extent));
-		} catch (SpatialIndexException e) {
-			e.printStackTrace();
-			fail();
+		} catch (SpatialIndexException ex) {
+			fail(ex.getMessage());
 		}
 		assertEquals(1, index.size());
 
@@ -114,9 +94,8 @@ public abstract class AbstractIndexTest extends QueryableIndexTestBase<SpatialIn
 			.createPoint(new double[] { 1.0, 3.0 });
 		try {
 			index.add(Record.create(n, extent1));
-		} catch (SpatialIndexException e) {
-			e.printStackTrace();
-			fail();
+		} catch (SpatialIndexException ex) {
+			fail(ex.getMessage());
 		}
 		assertEquals(1, index.size());
 

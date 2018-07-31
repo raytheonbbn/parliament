@@ -6,12 +6,15 @@
 
 package com.bbn.parliament.jena.joseki.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 /** @author sallen */
+@RunWith(JUnitPlatform.class)
 public class RDFFormatTest {
 	/** Test for {@link com.bbn.parliament.jena.util.RDFFormat#parse(java.lang.String)}. */
 	@SuppressWarnings("static-method")
@@ -41,7 +44,7 @@ public class RDFFormatTest {
 
 		try {
 			RDFFormat.parse(null);
-			assertTrue("Should have thrown an NPE", false);
+			assertTrue(false, "Should have thrown an NPE");
 		} catch (NullPointerException ex) {
 			// Do nothing
 		}
@@ -61,21 +64,21 @@ public class RDFFormatTest {
 
 		try {
 			RDFFormat.parseJenaFormatString("JSON-LD");
-			assertTrue("Should have thrown an IllegalArgumentException", false);
+			assertTrue(false, "Should have thrown an IllegalArgumentException");
 		} catch (IllegalArgumentException ex) {
 			System.out.println(ex.getMessage());
 		}
 
 		try {
 			RDFFormat.parseJenaFormatString("ZIP");
-			assertTrue("Should have thrown an IllegalArgumentException", false);
+			assertTrue(false, "Should have thrown an IllegalArgumentException");
 		} catch (IllegalArgumentException ex) {
 			System.out.println(ex.getMessage());
 		}
 
 		try {
 			RDFFormat.parseJenaFormatString("UNKNOWN");
-			assertTrue("Should have thrown an IllegalArgumentException", false);
+			assertTrue(false, "Should have thrown an IllegalArgumentException");
 		} catch (IllegalArgumentException ex) {
 			System.out.println(ex.getMessage());
 		}
@@ -109,7 +112,7 @@ public class RDFFormatTest {
 
 		try {
 			RDFFormat.parseFilename((String) null);
-			assertTrue("Should have thrown an NPE", false);
+			assertTrue(false, "Should have thrown an NPE");
 		} catch (NullPointerException ex) {
 			// Do nothing
 		}

@@ -31,11 +31,12 @@
 								<option id="gnu.cpp.compiler.option.include.paths.1984221352" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${env_var:BOOST_ROOT}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/darwin&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/win32&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:BDB_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/KbCore}&quot;"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.dialect.std.381369236" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.dialect.std.381369236" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1085406704" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.so.debug.1018997986" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.so.debug">
@@ -94,11 +95,12 @@
 								<option id="gnu.cpp.compiler.option.include.paths.586469638" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${env_var:BOOST_ROOT}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/darwin&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/win32&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:BDB_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/KbCore}&quot;"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.dialect.std.1943560140" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.dialect.std.1943560140" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1584831094" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.so.release.1178839962" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.so.release">
@@ -143,7 +145,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="dylib" artifactName="KbCore" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.macosx.so.debug.16651820" name="Debug_with_MacOSX GCC" optionalBuildProperties="org.eclipse.cdt.docker.launcher.containerbuild.property.volumes=,org.eclipse.cdt.docker.launcher.containerbuild.property.selectedvolumes=" parent="cdt.managedbuild.config.macosx.so.debug">
+				<configuration artifactExtension="dylib" artifactName="KbCore" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.macosx.so.debug.16651820" name="Debug_with_MacOSX GCC" optionalBuildProperties="org.eclipse.cdt.docker.launcher.containerbuild.property.selectedvolumes=,org.eclipse.cdt.docker.launcher.containerbuild.property.volumes=" parent="cdt.managedbuild.config.macosx.so.debug">
 					<folderInfo id="cdt.managedbuild.config.macosx.so.debug.16651820." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.macosx.so.debug.287026338" name="MacOSX GCC" nonInternalBuilderId="cdt.managedbuild.target.gnu.builder.macosx.so.debug" superClass="cdt.managedbuild.toolchain.gnu.macosx.so.debug">
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.macosx.so.debug.2004167267" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.macosx.so.debug"/>
@@ -170,11 +172,12 @@
 								<option id="gnu.cpp.compiler.option.include.paths.199426699" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${env_var:BOOST_ROOT}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/darwin&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/win32&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:BDB_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/KbCore}&quot;"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.dialect.std.928054476" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.dialect.std.928054476" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.2065061947" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.macosx.so.debug.474079925" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.macosx.so.debug">
@@ -235,11 +238,12 @@
 								<option id="gnu.cpp.compiler.option.include.paths.1232408036" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${env_var:BOOST_ROOT}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/darwin&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/win32&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:BDB_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/KbCore}&quot;"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.dialect.std.36262296" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.dialect.std.36262296" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1406874206" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.macosx.so.release.618083876" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.macosx.so.release">

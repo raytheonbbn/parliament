@@ -12,6 +12,7 @@
 namespace pmnt = ::bbn::parliament;
 
 using ::std::basic_string;
+using ::std::exception;
 using ::std::ostringstream;
 using ::std::size_t;
 using ::std::string;
@@ -168,12 +169,12 @@ void pmnt::JNIHelper::setStaticShortFld(JNIEnv* pEnv, jclass cls,
 	pEnv->SetStaticShortField(cls, fid, value);
 }
 
-void pmnt::JNIHelper::throwException(JNIEnv* pEnv, const char* pExType,
-	const char* pMsg, const char* pSrcFile, uint32 srcLineNum)
+void pmnt::JNIHelper::throwException(JNIEnv* pEnv, const exception& ex,
+	const char* pSrcFile, uint32 srcLineNum)
 {
 	ostringstream s;
-	s << pExType << " thrown from " << pSrcFile << " at line "
-		<< srcLineNum << ":  " << pMsg;
+	s << typeid(ex).name() << " thrown from " << pSrcFile << " at line "
+		<< srcLineNum << ":  " << ex.what();
 	throwJavaException(pEnv, "com/bbn/parliament/jni/NativeCodeException",
 		s.str().c_str());
 }

@@ -5,6 +5,10 @@
 // All rights reserved.
 package com.bbn.parliament.jena.graph.index.temporal.operands;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -24,35 +28,16 @@ import com.hp.hpl.jena.sparql.core.DatasetGraphFactory;
 import com.hp.hpl.jena.sparql.engine.ExecutionContext;
 import com.hp.hpl.jena.sparql.pfunction.PropFuncArg;
 
-import junit.framework.TestCase;
-
-public abstract class BaseOperandTestClass extends TestCase {
+public abstract class BaseOperandTestClass {
 	protected TemporalIndex index;
 	protected TemporalPropertyFunctionFactory<PersistentTemporalIndex> pfFactory;
 	protected TemporalPropertyFunction<PersistentTemporalIndex> pf;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	// Call from @BeforeEach
+	protected void beforeEach() {
 		index = TestIndexFactory.createPopulatedTestIndex();
 		pfFactory = TestIndexFactory.createPropertyFunctionFactory();
-		setUpOperator();
-	}
 
-	protected TemporalPropertyFunction<PersistentTemporalIndex> getOperator() {
-		return pf;
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		index.close();
-		index = null;
-		super.tearDown();
-	}
-
-	public abstract Operand getOperand();
-
-	private void setUpOperator() {
 		Operand op = getOperand();
 		pf = pfFactory.create(op);
 		ExecutionContext context = new ExecutionContext(ARQ.getContext(), index.getGraph(),
@@ -64,6 +49,18 @@ public abstract class BaseOperandTestClass extends TestCase {
 		pf.build(argSubject, predicate, argObject, context);
 	}
 
+	// Call from @AfterEach
+	protected void afterEach() {
+		index.close();
+		index = null;
+	}
+
+	public abstract Operand getOperand();
+
+	protected TemporalPropertyFunction<PersistentTemporalIndex> getOperator() {
+		return pf;
+	}
+
 	protected static void compareExtentIteratorToExpected(Iterator<Record<TemporalExtent>> it,
 		Set<String> answerKey) {
 		Set<String> results = new TreeSet<>();
@@ -71,12 +68,12 @@ public abstract class BaseOperandTestClass extends TestCase {
 		while (it.hasNext()) {
 			Record<TemporalExtent> nodeExtent = it.next();
 			Node n = nodeExtent.getKey();
-			assertNotNull("Resulting variable Node was null", n);
+			assertNotNull(n, "Resulting variable Node was null");
 			results.add(n.toString());
 		}
-		assertEquals("Incorrect number of results", answerKey.size(), results.size());
+		assertEquals(answerKey.size(), results.size(), "Incorrect number of results");
 		for (String s : answerKey) {
-			assertTrue("Expected result (" + s + ") not found in actual results", results.contains(s));
+			assertTrue(results.contains(s), "Expected result (" + s + ") not found in actual results");
 		}
 	}
 }

@@ -5,15 +5,35 @@
 // All rights reserved.
 package com.bbn.parliament.jena.graph.index.temporal.operands;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.Operand;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.query.TestIndexFactory;
 
+@RunWith(JUnitPlatform.class)
 public class IntervalDuringTest extends BaseOperandTestClass {
+	@BeforeEach
+	public void beforeEach() {
+		super.beforeEach();
+	}
+
+	@AfterEach
+	public void afterEach() {
+		super.afterEach();
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -21,23 +41,25 @@ public class IntervalDuringTest extends BaseOperandTestClass {
 		return Operand.INTERVAL_DURING;
 	}
 
+	@Test
 	public void testTestExtents() {
-		assertFalse("These intervals overlap but neither contains the other.",
-			getOperator().testExtents(TestIndexFactory.THREE, TestIndexFactory.FOUR));
-		assertFalse("One interval starts the other, so 'contains' does not hold.",
-			getOperator().testExtents(TestIndexFactory.TWO, TestIndexFactory.FOUR));
-		assertFalse("One interval starts the other, so 'contains' does not hold.",
-			getOperator().testExtents(TestIndexFactory.TWO, TestIndexFactory.THREE));
-		assertFalse("These intervals are equal.",
-			getOperator().testExtents(TestIndexFactory.ONE, TestIndexFactory.SIX));
-		assertFalse("This is a 'contains' relationship rather than 'during'.",
-			getOperator().testExtents(TestIndexFactory.FOUR, TestIndexFactory.FIVE));
-		assertFalse("This test involves incompatible datatypes and therefore must be false.",
-				pf.testExtents(TestIndexFactory.JAN05, TestIndexFactory.FOUR));
+		assertFalse(getOperator().testExtents(TestIndexFactory.THREE, TestIndexFactory.FOUR),
+			"These intervals overlap but neither contains the other.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.TWO, TestIndexFactory.FOUR),
+			"One interval starts the other, so 'contains' does not hold.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.TWO, TestIndexFactory.THREE),
+			"One interval starts the other, so 'contains' does not hold.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.ONE, TestIndexFactory.SIX),
+			"These intervals are equal.");
+		assertFalse(getOperator().testExtents(TestIndexFactory.FOUR, TestIndexFactory.FIVE),
+			"This is a 'contains' relationship rather than 'during'.");
 		assertTrue(getOperator().testExtents(TestIndexFactory.FIVE, TestIndexFactory.FOUR));
+		assertFalse(pf.testExtents(TestIndexFactory.JAN05, TestIndexFactory.FOUR),
+			"This test involves incompatible datatypes and therefore must be false.");
 	}
 
 	/** Calls '?x during FOUR' which should result in FIVE. */
+	@Test
 	public void testBindFirstVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("five");
@@ -46,11 +68,11 @@ public class IntervalDuringTest extends BaseOperandTestClass {
 	}
 
 	/** Calls 'FIVE during ?x' which should result in FOUR. */
+	@Test
 	public void testBindSecondVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("four");
 		Iterator<Record<TemporalExtent>> it = getOperator().bindSecondVar(TestIndexFactory.FIVE);
 		compareExtentIteratorToExpected(it, answerKey);
 	}
-
 }

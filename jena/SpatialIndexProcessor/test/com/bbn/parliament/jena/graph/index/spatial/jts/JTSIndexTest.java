@@ -6,25 +6,122 @@
 
 package com.bbn.parliament.jena.graph.index.spatial.jts;
 
-import java.util.Properties;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
-import com.bbn.parliament.jena.graph.index.IndexFactory;
-import com.bbn.parliament.jena.graph.index.spatial.AbstractIndexTest;
-import com.bbn.parliament.jena.graph.index.spatial.SpatialIndex;
-import com.bbn.parliament.jena.graph.index.spatial.SpatialIndexFactory;
-import com.vividsolutions.jts.geom.Geometry;
+import com.bbn.parliament.jena.query.index.IndexTestMethods;
 
 /** @author Robert Battle */
-public class JTSIndexTest extends AbstractIndexTest {
+@RunWith(JUnitPlatform.class)
+public class JTSIndexTest {
 	@SuppressWarnings("static-method")
-	protected Properties getProperties() {
-		return JTSPropertyFactory.create();
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testAddAndRemove(IndexTestMethods.IndexUnderTest iut) {
+		try (JTSIndexTestMethods testMethods = new JTSIndexTestMethods()) {
+			testMethods.testAddAndRemove(testMethods.getIndex(iut));
+		}
 	}
 
-	@Override
-	protected IndexFactory<SpatialIndex, Geometry> getIndexFactory() {
-		SpatialIndexFactory f = new SpatialIndexFactory();
-		f.configure(getProperties());
-		return f;
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testOpenClose(IndexTestMethods.IndexUnderTest iut) {
+		try (JTSIndexTestMethods testMethods = new JTSIndexTestMethods()) {
+			testMethods.testOpenClose(testMethods.getIndex(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testIterator(IndexTestMethods.IndexUnderTest iut) {
+		try (JTSIndexTestMethods testMethods = new JTSIndexTestMethods()) {
+			testMethods.testIterator(testMethods.getIndex(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testAddClosed(IndexTestMethods.IndexUnderTest iut) {
+		try (JTSIndexTestMethods testMethods = new JTSIndexTestMethods()) {
+			testMethods.testAddClosed(testMethods.getIndex(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testRemoveClosed(IndexTestMethods.IndexUnderTest iut) {
+		try (JTSIndexTestMethods testMethods = new JTSIndexTestMethods()) {
+			testMethods.testRemoveClosed(testMethods.getIndex(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testIteratorClosed(IndexTestMethods.IndexUnderTest iut) {
+		try (JTSIndexTestMethods testMethods = new JTSIndexTestMethods()) {
+			testMethods.testIteratorClosed(testMethods.getIndex(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testDelete(IndexTestMethods.IndexUnderTest iut) {
+		try (JTSIndexTestMethods testMethods = new JTSIndexTestMethods()) {
+			testMethods.testDelete(testMethods.getIndex(iut), testMethods.getGraph(iut),
+				testMethods.getGraphName(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testDeleteOpen(IndexTestMethods.IndexUnderTest iut) {
+		try (JTSIndexTestMethods testMethods = new JTSIndexTestMethods()) {
+			testMethods.testDeleteOpen(testMethods.getIndex(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testClear(IndexTestMethods.IndexUnderTest iut) {
+		try (JTSIndexTestMethods testMethods = new JTSIndexTestMethods()) {
+			testMethods.testClear(testMethods.getIndex(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testLookup(IndexTestMethods.IndexUnderTest iut) {
+		try (JTSIndexTestMethods testMethods = new JTSIndexTestMethods()) {
+			testMethods.testLookup(testMethods.getIndex(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testAddGeometry(IndexTestMethods.IndexUnderTest iut) {
+		try (JTSIndexTestMethods testMethods = new JTSIndexTestMethods()) {
+			testMethods.testAddGeometry(testMethods.getIndex(iut));
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(IndexTestMethods.IndexUnderTest.class)
+	public void testAddSameNode(IndexTestMethods.IndexUnderTest iut) {
+		try (JTSIndexTestMethods testMethods = new JTSIndexTestMethods()) {
+			testMethods.testAddSameNode(testMethods.getIndex(iut));
+		}
 	}
 }

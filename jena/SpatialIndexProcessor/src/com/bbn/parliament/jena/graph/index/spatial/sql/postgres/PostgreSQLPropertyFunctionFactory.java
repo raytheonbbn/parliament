@@ -7,18 +7,14 @@ import com.bbn.parliament.jena.query.index.operand.OperandFactory;
 import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunction;
 import com.vividsolutions.jts.geom.Geometry;
 
-public class PostgreSQLPropertyFunctionFactory extends
-      SpatialPropertyFunctionFactory {
+public class PostgreSQLPropertyFunctionFactory extends SpatialPropertyFunctionFactory {
+	public PostgreSQLPropertyFunctionFactory(OperationFactory operationFactory,
+		Class<? extends OperandFactory<Geometry>> operandFactoryClass) {
+		super(operationFactory, operandFactoryClass);
+	}
 
-   public PostgreSQLPropertyFunctionFactory(OperationFactory operationFactory,
-                                            Class<? extends OperandFactory<Geometry>> operandFactoryClass) {
-      super(operationFactory, operandFactoryClass);
-   }
-
-   @Override
-   protected IndexPropertyFunction<Geometry> create(String uri,
-         Operation operation) {
-      return new PostgresPropertyFunction(uri, operation, operandFactoryClass);
-   }
-
+	@Override
+	protected IndexPropertyFunction<Geometry> create(String uri, Operation operation) {
+		return new PostgresPropertyFunction(uri, operation, operandFactoryClass);
+	}
 }

@@ -6,12 +6,13 @@
 
 package com.bbn.parliament.jena.joseki.josekibridge;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.joseki.bridge.ParliamentBridge;
 import com.bbn.parliament.jena.joseki.bridge.ParliamentBridgeException;
@@ -20,9 +21,10 @@ import com.bbn.parliament.jena.joseki.bridge.configuration.IndexProcessorConfigu
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
 
 /** @author Robert Battle */
+@RunWith(JUnitPlatform.class)
 public class ParliamentServerTestCase {
 	@SuppressWarnings("static-method")
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		ModelManager.inst().initialize();
 		ModelManager.inst().clearKb();
@@ -31,10 +33,9 @@ public class ParliamentServerTestCase {
 
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
 	public void testSingleIndex() throws ParliamentBridgeException {
 		ParliamentBridge.initialize(
-			"test/com/bbn/parliament/jena/joseki/josekibridge/parliament-single-index.ttl");
+			"com/bbn/parliament/jena/joseki/josekibridge/parliament-single-index.ttl");
 		ParliamentBridge instance = ParliamentBridge.getInstance();
 		assertEquals(1, instance.getConfigurationHandlers().size());
 		ConfigurationHandler handler = instance.getConfigurationHandlers().get(0);
@@ -46,10 +47,9 @@ public class ParliamentServerTestCase {
 
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
 	public void testNoIndex() throws ParliamentBridgeException {
 		ParliamentBridge.initialize(
-			"test/com/bbn/parliament/jena/joseki/josekibridge/parliament-no-index.ttl");
+			"com/bbn/parliament/jena/joseki/josekibridge/parliament-no-index.ttl");
 		ParliamentBridge instance = ParliamentBridge.getInstance();
 		assertEquals(0, instance.getConfigurationHandlers().size());
 		//assertFalse(ModelManager.inst().getDefaultModel().getGraph() instanceof IndexingGraph);
@@ -57,30 +57,27 @@ public class ParliamentServerTestCase {
 
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
 	public void testInvalidIndexHandler() throws ParliamentBridgeException {
 		ParliamentBridge.initialize(
-			"test/com/bbn/parliament/jena/joseki/josekibridge/parliament-invalid-index-handler.ttl");
+			"com/bbn/parliament/jena/joseki/josekibridge/parliament-invalid-index-handler.ttl");
 		ParliamentBridge instance = ParliamentBridge.getInstance();
 		assertEquals(0, instance.getConfigurationHandlers().size());
 	}
 
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
 	public void testInvalidHandler() throws ParliamentBridgeException {
 		ParliamentBridge.initialize(
-			"test/com/bbn/parliament/jena/joseki/josekibridge/parliament-invalid-handler.ttl");
+			"com/bbn/parliament/jena/joseki/josekibridge/parliament-invalid-handler.ttl");
 		ParliamentBridge instance = ParliamentBridge.getInstance();
 		assertEquals(0, instance.getConfigurationHandlers().size());
 	}
 
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
 	public void testMultipleHandler() throws ParliamentBridgeException {
 		ParliamentBridge.initialize(
-			"test/com/bbn/parliament/jena/joseki/josekibridge/parliament-multiple-handlers.ttl");
+			"com/bbn/parliament/jena/joseki/josekibridge/parliament-multiple-handlers.ttl");
 		ParliamentBridge instance = ParliamentBridge.getInstance();
 		assertEquals(4, instance.getConfigurationHandlers().size());
 		assertEquals(3, TestHandler.COUNT);

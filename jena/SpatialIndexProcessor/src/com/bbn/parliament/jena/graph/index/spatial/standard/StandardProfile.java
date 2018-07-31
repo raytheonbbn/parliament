@@ -42,13 +42,13 @@ public class StandardProfile implements Profile {
 	public PrefixMap getPrefixes() {
 		PrefixMap prefixes = new PrefixMap();
 
-		prefixes.add("gml", Constants.GML_NS);
-		prefixes.add("gmlh", Constants.GML_NS_H);
-		prefixes.add("buffer", Constants.BUFFER_NS);
-		prefixes.add("spatial", Constants.SPATIAL_RELATIONS_NS);
-		prefixes.add("rcc", Constants.RCC_NS);
-		prefixes.add("ogc", Constants.OGC_NS);
-		prefixes.add("georss", Constants.GEORSS_NS);
+		prefixes.add("gml", StdConstants.GML_NS);
+		prefixes.add("gmlh", StdConstants.GML_NS_H);
+		prefixes.add("buffer", StdConstants.BUFFER_NS);
+		prefixes.add("spatial", StdConstants.SPATIAL_RELATIONS_NS);
+		prefixes.add("rcc", StdConstants.RCC_EXT_NS);
+		prefixes.add("ogc", StdConstants.OGC_EXT_NS);
+		prefixes.add("georss", StdConstants.GEORSS_NS);
 
 		return prefixes;
 	}

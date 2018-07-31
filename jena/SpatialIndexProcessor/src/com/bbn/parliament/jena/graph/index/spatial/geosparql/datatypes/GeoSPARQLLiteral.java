@@ -9,8 +9,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
-import com.bbn.parliament.jena.graph.index.spatial.geosparql.Constants;
+import com.bbn.parliament.jena.graph.index.spatial.Constants;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.TransformCache;
+import com.bbn.parliament.jena.graph.index.spatial.standard.StdConstants;
 import com.hp.hpl.jena.datatypes.BaseDatatype;
 import com.hp.hpl.jena.datatypes.DatatypeFormatException;
 import com.vividsolutions.jts.geom.Geometry;
@@ -29,7 +30,7 @@ public abstract class GeoSPARQLLiteral extends BaseDatatype {
 	// set the default coordinate reference system
 	static {
 		try {
-			DEFAULT_CRS = CRS.decode(com.bbn.parliament.jena.graph.index.spatial.Constants.DEFAULT_CRS);
+			DEFAULT_CRS = CRS.decode(Constants.DEFAULT_CRS);
 		} catch (NoSuchAuthorityCodeException e) {
 			throw new RuntimeException("Could not find CRS for default CRS");
 		} catch (FactoryException e) {
@@ -54,10 +55,10 @@ public abstract class GeoSPARQLLiteral extends BaseDatatype {
 		String prefix = null;
 		if (code.contains("CRS")) {
 			auth = "CRS" + code.substring(4);
-			prefix = Constants.OGC_SRS_NS;
+			prefix = StdConstants.OGC_SRS_NS;
 		} else if (code.contains("EPSG")) {
 			auth = code.substring(5);
-			prefix = Constants.EPSG_SRS_NS;
+			prefix = StdConstants.EPSG_SRS_NS;
 		} else {
 			return null;
 		}
@@ -66,7 +67,7 @@ public abstract class GeoSPARQLLiteral extends BaseDatatype {
 
 	/**
 	 * Get a coordinate reference system code by it's URI. Currently this only supports
-	 * URIs within the {@link Constants#OGC_SRS_NS} and {@link Constants#EPSG_SRS_NS}
+	 * URIs within the {@link StdConstants#OGC_SRS_NS} and {@link StdConstants#EPSG_SRS_NS}
 	 * namespaces.
 	 *
 	 * @param uri the URI of the CRS.
@@ -77,15 +78,15 @@ public abstract class GeoSPARQLLiteral extends BaseDatatype {
 			return null;
 		}
 		String auth = null;
-		if (uri.startsWith(Constants.OGC_SRS_NS)) {
-			String id = uri.substring(Constants.OGC_SRS_NS.length());
+		if (uri.startsWith(StdConstants.OGC_SRS_NS)) {
+			String id = uri.substring(StdConstants.OGC_SRS_NS.length());
 			if (id.contains("CRS")) {
 				auth = "CRS:" + id.substring(3);
 			} else {
 				auth = "CRS:" + id;
 			}
-		} else if (uri.startsWith(Constants.EPSG_SRS_NS)) {
-			String id = uri.substring(Constants.EPSG_SRS_NS.length());
+		} else if (uri.startsWith(StdConstants.EPSG_SRS_NS)) {
+			String id = uri.substring(StdConstants.EPSG_SRS_NS.length());
 			auth = "EPSG:" + id;
 		} else {
 			return null;
@@ -194,21 +195,16 @@ public abstract class GeoSPARQLLiteral extends BaseDatatype {
 			CoordinateReferenceSystem source;
 			CoordinateReferenceSystem destination;
 
-			source = CRS
-				.decode(com.bbn.parliament.jena.graph.index.spatial.Constants.INTERNAL_CRS);
+			source = CRS.decode(Constants.INTERNAL_CRS);
 			destination = CRS.decode(crs);
 
 			return convert(value, source, destination);
 		} catch (NoSuchAuthorityCodeException e) {
 			throw new DatatypeFormatException(
-				String.format("Could not convert %s to %s",
-					com.bbn.parliament.jena.graph.index.spatial.Constants.INTERNAL_CRS,
-					crs));
+				String.format("Could not convert %s to %s", Constants.INTERNAL_CRS, crs));
 		} catch (FactoryException e) {
 			throw new DatatypeFormatException(
-				String.format("Could not convert %s to %s",
-					com.bbn.parliament.jena.graph.index.spatial.Constants.INTERNAL_CRS,
-					crs));
+				String.format("Could not convert %s to %s", Constants.INTERNAL_CRS, crs));
 		}
 	}
 
@@ -228,19 +224,14 @@ public abstract class GeoSPARQLLiteral extends BaseDatatype {
 			CoordinateReferenceSystem destination;
 
 			source = CRS.decode(crs);
-			destination = CRS
-				.decode(com.bbn.parliament.jena.graph.index.spatial.Constants.INTERNAL_CRS);
+			destination = CRS.decode(Constants.INTERNAL_CRS);
 			return convert(value, source, destination);
 		} catch (NoSuchAuthorityCodeException e) {
 			throw new DatatypeFormatException(
-				String.format("Could not convert %s to %s",
-					crs,
-					com.bbn.parliament.jena.graph.index.spatial.Constants.INTERNAL_CRS));
+				String.format("Could not convert %s to %s", crs, Constants.INTERNAL_CRS));
 		} catch (FactoryException e) {
 			throw new DatatypeFormatException(
-				String.format("Could not convert %s to %s",
-					crs,
-					com.bbn.parliament.jena.graph.index.spatial.Constants.INTERNAL_CRS));
+				String.format("Could not convert %s to %s", crs, Constants.INTERNAL_CRS));
 		}
 	}
 }

@@ -42,7 +42,7 @@ static const char*const k_trueBoolValues[] = { "true", "t", "yes", "y", "on", "1
 static const char*const k_falseBoolValues[] = { "false", "f", "no", "n", "off", "0" };
 const pmnt::TChar pmnt::Config::k_defaultConfigFileName[] = _T("ParliamentConfig.txt");
 
-static auto g_log(pmnt::Log::getSource("Config"));
+static auto g_log = pmnt::Log::getSource("Config");
 
 
 
@@ -555,4 +555,21 @@ void pmnt::Config::disableAllRules()
 	m_inferOwlClass					= false;
 	m_inferRdfsResource				= false;
 	m_inferOwlThing					= false;
+}
+
+const pmnt::Config& pmnt::Config::ensureKbDirExists() const
+{
+	if (!exists(m_kbDirectoryPath))
+	{
+		create_directory(m_kbDirectoryPath);
+		PMNT_LOG(g_log, LogLevel::info) << "XYZZY Created KB directory '"
+			<< pathAsUtf8(m_kbDirectoryPath) << "'.";
+	}
+	else if (!is_directory(m_kbDirectoryPath))
+	{
+		throw Exception(format(
+			"Configuration entry kbDirectoryPath is not a directory:  '%1%'")
+			% m_kbDirectoryPath.generic_string());
+	}
+	return *this;
 }

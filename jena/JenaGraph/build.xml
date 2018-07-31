@@ -95,26 +95,19 @@
 			<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
 			<env key="PARLIAMENT_CONFIG_PATH" value="${testConfigFile}"/>
 			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
-			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
+			<sysproperty key="log4j.configuration" value="file://${kbRootDir}/log4j.junit.properties"/>
 			<sysproperty key="test.data.path" value="${basedir}/data"/>
 			<classpath>
 				<pathelement location="${testBinDir}"/>
 				<path refid="testPath"/>
 			</classpath>
 			<formatter type="xml"/>
-			<!--
-				Frequently run on their own, using <test> rather than <batchtest>:
-				com.bbn.parliament.jena.query.KbOpExecutorDAWGTest
-				com.bbn.parliament.jena.graph.union.KbUnionGraphTest
-				com.bbn.parliament.jena.query.index.IndexExecutionTest
-			-->
-			<!--test name="com.bbn.parliament.jena.query.index.IndexExecutionTest"
-				fork="yes" todir="${reportsDir}/${ant.project.name}"/-->
 			<batchtest fork="yes" todir="${reportsDir}/${ant.project.name}">
-				<fileset dir="${basedir}/test">
-					<include name="**/*Test.java"/>
-					<exclude name="**/UnionGraphTest.java"/>
-				</fileset>
+				<fileset dir="${basedir}/test" includes="**/*Test.java"/>
+				<!--fileset dir="${basedir}/test" includes="**/DeftLoadTest.java"/-->
+				<!--fileset dir="${basedir}/test" includes="**/IndexExecutionTest.java"/-->
+				<!--fileset dir="${basedir}/test" includes="**/KbOpExecutorDAWGTest.java"/-->
+				<!--fileset dir="${basedir}/test" includes="**/KbUnionGraphTest.java"/-->
 			</batchtest>
 		</junit>
 	</target>
@@ -128,11 +121,22 @@
 	<target name="runUnionTestForOneNativeDir">
 		<echo message="nativeArtifactsDir = '${nativeArtifactsDir}'"/>
 
-		<java classname="com.bbn.parliament.jena.graph.union.UnionGraphTest" fork="yes">
+		<java classname="com.bbn.parliament.jena.graph.union.UnionGraphTestNotJUnit" fork="yes">
 			<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
 			<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
 			<env key="PARLIAMENT_CONFIG_PATH" value="${testConfigFile}"/>
 			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
+			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
+			<sysproperty key="test.data.path" value="${basedir}/data"/>
+			<classpath>
+				<pathelement location="${testBinDir}"/>
+				<path refid="testPath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="runSplitter" depends="compileTests">
+		<java classname="com.bbn.parliament.jena.NTriplesSplitter" fork="yes">
 			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
 			<sysproperty key="test.data.path" value="${basedir}/data"/>
 			<classpath>

@@ -1,21 +1,25 @@
 package com.bbn.parliament.jena.query.index;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.Kb;
+import com.bbn.parliament.jena.TestingDataset;
 import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.jena.graph.index.IndexManager;
-import com.bbn.parliament.jena.query.AbstractKbTestCase;
 import com.bbn.parliament.jena.query.KbOpExecutor;
+import com.bbn.parliament.jena.query.QueryTestUtil;
 import com.bbn.parliament.jena.query.index.mock.MockIndex;
 import com.bbn.parliament.jena.query.index.mock.MockIndexFactory;
 import com.bbn.parliament.jena.query.index.mock.MockPatternQuerier;
@@ -35,9 +39,11 @@ import com.hp.hpl.jena.sparql.engine.main.OpExecutor;
 import com.hp.hpl.jena.sparql.sse.SSE;
 import com.hp.hpl.jena.sparql.util.Context;
 
-public class IndexExecutionTest extends AbstractKbTestCase {
+@RunWith(JUnitPlatform.class)
+public class IndexExecutionTest {
 	private static final int NUM_MOCKED_ITEMS = 5;
 
+	private static TestingDataset dataset;
 	private static MockIndexFactory factory;
 	private static Rewrite optimizer;
 
@@ -46,12 +52,18 @@ public class IndexExecutionTest extends AbstractKbTestCase {
 	private MockIndex index;
 	private MockPatternQuerier querier;
 
-	@BeforeClass
-	public static void setUpKb() {
+	@BeforeAll
+	public static void beforeAll() {
+		dataset = new TestingDataset();
 		Kb.init();
 		factory = new MockIndexFactory();
 		IndexFactoryRegistry.getInstance().register(factory);
 		optimizer = KbOptimize.factory.create(ARQ.getContext());
+	}
+
+	@AfterAll
+	public static void afterAll() {
+		dataset.clear();
 	}
 
 	protected QueryIterator createInput() {
@@ -63,26 +75,27 @@ public class IndexExecutionTest extends AbstractKbTestCase {
 		return ((OpBGP) sub).getPattern().size();
 	}
 
-	@Before
-	public void setUpIndex() {
+	@BeforeEach
+	public void beforeEach() {
 		Context params = ARQ.getContext();
-		execCxt = new ExecutionContext(params, defaultGraph, dataset,
+		execCxt = new ExecutionContext(params, dataset.getDefaultGraph(), dataset.getGraphStore(),
 			KbOpExecutor.KbOpExecutorFactory);
 		opExecutor = KbOpExecutor.KbOpExecutorFactory.create(execCxt);
 
-		index = IndexManager.getInstance().createAndRegister(getGraph(), null, factory);
+		index = IndexManager.getInstance().createAndRegister(dataset.getDefaultGraph(), null, factory);
 		querier = new MockPatternQuerier(NUM_MOCKED_ITEMS);
 	}
 
-	@After
-	public void tearDownIndex() {
-		IndexManager.getInstance().unregister(getGraph(), null, index);
+	@AfterEach
+	public void afterEach() {
+		dataset.reset();
+		IndexManager.getInstance().unregister(dataset.getDefaultGraph(), null, index);
 		IndexPatternQuerierManager.getInstance().unregister(index);
 	}
 
 	@Test
 	public void testIndexPropertyFunction() {
-		//loadResource("com/bbn/parliament/jena/query/index/mock/mockdata.ttl", getGraph());
+		//loadResource("com/bbn/parliament/jena/query/index/mock/mockdata.ttl", dataset.getDefaultGraph());
 		String algebra = ""
 			+ "(project (?x ?y)\n"
 			+ "  (bgp\n"
@@ -134,7 +147,7 @@ public class IndexExecutionTest extends AbstractKbTestCase {
 
 	@Test
 	public void testIndexPatternQuerier2() throws IOException {
-		loadResource("data/data-r2/triple-match/data-01.ttl", getGraph());
+		QueryTestUtil.loadResource("data/data-r2/triple-match/data-01.ttl", dataset.getDefaultGraph());
 
 		String algebra = ""
 			+ "(project (?x ?y)\n"
@@ -166,7 +179,7 @@ public class IndexExecutionTest extends AbstractKbTestCase {
 
 	@Test
 	public void testIndexPatternQuerier3() throws IOException {
-		loadResource("data/data-r2/triple-match/data-01.ttl", getGraph());
+		QueryTestUtil.loadResource("data/data-r2/triple-match/data-01.ttl", dataset.getDefaultGraph());
 
 		String algebra = ""
 			+ "(project (?x ?y)\n"
@@ -193,7 +206,7 @@ public class IndexExecutionTest extends AbstractKbTestCase {
 
 	@Test
 	public void testFilterableIndex() throws IOException {
-		loadResource("com/bbn/parliament/jena/query/index/mock/mockdata.ttl", getGraph());
+		QueryTestUtil.loadResource("com/bbn/parliament/jena/query/index/mock/mockdata.ttl", dataset.getDefaultGraph());
 
 		String algebra = ""
 			+ "(project (?x ?y)\n"

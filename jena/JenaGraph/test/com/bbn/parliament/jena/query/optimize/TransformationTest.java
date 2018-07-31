@@ -1,0 +1,110 @@
+package com.bbn.parliament.jena.query.optimize;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+
+import com.bbn.parliament.jena.TestingDataset;
+import com.bbn.parliament.jena.query.QueryTestUtil;
+import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.sparql.core.BasicPattern;
+import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.engine.optimizer.reorder.ReorderTransformation;
+
+@RunWith(JUnitPlatform.class)
+public class TransformationTest {
+	private static TestingDataset dataset;
+	private static List<ReorderTransformation> transformations;
+
+	@BeforeAll
+	public static void beforeAll() {
+		dataset = new TestingDataset();
+		transformations = Arrays.asList(
+			new DefaultCountTransformation(dataset.getDefaultGraph()),
+			new UpdatedStaticCountTransformation(dataset.getDefaultGraph())
+		);
+	}
+
+	@AfterAll
+	public static void afterAll() {
+		dataset.clear();
+	}
+
+	@SuppressWarnings("static-method")
+	@AfterEach
+	public void afterEach() {
+		dataset.reset();
+	}
+
+	public static Stream<ReorderTransformation> generateReorderTransformations() {
+		return transformations.stream();
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@MethodSource("generateReorderTransformations")
+	public void testNoTransformation(ReorderTransformation transformation) throws IOException {
+		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", dataset.getDefaultGraph());
+		BasicPattern pattern = new BasicPattern();
+		pattern.add(Triple.create(ResourceFactory
+			.createResource("http://example.org/data/x")
+			.asNode(), Var.alloc("p"), Var.alloc("o")));
+		pattern.add(Triple.create(Var.alloc("s"), Var.alloc("p"),
+			Var.alloc("o")));
+		BasicPattern reordered = transformation.reorder(pattern);
+
+		assertTrue(checkIndexes(new int[] { 0, 1 }, pattern, reordered));
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@MethodSource("generateReorderTransformations")
+	public void testSimpleTransformation(ReorderTransformation transformation) throws IOException {
+		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", dataset.getDefaultGraph());
+		BasicPattern pattern = new BasicPattern();
+		pattern.add(Triple.create(Var.alloc("s"), Var.alloc("p"),
+			Var.alloc("o")));
+		pattern.add(Triple.create(ResourceFactory
+			.createResource("http://example.org/data/x")
+			.asNode(), Var.alloc("p"), Var.alloc("o")));
+
+		BasicPattern reordered = transformation.reorder(pattern);
+
+		assertTrue(checkIndexes(new int[] { 1, 0 }, pattern, reordered));
+	}
+
+	/**
+	 * Check the indexes of the new pattern
+	 * @param indexes the indexes of the triples in the original pattern.
+	 * @param pattern the original pattern.
+	 * @param reordered the reordered pattern.
+	 * @return <code>true</code> if the indexes are correct, otherwise <code>false</code>.
+	 */
+	private static boolean checkIndexes(int[] indexes, BasicPattern pattern,
+		BasicPattern reordered) {
+		boolean valid = true;
+
+		for (int i = 0; i < indexes.length; i++) {
+			int index = indexes[i];
+			valid = valid && pattern.get(index).equals(reordered.get(i));
+			if (!valid) {
+				System.err.println(String.format("Invalid index: %d.  Expected %s but saw %s",
+					i, pattern.get(i), reordered.get(index)));
+				return valid;
+			}
+		}
+		return valid;
+	}
+}

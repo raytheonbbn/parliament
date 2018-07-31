@@ -5,15 +5,35 @@
 // All rights reserved.
 package com.bbn.parliament.jena.graph.index.temporal.operands;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.Operand;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.query.TestIndexFactory;
 
+@RunWith(JUnitPlatform.class)
 public class IntervalAfterTest extends BaseOperandTestClass {
+	@BeforeEach
+	public void beforeEach() {
+		super.beforeEach();
+	}
+
+	@AfterEach
+	public void afterEach() {
+		super.afterEach();
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -21,20 +41,22 @@ public class IntervalAfterTest extends BaseOperandTestClass {
 		return Operand.INTERVAL_AFTER;
 	}
 
+	@Test
 	public void testTestExtents() {
-		assertFalse("This case should fail since it comes 'before' the other interval.",
-			pf.testExtents(TestIndexFactory.ONE, TestIndexFactory.TWO));
-		assertFalse("These intervals share a common boundary therefore the 'after' relationship does not apply.",
-			pf.testExtents(TestIndexFactory.THREE, TestIndexFactory.ONE));
-		assertFalse("This test involves two overlapping intervals and therefore 'after' does not hold.",
-			pf.testExtents(TestIndexFactory.FOUR, TestIndexFactory.THREE));
+		assertFalse(pf.testExtents(TestIndexFactory.ONE, TestIndexFactory.TWO),
+			"This case should fail since it comes 'before' the other interval.");
+		assertFalse(pf.testExtents(TestIndexFactory.THREE, TestIndexFactory.ONE),
+			"These intervals share a common boundary therefore the 'after' relationship does not apply.");
+		assertFalse(pf.testExtents(TestIndexFactory.FOUR, TestIndexFactory.THREE),
+			"This test involves two overlapping intervals and therefore 'after' does not hold.");
 		assertTrue(pf.testExtents(TestIndexFactory.TWO, TestIndexFactory.ONE));
-		assertFalse("This test involves incompatible datatypes and therefore must be false.",
-				pf.testExtents(TestIndexFactory.FOUR, TestIndexFactory.JAN01));
+		assertFalse(pf.testExtents(TestIndexFactory.FOUR, TestIndexFactory.JAN01),
+			"This test involves incompatible datatypes and therefore must be false.");
 	}
 
 
 	/** Calls '?x after ONE' which should result in TWO, FOUR, and FIVE */
+	@Test
 	public void testBindFirstVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("five");
@@ -45,6 +67,7 @@ public class IntervalAfterTest extends BaseOperandTestClass {
 	}
 
 	/** Calls (FIVE after ?x) which should result in ONE, SIX */
+	@Test
 	public void testBindSecondVar() {
 		Set<String> answerKey = new TreeSet<>();
 		answerKey.add("one");

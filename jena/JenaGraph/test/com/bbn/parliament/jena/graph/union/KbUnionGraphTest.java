@@ -6,14 +6,20 @@
 
 package com.bbn.parliament.jena.graph.union;
 
-import java.util.Iterator;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import java.util.List;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.from_jena_test.AbstractTestGraph;
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.KbGraphFactory;
 import com.bbn.parliament.jena.graph.KbGraphStore;
@@ -26,51 +32,42 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.FileManager;
 
-public class KbUnionGraphTest extends AbstractTestGraph {
+@RunWith(JUnitPlatform.class)
+public class KbUnionGraphTest {
 	private static final String LEFT_BASE = "http://example.org/left";
 	private static final String RIGHT_BASE = "http://example.org/right";
 	private static final String UNION_BASE = "http://example.org/union";
 
 	private static final Logger log = LoggerFactory.getLogger(KbUnionGraphTest.class);
 
-	private int counter = -1;
-	private KbGraphStore dataset;
+	private static int counter = -1;
+	private KbGraph defaultGraph;
+	private KbGraph leftGraph;
+	private KbGraph rightGraph;
+	private KbGraphStore graphStore;
+	private KbUnionGraph union;
 
-	/** {@inheritDoc} */
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		dataset = new KbGraphStore(KbGraphFactory.createDefaultGraph());
-		counter = -1;
-	}
-
-	/** {@inheritDoc} */
-	@SuppressWarnings("resource")
-	@Override
-	public KbUnionGraph getGraph() {
-		++counter;
-
-		KbGraph left = KbGraphFactory.createNamedGraph();
-		KbGraph right = KbGraphFactory.createNamedGraph();
-
+	@BeforeEach
+	public void beforeEach() {
 		Node leftName = Node.createURI(LEFT_BASE + counter);
 		Node rightName = Node.createURI(RIGHT_BASE + counter);
 		Node unionName = Node.createURI(UNION_BASE + counter);
 
-		dataset.addGraph(leftName, left);
-		dataset.addGraph(rightName, right);
-		dataset.addUnionGraph(unionName, leftName, rightName);
+		defaultGraph = KbGraphFactory.createDefaultGraph();
+		leftGraph = KbGraphFactory.createNamedGraph();
+		rightGraph = KbGraphFactory.createNamedGraph();
 
-		return (KbUnionGraph) dataset.getGraph(unionName);
+		graphStore = new KbGraphStore(defaultGraph);
+		graphStore.addGraph(leftName, leftGraph);
+		graphStore.addGraph(rightName, rightGraph);
+		graphStore.addUnionGraph(unionName, leftName, rightName);
+
+		union = (KbUnionGraph) graphStore.getGraph(unionName);
 	}
 
-	public KbUnionGraphTest(String name) {
-		super(name);
-	}
-
-	@Override
-	public void tearDown() throws Exception {
-		dataset.clear();
+	@AfterEach
+	public void afterEach() {
+		graphStore.clear();
 	}
 
 	private static Model loadModel(String path) {
@@ -84,7 +81,7 @@ public class KbUnionGraphTest extends AbstractTestGraph {
 	}
 
 	private Graph getLeftGraph(KbUnionGraph graph) {
-		return dataset.getGraph(graph.getLeftGraphName());
+		return graphStore.getGraph(graph.getLeftGraphName());
 	}
 
 	private Model getRightModel(KbUnionGraph graph) {
@@ -93,12 +90,11 @@ public class KbUnionGraphTest extends AbstractTestGraph {
 	}
 
 	private Graph getRightGraph(KbUnionGraph graph) {
-		return dataset.getGraph(graph.getRightGraphName());
+		return graphStore.getGraph(graph.getRightGraphName());
 	}
 
 	@Test
 	public void testCreateUnionGraph() {
-		KbUnionGraph union = getGraph();
 		Graph left = getLeftGraph(union);
 		Model leftModel = getLeftModel(union);
 		Graph right = getRightGraph(union);
@@ -107,13 +103,11 @@ public class KbUnionGraphTest extends AbstractTestGraph {
 		assertEquals(0, union.size());
 		Model data;
 
-
 		data = loadModel("data/data-r2/triple-match/data-01.ttl");
 		leftModel.add(data);
 
 		assertEquals(2, union.size());
 		assertTrue(union.isIsomorphicWith(left));
-
 
 		data = loadModel("data/data-r2/triple-match/data-02.ttl");
 		rightModel.add(data);
@@ -125,7 +119,6 @@ public class KbUnionGraphTest extends AbstractTestGraph {
 
 	@Test
 	public void testCloseUnionGraph() {
-		KbUnionGraph union = getGraph();
 		Graph left = getLeftGraph(union);
 		Graph right = getRightGraph(union);
 
@@ -146,7 +139,6 @@ public class KbUnionGraphTest extends AbstractTestGraph {
 
 	@Test
 	public void testQueryUnionGraph() {
-		KbUnionGraph union = getGraph();
 		Graph left = getLeftGraph(union);
 		Model leftModel = getLeftModel(union);
 		//Graph right = getRightGraph(union);
@@ -164,51 +156,24 @@ public class KbUnionGraphTest extends AbstractTestGraph {
 
 		rs = QueryExecutionFactory.create(
 			String.format(UNION_TEST_QUERY, UNION_BASE, counter, ":p"),
-			dataset.toDataset()).execSelect();
+			graphStore.toDataset()).execSelect();
 		count = printResultSet("Union graph query 1", rs);
 		assertEquals(2, count);
 
 		rs = QueryExecutionFactory.create(
 			String.format(UNION_TEST_QUERY, UNION_BASE, counter, "?p"),
-			dataset.toDataset()).execSelect();
+			graphStore.toDataset()).execSelect();
 		count = printResultSet("Union graph query 2", rs);
 		assertEquals(3, count);
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	@Test
-	@Ignore
-	public void testIsomorphismFile() {
-		// no test here as we don't have the file
-		log.warn("Skipping test 'testIsomorphismFile', since we don't have the file.");
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	@Test
-	@Ignore
-	public void testContainsByValue() {
-		// Parliament doesn't implement comparisons like xsd:int to xsd:integer,
-		// so this test cannot work at present.
-		//super.testContainsByValue();
-		log.warn("Skipping test 'testContainsByValue', since Parliament doesn't "
-			+ "implement comparisons like xsd:int to xsd:integer.");
-	}
-
 	private static int printResultSet(String queryLabel, ResultSet rs) {
 		int count = 0;
+		List<String> vars = rs.getResultVars();
 		while (rs.hasNext()) {
-			QuerySolution qs = rs.nextSolution();
-			++count;
-			if (log.isDebugEnabled()) {
-				log.debug("Result {} of {}", count, queryLabel);
-				Iterator<String> varIter = qs.varNames();
-				while (varIter.hasNext()) {
-					String var = varIter.next();
-					log.debug("   ?{} = '{}'", var, qs.get(var));
-				}
-			}
+			QuerySolution qs = rs.next();
+			log.debug("Result {} of {}", ++count, queryLabel);
+			vars.forEach(var -> log.debug("   ?{} = '{}'", var, qs.get(var)));
 		}
 		if (count == 0) {
 			log.debug("No results for {}", queryLabel);

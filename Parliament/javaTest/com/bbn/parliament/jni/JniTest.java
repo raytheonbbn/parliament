@@ -6,15 +6,21 @@
 
 package com.bbn.parliament.jni;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jni.StmtIterator.Statement;
 
 /** @author iemmons */
-public class JniTest extends TestCase {
+@RunWith(JUnitPlatform.class)
+public class JniTest {
 	private static final String UNICODE_LABEL = "\"\u0056\u004d\u0057\u0430\u0058\u4e8c\u0059\ud800\udf02\u005a\"";
 
 	private static final String RDFS_SUB_CLASS = "http://www.w3.org/2000/01/rdf-schema#subClassOf";
@@ -30,6 +36,7 @@ public class JniTest extends TestCase {
 	private static final String PUFF_URI       = "http://example.org/#Puff";
 
 	@SuppressWarnings("static-method")
+	@Test
 	public void testUnicodeTransfer() {
 		Config cfg = buildConfig(false);
 
@@ -41,16 +48,17 @@ public class JniTest extends TestCase {
 			long unicodeLabelRsrcId = kb.uriToRsrcId(UNICODE_LABEL, true, true);
 			assertEquals(1, kb.rsrcCount());
 			String unicodeLabel = kb.rsrcIdToUri(unicodeLabelRsrcId);
-			assertEquals("Unicode string literal", UNICODE_LABEL, unicodeLabel);
+			assertEquals(UNICODE_LABEL, unicodeLabel, "Unicode string literal");
 		} catch (Throwable ex) {
 			ex.printStackTrace();
-			assertTrue(ex.getMessage(), false);
+			assertTrue(false, ex.getMessage());
 		} finally {
 			KbInstance.deleteKb(cfg, null);
 		}
 	}
 
 	@SuppressWarnings("static-method")
+	@Test
 	public void testByQuickOverview() {
 		Config cfg = buildConfig(true);
 
@@ -82,8 +90,8 @@ public class JniTest extends TestCase {
 
 			// Check that resources are inserted only once:
 			long rdfTypeRsrcId2 = kb.uriToRsrcId(RDF_TYPE, false, true);
-			assertEquals(String.format("rdf:type double inserted (rsrc ids %1$d and %2$d)",
-				rdfTypeRsrcId, rdfTypeRsrcId2), rdfTypeRsrcId, rdfTypeRsrcId2);
+			assertEquals(rdfTypeRsrcId, rdfTypeRsrcId2, String.format(
+				"rdf:type double inserted (rsrc ids %1$d and %2$d)", rdfTypeRsrcId, rdfTypeRsrcId2));
 
 			// Should be inferred:
 			// Human subClassOf Animal
@@ -100,10 +108,10 @@ public class JniTest extends TestCase {
 
 			// Check statement counts:
 			KbInstance.CountStmtsResult counts = kb.countStmts();
-			assertEquals("# total statements", 19, counts.getTotal());
-			assertEquals("# deleted statements", 0, counts.getNumDel());
-			assertEquals("# inferred statements", 11, counts.getNumInferred());
-			assertEquals("# del & inf statements", 0, counts.getNumDelAndInferred());
+			assertEquals(19, counts.getTotal(), "# total statements");
+			assertEquals(0, counts.getNumDel(), "# deleted statements");
+			assertEquals(11, counts.getNumInferred(), "# inferred statements");
+			assertEquals(0, counts.getNumDelAndInferred(), "# del & inf statements");
 
 			// Check that we can find instances of human:
 			try (StmtIterator it = kb.find(KbInstance.NULL_RSRC_ID, rdfTypeRsrcId,
@@ -121,7 +129,7 @@ public class JniTest extends TestCase {
 					System.out.format("Human query result:  %1$s%n",
 						kb.rsrcIdToUri(result.getSubject()));
 				}
-				assertEquals("Human query results", expectedResults, results);
+				assertEquals(expectedResults, results, "Human query results");
 			}
 
 			// Check that we can find instances of animal (inferred):
@@ -142,11 +150,11 @@ public class JniTest extends TestCase {
 					System.out.format("Animal query result:  %1$s%n",
 						kb.rsrcIdToUri(result.getSubject()));
 				}
-				assertEquals("Animal query results", expectedResults, results);
+				assertEquals(expectedResults, results, "Animal query results");
 			}
 		} catch (Throwable ex) {
 			ex.printStackTrace();
-			assertTrue(ex.getMessage(), false);
+			assertTrue(false, ex.getMessage());
 		} finally {
 			KbInstance.deleteKb(cfg, null);
 		}

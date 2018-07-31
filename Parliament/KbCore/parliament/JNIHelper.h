@@ -201,18 +201,8 @@ public:
 	static void setStaticShortFld(JNIEnv* pEnv, jclass cls,
 		const char* pFldName, int16 value);
 
-	static void throwException(JNIEnv* pEnv, const Exception& ex,
-		const char* pSrcFile, uint32 srcLineNum)
-		{
-			throwException(pEnv, "::bbn::parliament::Exception", ex.what(),
-				pSrcFile, srcLineNum);
-		}
 	static void throwException(JNIEnv* pEnv, const ::std::exception& ex,
-		const char* pSrcFile, uint32 srcLineNum)
-		{
-			throwException(pEnv, "::std::exception", ex.what(),
-				pSrcFile, srcLineNum);
-		}
+		const char* pSrcFile, uint32 srcLineNum);
 	static void throwJavaException(JNIEnv* pEnv, const char* pClassName, const char* pMsg);
 
 	static jobject newObject(JNIEnv* pEnv, jclass cls, const char* pCtorSignature, ...);
@@ -223,9 +213,6 @@ private:
 	// This method is defined via template specialization below:
 	template<typename t_char>
 	static jstring newString(JNIEnv* pEnv, const t_char* pStr);
-
-	static void throwException(JNIEnv* pEnv, const char* pExType,
-		const char* pMsg, const char* pSrcFile, uint32 srcLineNum);
 };
 
 template<>
@@ -313,10 +300,6 @@ PARLIAMENT_NAMESPACE_END
 		{
 
 #define END_JNI_EXCEPTION_HANDLER(pEnv)									\
-		}																				\
-		catch (const ::bbn::parliament::Exception& ex)					\
-		{																				\
-			JNIHelper::throwException(pEnv, ex, __FILE__, __LINE__);	\
 		}																				\
 		catch (const ::std::exception& ex)									\
 		{																				\
