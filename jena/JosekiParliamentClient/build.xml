@@ -9,7 +9,7 @@
 	<property name="jarFile" value="${artifactsDir}/${ant.project.name}.jar"/>
 	<property name="testBinDir" value="${targetDir}/test-bin/${ant.project.name}"/>
 
-	<path id="runTestsClassPath">
+	<path id="testClassPath">
 		<pathelement location="${jarFile}"/>
 		<fileset dir="${basedir}/lib/test" includes="**/*.jar"/>
 	</path>
@@ -17,10 +17,11 @@
 	<target name="buildDependencies"/>
 
 	<target name="compile" depends="buildDependencies,resolve">
-		<mkdir dir="${binDir}"/>
-		<javac destdir="${binDir}" debug="on"
-				deprecation="on" includeAntRuntime="false">
-			<src path="${basedir}/src"/>
+		<copy todir="${binDir}">
+			<fileset dir="${basedir}/src" excludes="**/*.java"/>
+		</copy>
+		<javac destdir="${binDir}" srcdir="${basedir}/src" debug="on" deprecation="on"
+				includeAntRuntime="false">
 			<compilerarg value="-Xlint:all"/>
 			<classpath>
 				<fileset dir="${basedir}/lib/default" includes="**/*.jar"/>
@@ -43,12 +44,7 @@
 			<fileset dir="${basedir}/test" excludes="**/*.java"/>
 		</copy>
 		<javac destdir="${testBinDir}" srcdir="${basedir}/test" debug="on" deprecation="on"
-				includeAntRuntime="false">
-			<include name="**/*.java"/>
-			<classpath>
-				<fileset dir="${basedir}/lib/test" includes="**/*.jar"/>
-				<fileset file="${jarFile}"/>
-			</classpath>
+				includeAntRuntime="false" classpathref="testClassPath">
 			<compilerarg value="-Xlint:all"/>
 		</javac>
 	</target>
@@ -66,7 +62,7 @@
 			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
 			<classpath>
 				<pathelement location="${testBinDir}"/>
-				<path refid="runTestsClassPath"/>
+				<path refid="testClassPath"/>
 			</classpath>
 			<formatter type="xml"/>
 			<batchtest fork="yes" todir="${reportsDir}/${ant.project.name}">
@@ -80,7 +76,7 @@
 
 	<target name="runExporter" depends="jar">
 		<java classname="com.bbn.parliament.jena.joseki.client.RemoteExporter" fork="true">
-			<classpath refid="runTestsClassPath"/>
+			<classpath refid="testClassPath"/>
 			<arg value="localhost"/>
 			<arg value="8089"/>
 			<arg value="."/>
@@ -89,7 +85,7 @@
 
 	<target name="runInserter" depends="jar">
 		<java classname="com.bbn.parliament.jena.joseki.client.RemoteInserter" fork="true">
-			<classpath refid="runTestsClassPath"/>
+			<classpath refid="testClassPath"/>
 			<arg value="localhost"/>
 			<arg value="8089"/>
 			<arg value="/Users/iemmons/Desktop/rvdata.nt"/>
@@ -98,7 +94,7 @@
 
 	<target name="runStressTestSuite" depends="jar">
 		<java classname="com.bbn.parliament.sesame.sail.stresstest.StressTestSuite" fork="true">
-			<classpath refid="runTestsClassPath"/>
+			<classpath refid="testClassPath"/>
 			<jvmarg value="-Xmx1g"/>
 			<arg value="TODO:  Get the command-line argument right, here."/>
 		</java>

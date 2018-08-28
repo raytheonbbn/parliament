@@ -8,10 +8,7 @@
 -->
 
 <project name="CommonBuildScriptElements" xmlns:ivy="antlib:org.apache.ivy.ant">
-	<description>
-		Common build script elements.
-		Depends on the property "kbRootDir" (and no others).
-	</description>
+	<description>Build script elements common to all Parliament projects.</description>
 
 	<property environment="env"/>
 	<dirname property="kbRootDir" file="${ant.file.CommonBuildScriptElements}"/>
@@ -130,6 +127,12 @@
 		</loadfile>
 	</target>
 
+	<!--
+		Create a configuration file for testing with:
+		* Console logging off to reduce the spew of text scrolling by during a build,
+		* A test-specific KB directory to sequester those temporary files, and
+		* Reduced initial statement and resource capacity to make test run faster.
+	-->
 	<target name="createTestConfig">
 		<copy todir="${targetDir}/test-bin" preservelastmodified="true" flatten="true"
 			file="${kbRootDir}/Parliament/KbCore/ParliamentConfig.txt"/>
@@ -139,5 +142,9 @@
 		<replace file="${testConfigFile}"
 			token="kbDirectoryPath        = ."
 			value="kbDirectoryPath        = test-kb-data"/>
+		<replaceregexp file="${testConfigFile}"
+			match="(initial[a-z]*capacity *= *)[0-9]+"
+			replace="\120"
+			flags="mig"/>
 	</target>
 </project>
