@@ -128,7 +128,7 @@ public class XSLTFilter implements Filter {
 				}
 			});
 
-			LOG.info("Applying XSL transformation on the server ({})", styleSheet);
+			LOG.debug("Applying XSL transformation on the server ({})", styleSheet);
 
 			try {
 				Transformer transformer = null;
@@ -136,19 +136,19 @@ public class XSLTFilter implements Filter {
 					StreamSource styleSource = new StreamSource(styleIn);
 					TransformerFactory transformerFactory = TransformerFactory.newInstance();
 					transformer = transformerFactory.newTransformer(styleSource);
-					LOG.debug("Created transformer");
+					LOG.trace("Created transformer");
 				}
 
 				try (InputStream in = wrapper.getInputStream()) {
 					StreamSource xmlSource = new StreamSource(in);
 					StreamResult result = new StreamResult(resp.getOutputStream());
 					transformer.transform(xmlSource, result);
-					LOG.debug("Transformed source");
+					LOG.trace("Transformed source");
 				}
 
 				try {
 					wrapper.join();
-					LOG.debug("Joined on wrapper");
+					LOG.trace("Joined on wrapper");
 				} catch (InterruptedException e) {
 					LOG.error("Interrupted while joining PipedServletResponseWrapper thread.", e);
 					throw new ServletException(e);
@@ -167,7 +167,7 @@ public class XSLTFilter implements Filter {
 				throw new ServletException(e);
 			}
 		} else {
-			LOG.info("Passing response through XSLTFilter without applying stylesheet");
+			LOG.debug("Passing response through XSLTFilter without applying stylesheet");
 			chain.doFilter(req, resp);
 		}
 	}

@@ -54,11 +54,11 @@ public class QueryHandler extends SPARQL {
 			trackable.run();
 
 			if (trackable.getQueryResult() == null) {
-				log.info("No result");
+				log.debug("No result");
 				throw new QueryExecutionException(ReturnCodes.rcServiceUnavailable, "No result");
 			} else if (q.isSelectType()) {
 				ResultSet rs = trackable.getResultSet();
-				log.info("Setting result set");
+				log.trace("Setting result set");
 
 				//ResultSetMem memoryRS = new ResultSetMem(rs);
 				//resp.setResultSet(memoryRS);
@@ -76,16 +76,16 @@ public class QueryHandler extends SPARQL {
 				});
 				resp.setResultSet(fileBackedRS.getResultSet());
 
-				log.info("OK/select");
+				log.debug("OK/select");
 			} else if (q.isConstructType() || q.isDescribeType()) {
 				Model respModel = trackable.getModel();
 				respModel.setWriterClassName(JsonLdRdfWriter.formatName, JsonLdRdfWriter.class.getName());
 				resp.setModel(respModel);
-				log.info(q.isConstructType() ? "OK/construct" : "OK/describe");
+				log.debug(q.isConstructType() ? "OK/construct" : "OK/describe");
 			} else if (q.isAskType()) {
 				boolean b = trackable.getBoolean();
 				resp.setBoolean(b);
-				log.info("OK/ask");
+				log.debug("OK/ask");
 			} else {
 				log.error(LogUtil.formatForLog("Unknown query type - ", trackable.getQuery().toString()));
 			}
