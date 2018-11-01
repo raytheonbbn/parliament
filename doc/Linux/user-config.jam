@@ -3,8 +3,9 @@ import os ;
 
 constant LinuxDistro : [ os.environ LINUX_DISTRO ] ;
 
-constant FLAGS_ubuntu16 : <cxxflags>"-std=c++14 -Wall" <linkflags>"-std=c++14" ;
+constant FLAGS_ubuntu18 : <cxxflags>"-std=c++17 -Wall" <linkflags>"-std=c++17" ;
 constant FLAGS_ubuntu17 : <cxxflags>"-std=c++14 -Wall" <linkflags>"-std=c++14" ;
+constant FLAGS_ubuntu16 : <cxxflags>"-std=c++14 -Wall" <linkflags>"-std=c++14" ;
 constant FLAGS_centos   : <cxxflags>"-std=c++11 -Wall" <linkflags>"-std=c++11" ;
 
 

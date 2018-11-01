@@ -69,10 +69,6 @@ To use Eclipse with your \ac{pmnt} working copy, first choose (or create) an Ecl
 \section{Building Berkeley DB}
 \label{sec:BuildingBerkeleyDB}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Building Berkeley DB}
-\label{sec:BuildingBerkeleyDB}
-
 \ac{pmnt} uses Berkeley DB (often abbreviated BDB), an embedded database manager from Oracle\urlcite{http://www.oracle.com/us/products/database/berkeley-db/}.  Because \ac{pmnt} is open source, this use of Berkeley DB also falls under an open source license.  The following procedures are based on BDB version 5.3.28.
 
 Note that \ac{pmnt} versions 2.7.6 through 2.7.9 was released with Berkeley DB 6.1, but we have rolled back to 5.3 because Oracle sneakily changed their open source license from a BSD-like license to AGPL, which is too restrictive for our purposes.
@@ -93,8 +89,8 @@ where \path|«dir»| is the absolute path of your \ac{pmnt} working copy.
 
 On Macintosh, Berkeley DB follows the usual pattern of software based on the autoconf/automake/libtool suite.  Specifically, expand the BDB distribution archive file, and change to the \path|build_unix| subdirectory.  Then issue the following commands:
 \begin{verbatim}
-env CC=clang CFLAGS="-fvisibility=default -arch x86_64
-     -arch i386" ../dist/configure
+env CC=clang CFLAGS="-fvisibility=default -arch x86_64"
+     ../dist/configure
 make
 sudo make install
 \end{verbatim}
@@ -139,13 +135,13 @@ We emphasize libraries that work well with the C++ Standard Library. Boost libra
 We aim to establish ``existing practice'' and provide reference implementations so that Boost libraries are suitable for eventual standardization. Ten Boost libraries are already included in the \href{http://www.open-std.org/jtc1/sc22/wg21/}{C++ Standards Committee's} Library Technical Report (\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1745.pdf}{TR1}) and in the new C++11 Standard.  C++11 also includes several more Boost libraries in addition to those from TR1.  More Boost libraries are proposed for \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1810.html}{TR2}.
 \end{quote}
 
-To get started, download the Boost source distribution (version 1.66.0 or later) from the Boost web site.  Unpack this to a handy location on your disk.  This location may be anywhere you like, but note that it is not temporary.  We will call this location \verb|BOOST_ROOT|, and you need to define an environment variable pointing there, such as
+To get started, download the Boost source distribution (version 1.68.0 or later) from the Boost web site.  Unpack this to a handy location on your disk.  This location may be anywhere you like, but note that it is not temporary.  We will call this location \verb|BOOST_ROOT|, and you need to define an environment variable pointing there, such as
 \begin{verbatim}
-export BOOST_ROOT=~/boost_1_66_0
+export BOOST_ROOT=~/boost_1_68_0
 \end{verbatim}
 or
 \begin{verbatim}
-set BOOST_ROOT=C:\boost_1_66_0
+set BOOST_ROOT=C:\boost_1_68_0
 \end{verbatim}
 From \acp{pmnt} point of view, there are two primary components contained within \verb|BOOST_ROOT|.  The first (and most obvious) is the boost libraries themselves.  Most of these are so-called ``header-only'' libraries, meaning that there is no pre-compiled library code or shared or dynamic library.  All of the code of such libraries is referenced via \verb|#include| directives and compiled along with the calling code.  Such libraries are extremely convenient, because they require virtually zero setup.  \ac{pmnt} uses several Boost libraries that are not header-only.  We will discuss how to build these libraries below.
 
@@ -192,7 +188,7 @@ b2 -q --build-dir=build-clang --stagedir=stage-clang --with-atomic
 --layout=versioned threading=multi toolset=clang
 define=BOOST_TEST_ALTERNATIVE_INIT_API address-model=32_64
 variant=debug,release link=shared,static runtime-link=shared
-cxxflags="-std=c++14 -fvisibility=default" linkflags=-std=c++14
+cxxflags="-std=c++17 -fvisibility=default" linkflags=-std=c++17
 stage
 \end{verbatim}}
 The build process may issue warnings about missing components, such as Python and ICU.  These warnings are innocuous.  When the build finishes, the libraries will be located under \path|stage-clang/lib|.  The directory \path|build-clang| contains the intermediate build products and can be deleted to save disk space.
@@ -206,10 +202,10 @@ b2 -q --build-dir=build-gcc --stagedir=stage-gcc --layout=versioned
 --with-locale --with-log --with-regex --with-system --with-test
 --with-thread define=BOOST_TEST_ALTERNATIVE_INIT_API
 address-model=64,32 variant=debug,release threading=multi
-link=shared,static runtime-link=shared cxxflags=-std=c++14
-linkflags=-std=c++14 stage
+link=shared,static runtime-link=shared cxxflags=-std=c++17
+linkflags=-std=c++17 stage
 \end{verbatim}}
-If your compiler does not support the C++14 standard, change ``14'' to ``11'' in the above command (in two places).  The build process may issue warnings about missing components, such as Python and ICU.  These warnings are innocuous.  When the build finishes, the libraries will be located in \path|stage-gcc/lib|.  The directory \path|build-gcc| contains the intermediate build products and can be deleted to save disk space.
+If your compiler does not support the C++17 standard, change ``17'' to ``14'' or ``11'' in the above command (in two places).  The build process may issue warnings about missing components, such as Python and ICU.  These warnings are innocuous.  When the build finishes, the libraries will be located in \path|stage-gcc/lib|.  The directory \path|build-gcc| contains the intermediate build products and can be deleted to save disk space.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Configuring Boost.Build}
@@ -220,7 +216,7 @@ Next we need to configure Boost.Build so that it can build \ac{pmnt}.  Start by 
 
 	\item\verb|BDB_HOME|: As described above in Section~\ref{sec:BuildingBerkeleyDB}.
 
-	\item\verb|BOOST_VERSION|: The version of Boost (currently 1\_66\_0).
+	\item\verb|BOOST_VERSION|: The version of Boost (currently 1\_68\_0).
 
 	\item\verb|BOOST_ROOT|: As described above in Section~\ref{sec:BuildingBoost}.
 

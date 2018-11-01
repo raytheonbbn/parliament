@@ -1,6 +1,8 @@
 Version 2.7.12 (?, revision ?):
 
-* Updated to Boost 1.66.0 and MSVC 14.1 (Visual Studio 2017)
+* Moved to GitHub
+
+* Updated to Boost 1.68.0 and MSVC 14.1 (Visual Studio 2017, 15.8.8)
 
 * Updated C++ code to use Boost.FileSystem and the Win32 wide character (UTF-16) API
 

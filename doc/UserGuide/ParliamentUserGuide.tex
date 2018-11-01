@@ -94,7 +94,8 @@
 \pagestyle{fancy}
 \renewcommand{\chaptermark}[1]
 	{\markboth{\chaptername \ \thechapter.\ #1}{}}
-\fancyhead[L]{\textsl{\leftmark}}\fancyhead[R]{\thepage}
+\fancyhead[L]{\textsl{\leftmark}}
+\fancyhead[R]{\thepage}
 \setlength{\headheight}{15pt}
 
 %\urlstyle{rm}
@@ -142,6 +143,8 @@
 
 \input{Appendices.tex}
 
+\backmatter
+
 \acsetup{
 	list-name=Glossary,
 	list-heading=chapter,
@@ -149,8 +152,7 @@
 	page-style=paren}
 \printacronyms
 
+\sloppy
 \printbibliography[heading=bibnumbered]
-
-\backmatter
 
 \end{document}

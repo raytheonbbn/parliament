@@ -223,7 +223,7 @@
 			casesensitive="false"
 			defaultValue="${env.BOOST_VERSION}"/>
 		<property name="boostLibSuffix"
-			value="-clang-darwin42-mt${variantSuffix}${addrModelSuffix}-${boostVer}.dylib"/>
+			value="-clang-darwin100-mt${variantSuffix}${addrModelSuffix}-${boostVer}.dylib"/>
 
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
@@ -455,6 +455,8 @@
 		<junit fork="yes" printsummary="yes" haltonfailure="${haltUnitTestsOnFailure}">
 			<env key="LD_LIBRARY_PATH" path="${targetDir}/${deployableSvrDir}/bin;${env.LD_LIBRARY_PATH}"/>
 			<env key="PATH" path="${targetDir}/${deployableSvrDir}/bin;${env.PATH}"/>
+			<!-- env key="DYLD_INSERT_LIBRARIES" path="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib"/ -->
+			<!-- env key="UBSAN_OPTIONS" value="print_stacktrace=1"/ -->
 			<sysproperty key="java.library.path" value="${targetDir}/${deployableSvrDir}/bin"/>
 			<sysproperty key="test.data.path" value="${basedir}/data"/>
 			<classpath>
@@ -516,7 +518,7 @@
 	<target name="buildUnixDaemonApp" depends="daemonAppUpToDateCheck,unpackDaemonArchive"
 		unless="isDaemonAppUpToDate">
 
-		<condition property="flags" value="-arch x86_64 -arch i386" else="-m${addrModel}">
+		<condition property="flags" value="-arch x86_64" else="-m${addrModel}">
 			<equals arg1="${addrModel}" arg2="universal"/>
 		</condition>
 		<condition property="ccValue" value="clang" else="">
