@@ -36,7 +36,7 @@ run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 		<define>PARLIAMENT_SUPPRESS_EXPORTS
 		<define>PARLIAMENT_UNIT_TEST
 		<threading>multi
-		<target-os>windows:<dependency>ParliamentConfig.txt
+		<dependency>ParliamentConfig.txt
 		<dependency>$(TestDir)/ParliamentConfig.txt
 		#<testing.launcher>TestLauncher.bat
 		<target-os>darwin:<cxxflags>"-fvisibility=hidden"
@@ -65,7 +65,7 @@ unit-test ParliamentTestOld
 		<define>PARLIAMENT_SUPPRESS_EXPORTS
 		<define>PARLIAMENT_UNIT_TEST
 		<threading>multi
-		<target-os>windows:<dependency>ParliamentConfig.txt
+		<dependency>ParliamentConfig.txt
 		<dependency>$(TestDir)/ParliamentConfig.txt
 		#<testing.launcher>TestLauncher.bat
 	:	# default build
@@ -74,9 +74,13 @@ unit-test ParliamentTestOld
 
 # This one is for Windows:
 explicit ParliamentConfig.txt ;
-make ParliamentConfig.txt : $(KbCoreDir)/ParliamentConfig.txt : @common.copy ;
+make ParliamentConfig.txt
+	: $(KbCoreDir)/ParliamentConfig.txt
+	: @common.copy
+	: <relevant>toolset <relevant>variant <relevant>address-model <relevant>threading
+	;
 
-# But this one is for UNIX-like platforms:
+# And this one is for UNIX-like platforms:
 explicit $(TestDir)/ParliamentConfig.txt ;
 make $(TestDir)/ParliamentConfig.txt : $(KbCoreDir)/ParliamentConfig.txt : @common.copy ;
 
