@@ -144,46 +144,6 @@ public abstract class Trackable extends Observable implements TrackableMXBean, C
       return _startTime;
    }
 
-   public String toJSON() {
-      StringBuilder json = new StringBuilder();
-      json.append("{\n");
-      json.append(createValuePair("id", this.getId()));
-      json.append(",");
-      json.append(createValuePair("cancellable", this.isCancellable()));
-      json.append(",");
-      json.append(createValuePair("status", this.getStatus().toString()));
-      json.append(",");
-      String query = this.getDisplay();
-      json.append(createValuePair("display", query));
-      json.append(",");
-      Calendar cal = Calendar.getInstance();
-      json.append(createValuePair("currentTime", cal.getTimeInMillis()));
-      cal.setTime(this.getCreatedTime());
-      json.append(",");
-      json.append(createValuePair("created", cal.getTimeInMillis()));
-      if (null != this.getStartTime()) {
-         json.append(",");
-         cal.setTime(this.getStartTime());
-         json.append(createValuePair("started", cal.getTimeInMillis()));
-      }
-      json.append(",");
-      json.append(createValuePair("creator", this.getCreator()));
-      json.append("}");
-      return json.toString();
-   }
-
-   private static String createValuePair(String id, boolean value) {
-      return String.format("\"%s\":%b", id, value);
-   }
-
-   private static String createValuePair(String id, long value) {
-      return String.format("\"%s\":%d", id, value);
-   }
-
-   private static String createValuePair(String id, String value) {
-      return String.format("\"%s\":\"%s\"", id,  NTriplesUtil.escapeString(value));
-   }
-
    @Override
 	public int compareTo(Trackable o) {
       return this.getCreatedTime().compareTo(o.getCreatedTime());
