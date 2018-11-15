@@ -14,12 +14,12 @@ import org.openrdf.model.Value;
 
 abstract public class SWRLBuiltin
 {
-   protected List<Object> _args;
+	protected List<Object> _args;
 
-   SWRLBuiltin(List<Object> args)
-   {
-      _args = args;
-   }
+	SWRLBuiltin(List<Object> args)
+	{
+		_args = args;
+	}
 
-   abstract boolean run(SWRLRule rule, Map<String, Value> boundVars);
+	abstract boolean run(SWRLRule rule, Map<String, Value> boundVars);
 }

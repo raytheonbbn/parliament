@@ -11,10 +11,10 @@ import org.openrdf.sesame.sail.SailInternalException;
 
 public class UnimplementedException extends SailInternalException
 {
-   private static final long serialVersionUID = 3792365231456525479L;
+	private static final long serialVersionUID = 3792365231456525479L;
 
-   public UnimplementedException()
-   {
-      super("Unimplemented");
-   }
+	public UnimplementedException()
+	{
+		super("Unimplemented");
+	}
 }

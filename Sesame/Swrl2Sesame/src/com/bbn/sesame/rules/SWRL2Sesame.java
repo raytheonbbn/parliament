@@ -19,26 +19,26 @@ import org.w3._2003._11.swrlx.Ontology;
 
 public class SWRL2Sesame
 {
-   @SuppressWarnings({ "rawtypes", "deprecation" })
-   public static List<SWRLRule> getRules(String uri) throws Exception
-   {
-      List<SWRLRule> rules = new ArrayList<>();
+	@SuppressWarnings({ "rawtypes", "deprecation" })
+	public static List<SWRLRule> getRules(String uri) throws Exception
+	{
+		List<SWRLRule> rules = new ArrayList<>();
 
-      JAXBContext jc = JAXBContext.newInstance("org.w3._2003._11.swrlx");
-      Unmarshaller u = jc.createUnmarshaller();
+		JAXBContext jc = JAXBContext.newInstance("org.w3._2003._11.swrlx");
+		Unmarshaller u = jc.createUnmarshaller();
 
-      u.setValidating(true);
+		u.setValidating(true);
 
-      Ontology ont = (Ontology) u.unmarshal(new File(uri));
-      List list = ont.getVersionInfoOrPriorVersionOrBackwardCompatibleWith();
-      for (Object o : list)
-      {
-         if (o instanceof Imp)
-         {
-            rules.add(new SWRLRule((Imp) o));
-         }
-      }
+		Ontology ont = (Ontology) u.unmarshal(new File(uri));
+		List list = ont.getVersionInfoOrPriorVersionOrBackwardCompatibleWith();
+		for (Object o : list)
+		{
+			if (o instanceof Imp)
+			{
+				rules.add(new SWRLRule((Imp) o));
+			}
+		}
 
-      return rules;
-   }
+		return rules;
+	}
 }

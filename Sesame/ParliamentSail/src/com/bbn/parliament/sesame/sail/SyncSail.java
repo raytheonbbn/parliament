@@ -14,10 +14,10 @@ package com.bbn.parliament.sesame.sail;
  */
 public interface SyncSail
 {
-   public void _getWriteLock();
-   public void _releaseWriteLock();
-   public void _getReadLock();
-   public void _releaseReadLock();
+	public void _getWriteLock();
+	public void _releaseWriteLock();
+	public void _getReadLock();
+	public void _releaseReadLock();
 
-   public boolean isWriting();
+	public boolean isWriting();
 }

@@ -16,22 +16,22 @@ import org.w3._2003._11.ruleml.Var;
 
 public class StringConcat extends SWRLBuiltin
 {
-   StringConcat(List<Object> args)
-   {
-      super(args);
-   }
+	StringConcat(List<Object> args)
+	{
+		super(args);
+	}
 
-   @Override
+	@Override
 	boolean run(SWRLRule rule, Map<String, Value> boundVars)
-   {
-      StringBuffer result = new StringBuffer();
-      for (int i = 1; i < _args.size(); ++i)
-      {
-         result.append(rule.getValue(_args.get(i), boundVars).toString());
-      }
-      boundVars.put(((Var) _args.get(0)).getValue(),
-         new LiteralImpl(result.toString()));
+	{
+		StringBuffer result = new StringBuffer();
+		for (int i = 1; i < _args.size(); ++i)
+		{
+			result.append(rule.getValue(_args.get(i), boundVars).toString());
+		}
+		boundVars.put(((Var) _args.get(0)).getValue(),
+			new LiteralImpl(result.toString()));
 
-      return true;
-   }
+		return true;
+	}
 }

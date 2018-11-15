@@ -3,6 +3,7 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.sesame.sail.profile;
 
 import java.io.BufferedReader;
@@ -316,7 +317,7 @@ public class Profiler
 		try (
 			InputStream in = new FileInputStream(src);
 			OutputStream out = new FileOutputStream(dst);
-		) {
+			) {
 			// Transfer bytes from in to out
 			byte[] buf = new byte[1024];
 			int len;

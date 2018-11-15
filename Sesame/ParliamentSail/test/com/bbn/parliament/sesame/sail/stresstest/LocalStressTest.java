@@ -3,6 +3,7 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.sesame.sail.stresstest;
 
 import java.io.File;
@@ -156,7 +157,7 @@ public class LocalStressTest extends AbstractStressTest
 		try (
 			InputStream in = new FileInputStream(src);
 			OutputStream out = new FileOutputStream(dst);
-		) {
+			) {
 			// Transfer bytes from in to out
 			byte[] buf = new byte[1024];
 			int len;
@@ -195,7 +196,7 @@ public class LocalStressTest extends AbstractStressTest
 			try
 			{
 				LocalRepository repository
-					= Sesame.getService().createRepository(config);
+				= Sesame.getService().createRepository(config);
 				addData(repository);
 				repository.shutDown();
 			}
