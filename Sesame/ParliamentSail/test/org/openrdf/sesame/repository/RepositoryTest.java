@@ -3,6 +3,7 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package org.openrdf.sesame.repository;
 
 import java.io.File;
@@ -135,7 +136,7 @@ public abstract class RepositoryTest extends TestCase
 					true, true, false, true);
 				FileOutputStream os = new FileOutputStream(OUTPUT_PATH
 					+ "extractRDF-test.rdf");
-			) {
+				) {
 				for (int i = in.read(); i != -1; i = in.read())
 				{
 					os.write(i);

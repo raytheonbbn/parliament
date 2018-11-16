@@ -98,7 +98,7 @@ public class KbStatement implements Statement
 		{
 			return 0;
 		}
-		*/
+		 */
 	}
 
 	@Override

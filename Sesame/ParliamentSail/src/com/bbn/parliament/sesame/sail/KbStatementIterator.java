@@ -14,54 +14,54 @@ import com.bbn.parliament.jni.StmtIterator;
 
 public class KbStatementIterator implements StatementIterator
 {
-   private SyncSail     _syncSail;
-   private KbInstance   _kb;
-   private StmtIterator _iter;
+	private SyncSail     _syncSail;
+	private KbInstance   _kb;
+	private StmtIterator _iter;
 
-   KbStatementIterator(KbInstance kb, SyncSail syncSail, StmtIterator iter)
-   {
-      if (kb == null)
-      {
-         throw new IllegalArgumentException("kb argument may not be null");
-      }
-      if (iter == null)
-      {
-         throw new IllegalArgumentException("iter argument may not be null");
-      }
+	KbStatementIterator(KbInstance kb, SyncSail syncSail, StmtIterator iter)
+	{
+		if (kb == null)
+		{
+			throw new IllegalArgumentException("kb argument may not be null");
+		}
+		if (iter == null)
+		{
+			throw new IllegalArgumentException("iter argument may not be null");
+		}
 
-      _kb = kb;
-      _syncSail = syncSail;
-      _iter = iter;
-      if (_syncSail != null)
-      {
-         _syncSail._getReadLock();
-      }
-   }
+		_kb = kb;
+		_syncSail = syncSail;
+		_iter = iter;
+		if (_syncSail != null)
+		{
+			_syncSail._getReadLock();
+		}
+	}
 
-   @Override
+	@Override
 	public void close()
-   {
-      if (_iter != null)
-      {
-         _iter.finalize();
-         _iter = null;
-      }
-      if (_syncSail != null)
-      {
-         _syncSail._releaseReadLock();
-         _syncSail = null; // just in case we're closed again
-      }
-   }
+	{
+		if (_iter != null)
+		{
+			_iter.finalize();
+			_iter = null;
+		}
+		if (_syncSail != null)
+		{
+			_syncSail._releaseReadLock();
+			_syncSail = null; // just in case we're closed again
+		}
+	}
 
-   @Override
+	@Override
 	public boolean hasNext()
-   {
-      return _iter.hasNext();
-   }
+	{
+		return _iter.hasNext();
+	}
 
-   @Override
+	@Override
 	public Statement next()
-   {
-      return new KbStatement(_kb, _iter.next());
-   }
+	{
+		return new KbStatement(_kb, _iter.next());
+	}
 }

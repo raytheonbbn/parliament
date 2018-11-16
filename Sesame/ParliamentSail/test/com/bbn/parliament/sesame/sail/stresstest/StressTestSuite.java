@@ -3,6 +3,7 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.sesame.sail.stresstest;
 
 import java.io.File;
@@ -11,9 +12,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author jlerner
- */
+/** @author jlerner */
 public class StressTestSuite
 {
 	private static void usage(String message)
@@ -329,7 +328,7 @@ public class StressTestSuite
 				try (
 					PrintStream tpOut = new PrintStream(tpFile);
 					PrintStream rtOut = new PrintStream(rtFile);
-				) {
+					) {
 					// TODO: write out the arrays
 					writeArray(tpArray, tpOut);
 					writeArray(rtArray, rtOut);

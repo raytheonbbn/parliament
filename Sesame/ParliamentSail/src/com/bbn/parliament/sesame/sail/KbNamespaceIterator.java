@@ -13,41 +13,41 @@ import org.openrdf.sesame.sail.StatementIterator;
 
 public class KbNamespaceIterator implements NamespaceIterator
 {
-   private StatementIterator _iterator;
-   private Statement         _statement;
+	private StatementIterator _iterator;
+	private Statement         _statement;
 
-   KbNamespaceIterator(StatementIterator iterator)
-   {
-      _iterator = iterator;
-   }
+	KbNamespaceIterator(StatementIterator iterator)
+	{
+		_iterator = iterator;
+	}
 
-   @Override
+	@Override
 	public void close()
-   {
-      _iterator.close();
-   }
+	{
+		_iterator.close();
+	}
 
-   @Override
+	@Override
 	public String getName()
-   {
-      return _statement.getSubject().toString();
-   }
+	{
+		return _statement.getSubject().toString();
+	}
 
-   @Override
+	@Override
 	public String getPrefix()
-   {
-      return _statement.getObject().toString();
-   }
+	{
+		return _statement.getObject().toString();
+	}
 
-   @Override
+	@Override
 	public boolean hasNext()
-   {
-      return _iterator.hasNext();
-   }
+	{
+		return _iterator.hasNext();
+	}
 
-   @Override
+	@Override
 	public void next()
-   {
-      _statement = _iterator.next();
-   }
+	{
+		_statement = _iterator.next();
+	}
 }
