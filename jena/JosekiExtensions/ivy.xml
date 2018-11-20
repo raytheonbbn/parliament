@@ -80,7 +80,7 @@
 		<dependency org="org.junit.platform" name="junit-platform-runner" rev="1.1.0" conf="test->default"/>
 
     <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
-    <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.9.7"/>
+    <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.9.7" conf="test->default"/>
 
     <exclude org="commons-logging"/>
 		<override org="org.apache.httpcomponents" module="httpclient-cache"
