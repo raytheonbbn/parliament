@@ -2,8 +2,8 @@ package com.bbn.parliament.jena.joseki.bridge.servlet;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Objects;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
@@ -11,12 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.bbn.parliament.jena.joseki.bridge.tracker.Trackable;
 import com.bbn.parliament.jena.joseki.bridge.tracker.TrackableDTO;
 import com.bbn.parliament.jena.joseki.bridge.tracker.TrackableException;
 import com.bbn.parliament.jena.joseki.bridge.tracker.Tracker;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TrackerServlet extends HttpServlet {
 	private static final long serialVersionUID = -7345801993380970907L;
@@ -33,8 +31,9 @@ public class TrackerServlet extends HttpServlet {
 			.filter(Objects::nonNull)
 			.map(TrackableDTO::new)
 			.collect(Collectors.toList());
-		
+
 		resp.setHeader("Content-Type", "application/json");
+		@SuppressWarnings("resource")
 		OutputStream responseBody = resp.getOutputStream();
 		MAPPER.writeValue(responseBody, trackables);
 	}

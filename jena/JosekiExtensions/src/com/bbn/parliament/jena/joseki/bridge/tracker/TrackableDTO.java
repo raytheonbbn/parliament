@@ -25,12 +25,12 @@ public class TrackableDTO {
 		this.started = convertDateToLong(source.getStartTime(), true);
 		this.creator = source.getCreator();
 	}
-	
-	private Long getCurrentDateAsLong() {
+
+	private static Long getCurrentDateAsLong() {
 		return convertDateToLong(null, false);
 	}
-	
-	private Long convertDateToLong(Date date, boolean returnNull) {
+
+	private static Long convertDateToLong(Date date, boolean returnNull) {
 		Long timeInMillis = null;
 		if (date != null || !returnNull) {
 			Calendar calendar = Calendar.getInstance();
