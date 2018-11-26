@@ -16,7 +16,7 @@
 	<property name="javadocDir" value="${targetDir}/bin/javadoc"/>
 	<property name="javadocZip" value="${distroDir}/parliament-javadoc.zip"/>
 	<property name="srcZip" value="${distroDir}/parliament-src.zip"/>
-	<property name="windowsReleaseDir" value="${artifactsDir}/msvc-14.0/release"/>
+	<property name="windowsReleaseDir" value="${artifactsDir}/msvc-14.1/release"/>
 	<property name="macosReleaseDir" value="${artifactsDir}/clang/release/universal"/>
 
 	<target name="clean" description="Cleans up after the ant build">
