@@ -113,6 +113,7 @@
 		<copy todir="${toDir}/License">
 			<fileset dir="${basedir}/License"/>
 		</copy>
+		<copy tofile="${toDir}/License/Parliament-License.md" file="${basedir}/LICENSE.md"/>
 	</target>
 
 	<!-- Copy docs to the ${srcDir} directory.  Expects parameter srcDir. -->
