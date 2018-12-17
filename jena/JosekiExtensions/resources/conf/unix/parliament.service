@@ -8,9 +8,8 @@ Type=simple
 Restart=always
 RestartSec=1
 User=USERNAME
-ExecStart=DIRECTORY/StartParliamentDaemon.sh
-# Is there a special command or interaction necessary to turn off the Parliament daemon?
-# ExecStop=???
+ExecStart=DIRECTORY/StartParliamentDaemon.sh start
+ExecStop=DIRECTORY/StartParliamentDaemon.sh stop
 
 [Install]
 WantedBy=multi-user.target
