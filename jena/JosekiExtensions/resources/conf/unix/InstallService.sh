@@ -31,7 +31,8 @@ if [ -z "$username" -o -z "$directory" ] ; then
 fi
 
 if [ -z "$JAVA_HOME" ] ; then
-	JAVA_HOME=$(dirname $(which java))
+	echo "You must set and export the JAVA_HOME environment variable."
+	exit 2
 fi
 
 cp -f parliament.service /etc/systemd/system/parliament.service
