@@ -1,11 +1,13 @@
-usage="$(basename "$0") --username USERNAME --directory DIRECTORY -- installs Parliament as a System D service
+usage="$(basename "$0") --username USERNAME --directory DIRECTORY --javahome JAVAHOME -- installs Parliament as a System D service
 
 where:
 	--username		the account under which to run Parliament
 	--directory		the absolute path to Parliament's installation
+	--javahome		the absolute path to the desired Java installation
 "
 username=
 directory=
+javahome=
 
 while [ "$1" != "" ]; do
 	case $1 in
@@ -14,6 +16,9 @@ while [ "$1" != "" ]; do
 						;;
 		-d|--d)			shift
 						directory=$1
+						;;
+		-j|--javahome)	shift
+						javahome=$1
 						;;
 		-h|--help)		echo "$usage" >&2
 						exit
@@ -25,19 +30,14 @@ while [ "$1" != "" ]; do
 	shift
 done
 
-if [ -z "$username" -o -z "$directory" ] ; then
+if [ -z "$username" -o -z "$directory" -o -z "$javahome" ] ; then
 	echo "$usage" >&2
 	exit 1
-fi
-
-if [ -z "$JAVA_HOME" ] ; then
-	echo "You must set and export the JAVA_HOME environment variable."
-	exit 2
 fi
 
 cp -f parliament.service /etc/systemd/system/parliament.service
 sed -i -e "s/USERNAME/$username/g" /etc/systemd/system/parliament.service
 sed -i -e "s|DIRECTORY|$directory|g" /etc/systemd/system/parliament.service
-sed -i -e "s|JAVAHOME|$JAVA_HOME|g" /etc/systemd/system/parliament.service
-systemctl enable parliament
+sed -i -e "s|JAVAHOME|$javahome|g" /etc/systemd/system/parliament.service
 systemctl start parliament
+systemctl enable parliament
