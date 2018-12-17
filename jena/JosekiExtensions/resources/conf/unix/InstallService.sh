@@ -30,8 +30,13 @@ if [ -z "$username" -o -z "$directory" ] ; then
 	exit 1
 fi
 
+if [ -z "$JAVA_HOME" ] ; then
+	JAVA_HOME=$(dirname $(which java))
+fi
+
 cp -f parliament.service /etc/systemd/system/parliament.service
 sed -i -e "s/USERNAME/$username/g" /etc/systemd/system/parliament.service
 sed -i -e "s|DIRECTORY|$directory|g" /etc/systemd/system/parliament.service
+sed -i -e "s|JAVAHOME|$JAVA_HOME|g" /etc/systemd/system/parliament.service
 systemctl enable parliament
 systemctl start parliament
