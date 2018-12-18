@@ -304,8 +304,8 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultCtor)
 	BOOST_CHECK_EQUAL(false, c.inferRdfsResource());
 	BOOST_CHECK_EQUAL(false, c.inferOwlThing());
 
-  BOOST_CHECK_EQUAL(5, c.timeoutDuration());
-  BOOST_CHECK_EQUAL(string("MINUTES"), c.timeoutUnit());
+	BOOST_CHECK_EQUAL(5, c.timeoutDuration());
+	BOOST_CHECK_EQUAL(string("MINUTES"), c.timeoutUnit());
 }
 
 // =========================================================================
@@ -378,9 +378,9 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 		s << "inferOwlClass        = no" << endl;
 		s << "inferRdfsResource    = yes" << endl;
 		s << "inferOwlThing        = no" << endl;
-    s << endl;
-    s << "timeoutLength = 200" << endl;
-    s << "timeoutUnit = MILLISECONDS" << endl;
+		s << endl;
+		s << "TimeoutDuration = 200" << endl;
+		s << "TimeoutUnit = MILLISECONDS" << endl;
 		s.close();
 
 		BOOST_REQUIRE_NO_THROW(c = Config::readFromFile());
@@ -439,8 +439,8 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 		BOOST_CHECK_EQUAL(true, c.inferRdfsResource());
 		BOOST_CHECK_EQUAL(false, c.inferOwlThing());
 
-    BOOST_CHECK_EQUAL(200, c.timeoutDuration());
-    BOOST_CHECK_EQUAL(string("MILLISECONDS"), c.timeoutUnit());
+		BOOST_CHECK_EQUAL(200, c.timeoutDuration());
+		BOOST_CHECK_EQUAL(string("MILLISECONDS"), c.timeoutUnit());
 	}
 
 	{
@@ -500,9 +500,9 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 		s << "inferOwlClass        = yes" << endl;
 		s << "inferRdfsResource    = yes" << endl;
 		s << "inferOwlThing        = yes" << endl;
-    s << endl;
-    s << "timeoutLength = 200" << endl;
-    s << "timeoutUnit = MILLISECONDS" << endl;
+		s << endl;
+		s << "TimeoutDuration = 200" << endl;
+		s << "TimeoutUnit = MILLISECONDS" << endl;
 		s.close();
 
 		BOOST_CHECK_THROW(c = Config::readFromFile(), Exception);
@@ -563,8 +563,8 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 	BOOST_CHECK_EQUAL(defaults.inferRdfsResource(), c.inferRdfsResource());
 	BOOST_CHECK_EQUAL(defaults.inferOwlThing(), c.inferOwlThing());
 
-  BOOST_CHECK_EQUAL(defaults.timeoutDuration(), c.timeoutDuration());
-  BOOST_CHECK_EQUAL(defaults.timeoutUnit(), c.timeoutUnit());
+	BOOST_CHECK_EQUAL(defaults.timeoutDuration(), c.timeoutDuration());
+	BOOST_CHECK_EQUAL(defaults.timeoutUnit(), c.timeoutUnit());
 }
 
 BOOST_AUTO_TEST_SUITE_END()

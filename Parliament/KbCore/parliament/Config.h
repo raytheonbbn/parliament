@@ -303,17 +303,17 @@ public:
 	void inferOwlThing(bool newValue)
 		{ m_inferOwlThing = newValue; }
 
-  // How long to allow a query to run before aborting it.
-  size_t timeoutDuration() const
-    { return m_timeoutDuration; }
-  void timeoutDuration(size_t newValue)
-    { m_timeoutDuration = newValue; }
+	// How long to allow a query to run before aborting it.
+	size_t timeoutDuration() const
+		{ return m_timeoutDuration; }
+	void timeoutDuration(size_t newValue)
+		{ m_timeoutDuration = newValue; }
 
-  // Unit for timeout duration
-  ::std::string timeoutUnit() const
-    { return { m_timeoutUnit }; }
-  void timeoutUnit(::std::string newValue)
-    { m_timeoutUnit = { newValue }; }
+	// Unit for timeout duration
+	::std::string timeoutUnit() const
+		{ return { m_timeoutUnit }; }
+	void timeoutUnit(::std::string newValue)
+		{ m_timeoutUnit = { newValue }; }
 
 	void disableAllRules();
 
@@ -396,8 +396,8 @@ private:
 	bool								m_inferRdfsResource;
 	bool								m_inferOwlThing;
 
-  size_t                m_timeoutDuration;
-  ::std::string       m_timeoutUnit;
+	size_t								m_timeoutDuration;
+	::std::string						m_timeoutUnit;
 };
 
 PARLIAMENT_NAMESPACE_END

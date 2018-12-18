@@ -224,7 +224,7 @@ public class Config
 	public boolean m_inferOwlThing;
 
 	/** How long a query should be allowed to run before being aborted */
-	public Long m_timeoutDuration;
+	public long m_timeoutDuration;
 
 	/** The units for m_timeoutDuration */
 	public String m_timeoutUnit;

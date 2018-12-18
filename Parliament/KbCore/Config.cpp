@@ -186,8 +186,8 @@ pmnt::Config::Config() :
 	m_inferOwlClass(false),
 	m_inferRdfsResource(false),
 	m_inferOwlThing(false),
-  m_timeoutDuration(5),
-  m_timeoutUnit("MINUTES")
+	m_timeoutDuration(5),
+	m_timeoutUnit("MINUTES")
 {
 }
 
@@ -475,7 +475,7 @@ void pmnt::Config::parseKeyValuePair(const string& key,
 	{
 		cp.m_inferOwlThing = parseBool(value, lineNum);
 	}
-  else if (ba::iequals(key, "TimeoutDuration"))
+	else if (ba::iequals(key, "TimeoutDuration"))
 	{
 		cp.m_timeoutDuration = parseUnsigned(value, lineNum);
 	}
