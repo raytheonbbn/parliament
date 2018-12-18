@@ -1,3 +1,4 @@
+#!/bin/sh
 usage="$(basename "$0") --username USERNAME --directory DIRECTORY --javahome JAVAHOME -- installs Parliament as a System D service
 
 where:
