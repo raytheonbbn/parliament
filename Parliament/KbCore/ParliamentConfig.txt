@@ -122,3 +122,9 @@ InvFunctionalPropRule  = off
 # Sets up the following rule:
 # * "P is a transitive property" ^ "P(X, Y)" ^ "P(Y, Z)" ==> "P(X, Z)"
 TransitivePropRule     = on
+
+
+
+#####   Query execution configuration   #####
+TimeoutDuration        = 5
+TimeoutUnit            = MINUTES

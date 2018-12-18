@@ -138,6 +138,9 @@ static void assignJavaConfigToCppConfig(Config& config, JNIEnv* pEnv, jobject ob
 	config.inferOwlClass(					JNIHelper::getBooleanFld(pEnv, obj,	"m_inferOwlClass"));
 	config.inferRdfsResource(			JNIHelper::getBooleanFld(pEnv, obj,	"m_inferRdfsResource"));
 	config.inferOwlThing(					JNIHelper::getBooleanFld(pEnv, obj,	"m_inferOwlThing"));
+
+  config.timeoutDuration(JNIHelper::getSizeTFld(pEnv, obj, "m_timeoutDuration"));
+  config.timeoutUnit(JNIHelper::getStringFld(pEnv, obj, "m_timeoutUnit"));
 }
 
 JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_init(

@@ -223,6 +223,12 @@ public class Config
 	/** Whether to infer owl:Thing based on subclass statements */
 	public boolean m_inferOwlThing;
 
+	/** How long a query should be allowed to run before being aborted */
+	public Long m_timeoutDuration;
+
+	/** The units for m_timeoutDuration */
+	public String m_timeoutUnit;
+
 	public void disableAllRules()
 	{
 		m_enableSWRLRuleEngine = false;
