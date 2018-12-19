@@ -303,6 +303,17 @@ public:
 	void inferOwlThing(bool newValue)
 		{ m_inferOwlThing = newValue; }
 
+	// How long to allow a query to run before aborting it.
+	size_t timeoutDuration() const
+		{ return m_timeoutDuration; }
+	void timeoutDuration(size_t newValue)
+		{ m_timeoutDuration = newValue; }
+
+	// Unit for timeout duration
+	::std::string timeoutUnit() const
+		{ return m_timeoutUnit; }
+	void timeoutUnit(const ::std::string& newValue);
+
 	void disableAllRules();
 
 	const Config& ensureKbDirExists() const;
@@ -332,6 +343,7 @@ private:
 	static size_t parseUnsigned(const ::std::string& s, uint32 lineNum);
 	static double parseDouble(const ::std::string& s, uint32 lineNum);
 	static bool parseBool(const ::std::string& s, uint32 lineNum);
+	static bool validateTimeUnit(const ::std::string& s);
 
 	bool								m_logToConsole;
 	bool								m_logConsoleAsynchronous;
@@ -383,6 +395,9 @@ private:
 	bool								m_inferOwlClass;
 	bool								m_inferRdfsResource;
 	bool								m_inferOwlThing;
+
+	size_t								m_timeoutDuration;
+	::std::string						m_timeoutUnit;
 };
 
 PARLIAMENT_NAMESPACE_END

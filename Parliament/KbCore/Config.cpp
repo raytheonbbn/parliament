@@ -185,7 +185,9 @@ pmnt::Config::Config() :
 	m_inferRdfsClass(false),
 	m_inferOwlClass(false),
 	m_inferRdfsResource(false),
-	m_inferOwlThing(false)
+	m_inferOwlThing(false),
+	m_timeoutDuration(5),
+	m_timeoutUnit("MINUTES")
 {
 }
 
@@ -473,6 +475,22 @@ void pmnt::Config::parseKeyValuePair(const string& key,
 	{
 		cp.m_inferOwlThing = parseBool(value, lineNum);
 	}
+	else if (ba::iequals(key, "TimeoutDuration"))
+	{
+		cp.m_timeoutDuration = parseUnsigned(value, lineNum);
+	}
+	else if (ba::iequals(key, "TimeoutUnit"))
+	{
+		if (!validateTimeUnit(value)) {
+			throw Exception(
+				format("Illegal configuration file syntax: invalid '%1%' value '%2%' on line %3%")
+					% key
+					% value
+					% lineNum
+			);
+		}
+		cp.m_timeoutUnit = value;
+	}
 	else
 	{
 		throw Exception(format(
@@ -572,4 +590,15 @@ const pmnt::Config& pmnt::Config::ensureKbDirExists() const
 			% m_kbDirectoryPath.generic_string());
 	}
 	return *this;
+}
+
+bool pmnt::Config::validateTimeUnit(const string& s) {
+	return ba::equals(s, "MILLISECONDS") || ba::equals(s, "SECONDS") || ba::equals(s, "MINUTES");
+}
+
+void pmnt::Config::timeoutUnit(const string& newValue) {
+	if (!validateTimeUnit(newValue)) {
+		throw Exception(format("Invalid time unit: '%1%'") % newValue);
+	}
+	m_timeoutUnit = newValue;
 }
