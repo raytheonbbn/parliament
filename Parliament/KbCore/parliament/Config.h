@@ -311,9 +311,8 @@ public:
 
 	// Unit for timeout duration
 	::std::string timeoutUnit() const
-		{ return { m_timeoutUnit }; }
-	void timeoutUnit(::std::string newValue)
-		{ m_timeoutUnit = { newValue }; }
+		{ return m_timeoutUnit; }
+	void timeoutUnit(const ::std::string& newValue);
 
 	void disableAllRules();
 
@@ -344,6 +343,7 @@ private:
 	static size_t parseUnsigned(const ::std::string& s, uint32 lineNum);
 	static double parseDouble(const ::std::string& s, uint32 lineNum);
 	static bool parseBool(const ::std::string& s, uint32 lineNum);
+	static bool validateTimeUnit(const ::std::string& s);
 
 	bool								m_logToConsole;
 	bool								m_logConsoleAsynchronous;

@@ -481,6 +481,14 @@ void pmnt::Config::parseKeyValuePair(const string& key,
 	}
 	else if (ba::iequals(key, "TimeoutUnit"))
 	{
+		if (!validateTimeUnit(value)) {
+			throw Exception(
+				format("Illegal configuration file syntax: invalid '%1%' value '%2%' on line %3%")
+					% key
+					% value
+					% lineNum
+			);
+		}
 		cp.m_timeoutUnit = value;
 	}
 	else
@@ -582,4 +590,15 @@ const pmnt::Config& pmnt::Config::ensureKbDirExists() const
 			% m_kbDirectoryPath.generic_string());
 	}
 	return *this;
+}
+
+bool pmnt::Config::validateTimeUnit(const string& s) {
+	return ba::equals(s, "MILLISECONDS") || ba::equals(s, "SECONDS") || ba::equals(s, "MINUTES");
+}
+
+void pmnt::Config::timeoutUnit(const string& newValue) {
+	if (!validateTimeUnit(newValue)) {
+		throw Exception(format("Invalid time unit: '%1%'") % newValue);
+	}
+	m_timeoutUnit = newValue;
 }
