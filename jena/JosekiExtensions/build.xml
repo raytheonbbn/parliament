@@ -174,7 +174,7 @@
 			</then>
 			<else>
 				<copy todir="${deployableSvrDir}">
-					<fileset dir="${configDir}/unix" includes="*.sh"/>
+					<fileset dir="${configDir}/unix" includes="*.sh,*.service"/>
 				</copy>
 				<chmod file="${deployableSvrDir}/*.sh" perm="ugo+rx" verbose="true"/>
 			</else>
