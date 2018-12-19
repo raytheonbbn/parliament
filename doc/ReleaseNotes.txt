@@ -17,6 +17,29 @@ Version 2.7.12 (?, revision ?):
   and renamed the "quick start" binaries to indicate their status as the new standard.
   Also added javadoc and source distribution files.
 
+* Fixed a bug that prevented the Admin web page from showing running queries due to a
+  JSON parse error.
+
+* Added the script 'InstallService.sh' for Linux builds.  On systemd-based Linux
+  distributions (including CentOS and Ubuntu), this will install Parliament as a daemon
+  (a.k.a. service).  This means that Parliament will shut down properly when the machine
+  shuts down (or when the daemon controller shuts it down).  This could be extended to
+  other variants of Linux and to UNIX, but this is a good start that will cover our most
+  important use cases.
+
+* Added two configuration properties to ParliamentConfig.txt to cause long-running
+  queries to time out.
+
+
+
+Doc update notes:
+* dependencies directory and env var
+* MSVC redistributables env vars (paths vary with version):
+set VS_ROOT=C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\
+set VS_REDIST_PATH_32=!VS_ROOT!Redist\MSVC\14.16.27012\vc_redist.x86.exe
+set VS_REDIST_PATH_64=!VS_ROOT!Redist\MSVC\14.16.27012\vc_redist.x64.exe
+
+
 
 
 =================================================
