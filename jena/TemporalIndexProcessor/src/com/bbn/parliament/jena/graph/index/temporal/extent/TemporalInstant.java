@@ -73,6 +73,12 @@ public class TemporalInstant implements TemporalExtent, Comparable<TemporalInsta
 	 * Performs a total-ordering comparison. This means that 2 TemporalInstant objects that
 	 * represent the same time, but for different intervals are not actually equal.
 	 *
+	 * TemporalInstants are ordered as follows:
+	 * 1) TemporalInstants with earlier epochs ("instants") precede those with later epochs.
+	 * 2) TemporalInstants that are not part of a TemporalInterval precede those that are.
+	 * 3) TemporalInstants that are the starts of their TemporalIntervals precede those that end theirs.
+	 * 4) TemporalInstants that are otherwise equivalent break their ties based upon their TemporalIntervals' orderings.
+	 *
 	 * @param that TemporalInstant object to compare with
 	 * @return -1 if the given argument is greater than this object. 1 if the argument is
 	 *         smaller. 0 if they are equal.
@@ -81,17 +87,14 @@ public class TemporalInstant implements TemporalExtent, Comparable<TemporalInsta
 	public int compareTo(TemporalInstant that) {
 		int comparison = Long.compare(this.instant, that.instant);
 		if (comparison == 0) {
-			comparison = (this.isStart ? -1 : 0) + (that.isStart ? 1 : 0);
-			if (comparison == 0) {
-				comparison = (this.isEnd ? 1 : 0) + (that.isEnd ? -1 : 0);
+			comparison = (
+				(this.parentInterval == null ? -1 : 0) +
+				(that.parentInterval == null ? 1 : 0)
+			);
+			if (comparison == 0 && this.parentInterval != null) {
+				comparison = (this.isStart ? -1 : 0) + (that.isStart ? 1 : 0);
 				if (comparison == 0) {
-					comparison = (
-						(this.parentInterval == null ? -1 : 0) +
-						(that.parentInterval == null ? 1 : 0)
-					);
-					if (comparison == 0 && this.parentInterval != null) {
-						comparison = this.parentInterval.compareTo(that.parentInterval);
-					}
+					comparison = this.parentInterval.compareTo(that.parentInterval);
 				}
 			}
 		}
@@ -104,7 +107,6 @@ public class TemporalInstant implements TemporalExtent, Comparable<TemporalInsta
 			TemporalInstant ti = (TemporalInstant) obj;
 			return (instant == ti.instant
 					&& isStart == ti.isStart
-					&& isEnd == ti.isEnd
 					&& Objects.equals(parentInterval, ti.parentInterval)
 					);
 		}
@@ -113,7 +115,7 @@ public class TemporalInstant implements TemporalExtent, Comparable<TemporalInsta
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(instant, isStart, isEnd, parentInterval);
+		return Objects.hash(instant, isStart, parentInterval);
 	}
 
 	@Override
