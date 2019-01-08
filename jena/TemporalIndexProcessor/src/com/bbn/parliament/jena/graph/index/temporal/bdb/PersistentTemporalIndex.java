@@ -418,8 +418,12 @@ public class PersistentTemporalIndex extends TemporalIndex {
 	/** {@inheritDoc} */
 	@Override
 	public void delete() {
+		// (J. Craig, 2019-01-07)
+		// The old code closed the index if it was open.  The test suite expects this method to throw an Exception
+		// (see com.bbn.parliament.jena.graph.index.IndexBase).  I changed this code based upon the assumption that the
+		// test suite is correct.
 		if (!closed) {
-			close();
+			throw new IllegalStateException("Index open");
 		}
 		File dirFile = new File(dirName);
 		if (dirFile.exists()) {
@@ -437,9 +441,23 @@ public class PersistentTemporalIndex extends TemporalIndex {
 	public boolean add(Record<TemporalExtent> r) {
 		Node node = r.getKey();
 		TemporalExtent extent = r.getValue();
-		DatabaseEntry key = new DatabaseEntry();
+
+		// (J. Craig, 2019-01-07)
+		// The BDB documentation for DatabaseConfig::setSortedDuplicates() states:
+		//   "Although two records may have the same key, they may not also have the same data item. Two identical
+		//   records, that have the same key and data, may not be stored in a database."
+		// Despite nodeIndexedDatabase's not being configured to allow duplicates, the behavior before I added this
+		// block made it seem like trying to add the same record twice (as we do in IndexTestMethods) was a violation of
+		// an assumption that this API does not enforce.
+		// Thus, the overhead of checking to see whether the value previously existed seems to unfortunately be
+		// necessary.
+		Record<TemporalExtent> previous = find(node);
+		if (previous != null && extent.sameAs(previous.getValue())) {
+			return false;
+		}
+
+		DatabaseEntry key = convertToKey(node);
 		DatabaseEntry data = new DatabaseEntry();
-		key.setData(getStringRepresentation(node).getBytes());
 		byte[] databytes = new byte[16];
 
 		minStart = Math.min(minStart, extent.getStart().getInstant());
@@ -460,6 +478,12 @@ public class PersistentTemporalIndex extends TemporalIndex {
 		return true;
 	}
 
+	private DatabaseEntry convertToKey(Node node) {
+		DatabaseEntry key = new DatabaseEntry();
+		key.setData(getStringRepresentation(node).getBytes());
+		return key;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public void add(Iterator<Record<TemporalExtent>> records) {
@@ -471,13 +495,13 @@ public class PersistentTemporalIndex extends TemporalIndex {
 	@Override
 	public boolean remove(Record<TemporalExtent> r) {
 		Node node = r.getKey();
-		DatabaseEntry key = new DatabaseEntry(getStringRepresentation(node)
-				.getBytes());
+		DatabaseEntry key = convertToKey(node);
 		boolean success = false;
 		try {
 			OperationStatus status = nodeIndexedDatabase.delete(null, key);
 			if (status.equals(OperationStatus.SUCCESS)) {
 				success = true;
+				--size;
 			}
 		} catch (DatabaseException e) {
 			throw new RuntimeException("Error with the BDB database", e);
