@@ -3,6 +3,7 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.graph.index.temporal.bdb;
 
 import java.io.File;
@@ -478,7 +479,7 @@ public class PersistentTemporalIndex extends TemporalIndex {
 		return true;
 	}
 
-	private DatabaseEntry convertToKey(Node node) {
+	private static DatabaseEntry convertToKey(Node node) {
 		DatabaseEntry key = new DatabaseEntry();
 		key.setData(getStringRepresentation(node).getBytes());
 		return key;
