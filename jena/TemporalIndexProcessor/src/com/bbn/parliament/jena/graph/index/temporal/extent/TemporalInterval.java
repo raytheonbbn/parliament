@@ -5,6 +5,8 @@
 // All rights reserved.
 package com.bbn.parliament.jena.graph.index.temporal.extent;
 
+import java.util.Objects;
+
 /**
  * Implementation for an interval in time. The concrete representation for <code>TemporalInterval</code>s
  * is a pair of 64-bit <code>long</code>s wrapped inside {@link TemporalInstant}s. These represent the endpoints of the
@@ -14,7 +16,7 @@ package com.bbn.parliament.jena.graph.index.temporal.extent;
  * @author dkolas
  * @author mhale
  */
-public class TemporalInterval extends TemporalExtent {
+public class TemporalInterval implements TemporalExtent, Comparable<TemporalInterval> {
 
 	private TemporalInstant start;
 	private TemporalInstant end;
@@ -83,9 +85,15 @@ public class TemporalInterval extends TemporalExtent {
 	 * the values of the start and end of the interval. That means that this *is* an
 	 * appropriate implementation of the Allen Time Interval 'equals' function.
 	 */
-	public boolean sameAs(TemporalInterval interval) {
-		return getStart().sameAs(interval.getStart())
-			&& getEnd().sameAs(interval.getEnd());
+	@Override
+	public boolean sameAs(TemporalExtent other) {
+		TemporalInterval that;
+		return (
+			other != null &&
+			TemporalInterval.class.equals(other.getClass()) &&
+			start.sameAs((that = (TemporalInterval) other).start) &&
+			end.sameAs(that.end)
+		);
 	}
 
 	/** Tests whether this interval ends before the given interval begins. */
@@ -173,6 +181,33 @@ public class TemporalInterval extends TemporalExtent {
 	public boolean finishedBy(TemporalInterval interval) {
 		return getEnd().sameAs(interval.getEnd())
 			&& interval.getStart().greaterThan(getStart());
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		boolean areEqual = this == other;
+		if (!areEqual && TemporalInterval.class.equals(other.getClass())) {
+			TemporalInterval that = (TemporalInterval) other;
+			areEqual = this.start.instant == that.start.instant && this.end.instant == that.end.instant;
+		}
+		return areEqual;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(start.instant, end.instant);
+	}
+
+	@Override
+	public int compareTo(TemporalInterval that) {
+		int comparison = -1;
+		if (that != null) {
+			comparison = Long.compare(this.start.instant, that.start.instant);
+			if (comparison == 0) {
+				comparison = Long.compare(this.end.instant, that.end.instant);
+			}
+		}
+		return comparison;
 	}
 
 	@Override

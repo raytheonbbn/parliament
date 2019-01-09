@@ -6,6 +6,7 @@
 package com.bbn.parliament.jena.graph.index.temporal.extent;
 
 import java.util.Calendar;
+import java.util.Objects;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.graph.Node;
@@ -20,7 +21,7 @@ import com.hp.hpl.jena.graph.Node;
  * @author dkolas
  * */
 
-public class TemporalInstant extends TemporalExtent implements Comparable<TemporalInstant> {
+public class TemporalInstant implements TemporalExtent, Comparable<TemporalInstant> {
 	protected long instant;
 	protected TemporalInterval parentInterval;
 	protected boolean isStart = false;
@@ -72,25 +73,32 @@ public class TemporalInstant extends TemporalExtent implements Comparable<Tempor
 	 * Performs a total-ordering comparison. This means that 2 TemporalInstant objects that
 	 * represent the same time, but for different intervals are not actually equal.
 	 *
-	 * @param o TemporalInstant object to compare with
+	 * TemporalInstants are ordered as follows:
+	 * 1) TemporalInstants with earlier epochs ("instants") precede those with later epochs.
+	 * 2) TemporalInstants that are not part of a TemporalInterval precede those that are.
+	 * 3) TemporalInstants that are the starts of their TemporalIntervals precede those that end theirs.
+	 * 4) TemporalInstants that are otherwise equivalent break their ties based upon their TemporalIntervals' orderings.
+	 *
+	 * @param that TemporalInstant object to compare with
 	 * @return -1 if the given argument is greater than this object. 1 if the argument is
 	 *         smaller. 0 if they are equal.
 	 */
 	@Override
-	public int compareTo(TemporalInstant o) {
-		if (instant < o.instant) {
-			return -1;
-		} else if (instant > o.instant) {
-			return 1;
-		} else { // they have equivalent timestamps
-			if (isStart && !o.isStart) { // this object's interval occurs after
-				return 1;
-			} else if (isEnd && o.isStart) { // this object's interval occurs before
-				return -1;
-			} else {
-				return hashCode() - o.hashCode();
+	public int compareTo(TemporalInstant that) {
+		int comparison = Long.compare(this.instant, that.instant);
+		if (comparison == 0) {
+			comparison = (
+				(this.parentInterval == null ? -1 : 0) +
+				(that.parentInterval == null ? 1 : 0)
+			);
+			if (comparison == 0 && this.parentInterval != null) {
+				comparison = (this.isStart ? -1 : 0) + (that.isStart ? 1 : 0);
+				if (comparison == 0) {
+					comparison = this.parentInterval.compareTo(that.parentInterval);
+				}
 			}
 		}
+		return comparison;
 	}
 
 	@Override
@@ -99,8 +107,7 @@ public class TemporalInstant extends TemporalExtent implements Comparable<Tempor
 			TemporalInstant ti = (TemporalInstant) obj;
 			return (instant == ti.instant
 					&& isStart == ti.isStart
-					&& isEnd == ti.isEnd
-					&& parentInterval == ti.parentInterval
+					&& Objects.equals(parentInterval, ti.parentInterval)
 					);
 		}
 		return false;
@@ -108,13 +115,7 @@ public class TemporalInstant extends TemporalExtent implements Comparable<Tempor
 
 	@Override
 	public int hashCode() {
-		int result = Long.valueOf(instant).hashCode();
-		result ^= Boolean.valueOf(isStart).hashCode();
-		result ^= Integer.rotateLeft(Boolean.valueOf(isEnd).hashCode(), 4);
-		if (parentInterval != null) {
-			result ^= parentInterval.hashCode();
-		}
-		return result;
+		return Objects.hash(instant, isStart, parentInterval);
 	}
 
 	@Override
@@ -158,8 +159,13 @@ public class TemporalInstant extends TemporalExtent implements Comparable<Tempor
 	 * does not compare the actual nodes that use this instant. Instead, it only compares
 	 * the value of the instant.
 	 */
-	public boolean sameAs(TemporalInstant instant2) {
-		return instant == instant2.instant;
+	@Override
+	public boolean sameAs(TemporalExtent other) {
+		return (
+			other != null &&
+			TemporalInstant.class.equals(other.getClass()) &&
+			instant == ((TemporalInstant) other).instant
+		);
 	}
 
 	/**

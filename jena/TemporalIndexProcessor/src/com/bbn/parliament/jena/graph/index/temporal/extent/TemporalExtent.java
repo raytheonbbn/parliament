@@ -10,7 +10,9 @@ package com.bbn.parliament.jena.graph.index.temporal.extent;
  * index.
  *
  *  @author dkolas */
-public abstract class TemporalExtent {
-	public abstract TemporalInstant getStart();
-	public abstract TemporalInstant getEnd();
+public interface TemporalExtent {
+	TemporalInstant getStart();
+	TemporalInstant getEnd();
+
+	boolean sameAs(TemporalExtent other);
 }
