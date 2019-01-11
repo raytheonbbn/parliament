@@ -230,7 +230,7 @@ pmnt::SWRLBuiltinAtomPtr pmnt::SWRLRuleBuilder::buildBuiltinAtom(
 	// need to check all arguments from list and add them to the positions list
 	checkAndIndexArgList(pResult.get(), isRuleHead, argListId, varMap);
 
-	PMNT_LOG(g_log, LogLevel::debug) << format("Returning builtin type '%1%' for ID '%2%'")
+	PMNT_LOG(g_log, LogLevel::debug) << format{"Returning builtin type '%1%' for ID '%2%'"}
 		% typeid(pResult.get()).name() % convertFromRsrcChar(builtinIdStr);
 
 	return pResult;

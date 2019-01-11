@@ -7,6 +7,7 @@
 package com.bbn.parliament.jena.jetty;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ public class CmdLineJettyServer {
 					printPrompt();
 					byte[] bytes = new byte[256];
 					int count = System.in.read(bytes);
-					String consoleInput = new String(bytes, 0, count).trim();
+					String consoleInput = new String(bytes, 0, count, StandardCharsets.UTF_8).trim();
 					timeToExit = consoleInput.equalsIgnoreCase("exit");
 				}
 				System.out.format("Shutting down server%n");
@@ -64,7 +65,7 @@ public class CmdLineJettyServer {
 				+ "#####   Warning:  Killing the server process by any means other  #####%n"
 				+ "#####   than graceful shutdown may result in corrupt knowledge   #####%n"
 				+ "#####   base files.  Please shut down the server by typing       #####%n"
-				+ "#####   \"exit\" at the prompt below.                              #####%n"
+				+ "#####   'exit' at the prompt below.                              #####%n"
 				+ "#####                                                            #####%n"
 				+ "######################################################################%n"
 				+ "######################################################################%n"

@@ -6,36 +6,29 @@
 
 package com.bbn.parliament.jni;
 
-public class InterruptedStmtIterationException extends RuntimeException
-{
-	private static final long serialVersionUID = -7584302482776960609L;
+public class InterruptedStmtIterationException extends RuntimeException {
+	private static final long serialVersionUID = 1L;
 
-	public InterruptedStmtIterationException()
-	{
+	public InterruptedStmtIterationException() {
 	}
 
-	public InterruptedStmtIterationException(String message)
-	{
+	public InterruptedStmtIterationException(String message) {
 		super(message);
 	}
 
-	public InterruptedStmtIterationException(String fmt, Object... args)
-	{
+	public InterruptedStmtIterationException(String fmt, Object... args) {
 		super(String.format(fmt, args));
 	}
 
-	public InterruptedStmtIterationException(Throwable cause)
-	{
+	public InterruptedStmtIterationException(Throwable cause) {
 		super(cause);
 	}
 
-	public InterruptedStmtIterationException(Throwable cause, String message)
-	{
+	public InterruptedStmtIterationException(Throwable cause, String message) {
 		super(message, cause);
 	}
 
-	public InterruptedStmtIterationException(Throwable cause, String fmt, Object... args)
-	{
+	public InterruptedStmtIterationException(Throwable cause, String fmt, Object... args) {
 		super(String.format(fmt, args), cause);
 	}
 }

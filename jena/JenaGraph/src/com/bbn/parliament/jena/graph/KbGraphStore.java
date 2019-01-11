@@ -36,8 +36,7 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 /** @author sallen */
-public class KbGraphStore extends DatasetGraphMap implements GraphStore { // extends GraphStoreBasic {
-
+public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 	public static final String PARLIAMENT_NS        = "http://parliament.semwebcentral.org/parliament#";
 	public static final String MASTER_GRAPH         = PARLIAMENT_NS + "MasterGraph";
 	public static final String GRAPH_CLASS          = PARLIAMENT_NS + "NamedGraph";
@@ -373,12 +372,17 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore { // ext
 		@SuppressWarnings("resource")
 		KbGraph kbGraph = getInnerKbGraph(graph);
 		if (kbGraph != null) {
+			long start = 0;
+			if (log.isDebugEnabled()) {
+				start = System.currentTimeMillis();
+			}
 			kbGraph.flush();
 			//IndexManager.getInstance().flush(graph);
 			if (log.isDebugEnabled()) {
-				log.debug((graphName == null || graphName.length() == 0)
-					? "Flushed Default Graph"
-					: String.format("Flushed named graph <%1$s>", graphName));
+				long duration = System.currentTimeMillis() - start;
+				String graphDisplayName = (graphName == null || graphName.isEmpty())
+					? "default" : graphName;
+				log.debug("Flushed graph <{}> in {} ms", graphDisplayName, duration);
 			}
 		}
 	}

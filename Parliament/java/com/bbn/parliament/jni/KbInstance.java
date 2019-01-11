@@ -88,81 +88,35 @@ public class KbInstance implements Closeable {
 		private double _pctUnusedStmtCapacity;
 	}
 
-	/**
-	 * The null statement id (k_nullStmtId in C++). This field is intended to be
-	 * a constant, but cannot be marked final due to issues with the JNI
-	 * implementation of IKVM.NET. Changing this field is strongly discouraged.
-	 */
-	public static long NULL_STMT_ID = tempInit();
+	/** The null statement id (k_nullStmtId in C++). */
+	public static final long NULL_STMT_ID = tempInit();
 
-	/**
-	 * The null resource id (k_nullRsrcId in C++). This field is intended to be
-	 * a constant, but cannot be marked final due to issues with the JNI
-	 * implementation of IKVM.NET. Changing this field is strongly discouraged.
-	 */
-	public static long NULL_RSRC_ID = tempInit();
+	/** The null resource id (k_nullRsrcId in C++). */
+	public static final long NULL_RSRC_ID = tempInit();
 
-	/**
-	 * Indicates an indeterminate kb disposition. Some files exist, while others
-	 * are missing. This field is intended to be a constant, but cannot be
-	 * marked final due to issues with the JNI implementation of IKVM.NET.
-	 * Changing this field is strongly discouraged.
-	 */
-	public static short INDETERMINATE_KB_STATE = tempInit();
+	/** Indicates a KB disposition in which some files exist, while others are missing. */
+	public static final short INDETERMINATE_KB_STATE = tempInit();
 
-	/**
-	 * Indicates that the kb does not exist. This field is intended to be a
-	 * constant, but cannot be marked final due to issues with the JNI
-	 * implementation of IKVM.NET. Changing this field is strongly discouraged.
-	 */
-	public static short KB_DOES_NOT_EXIST = tempInit();
+	/** Indicates that the kb does not exist. */
+	public static final short KB_DOES_NOT_EXIST = tempInit();
 
-	/**
-	 * Indicates that the kb exists, but that it is missing the URI-to-int
-	 * dictionary. This field is intended to be a constant, but cannot be marked
-	 * final due to issues with the JNI implementation of IKVM.NET. Changing
-	 * this field is strongly discouraged.
-	 */
-	public static short KB_EXISTS_WITHOUT_URI_TO_INT = tempInit();
+	/** Indicates that the kb exists, but that it is missing the URI-to-int dictionary. */
+	public static final short KB_EXISTS_WITHOUT_URI_TO_INT = tempInit();
 
-	/**
-	 * Indicates that the kb exists. This field is intended to be a constant,
-	 * but cannot be marked final due to issues with the JNI implementation of
-	 * IKVM.NET. Changing this field is strongly discouraged.
-	 */
-	public static short KB_EXISTS = tempInit();
+	/** Indicates that the kb exists. */
+	public static final short KB_EXISTS = tempInit();
 
-	/**
-	 * Instructs a statement iterator to skip deleted statements. This field is
-	 * intended to be a constant, but cannot be marked final due to issues with
-	 * the JNI implementation of IKVM.NET. Changing this field is strongly
-	 * discouraged.
-	 */
-	public static int SKIP_DELETED_STMT_ITER_FLAG = tempInit();
+	/** Instructs a statement iterator to skip deleted statements. */
+	public static final int SKIP_DELETED_STMT_ITER_FLAG = tempInit();
 
-	/**
-	 * Instructs a statement iterator to skip inferred statements. This field is
-	 * intended to be a constant, but cannot be marked final due to issues with
-	 * the JNI implementation of IKVM.NET. Changing this field is strongly
-	 * discouraged.
-	 */
-	public static int SKIP_INFERRED_STMT_ITER_FLAG = tempInit();
+	/** Instructs a statement iterator to skip inferred statements. */
+	public static final int SKIP_INFERRED_STMT_ITER_FLAG = tempInit();
 
-	/**
-	 * Instructs a statement iterator to skip literal statements. This field is
-	 * intended to be a constant, but cannot be marked final due to issues with
-	 * the JNI implementation of IKVM.NET. Changing this field is strongly
-	 * discouraged.
-	 */
-	public static int SKIP_LITERAL_STMT_ITER_FLAG = tempInit();
+	/** Instructs a statement iterator to skip literal statements. */
+	public static final int SKIP_LITERAL_STMT_ITER_FLAG = tempInit();
 
-	/**
-	 * Instructs a statement iterator to skip non-literal statements. This field
-	 * is intended to be a constant, but cannot be marked final due to issues
-	 * with the JNI implementation of IKVM.NET. Changing this field is strongly
-	 * discouraged.
-	 */
-	public static int SKIP_NON_LITERAL_STMT_ITER_FLAG = tempInit();
+	/** Instructs a statement iterator to skip non-literal statements. */
+	public static final int SKIP_NON_LITERAL_STMT_ITER_FLAG = tempInit();
 
 	private long m_pKb = 0;
 
@@ -177,12 +131,6 @@ public class KbInstance implements Closeable {
 	 * The reason we don't simply initialize these with zero is so that the
 	 * compiler doesn't do constant folding, which undermines the effect of the
 	 * initializations performed by initStatic().
-	 *
-	 * Note (2009-11-23): The "constants" that this method is used to initialize
-	 * are no longer final due to an issue with IKVM.NET's JNI implementation.
-	 * As a result, this method could probably be eliminated, but I am leaving
-	 * it in so that we can reinstate the final-ness of the constants later if
-	 * desired.
 	 */
 	private static short tempInit() {
 		return 0;

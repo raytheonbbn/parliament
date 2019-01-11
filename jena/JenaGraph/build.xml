@@ -74,29 +74,17 @@
 	<!-- Runs unit tests for a specific native directory (the name of which is expected as a parameter) -->
 	<target name="runTestsForOneNativeDir">
 		<echo message="nativeArtifactsDir = '${nativeArtifactsDir}'"/>
-
-		<!--
-			Reducing the initial statement and resource capacity in the Parliament
-			configuration file speeds up the tests considerably:
-		-->
-		<copy todir="${testBinDir}">
-			<fileset dir="${nativeArtifactsDir}" includes="ParliamentConfig.txt"/>
-			<filterchain>
-				<tokenfilter>
-					<filetokenizer/>
-					<replaceregex pattern="(initial[a-z]*capacity *= *)[0-9]+"
-						flags="mig" replace="\120"/>
-				</tokenfilter>
-			</filterchain>
-		</copy>
-
-		<junit fork="yes" printsummary="yes" haltonfailure="${haltUnitTestsOnFailure}">
+		<junit fork="yes" printsummary="yes" haltonfailure="${haltUnitTestsOnFailure}" dir="${basedir}">
 			<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
 			<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
 			<env key="PARLIAMENT_CONFIG_PATH" value="${testConfigFile}"/>
+
+			<!-- These env vars are for running under clang's 'santizer' options: -->
+			<!-- env key="DYLD_INSERT_LIBRARIES" path="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib"/ -->
+			<!-- env key="UBSAN_OPTIONS" value="print_stacktrace=1"/ -->
+
 			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
 			<sysproperty key="log4j.configuration" value="file://${kbRootDir}/log4j.junit.properties"/>
-			<sysproperty key="test.data.path" value="${basedir}/data"/>
 			<classpath>
 				<pathelement location="${testBinDir}"/>
 				<path refid="testPath"/>
@@ -120,7 +108,6 @@
 	<!-- Runs the test for a specific native directory (the name of which is expected as a parameter) -->
 	<target name="runUnionTestForOneNativeDir">
 		<echo message="nativeArtifactsDir = '${nativeArtifactsDir}'"/>
-
 		<java classname="com.bbn.parliament.jena.graph.union.UnionGraphTestNotJUnit" fork="yes">
 			<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
 			<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>

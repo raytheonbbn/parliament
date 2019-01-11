@@ -72,12 +72,12 @@ void pmnt::LiteralUtils::unsynchronizedInitUriToEnumMap()
 	g_uriToEnumMap[ul.m_gisWKTLiteral.strNoCache()] = notConvertible;
 
 	g_uriToEnumMap[ul.m_rdfHTML.strNoCache()] = notConvertible;
-	g_uriToEnumMap[ul.m_rdfLangString.strNoCache()] = &defaultConversion;
-	g_uriToEnumMap[ul.m_rdfPlainLiteral.strNoCache()] = &defaultConversion;
+	g_uriToEnumMap[ul.m_rdfLangString.strNoCache()] = defaultConversion;
+	g_uriToEnumMap[ul.m_rdfPlainLiteral.strNoCache()] = defaultConversion;
 	g_uriToEnumMap[ul.m_rdfXMLLiteral.strNoCache()] = notConvertible;
 
 	g_uriToEnumMap[ul.m_xsdAnyURI.strNoCache()] = notConvertible;
-	g_uriToEnumMap[ul.m_xsdBase64Binary.strNoCache()] = notConvertible;	// Questionable
+	g_uriToEnumMap[ul.m_xsdBase64Binary.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdBoolean.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdByte.strNoCache()] = [](const RsrcString& lexicalForm)
 		{ return numeric_cast<double>(lexical_cast<int8>(convertFromRsrcChar(lexicalForm))); };
@@ -85,8 +85,8 @@ void pmnt::LiteralUtils::unsynchronizedInitUriToEnumMap()
 	g_uriToEnumMap[ul.m_xsdDateTime.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdDateTimeStamp.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdDayTimeDuration.strNoCache()] = notConvertible;
-	g_uriToEnumMap[ul.m_xsdDecimal.strNoCache()] = &defaultConversion;
-	g_uriToEnumMap[ul.m_xsdDouble.strNoCache()] = &defaultConversion;
+	g_uriToEnumMap[ul.m_xsdDecimal.strNoCache()] = defaultConversion;
+	g_uriToEnumMap[ul.m_xsdDouble.strNoCache()] = defaultConversion;
 	g_uriToEnumMap[ul.m_xsdDuration.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdFloat.strNoCache()] = [](const RsrcString& lexicalForm)
 		{ return numeric_cast<double>(lexical_cast<float>(convertFromRsrcChar(lexicalForm))); };
@@ -104,16 +104,16 @@ void pmnt::LiteralUtils::unsynchronizedInitUriToEnumMap()
 	g_uriToEnumMap[ul.m_xsdName.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdNCName.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdNegativeInteger.strNoCache()] = int64Converter;
-	g_uriToEnumMap[ul.m_xsdNMTOKEN.strNoCache()] = &defaultConversion;
+	g_uriToEnumMap[ul.m_xsdNMTOKEN.strNoCache()] = defaultConversion;
 	g_uriToEnumMap[ul.m_xsdNonNegativeInteger.strNoCache()] = uint64Converter;
 	g_uriToEnumMap[ul.m_xsdNonPositiveInteger.strNoCache()] = int64Converter;
-	g_uriToEnumMap[ul.m_xsdNormalizedString.strNoCache()] = &defaultConversion;
+	g_uriToEnumMap[ul.m_xsdNormalizedString.strNoCache()] = defaultConversion;
 	g_uriToEnumMap[ul.m_xsdPositiveInteger.strNoCache()] = uint64Converter;
 	g_uriToEnumMap[ul.m_xsdShort.strNoCache()] = [](const RsrcString& lexicalForm)
 		{ return numeric_cast<double>(lexical_cast<int16>(convertFromRsrcChar(lexicalForm))); };
-	g_uriToEnumMap[ul.m_xsdString.strNoCache()] = &defaultConversion;
+	g_uriToEnumMap[ul.m_xsdString.strNoCache()] = defaultConversion;
 	g_uriToEnumMap[ul.m_xsdTime.strNoCache()] = notConvertible;
-	g_uriToEnumMap[ul.m_xsdToken.strNoCache()] = &defaultConversion;
+	g_uriToEnumMap[ul.m_xsdToken.strNoCache()] = defaultConversion;
 	g_uriToEnumMap[ul.m_xsdUnsignedByte.strNoCache()] = [](const RsrcString& lexicalForm)
 		{ return numeric_cast<double>(lexical_cast<uint8>(convertFromRsrcChar(lexicalForm))); };
 	g_uriToEnumMap[ul.m_xsdUnsignedInt.strNoCache()] = [](const RsrcString& lexicalForm)
