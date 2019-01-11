@@ -17,12 +17,25 @@
 
 #include <ostream>
 
+#include <cstdlib>
+#include <exception>
+#include <iostream>
+#include <fstream>
+
 using namespace ::bbn::parliament;
 using ::std::basic_ostream;
 using ::std::string;
 
+static void temporaryTerminate()
+{
+	::std::cout << "CRITICAL ERROR:  Terminate function called." << ::std::endl << ::std::flush;
+	::std::abort();
+}
+
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* /* pVM */, void* /* pReserved */)
 {
+	::std::set_terminate(temporaryTerminate);
+	::std::cout << "Terminate function installed." << ::std::endl << ::std::flush;
 	return JNI_VERSION_1_4;
 }
 
@@ -33,6 +46,7 @@ JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* /* pVM */, void* /* pReserved */)
 JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_initStatic(
 	JNIEnv* pEnv, jclass cls)
 {
+	::std::cout << "KbInstance_initStatic called" << ::std::endl << ::std::flush;
 	JNIHelper::setStaticLongFld(pEnv, cls, "NULL_STMT_ID", k_nullStmtId);
 	JNIHelper::setStaticLongFld(pEnv, cls, "NULL_RSRC_ID", k_nullRsrcId);
 
@@ -45,6 +59,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_initStatic(
 	JNIHelper::setStaticIntFld(pEnv, cls, "SKIP_INFERRED_STMT_ITER_FLAG", static_cast<int32>(StmtIteratorFlags::k_skipInferred));
 	JNIHelper::setStaticIntFld(pEnv, cls, "SKIP_LITERAL_STMT_ITER_FLAG", static_cast<int32>(StmtIteratorFlags::k_skipLiteral));
 	JNIHelper::setStaticIntFld(pEnv, cls, "SKIP_NON_LITERAL_STMT_ITER_FLAG", static_cast<int32>(StmtIteratorFlags::k_skipNonLiteral));
+	::std::cout << "KbInstance_initStatic finished" << ::std::endl << ::std::flush;
 }
 
 // The BAD_PERFORMANCE version of this function is intended as documentation of
@@ -146,6 +161,7 @@ static void assignJavaConfigToCppConfig(Config& config, JNIEnv* pEnv, jobject ob
 JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_init(
 	JNIEnv* pEnv, jobject obj, jobject jconfig)
 {
+	::std::cout << "KbInstance_init called" << ::std::endl << ::std::flush;
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
 		disposeInternal(pEnv, obj);
 
@@ -155,6 +171,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_init(
 
 		JNIHelper::setPtrFld(pEnv, obj, "m_pKb", pKb);
 	END_JNI_EXCEPTION_HANDLER(pEnv)
+		::std::cout << "KbInstance_init finished" << ::std::endl << ::std::flush;
 }
 
 JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_dispose(
@@ -239,6 +256,7 @@ JNIEXPORT jshort JNICALL Java_com_bbn_parliament_jni_KbInstance_determineDisposi
 JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_deleteKb(
 	JNIEnv* pEnv, jclass /* cls */, jobject javaConfig, jstring directory)
 {
+	::std::cout << "KbInstance_deleteKb called" << ::std::endl << ::std::flush;
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
 		if (javaConfig == 0)
 		{
@@ -267,6 +285,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_deleteKb(
 			}
 		}
 	END_JNI_EXCEPTION_HANDLER(pEnv)
+	::std::cout << "KbInstance_deleteKb finished" << ::std::endl << ::std::flush;
 }
 
 JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_stmtCount(
@@ -450,6 +469,7 @@ JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_jni_KbInstance_isRsrcAnonymou
 JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_uriToRsrcId(
 	JNIEnv* pEnv, jobject obj, jstring uri, jboolean isLiteral, jboolean createIfMissing)
 {
+//::std::cout << "KbInstance_uriToRsrcId called" << ::std::endl << ::std::flush;
 	jlong result = k_nullRsrcId;
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
 		if (uri != 0)
@@ -459,6 +479,7 @@ JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_uriToRsrcId(
 			result = static_cast<jlong>(pKb->uriToRsrcId(accessor.begin(), accessor.size(), !!isLiteral, !!createIfMissing));
 		}
 	END_JNI_EXCEPTION_HANDLER(pEnv)
+//::std::cout << "KbInstance_uriToRsrcId finished" << ::std::endl << ::std::flush;
 	return result;
 }
 
@@ -485,17 +506,43 @@ JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_createAnonymousRs
 	return result;
 }
 
+static unsigned long g_addStmtCallCount = 0;
+static const bool k_printForEveryStmtAdded = false;
+static const unsigned long k_errantStmtCount1 = 2241;
+static const unsigned long k_errantStmtCount2 = 68879;
+
 JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_addStmt(
 	JNIEnv* pEnv, jobject obj, jlong subjectId,
 	jlong predicateId, jlong objectId, jboolean isInferred)
 {
+++g_addStmtCallCount;
+if (k_printForEveryStmtAdded || g_addStmtCallCount == k_errantStmtCount1 || g_addStmtCallCount == k_errantStmtCount2) {
+	::std::cout << "KbInstance_addStmt #" << g_addStmtCallCount << " called ("
+		<< subjectId << " " << predicateId << " " << objectId << ")" << ::std::endl << ::std::flush;
+}
 	jlong result = k_nullStmtId;
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
 		KbInstance* pKb = kbPtr(pEnv, obj);
+if (k_printForEveryStmtAdded || g_addStmtCallCount == k_errantStmtCount1 || g_addStmtCallCount == k_errantStmtCount2) {
+	{
+		::std::ofstream strm("rules-log.txt");
+		strm << ::std::endl << ::std::endl << ::std::endl << ::std::endl << ::std::endl;
+		pKb->printRules(strm);
+		strm << ::std::endl << ::std::endl << ::std::endl << ::std::endl << ::std::endl;
+		pKb->printRuleTriggers(strm);
+	}
+	::std::cout
+		<< "     " << pKb->rsrcIdToUri(static_cast<ResourceId>(subjectId)) << ::std::endl
+		<< "     " << pKb->rsrcIdToUri(static_cast<ResourceId>(predicateId)) << ::std::endl
+		<< "     " << pKb->rsrcIdToUri(static_cast<ResourceId>(objectId)) << ::std::endl << ::std::flush;
+}
 		result = static_cast<jlong>(pKb->addStmt(static_cast<ResourceId>(subjectId),
 			static_cast<ResourceId>(predicateId), static_cast<ResourceId>(objectId),
 			!!isInferred));
 	END_JNI_EXCEPTION_HANDLER(pEnv)
+if (k_printForEveryStmtAdded || g_addStmtCallCount == k_errantStmtCount1 || g_addStmtCallCount == k_errantStmtCount2) {
+	::std::cout << "KbInstance_addStmt #" << g_addStmtCallCount << " finished" << ::std::endl << ::std::flush;
+}
 	return result;
 }
 

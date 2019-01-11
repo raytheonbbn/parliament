@@ -43,6 +43,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/format.hpp>
 
+#include <iostream>
 #include <iomanip>
 #include <ostream>
 #include <sstream>
@@ -425,6 +426,7 @@ void pmnt::KbInstance::countStmts(/* out */ size_t& total, /* out */ size_t& num
 
 // Add a new statement to the kb.  If the statement is part of a reification
 // and thus is virtual, return k_nullStmtId.  Else return new statement id.
+static unsigned long g_addStmtCallNestingDepth = 0;
 pmnt::StatementId pmnt::KbInstance::addStmt(ResourceId subjectId,
 	ResourceId predicateId, ResourceId objectId, bool isInferred)
 {
@@ -455,15 +457,20 @@ pmnt::StatementId pmnt::KbInstance::addStmt(ResourceId subjectId,
 
 			if (wasDeleted)
 			{
+				::std::cout << "KbInstance::addStmt call depth = " << ++g_addStmtCallNestingDepth << " ("
+					<< subjectId << " " << predicateId << " " << objectId << " " << isInferred << ")" << ::std::endl << ::std::flush;
 				// Fire the trigger
 				for (auto pStmtHndlr : m_pi->m_stmtHndlrList)
 				{
 					pStmtHndlr->onNewStmt(this, Statement(this, result));
 				}
+				--g_addStmtCallNestingDepth;
 			}
 		}
 		else if (!s.isVirtual())
 		{
+			::std::cout << "KbInstance::addStmt call depth = " << ++g_addStmtCallNestingDepth << " ("
+				<< subjectId << " " << predicateId << " " << objectId << " " << isInferred << ")" << ::std::endl << ::std::flush;
 			// Get the Id of statement to be added
 			auto nextStmtID = static_cast<StatementId>(stmtCount());
 
@@ -506,6 +513,7 @@ pmnt::StatementId pmnt::KbInstance::addStmt(ResourceId subjectId,
 				pStmtHndlr->onNewStmt(this, Statement(this, nextStmtID));
 			}
 			result = nextStmtID;
+			--g_addStmtCallNestingDepth;
 		}
 		return result;
 	}
