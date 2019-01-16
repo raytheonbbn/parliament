@@ -1,4 +1,4 @@
-﻿// Parliament is licensed under the BSD License from the Open Source
+// Parliament is licensed under the BSD License from the Open Source
 // Initiative, http://www.opensource.org/licenses/bsd-license.php
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
@@ -42,8 +42,7 @@ public:
 	PARLIAMENT_EXPORT ~KbInstance();
 
 	PARLIAMENT_EXPORT const Config& config() const;
-	PARLIAMENT_EXPORT void syncSynchronously();
-	PARLIAMENT_EXPORT void syncAsynchronously();
+	PARLIAMENT_EXPORT void sync();
 	PARLIAMENT_EXPORT void getExcessCapacity(/* out */ double& pctUnusedUriCapacity,
 		/* out */ double& pctUnusedRsrcCapacity, /* out */ double& pctUnusedStmtCapacity) const;
 	PARLIAMENT_EXPORT void releaseExcessCapacity();

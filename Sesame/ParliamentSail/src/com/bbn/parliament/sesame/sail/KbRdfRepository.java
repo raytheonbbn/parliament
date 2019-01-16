@@ -54,7 +54,7 @@ public class KbRdfRepository extends KbRdfSource implements RdfRepository
 	{
 		if(_adds > 0)
 		{
-			getKb().syncAsynchronously();
+			getKb().sync();
 		}
 
 		_transactionStarted = false;

@@ -1,4 +1,4 @@
-﻿// Parliament is licensed under the BSD License from the Open Source
+// Parliament is licensed under the BSD License from the Open Source
 // Initiative, http://www.opensource.org/licenses/bsd-license.php
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
@@ -176,21 +176,12 @@ JNIEXPORT jstring JNICALL Java_com_bbn_parliament_jni_KbInstance_getVersion(
 	return result;
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_syncSynchronously(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_sync(
 	JNIEnv* pEnv, jobject obj)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
 		KbInstance* pKb = kbPtr(pEnv, obj);
-		pKb->syncSynchronously();
-	END_JNI_EXCEPTION_HANDLER(pEnv)
-}
-
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_syncAsynchronously(
-	JNIEnv* pEnv, jobject obj)
-{
-	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
-		KbInstance* pKb = kbPtr(pEnv, obj);
-		pKb->syncAsynchronously();
+		pKb->sync();
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
