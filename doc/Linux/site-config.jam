@@ -15,7 +15,7 @@ constant BoostVersionAbbrv : $(BoostVersionAbbrvAlternatives[1]) ;
 constant BdbVersion : [ os.environ BDB_VERSION ] ;
 constant LinuxDistro : [ os.environ LINUX_DISTRO ] ;
 
-constant COMPILER_ubuntu18 : gcc73 ;	# Ubuntu 18.04
+constant COMPILER_ubuntu18 : gcc7 ;		# Ubuntu 18.04
 constant COMPILER_ubuntu17 : gcc72 ;	# Ubuntu 17.04
 constant COMPILER_ubuntu16 : gcc54 ;	# Ubuntu 16.04
 constant COMPILER_centos   : gcc48 ;	# CentOS 7
