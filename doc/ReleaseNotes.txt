@@ -2,7 +2,7 @@ Version 2.7.12 (?, revision ?):
 
 * Moved to GitHub
 
-* Updated to Boost 1.68.0 and MSVC 14.1 (Visual Studio 2017, 15.8.8)
+* Updated to Boost 1.69.0 and MSVC 14.1 (Visual Studio 2017, 15.8.8)
 
 * Updated C++ code to use Boost.FileSystem and the Win32 wide character (UTF-16) API
 
@@ -29,6 +29,8 @@ Version 2.7.12 (?, revision ?):
 
 * Added two configuration properties to ParliamentConfig.txt to cause long-running
   queries to time out.
+
+* Fixed a few bugs in the temporal index implementation and unit tests.
 
 
 
