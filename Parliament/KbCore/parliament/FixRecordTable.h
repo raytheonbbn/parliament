@@ -87,10 +87,8 @@ public:
 			numRecordsToPop = ::std::min(numRecordsToPop, oldRecCount);
 			m_mMap.header().m_recordCount = oldRecCount - numRecordsToPop;
 		}
-	void syncSynchronously()
-		{ m_mMap.syncSynchronously(); }
-	void syncAsynchronously()
-		{ m_mMap.syncAsynchronously(); }
+	void sync()
+		{ m_mMap.sync(); }
 	void releaseExcessCapacity()
 		{
 			if (capacity() > recordCount())

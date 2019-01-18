@@ -30,6 +30,8 @@ Version 2.7.12 (?, revision ?):
 * Added two configuration properties to ParliamentConfig.txt to cause long-running
   queries to time out.
 
+* Fixed a bug that increased the likelihood that an ungraceful shutdown would corrupt
+  the data files.
 
 
 Doc update notes:

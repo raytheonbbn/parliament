@@ -111,7 +111,7 @@ public:
 	StringToId& operator=(StringToId&&) = delete;
 	~StringToId();
 
-	void syncSynchronously();
+	void sync();
 	void compact();
 
 	bool isMember(const RsrcChar* pKey, size_t keyLen) const

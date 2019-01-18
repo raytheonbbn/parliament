@@ -467,7 +467,7 @@ pmnt::StringToId::~StringToId()
 #endif
 }
 
-void pmnt::StringToId::syncSynchronously()
+void pmnt::StringToId::sync()
 {
 #if !defined(USE_IN_MEMORY_LOOKUP_TABLE)
 	if (!m_readOnly)

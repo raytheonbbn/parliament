@@ -29,10 +29,7 @@ BOOST_AUTO_TEST_CASE(testFileMapping)
 		FileMapping fileMapping(hFile);
 		strcpy(reinterpret_cast<char*>(fileMapping.getBaseAddr()), k_testString1);
 		BOOST_CHECK(strcmp(reinterpret_cast<char*>(fileMapping.getBaseAddr()), k_testString1) == 0);
-		BOOST_CHECK_NO_THROW(fileMapping.syncAsynchronously());
-#if !defined(PARLIAMENT_WINDOWS)
-		BOOST_CHECK_NO_THROW(fileMapping.syncSynchronously());
-#endif
+		BOOST_CHECK_NO_THROW(fileMapping.sync());
 		fileMapping.close();
 
 		hFile.truncate(strlen(k_testString2) + 1);
