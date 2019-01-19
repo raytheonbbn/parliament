@@ -24,6 +24,7 @@
 
 		<delete dir="${targetDir}" deleteonexit="true"/>
 		<delete file="${basedir}/Parliament/Test/ParliamentConfig.txt"/>
+		<delete dir="${basedir}/Parliament/Test/kb-data"/>
 		<delete dir="${basedir}/data"/>
 		<delete dir="${basedir}/indexes"/>
 		<delete dir="${basedir}/log"/>
@@ -31,6 +32,7 @@
 		<delete dir="${basedir}/Parliament/Test/log"/>
 
 		<delete dir="${basedir}/jena/JenaGraph/lib"/>
+		<delete dir="${basedir}/jena/JenaGraph/union-test-kb-data"/>
 		<delete dir="${basedir}/jena/JosekiExtensions/lib"/>
 		<delete dir="${basedir}/jena/JosekiParliamentClient/lib"/>
 		<delete dir="${basedir}/jena/NumericIndex/lib"/>
