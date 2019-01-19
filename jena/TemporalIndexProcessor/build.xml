@@ -76,7 +76,6 @@
 			<env key="PARLIAMENT_CONFIG_PATH" value="${testConfigFile}"/>
 			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
 			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
-			<sysproperty key="test.data.path" value="${basedir}/data"/>
 			<classpath refid="testClassPath"/>
 			<classpath location="${testBinDir}"/>
 			<formatter type="xml"/>

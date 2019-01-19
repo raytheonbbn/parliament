@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.bbn.parliament.jena.graph.index.spatial.geosparql;
 
 import java.util.Arrays;
@@ -18,67 +15,62 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.vividsolutions.jts.geom.Geometry;
 
-/**
- * @author rbattle
- *
- */
+/** @author rbattle */
 public class GeoSPARQLRecordFactory implements GeometryRecordFactory {
 
-   private static final List<Triple> MATCHES = Arrays.asList(Triple.create(Node.ANY, Geo.Nodes.asWKT, Node.ANY),
-                                                             Triple.create(Node.ANY, Geo.Nodes.asGML, Node.ANY));
+	private static final List<Triple> MATCHES = Arrays.asList(Triple.create(Node.ANY, Geo.Nodes.asWKT, Node.ANY),
+		Triple.create(Node.ANY, Geo.Nodes.asGML, Node.ANY));
 
-   public GeoSPARQLRecordFactory() {
-      TypeMapper.getInstance().registerDatatype(new WKTLiteral());
-      TypeMapper.getInstance().registerDatatype(new GMLLiteral());
-      TypeMapper.getInstance().registerDatatype(new WKTLiteral.WKTLiteralSFNamespace());
-      TypeMapper.getInstance().registerDatatype(new GMLLiteral.GMLLiteralGMLNamespace());
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public GeometryRecord createRecord(Triple triple) {
-      Node object = triple.getObject();
-      if (!object.isLiteral()) {
-         return null;
-      }
-      Node predicate = triple.getPredicate();
-      if (!predicate.isURI()) {
-         return null;
-      }
-      String uri = predicate.getURI();
+	public GeoSPARQLRecordFactory() {
+		TypeMapper.getInstance().registerDatatype(new WKTLiteral());
+		TypeMapper.getInstance().registerDatatype(new GMLLiteral());
+		TypeMapper.getInstance().registerDatatype(new WKTLiteral.WKTLiteralSFNamespace());
+		TypeMapper.getInstance().registerDatatype(new GMLLiteral.GMLLiteralGMLNamespace());
+	}
 
-      Node subject = triple.getSubject();
-      RDFDatatype objectType = object.getLiteralDatatype();
-      if (Geo.Nodes.asWKT.equals(predicate)) {
-         if (objectType instanceof WKTLiteral) {
-            Geometry geo = (Geometry)object.getLiteralValue();
-            if (!geo.isValid()) {
-               return null;
-            }
-            return GeometryRecord.create(subject, geo);
-         } else if (objectType instanceof XSDBaseStringType || null == objectType) {
-            WKTLiteral lit = new WKTLiteral();
-            Geometry geo = lit.parse(object.getLiteralValue().toString());
-            if (!geo.isValid()) {
-               return null;
-            }
-            return GeometryRecord.create(subject, geo);
-         }
-      } else if (Geo.Nodes.asGML.equals(uri)) {
-         if (objectType instanceof GMLLiteral) {
-            Geometry geo = (Geometry)object.getLiteralValue();
-            if (!geo.isValid()) {
-               return null;
-            }
-            return GeometryRecord.create(subject, geo);
-         }
-      }
-      return null;
-   }
-   @Override
-   public List<Triple> getTripleMatchers() {
-      return MATCHES;
-   }
+	/** {@inheritDoc} */
+	@Override
+	public GeometryRecord createRecord(Triple triple) {
+		Node object = triple.getObject();
+		if (!object.isLiteral()) {
+			return null;
+		}
+		Node predicate = triple.getPredicate();
+		if (!predicate.isURI()) {
+			return null;
+		}
 
+		Node subject = triple.getSubject();
+		RDFDatatype objectType = object.getLiteralDatatype();
+		if (Geo.Nodes.asWKT.equals(predicate)) {
+			if (objectType instanceof WKTLiteral) {
+				Geometry geo = (Geometry)object.getLiteralValue();
+				if (!geo.isValid()) {
+					return null;
+				}
+				return GeometryRecord.create(subject, geo);
+			} else if (objectType instanceof XSDBaseStringType || null == objectType) {
+				WKTLiteral lit = new WKTLiteral();
+				Geometry geo = lit.parse(object.getLiteralValue().toString());
+				if (!geo.isValid()) {
+					return null;
+				}
+				return GeometryRecord.create(subject, geo);
+			}
+		} else if (Geo.Nodes.asGML.equals(predicate)) {
+			if (objectType instanceof GMLLiteral) {
+				Geometry geo = (Geometry)object.getLiteralValue();
+				if (!geo.isValid()) {
+					return null;
+				}
+				return GeometryRecord.create(subject, geo);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public List<Triple> getTripleMatchers() {
+		return MATCHES;
+	}
 }

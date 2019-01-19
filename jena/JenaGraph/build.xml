@@ -114,7 +114,7 @@
 			<env key="PARLIAMENT_CONFIG_PATH" value="${testConfigFile}"/>
 			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
 			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
-			<sysproperty key="test.data.path" value="${basedir}/data"/>
+			<sysproperty key="test.data.path" value="${parliamentDependenciesDir}/data"/>
 			<classpath>
 				<pathelement location="${testBinDir}"/>
 				<path refid="testPath"/>
@@ -125,7 +125,6 @@
 	<target name="runSplitter" depends="compileTests">
 		<java classname="com.bbn.parliament.jena.NTriplesSplitter" fork="yes">
 			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
-			<sysproperty key="test.data.path" value="${basedir}/data"/>
 			<classpath>
 				<pathelement location="${testBinDir}"/>
 				<path refid="testPath"/>

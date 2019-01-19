@@ -31,9 +31,9 @@ public class ThreadTestMethods extends SpatialTestDataset {
 
 	// Call from @BeforeEach
 	public void addData() {
-		loadData("example/BuildingExample1.ttl");
-		loadData("example/BuildingExample2.ttl");
-		loadData("example/BuildingExample3.ttl");
+		loadData("queries/BuildingExample1.ttl");
+		loadData("queries/BuildingExample2.ttl");
+		loadData("queries/BuildingExample3.ttl");
 	}
 
 	private static final String SIMPLE_QUERY = ""

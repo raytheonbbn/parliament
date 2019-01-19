@@ -76,7 +76,6 @@
 		<mkdir dir="${reportsDir}"/>
 		<junit fork="yes" printsummary="yes" haltonfailure="${haltUnitTestsOnFailure}" showoutput="yes" dir="${testBinDir}">
 			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
-			<sysproperty key="test.data.path" value="${basedir}/resources"/>
 			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
 			<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
 			<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>

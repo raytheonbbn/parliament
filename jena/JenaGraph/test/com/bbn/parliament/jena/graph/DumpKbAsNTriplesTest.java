@@ -47,6 +47,7 @@ public class DumpKbAsNTriplesTest {
 	public void beforeEach() {
 		afterEach();
 		config = Config.readFromFile();
+		KbInstance.deleteKb(config, null);
 		graph = KbGraphFactory.createDefaultGraph();
 		model = ModelFactory.createModelForGraph(graph);
 	}
