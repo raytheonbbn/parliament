@@ -28,6 +28,7 @@ exe ParliamentAdmin
 		/site-config//BoostSystem
 	:	<include>.
 		<visibility>hidden
+		<threading>multi
 		<os>NT:<source>Version.rc
 	:	# default build
 	:	# usage requirements

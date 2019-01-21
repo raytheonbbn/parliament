@@ -23,20 +23,20 @@ using SysErrCode = uint32;
 using SysErrCode = int;
 #endif
 
-class Exception : public ::std::exception
+class PARLIAMENT_EXPORT Exception : public ::std::exception
 {
 public:
-	PARLIAMENT_EXPORT Exception(const char* pMsg) noexcept;
-	PARLIAMENT_EXPORT Exception(const ::std::string& msg) noexcept;
-	PARLIAMENT_EXPORT Exception(const ::boost::format& fmt);
-	PARLIAMENT_EXPORT Exception(const Exception& rhs) noexcept;
-	PARLIAMENT_EXPORT Exception& operator=(const Exception& rhs) noexcept;
-	PARLIAMENT_EXPORT ~Exception() override;
+	Exception(const char* pMsg) noexcept;
+	Exception(const ::std::string& msg) noexcept;
+	Exception(const ::boost::format& fmt);
+	Exception(const Exception& rhs) noexcept;
+	Exception& operator=(const Exception& rhs) noexcept;
+	~Exception() override;
 
 	const char* what() const noexcept override { return m_msg; }
 
-	PARLIAMENT_EXPORT static SysErrCode getSysErrCode() noexcept;
-	PARLIAMENT_EXPORT static ::std::string getSysErrMsg(SysErrCode errCode);
+	static SysErrCode getSysErrCode() noexcept;
+	static ::std::string getSysErrMsg(SysErrCode errCode);
 
 private:
 	inline void copyMsg(const char* pMsg) noexcept;
@@ -44,7 +44,7 @@ private:
 	char m_msg[384];
 };
 
-class UnicodeException : public Exception
+class PARLIAMENT_EXPORT UnicodeException : public Exception
 {
 public:
 	UnicodeException(const char* pMsg) noexcept : Exception(pMsg) {}
@@ -52,7 +52,7 @@ public:
 	UnicodeException(const ::boost::format& fmt) : Exception(fmt) {}
 };
 
-class UnimplementedException : public Exception
+class PARLIAMENT_EXPORT UnimplementedException : public Exception
 {
 public:
 	UnimplementedException(const char* pMsg) noexcept : Exception(pMsg) {}
@@ -60,7 +60,7 @@ public:
 	UnimplementedException(const ::boost::format& fmt) : Exception(fmt) {}
 };
 
-class UsageException : public Exception
+class PARLIAMENT_EXPORT UsageException : public Exception
 {
 public:
 	UsageException(const char* pMsg) noexcept : Exception(pMsg) {}

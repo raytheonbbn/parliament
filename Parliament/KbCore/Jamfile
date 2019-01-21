@@ -41,7 +41,6 @@ lib Parliament
 		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_ReificationIterator.h
 	:	# default build
 	:	<include>.
-		<threading>multi
 	;
 
 explicit parliament/generated/com_bbn_parliament_jni_Config.h ;

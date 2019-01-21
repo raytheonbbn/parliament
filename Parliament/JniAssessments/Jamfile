@@ -34,7 +34,7 @@ lib JniAssessments
 	:	# default build
 	:	<include>.
 		<define>_REENTRANT
-		<threading>multi ;
+	;
 
 explicit JniAssessments.h ;
 make JniAssessments.h : [ glob-tree *.java ] : @BuildJar ;
