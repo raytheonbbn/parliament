@@ -6,7 +6,6 @@
 using clang
 	: # version
 	: # c++-compile-command
-	:	<visibility>hidden
-		<cxxflags>"-std=c++17 -Wall"
+	:	<cxxflags>"-std=c++17 -Wall"
 		<linkflags>"-std=c++17 -headerpad_max_install_names"
 	;
