@@ -32,6 +32,7 @@ lib Parliament
 		Parliament.jar
 	:	<include>.
 		<define>BUILDING_KBCORE
+		<visibility>hidden
 		<threading>multi
 		<os>NT:<source>Version.rc
 		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_Config.h
@@ -73,5 +74,6 @@ exe Utf8StaticInitGen
 	:	Utf8StaticInitGen.cpp
 	:	<include>.
 		<define>PARLIAMENT_SUPPRESS_AUTOLINK
+		<visibility>hidden
 		<threading>multi
 	;

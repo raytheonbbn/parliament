@@ -28,6 +28,7 @@ lib JniAssessments
 	:	<include>.
 		<include>../KbCore
 		<define>_REENTRANT
+		<visibility>hidden
 		<threading>multi
 		<implicit-dependency>JniAssessments.h
 	:	# default build
