@@ -15,6 +15,15 @@
 
 #include <boost/format.hpp>
 
+// UNIX/Linux compilers require that the exception classes themselves be exported so
+// that their RTTI is exported, but this upsets MSVC because the base class
+// (std::exception) is not exported.
+#if defined(PARLIAMENT_WINDOWS)
+#define NON_WINDOWS_PARLIAMENT_EXPORT
+#else
+#define NON_WINDOWS_PARLIAMENT_EXPORT PARLIAMENT_EXPORT
+#endif
+
 PARLIAMENT_NAMESPACE_BEGIN
 
 #if defined(PARLIAMENT_WINDOWS)
@@ -23,7 +32,7 @@ using SysErrCode = uint32;
 using SysErrCode = int;
 #endif
 
-class Exception : public ::std::exception
+class NON_WINDOWS_PARLIAMENT_EXPORT Exception : public ::std::exception
 {
 public:
 	PARLIAMENT_EXPORT Exception(const char* pMsg) noexcept;
@@ -44,7 +53,7 @@ private:
 	char m_msg[384];
 };
 
-class UnicodeException : public Exception
+class NON_WINDOWS_PARLIAMENT_EXPORT UnicodeException : public Exception
 {
 public:
 	UnicodeException(const char* pMsg) noexcept : Exception(pMsg) {}
@@ -52,7 +61,7 @@ public:
 	UnicodeException(const ::boost::format& fmt) : Exception(fmt) {}
 };
 
-class UnimplementedException : public Exception
+class NON_WINDOWS_PARLIAMENT_EXPORT UnimplementedException : public Exception
 {
 public:
 	UnimplementedException(const char* pMsg) noexcept : Exception(pMsg) {}
@@ -60,7 +69,7 @@ public:
 	UnimplementedException(const ::boost::format& fmt) : Exception(fmt) {}
 };
 
-class UsageException : public Exception
+class NON_WINDOWS_PARLIAMENT_EXPORT UsageException : public Exception
 {
 public:
 	UsageException(const char* pMsg) noexcept : Exception(pMsg) {}

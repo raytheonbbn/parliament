@@ -42,7 +42,7 @@ alias BoostAtomic
 		$(BoostStDbgLibPfx)atomic$(BoostStDbgLibSfx)
 		$(BoostStRlsLibPfx)atomic$(BoostStRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 	;
 
 alias BoostChrono
@@ -52,7 +52,7 @@ alias BoostChrono
 		$(BoostStDbgLibPfx)chrono$(BoostStDbgLibSfx)
 		$(BoostStRlsLibPfx)chrono$(BoostStRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 	;
 
 alias BoostDateTime
@@ -62,7 +62,7 @@ alias BoostDateTime
 		$(BoostStDbgLibPfx)date_time$(BoostStDbgLibSfx)
 		$(BoostStRlsLibPfx)date_time$(BoostStRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 	;
 
 alias BoostFileSystem
@@ -72,7 +72,7 @@ alias BoostFileSystem
 		$(BoostStDbgLibPfx)filesystem$(BoostStDbgLibSfx)
 		$(BoostStRlsLibPfx)filesystem$(BoostStRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 	;
 
 alias BoostLog
@@ -82,7 +82,7 @@ alias BoostLog
 		$(BoostStDbgLibPfx)log$(BoostStDbgLibSfx)
 		$(BoostStRlsLibPfx)log$(BoostStRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 		<link>shared:<define>BOOST_LOG_DYN_LINK
 		<define>BOOST_LOG_NO_SHORTHAND_NAMES
 	;
@@ -94,7 +94,7 @@ alias BoostLogSetup
 		$(BoostStDbgLibPfx)log_setup$(BoostStDbgLibSfx)
 		$(BoostStRlsLibPfx)log_setup$(BoostStRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 		<link>shared:<define>BOOST_LOG_DYN_LINK
 		<define>BOOST_LOG_NO_SHORTHAND_NAMES
 	;
@@ -106,7 +106,7 @@ alias BoostRegex
 		$(BoostStDbgLibPfx)regex$(BoostStDbgLibSfx)
 		$(BoostStRlsLibPfx)regex$(BoostStRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 	;
 
 alias BoostSystem
@@ -116,7 +116,7 @@ alias BoostSystem
 		$(BoostStDbgLibPfx)system$(BoostStDbgLibSfx)
 		$(BoostStRlsLibPfx)system$(BoostStRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 	;
 
 alias BoostThread
@@ -126,7 +126,7 @@ alias BoostThread
 		$(BoostStDbgLibPfx)thread$(BoostStDbgLibSfx)
 		$(BoostStRlsLibPfx)thread$(BoostStRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 	;
 
 alias BoostUnitTest
@@ -136,7 +136,7 @@ alias BoostUnitTest
 		$(BoostStDbgLibPfx)unit_test_framework$(BoostStDbgLibSfx)
 		$(BoostStRlsLibPfx)unit_test_framework$(BoostStRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 		<define>BOOST_TEST_ALTERNATIVE_INIT_API
 		<link>shared:<define>BOOST_TEST_DYN_LINK
 	;

@@ -15,7 +15,7 @@ constant BoostVersionAbbrv : $(BoostVersionAbbrvAlternatives[1]) ;
 constant BdbVersion : [ os.environ BDB_VERSION ] ;
 constant LinuxDistro : [ os.environ LINUX_DISTRO ] ;
 
-constant COMPILER_ubuntu18 : gcc73 ;	# Ubuntu 18.04
+constant COMPILER_ubuntu18 : gcc7 ;		# Ubuntu 18.04
 constant COMPILER_ubuntu17 : gcc72 ;	# Ubuntu 17.04
 constant COMPILER_ubuntu16 : gcc54 ;	# Ubuntu 16.04
 constant COMPILER_centos   : gcc48 ;	# CentOS 7
@@ -59,7 +59,7 @@ alias BoostAtomic
 		$(Boost32StDbgLibPfx)atomic$(Boost32StDbgLibSfx)
 		$(Boost32StRlsLibPfx)atomic$(Boost32StRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 	;
 
 alias BoostChrono
@@ -73,7 +73,7 @@ alias BoostChrono
 		$(Boost32StDbgLibPfx)chrono$(Boost32StDbgLibSfx)
 		$(Boost32StRlsLibPfx)chrono$(Boost32StRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 	;
 
 alias BoostDateTime
@@ -87,7 +87,7 @@ alias BoostDateTime
 		$(Boost32StDbgLibPfx)date_time$(Boost32StDbgLibSfx)
 		$(Boost32StRlsLibPfx)date_time$(Boost32StRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 	;
 
 alias BoostFileSystem
@@ -101,7 +101,7 @@ alias BoostFileSystem
 		$(Boost32StDbgLibPfx)filesystem$(Boost32StDbgLibSfx)
 		$(Boost32StRlsLibPfx)filesystem$(Boost32StRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 	;
 
 alias BoostLog
@@ -115,7 +115,7 @@ alias BoostLog
 		$(Boost32StDbgLibPfx)log$(Boost32StDbgLibSfx)
 		$(Boost32StRlsLibPfx)log$(Boost32StRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 		<link>shared:<define>BOOST_LOG_DYN_LINK
 		<define>BOOST_LOG_NO_SHORTHAND_NAMES
 	;
@@ -131,7 +131,7 @@ alias BoostLogSetup
 		$(Boost32StDbgLibPfx)log_setup$(Boost32StDbgLibSfx)
 		$(Boost32StRlsLibPfx)log_setup$(Boost32StRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 		<link>shared:<define>BOOST_LOG_DYN_LINK
 		<define>BOOST_LOG_NO_SHORTHAND_NAMES
 	;
@@ -147,7 +147,7 @@ alias BoostRegex
 		$(Boost32StDbgLibPfx)regex$(Boost32StDbgLibSfx)
 		$(Boost32StRlsLibPfx)regex$(Boost32StRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 	;
 
 alias BoostSystem
@@ -161,7 +161,7 @@ alias BoostSystem
 		$(Boost32StDbgLibPfx)system$(Boost32StDbgLibSfx)
 		$(Boost32StRlsLibPfx)system$(Boost32StRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 	;
 
 alias BoostThread
@@ -175,7 +175,7 @@ alias BoostThread
 		$(Boost32StDbgLibPfx)thread$(Boost32StDbgLibSfx)
 		$(Boost32StRlsLibPfx)thread$(Boost32StRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 	;
 
 alias BoostUnitTest
@@ -189,7 +189,7 @@ alias BoostUnitTest
 		$(Boost32StDbgLibPfx)unit_test_framework$(Boost32StDbgLibSfx)
 		$(Boost32StRlsLibPfx)unit_test_framework$(Boost32StRlsLibSfx)
 	:	# no default build
-	:	<include>$(BoostDir) <threading>multi
+	:	<include>$(BoostDir)
 		<define>BOOST_TEST_ALTERNATIVE_INIT_API
 		<link>shared:<define>BOOST_TEST_DYN_LINK
 	;
