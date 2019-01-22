@@ -110,8 +110,9 @@
 #		define PARLIAMENT_EXPORT __declspec(dllimport)
 #		define PARLIAMENT_EXPORT_TEMPLATE_INST extern template class PARLIAMENT_EXPORT
 #	endif
-//#elif defined(PARLIAMENT_MACOS) && !defined(PARLIAMENT_SUPPRESS_EXPORTS)
-//#	define PARLIAMENT_EXPORT __attribute__((visibility("default")))
+#elif (defined(PARLIAMENT_MACOS) || defined(PARLIAMENT_LINUX)) && !defined(PARLIAMENT_SUPPRESS_EXPORTS)
+#	define PARLIAMENT_EXPORT __attribute__((visibility("default")))
+#	define PARLIAMENT_EXPORT_TEMPLATE_INST
 #else
 #	define PARLIAMENT_EXPORT
 #	define PARLIAMENT_EXPORT_TEMPLATE_INST

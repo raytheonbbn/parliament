@@ -304,7 +304,7 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultCtor)
 	BOOST_CHECK_EQUAL(false, c.inferRdfsResource());
 	BOOST_CHECK_EQUAL(false, c.inferOwlThing());
 
-	BOOST_CHECK_EQUAL(5, c.timeoutDuration());
+	BOOST_CHECK_EQUAL(5u, c.timeoutDuration());
 	BOOST_CHECK_EQUAL(string("MINUTES"), c.timeoutUnit());
 }
 
@@ -439,7 +439,7 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 		BOOST_CHECK_EQUAL(true, c.inferRdfsResource());
 		BOOST_CHECK_EQUAL(false, c.inferOwlThing());
 
-		BOOST_CHECK_EQUAL(200, c.timeoutDuration());
+		BOOST_CHECK_EQUAL(200u, c.timeoutDuration());
 		BOOST_CHECK_EQUAL(string("MILLISECONDS"), c.timeoutUnit());
 	}
 
