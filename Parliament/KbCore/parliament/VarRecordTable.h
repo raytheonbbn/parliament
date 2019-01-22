@@ -38,10 +38,8 @@ public:
 		{ return &m_fixRecTbl.getRecordAt(recordOffset); }
 	size_t pushBack(const RsrcChar* pStr, size_t strLen);
 	size_t pushBack(const RsrcChar* pStr);
-	void syncSynchronously()
-		{ m_fixRecTbl.syncSynchronously(); }
-	void syncAsynchronously()
-		{ m_fixRecTbl.syncAsynchronously(); }
+	void sync()
+		{ m_fixRecTbl.sync(); }
 	void releaseExcessCapacity()
 		{ m_fixRecTbl.releaseExcessCapacity(); }
 

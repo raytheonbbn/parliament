@@ -179,24 +179,14 @@ const pmnt::Config& pmnt::KbInstance::config() const
 	return m_pi->m_config;
 }
 
-void pmnt::KbInstance::syncSynchronously()
+void pmnt::KbInstance::sync()
 {
 	if (!m_pi->m_config.readOnly())
 	{
-		m_pi->m_uriTbl.syncSynchronously();
-		m_pi->m_uriToRsrcId.syncSynchronously();
-		m_pi->m_stmtTbl.syncSynchronously();
-		m_pi->m_rsrcTbl.syncSynchronously();
-	}
-}
-
-void pmnt::KbInstance::syncAsynchronously()
-{
-	if (!m_pi->m_config.readOnly())
-	{
-		m_pi->m_uriTbl.syncAsynchronously();
-		m_pi->m_stmtTbl.syncAsynchronously();
-		m_pi->m_rsrcTbl.syncAsynchronously();
+		m_pi->m_uriTbl.sync();
+		m_pi->m_uriToRsrcId.sync();
+		m_pi->m_stmtTbl.sync();
+		m_pi->m_rsrcTbl.sync();
 	}
 }
 
@@ -216,7 +206,7 @@ double pmnt::KbInstance::computeExcessCapacity(size_t capacity, size_t recCount)
 {
 	return (capacity == 0)
 		? 0
-		: (double) (capacity - recCount) / (double) capacity;
+		: static_cast<double>(capacity - recCount) / static_cast<double>(capacity);
 }
 
 void pmnt::KbInstance::releaseExcessCapacity()

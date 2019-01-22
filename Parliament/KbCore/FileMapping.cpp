@@ -138,46 +138,17 @@ void pmnt::FileMapping::close()
 #endif
 }
 
-#if !defined(PARLIAMENT_WINDOWS)
-void pmnt::FileMapping::syncSynchronously()
+void pmnt::FileMapping::sync()
 {
+#if defined(PARLIAMENT_WINDOWS)
+	if (!FlushViewOfFile(m_pBaseAddress, m_fileSize))
+#else
 	if (msync(m_pBaseAddress, m_fileSize, MS_SYNC) != 0)
+#endif
 	{
 		SysErrCode errCode = Exception::getSysErrCode();
 		PMNT_LOG(g_log, LogLevel::error) << format(
 			"Unable to synchronously flush mapped memory:  %1% (%2%)")
-			% Exception::getSysErrMsg(errCode) % errCode;
-	}
-}
-#endif
-
-void pmnt::FileMapping::syncAsynchronously()
-{
-	syncAsynchronously(m_pBaseAddress,
-#if defined(PARLIAMENT_WINDOWS)
-		0
-#else
-		m_fileSize
-#endif
-		);
-}
-
-void pmnt::FileMapping::syncAsynchronously(uint8* pAddr, size_t length)
-{
-	if (pAddr < m_pBaseAddress || pAddr + length > m_pBaseAddress + m_fileSize)
-	{
-		throw Exception("Address range passed to syncAsynchronously is outside the "
-			"range of the file mapping");
-	}
-#if defined(PARLIAMENT_WINDOWS)
-	if (!FlushViewOfFile(pAddr, length))
-#else
-	if (msync(pAddr, length, MS_ASYNC) != 0)
-#endif
-	{
-		SysErrCode errCode = Exception::getSysErrCode();
-		PMNT_LOG(g_log, LogLevel::error) << format(
-			"Unable to asynchronously flush mapped memory:  %1% (%2%)")
 			% Exception::getSysErrMsg(errCode) % errCode;
 	}
 }

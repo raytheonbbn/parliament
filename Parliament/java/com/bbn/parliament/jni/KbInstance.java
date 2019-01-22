@@ -188,14 +188,7 @@ public class KbInstance implements Closeable {
 	 * Synchronizes with storage, flushing any changes to disk, and does not
 	 * return until all changes have been written
 	 */
-	public native void syncSynchronously();
-
-	/**
-	 * Signals the operating system to synchronize with storage (flush any
-	 * changes to disk), but returns immediately before the disk writes have
-	 * occurred
-	 */
-	public native void syncAsynchronously();
+	public native void sync();
 
 	/** Return statistics about the excess capacity */
 	public native GetExcessCapacityResult getExcessCapacity();

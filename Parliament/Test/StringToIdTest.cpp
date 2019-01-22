@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(testStringToIdCorrectness)
 		BOOST_CHECK_EQUAL(k_testValue1, s2i.find(k_testKey1));
 		BOOST_CHECK_EQUAL(true, s2i.isMember(k_testKey1));
 
-		BOOST_CHECK_NO_THROW(s2i.syncSynchronously());
+		BOOST_CHECK_NO_THROW(s2i.sync());
 		BOOST_CHECK_NO_THROW(s2i.compact());
 	}
 

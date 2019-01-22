@@ -205,7 +205,7 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 	}
 
 	public void flush() {
-		kb.syncAsynchronously();
+		kb.sync();
 	}
 
 	@Override
@@ -215,11 +215,6 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 		long object = getKbId(t.getObject(), true);
 		kb.addStmt(subject, predicate, object, false);
 	}
-
-
-	//	private void reificationAdd(Triple t) {
-		//		Node statementName = t.getSubject();
-		//
 
 	/**
 	 * Free all resources, any further use of this graph is an error.
