@@ -115,8 +115,7 @@ BOOST_AUTO_TEST_CASE(testMMapMgr)
 			k_testData2, sizeof(k_testData2)));
 		BOOST_CHECK_NO_THROW(mmap.header().m_recordCount += sizeof(k_testData2));
 
-		BOOST_CHECK_NO_THROW(mmap.syncAsynchronously());
-		BOOST_CHECK_NO_THROW(mmap.syncSynchronously());
+		BOOST_CHECK_NO_THROW(mmap.sync());
 	} // force the file mapping to be closed before we read it
 
 	vector<uint8> fileContent;

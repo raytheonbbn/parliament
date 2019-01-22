@@ -91,8 +91,7 @@ BOOST_AUTO_TEST_CASE(testVarRecordTable)
 		BOOST_CHECK_EQUAL(k_testData1.length() + k_testData2.length() + 2, vrt.size());
 		BOOST_CHECK(vrt.capacity() >= k_testData1.length() + k_testData2.length() + 2);
 
-		BOOST_CHECK_NO_THROW(vrt.syncAsynchronously());
-		BOOST_CHECK_NO_THROW(vrt.syncSynchronously());
+		BOOST_CHECK_NO_THROW(vrt.sync());
 	}
 
 	{

@@ -118,21 +118,18 @@ pmnt::MMapMgr::~MMapMgr()
 
 void pmnt::MMapMgr::reallocate(FileHandle::FileSize newFileSize)
 {
-	syncSynchronously();
+	sync();
 	m_fileMap.close();
 	m_file.truncate(newFileSize);
 	m_fileSize = m_file.getFileSize();
 	m_fileMap.reopen(m_file);
 }
 
-void pmnt::MMapMgr::syncSynchronously()
+void pmnt::MMapMgr::sync()
 {
+	m_fileMap.sync();
 #if defined(PARLIAMENT_WINDOWS)
-	m_fileMap.syncAsynchronously();
-	::Sleep(250);
 	m_file.sync();
-#else
-	m_fileMap.syncSynchronously();
 #endif
 }
 

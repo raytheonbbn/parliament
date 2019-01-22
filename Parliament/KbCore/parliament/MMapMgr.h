@@ -80,11 +80,7 @@ public:
 		{ return m_file.getFilePath(); }
 	void reallocate(FileHandle::FileSize newFileSize);
 
-	void syncSynchronously();
-	void syncAsynchronously()
-		{ m_fileMap.syncAsynchronously(); }
-	void syncAsynchronously(uint8* pAddr, size_t length)
-		{ m_fileMap.syncAsynchronously(pAddr, length); }
+	void sync();
 
 	static size_t growRecordCount(size_t oldRecCount, double growthFactor);
 

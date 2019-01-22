@@ -32,6 +32,8 @@ Version 2.7.12 (?, revision ?):
 
 * Fixed a few bugs in the temporal index implementation and unit tests.
 
+* Fixed a bug that increased the likelihood that an ungraceful shutdown would corrupt
+  the data files.
 
 
 Doc update notes:

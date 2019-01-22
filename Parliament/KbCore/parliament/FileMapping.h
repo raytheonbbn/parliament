@@ -35,11 +35,7 @@ public:
 	void reopen(const FileHandle& file);
 	void close();
 
-#if !defined(PARLIAMENT_WINDOWS)
-	void syncSynchronously();
-#endif
-	void syncAsynchronously();
-	void syncAsynchronously(uint8* pAddr, size_t length);
+	void sync();
 
 	uint8* getBaseAddr() const
 		{ return m_pBaseAddress; }

@@ -135,8 +135,7 @@ BOOST_AUTO_TEST_CASE(testFixRecordTable)
 		BOOST_CHECK_EQUAL(arrayLen(k_testData1) + arrayLen(k_testData2) - 1, frt.recordCount());
 		BOOST_CHECK_EQUAL(frt.recordCount(), frt.capacity());
 
-		BOOST_CHECK_NO_THROW(frt.syncAsynchronously());
-		BOOST_CHECK_NO_THROW(frt.syncSynchronously());
+		BOOST_CHECK_NO_THROW(frt.sync());
 	}
 
 	{
