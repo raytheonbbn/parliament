@@ -28,12 +28,13 @@ lib JniAssessments
 	:	<include>.
 		<include>../KbCore
 		<define>_REENTRANT
+		<visibility>hidden
 		<threading>multi
 		<implicit-dependency>JniAssessments.h
 	:	# default build
 	:	<include>.
 		<define>_REENTRANT
-		<threading>multi ;
+	;
 
 explicit JniAssessments.h ;
 make JniAssessments.h : [ glob-tree *.java ] : @BuildJar ;

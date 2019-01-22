@@ -35,6 +35,7 @@ run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 		<include>$(KbCoreDir)
 		<define>PARLIAMENT_SUPPRESS_EXPORTS
 		<define>PARLIAMENT_UNIT_TEST
+		<visibility>hidden
 		<threading>multi
 		<dependency>ParliamentConfig.txt
 		<dependency>$(TestDir)/ParliamentConfig.txt
@@ -64,6 +65,7 @@ unit-test ParliamentTestOld
 		<include>$(KbCoreDir)
 		<define>PARLIAMENT_SUPPRESS_EXPORTS
 		<define>PARLIAMENT_UNIT_TEST
+		<visibility>hidden
 		<threading>multi
 		<dependency>ParliamentConfig.txt
 		<dependency>$(TestDir)/ParliamentConfig.txt
@@ -87,6 +89,7 @@ make $(TestDir)/ParliamentConfig.txt : $(KbCoreDir)/ParliamentConfig.txt : @comm
 exe UnicodeTestCaseGen
 	:	UnicodeTestCaseGen.cpp
 	:	<include>.
+		<visibility>hidden
 		<threading>multi
 		<os>NT:<build>yes
 	:	<build>no

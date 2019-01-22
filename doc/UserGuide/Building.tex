@@ -135,13 +135,13 @@ We emphasize libraries that work well with the C++ Standard Library. Boost libra
 We aim to establish ``existing practice'' and provide reference implementations so that Boost libraries are suitable for eventual standardization. Ten Boost libraries are already included in the \href{http://www.open-std.org/jtc1/sc22/wg21/}{C++ Standards Committee's} Library Technical Report (\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1745.pdf}{TR1}) and in the new C++11 Standard.  C++11 also includes several more Boost libraries in addition to those from TR1.  More Boost libraries are proposed for \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1810.html}{TR2}.
 \end{quote}
 
-To get started, download the Boost source distribution (version 1.68.0 or later) from the Boost web site.  Unpack this to a handy location on your disk.  This location may be anywhere you like, but note that it is not temporary.  We will call this location \verb|BOOST_ROOT|, and you need to define an environment variable pointing there, such as
+To get started, download the Boost source distribution (version 1.69.0 or later) from the Boost web site.  Unpack this to a handy location on your disk.  This location may be anywhere you like, but note that it is not temporary.  We will call this location \verb|BOOST_ROOT|, and you need to define an environment variable pointing there, such as
 \begin{verbatim}
-export BOOST_ROOT=~/boost_1_68_0
+export BOOST_ROOT=~/boost_1_69_0
 \end{verbatim}
 or
 \begin{verbatim}
-set BOOST_ROOT=C:\boost_1_68_0
+set BOOST_ROOT=C:\boost_1_69_0
 \end{verbatim}
 From \acp{pmnt} point of view, there are two primary components contained within \verb|BOOST_ROOT|.  The first (and most obvious) is the boost libraries themselves.  Most of these are so-called ``header-only'' libraries, meaning that there is no pre-compiled library code or shared or dynamic library.  All of the code of such libraries is referenced via \verb|#include| directives and compiled along with the calling code.  Such libraries are extremely convenient, because they require virtually zero setup.  \ac{pmnt} uses several Boost libraries that are not header-only.  We will discuss how to build these libraries below.
 
@@ -216,7 +216,7 @@ Next we need to configure Boost.Build so that it can build \ac{pmnt}.  Start by 
 
 	\item\verb|BDB_HOME|: As described above in Section~\ref{sec:BuildingBerkeleyDB}.
 
-	\item\verb|BOOST_VERSION|: The version of Boost (currently 1\_68\_0).
+	\item\verb|BOOST_VERSION|: The version of Boost (currently 1\_69\_0).
 
 	\item\verb|BOOST_ROOT|: As described above in Section~\ref{sec:BuildingBoost}.
 
