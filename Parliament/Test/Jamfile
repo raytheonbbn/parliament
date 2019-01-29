@@ -12,7 +12,6 @@ project /KB/Test ;
 path-constant TestDir : . ;
 path-constant KbCoreDir : ../KbCore ;
 
-explicit ParliamentTest ;
 run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 		[ glob $(KbCoreDir)/*.cpp : $(KbCoreDir)/*JNI*.cpp $(KbCoreDir)/DllMain.cpp $(KbCoreDir)/Utf8StaticInitGen.cpp ]
 		/site-config//BerkeleyDB
@@ -30,6 +29,7 @@ run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 	:	# arguments
 		#--list_content
 		#--run_test=KbInstanceTestSuite/testByQuickOverview
+		#--run_test=InferenceStressTestSuite/inferenceStressTest
 	:	# input files
 	:	<include>.
 		<include>$(KbCoreDir)
@@ -39,39 +39,8 @@ run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 		<threading>multi
 		<dependency>ParliamentConfig.txt
 		<dependency>$(TestDir)/ParliamentConfig.txt
-		#<testing.launcher>TestLauncher.bat
-		<target-os>darwin:<cxxflags>"-fvisibility=hidden"
 	:	ParliamentTest
 	:	# default build
-	;
-
-#explicit ParliamentTestOld ;
-unit-test ParliamentTestOld
-	:	[ glob *.cpp : UnicodeTestCaseGen.cpp ]
-		[ glob $(KbCoreDir)/*.cpp : $(KbCoreDir)/*JNI*.cpp $(KbCoreDir)/DllMain.cpp $(KbCoreDir)/Utf8StaticInitGen.cpp ]
-		/site-config//BerkeleyDB
-		/site-config//BoostHeaderOnlyLibraries
-		/site-config//BoostAtomic/<link>static
-		/site-config//BoostChrono/<link>static
-		/site-config//BoostDateTime/<link>static
-		/site-config//BoostFileSystem/<link>static
-		/site-config//BoostLog/<link>static
-		/site-config//BoostLogSetup/<link>static
-		/site-config//BoostRegex/<link>static
-		/site-config//BoostSystem/<link>static
-		/site-config//BoostThread/<link>static
-		/site-config//BoostUnitTest/<link>static
-	:	<include>.
-		<include>$(KbCoreDir)
-		<define>PARLIAMENT_SUPPRESS_EXPORTS
-		<define>PARLIAMENT_UNIT_TEST
-		<visibility>hidden
-		<threading>multi
-		<dependency>ParliamentConfig.txt
-		<dependency>$(TestDir)/ParliamentConfig.txt
-		#<testing.launcher>TestLauncher.bat
-	:	# default build
-	:	# usage requirements
 	;
 
 # This one is for Windows:
