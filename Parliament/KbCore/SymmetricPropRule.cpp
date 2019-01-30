@@ -14,21 +14,21 @@ namespace pmnt = ::bbn::parliament;
 pmnt::SymmetricPropRule::SymmetricPropRule(KbInstance* pKB, RuleEngine* pRE) :
 	Rule(pKB, pRE, pRE->uriLib().m_ruleSymmetricProp.id())
 {
-	bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_rdfType.id()),
-		RulePosition::makeRsrcPos(uriLib().m_owlSymmetricProp.id())));
+	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_rdfType.id()),
+		RuleAtomSlot::createForRsrc(uriLib().m_owlSymmetricProp.id())));
 }
 
 void pmnt::SymmetricPropRule::applyRuleHead(BindingList &bindingList)
 {
-	ResourceId propRsrcId = bindingList[0].m_rsrcId;
+	ResourceId propRsrcId = bindingList[0].getBinding();
 
 	auto pNewRule = ::std::make_shared<StandardRule>(m_pKB, m_pRE, getRsrcId());
-	pNewRule->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(propRsrcId),
-		RulePosition::makeVariablePos(1)));
-	pNewRule->headPushBack(RuleAtom(RulePosition::makeVariablePos(1),
-		RulePosition::makeRsrcPos(propRsrcId),
-		RulePosition::makeVariablePos(0)));
+	pNewRule->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(propRsrcId),
+		RuleAtomSlot::createForVar(1)));
+	pNewRule->headPushBack(RuleAtom(RuleAtomSlot::createForVar(1),
+		RuleAtomSlot::createForRsrc(propRsrcId),
+		RuleAtomSlot::createForVar(0)));
 	m_pRE->addRule(pNewRule);
 }

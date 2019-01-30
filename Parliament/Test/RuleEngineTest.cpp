@@ -932,18 +932,18 @@ BOOST_DATA_TEST_CASE(
 
 	//a complex rule having only one var
 	auto pNewRule1 = make_shared<StandardRule>(&kb, &(kb.ruleEngine()), k_nullRsrcId);
-	pNewRule1->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-			RulePosition::makeRsrcPos(rdfTypeRsrcId),
-			RulePosition::makeRsrcPos(mammalRsrcId)));
-	pNewRule1->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-			RulePosition::makeRsrcPos(isAliveRsrcId),
-			RulePosition::makeRsrcPos(trueRsrcId)));
-	pNewRule1->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-			RulePosition::makeRsrcPos(stateOfHealthRsrcId),
-			RulePosition::makeRsrcPos(healthyRsrcId)));
-	pNewRule1->headPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-			RulePosition::makeRsrcPos(coveredWithRsrcId),
-			RulePosition::makeRsrcPos(furRsrcId)));
+	pNewRule1->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+			RuleAtomSlot::createForRsrc(rdfTypeRsrcId),
+			RuleAtomSlot::createForRsrc(mammalRsrcId)));
+	pNewRule1->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+			RuleAtomSlot::createForRsrc(isAliveRsrcId),
+			RuleAtomSlot::createForRsrc(trueRsrcId)));
+	pNewRule1->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+			RuleAtomSlot::createForRsrc(stateOfHealthRsrcId),
+			RuleAtomSlot::createForRsrc(healthyRsrcId)));
+	pNewRule1->headPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+			RuleAtomSlot::createForRsrc(coveredWithRsrcId),
+			RuleAtomSlot::createForRsrc(furRsrcId)));
 
 	if (rtp.m_initPoint == RuleInitPoint::k_beginning)
 	{
@@ -995,15 +995,15 @@ BOOST_DATA_TEST_CASE(
 	// 2) in firing, will assert the same statement multiple times;
 	//will succeed in firing, but not in adding the same statement twice
 	auto pNewRule2 = make_shared<StandardRule>(&kb, &(kb.ruleEngine()), k_nullRsrcId);
-	pNewRule2->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-			RulePosition::makeRsrcPos(rdfTypeRsrcId),
-			RulePosition::makeRsrcPos(personRsrcId)));
-	pNewRule2->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(1),
-			RulePosition::makeRsrcPos(rdfTypeRsrcId),
-			RulePosition::makeRsrcPos(personRsrcId)));
-	pNewRule2->headPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-			RulePosition::makeRsrcPos(hasSSNRsrcId),
-			RulePosition::makeRsrcPos(ssnRsrcId)));
+	pNewRule2->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+			RuleAtomSlot::createForRsrc(rdfTypeRsrcId),
+			RuleAtomSlot::createForRsrc(personRsrcId)));
+	pNewRule2->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(1),
+			RuleAtomSlot::createForRsrc(rdfTypeRsrcId),
+			RuleAtomSlot::createForRsrc(personRsrcId)));
+	pNewRule2->headPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+			RuleAtomSlot::createForRsrc(hasSSNRsrcId),
+			RuleAtomSlot::createForRsrc(ssnRsrcId)));
 
 	kb.addStmt(thisPersonRsrcId, rdfTypeRsrcId, personRsrcId, false);
 	kb.addStmt(thatPersonRsrcId, rdfTypeRsrcId, personRsrcId, false);
@@ -1028,21 +1028,21 @@ BOOST_DATA_TEST_CASE(
 
 	//test that a rule having a series of linked vars executes properly
 	auto pNewRule3 = make_shared<StandardRule>(&kb, &(kb.ruleEngine()), k_nullRsrcId);
-	pNewRule3->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-			RulePosition::makeRsrcPos(hasAddressRsrcId),
-			RulePosition::makeVariablePos(1)));
-	pNewRule3->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(1),
-			RulePosition::makeRsrcPos(hasZipCodeRsrcId),
-			RulePosition::makeVariablePos(2)));
-	pNewRule3->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(2),
-			RulePosition::makeRsrcPos(hasProfileRsrcId),
-			RulePosition::makeVariablePos(3)));
-	pNewRule3->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(2),
-			RulePosition::makeRsrcPos(hasAreaNameRsrcId),
-			RulePosition::makeVariablePos(4)));
-	pNewRule3->headPushBack(RuleAtom(RulePosition::makeVariablePos(3),
-			RulePosition::makeRsrcPos(hasAreaNameRsrcId),
-			RulePosition::makeVariablePos(4)));
+	pNewRule3->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+			RuleAtomSlot::createForRsrc(hasAddressRsrcId),
+			RuleAtomSlot::createForVar(1)));
+	pNewRule3->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(1),
+			RuleAtomSlot::createForRsrc(hasZipCodeRsrcId),
+			RuleAtomSlot::createForVar(2)));
+	pNewRule3->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(2),
+			RuleAtomSlot::createForRsrc(hasProfileRsrcId),
+			RuleAtomSlot::createForVar(3)));
+	pNewRule3->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(2),
+			RuleAtomSlot::createForRsrc(hasAreaNameRsrcId),
+			RuleAtomSlot::createForVar(4)));
+	pNewRule3->headPushBack(RuleAtom(RuleAtomSlot::createForVar(3),
+			RuleAtomSlot::createForRsrc(hasAreaNameRsrcId),
+			RuleAtomSlot::createForVar(4)));
 
 	if (rtp.m_initPoint == RuleInitPoint::k_middle4)
 	{
@@ -1056,21 +1056,21 @@ BOOST_DATA_TEST_CASE(
 	//test that a hyper-connected rule (each pair of rule atoms shares at least one var) executes properly
 	//this rule also tests that atoms may have vars as arguments
 	auto pNewRule4 = make_shared<StandardRule>(&kb, &(kb.ruleEngine()), k_nullRsrcId);
-	pNewRule4->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-			RulePosition::makeVariablePos(1),
-			RulePosition::makeVariablePos(2)));
-	pNewRule4->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(1),
-			RulePosition::makeVariablePos(3),
-			RulePosition::makeVariablePos(4)));
-	pNewRule4->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(2),
-			RulePosition::makeVariablePos(3),
-			RulePosition::makeVariablePos(5)));
-	pNewRule4->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-			RulePosition::makeVariablePos(4),
-			RulePosition::makeVariablePos(5)));
-	pNewRule4->headPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-			RulePosition::makeVariablePos(3),
-			RulePosition::makeVariablePos(5)));
+	pNewRule4->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+			RuleAtomSlot::createForVar(1),
+			RuleAtomSlot::createForVar(2)));
+	pNewRule4->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(1),
+			RuleAtomSlot::createForVar(3),
+			RuleAtomSlot::createForVar(4)));
+	pNewRule4->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(2),
+			RuleAtomSlot::createForVar(3),
+			RuleAtomSlot::createForVar(5)));
+	pNewRule4->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+			RuleAtomSlot::createForVar(4),
+			RuleAtomSlot::createForVar(5)));
+	pNewRule4->headPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+			RuleAtomSlot::createForVar(3),
+			RuleAtomSlot::createForVar(5)));
 
 	kb.addStmt(aRsrcId, bRsrcId, cRsrcId, false);
 	kb.addStmt(bRsrcId, dRsrcId, eRsrcId, false);

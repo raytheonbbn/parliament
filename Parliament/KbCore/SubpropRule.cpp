@@ -14,27 +14,27 @@ namespace pmnt = ::bbn::parliament;
 pmnt::SubpropRule::SubpropRule(KbInstance* pKB, RuleEngine* pRE) :
 	Rule(pKB, pRE, pRE->uriLib().m_ruleSubproperty.id())
 {
-	bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_rdfsSubPropertyOf.id()),
-		RulePosition::makeVariablePos(1)));
+	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_rdfsSubPropertyOf.id()),
+		RuleAtomSlot::createForVar(1)));
 }
 
 void pmnt::SubpropRule::applyRuleHead(BindingList &variableBindings)
 {
-	ResourceId subPropRsrcId = variableBindings[0].m_rsrcId;
-	ResourceId superPropRsrcId = variableBindings[1].m_rsrcId;
+	ResourceId subPropRsrcId = variableBindings[0].getBinding();
+	ResourceId superPropRsrcId = variableBindings[1].getBinding();
 
 	if (subPropRsrcId != superPropRsrcId)	// avoid recursion
 	{
 		m_pRE->addRule(::std::make_shared<SubpropHelperRule>(m_pKB, m_pRE, subPropRsrcId, superPropRsrcId));
 
 		auto pNewRule = ::std::make_shared<StandardRule>(m_pKB, m_pRE, getRsrcId());
-		pNewRule->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-			RulePosition::makeRsrcPos(subPropRsrcId),
-			RulePosition::makeVariablePos(1)));
-		pNewRule->headPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-			RulePosition::makeRsrcPos(superPropRsrcId),
-			RulePosition::makeVariablePos(1)));
+		pNewRule->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+			RuleAtomSlot::createForRsrc(subPropRsrcId),
+			RuleAtomSlot::createForVar(1)));
+		pNewRule->headPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+			RuleAtomSlot::createForRsrc(superPropRsrcId),
+			RuleAtomSlot::createForVar(1)));
 		m_pRE->addRule(pNewRule);
 	}
 }
@@ -45,17 +45,17 @@ pmnt::SubpropHelperRule::SubpropHelperRule(KbInstance* pKB, RuleEngine* pRE,
 	m_subPropRsrcId(subPropRsrcId),
 	m_superPropRsrcId(superPropRsrcId)
 {
-	bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_rdfsSubPropertyOf.id()),
-		RulePosition::makeRsrcPos(m_subPropRsrcId)));
-	headPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_rdfsSubPropertyOf.id()),
-		RulePosition::makeRsrcPos(m_superPropRsrcId)));
+	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_rdfsSubPropertyOf.id()),
+		RuleAtomSlot::createForRsrc(m_subPropRsrcId)));
+	headPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_rdfsSubPropertyOf.id()),
+		RuleAtomSlot::createForRsrc(m_superPropRsrcId)));
 }
 
 void pmnt::SubpropHelperRule::applyRuleHead(BindingList &variableBindings)
 {
-	ResourceId propRsrcId = variableBindings[0].m_rsrcId;
+	ResourceId propRsrcId = variableBindings[0].getBinding();
 	if (propRsrcId != m_superPropRsrcId)
 	{
 		StandardRule::applyRuleHead(variableBindings);

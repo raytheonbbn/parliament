@@ -43,11 +43,13 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/format.hpp>
 
+#include <algorithm>
 #include <iostream>
 #include <iomanip>
 #include <ostream>
 #include <sstream>
 #include <utility>
+#include <vector>
 
 // Uncomment for debugging only:
 //#include <iostream>
@@ -414,9 +416,17 @@ void pmnt::KbInstance::countStmts(/* out */ size_t& total, /* out */ size_t& num
 	}
 }
 
+struct Triple {
+	pmnt::ResourceId sId;
+	pmnt::ResourceId pId;
+	pmnt::ResourceId oId;
+};
+bool operator==(const Triple& lhs, const Triple& rhs)
+	{ return lhs.sId == rhs.sId && lhs.pId == rhs.pId && lhs.oId == rhs.oId; }
+static ::std::vector<Triple> g_tripleStack;
+
 // Add a new statement to the kb.  If the statement is part of a reification
 // and thus is virtual, return k_nullStmtId.  Else return new statement id.
-static unsigned long g_addStmtCallNestingDepth = 0;
 pmnt::StatementId pmnt::KbInstance::addStmt(ResourceId subjectId,
 	ResourceId predicateId, ResourceId objectId, bool isInferred)
 {
@@ -447,20 +457,42 @@ pmnt::StatementId pmnt::KbInstance::addStmt(ResourceId subjectId,
 
 			if (wasDeleted)
 			{
-				::std::cout << "KbInstance::addStmt call depth = " << ++g_addStmtCallNestingDepth << " ("
-					<< subjectId << " " << predicateId << " " << objectId << " " << isInferred << ")" << ::std::endl << ::std::flush;
-				// Fire the trigger
 				for (auto pStmtHndlr : m_pi->m_stmtHndlrList)
 				{
 					pStmtHndlr->onNewStmt(this, Statement(this, result));
 				}
-				--g_addStmtCallNestingDepth;
 			}
 		}
 		else if (!s.isVirtual())
 		{
-			::std::cout << "KbInstance::addStmt call depth = " << ++g_addStmtCallNestingDepth << " ("
+			Triple triple{ subjectId, predicateId, objectId };
+			auto foundIt = ::std::find(cBegin(g_tripleStack), cEnd(g_tripleStack), triple);
+			if (foundIt != cEnd(g_tripleStack))
+			{
+				auto index = ::std::distance(cBegin(g_tripleStack), foundIt);
+				::std::cout << "RE-ADD STMT index = " << index << " ("
+					<< subjectId << " " << predicateId << " " << objectId << " " << isInferred << ")" << ::std::endl << ::std::flush;
+			}
+			g_tripleStack.push_back(triple);
+			::std::cout << "KbInstance::addStmt call depth = " << g_tripleStack.size() << " ("
 				<< subjectId << " " << predicateId << " " << objectId << " " << isInferred << ")" << ::std::endl << ::std::flush;
+
+//			if (g_tripleStack.size() > 105)
+//			{
+//				::std::cout << ::std::endl;
+//				printRules(::std::cout);
+//				::std::cout << ::std::endl << ::std::flush;
+//			}
+
+//			if (g_tripleStack.size() > 90)
+//			{
+//				for (auto trpl : g_tripleStack)
+//				{
+//					::std::cout << "     Stack entry:  "
+//						<< rsrcIdToUri(trpl.sId) << " " << rsrcIdToUri(trpl.pId) << " " << rsrcIdToUri(trpl.oId) << ::std::endl << ::std::flush;
+//				}
+//			}
+
 			// Get the Id of statement to be added
 			auto nextStmtID = static_cast<StatementId>(stmtCount());
 
@@ -503,7 +535,14 @@ pmnt::StatementId pmnt::KbInstance::addStmt(ResourceId subjectId,
 				pStmtHndlr->onNewStmt(this, Statement(this, nextStmtID));
 			}
 			result = nextStmtID;
-			--g_addStmtCallNestingDepth;
+			if (g_tripleStack.empty())
+			{
+				::std::cout << "POPPING FROM EMPTY TRIPLE STACK" << ::std::endl << ::std::flush;
+			}
+			else
+			{
+				g_tripleStack.pop_back();
+			}
 		}
 		return result;
 	}
@@ -568,7 +607,7 @@ void pmnt::KbInstance::handleReificationAdd(ResourceId subjectId,
 	ResourceId predicateId, ResourceId objectId)
 {
 	auto it = m_pi->m_reificationMap.find(subjectId);
-	if (it == ::std::end(m_pi->m_reificationMap))
+	if (it == cEnd(m_pi->m_reificationMap))
 	{
 		it = m_pi->m_reificationMap.insert(make_pair(subjectId, PartialReification())).first;
 	}
@@ -972,8 +1011,8 @@ bool pmnt::KbInstance::isRsrcValid(ResourceId rsrcId) const
 
 void pmnt::KbInstance::addNewStmtHndlr(NewStmtHandler* pHandler)
 {
-	auto end = ::std::end(m_pi->m_stmtHndlrList);
-	auto it = ::std::find(::std::begin(m_pi->m_stmtHndlrList), end, pHandler);
+	auto end = cEnd(m_pi->m_stmtHndlrList);
+	auto it = ::std::find(cBegin(m_pi->m_stmtHndlrList), end, pHandler);
 	if (it == end)
 	{
 		m_pi->m_stmtHndlrList.push_back(pHandler);

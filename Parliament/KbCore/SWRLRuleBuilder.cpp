@@ -227,7 +227,7 @@ pmnt::SWRLBuiltinAtomPtr pmnt::SWRLRuleBuilder::buildBuiltinAtom(
 
 	checkAndIndexAtomArg(isRuleHead, builtinId, varMap);
 
-	// need to check all arguments from list and add them to the positions list
+	// need to check all arguments from list and add them to the slots list
 	checkAndIndexArgList(pResult.get(), isRuleHead, argListId, varMap);
 
 	PMNT_LOG(g_log, LogLevel::debug) << format{"Returning builtin type '%1%' for ID '%2%'"}
@@ -251,9 +251,9 @@ pmnt::RuleAtom pmnt::SWRLRuleBuilder::buildClassAtom(ResourceId atomRsrcId, VarM
 	}
 
 	bool arg1IsVar = checkAndIndexAtomArg(isRuleHead, arg1Id, varMap);
-	return RuleAtom(arg1IsVar ? RulePosition::makeVariablePos(varMap.find(arg1Id)->second) : RulePosition::makeRsrcPos(arg1Id),
-			RulePosition::makeRsrcPos(uriLib().m_rdfType.id()),
-			RulePosition::makeRsrcPos(classId));
+	return RuleAtom(arg1IsVar ? RuleAtomSlot::createForVar(varMap.find(arg1Id)->second) : RuleAtomSlot::createForRsrc(arg1Id),
+			RuleAtomSlot::createForRsrc(uriLib().m_rdfType.id()),
+			RuleAtomSlot::createForRsrc(classId));
 }
 
 // builds a swrl:DataRangeAtom from the existing KB.
@@ -295,9 +295,9 @@ pmnt::RuleAtom pmnt::SWRLRuleBuilder::buildDifferentIndividualsAtom(ResourceId a
 	// TODO: is this correct?  Is there a different way that we should be checking this? open-world?
 	// for now, we are operating with explicit statements that :x owl:differentFrom :y
 	// TODO: does not deal with owl:AllDifferent statements
-	return RuleAtom(arg1IsVar ? RulePosition::makeVariablePos(varMap.find(arg1Id)->second) : RulePosition::makeRsrcPos(arg1Id),
-			RulePosition::makeRsrcPos(uriLib().m_owlDifferentFrom.id()),
-			arg2IsVar ? RulePosition::makeVariablePos(varMap.find(arg2Id)->second) : RulePosition::makeRsrcPos(arg2Id));
+	return RuleAtom(arg1IsVar ? RuleAtomSlot::createForVar(varMap.find(arg1Id)->second) : RuleAtomSlot::createForRsrc(arg1Id),
+			RuleAtomSlot::createForRsrc(uriLib().m_owlDifferentFrom.id()),
+			arg2IsVar ? RuleAtomSlot::createForVar(varMap.find(arg2Id)->second) : RuleAtomSlot::createForRsrc(arg2Id));
 }
 
 // builds a swrl:IndividualPropertyAtom from the existing KB.
@@ -315,9 +315,9 @@ pmnt::RuleAtom pmnt::SWRLRuleBuilder::buildIndividualPropertyAtom(ResourceId ato
 	//see if atom variables have already been encountered; if not, add them to varMap
 	bool arg1IsVar = checkAndIndexAtomArg(isRuleHead, arg1Id, varMap);
 	bool arg2IsVar = checkAndIndexAtomArg(isRuleHead, arg2Id, varMap);
-	return RuleAtom(arg1IsVar ? RulePosition::makeVariablePos(varMap.find(arg1Id)->second) : RulePosition::makeRsrcPos(arg1Id),
-			RulePosition::makeRsrcPos(propertyId),
-			arg2IsVar ? RulePosition::makeVariablePos(varMap.find(arg2Id)->second) : RulePosition::makeRsrcPos(arg2Id));
+	return RuleAtom(arg1IsVar ? RuleAtomSlot::createForVar(varMap.find(arg1Id)->second) : RuleAtomSlot::createForRsrc(arg1Id),
+			RuleAtomSlot::createForRsrc(propertyId),
+			arg2IsVar ? RuleAtomSlot::createForVar(varMap.find(arg2Id)->second) : RuleAtomSlot::createForRsrc(arg2Id));
 }
 
 pmnt::RuleAtom pmnt::SWRLRuleBuilder::buildSameIndividualAtom(ResourceId atomRsrcId, VarMap& varMap, bool isRuleHead)
@@ -335,9 +335,9 @@ pmnt::RuleAtom pmnt::SWRLRuleBuilder::buildSameIndividualAtom(ResourceId atomRsr
 
 	// TODO: is this correct?  Is there a different way that we should be checking this? open-world?
 	// for now, we are operating with explicit statements that :x owl:sameAs :y
-	return RuleAtom(arg1IsVar ? RulePosition::makeVariablePos(varMap.find(arg1Id)->second) : RulePosition::makeRsrcPos(arg1Id),
-			RulePosition::makeRsrcPos(uriLib().m_owlSameAs.id()),
-			arg2IsVar ? RulePosition::makeVariablePos(varMap.find(arg2Id)->second) : RulePosition::makeRsrcPos(arg2Id));
+	return RuleAtom(arg1IsVar ? RuleAtomSlot::createForVar(varMap.find(arg1Id)->second) : RuleAtomSlot::createForRsrc(arg1Id),
+			RuleAtomSlot::createForRsrc(uriLib().m_owlSameAs.id()),
+			arg2IsVar ? RuleAtomSlot::createForVar(varMap.find(arg2Id)->second) : RuleAtomSlot::createForRsrc(arg2Id));
 }
 
 // Checks the SWRL argument:
@@ -379,11 +379,11 @@ void pmnt::SWRLRuleBuilder::checkAndIndexArgList(SWRLBuiltinRuleAtom* pBuiltinAt
 
 	if (checkAndIndexAtomArg(isRuleHead, firstId, varMap))
 	{
-		pBuiltinAtom->appendRulePos(RulePosition::makeVariablePos(varMap.find(firstId)->second));
+		pBuiltinAtom->appendAtomSlot(RuleAtomSlot::createForVar(varMap.find(firstId)->second));
 	}
 	else
 	{
-		pBuiltinAtom->appendRulePos(RulePosition::makeRsrcPos(firstId));
+		pBuiltinAtom->appendAtomSlot(RuleAtomSlot::createForRsrc(firstId));
 	}
 
 	// stop when the rest is Nil

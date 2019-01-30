@@ -15,33 +15,33 @@ namespace pmnt = ::bbn::parliament;
 pmnt::TransitivePropRule::TransitivePropRule(KbInstance* pKB, RuleEngine* pRE) :
 	Rule(pKB, pRE, pRE->uriLib().m_ruleTransitiveProp.id())
 {
-	bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_rdfType.id()),
-		RulePosition::makeRsrcPos(uriLib().m_owlTransitiveProp.id())));
+	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_rdfType.id()),
+		RuleAtomSlot::createForRsrc(uriLib().m_owlTransitiveProp.id())));
 }
 
 void pmnt::TransitivePropRule::applyRuleHead(BindingList &bindingList)
 {
-	ResourceId transPropId = bindingList[0].m_rsrcId;
+	ResourceId transPropId = bindingList[0].getBinding();
 	m_pRE->addRule(::std::make_shared<TransitivePropHelperRule>(m_pKB, m_pRE, transPropId));
 }
 
 pmnt::TransitivePropHelperRule::TransitivePropHelperRule(KbInstance* pKB, RuleEngine* pRE, ResourceId transPropId) :
 	Rule(pKB, pRE, pRE->uriLib().m_ruleTransitiveProp.id())
 {
-	bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(transPropId),
-		RulePosition::makeVariablePos(1)));
+	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(transPropId),
+		RuleAtomSlot::createForVar(1)));
 }
 
 void pmnt::TransitivePropHelperRule::applyRuleHead(BindingList &bindingList)
 {
-	ResourceId subjectId = bindingList[0].m_rsrcId;
-	ResourceId objectId = bindingList[1].m_rsrcId;
+	ResourceId subjectId = bindingList[0].getBinding();
+	ResourceId objectId = bindingList[1].getBinding();
 
 	if (subjectId != objectId) // avoid recursion
 	{
-		ResourceId transPropId = getBody().back().m_predPos.m_rsrcId;
+		ResourceId transPropId = getBody().back().m_predSlot.getRsrcId();
 
 		StmtIterator end = m_pKB->end();
 		for (StmtIterator iter = m_pKB->find(k_nullRsrcId, transPropId, subjectId);

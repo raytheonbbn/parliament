@@ -12,14 +12,14 @@ namespace pmnt = ::bbn::parliament;
 pmnt::EquivalentClassRule::EquivalentClassRule(KbInstance* pKB, RuleEngine* pRE) :
 	StandardRule(pKB, pRE, pRE->uriLib().m_ruleEquivalentClass.id())
 {
-	bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_owlEquivalentClass.id()),
-		RulePosition::makeVariablePos(1)));
+	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_owlEquivalentClass.id()),
+		RuleAtomSlot::createForVar(1)));
 
-	headPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_rdfsSubClassOf.id()),
-		RulePosition::makeVariablePos(1)));
-	headPushBack(RuleAtom(RulePosition::makeVariablePos(1),
-		RulePosition::makeRsrcPos(uriLib().m_rdfsSubClassOf.id()),
-		RulePosition::makeVariablePos(0)));
+	headPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_rdfsSubClassOf.id()),
+		RuleAtomSlot::createForVar(1)));
+	headPushBack(RuleAtom(RuleAtomSlot::createForVar(1),
+		RuleAtomSlot::createForRsrc(uriLib().m_rdfsSubClassOf.id()),
+		RuleAtomSlot::createForVar(0)));
 }

@@ -15,22 +15,22 @@ namespace pmnt = ::bbn::parliament;
 pmnt::DomainRule::DomainRule(KbInstance* pKB, RuleEngine* pRE) :
 	Rule(pKB, pRE, pRE->uriLib().m_ruleDomain.id())
 {
-	bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_rdfsDomain.id()),
-		RulePosition::makeVariablePos(1)));
+	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_rdfsDomain.id()),
+		RuleAtomSlot::createForVar(1)));
 }
 
 void pmnt::DomainRule::applyRuleHead(BindingList &variableBindings)
 {
-	ResourceId propId = variableBindings[0].m_rsrcId;
-	ResourceId domainId = variableBindings[1].m_rsrcId;
+	ResourceId propId = variableBindings[0].getBinding();
+	ResourceId domainId = variableBindings[1].getBinding();
 
 	auto pNewRule = ::std::make_shared<StandardRule>(m_pKB, m_pRE, getRsrcId());
-	pNewRule->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(propId),
-		RulePosition::makeVariablePos(1)));
-	pNewRule->headPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_rdfType.id()),
-		RulePosition::makeRsrcPos(domainId)));
+	pNewRule->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(propId),
+		RuleAtomSlot::createForVar(1)));
+	pNewRule->headPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_rdfType.id()),
+		RuleAtomSlot::createForRsrc(domainId)));
 	m_pRE->addRule(pNewRule);
 }

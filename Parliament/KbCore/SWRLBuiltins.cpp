@@ -20,7 +20,6 @@ using ::boost::format;
 using ::boost::lexical_cast;
 
 static const auto k_rsrcQuote = pmnt::convertToRsrcChar("\"");
-static const auto k_dateRsrcEnd = pmnt::convertToRsrcChar("\"^^http://www.w3.org/2001/XMLSchema#date");
 static const auto k_rsrcPlus = pmnt::convertToRsrcChar("+");
 static const auto k_rsrcColon = pmnt::convertToRsrcChar(":");
 static const auto k_rsrcHyphen = pmnt::convertToRsrcChar("-");
@@ -33,13 +32,13 @@ bool pmnt::AddBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingLis
 {
 	auto addVal = 0.0;
 
-	auto current = begin(getRulePosList());
+	auto current = begin(getAtomSlotList());
 	auto result = *current;
 	++current;
 
-	for (; current != end(getRulePosList()); ++current)
+	for (; current != end(getAtomSlotList()); ++current)
 	{
-		auto val = getDoubleFromRulePos(*current, pKB, bindingList);
+		auto val = getDoubleFromAtomSlot(*current, pKB, bindingList);
 		addVal += val;
 	}
 
@@ -49,30 +48,30 @@ bool pmnt::AddBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingLis
 
 bool pmnt::SubtractBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultPos = getRulePosList().at(0);
-	auto firstPos = getRulePosList().at(1);
-	auto secondPos = getRulePosList().at(2);
+	auto resultSlot = getAtomSlotList().at(0);
+	auto firstSlot = getAtomSlotList().at(1);
+	auto secondSlot = getAtomSlotList().at(2);
 
-	auto firstVal = getDoubleFromRulePos(firstPos, pKB, bindingList);
-	auto secondVal = getDoubleFromRulePos(secondPos, pKB, bindingList);
+	auto firstVal = getDoubleFromAtomSlot(firstSlot, pKB, bindingList);
+	auto secondVal = getDoubleFromAtomSlot(secondSlot, pKB, bindingList);
 
 	auto resultVal = firstVal - secondVal;
-	return checkResult(resultPos, resultVal, pKB, bindingList);
+	return checkResult(resultSlot, resultVal, pKB, bindingList);
 }
 
 // TODO: complete this method
 bool pmnt::MultiplyBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto current = begin(getRulePosList());
+	auto current = begin(getAtomSlotList());
 	auto result = *current;
 	++current;
 
 	// TODO: handle ints v. double
 	auto multVal = 1.0;
 
-	for (; current != end(getRulePosList()); ++current)
+	for (; current != end(getAtomSlotList()); ++current)
 	{
-		multVal *= getDoubleFromRulePos(*current, pKB, bindingList);
+		multVal *= getDoubleFromAtomSlot(*current, pKB, bindingList);
 	}
 
 	// TODO: is this correct?
@@ -81,25 +80,25 @@ bool pmnt::MultiplyBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindi
 
 bool pmnt::DivideBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultPos = getRulePosList().at(0);
-	auto firstPos = getRulePosList().at(1);
-	auto secondPos = getRulePosList().at(2);
+	auto resultSlot = getAtomSlotList().at(0);
+	auto firstSlot = getAtomSlotList().at(1);
+	auto secondSlot = getAtomSlotList().at(2);
 
-	auto firstVal = getDoubleFromRulePos(firstPos, pKB, bindingList);
-	auto secondVal = getDoubleFromRulePos(secondPos, pKB, bindingList);
+	auto firstVal = getDoubleFromAtomSlot(firstSlot, pKB, bindingList);
+	auto secondVal = getDoubleFromAtomSlot(secondSlot, pKB, bindingList);
 
 	auto resultVal = firstVal / secondVal; // todo: correct for all types?  what of check for DivByZero?
-	return checkResult(resultPos, resultVal, pKB, bindingList);
+	return checkResult(resultSlot, resultVal, pKB, bindingList);
 }
 
 //TODO: Fix the iequals to handle Unicode properly.  How do we know the locale?
 bool pmnt::StringEqualIngnoreCaseBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto firstPos = getRulePosList().at(0);
-	auto secondPos = getRulePosList().at(1);
+	auto firstSlot = getAtomSlotList().at(0);
+	auto secondSlot = getAtomSlotList().at(1);
 
-	auto firstStr = getLiteralStrFromRulePos(firstPos, pKB, bindingList);
-	auto secondStr = getLiteralStrFromRulePos(secondPos, pKB, bindingList);
+	auto firstStr = getLiteralStrFromAtomSlot(firstSlot, pKB, bindingList);
+	auto secondStr = getLiteralStrFromAtomSlot(secondSlot, pKB, bindingList);
 	auto firstStrUtf8 = convertFromRsrcChar(firstStr);
 	auto secondStrUtf8 = convertFromRsrcChar(secondStr);
 	return ::boost::iequals(firstStrUtf8, secondStrUtf8);
@@ -107,28 +106,26 @@ bool pmnt::StringEqualIngnoreCaseBuiltinRuleAtom::evalImpl(KbInstance* pKB, Bind
 
 bool pmnt::StringConcatBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	RulePosition result;
-	RsrcString firstStr;
+	auto result = getAtomSlotList().at(0);
+	auto firstStr = getLiteralStrFromAtomSlot(result, pKB, bindingList);;
 	RsrcString secondStr;
 	auto isFirstIteration = true;
-	for (auto current = begin(getRulePosList()); current != end(getRulePosList()); ++current)
+	for (auto current = begin(getAtomSlotList()); current != end(getAtomSlotList()); ++current)
 	{
 		if (isFirstIteration)
 		{
-			result = *current;
-			firstStr = getLiteralStrFromRulePos(result, pKB, bindingList);
 			isFirstIteration = false;
 		}
 		else
 		{
-			secondStr += getLiteralStrFromRulePos(*current, pKB, bindingList);
+			secondStr += getLiteralStrFromAtomSlot(*current, pKB, bindingList);
 		}
 	}
 
-	if (result.m_isVariable)
+	if (result.isVariable())
 	{
 		auto resultId = pKB->uriToRsrcId(k_rsrcQuote + secondStr + k_rsrcQuote, true, true);
-		return result.checkPositionAddBinding(resultId, bindingList);
+		return result.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
@@ -138,79 +135,79 @@ bool pmnt::StringConcatBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& b
 
 bool pmnt::YearMonthDurationBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto yearMonthDurationPos = getRulePosList().at(0);
-	auto yearsPos = getRulePosList().at(1);
-	auto monthsPos = getRulePosList().at(2);
+	auto yearMonthDurationSlot = getAtomSlotList().at(0);
+	auto yearsSlot = getAtomSlotList().at(1);
+	auto monthsSlot = getAtomSlotList().at(2);
 
-	auto years = lexical_cast<int64>(convertFromRsrcChar(getLiteralStrFromRulePos(yearsPos, pKB, bindingList)));
-	auto months = lexical_cast<int64>(convertFromRsrcChar(getLiteralStrFromRulePos(monthsPos, pKB, bindingList)));
+	auto years = lexical_cast<int64>(convertFromRsrcChar(getLiteralStrFromAtomSlot(yearsSlot, pKB, bindingList)));
+	auto months = lexical_cast<int64>(convertFromRsrcChar(getLiteralStrFromAtomSlot(monthsSlot, pKB, bindingList)));
 
 	XSDYearMonthDuration resultDuration(years, months);
 
-	if (yearMonthDurationPos.m_isVariable)
+	if (yearMonthDurationSlot.isVariable())
 	{
 		auto resultId = pKB->uriToRsrcId(resultDuration.toXsdLiteral(), true, true);
-		return yearMonthDurationPos.checkPositionAddBinding(resultId, bindingList);
+		return yearMonthDurationSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		XSDYearMonthDuration foundDuration(getLiteralStrFromRulePos(yearMonthDurationPos, pKB, bindingList));
+		XSDYearMonthDuration foundDuration(getLiteralStrFromAtomSlot(yearMonthDurationSlot, pKB, bindingList));
 		return foundDuration == resultDuration;
 	}
 }
 
 bool pmnt::DayTimeDurationBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto durationPos = getRulePosList().at(0);
-	auto daysPos = getRulePosList().at(1);
-	auto hourPos = getRulePosList().at(2);
-	auto minutesPos = getRulePosList().at(3);
-	auto secondsPos = getRulePosList().at(4);
+	auto durationSlot = getAtomSlotList().at(0);
+	auto daysSlot = getAtomSlotList().at(1);
+	auto hourSlot = getAtomSlotList().at(2);
+	auto minutesSlot = getAtomSlotList().at(3);
+	auto secondsSlot = getAtomSlotList().at(4);
 
-	auto days = lexical_cast<int64>(convertFromRsrcChar(getLiteralStrFromRulePos(daysPos, pKB, bindingList)));
-	auto hours = lexical_cast<int64>(convertFromRsrcChar(getLiteralStrFromRulePos(hourPos, pKB, bindingList)));
-	auto minutes = lexical_cast<int64>(convertFromRsrcChar(getLiteralStrFromRulePos(minutesPos, pKB, bindingList)));
-	auto seconds = lexical_cast<double>(convertFromRsrcChar(getLiteralStrFromRulePos(secondsPos, pKB, bindingList)));
+	auto days = lexical_cast<int64>(convertFromRsrcChar(getLiteralStrFromAtomSlot(daysSlot, pKB, bindingList)));
+	auto hours = lexical_cast<int64>(convertFromRsrcChar(getLiteralStrFromAtomSlot(hourSlot, pKB, bindingList)));
+	auto minutes = lexical_cast<int64>(convertFromRsrcChar(getLiteralStrFromAtomSlot(minutesSlot, pKB, bindingList)));
+	auto seconds = lexical_cast<double>(convertFromRsrcChar(getLiteralStrFromAtomSlot(secondsSlot, pKB, bindingList)));
 
 	XSDDayTimeDuration duration(days, hours, minutes, seconds);
 
-	if (durationPos.m_isVariable)
+	if (durationSlot.isVariable())
 	{
 		auto resultId = pKB->uriToRsrcId(duration.toXsdLiteral(), true, true);
-		return durationPos.checkPositionAddBinding(resultId, bindingList);
+		return durationSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		XSDDayTimeDuration resultDuration(getLiteralStrFromRulePos(durationPos, pKB, bindingList));
+		XSDDayTimeDuration resultDuration(getLiteralStrFromAtomSlot(durationSlot, pKB, bindingList));
 		return resultDuration == duration;
 	}
 }
 
 bool pmnt::TimeBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto timePos = getRulePosList().at(0);
-	auto hourPos = getRulePosList().at(1);
-	auto minPos = getRulePosList().at(2);
-	auto secPos = getRulePosList().at(3);
-	auto tzPos = getRulePosList().at(4);
+	auto timeSlot = getAtomSlotList().at(0);
+	auto hourSlot = getAtomSlotList().at(1);
+	auto minSlot = getAtomSlotList().at(2);
+	auto secSlot = getAtomSlotList().at(3);
+	auto tzSlot = getAtomSlotList().at(4);
 
-	auto hours = getLiteralStrFromRulePos(hourPos, pKB, bindingList);
-	auto minutes = getLiteralStrFromRulePos(minPos, pKB, bindingList);
-	auto seconds = getLiteralStrFromRulePos(secPos, pKB, bindingList);
-	auto tzStr = getLiteralStrFromRulePos(tzPos, pKB, bindingList);
+	auto hours = getLiteralStrFromAtomSlot(hourSlot, pKB, bindingList);
+	auto minutes = getLiteralStrFromAtomSlot(minSlot, pKB, bindingList);
+	auto seconds = getLiteralStrFromAtomSlot(secSlot, pKB, bindingList);
+	auto tzStr = getLiteralStrFromAtomSlot(tzSlot, pKB, bindingList);
 
 	auto resultTimeStr = hours + k_rsrcColon + minutes + k_rsrcColon + seconds + tzStr;
 	auto resultTime = DateTimeUtils::getPTimeFromXsdTime(resultTimeStr);
 
-	if (timePos.m_isVariable)
+	if (timeSlot.isVariable())
 	{
 		auto timeStr = DateTimeUtils::getXsdTimeLiteral(resultTime);
 		auto resultId = pKB->uriToRsrcId(timeStr, true, true);
-		return timePos.checkPositionAddBinding(resultId, bindingList);
+		return timeSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto foundTimeStr = getLiteralStrFromRulePos(timePos, pKB, bindingList);
+		auto foundTimeStr = getLiteralStrFromAtomSlot(timeSlot, pKB, bindingList);
 		auto foundTime = DateTimeUtils::getPTimeFromXsdTime(foundTimeStr);
 		return foundTime == resultTime;
 	}
@@ -218,36 +215,36 @@ bool pmnt::TimeBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingLi
 
 bool pmnt::DateTimeBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto dateTimePos = getRulePosList().at(0);
-	auto yearPos = getRulePosList().at(1);
-	auto monthPos = getRulePosList().at(2);
-	auto dayPos = getRulePosList().at(3);
-	auto hourPos = getRulePosList().at(4);
-	auto minPos = getRulePosList().at(5);
-	auto secPos = getRulePosList().at(6);
-	auto tzPos = getRulePosList().at(7);
+	auto dateTimeSlot = getAtomSlotList().at(0);
+	auto yearSlot = getAtomSlotList().at(1);
+	auto monthSlot = getAtomSlotList().at(2);
+	auto daySlot = getAtomSlotList().at(3);
+	auto hourSlot = getAtomSlotList().at(4);
+	auto minSlot = getAtomSlotList().at(5);
+	auto secSlot = getAtomSlotList().at(6);
+	auto tzSlot = getAtomSlotList().at(7);
 
-	auto years = getLiteralStrFromRulePos(yearPos, pKB, bindingList);
-	auto months = getLiteralStrFromRulePos(monthPos, pKB, bindingList);
-	auto days = getLiteralStrFromRulePos(dayPos, pKB, bindingList);
-	auto hours = getLiteralStrFromRulePos(hourPos, pKB, bindingList);
-	auto minutes = getLiteralStrFromRulePos(minPos, pKB, bindingList);
-	auto seconds = getLiteralStrFromRulePos(secPos, pKB, bindingList);
-	auto tzStr = getLiteralStrFromRulePos(tzPos, pKB, bindingList);
+	auto years = getLiteralStrFromAtomSlot(yearSlot, pKB, bindingList);
+	auto months = getLiteralStrFromAtomSlot(monthSlot, pKB, bindingList);
+	auto days = getLiteralStrFromAtomSlot(daySlot, pKB, bindingList);
+	auto hours = getLiteralStrFromAtomSlot(hourSlot, pKB, bindingList);
+	auto minutes = getLiteralStrFromAtomSlot(minSlot, pKB, bindingList);
+	auto seconds = getLiteralStrFromAtomSlot(secSlot, pKB, bindingList);
+	auto tzStr = getLiteralStrFromAtomSlot(tzSlot, pKB, bindingList);
 
 	auto resultDatetimeStr = years + k_rsrcHyphen + months + k_rsrcHyphen + days
 		+ k_rsrcTee + hours + k_rsrcColon + minutes + k_rsrcColon + seconds + tzStr;
 	auto resultDatetime = DateTimeUtils::getPTimeFromXsdDateTime(resultDatetimeStr);
 
-	if (dateTimePos.m_isVariable)
+	if (dateTimeSlot.isVariable())
 	{
 		auto datetimeStr = DateTimeUtils::getXsdDateTimeLiteral(resultDatetime);
 		auto resultId = pKB->uriToRsrcId(datetimeStr, true, true);
-		return dateTimePos.checkPositionAddBinding(resultId, bindingList);
+		return dateTimeSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto foundDatetimeStr = getLiteralStrFromRulePos(dateTimePos, pKB, bindingList);
+		auto foundDatetimeStr = getLiteralStrFromAtomSlot(dateTimeSlot, pKB, bindingList);
 		auto foundDatetime = DateTimeUtils::getPTimeFromXsdDateTime(foundDatetimeStr);
 		return foundDatetime == resultDatetime;
 	}
@@ -255,16 +252,16 @@ bool pmnt::DateTimeBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindi
 
 bool pmnt::DateBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto datePos = getRulePosList().at(0);
-	auto yearPos = getRulePosList().at(1);
-	auto monthPos = getRulePosList().at(2);
-	auto dayPos = getRulePosList().at(3);
-	auto timezonePos = getRulePosList().at(4);
+	auto dateSlot = getAtomSlotList().at(0);
+	auto yearSlot = getAtomSlotList().at(1);
+	auto monthSlot = getAtomSlotList().at(2);
+	auto daySlot = getAtomSlotList().at(3);
+	auto timezoneSlot = getAtomSlotList().at(4);
 
-	auto year = getLiteralStrFromRulePos(yearPos, pKB, bindingList);
-	auto month = getLiteralStrFromRulePos(monthPos, pKB, bindingList);
-	auto day = getLiteralStrFromRulePos(dayPos, pKB, bindingList);
-	auto tzStr = getLiteralStrFromRulePos(timezonePos, pKB, bindingList);
+	auto year = getLiteralStrFromAtomSlot(yearSlot, pKB, bindingList);
+	auto month = getLiteralStrFromAtomSlot(monthSlot, pKB, bindingList);
+	auto day = getLiteralStrFromAtomSlot(daySlot, pKB, bindingList);
+	auto tzStr = getLiteralStrFromAtomSlot(timezoneSlot, pKB, bindingList);
 	if (!tzStr.empty() && tzStr[0] != 'Z' && tzStr[0] != '-' && tzStr[0] != '+')
 	{
 		tzStr = k_rsrcPlus + tzStr;
@@ -273,15 +270,15 @@ bool pmnt::DateBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingLi
 	auto resultDateStr = year + k_rsrcHyphen + month + k_rsrcHyphen + day + tzStr;
 	auto resultDate = DateTimeUtils::getDateFromXsdDate(resultDateStr);
 
-	if (datePos.m_isVariable)
+	if (dateSlot.isVariable())
 	{
 		auto dateStr = DateTimeUtils::getXsdDateLiteral(resultDate);
 		auto resultId = pKB->uriToRsrcId(dateStr, true, true);
-		return datePos.checkPositionAddBinding(resultId, bindingList);
+		return dateSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto foundDateStr = getLiteralStrFromRulePos(datePos, pKB, bindingList);
+		auto foundDateStr = getLiteralStrFromAtomSlot(dateSlot, pKB, bindingList);
 		auto foundDate = DateTimeUtils::getDateFromXsdDate(foundDateStr);
 		return foundDate == resultDate;
 	}
@@ -289,12 +286,12 @@ bool pmnt::DateBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingLi
 
 bool pmnt::SubtractDatesBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultDurationPos = getRulePosList().at(0);
-	auto firstDatePos = getRulePosList().at(1);
-	auto secondDatePos = getRulePosList().at(2);
+	auto resultDurationSlot = getAtomSlotList().at(0);
+	auto firstDateSlot = getAtomSlotList().at(1);
+	auto secondDateSlot = getAtomSlotList().at(2);
 
-	auto firstDateStr = getLiteralStrFromRulePos(firstDatePos, pKB, bindingList);
-	auto secondDateStr = getLiteralStrFromRulePos(secondDatePos, pKB, bindingList);
+	auto firstDateStr = getLiteralStrFromAtomSlot(firstDateSlot, pKB, bindingList);
+	auto secondDateStr = getLiteralStrFromAtomSlot(secondDateSlot, pKB, bindingList);
 
 	// need ptimes for day-minute duration object, as specified in built-in definition.
 	auto firstDate = DateTimeUtils::getPTimeFromXsdDate(firstDateStr);
@@ -302,26 +299,26 @@ bool pmnt::SubtractDatesBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& 
 
 	auto resultDuration = XSDDayTimeDuration{firstDate - secondDate};
 
-	if (resultDurationPos.m_isVariable)
+	if (resultDurationSlot.isVariable())
 	{
 		auto resultId = pKB->uriToRsrcId(resultDuration.toXsdLiteral(), true, true);
-		return resultDurationPos.checkPositionAddBinding(resultId, bindingList);
+		return resultDurationSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto foundDuration = XSDDayTimeDuration{getLiteralStrFromRulePos(resultDurationPos, pKB, bindingList)};
+		auto foundDuration = XSDDayTimeDuration{getLiteralStrFromAtomSlot(resultDurationSlot, pKB, bindingList)};
 		return foundDuration == resultDuration;
 	}
 }
 
 bool pmnt::SubtractTimesBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultDurationPos = getRulePosList().at(0);
-	auto firstTimePos = getRulePosList().at(1);
-	auto secondTimePos = getRulePosList().at(2);
+	auto resultDurationSlot = getAtomSlotList().at(0);
+	auto firstTimeSlot = getAtomSlotList().at(1);
+	auto secondTimeSlot = getAtomSlotList().at(2);
 
-	auto firstTimeStr = getLiteralStrFromRulePos(firstTimePos, pKB, bindingList);
-	auto secondTimeStr = getLiteralStrFromRulePos(secondTimePos, pKB, bindingList);
+	auto firstTimeStr = getLiteralStrFromAtomSlot(firstTimeSlot, pKB, bindingList);
+	auto secondTimeStr = getLiteralStrFromAtomSlot(secondTimeSlot, pKB, bindingList);
 
 	// need ptimes for day-minute duration object, as specified in built-in definition.
 	auto firstTime = DateTimeUtils::getPTimeFromXsdTime(firstTimeStr);
@@ -329,26 +326,26 @@ bool pmnt::SubtractTimesBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& 
 
 	auto resultDuration = XSDDayTimeDuration{firstTime - secondTime};
 
-	if (resultDurationPos.m_isVariable)
+	if (resultDurationSlot.isVariable())
 	{
 		auto resultId = pKB->uriToRsrcId(resultDuration.toXsdLiteral(), true, true);
-		return resultDurationPos.checkPositionAddBinding(resultId, bindingList);
+		return resultDurationSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto foundDuration = XSDDayTimeDuration{getLiteralStrFromRulePos(resultDurationPos, pKB, bindingList)};
+		auto foundDuration = XSDDayTimeDuration{getLiteralStrFromAtomSlot(resultDurationSlot, pKB, bindingList)};
 		return foundDuration == resultDuration;
 	}
 }
 
 bool pmnt::AddYearMonthDurationToDateTimeBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultDatetimePos = getRulePosList().at(0);
-	auto datetimeArgPos = getRulePosList().at(1);
-	auto durationArgPos = getRulePosList().at(2);
+	auto resultDatetimeSlot = getAtomSlotList().at(0);
+	auto datetimeArgSlot = getAtomSlotList().at(1);
+	auto durationArgSlot = getAtomSlotList().at(2);
 
-	auto datetimeArgStr = getLiteralStrFromRulePos(datetimeArgPos, pKB, bindingList);
-	auto durationArgStr = getLiteralStrFromRulePos(durationArgPos, pKB, bindingList);
+	auto datetimeArgStr = getLiteralStrFromAtomSlot(datetimeArgSlot, pKB, bindingList);
+	auto durationArgStr = getLiteralStrFromAtomSlot(durationArgSlot, pKB, bindingList);
 
 	auto durationArg = XSDYearMonthDuration{durationArgStr};
 
@@ -357,15 +354,15 @@ bool pmnt::AddYearMonthDurationToDateTimeBuiltinRuleAtom::evalImpl(KbInstance* p
 
 	auto resultDatetime = ::boost::posix_time::ptime{resultDate, datetimeArg.time_of_day()};
 
-	if (resultDatetimePos.m_isVariable)
+	if (resultDatetimeSlot.isVariable())
 	{
 		auto resultStr = DateTimeUtils::getXsdDateTimeLiteral(resultDatetime);
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultDatetimePos.checkPositionAddBinding(resultId, bindingList);
+		return resultDatetimeSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto foundDatetimeStr = getLiteralStrFromRulePos(resultDatetimePos, pKB, bindingList);
+		auto foundDatetimeStr = getLiteralStrFromAtomSlot(resultDatetimeSlot, pKB, bindingList);
 		auto foundDatetime = DateTimeUtils::getPTimeFromXsdDateTime(foundDatetimeStr);
 		return foundDatetime == resultDatetime;
 	}
@@ -373,27 +370,27 @@ bool pmnt::AddYearMonthDurationToDateTimeBuiltinRuleAtom::evalImpl(KbInstance* p
 
 bool pmnt::AddDayTimeDurationToDateTimeBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultDatetimePos = getRulePosList().at(0);
-	auto datetimeArgPos = getRulePosList().at(1);
-	auto durationArgPos = getRulePosList().at(2);
+	auto resultDatetimeSlot = getAtomSlotList().at(0);
+	auto datetimeArgSlot = getAtomSlotList().at(1);
+	auto durationArgSlot = getAtomSlotList().at(2);
 
-	auto datetimeArgStr = getLiteralStrFromRulePos(datetimeArgPos, pKB, bindingList);
-	auto durationArgStr = getLiteralStrFromRulePos(durationArgPos, pKB, bindingList);
+	auto datetimeArgStr = getLiteralStrFromAtomSlot(datetimeArgSlot, pKB, bindingList);
+	auto durationArgStr = getLiteralStrFromAtomSlot(durationArgSlot, pKB, bindingList);
 
 	auto durationArg = XSDDayTimeDuration{durationArgStr};
 
 	auto datetimeArg = DateTimeUtils::getPTimeFromXsdDateTime(datetimeArgStr);
 	auto resultDatetime = datetimeArg + durationArg.asTimeDuration();
 
-	if (resultDatetimePos.m_isVariable)
+	if (resultDatetimeSlot.isVariable())
 	{
 		auto resultStr = DateTimeUtils::getXsdDateTimeLiteral(resultDatetime);
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultDatetimePos.checkPositionAddBinding(resultId, bindingList);
+		return resultDatetimeSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto foundDatetimeStr = getLiteralStrFromRulePos(resultDatetimePos, pKB, bindingList);
+		auto foundDatetimeStr = getLiteralStrFromAtomSlot(resultDatetimeSlot, pKB, bindingList);
 		auto foundDatetime = DateTimeUtils::getPTimeFromXsdDateTime(foundDatetimeStr);
 		return foundDatetime == resultDatetime;
 	}
@@ -401,12 +398,12 @@ bool pmnt::AddDayTimeDurationToDateTimeBuiltinRuleAtom::evalImpl(KbInstance* pKB
 
 bool pmnt::SubtractYearMonthDurationFromDateTimeBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultDatetimePos = getRulePosList().at(0);
-	auto datetimeArgPos = getRulePosList().at(1);
-	auto durationArgPos = getRulePosList().at(2);
+	auto resultDatetimeSlot = getAtomSlotList().at(0);
+	auto datetimeArgSlot = getAtomSlotList().at(1);
+	auto durationArgSlot = getAtomSlotList().at(2);
 
-	auto datetimeArgStr = getLiteralStrFromRulePos(datetimeArgPos, pKB, bindingList);
-	auto durationArgStr = getLiteralStrFromRulePos(durationArgPos, pKB, bindingList);
+	auto datetimeArgStr = getLiteralStrFromAtomSlot(datetimeArgSlot, pKB, bindingList);
+	auto durationArgStr = getLiteralStrFromAtomSlot(durationArgSlot, pKB, bindingList);
 
 	auto durationArg = XSDYearMonthDuration{durationArgStr};
 
@@ -415,15 +412,15 @@ bool pmnt::SubtractYearMonthDurationFromDateTimeBuiltinRuleAtom::evalImpl(KbInst
 
 	auto resultDatetime = ::boost::posix_time::ptime{resultDate, datetimeArg.time_of_day()};
 
-	if (resultDatetimePos.m_isVariable)
+	if (resultDatetimeSlot.isVariable())
 	{
 		auto resultStr = DateTimeUtils::getXsdDateTimeLiteral(resultDatetime);
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultDatetimePos.checkPositionAddBinding(resultId, bindingList);
+		return resultDatetimeSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto foundDatetimeStr = getLiteralStrFromRulePos(resultDatetimePos, pKB, bindingList);
+		auto foundDatetimeStr = getLiteralStrFromAtomSlot(resultDatetimeSlot, pKB, bindingList);
 		auto foundDatetime = DateTimeUtils::getPTimeFromXsdDateTime(foundDatetimeStr);
 		return foundDatetime == resultDatetime;
 	}
@@ -431,27 +428,27 @@ bool pmnt::SubtractYearMonthDurationFromDateTimeBuiltinRuleAtom::evalImpl(KbInst
 
 bool pmnt::SubtractDayTimeDurationFromDateTimeBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultDatetimePos = getRulePosList().at(0);
-	auto datetimeArgPos = getRulePosList().at(1);
-	auto durationArgPos = getRulePosList().at(2);
+	auto resultDatetimeSlot = getAtomSlotList().at(0);
+	auto datetimeArgSlot = getAtomSlotList().at(1);
+	auto durationArgSlot = getAtomSlotList().at(2);
 
-	auto datetimeArgStr = getLiteralStrFromRulePos(datetimeArgPos, pKB, bindingList);
-	auto durationArgStr = getLiteralStrFromRulePos(durationArgPos, pKB, bindingList);
+	auto datetimeArgStr = getLiteralStrFromAtomSlot(datetimeArgSlot, pKB, bindingList);
+	auto durationArgStr = getLiteralStrFromAtomSlot(durationArgSlot, pKB, bindingList);
 
 	auto durationArg = XSDDayTimeDuration{durationArgStr};
 
 	auto datetimeArg = DateTimeUtils::getPTimeFromXsdDateTime(datetimeArgStr);
 	auto resultDatetime = datetimeArg - durationArg.asTimeDuration();
 
-	if (resultDatetimePos.m_isVariable)
+	if (resultDatetimeSlot.isVariable())
 	{
 		auto resultStr = DateTimeUtils::getXsdDateTimeLiteral(resultDatetime);
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultDatetimePos.checkPositionAddBinding(resultId, bindingList);
+		return resultDatetimeSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto foundDatetimeStr = getLiteralStrFromRulePos(resultDatetimePos, pKB, bindingList);
+		auto foundDatetimeStr = getLiteralStrFromAtomSlot(resultDatetimeSlot, pKB, bindingList);
 		auto foundDatetime = DateTimeUtils::getPTimeFromXsdDateTime(foundDatetimeStr);
 		return foundDatetime == resultDatetime;
 	}
@@ -459,27 +456,27 @@ bool pmnt::SubtractDayTimeDurationFromDateTimeBuiltinRuleAtom::evalImpl(KbInstan
 
 bool pmnt::AddYearMonthDurationToDateBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultDatePos = getRulePosList().at(0);
-	auto dateArgPos = getRulePosList().at(1);
-	auto durationArgPos = getRulePosList().at(2);
+	auto resultDateSlot = getAtomSlotList().at(0);
+	auto dateArgSlot = getAtomSlotList().at(1);
+	auto durationArgSlot = getAtomSlotList().at(2);
 
-	auto dateArgStr = getLiteralStrFromRulePos(dateArgPos, pKB, bindingList);
-	auto durationArgStr = getLiteralStrFromRulePos(durationArgPos, pKB, bindingList);
+	auto dateArgStr = getLiteralStrFromAtomSlot(dateArgSlot, pKB, bindingList);
+	auto durationArgStr = getLiteralStrFromAtomSlot(durationArgSlot, pKB, bindingList);
 
 	auto durationArg = XSDYearMonthDuration{durationArgStr};
 
 	auto dateArg = DateTimeUtils::getDateFromXsdDate(dateArgStr);
 	auto resultDate = dateArg + durationArg.totalMonthsAsDuration();
 
-	if (resultDatePos.m_isVariable)
+	if (resultDateSlot.isVariable())
 	{
 		auto resultStr = DateTimeUtils::getXsdDateLiteral(resultDate);
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultDatePos.checkPositionAddBinding(resultId, bindingList);
+		return resultDateSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto foundDateStr = getLiteralStrFromRulePos(resultDatePos, pKB, bindingList);
+		auto foundDateStr = getLiteralStrFromAtomSlot(resultDateSlot, pKB, bindingList);
 		auto foundDate = DateTimeUtils::getDateFromXsdDate(foundDateStr);
 		return foundDate == resultDate;
 	}
@@ -487,27 +484,27 @@ bool pmnt::AddYearMonthDurationToDateBuiltinRuleAtom::evalImpl(KbInstance* pKB, 
 
 bool pmnt::SubtractYearMonthDurationFromDateBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultDatePos = getRulePosList().at(0);
-	auto dateArgPos = getRulePosList().at(1);
-	auto durationArgPos = getRulePosList().at(2);
+	auto resultDateSlot = getAtomSlotList().at(0);
+	auto dateArgSlot = getAtomSlotList().at(1);
+	auto durationArgSlot = getAtomSlotList().at(2);
 
-	auto dateArgStr = getLiteralStrFromRulePos(dateArgPos, pKB, bindingList);
-	auto durationArgStr = getLiteralStrFromRulePos(durationArgPos, pKB, bindingList);
+	auto dateArgStr = getLiteralStrFromAtomSlot(dateArgSlot, pKB, bindingList);
+	auto durationArgStr = getLiteralStrFromAtomSlot(durationArgSlot, pKB, bindingList);
 
 	auto durationArg = XSDYearMonthDuration{durationArgStr};
 
 	auto dateArg = DateTimeUtils::getDateFromXsdDate(dateArgStr);
 	auto resultDate = dateArg - durationArg.totalMonthsAsDuration();
 
-	if (resultDatePos.m_isVariable)
+	if (resultDateSlot.isVariable())
 	{
 		auto resultStr = DateTimeUtils::getXsdDateLiteral(resultDate);
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultDatePos.checkPositionAddBinding(resultId, bindingList);
+		return resultDateSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto foundDateStr = getLiteralStrFromRulePos(resultDatePos, pKB, bindingList);
+		auto foundDateStr = getLiteralStrFromAtomSlot(resultDateSlot, pKB, bindingList);
 		auto foundDate = DateTimeUtils::getDateFromXsdDate(foundDateStr);
 		return foundDate == resultDate;
 	}
@@ -515,27 +512,27 @@ bool pmnt::SubtractYearMonthDurationFromDateBuiltinRuleAtom::evalImpl(KbInstance
 
 bool pmnt::AddDayTimeDurationToDateBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultDatePos = getRulePosList().at(0);
-	auto dateArgPos = getRulePosList().at(1);
-	auto durationArgPos = getRulePosList().at(2);
+	auto resultDateSlot = getAtomSlotList().at(0);
+	auto dateArgSlot = getAtomSlotList().at(1);
+	auto durationArgSlot = getAtomSlotList().at(2);
 
-	auto dateArgStr = getLiteralStrFromRulePos(dateArgPos, pKB, bindingList);
-	auto durationArgStr = getLiteralStrFromRulePos(durationArgPos, pKB, bindingList);
+	auto dateArgStr = getLiteralStrFromAtomSlot(dateArgSlot, pKB, bindingList);
+	auto durationArgStr = getLiteralStrFromAtomSlot(durationArgSlot, pKB, bindingList);
 
 	auto durationArg = XSDDayTimeDuration{durationArgStr};
 
 	auto dateArg = DateTimeUtils::getPTimeFromXsdDate(dateArgStr);
 	auto resultDate = dateArg + durationArg.asTimeDuration();
 
-	if (resultDatePos.m_isVariable)
+	if (resultDateSlot.isVariable())
 	{
 		auto resultStr = DateTimeUtils::getXsdDateLiteral(resultDate);
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultDatePos.checkPositionAddBinding(resultId, bindingList);
+		return resultDateSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto foundDateStr = getLiteralStrFromRulePos(resultDatePos, pKB, bindingList);
+		auto foundDateStr = getLiteralStrFromAtomSlot(resultDateSlot, pKB, bindingList);
 		auto foundDate = DateTimeUtils::getPTimeFromXsdDate(foundDateStr);
 		return foundDate == resultDate;
 	}
@@ -543,27 +540,27 @@ bool pmnt::AddDayTimeDurationToDateBuiltinRuleAtom::evalImpl(KbInstance* pKB, Bi
 
 bool pmnt::SubtractDayTimeDurationFromDateBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultDatePos = getRulePosList().at(0);
-	auto dateArgPos = getRulePosList().at(1);
-	auto durationArgPos = getRulePosList().at(2);
+	auto resultDateSlot = getAtomSlotList().at(0);
+	auto dateArgSlot = getAtomSlotList().at(1);
+	auto durationArgSlot = getAtomSlotList().at(2);
 
-	auto dateArgStr = getLiteralStrFromRulePos(dateArgPos, pKB, bindingList);
-	auto durationArgStr = getLiteralStrFromRulePos(durationArgPos, pKB, bindingList);
+	auto dateArgStr = getLiteralStrFromAtomSlot(dateArgSlot, pKB, bindingList);
+	auto durationArgStr = getLiteralStrFromAtomSlot(durationArgSlot, pKB, bindingList);
 
 	auto durationArg = XSDDayTimeDuration{durationArgStr};
 
 	auto dateArg = DateTimeUtils::getPTimeFromXsdDate(dateArgStr);
 	auto resultDate = dateArg - durationArg.asTimeDuration();
 
-	if (resultDatePos.m_isVariable)
+	if (resultDateSlot.isVariable())
 	{
 		auto resultStr = DateTimeUtils::getXsdDateLiteral(resultDate);
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultDatePos.checkPositionAddBinding(resultId, bindingList);
+		return resultDateSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto foundDateStr = getLiteralStrFromRulePos(resultDatePos, pKB, bindingList);
+		auto foundDateStr = getLiteralStrFromAtomSlot(resultDateSlot, pKB, bindingList);
 		auto foundDate = DateTimeUtils::getPTimeFromXsdDate(foundDateStr);
 		return foundDate == resultDate;
 	}
@@ -571,27 +568,27 @@ bool pmnt::SubtractDayTimeDurationFromDateBuiltinRuleAtom::evalImpl(KbInstance* 
 
 bool pmnt::AddDayTimeDurationToTimeBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultTimePos = getRulePosList().at(0);
-	auto timeArgPos = getRulePosList().at(1);
-	auto durationArgPos = getRulePosList().at(2);
+	auto resultTimeSlot = getAtomSlotList().at(0);
+	auto timeArgSlot = getAtomSlotList().at(1);
+	auto durationArgSlot = getAtomSlotList().at(2);
 
-	auto timeArgStr = getLiteralStrFromRulePos(timeArgPos, pKB, bindingList);
-	auto durationArgStr = getLiteralStrFromRulePos(durationArgPos, pKB, bindingList);
+	auto timeArgStr = getLiteralStrFromAtomSlot(timeArgSlot, pKB, bindingList);
+	auto durationArgStr = getLiteralStrFromAtomSlot(durationArgSlot, pKB, bindingList);
 
 	auto durationArg = XSDDayTimeDuration{durationArgStr};
 
 	auto timeArg = DateTimeUtils::getPTimeFromXsdTime(timeArgStr);
 	auto resultDate = timeArg + durationArg.asTimeDuration();
 
-	if (resultTimePos.m_isVariable)
+	if (resultTimeSlot.isVariable())
 	{
 		auto resultStr = DateTimeUtils::getXsdTimeLiteral(resultDate);
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultTimePos.checkPositionAddBinding(resultId, bindingList);
+		return resultTimeSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto foundTimeStr = getLiteralStrFromRulePos(resultTimePos, pKB, bindingList);
+		auto foundTimeStr = getLiteralStrFromAtomSlot(resultTimeSlot, pKB, bindingList);
 		auto foundDate = DateTimeUtils::getPTimeFromXsdTime(foundTimeStr);
 		return foundDate == resultDate;
 	}
@@ -599,27 +596,27 @@ bool pmnt::AddDayTimeDurationToTimeBuiltinRuleAtom::evalImpl(KbInstance* pKB, Bi
 
 bool pmnt::SubtractDayTimeDurationFromTimeBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultTimePos = getRulePosList().at(0);
-	auto timeArgPos = getRulePosList().at(1);
-	auto durationArgPos = getRulePosList().at(2);
+	auto resultTimeSlot = getAtomSlotList().at(0);
+	auto timeArgSlot = getAtomSlotList().at(1);
+	auto durationArgSlot = getAtomSlotList().at(2);
 
-	auto timeArgStr = getLiteralStrFromRulePos(timeArgPos, pKB, bindingList);
-	auto durationArgStr = getLiteralStrFromRulePos(durationArgPos, pKB, bindingList);
+	auto timeArgStr = getLiteralStrFromAtomSlot(timeArgSlot, pKB, bindingList);
+	auto durationArgStr = getLiteralStrFromAtomSlot(durationArgSlot, pKB, bindingList);
 
 	auto durationArg = XSDDayTimeDuration{durationArgStr};
 
 	auto timeArg = DateTimeUtils::getPTimeFromXsdTime(timeArgStr);
 	auto resultDate = timeArg - durationArg.asTimeDuration();
 
-	if (resultTimePos.m_isVariable)
+	if (resultTimeSlot.isVariable())
 	{
 		auto resultStr = DateTimeUtils::getXsdTimeLiteral(resultDate);
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultTimePos.checkPositionAddBinding(resultId, bindingList);
+		return resultTimeSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto foundTimeStr = getLiteralStrFromRulePos(resultTimePos, pKB, bindingList);
+		auto foundTimeStr = getLiteralStrFromAtomSlot(resultTimeSlot, pKB, bindingList);
 		auto foundDate = DateTimeUtils::getPTimeFromXsdTime(foundTimeStr);
 		return foundDate == resultDate;
 	}
@@ -627,26 +624,26 @@ bool pmnt::SubtractDayTimeDurationFromTimeBuiltinRuleAtom::evalImpl(KbInstance* 
 
 bool pmnt::AddYearMonthDurationsBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto current = begin(getRulePosList());
-	auto resultPos = *current;
+	auto current = begin(getAtomSlotList());
+	auto resultSlot = *current;
 	++current;
 
 	auto totalDuration = XSDYearMonthDuration{};
-	for (; current != end(getRulePosList()); ++current)
+	for (; current != end(getAtomSlotList()); ++current)
 	{
-		auto durationArgStr = getLiteralStrFromRulePos(*current, pKB, bindingList);
+		auto durationArgStr = getLiteralStrFromAtomSlot(*current, pKB, bindingList);
 		totalDuration += XSDYearMonthDuration{durationArgStr};
 	}
 
-	if (resultPos.m_isVariable)
+	if (resultSlot.isVariable())
 	{
 		auto resultStr = totalDuration.toXsdLiteral();
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultPos.checkPositionAddBinding(resultId, bindingList);
+		return resultSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto resultStr = getLiteralStrFromRulePos(*current, pKB, bindingList);
+		auto resultStr = getLiteralStrFromAtomSlot(*current, pKB, bindingList);
 		auto resultDuration = XSDYearMonthDuration{resultStr};
 		return resultDuration == totalDuration;
 	}
@@ -654,27 +651,27 @@ bool pmnt::AddYearMonthDurationsBuiltinRuleAtom::evalImpl(KbInstance* pKB, Bindi
 
 bool pmnt::SubtractYearMonthDurationsBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultPos = getRulePosList().at(0);
-	auto firstDurationPos = getRulePosList().at(1);
-	auto secondDurationPos = getRulePosList().at(2);
+	auto resultSlot = getAtomSlotList().at(0);
+	auto firstDurationSlot = getAtomSlotList().at(1);
+	auto secondDurationSlot = getAtomSlotList().at(2);
 
-	auto firstDurationStr = getLiteralStrFromRulePos(firstDurationPos, pKB, bindingList);
+	auto firstDurationStr = getLiteralStrFromAtomSlot(firstDurationSlot, pKB, bindingList);
 	auto firstDuration = XSDYearMonthDuration{firstDurationStr};
 
-	auto secondDurationStr = getLiteralStrFromRulePos(secondDurationPos, pKB, bindingList);
+	auto secondDurationStr = getLiteralStrFromAtomSlot(secondDurationSlot, pKB, bindingList);
 	auto secondDuration = XSDYearMonthDuration{secondDurationStr};
 
 	auto totalDuration = firstDuration - secondDuration;
 
-	if (resultPos.m_isVariable)
+	if (resultSlot.isVariable())
 	{
 		auto resultStr = totalDuration.toXsdLiteral();
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultPos.checkPositionAddBinding(resultId, bindingList);
+		return resultSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto resultStr = getLiteralStrFromRulePos(resultPos, pKB, bindingList);
+		auto resultStr = getLiteralStrFromAtomSlot(resultSlot, pKB, bindingList);
 		auto resultDuration = XSDYearMonthDuration{resultStr};
 		return resultDuration == totalDuration;
 	}
@@ -682,29 +679,29 @@ bool pmnt::SubtractYearMonthDurationsBuiltinRuleAtom::evalImpl(KbInstance* pKB, 
 
 bool pmnt::MultiplyYearMonthDurationBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultPos = getRulePosList().at(0);
-	auto durationPos = getRulePosList().at(1);
-	auto scalePos = getRulePosList().at(2);
+	auto resultSlot = getAtomSlotList().at(0);
+	auto durationSlot = getAtomSlotList().at(1);
+	auto scaleSlot = getAtomSlotList().at(2);
 
-	auto durationArgStr = getLiteralStrFromRulePos(durationPos, pKB, bindingList);
+	auto durationArgStr = getLiteralStrFromAtomSlot(durationSlot, pKB, bindingList);
 	auto duration = XSDYearMonthDuration{durationArgStr};
 
-	auto scale = getDoubleFromRulePos(scalePos, pKB, bindingList);
+	auto scale = getDoubleFromAtomSlot(scaleSlot, pKB, bindingList);
 
 	auto total = duration.months() * scale;
 	auto totalRounded = static_cast<int64>(floor(total + 0.5)); // must round
 
 	auto totalDuration = XSDYearMonthDuration{totalRounded};
 
-	if (resultPos.m_isVariable)
+	if (resultSlot.isVariable())
 	{
 		auto resultStr = totalDuration.toXsdLiteral();
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultPos.checkPositionAddBinding(resultId, bindingList);
+		return resultSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto resultStr = getLiteralStrFromRulePos(resultPos, pKB, bindingList);
+		auto resultStr = getLiteralStrFromAtomSlot(resultSlot, pKB, bindingList);
 		auto resultDuration = XSDYearMonthDuration{resultStr};
 		return resultDuration == totalDuration;
 	}
@@ -712,29 +709,29 @@ bool pmnt::MultiplyYearMonthDurationBuiltinRuleAtom::evalImpl(KbInstance* pKB, B
 
 bool pmnt::DivideYearMonthDurationsBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultPos = getRulePosList().at(0);
-	auto durationPos = getRulePosList().at(1);
-	auto divisorPos = getRulePosList().at(2);
+	auto resultSlot = getAtomSlotList().at(0);
+	auto durationSlot = getAtomSlotList().at(1);
+	auto divisorSlot = getAtomSlotList().at(2);
 
-	auto durationArgStr = getLiteralStrFromRulePos(durationPos, pKB, bindingList);
+	auto durationArgStr = getLiteralStrFromAtomSlot(durationSlot, pKB, bindingList);
 	auto duration = XSDYearMonthDuration{durationArgStr};
 
-	auto divisor = getDoubleFromRulePos(divisorPos, pKB, bindingList);
+	auto divisor = getDoubleFromAtomSlot(divisorSlot, pKB, bindingList);
 
 	auto total = duration.months() / divisor;
 	auto totalRounded = static_cast<int64>(floor(total + 0.5)); // must round
 
 	auto totalDuration = XSDYearMonthDuration{totalRounded};
 
-	if (resultPos.m_isVariable)
+	if (resultSlot.isVariable())
 	{
 		auto resultStr = totalDuration.toXsdLiteral();
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultPos.checkPositionAddBinding(resultId, bindingList);
+		return resultSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto resultStr = getLiteralStrFromRulePos(resultPos, pKB, bindingList);
+		auto resultStr = getLiteralStrFromAtomSlot(resultSlot, pKB, bindingList);
 		auto resultDuration = XSDYearMonthDuration{resultStr};
 		return resultDuration == totalDuration;
 	}
@@ -742,27 +739,27 @@ bool pmnt::DivideYearMonthDurationsBuiltinRuleAtom::evalImpl(KbInstance* pKB, Bi
 
 bool pmnt::AddDayTimeDurationsBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto current = begin(getRulePosList());
+	auto current = begin(getAtomSlotList());
 	auto result = *current;
 
 	++current;
 
 	auto totalDuration = XSDDayTimeDuration{};
-	for (; current != end(getRulePosList()); ++current)
+	for (; current != end(getAtomSlotList()); ++current)
 	{
-		auto durationArgStr = getLiteralStrFromRulePos(*current, pKB, bindingList);
+		auto durationArgStr = getLiteralStrFromAtomSlot(*current, pKB, bindingList);
 		totalDuration += XSDDayTimeDuration{durationArgStr};
 	}
 
-	if (result.m_isVariable)
+	if (result.isVariable())
 	{
 		auto resultStr = totalDuration.toXsdLiteral();
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return result.checkPositionAddBinding(resultId, bindingList);
+		return result.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto resultStr = getLiteralStrFromRulePos(*current, pKB, bindingList);
+		auto resultStr = getLiteralStrFromAtomSlot(*current, pKB, bindingList);
 		auto resultDuration = XSDDayTimeDuration{resultStr};
 		return resultDuration == totalDuration;
 	}
@@ -770,27 +767,27 @@ bool pmnt::AddDayTimeDurationsBuiltinRuleAtom::evalImpl(KbInstance* pKB, Binding
 
 bool pmnt::SubtractDayTimeDurationsBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultPos = getRulePosList().at(0);
-	auto firstDurationPos = getRulePosList().at(1);
-	auto secondDurationPos = getRulePosList().at(2);
+	auto resultSlot = getAtomSlotList().at(0);
+	auto firstDurationSlot = getAtomSlotList().at(1);
+	auto secondDurationSlot = getAtomSlotList().at(2);
 
-	auto firstDurationStr = getLiteralStrFromRulePos(firstDurationPos, pKB, bindingList);
+	auto firstDurationStr = getLiteralStrFromAtomSlot(firstDurationSlot, pKB, bindingList);
 	auto firstDuration = XSDDayTimeDuration{firstDurationStr};
 
-	auto secondDurationStr = getLiteralStrFromRulePos(secondDurationPos, pKB, bindingList);
+	auto secondDurationStr = getLiteralStrFromAtomSlot(secondDurationSlot, pKB, bindingList);
 	auto secondDuration = XSDDayTimeDuration{secondDurationStr};
 
 	auto totalDuration = firstDuration - secondDuration;
 
-	if (resultPos.m_isVariable)
+	if (resultSlot.isVariable())
 	{
 		auto resultStr = totalDuration.toXsdLiteral();
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultPos.checkPositionAddBinding(resultId, bindingList);
+		return resultSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto resultStr = getLiteralStrFromRulePos(resultPos, pKB, bindingList);
+		auto resultStr = getLiteralStrFromAtomSlot(resultSlot, pKB, bindingList);
 		auto resultDuration = XSDDayTimeDuration{resultStr};
 		return resultDuration == totalDuration;
 	}
@@ -798,28 +795,28 @@ bool pmnt::SubtractDayTimeDurationsBuiltinRuleAtom::evalImpl(KbInstance* pKB, Bi
 
 bool pmnt::MultiplyDayTimeDurationsBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultPos = getRulePosList().at(0);
-	auto durationPos = getRulePosList().at(1);
-	auto scalePos = getRulePosList().at(2);
+	auto resultSlot = getAtomSlotList().at(0);
+	auto durationSlot = getAtomSlotList().at(1);
+	auto scaleSlot = getAtomSlotList().at(2);
 
-	auto durationArgStr = getLiteralStrFromRulePos(durationPos, pKB, bindingList);
+	auto durationArgStr = getLiteralStrFromAtomSlot(durationSlot, pKB, bindingList);
 	auto duration = XSDDayTimeDuration{durationArgStr};
 
-	auto scale = getDoubleFromRulePos(scalePos, pKB, bindingList);
+	auto scale = getDoubleFromAtomSlot(scaleSlot, pKB, bindingList);
 
 	//TODO:  Not sure why we're rounding, here
 	auto total = floor(duration.totalSeconds() * scale + 0.5);
 	auto totalDuration = XSDDayTimeDuration{0, 0, 0, total};
 
-	if (resultPos.m_isVariable)
+	if (resultSlot.isVariable())
 	{
 		auto resultStr = totalDuration.toXsdLiteral();
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultPos.checkPositionAddBinding(resultId, bindingList);
+		return resultSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto resultStr = getLiteralStrFromRulePos(resultPos, pKB, bindingList);
+		auto resultStr = getLiteralStrFromAtomSlot(resultSlot, pKB, bindingList);
 		auto resultDuration = XSDDayTimeDuration{resultStr};
 		return resultDuration == totalDuration;
 	}
@@ -827,28 +824,28 @@ bool pmnt::MultiplyDayTimeDurationsBuiltinRuleAtom::evalImpl(KbInstance* pKB, Bi
 
 bool pmnt::DivideDayTimeDurationBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultPos = getRulePosList().at(0);
-	auto durationPos = getRulePosList().at(1);
-	auto divisorPos = getRulePosList().at(2);
+	auto resultSlot = getAtomSlotList().at(0);
+	auto durationSlot = getAtomSlotList().at(1);
+	auto divisorSlot = getAtomSlotList().at(2);
 
-	auto durationArgStr = getLiteralStrFromRulePos(durationPos, pKB, bindingList);
+	auto durationArgStr = getLiteralStrFromAtomSlot(durationSlot, pKB, bindingList);
 	auto duration = XSDDayTimeDuration{durationArgStr};
 
-	auto divisor = getDoubleFromRulePos(divisorPos, pKB, bindingList);
+	auto divisor = getDoubleFromAtomSlot(divisorSlot, pKB, bindingList);
 
 	//TODO:  Not sure why we're rounding, here
 	auto total = floor(duration.totalSeconds() / divisor + 0.5);
 	auto totalDuration = XSDDayTimeDuration{0, 0, 0, total};
 
-	if (resultPos.m_isVariable)
+	if (resultSlot.isVariable())
 	{
 		auto resultStr = totalDuration.toXsdLiteral();
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultPos.checkPositionAddBinding(resultId, bindingList);
+		return resultSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto resultStr = getLiteralStrFromRulePos(resultPos, pKB, bindingList);
+		auto resultStr = getLiteralStrFromAtomSlot(resultSlot, pKB, bindingList);
 		auto resultDuration = XSDDayTimeDuration{resultStr};
 		return resultDuration == totalDuration;
 	}
@@ -856,14 +853,14 @@ bool pmnt::DivideDayTimeDurationBuiltinRuleAtom::evalImpl(KbInstance* pKB, Bindi
 
 bool pmnt::SubtractDateTimesYieldingYearMonthDurationBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultDurationPos = getRulePosList().at(0);
-	auto firstDatetimePos = getRulePosList().at(1);
-	auto secondDatetimePos = getRulePosList().at(2);
+	auto resultDurationSlot = getAtomSlotList().at(0);
+	auto firstDatetimeSlot = getAtomSlotList().at(1);
+	auto secondDatetimeSlot = getAtomSlotList().at(2);
 
-	auto firstDatetimeStr = getLiteralStrFromRulePos(firstDatetimePos, pKB, bindingList);
+	auto firstDatetimeStr = getLiteralStrFromAtomSlot(firstDatetimeSlot, pKB, bindingList);
 	auto firstDatetime = DateTimeUtils::getPTimeFromXsdDateTime(firstDatetimeStr);
 
-	auto secondDatetimeStr = getLiteralStrFromRulePos(secondDatetimePos, pKB, bindingList);
+	auto secondDatetimeStr = getLiteralStrFromAtomSlot(secondDatetimeSlot, pKB, bindingList);
 	auto secondDatetime = DateTimeUtils::getPTimeFromXsdDateTime(secondDatetimeStr);
 
 	auto firstDate = firstDatetime.date();
@@ -885,15 +882,15 @@ bool pmnt::SubtractDateTimesYieldingYearMonthDurationBuiltinRuleAtom::evalImpl(K
 
 	auto totalDuration = XSDYearMonthDuration{isNegative ? -countOfMonths : countOfMonths};
 
-	if (resultDurationPos.m_isVariable)
+	if (resultDurationSlot.isVariable())
 	{
 		auto resultStr = totalDuration.toXsdLiteral();
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultDurationPos.checkPositionAddBinding(resultId, bindingList);
+		return resultDurationSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto resultStr = getLiteralStrFromRulePos(resultDurationPos, pKB, bindingList);
+		auto resultStr = getLiteralStrFromAtomSlot(resultDurationSlot, pKB, bindingList);
 		auto resultDuration = XSDYearMonthDuration{resultStr};
 		return resultDuration == totalDuration;
 	}
@@ -901,27 +898,27 @@ bool pmnt::SubtractDateTimesYieldingYearMonthDurationBuiltinRuleAtom::evalImpl(K
 
 bool pmnt::SubtractDateTimesYieldingDayTimeDurationBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const
 {
-	auto resultDurationPos = getRulePosList().at(0);
-	auto firstDatetimePos = getRulePosList().at(1);
-	auto secondDatetimePos = getRulePosList().at(2);
+	auto resultDurationSlot = getAtomSlotList().at(0);
+	auto firstDatetimeSlot = getAtomSlotList().at(1);
+	auto secondDatetimeSlot = getAtomSlotList().at(2);
 
-	auto firstDatetimeStr = getLiteralStrFromRulePos(firstDatetimePos, pKB, bindingList);
+	auto firstDatetimeStr = getLiteralStrFromAtomSlot(firstDatetimeSlot, pKB, bindingList);
 	auto firstDatetime = DateTimeUtils::getPTimeFromXsdDateTime(firstDatetimeStr);
 
-	auto secondDatetimeStr = getLiteralStrFromRulePos(secondDatetimePos, pKB, bindingList);
+	auto secondDatetimeStr = getLiteralStrFromAtomSlot(secondDatetimeSlot, pKB, bindingList);
 	auto secondDatetime = DateTimeUtils::getPTimeFromXsdDateTime(secondDatetimeStr);
 
 	auto totalDuration = XSDDayTimeDuration{firstDatetime - secondDatetime};
 
-	if (resultDurationPos.m_isVariable)
+	if (resultDurationSlot.isVariable())
 	{
 		auto resultStr = totalDuration.toXsdLiteral();
 		auto resultId = pKB->uriToRsrcId(resultStr, true, true);
-		return resultDurationPos.checkPositionAddBinding(resultId, bindingList);
+		return resultDurationSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		auto resultStr = getLiteralStrFromRulePos(resultDurationPos, pKB, bindingList);
+		auto resultStr = getLiteralStrFromAtomSlot(resultDurationSlot, pKB, bindingList);
 		auto resultDuration = XSDDayTimeDuration{resultStr};
 		return resultDuration == totalDuration;
 	}

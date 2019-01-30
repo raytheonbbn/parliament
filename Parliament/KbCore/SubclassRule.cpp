@@ -15,15 +15,15 @@ namespace pmnt = ::bbn::parliament;
 pmnt::SubclassRule::SubclassRule(KbInstance* pKB, RuleEngine* pRE) :
 	Rule(pKB, pRE, pRE->uriLib().m_ruleSubclass.id())
 {
-	bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_rdfsSubClassOf.id()),
-		RulePosition::makeVariablePos(1)));
+	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_rdfsSubClassOf.id()),
+		RuleAtomSlot::createForVar(1)));
 }
 
 void pmnt::SubclassRule::applyRuleHead(BindingList& variableBindings)
 {
-	ResourceId subClsRsrcId = variableBindings[0].m_rsrcId;
-	ResourceId superClsRsrcId = variableBindings[1].m_rsrcId;
+	ResourceId subClsRsrcId = variableBindings[0].getBinding();
+	ResourceId superClsRsrcId = variableBindings[1].getBinding();
 
 	if (subClsRsrcId != superClsRsrcId)	// avoid recursion
 	{
@@ -66,17 +66,14 @@ void pmnt::SubclassRule::applyRuleHead(BindingList& variableBindings)
 			}
 		}
 
-		if (!m_pKB->isRsrcAnonymous(superClsRsrcId)) // filter anonymous stuff (restrictions?)
-		{
-			auto pNewRule = ::std::make_shared<StandardRule>(m_pKB, m_pRE, getRsrcId());
-			pNewRule->bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-				RulePosition::makeRsrcPos(uriLib().m_rdfType.id()),
-				RulePosition::makeRsrcPos(subClsRsrcId)));
-			pNewRule->headPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-				RulePosition::makeRsrcPos(uriLib().m_rdfType.id()),
-				RulePosition::makeRsrcPos(superClsRsrcId)));
-			m_pRE->addRule(pNewRule);
-		}
+		auto pNewRule = ::std::make_shared<StandardRule>(m_pKB, m_pRE, getRsrcId());
+		pNewRule->bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+			RuleAtomSlot::createForRsrc(uriLib().m_rdfType.id()),
+			RuleAtomSlot::createForRsrc(subClsRsrcId)));
+		pNewRule->headPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+			RuleAtomSlot::createForRsrc(uriLib().m_rdfType.id()),
+			RuleAtomSlot::createForRsrc(superClsRsrcId)));
+		m_pRE->addRule(pNewRule);
 	}
 }
 
@@ -86,17 +83,17 @@ pmnt::SubclassHelperRule::SubclassHelperRule(KbInstance* pKB, RuleEngine* pRE,
 	m_subClsRsrcId(subClsRsrcId),
 	m_superClsRsrcId(superClsRsrcId)
 {
-	bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_rdfsSubClassOf.id()),
-		RulePosition::makeRsrcPos(m_subClsRsrcId)));
-	headPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_rdfsSubClassOf.id()),
-		RulePosition::makeRsrcPos(m_superClsRsrcId)));
+	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_rdfsSubClassOf.id()),
+		RuleAtomSlot::createForRsrc(m_subClsRsrcId)));
+	headPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_rdfsSubClassOf.id()),
+		RuleAtomSlot::createForRsrc(m_superClsRsrcId)));
 }
 
 void pmnt::SubclassHelperRule::applyRuleHead(BindingList& variableBindings)
 {
-	ResourceId clsRsrcId = variableBindings[0].m_rsrcId;
+	ResourceId clsRsrcId = variableBindings[0].getBinding();
 	if (clsRsrcId != m_superClsRsrcId)
 	{
 		StandardRule::applyRuleHead(variableBindings);
