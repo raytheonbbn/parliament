@@ -981,7 +981,6 @@ BOOST_DATA_TEST_CASE(
 
 	if (rtp.m_initPoint == RuleInitPoint::k_middle2)
 	{
-		//kb.dumpKbAsNTriples(::std::cout,true,true,true);
 		kb.ruleEngine().addRule(pNewRule1);
 		kb.ruleEngine().addRule(make_shared<SubclassRule>(&kb, &(kb.ruleEngine())));
 		// Test entailments - the above complex rule paired with subclass rule - both must fire
@@ -1080,7 +1079,7 @@ BOOST_DATA_TEST_CASE(
 	if (rtp.m_initPoint == RuleInitPoint::k_middle5)
 	{
 		kb.ruleEngine().addRule(pNewRule4);
-		//kb.dumpKbAsNTriples(::std::cout,true,true,true);
+
 		// Test entailments
 		BOOST_CHECK_EQUAL(static_cast<size_t>(23), kb.stmtCount());
 		BOOST_CHECK(isEntailed(kb, aRsrcId, dRsrcId, fRsrcId));

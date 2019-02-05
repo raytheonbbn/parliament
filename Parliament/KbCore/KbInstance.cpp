@@ -44,7 +44,6 @@
 #include <boost/format.hpp>
 
 #include <algorithm>
-#include <iostream>
 #include <iomanip>
 #include <ostream>
 #include <sstream>
@@ -400,12 +399,12 @@ void pmnt::KbInstance::countStmts(/* out */ size_t& total, /* out */ size_t& num
 		}
 		if (isVirtual)
 		{
-			numVirtual++;
+			++numVirtual;
 			--total;
 		}
 		if (isHidden)
 		{
-			numHidden++;
+			++numHidden;
 		}
 	}
 
@@ -416,22 +415,61 @@ void pmnt::KbInstance::countStmts(/* out */ size_t& total, /* out */ size_t& num
 	}
 }
 
-struct Triple {
-	pmnt::ResourceId sId;
-	pmnt::ResourceId pId;
-	pmnt::ResourceId oId;
-};
-bool operator==(const Triple& lhs, const Triple& rhs)
-	{ return lhs.sId == rhs.sId && lhs.pId == rhs.pId && lhs.oId == rhs.oId; }
-static ::std::vector<Triple> g_tripleStack;
-
-// Add a new statement to the kb.  If the statement is part of a reification
-// and thus is virtual, return k_nullStmtId.  Else return new statement id.
+// Add a new statement to the kb.  If this call to addStmt is recursive (because a
+// previous call caused an inference), then return k_nullStmtId.  Also, if the
+// statement is part of a reification and is therefore virtual, return k_nullStmtId.
+// Otherwise, return the new statement ID.
+//
+// Assumes that some external caller is ensuring serialization between threads,
+// which is okay because that is the blanket assumption across all KbInstance
+// methods that write.
 pmnt::StatementId pmnt::KbInstance::addStmt(ResourceId subjectId,
 	ResourceId predicateId, ResourceId objectId, bool isInferred)
 {
 	ensureNotReadOnly("KbInstance::addStmt");
 
+	if (m_pi->m_addStmtStack.empty())
+	{
+		// This is a top-level call to addStmt, so do the actual add and remember the
+		// statement ID to return later.  Also, add a dummy record to the stack so we
+		// know that we're recursing on the next addStmt call.
+		m_pi->m_addStmtStack.emplace_back(k_nullRsrcId, k_nullRsrcId, k_nullRsrcId, false);
+		StatementId stmtId = addStmtInternal(subjectId, predicateId, objectId, isInferred);
+
+		// In the midst of the addStmtInternal call above, we may have accumulated new
+		// inferences to add in m_pi->m_addStmtStack, so we add those now.  Note that
+		// the mode of iterating over the collection is a little odd because the call
+		// to addStmtInternal in the body of the loop may cause recursive calls to addStmt
+		// that add new entries to the collection, so we can't use iterators.
+		while (!m_pi->m_addStmtStack.empty())
+		{
+			StmtToAdd stmtToAdd{m_pi->m_addStmtStack.back()};
+			m_pi->m_addStmtStack.pop_back();
+			if (stmtToAdd.m_subjId != k_nullRsrcId)
+			{
+				addStmtInternal(stmtToAdd.m_subjId, stmtToAdd.m_predId, stmtToAdd.m_objId,
+					stmtToAdd.m_isInferred);
+			}
+		}
+
+		// Now return the statement ID from above:
+		return stmtId;
+	}
+	else
+	{
+		// We are in the midst of a recursion, so don't actually add the new statement,
+		// just remember that we need to add it later and return.  (This breaks the
+		// recursion so we don't overflow the stack.)
+		m_pi->m_addStmtStack.emplace_back(subjectId, predicateId, objectId, isInferred);
+		return k_nullStmtId;
+	}
+}
+
+// Add a new statement to the kb.  If the statement is part of a reification
+// and thus is virtual, return k_nullStmtId.  Else return new statement id.
+pmnt::StatementId pmnt::KbInstance::addStmtInternal(ResourceId subjectId,
+	ResourceId predicateId, ResourceId objectId, bool isInferred)
+{
 	// Test to see if this statement is part of a reification
 	if (predicateId == uriLib().m_rdfSubject.id()
 		|| predicateId == uriLib().m_rdfPredicate.id()
@@ -465,87 +503,69 @@ pmnt::StatementId pmnt::KbInstance::addStmt(ResourceId subjectId,
 		}
 		else if (!s.isVirtual())
 		{
-			Triple triple{ subjectId, predicateId, objectId };
-			auto foundIt = ::std::find(cBegin(g_tripleStack), cEnd(g_tripleStack), triple);
-			if (foundIt != cEnd(g_tripleStack))
-			{
-				auto index = ::std::distance(cBegin(g_tripleStack), foundIt);
-				::std::cout << "RE-ADD STMT index = " << index << " ("
-					<< subjectId << " " << predicateId << " " << objectId << " " << isInferred << ")" << ::std::endl << ::std::flush;
-			}
-			g_tripleStack.push_back(triple);
-			::std::cout << "KbInstance::addStmt call depth = " << g_tripleStack.size() << " ("
-				<< subjectId << " " << predicateId << " " << objectId << " " << isInferred << ")" << ::std::endl << ::std::flush;
-
-//			if (g_tripleStack.size() > 105)
-//			{
-//				::std::cout << ::std::endl;
-//				printRules(::std::cout);
-//				::std::cout << ::std::endl << ::std::flush;
-//			}
-
-//			if (g_tripleStack.size() > 90)
-//			{
-//				for (auto trpl : g_tripleStack)
-//				{
-//					::std::cout << "     Stack entry:  "
-//						<< rsrcIdToUri(trpl.sId) << " " << rsrcIdToUri(trpl.pId) << " " << rsrcIdToUri(trpl.oId) << ::std::endl << ::std::flush;
-//				}
-//			}
-
-			// Get the Id of statement to be added
-			auto nextStmtID = static_cast<StatementId>(stmtCount());
-
-			KbStmt stmt;
-			stmt.init();
-			stmt.setFlag(StatementFlags::k_stmtFlagValid, true);		// ensure it's marked valid
-			stmt.setFlag(StatementFlags::k_stmtFlagDeleted, false);	// ensure it's not deleted
-			stmt.setFlag(StatementFlags::k_stmtFlagInferred, isInferred);
-			stmt.setFlag(StatementFlags::k_stmtFlagHidden, false);
-
-			// Set up stmt subject, predicate, and object:
-			stmt.m_subjectId		= subjectId;
-			stmt.m_predicateId	= predicateId;
-			stmt.m_objectId		= objectId;
-
-			// Link stmt into subject linked list
-			KbRsrc& subRsrc = m_pi->m_rsrcTbl.getRecordAt(subjectId);
-			stmt.m_subjectNext = subRsrc.m_subjectFirst;
-			subRsrc.m_subjectFirst = nextStmtID;
-			++subRsrc.m_subjectCount;
-
-			// Link stmt into predicate linked list
-			KbRsrc& predRsrc = m_pi->m_rsrcTbl.getRecordAt(predicateId);
-			stmt.m_predicateNext = predRsrc.m_predicateFirst;
-			predRsrc.m_predicateFirst = nextStmtID;
-			++predRsrc.m_predicateCount;
-
-			// Link stmt into object linked list
-			KbRsrc& objRsrc = m_pi->m_rsrcTbl.getRecordAt(objectId);
-			stmt.m_objectNext = objRsrc.m_objectFirst;
-			objRsrc.m_objectFirst = nextStmtID;
-			++objRsrc.m_objectCount;
-
-			// Store the stmt
-			m_pi->m_stmtTbl.pushBack(stmt);
+			// Physically add the statement in the statement table:
+			result = addStmtCore(subjectId, predicateId, objectId, false, false, isInferred);
 
 			// Fire the trigger
 			for (auto pStmtHndlr : m_pi->m_stmtHndlrList)
 			{
-				pStmtHndlr->onNewStmt(this, Statement(this, nextStmtID));
-			}
-			result = nextStmtID;
-			if (g_tripleStack.empty())
-			{
-				::std::cout << "POPPING FROM EMPTY TRIPLE STACK" << ::std::endl << ::std::flush;
-			}
-			else
-			{
-				g_tripleStack.pop_back();
+				pStmtHndlr->onNewStmt(this, Statement(this, result));
 			}
 		}
 		return result;
 	}
+}
+
+// This is the core of the addStmt implementation, where that physical modifications
+// are made to the statment table itself.  Do not call this directly unless you are
+// very clear about what you are doing!
+pmnt::StatementId pmnt::KbInstance::addStmtCore(ResourceId subjectId, ResourceId predicateId,
+	ResourceId objectId, bool isHidden, bool isDeleted, bool isInferred)
+{
+	// Hidden flag takes precedence over the other two:
+	if (isHidden)
+	{
+		isDeleted = false;
+		isInferred = false;
+	}
+
+	// Get the Id of statement to be added
+	auto nextStmtID = static_cast<StatementId>(stmtCount());
+
+	KbStmt stmt;
+	stmt.init();
+	stmt.setFlag(StatementFlags::k_stmtFlagValid, true);		// ensure it's marked valid
+	stmt.setFlag(StatementFlags::k_stmtFlagDeleted, isDeleted);
+	stmt.setFlag(StatementFlags::k_stmtFlagInferred, isInferred);
+	stmt.setFlag(StatementFlags::k_stmtFlagHidden, isHidden);
+
+	// Set up stmt subject, predicate, and object:
+	stmt.m_subjectId		= subjectId;
+	stmt.m_predicateId	= predicateId;
+	stmt.m_objectId		= objectId;
+
+	// Link stmt into subject linked list
+	KbRsrc& subRsrc = m_pi->m_rsrcTbl.getRecordAt(subjectId);
+	stmt.m_subjectNext = subRsrc.m_subjectFirst;
+	subRsrc.m_subjectFirst = nextStmtID;
+	++subRsrc.m_subjectCount;
+
+	// Link stmt into predicate linked list
+	KbRsrc& predRsrc = m_pi->m_rsrcTbl.getRecordAt(predicateId);
+	stmt.m_predicateNext = predRsrc.m_predicateFirst;
+	predRsrc.m_predicateFirst = nextStmtID;
+	++predRsrc.m_predicateCount;
+
+	// Link stmt into object linked list
+	KbRsrc& objRsrc = m_pi->m_rsrcTbl.getRecordAt(objectId);
+	stmt.m_objectNext = objRsrc.m_objectFirst;
+	objRsrc.m_objectFirst = nextStmtID;
+	++objRsrc.m_objectCount;
+
+	// Store the stmt
+	m_pi->m_stmtTbl.pushBack(stmt);
+
+	return nextStmtID;
 }
 
 void pmnt::KbInstance::deleteStmt(ResourceId subjectId, ResourceId predicateId,
@@ -653,36 +673,36 @@ pair<pmnt::ResourceId, pmnt::StatementId> pmnt::KbInstance::addReification(
 	ResourceId stmtName, ResourceId subjectId, ResourceId predicateId, ResourceId objectId)
 {
 	ensureNotReadOnly("KbInstance::addReification");
+
 	StatementId stmtId = findStatementId(subjectId, predicateId, objectId);
 	if (stmtId == k_nullStmtId)
 	{
-		stmtId = addStmt(subjectId, predicateId, objectId, false);
-		deleteStmt(subjectId, predicateId, objectId);
+		stmtId = addStmtCore(subjectId, predicateId, objectId, false, true, false);
 	}
 	KbStmt* pStmt = stmtIdToStmt(stmtId);
-	ResourceId statementTag = pStmt->m_statementTag;
-	if (statementTag == k_nullRsrcId){
-		// Create statement resource, push it back in
-		statementTag = (ResourceId) m_pi->m_rsrcTbl.recordCount();
+	ResourceId stmtTag = pStmt->m_statementTag;
+	if (stmtTag == k_nullRsrcId){
+		// Get the next resource ID:
+		stmtTag = static_cast<ResourceId>(m_pi->m_rsrcTbl.recordCount());
 
-		// Initialize a KbRsrc
+		// Initialize the KbRsrc
 		KbRsrc rsrc;
 		rsrc.init();
-
-		// Insert URI in m_pi->m_uriTbl and link it to the KbRsrc
 		rsrc.m_uriOffset = stmtId;
-
 		rsrc.setFlag(ResourceFlags::k_rsrcFlagStatementTag, true);
+
 		// Insert the KbRsrc in the file
 		m_pi->m_rsrcTbl.pushBack(rsrc);
-		pStmt->m_statementTag = statementTag;
+		pStmt->m_statementTag = stmtTag;
 	}
-	ResourceId p = m_pi->m_uriLib.m_statementHasName.id();
-	// Create link statement
-	StatementId linkStatementId = addStmt(statementTag, p, stmtName, false);
-	// Hide link statement
-	KbStmt* linkStatement = stmtIdToStmt(linkStatementId);
-	linkStatement->setFlag(StatementFlags::k_stmtFlagHidden, true);
+
+	// Create the hidden link statement
+	ResourceId hasName = m_pi->m_uriLib.m_statementHasName.id();
+	if (findStatementId(stmtTag, hasName, stmtName) == k_nullStmtId)
+	{
+		addStmtCore(stmtTag, hasName, stmtName, true, false, false);
+	}
+
 	return make_pair(stmtName, stmtId);
 }
 
@@ -693,8 +713,8 @@ void pmnt::KbInstance::deleteReification(ResourceId stmtName, ResourceId subject
 	StatementId stmtId = findStatementId(subjectId, predicateId, objectId);
 	if (stmtId != k_nullStmtId){
 		KbStmt* pStmt = stmtIdToStmt(stmtId);
-		ResourceId statementTag = pStmt->m_statementTag;
-		deleteStmt(statementTag, m_pi->m_uriLib.m_statementHasName.id(),stmtName);
+		ResourceId stmtTag = pStmt->m_statementTag;
+		deleteStmt(stmtTag, m_pi->m_uriLib.m_statementHasName.id(),stmtName);
 	}
 }
 

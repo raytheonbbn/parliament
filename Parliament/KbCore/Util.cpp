@@ -13,6 +13,7 @@
 #include <cstring>
 #include <locale>
 #include <sstream>
+#include <cstdlib>
 #include <string>
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -44,6 +45,17 @@ using ::std::use_facet;
 string pmnt::getKbVersion()
 {
 	return PARLIAMENT_VERSION_STRING;
+}
+
+pmnt::TString pmnt::tGetEnvVar(const TChar* pVarName)
+{
+	const TChar* pEnvVarValue =
+#if defined(PARLIAMENT_WINDOWS) && defined(UNICODE)
+		::_wgetenv(pVarName);
+#else
+		::getenv(pVarName);
+#endif
+	return (pEnvVarValue == nullptr) ? TString() : TString(pEnvVarValue);
 }
 
 

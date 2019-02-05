@@ -10,6 +10,7 @@
 #include "parliament/Exceptions.h"
 #include "parliament/Log.h"
 #include "parliament/UnicodeIterator.h"
+#include "parliament/Util.h"
 #include "parliament/Windows.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
@@ -19,7 +20,6 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/format.hpp>
 #include <algorithm>
-#include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <string>
@@ -93,21 +93,10 @@ PARLIAMENT_NAMESPACE_END
 
 #endif
 
-pmnt::TString pmnt::Config::tGetEnvVar(const TChar* pVarName)
-{
-	const TChar* pEnvVarValue =
-#if defined(PARLIAMENT_WINDOWS) && defined(UNICODE)
-		::_wgetenv(pVarName);
-#else
-		::getenv(pVarName);
-#endif
-	return (pEnvVarValue == nullptr) ? TString() : TString(pEnvVarValue);
-}
-
 bfs::path pmnt::Config::getConfigFilePath()
 {
 	auto envVarValue = tGetEnvVar(_T("PARLIAMENT_CONFIG_PATH"));
-	if (envVarValue.length() > 0)
+	if (!envVarValue.empty())
 	{
 		return envVarValue;
 	}

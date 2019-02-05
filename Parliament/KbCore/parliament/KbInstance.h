@@ -173,6 +173,9 @@ private:
 	KbStmt* stmtIdToStmt(StatementId stmtId, const ::std::nothrow_t& nothrow) const;
 	Statement findStatement(ResourceId subjectId, ResourceId predicateId, ResourceId objectId) const;
 	StatementId findStatementId(ResourceId subjectId, ResourceId predicateId, ResourceId objectId) const;
+	StatementId addStmtInternal(ResourceId subjectId, ResourceId predicateId, ResourceId objectId, bool isInferred);
+	StatementId addStmtCore(ResourceId subjectId, ResourceId predicateId,
+		ResourceId objectId, bool isHidden, bool isDeleted, bool isInferred);
 	void printStmt(const KbStmt& stmt, StatementId stmtId, ::std::ostream& s, bool includeNextStmts, bool verboseNextStmts) const;
 	void printRsrc(const KbRsrc& rsrc, ResourceId rsrcId, ::std::ostream& s, bool includeFirstStmts, bool verboseFirstStmts) const;
 	void printStmtIdField(const char* pFieldName, StatementId stmtId, ::std::ostream& s, bool includeStmtTriple) const;

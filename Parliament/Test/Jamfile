@@ -45,6 +45,7 @@ run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 		#--list_content
 		#--run_test=KbInstanceTestSuite/testByQuickOverview
 		#--run_test=InferenceStressTestSuite/inferenceStressTest
+		#--run_test=DeftTestSuite/testDeftLoad
 	:	# input files
 	:	<include>.
 		<include>$(KbCoreDir)

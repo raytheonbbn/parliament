@@ -15,7 +15,7 @@ using namespace ::bbn::parliament;
 
 BOOST_AUTO_TEST_SUITE(InferenceStressTestSuite)
 
-static const size_t k_numABoxStmts = 200;
+static const size_t k_numABoxStmts = 10000;
 
 static const char k_aircraftInstFmt[]	= "http://example.org/abox#tailNo%|1$09|";
 

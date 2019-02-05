@@ -92,7 +92,6 @@
 			<formatter type="xml"/>
 			<batchtest fork="yes" todir="${reportsDir}/${ant.project.name}">
 				<fileset dir="${basedir}/test" includes="**/*Test.java"/>
-				<!--fileset dir="${basedir}/test" includes="**/DeftLoadTest.java"/-->
 				<!--fileset dir="${basedir}/test" includes="**/IndexExecutionTest.java"/-->
 				<!--fileset dir="${basedir}/test" includes="**/KbOpExecutorDAWGTest.java"/-->
 				<!--fileset dir="${basedir}/test" includes="**/KbUnionGraphTest.java"/-->
@@ -113,17 +112,6 @@
 			<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
 			<env key="PARLIAMENT_CONFIG_PATH" value="${testConfigFile}"/>
 			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
-			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
-			<sysproperty key="test.data.path" value="${basedir}/data"/>
-			<classpath>
-				<pathelement location="${testBinDir}"/>
-				<path refid="testPath"/>
-			</classpath>
-		</java>
-	</target>
-
-	<target name="runSplitter" depends="compileTests">
-		<java classname="com.bbn.parliament.jena.NTriplesSplitter" fork="yes">
 			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
 			<sysproperty key="test.data.path" value="${basedir}/data"/>
 			<classpath>
