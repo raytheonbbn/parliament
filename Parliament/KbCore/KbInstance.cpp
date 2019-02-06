@@ -680,7 +680,8 @@ pair<pmnt::ResourceId, pmnt::StatementId> pmnt::KbInstance::addReification(
 	}
 	KbStmt* pStmt = stmtIdToStmt(stmtId);
 	ResourceId stmtTag = pStmt->m_statementTag;
-	if (stmtTag == k_nullRsrcId){
+	if (stmtTag == k_nullRsrcId)
+	{
 		// Get the next resource ID:
 		stmtTag = static_cast<ResourceId>(m_pi->m_rsrcTbl.recordCount());
 
