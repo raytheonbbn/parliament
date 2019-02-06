@@ -569,7 +569,7 @@ const pmnt::Config& pmnt::Config::ensureKbDirExists() const
 	if (!exists(m_kbDirectoryPath))
 	{
 		create_directory(m_kbDirectoryPath);
-		PMNT_LOG(g_log, LogLevel::info) << "XYZZY Created KB directory '"
+		PMNT_LOG(g_log, LogLevel::debug) << "Created KB directory '"
 			<< pathAsUtf8(m_kbDirectoryPath) << "'.";
 	}
 	else if (!is_directory(m_kbDirectoryPath))

@@ -16,7 +16,6 @@
 #include "parliament/KbInstance.h"
 #include "parliament/RegEx.h"
 #include "parliament/UnicodeIterator.h"
-#include "parliament/UnicodeIterator.h"
 
 namespace bfs = ::boost::filesystem;
 using namespace ::bbn::parliament;
@@ -37,7 +36,8 @@ static const char k_nTripleRegExStr[] = "^(?:(?:<([^ ]+)>)|(_:[^ ]+)) <([^ ]+)> 
 static ResourceId getBNodeId(KbInstance& kb, BlankNodeMap& bnodeMap, const string& bnodeQName)
 {
 	ResourceId bNodeId;
-	if (auto it = bnodeMap.find(bnodeQName); it != end(bnodeMap))
+	auto it = bnodeMap.find(bnodeQName);
+	if (it != end(bnodeMap))
 	{
 		bNodeId = it->second;
 	}
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(testDeftLoad)
 	if (envVarValue.empty())
 	{
 		BOOST_TEST_MESSAGE("Skipping test because environment variable "
-			<< k_pmntDepsEnvVar << " is not defined.");
+			<< convertTCharToUtf8(k_pmntDepsEnvVar) << " is not defined.");
 		return;
 	}
 
@@ -63,8 +63,8 @@ BOOST_AUTO_TEST_CASE(testDeftLoad)
 	dataFile /= k_dataFilePath;
 	if (!exists(dataFile))
 	{
-		BOOST_TEST_MESSAGE("Skipping test because data file " << k_dataFilePath
-			<< " could not be found in dependencies directory " << envVarValue);
+		BOOST_TEST_MESSAGE("Skipping test because data file " << convertTCharToUtf8(k_dataFilePath)
+			<< " could not be found in dependencies directory " << convertTCharToUtf8(envVarValue));
 		return;
 	}
 

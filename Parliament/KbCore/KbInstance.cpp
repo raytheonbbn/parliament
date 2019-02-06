@@ -43,7 +43,6 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/format.hpp>
 
-#include <algorithm>
 #include <iomanip>
 #include <ostream>
 #include <sstream>
