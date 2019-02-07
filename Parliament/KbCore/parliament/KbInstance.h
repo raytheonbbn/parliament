@@ -168,6 +168,7 @@ private:
 	enum class EncodingType { LITERAL, IRI };
 
 	static double computeExcessCapacity(size_t capacity, size_t recCount);
+	ResourceId createStmtTagRsrc(StatementId reifiedStmtId);
 	KbRsrc* rsrcIdToRsrc(ResourceId rsrcId) const;
 	KbStmt* stmtIdToStmt(StatementId stmtId) const;
 	KbStmt* stmtIdToStmt(StatementId stmtId, const ::std::nothrow_t& nothrow) const;

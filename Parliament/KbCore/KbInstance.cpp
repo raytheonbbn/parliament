@@ -312,7 +312,21 @@ pmnt::ResourceId pmnt::KbInstance::createAnonymousRsrc()
 	ResourceId rsrcId = m_pi->m_rsrcTbl.recordCount();
 	KbRsrc rsrc;
 	rsrc.init();
-	rsrc.m_flags |= asBitMask(ResourceFlags::k_rsrcFlagAnonymous);
+	rsrc.setFlag(ResourceFlags::k_rsrcFlagAnonymous, true);
+	m_pi->m_rsrcTbl.pushBack(rsrc);
+	return rsrcId;
+}
+
+// Allocate a fresh Id for a statement tag resource
+pmnt::ResourceId pmnt::KbInstance::createStmtTagRsrc(StatementId reifiedStmtId)
+{
+	ensureNotReadOnly("KbInstance::createStmtTagRsrc");
+
+	ResourceId rsrcId = m_pi->m_rsrcTbl.recordCount();
+	KbRsrc rsrc;
+	rsrc.init();
+	rsrc.setFlag(ResourceFlags::k_rsrcFlagStatementTag, true);
+	rsrc.m_uriOffset = reifiedStmtId;
 	m_pi->m_rsrcTbl.pushBack(rsrc);
 	return rsrcId;
 }
@@ -682,17 +696,7 @@ pair<pmnt::ResourceId, pmnt::StatementId> pmnt::KbInstance::addReification(
 	ResourceId stmtTag = pStmt->m_statementTag;
 	if (stmtTag == k_nullRsrcId)
 	{
-		// Get the next resource ID:
-		stmtTag = static_cast<ResourceId>(m_pi->m_rsrcTbl.recordCount());
-
-		// Initialize the KbRsrc
-		KbRsrc rsrc;
-		rsrc.init();
-		rsrc.m_uriOffset = stmtId;
-		rsrc.setFlag(ResourceFlags::k_rsrcFlagStatementTag, true);
-
-		// Insert the KbRsrc in the file
-		m_pi->m_rsrcTbl.pushBack(rsrc);
+		stmtTag = createStmtTagRsrc(stmtId);
 		pStmt->m_statementTag = stmtTag;
 	}
 
