@@ -26,8 +26,6 @@ BOOST_AUTO_TEST_CASE(inferenceStressTest)
 {
 	Config config;
 	config.kbDirectoryPath("test-kb-data");
-	config.disableAllRules();
-	config.isSubclassRuleOn(true);
 	KbInstance::deleteKb(config);
 
 	{
