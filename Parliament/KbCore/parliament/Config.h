@@ -332,7 +332,6 @@ public:
 #endif
 
 private:
-	static TString tGetEnvVar(const TChar* pVarName);
 	static ::boost::filesystem::path getConfigFilePath();
 	static bool isBlankOrCommentLine(const ::std::string& line);
 	static void splitAtFirstEquals(/* in */ const ::std::string& line,

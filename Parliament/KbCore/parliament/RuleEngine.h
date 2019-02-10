@@ -19,6 +19,7 @@
 #include <limits>
 #include <memory>
 #include <set>
+#include <stdexcept>
 #include <unordered_map>
 #include <vector>
 
@@ -26,57 +27,68 @@ PARLIAMENT_NAMESPACE_BEGIN
 
 class RuleEngine;
 
-struct RuleVariableBinding
+class RuleVariableBinding
 {
-	bool			m_isBound;
-	ResourceId	m_rsrcId;
-
-	RuleVariableBinding()
-		: m_isBound(false), m_rsrcId(k_nullRsrcId) {}
+public:
+	RuleVariableBinding() : m_rsrcId(k_nullRsrcId) {}
 	void bind(ResourceId rsrcId)
-		{
-			m_rsrcId = rsrcId;
-			m_isBound = true;
-		}
+		{ m_rsrcId = rsrcId; }
+	bool isBound() const
+		{ return m_rsrcId != k_nullRsrcId; }
+	ResourceId getBinding() const
+		{ return m_rsrcId; }
+
+private:
+	ResourceId m_rsrcId;
 };
 
 using BoolList = ::std::vector<bool>;
 using BindingList = ::std::vector<RuleVariableBinding>;
 
-struct RulePosition
+class RuleAtomSlot
 {
-	bool				m_isVariable;	// Determines which union element is currently in use
-	union
-	{
-		uint32		m_variableIndex;
-		ResourceId	m_rsrcId;
-	};
-
-	RulePosition()
-		: m_isVariable(false), m_rsrcId(k_nullRsrcId) {}
-	static RulePosition makeVariablePos(uint32 variableIndex)
+public:
+	static RuleAtomSlot createForVar(uint32 variableIndex)
 		{
-			RulePosition newPos;
-			newPos.m_isVariable = true;
-			newPos.m_variableIndex = variableIndex;
-			return newPos;
+			RuleAtomSlot newSlot;
+			newSlot.m_isVariable = true;
+			newSlot.m_variableIndex = variableIndex;
+			return newSlot;
 		}
-	static RulePosition makeRsrcPos(ResourceId rsrcId)
+	static RuleAtomSlot createForRsrc(ResourceId rsrcId)
 		{
-			RulePosition newPos;
-			newPos.m_isVariable = false;
-			newPos.m_rsrcId = rsrcId;
-			return newPos;
+			RuleAtomSlot newSlot;
+			newSlot.m_isVariable = false;
+			newSlot.m_rsrcId = rsrcId;
+			return newSlot;
 		}
-	bool checkPositionAddBinding(ResourceId rsrcId, BindingList& bindingList) const
+	bool isVariable() const
+		{ return m_isVariable; }
+	ResourceId getRsrcId() const
+		{
+			if (m_isVariable)
+			{
+				throw ::std::logic_error("Attempt to retrieve resource ID from a variable slot");
+			}
+			return m_rsrcId;
+		}
+	uint32 getVarIndexId() const
+		{
+			if (!m_isVariable)
+			{
+				throw ::std::logic_error("Attempt to retrieve variable index from a resource slot");
+			}
+			return m_variableIndex;
+		}
+	bool checkSlotAddBinding(ResourceId rsrcId, BindingList& bindingList) const
 		{
 			if (!m_isVariable)
 			{
 				return m_rsrcId == rsrcId;
 			}
-			else if (bindingList[m_variableIndex].m_isBound)
+			else if (bindingList[m_variableIndex].isBound())
 			{
-				return bindingList[m_variableIndex].m_rsrcId == rsrcId;
+				return bindingList[m_variableIndex].getBinding() == rsrcId;
 			}
 			else
 			{
@@ -85,21 +97,30 @@ struct RulePosition
 			}
 		}
 	void print(::std::ostream& s, const KbInstance* pKB) const;
+
+private:
+	RuleAtomSlot()
+		: m_isVariable(false), m_rsrcId(k_nullRsrcId) {}
+
+	bool				m_isVariable;	// Determines which union element is currently in use
+	union
+	{
+		uint32		m_variableIndex;
+		ResourceId	m_rsrcId;
+	};
 };
 
-using RulePositionList = ::std::vector<RulePosition>;
+using RuleAtomSlotList = ::std::vector<RuleAtomSlot>;
 
 struct RuleAtom
 {
-	RulePosition	m_subjPos;
-	RulePosition	m_predPos;
-	RulePosition	m_objPos;
+	RuleAtomSlot	m_subjSlot;
+	RuleAtomSlot	m_predSlot;
+	RuleAtomSlot	m_objSlot;
 
-	RuleAtom()
-		: m_subjPos(), m_predPos(), m_objPos() {}
-	RuleAtom(const RulePosition& subjPos, const RulePosition& predPos,
-			const RulePosition& objPos)
-		: m_subjPos(subjPos), m_predPos(predPos), m_objPos(objPos) {}
+	RuleAtom(const RuleAtomSlot& subjSlot, const RuleAtomSlot& predSlot,
+			const RuleAtomSlot& objSlot)
+		: m_subjSlot(subjSlot), m_predSlot(predSlot), m_objSlot(objSlot) {}
 	void print(::std::ostream& s, const KbInstance* pKB) const;
 };
 
@@ -115,7 +136,7 @@ struct ArgCountLimits
 class SWRLBuiltinRuleAtom
 {
 public:
-	SWRLBuiltinRuleAtom(const RsrcString& id) : m_id(id), m_positions() {}
+	SWRLBuiltinRuleAtom(const RsrcString& id) : m_id(id), m_slots() {}
 
 	virtual ~SWRLBuiltinRuleAtom() {}
 
@@ -124,18 +145,18 @@ public:
 
 	bool evaluate(KbInstance* pKB, BindingList& bindingList) const;
 
-	const RulePositionList& getRulePosList() const
-		{ return m_positions; }
-	void appendRulePos(const RulePosition& rulePos)
-		{ m_positions.push_back(rulePos); }
+	const RuleAtomSlotList& getAtomSlotList() const
+		{ return m_slots; }
+	void appendAtomSlot(const RuleAtomSlot& atomSlot)
+		{ m_slots.push_back(atomSlot); }
 
 protected:
-	double getDoubleFromRulePos(const RulePosition& rulePosition,
+	double getDoubleFromAtomSlot(const RuleAtomSlot& atomSlot,
 		KbInstance* pKB, const BindingList& bindingList) const;
-	RsrcString getLiteralStrFromRulePos(const RulePosition& rulePosition,
+	RsrcString getLiteralStrFromAtomSlot(const RuleAtomSlot& atomSlot,
 		KbInstance* pKB, const BindingList& bindingList) const;
 	ResourceId getRsrcIdForValue(const double value, KbInstance* pKB) const;
-	bool checkResult(const RulePosition& resultPos, double resultVal, KbInstance* pKB,
+	bool checkResult(const RuleAtomSlot& resultSlot, double resultVal, KbInstance* pKB,
 		BindingList& bindingList) const;
 
 	bool equivalent(double one, double two) const
@@ -153,7 +174,7 @@ private:
 	virtual bool evalImpl(KbInstance* pKB, BindingList& bindingList) const = 0;
 
 	RsrcString			m_id;
-	RulePositionList	m_positions;
+	RuleAtomSlotList	m_slots;
 };
 
 using AtomList = ::std::vector<RuleAtom>;
@@ -199,8 +220,6 @@ public:
 
 protected:
 	virtual void printHead(::std::ostream& s) const;
-	void bindStatement(const RuleAtom& atom, const Statement& stmt,
-		RuleVariableBinding* pBindingList) const;
 	const UriLib& uriLib() const;
 
 	KbInstance*				m_pKB;

@@ -141,7 +141,7 @@ void pmnt::FileMapping::close()
 void pmnt::FileMapping::sync()
 {
 #if defined(PARLIAMENT_WINDOWS)
-	if (!FlushViewOfFile(m_pBaseAddress, m_fileSize))
+	if (!FlushViewOfFile(m_pBaseAddress, static_cast<SIZE_T>(m_fileSize)))
 #else
 	if (msync(m_pBaseAddress, m_fileSize, MS_SYNC) != 0)
 #endif

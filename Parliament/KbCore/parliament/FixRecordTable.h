@@ -47,8 +47,8 @@ public:
 		{
 			if (recIndex >= recordCount())
 			{
-				throw Exception(::boost::format("FixRecordTable index out of "
-					"range for KB file \"%1%\"") % pathAsUtf8(m_mMap.filePath()));
+				throw Exception(::boost::format("FixRecordTable index 0x%|1$016x| out of "
+					"range for KB file \"%2%\"") % recIndex % pathAsUtf8(m_mMap.filePath()));
 			}
 			return uncheckedGetRecordAt(recIndex);
 		}

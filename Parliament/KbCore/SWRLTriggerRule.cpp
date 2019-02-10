@@ -16,9 +16,9 @@ pmnt::SWRLTriggerRule::SWRLTriggerRule(KbInstance* pKB, RuleEngine* pRE) :
 	// We assume here that an entire SWRL rule will be inserted in a single
 	// operation, and we further rely on the single-writer locking to ensure
 	// that no one is reading in the midst of this insert.
-	bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_rdfType.id()),
-		RulePosition::makeRsrcPos(uriLib().m_swrlImp.id())));
+	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_rdfType.id()),
+		RuleAtomSlot::createForRsrc(uriLib().m_swrlImp.id())));
 }
 
 void pmnt::SWRLTriggerRule::applyRuleHead(BindingList &variableBindings)

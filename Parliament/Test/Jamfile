@@ -12,7 +12,21 @@ project /KB/Test ;
 path-constant TestDir : . ;
 path-constant KbCoreDir : ../KbCore ;
 
-explicit ParliamentTest ;
+# This run target is the recommended Boost.Build mechanism for running tests, but
+# it doesn't quite work as desired on Windows.  On Windows, Parliament needs
+# ParliamentConfig.txt to be present in the same directory as the test executable.
+# The copy target below attempts to satisfy this requirement.  However, the run
+# target puts the test executable in this directory:
+#
+# target/bin/native/Parliament/Test/ParliamentTest.test/msvc-14.1/debug/address-model-64/threading-multi
+#
+# but the copy target puts the configuration file in this one:
+#
+# target/bin/native/Parliament/Test/msvc-14.1/debug/address-model-64/threading-multi
+#
+# The launcher script fixes this discrepancy by doing the copy immedaitely before
+# running the test executable.
+
 run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 		[ glob $(KbCoreDir)/*.cpp : $(KbCoreDir)/*JNI*.cpp $(KbCoreDir)/DllMain.cpp $(KbCoreDir)/Utf8StaticInitGen.cpp ]
 		/site-config//BerkeleyDB
@@ -30,6 +44,8 @@ run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 	:	# arguments
 		#--list_content
 		#--run_test=KbInstanceTestSuite/testByQuickOverview
+		#--run_test=InferenceStressTestSuite/inferenceStressTest
+		#--run_test=DeftTestSuite/testDeftLoad
 	:	# input files
 	:	<include>.
 		<include>$(KbCoreDir)
@@ -39,39 +55,9 @@ run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 		<threading>multi
 		<dependency>ParliamentConfig.txt
 		<dependency>$(TestDir)/ParliamentConfig.txt
-		#<testing.launcher>TestLauncher.bat
-		<target-os>darwin:<cxxflags>"-fvisibility=hidden"
+		<os>NT:<testing.launcher>$(TestDir)\\TestLaunch.bat
 	:	ParliamentTest
 	:	# default build
-	;
-
-#explicit ParliamentTestOld ;
-unit-test ParliamentTestOld
-	:	[ glob *.cpp : UnicodeTestCaseGen.cpp ]
-		[ glob $(KbCoreDir)/*.cpp : $(KbCoreDir)/*JNI*.cpp $(KbCoreDir)/DllMain.cpp $(KbCoreDir)/Utf8StaticInitGen.cpp ]
-		/site-config//BerkeleyDB
-		/site-config//BoostHeaderOnlyLibraries
-		/site-config//BoostAtomic/<link>static
-		/site-config//BoostChrono/<link>static
-		/site-config//BoostDateTime/<link>static
-		/site-config//BoostFileSystem/<link>static
-		/site-config//BoostLog/<link>static
-		/site-config//BoostLogSetup/<link>static
-		/site-config//BoostRegex/<link>static
-		/site-config//BoostSystem/<link>static
-		/site-config//BoostThread/<link>static
-		/site-config//BoostUnitTest/<link>static
-	:	<include>.
-		<include>$(KbCoreDir)
-		<define>PARLIAMENT_SUPPRESS_EXPORTS
-		<define>PARLIAMENT_UNIT_TEST
-		<visibility>hidden
-		<threading>multi
-		<dependency>ParliamentConfig.txt
-		<dependency>$(TestDir)/ParliamentConfig.txt
-		#<testing.launcher>TestLauncher.bat
-	:	# default build
-	:	# usage requirements
 	;
 
 # This one is for Windows:

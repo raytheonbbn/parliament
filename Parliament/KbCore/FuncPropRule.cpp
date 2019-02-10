@@ -15,14 +15,14 @@ namespace pmnt = ::bbn::parliament;
 pmnt::FuncPropRule::FuncPropRule(KbInstance* pKB, RuleEngine* pRE) :
 	Rule(pKB, pRE, pRE->uriLib().m_ruleFuncProp.id())
 {
-	bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_rdfType.id()),
-		RulePosition::makeRsrcPos(uriLib().m_owlFuncProp.id())));
+	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_rdfType.id()),
+		RuleAtomSlot::createForRsrc(uriLib().m_owlFuncProp.id())));
 }
 
 void pmnt::FuncPropRule::applyRuleHead(BindingList &bindingList)
 {
-	ResourceId funcPropId = bindingList[0].m_rsrcId;
+	ResourceId funcPropId = bindingList[0].getBinding();
 	m_pRE->addRule(::std::make_shared<FuncPropHelperRule>(m_pKB, m_pRE, funcPropId));
 }
 
@@ -30,18 +30,18 @@ pmnt::FuncPropHelperRule::FuncPropHelperRule(KbInstance* pKB, RuleEngine* pRE,
 		ResourceId funcPropId) :
 	Rule(pKB, pRE, pRE->uriLib().m_ruleFuncProp.id())
 {
-	bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(funcPropId),
-		RulePosition::makeVariablePos(1)));
+	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(funcPropId),
+		RuleAtomSlot::createForVar(1)));
 }
 
 void pmnt::FuncPropHelperRule::applyRuleHead(BindingList &bindingList)
 {
-	ResourceId objId = bindingList[1].m_rsrcId;
+	ResourceId objId = bindingList[1].getBinding();
 	if (!m_pKB->isRsrcLiteral(objId))
 	{
-		ResourceId subjId = bindingList[0].m_rsrcId;
-		ResourceId predId = getBody().back().m_predPos.m_rsrcId;
+		ResourceId subjId = bindingList[0].getBinding();
+		ResourceId predId = getBody().back().m_predSlot.getRsrcId();
 
 		StatementId newStmtId = m_pKB->find(subjId, predId, objId).statement().getStatementId();
 

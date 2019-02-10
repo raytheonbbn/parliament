@@ -12,15 +12,15 @@ namespace pmnt = ::bbn::parliament;
 pmnt::RangeRule::RangeRule(KbInstance* pKB, RuleEngine* pRE) :
 	Rule(pKB, pRE, pRE->uriLib().m_ruleRange.id())
 {
-	bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_rdfsRange.id()),
-		RulePosition::makeVariablePos(1)));
+	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_rdfsRange.id()),
+		RuleAtomSlot::createForVar(1)));
 }
 
 void pmnt::RangeRule::applyRuleHead(BindingList &bindingList)
 {
-	ResourceId propId = bindingList[0].m_rsrcId;
-	ResourceId rangeId = bindingList[1].m_rsrcId;
+	ResourceId propId = bindingList[0].getBinding();
+	ResourceId rangeId = bindingList[1].getBinding();
 	RsrcString range = m_pKB->rsrcIdToUri(rangeId);
 
 	// Here we make a good-faith effort to weed out range declarations for
@@ -44,14 +44,14 @@ pmnt::RangeHelperRule::RangeHelperRule(KbInstance* pKB, RuleEngine* pRE,
 	m_propId(propId),
 	m_rangeId(rangeId)
 {
-	bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(m_propId),
-		RulePosition::makeVariablePos(1)));
+	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(m_propId),
+		RuleAtomSlot::createForVar(1)));
 }
 
 void pmnt::RangeHelperRule::applyRuleHead(BindingList &variableBindings)
 {
-	ResourceId objId = variableBindings[1].m_rsrcId;
+	ResourceId objId = variableBindings[1].getBinding();
 	if (!m_pKB->isRsrcLiteral(objId))
 	{
 		ResourceId rdfTypeId = uriLib().m_rdfType.id();

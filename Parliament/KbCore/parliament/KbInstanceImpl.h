@@ -39,14 +39,30 @@ struct PartialReification
 	ResourceId	m_objId;
 };
 
+struct StmtToAdd {
+	StmtToAdd(ResourceId subjId, ResourceId predId, ResourceId objId, bool isInferred) :
+		m_subjId(subjId),
+		m_predId(predId),
+		m_objId(objId),
+		m_isInferred(isInferred)
+	{}
+
+	ResourceId m_subjId;
+	ResourceId m_predId;
+	ResourceId m_objId;
+	bool m_isInferred;
+};
+
 class KbInstance;
 
 struct KbInstance::Impl
 {
+	using AtomicBool = ::std::atomic_flag;
 	using StmtHandlerList = ::std::vector<NewStmtHandler*>;
 	using ReificationMap = ::std::unordered_map<ResourceId, PartialReification>;
 	using RsrcTable = FixRecordTable<KbRsrc>;
 	using StmtTable = FixRecordTable<KbStmt>;
+	using AddStmtStack = ::std::vector<StmtToAdd>;
 
 	Impl(const Config& config, KbInstance* pKB) :
 		m_config(config.ensureKbDirExists()),
@@ -64,6 +80,7 @@ struct KbInstance::Impl
 		m_stmtTbl(m_config.stmtFilePath(), m_config.readOnly(), m_config.initialStmtCapacity(),
 			m_config.stmtGrowthFactor()),
 		m_uriLib(pKB),
+		m_addStmtStack(),
 		m_re(pKB)
 	{
 		testAndClearRunAddNewRulesFlag();
@@ -91,7 +108,7 @@ struct KbInstance::Impl
 	}
 
 	const Config			m_config;			// Configuration parameters passed at initialization
-	mutable ::std::atomic_flag	m_dontNeedToRunAddNewRules;	// Whether to run addNewRules prior to a find()
+	mutable AtomicBool	m_dontNeedToRunAddNewRules;	// Whether to run addNewRules prior to a find()
 
 	const bool				m_isLogEngineInitialized;
 	Log::Source				m_log;
@@ -106,6 +123,7 @@ struct KbInstance::Impl
 	StmtTable				m_stmtTbl;			// Stores triples (subjectId, predicateId, objectId)
 
 	UriLib					m_uriLib;
+	AddStmtStack			m_addStmtStack;
 	RuleEngine				m_re;					// Implements SWRL-style rule inferencing
 };
 

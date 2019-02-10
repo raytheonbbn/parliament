@@ -53,9 +53,9 @@ using ::std::string;
 
 static auto g_log = pmnt::Log::getSource("RuleEngine");
 
-// ==========   RulePosition implementation   ==========
+// ==========   RuleAtomSlot implementation   ==========
 
-void pmnt::RulePosition::print(ostream& s, const KbInstance* pKB) const
+void pmnt::RuleAtomSlot::print(ostream& s, const KbInstance* pKB) const
 {
 	if (m_isVariable)
 	{
@@ -72,11 +72,11 @@ void pmnt::RulePosition::print(ostream& s, const KbInstance* pKB) const
 void pmnt::RuleAtom::print(ostream& s, const KbInstance* pKB) const
 {
 	s << "  ";
-	m_subjPos.print(s, pKB);
+	m_subjSlot.print(s, pKB);
 	s << " ";
-	m_predPos.print(s, pKB);
+	m_predSlot.print(s, pKB);
 	s << " ";
-	m_objPos.print(s, pKB);
+	m_objSlot.print(s, pKB);
 	s << endl;
 }
 
@@ -85,19 +85,19 @@ void pmnt::RuleAtom::print(ostream& s, const KbInstance* pKB) const
 bool pmnt::SWRLBuiltinRuleAtom::evaluate(KbInstance* pKB, BindingList& bindingList) const
 {
 	const auto argCountLimits = getArgCountLimits();
-	if (getRulePosList().size() < argCountLimits.m_min)
+	if (getAtomSlotList().size() < argCountLimits.m_min)
 	{
 		PMNT_LOG(g_log, LogLevel::warn) << format(
 			"SWRL built-in '%1%' requires at least %2% arguments, but has only %3%")
-			% convertFromRsrcChar(m_id) % argCountLimits.m_min % getRulePosList().size();
+			% convertFromRsrcChar(m_id) % argCountLimits.m_min % getAtomSlotList().size();
 		return false;
 	}
 	else if (argCountLimits.m_max != ArgCountLimits::k_unbounded
-		&& getRulePosList().size() > argCountLimits.m_max)
+		&& getAtomSlotList().size() > argCountLimits.m_max)
 	{
 		PMNT_LOG(g_log, LogLevel::warn) << format(
 			"SWRL built-in '%1%' takes at most %2% arguments, but has %3%")
-			% convertFromRsrcChar(m_id) % argCountLimits.m_max % getRulePosList().size();
+			% convertFromRsrcChar(m_id) % argCountLimits.m_max % getAtomSlotList().size();
 		return false;
 	}
 
@@ -114,17 +114,17 @@ bool pmnt::SWRLBuiltinRuleAtom::evaluate(KbInstance* pKB, BindingList& bindingLi
 	}
 }
 
-bool pmnt::SWRLBuiltinRuleAtom::checkResult(const RulePosition& resultPos,
+bool pmnt::SWRLBuiltinRuleAtom::checkResult(const RuleAtomSlot& resultSlot,
 	double resultVal, KbInstance* pKB, BindingList& bindingList) const
 {
-	if (resultPos.m_isVariable)
+	if (resultSlot.isVariable())
 	{
 		ResourceId resultId = getRsrcIdForValue(resultVal, pKB);
-		return resultPos.checkPositionAddBinding(resultId, bindingList);
+		return resultSlot.checkSlotAddBinding(resultId, bindingList);
 	}
 	else
 	{
-		double compareVal = getDoubleFromLiteralStr(pKB->rsrcIdToUri(resultPos.m_rsrcId));
+		double compareVal = getDoubleFromLiteralStr(pKB->rsrcIdToUri(resultSlot.getRsrcId()));
 		return equivalent(compareVal, resultVal);
 	}
 }
@@ -137,38 +137,40 @@ pmnt::ResourceId pmnt::SWRLBuiltinRuleAtom::getRsrcIdForValue(const double value
 	return pKB->uriToRsrcId(literal, true, true);
 }
 
-double pmnt::SWRLBuiltinRuleAtom::getDoubleFromRulePos(
-	const RulePosition& rulePosition, KbInstance* pKB, const BindingList& bindingList) const
+double pmnt::SWRLBuiltinRuleAtom::getDoubleFromAtomSlot(
+	const RuleAtomSlot& atomSlot, KbInstance* pKB, const BindingList& bindingList) const
 {
 	ResourceId rsrcId;
-	if ( rulePosition.m_isVariable )
+	if (atomSlot.isVariable())
 	{
 		// don't work with body evaluations in which inputs are not bound previously
-		if (!bindingList[rulePosition.m_variableIndex].m_isBound)
+		if (!bindingList[atomSlot.getVarIndexId()].isBound())
+		{
 			throw Exception("body evaluations must have inputs bound previously");
+		}
 
-		rsrcId = bindingList[rulePosition.m_variableIndex].m_rsrcId;
+		rsrcId = bindingList[atomSlot.getVarIndexId()].getBinding();
 	}
 	else
 	{
-		rsrcId = rulePosition.m_rsrcId;
+		rsrcId = atomSlot.getRsrcId();
 	}
 
 	const RsrcChar* firstUri = pKB->rsrcIdToUri(rsrcId);
 	return getDoubleFromLiteralStr(firstUri);
 }
 
-pmnt::RsrcString pmnt::SWRLBuiltinRuleAtom::getLiteralStrFromRulePos(
-	const RulePosition& rulePosition, KbInstance* pKB, const BindingList& bindingList) const
+pmnt::RsrcString pmnt::SWRLBuiltinRuleAtom::getLiteralStrFromAtomSlot(
+	const RuleAtomSlot& atomSlot, KbInstance* pKB, const BindingList& bindingList) const
 {
 	ResourceId rsrcId;
-	if (!rulePosition.m_isVariable)
+	if (!atomSlot.isVariable())
 	{
-		rsrcId = rulePosition.m_rsrcId;
+		rsrcId = atomSlot.getRsrcId();
 	}
-	else if (bindingList[rulePosition.m_variableIndex].m_isBound)
+	else if (bindingList[atomSlot.getVarIndexId()].isBound())
 	{
-		rsrcId = bindingList[rulePosition.m_variableIndex].m_rsrcId;
+		rsrcId = bindingList[atomSlot.getVarIndexId()].getBinding();
 	}
 	else
 	{
@@ -235,23 +237,6 @@ void pmnt::Rule::printHead(ostream& s) const
 	s << "  Rule head is custom-defined." << endl;
 }
 
-void pmnt::Rule::bindStatement(const RuleAtom& atom,
-	const Statement& stmt, RuleVariableBinding* pBindingList) const
-{
-	if (atom.m_subjPos.m_isVariable)
-	{
-		pBindingList[atom.m_subjPos.m_variableIndex].bind(stmt.getSubjectId());
-	}
-	if (atom.m_predPos.m_isVariable)
-	{
-		pBindingList[atom.m_predPos.m_variableIndex].bind(stmt.getPredicateId());
-	}
-	if (atom.m_objPos.m_isVariable)
-	{
-		pBindingList[atom.m_objPos.m_variableIndex].bind(stmt.getObjectId());
-	}
-}
-
 // ==========   StandardRule implementation   ==========
 
 //TODO: for head vars, distinguish between literals and URIs (probably using info from the body vars)
@@ -260,15 +245,15 @@ void pmnt::StandardRule::applyRuleHead(BindingList& variableBindings)
 	PMNT_LOG(g_log, LogLevel::debug) << "applyRuleHead(): applying rule";
 	for (const auto& atom : m_head)
 	{
-		ResourceId subjectId = atom.m_subjPos.m_isVariable
-			? variableBindings[atom.m_subjPos.m_variableIndex].m_rsrcId
-			: atom.m_subjPos.m_rsrcId;
-		ResourceId predicateId = atom.m_predPos.m_isVariable
-			? variableBindings[atom.m_predPos.m_variableIndex].m_rsrcId
-			: atom.m_predPos.m_rsrcId;
-		ResourceId objectId = atom.m_objPos.m_isVariable
-			? variableBindings[atom.m_objPos.m_variableIndex].m_rsrcId
-			: atom.m_objPos.m_rsrcId;
+		ResourceId subjectId = atom.m_subjSlot.isVariable()
+			? variableBindings[atom.m_subjSlot.getVarIndexId()].getBinding()
+			: atom.m_subjSlot.getRsrcId();
+		ResourceId predicateId = atom.m_predSlot.isVariable()
+			? variableBindings[atom.m_predSlot.getVarIndexId()].getBinding()
+			: atom.m_predSlot.getRsrcId();
+		ResourceId objectId = atom.m_objSlot.isVariable()
+			? variableBindings[atom.m_objSlot.getVarIndexId()].getBinding()
+			: atom.m_objSlot.getRsrcId();
 
 		PMNT_LOG(g_log, LogLevel::debug) << format("applyRuleHead(): adding a new statement: %1% %2% %3%")
 			% subjectId % predicateId % objectId;
@@ -365,22 +350,22 @@ void pmnt::RuleEngine::setTriggers(RuleIndex ruleIdx)
 		// TODO: is this still correct?
 		AtomIndex atomIdx = distance(beginIt, atomIt);
 
-		if (!atomIt->m_subjPos.m_isVariable)
+		if (!atomIt->m_subjSlot.isVariable())
 		{
-			setTrigger(m_subjTriggerMap, atomIt->m_subjPos.m_rsrcId, ruleIdx, atomIdx);
+			setTrigger(m_subjTriggerMap, atomIt->m_subjSlot.getRsrcId(), ruleIdx, atomIdx);
 		}
 
-		if (!atomIt->m_predPos.m_isVariable
-			&& ((atomIt->m_predPos.m_rsrcId != uriLib().m_rdfType.id()
-				&& atomIt->m_predPos.m_rsrcId != uriLib().m_rdfsSubClassOf.id())
-				|| (atomIt->m_subjPos.m_isVariable && atomIt->m_objPos.m_isVariable))) // only constant
+		if (!atomIt->m_predSlot.isVariable()
+			&& ((atomIt->m_predSlot.getRsrcId() != uriLib().m_rdfType.id()
+				&& atomIt->m_predSlot.getRsrcId() != uriLib().m_rdfsSubClassOf.id())
+				|| (atomIt->m_subjSlot.isVariable() && atomIt->m_objSlot.isVariable()))) // only constant
 		{
-			setTrigger(m_predTriggerMap, atomIt->m_predPos.m_rsrcId, ruleIdx, atomIdx);
+			setTrigger(m_predTriggerMap, atomIt->m_predSlot.getRsrcId(), ruleIdx, atomIdx);
 		}
 
-		if (!atomIt->m_objPos.m_isVariable)
+		if (!atomIt->m_objSlot.isVariable())
 		{
-			setTrigger(m_objTriggerMap, atomIt->m_objPos.m_rsrcId, ruleIdx, atomIdx);
+			setTrigger(m_objTriggerMap, atomIt->m_objSlot.getRsrcId(), ruleIdx, atomIdx);
 		}
 	}
 
@@ -393,9 +378,9 @@ void pmnt::RuleEngine::setTriggers(RuleIndex ruleIdx)
 
 		PMNT_LOG(g_log, LogLevel::debug) << "setting triggers for builtin";
 
-		for (const auto& rulePos : (*builtinAtomIt)->getRulePosList())
+		for (const auto& atomSlot : (*builtinAtomIt)->getAtomSlotList())
 		{
-			setTrigger(m_SWRLBuiltinTriggerMap, rulePos.m_rsrcId, ruleIdx, atomIdx);
+			setTrigger(m_SWRLBuiltinTriggerMap, atomSlot.getRsrcId(), ruleIdx, atomIdx);
 		}
 	}
 }
@@ -411,9 +396,9 @@ bool pmnt::RuleEngine::checkStatementAddBinding(const RuleAtom& atom,
 	const Statement& stmt, BindingList& bindingList)
 {
 	PMNT_LOG(g_log, LogLevel::debug) << "RuleEngine::checkStatementAddBinding() -- standard atom check...";
-	return atom.m_subjPos.checkPositionAddBinding(stmt.getSubjectId(), bindingList)
-			&& atom.m_predPos.checkPositionAddBinding(stmt.getPredicateId(), bindingList)
-			&& atom.m_objPos.checkPositionAddBinding(stmt.getObjectId(), bindingList);
+	return atom.m_subjSlot.checkSlotAddBinding(stmt.getSubjectId(), bindingList)
+			&& atom.m_predSlot.checkSlotAddBinding(stmt.getPredicateId(), bindingList)
+			&& atom.m_objSlot.checkSlotAddBinding(stmt.getObjectId(), bindingList);
 }
 
 // TODO: eliminate?
@@ -560,15 +545,15 @@ void pmnt::RuleEngine::expandFwdChainNode(FwdChainNode& fcNode)
 	const RuleAtom& atom = fcNode.getBody()[nextAtomIdx];
 
 	//TODO: need to use the bindings here
-	const ResourceId subjectId = atom.m_subjPos.m_isVariable
+	const ResourceId subjectId = atom.m_subjSlot.isVariable()
 		? k_nullRsrcId
-		: atom.m_subjPos.m_rsrcId;
-	const ResourceId predicateId = atom.m_predPos.m_isVariable
+		: atom.m_subjSlot.getRsrcId();
+	const ResourceId predicateId = atom.m_predSlot.isVariable()
 		? k_nullRsrcId
-		: atom.m_predPos.m_rsrcId;
-	const ResourceId objectId = atom.m_objPos.m_isVariable
+		: atom.m_predSlot.getRsrcId();
+	const ResourceId objectId = atom.m_objSlot.isVariable()
 		? k_nullRsrcId
-		: atom.m_objPos.m_rsrcId;
+		: atom.m_objSlot.getRsrcId();
 
 	PMNT_LOG(g_log, LogLevel::debug) << format("expandFwdChainNode -- looking for: %1% %2% %3%")
 		% subjectId % predicateId % objectId;
