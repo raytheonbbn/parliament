@@ -14,15 +14,15 @@ namespace pmnt = ::bbn::parliament;
 pmnt::InverseOfRule::InverseOfRule(KbInstance* pKB, RuleEngine* pRE) :
 	Rule(pKB, pRE, pRE->uriLib().m_ruleInverseProp.id())
 {
-	bodyPushBack(RuleAtom(RulePosition::makeVariablePos(0),
-		RulePosition::makeRsrcPos(uriLib().m_owlInverseOf.id()),
-		RulePosition::makeVariablePos(1)));
+	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(uriLib().m_owlInverseOf.id()),
+		RuleAtomSlot::createForVar(1)));
 }
 
 void pmnt::InverseOfRule::applyRuleHead(BindingList &bindingList)
 {
-	ResourceId p1RsrcId = bindingList[0].m_rsrcId;
-	ResourceId p2RsrcId = bindingList[1].m_rsrcId;
+	ResourceId p1RsrcId = bindingList[0].getBinding();
+	ResourceId p2RsrcId = bindingList[1].getBinding();
 
 	if (p1RsrcId == p2RsrcId)
 	{
@@ -35,13 +35,13 @@ void pmnt::InverseOfRule::applyRuleHead(BindingList &bindingList)
 
 		auto pNewRule = ::std::make_shared<StandardRule>(m_pKB, m_pRE, getRsrcId());
 		pNewRule->bodyPushBack(RuleAtom(
-			RulePosition::makeVariablePos(0),
-			RulePosition::makeRsrcPos(p1RsrcId),
-			RulePosition::makeVariablePos(1)));
+			RuleAtomSlot::createForVar(0),
+			RuleAtomSlot::createForRsrc(p1RsrcId),
+			RuleAtomSlot::createForVar(1)));
 		pNewRule->headPushBack(RuleAtom(
-			RulePosition::makeVariablePos(1),
-			RulePosition::makeRsrcPos(p2RsrcId),
-			RulePosition::makeVariablePos(0)));
+			RuleAtomSlot::createForVar(1),
+			RuleAtomSlot::createForRsrc(p2RsrcId),
+			RuleAtomSlot::createForVar(0)));
 		m_pRE->addRule(pNewRule);
 	}
 }
