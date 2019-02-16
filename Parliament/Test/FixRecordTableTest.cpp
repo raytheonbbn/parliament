@@ -75,7 +75,7 @@ static const uint8 k_expectedResult[] =
 	};
 static const TChar k_fName[] = _T("tempFile");
 
-static Log::Source g_log(Log::getSource("FixRecordTableTest"));
+static auto g_log(Log::getSource("FixRecordTableTest"));
 
 BOOST_AUTO_TEST_SUITE(FixRecordTableTestSuite)
 

@@ -25,15 +25,15 @@ A \ac{pmnt} distribution is a compressed archive containing a ready-to-run \ac{p
 Here \texttt{\textbf{\textit{X.Y.Z}}} is the \ac{pmnt} version number and \texttt{\textbf{\textit{toolset}}} indicates the platform on which the distribution runs, as shown in Table~\ref{tbl:ToolsetPlatformCorrespondence}.
 \begin{table}[htbp]
 	\centering
-	\begin{tabular}{l>{\RaggedRight}p{90mm}}
+	\begin{tabular}{ll}
 		\toprule
 		\emph{Toolset}		& \emph{Corresponding Platform}\\
 		\headingrule
-		\path|msvc141-64|	& 64-bit Windows, built with Visual Studio 2017\\
-		\path|msvc141-32|	& 32-bit Windows, built with Visual Studio 2017\\
 		\path|clang|		& Universal binaries for Mac OS X\\
-		\path|gcc-64|		& 64-bit Ubuntu Linux\\
-		\path|gcc-32|		& 32-bit Ubuntu Linux\\
+		\path|gcc-centos|	& 64-bit CentOS Linux\\
+		\path|gcc-ubuntu|	& 64-bit Ubuntu Linux\\
+		\path|msvc-64|		& 64-bit Windows\\
+		\path|msvc-32|		& 32-bit Windows\\
 		\bottomrule
 	\end{tabular}
 	\caption{Toolset-to-Platform Correspondence}
@@ -41,14 +41,14 @@ Here \texttt{\textbf{\textit{X.Y.Z}}} is the \ac{pmnt} version number and \textt
 \end{table}
 If you are building \ac{pmnt} yourself according to the instructions in Chapter~\ref{chapter-building-parliament}, then these archives appear in the \path|target/distro| directory at the end of the build process.
 
-As shown in Table~\ref{tbl:ToolsetPlatformCorrespondence}, most platforms require that you choose between 32-bit and 64-bit builds.  Whenever possible, use the 64-bit version, because 32-bit \ac{pmnt} is limited to 5 to 10 million statements.
+As shown in Table~\ref{tbl:ToolsetPlatformCorrespondence}, on Windows there is a choice between 32-bit and 64-bit builds.  Whenever possible, use the 64-bit version, because 32-bit \ac{pmnt} is limited to 5 to 10 million statements.
 
 \subsection{Installing for the First Time}
 \label{section-std-server-init-deploy}
 
 Once you have downloaded a distribution, these steps will yield a functioning \ac{kb}:
 \begin{enumerate}
-	\item Extract the archive contents to whatever location you choose.  On UNIX-like systems, \path|/usr/opt/ParliamentKB| is a likely choice.  On Windows, \path|C:\Program Files\ParliamentKB| is customary.  The instructions that follow refer to this directory as \path|ParliamentKB|.
+	\item Extract the archive to the location of your choice.  On UNIX-like systems, \path|/usr/opt/ParliamentKB| or \path|/usr/local/ParliamentKB| is a likely choice.  On Windows, \path|C:\Program Files\ParliamentKB| is customary.  The instructions that follow refer to this directory as simply \path|ParliamentKB|.
 
 	\item On Windows, install the C and C++ run-time libraries.  You can find installers for these in the following directory:
 	\begin{quote}
@@ -66,7 +66,7 @@ When upgrading an existing \ac{pmnt} installation to a newer version, the proced
 However, from time to time \acp{pmnt} file formats do change, and in such cases a different migration procedure is required.  Following this procedure even in those cases where it is not required has some benefits as well, since it frees up any unused space in the \ac{pmnt} files.  This is the way to perform such a migration:
 
 \begin{enumerate}
-	\item Before upgrading, point your browser at your \ac{pmnt} server.  The \ac{url} for this looks like \nolinkurl{http://<host>:<port>/parliament/}.  By default this will be \nolinkurl{http://localhost:8089/parliament/}.
+	\item\label{upgrade-procedure-first-step}\textbf{\emph{Before upgrading,}} point your browser at your \ac{pmnt} server.  The \acs{url} for this is \nolinkurl{http://<host>:<port>/parliament/}.  By default this will be \nolinkurl{http://localhost:8089/parliament/}.
 
 	\item Click on the ``Export'' link.
 
@@ -75,13 +75,13 @@ However, from time to time \acp{pmnt} file formats do change, and in such cases 
 
 	\item When the download finishes, shut down \ac{pmnt}.  Rename the \ac{pmnt} installation directory if you want your upgraded installation to reside in the same place.
 
-	\item Unzip the new version of \ac{pmnt} and move the resulting installation directory to your desired location.
+	\item Unzip the new version of \ac{pmnt} to your desired location.
 
-	\item Customize the new installation's settings as required.  The most common customizations are the host and port, which are easily modified in the startup script, and the settings in the ParliamentConfig.txt file.
+	\item Customize the new installation's settings as required.  For more information, see Sections~\ref{section-std-server-config} and~\ref{section-parliament-config-file}.
 
 	\item Start up the new \ac{pmnt} installation.
 
-	\item Point your browser at the new \ac{pmnt} server.  As above, the \ac{url} for this looks like \nolinkurl{http://<host>:<port>/parliament/}, or \nolinkurl{http://localhost:8089/parliament/} by default.
+	\item Point your browser at the new \ac{pmnt} server.  The \ac{url} is the same as the one in Step~\ref{upgrade-procedure-first-step} above.
 
 	\item Click on the ``Insert Data'' link.
 
@@ -168,13 +168,13 @@ Note that the query strings passed to the remote model in Figure~\ref{figure-usi
 \subsection{Configuration}
 \label{section-std-server-config}
 
-This section explores the most important configuration options for your \ac{pmnt} server.  The installation procedure in Section~\ref{section-std-server-init-deploy} simply accepts the defaults for these options, but most deployments will require some level of customization.
+This section explores the most important configuration options for your \ac{pmnt} server.  The installation procedure in Section~\ref{section-std-server-init-deploy} simply accepts the defaults for these options, but many deployments will require some level of customization.
 
 Section~\ref{section-std-server-init-deploy} mentions \acp{pmnt} start script, which is used to directly start the server.  However, in many cases it is preferable to run \ac{pmnt} as a Windows service or as a UNIX daemon.
 
 The script \path|InstallParliamentService.bat| installs \ac{pmnt} as a Windows service.  In order for this script to have the permissions it requires, you usually need to right-click the Command Prompt shortcut and choose ``Run as Administrator.''  This script locates your Java installation by using the \verb|JAVA_HOME| environment variable\footnote{See Section~\ref{section-troubleshooting} for information about choosing among multiple Java installations.}.  After running this script, use the Services management console to start and stop \ac{pmnt} and to run \ac{pmnt} automatically upon system startup.  Uninstall the service with \path|UninstallParliamentService.bat|.
 
-The \path|StartParliamentDaemon.sh| script will start \ac{pmnt} as a daemon on UNIX-like systems.  The exact method for wiring this into the operating system's infrastructure for starting and stopping daemon processes varies from platform to platform, and is not covered here.
+The \path|StartParliamentDaemon.sh| script will start \ac{pmnt} as a daemon on UNIX-like systems.  The exact method for wiring this into the operating system's infrastructure for starting and stopping daemon processes varies from platform to platform.  For variants of Linux that do support System D, such as CentOS and Ubuntu, Parliament includes the \path|InstallService.sh| script, which will install \ac{pmnt} as a System D service, so that it can be controlled via the \path|systemctl| command.
 
 You can change the host name (or IP address) and port of the \ac{sparql} endpoint by setting \verb|JETTY_HOST| and \verb|JETTY_PORT| in the start script.  These default to \verb|localhost| and 8089, respectively.  Also, you can control the amount of memory set aside for the Java virtual machine's heap by setting \verb|MIN_MEM| and \verb|MAX_MEM| in the same location.  While it is important to allow the \ac{jvm} sufficient memory, it is also important to realize that a significant portion of \ac{pmnt} is native code, and therefore does not use the Java heap.  Java programmers are often inclined to set \verb|MAX_MEM| close to the total memory of the machine, but this will starve \acp{pmnt} native code of the memory it needs to achieve good performance.  The default heap size ranges from 128 MB to 512 MB, which is reasonable for machines with 4 to 8 GB of total memory.
 
@@ -266,8 +266,6 @@ The recognized settings are as follows.  Setting names are case-insensitive.
 
 	\item[bdbCacheSize] The amount of memory to be devoted to the Berkeley DB cache.  The portion before the comma is the total cache size (with a k for kilobytes, m for megabytes, g for gigabytes).  The portion after the comma specifies how many segments the memory should be broken across, for compatibility with systems that limit the size of single memory allocations.  On systems with 4 GB or more of memory, setting this to ``256m,1'' generally seems to be optimal. \emph{Default: ``32m,1''}
 
-	\item[runAllRulesAtStartup] Causes \ac{pmnt} to evaluate each of the enabled rules at startup against the existing statements in the \ac{kb} to see if any new statements should be materialized.  Generally, this is unnecessary, because the rules are always evaluated against each statement as it is asserted.  However, if some of the rules were initially disabled when statements were being asserted, and are then enabled, it may be necessary to turn this on for one startup of \ac{pmnt} to ensure that the state of the \ac{kb} is in sync with the rule settings.  Alternately, in such a case this setting may be left off and the ParliamentAdmin tool may be run against the \ac{kb} with the ``guaranteeEntailments'' option.  Note that when this setting is turned on, \ac{kb} the startup time may be lengthy. \emph{Default: ``no''}
-
 	\item[normalizeTypedStringLiterals] Instructs \ac{pmnt} to convert typed string literals to plain literals, both upon insert and at query time, as mandated in \ac{rdf} 1.1.  In \ac{pmnt} versions before the implementation of this option (versions~2.7.9 and prior), the behavior was as if the option were set to ``no''.  Therefore, if you are migrating a \ac{pmnt} installation originally created with one of these older versions to a newer version, you must do one of two things:
 	\begin{enumerate}
 		\item Either before or after the upgrade, create an export of the entire triple store.  To do this, use the ``Export Repository'' option on the Export page of \acp{pmnt} Web-based administrative interface.  Then shut down \ac{pmnt} and delete its \path|data| directory.  This is the location identified by the \texttt{kbDirectoryPath} setting in the configuration file.  Then, after upgrading, import the backup using the ``Import Repository'' option on the Insert Data page of the administrative interface.
@@ -275,6 +273,10 @@ The recognized settings are as follows.  Setting names are case-insensitive.
 		\item Set this option to ``no''.
 	\end{enumerate}
 	The first option is highly recommended.  It requires some effort, but will bring your triple store into compliance with \ac{rdf} 1.1 and deliver slightly better performance to boot.  \emph{Default: ``yes''}
+
+	\item[runAllRulesAtStartup] Causes \ac{pmnt} to evaluate each of the enabled rules at startup against the existing statements in the \ac{kb} to see if any new statements should be materialized.  Generally, this is unnecessary, because the rules are always evaluated against each statement as it is asserted.  However, if some of the rules were initially disabled when statements were being asserted, and are then enabled, it may be necessary to turn this on for one startup of \ac{pmnt} to ensure that the state of the \ac{kb} is in sync with the rule settings.  Alternately, in such a case this setting may be left off and the ParliamentAdmin tool may be run against the \ac{kb} with the ``guaranteeEntailments'' option.  Note that when this setting is turned on, \ac{kb} the startup time may be lengthy. \emph{Default: ``no''}
+
+	\item[enableSWRLRuleEngine] Enables an additional rule engine that implements the \ac{swrl} rule language. \emph{Default: ``no''}
 
 	\item[SubclassRule] Enables the following inference rules:
 \[A \subset B \land B \subset C \Rightarrow A \subset C\]
@@ -337,6 +339,10 @@ where ``IFP'' stands for ``InverseFunctionalProperty''. \emph{Default: ``on''}
 	\item[TransitivePropRule] Enables the following inference rule:
 \[P \in \text{owl:TransitiveProperty} \land P(X, Y) \land P(Y, Z) \Rightarrow P(X, Z)\]
 \emph{Default: ``on''}
+
+	\item[TimeoutDuration] Sets an execution timeout on queries. \emph{Default: ``5''}
+
+	\item[TimeoutUnit] Sets the units of the execution timeout on queries.  Valid values are `SECONDS' and `MINUTES'. \emph{Default: ``MINUTES''}
 \end{description}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

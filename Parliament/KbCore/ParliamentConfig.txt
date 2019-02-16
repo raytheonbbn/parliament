@@ -23,13 +23,20 @@ logFileRotationTimePoint = 02:00:00
 
 # TRACE, DEBUG, INFO, WARN, ERROR
 logLevel                 = INFO
+#logChannelLevel          = Config=TRACE
+#logChannelLevel          = Exceptions=TRACE
 #logChannelLevel          = FileHandle=TRACE
 #logChannelLevel          = FileMapping=TRACE
 #logChannelLevel          = KbInstance=TRACE
+#logChannelLevel          = LiteralUtils=TRACE
 #logChannelLevel          = RuleEngine=TRACE
 #logChannelLevel          = StringToId=TRACE
-#logChannelLevel          = StrToIdEntryIterator=TRACE
+#logChannelLevel          = SWRLBuiltins=TRACE
+#logChannelLevel          = SWRLRuleBuilder=TRACE
 #logChannelLevel          = FixRecordTableTest=TRACE
+#logChannelLevel          = RuleEngineTest=TRACE
+#logChannelLevel          = TestMain=TRACE
+#logChannelLevel          = TestUtils=TRACE
 
 
 

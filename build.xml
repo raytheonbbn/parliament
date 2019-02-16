@@ -30,6 +30,8 @@
 		<delete dir="${basedir}/log"/>
 		<delete dir="${basedir}/Parliament/log"/>
 		<delete dir="${basedir}/Parliament/Test/log"/>
+		<delete dir="${basedir}/jena/JenaGraph/log"/>
+		<delete dir="${basedir}/jena/TemporalIndexProcessor/log"/>
 
 		<delete dir="${basedir}/jena/JenaGraph/lib"/>
 		<delete dir="${basedir}/jena/JenaGraph/union-test-kb-data"/>
@@ -70,19 +72,9 @@
 		<delete dir="${basedir}/Sesame/SameAsSail/bin"/>
 		<delete dir="${basedir}/Sesame/Swrl2Sesame/bin"/>
 
-		<delete>
-			<fileset dir="${basedir}/Parliament/KbCore" includes="Debug_with_*/*"/>
-			<dirset dir="${basedir}/Parliament/KbCore" includes="Debug_with_*"/>
-			<fileset dir="${basedir}/Parliament/KbCore" includes="Release_with_*/*"/>
-			<dirset dir="${basedir}/Parliament/KbCore" includes="Release_with_*"/>
-			<fileset dir="${basedir}/Parliament/AdminClient" includes="Debug_with_*/*"/>
-			<dirset dir="${basedir}/Parliament/AdminClient" includes="Debug_with_*"/>
-			<fileset dir="${basedir}/Parliament/AdminClient" includes="Release_with_*/*"/>
-			<dirset dir="${basedir}/Parliament/AdminClient" includes="Release_with_*"/>
-			<fileset dir="${basedir}/Parliament/Test" includes="Debug_with_*/*"/>
-			<dirset dir="${basedir}/Parliament/Test" includes="Debug_with_*"/>
-			<fileset dir="${basedir}/Parliament/Test" includes="Release_with_*/*"/>
-			<dirset dir="${basedir}/Parliament/Test" includes="Release_with_*"/>
+		<delete includeemptydirs="true">
+			<fileset dir="${basedir}/Parliament" includes="**/Debug_with_*/"/>
+			<fileset dir="${basedir}/Parliament" includes="**/Release_with_*/"/>
 		</delete>
 	</target>
 

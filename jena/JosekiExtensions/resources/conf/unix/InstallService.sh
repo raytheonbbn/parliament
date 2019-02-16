@@ -1,11 +1,16 @@
 #!/bin/sh
-usage="$(basename "$0") --username USERNAME --directory DIRECTORY --javahome JAVAHOME -- installs Parliament as a System D service
+
+usage="
+Installs Parliament as a System D service.  Usage:
+
+	$(basename "$0") --username USERNAME --directory DIRECTORY --javahome JAVAHOME
 
 where:
-	--username		the account under which to run Parliament
-	--directory		the absolute path to Parliament's installation
-	--javahome		the absolute path to the desired Java installation
+	--username	the account under which to run Parliament
+	--directory	the absolute path to Parliament's installation
+	--javahome	the absolute path to the desired Java installation
 "
+
 username=
 directory=
 javahome=
