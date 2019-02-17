@@ -25,22 +25,22 @@ You will need to acquire and install one or more appropriate compilers for each 
 		\headingrule
 		Windows (32- and 64-bit) & Visual Studio 2017 & msvc-14.1 \\
 		\midrule
-		Mac OS X 10.10.3 & Xcode 6.3.1 & clang \\
+		Mac OS X 10.14 (Mojave) & Xcode 10.1 & clang \\
 		\midrule
-		Ubuntu 15.10 (64-bit) & GCC 5.2.1 & gcc \\
+		Ubuntu 18 (64-bit) & GCC 7.3.0 & gcc \\
 		\midrule
-		Centos 6.6 (64-bit) & GCC 4.4.7 & gcc \\
+		Centos 7 (64-bit) & GCC 4.8.5 & gcc \\
 		\bottomrule
 	\end{tabular}
 	\caption{Supported Platforms and Compilers}
 	\label{platforms-and-compilers}
 \end{table}
 
-Windows versions 7 and above are supported.  The 64-bit build has been tested on AMD-64 or EM64T hardware (often collectively known as x64).  \acp{pmnt} capacity is much higher when running as a 64-bit process\footnote{On 32-bit Windows \ac{pmnt} runs out of virtual address space after storing 5 to 10 million statements.}, so one of those compilers is highly recommended.
+Windows versions 7 and above are supported.  The 64-bit build has been tested on x64 hardware.  \acp{pmnt} capacity is much higher when running as a 64-bit process\footnote{On 32-bit Windows \ac{pmnt} runs out of virtual address space after storing 5 to 10 million statements.}, so one of those compilers is highly recommended.
 
-On Macintosh, \ac{pmnt} builds as a universal binary (for the x64 and x86 architectures) using Apple's Xcode development tools.
+On Macintosh, \ac{pmnt} builds as a universal binary using Apple's Xcode development tools.
 
-\ac{pmnt} assumes the presence of the Java Developer Kit (JDK), version 8 or above.  Furthermore, you will need a 64-bit \ac{jvm} in order to run a 64-bit build of \ac{pmnt}.
+\ac{pmnt} assumes the presence of the Java Developer Kit (JDK), version 8.  Furthermore, you will need a 64-bit \ac{jvm} in order to run a 64-bit build of \ac{pmnt}.
 \begin{itemize}
 	\item On Windows, download and install the JDK from Oracle.  The 32-bit and 64-bit versions are separate downloads and installations.
 
@@ -53,15 +53,20 @@ You will need Apache Ant version 1.10.1 or later\urlcite{http://ant.apache.org/}
 
 Once you have these prerequisites installed, you can clone the \ac{pmnt} code base from here:
 \begin{quote}
-	\nolinkurl{https://github.com/SemWebCentral/parliament}
+	\url{https://github.com/SemWebCentral/parliament}
 \end{quote}
+Because GitHub limits repository size, \acp{pmnt} does not include larger binary files that are required by the build.  To supply these, download this archive:
+\begin{quote}
+	\red{\texttt{https://github.com/SemWebCentral/parliament/TBD}}
+\end{quote}
+and expand it in the \path|dependencies| subdirectory of your clone.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Configuring Eclipse}
 
-The \ac{pmnt} code base includes Eclipse projects for all of the Java and C++ code.  These are useful for inspecting and editing code, but it is important to note that they are not the official build mechanism.  In fact, as of this writing, the C++ Eclipse projects do not build at all.  (The Java projects do build correctly, but they are still not the official build mechanism.)  This may be corrected in the future, but the \ac{jni} layer between the Java and native code makes this complex.  Therefore the C++ projects are merely an editing convenience.
+The \ac{pmnt} code base includes Eclipse projects for all of its Java and C++ code.  These are useful for inspecting and editing code, but it is important to note that they are not the official build mechanism.  In fact, it is difficult to configure the C++ Eclipse projects to build at all.  (The Java projects do build correctly, but they are still not the official build mechanism.)  This may be corrected in the future, but the \ac{jni} layer between the Java and native code makes this complex.  Therefore the C++ projects should be regarded merely as an editing convenience.
 
-To setup Eclipse, you need the Mars version or later of the Eclipse \ac{ide} for Java Developers, plus the \ac{cdt}.  One way to acquire this set of components is to download the Eclipse \ac{ide} for Java\urlcite{http://www.eclipse.org/}, install it, and use its ``Install New Software'' menu item to download and install the \ac{cdt}.  The procedure for this changes a bit between Eclipse releases, but you can find instructions on the \ac{cdt} web site\urlcite{http://www.eclipse.org/cdt/}.
+To setup Eclipse, you need the Photon or later version of the Eclipse \ac{ide} for Java Developers, plus the \ac{cdt}.  One way to acquire this set of components is to download the Eclipse \ac{ide} for Java\urlcite{http://www.eclipse.org/}, install it, and use its ``Install New Software'' menu item to download and install the \ac{cdt}.  The procedure for this changes a bit between Eclipse releases, but you can find instructions on the \ac{cdt} web site\urlcite{http://www.eclipse.org/cdt/}.
 
 To use Eclipse with your \ac{pmnt} working copy, first choose (or create) an Eclipse workspace.  Then import all existing projects from within your \ac{pmnt} working copy.  To do so, choose Import from the File menu and select ``Existing Projects into Workspace'' under the General category.  Press the Next button, and enter the root directory of your \ac{pmnt} working copy in the ``Select root directory'' box.  Press the Select All button, make sure that ``Copy projects into workspace'' is unchecked, and press the Finish button.  At this point all of the \ac{pmnt} projects will be displayed in the Package Explorer view.
 
@@ -71,23 +76,23 @@ To use Eclipse with your \ac{pmnt} working copy, first choose (or create) an Ecl
 
 \ac{pmnt} uses Berkeley DB (often abbreviated BDB), an embedded database manager from Oracle\urlcite{http://www.oracle.com/us/products/database/berkeley-db/}.  Because \ac{pmnt} is open source, this use of Berkeley DB also falls under an open source license.  The following procedures are based on BDB version 5.3.28.
 
-Note that \ac{pmnt} versions 2.7.6 through 2.7.9 was released with Berkeley DB 6.1, but we have rolled back to 5.3 because Oracle sneakily changed their open source license from a BSD-like license to AGPL, which is too restrictive for our purposes.
+%Note that \ac{pmnt} versions 2.7.6 through 2.7.9 was released with Berkeley DB 6.1, but we have rolled back to 5.3 because Oracle sneakily changed their open source license from a BSD-like license to AGPL, which is too restrictive for our purposes.
 
 \subsection{Building BDB for Windows}
 
-The build infrastructure for Berkeley DB is not particularly friendly for Windows.  Therefore, the \ac{pmnt} source code repository includes pre-built Berkeley DB libraries (both 32- and 64-bit) for all supported versions of Visual Studio\footnote{Note that Oracle does provide an already-compiled distribution, but it includes only a 32-bit build.}.  If you need to update the pre-built libraries, e.g., for a new version of Berkeley DB or to build with a different compiler, see Appendix~\ref{chapter-building-bdb-for-windows}.
+The build infrastructure for Berkeley DB is not particularly friendly for Windows.  Therefore, the \ac{pmnt} dependencies archive includes pre-built Berkeley DB libraries (both 32- and 64-bit).  If you need to update the pre-built libraries, e.g., for a new version of Berkeley DB or to build with a different compiler, see Appendix~\ref{chapter-building-bdb-for-windows}.
 
 Define the following environment variables so that the \ac{pmnt} build infrastructure can find the libraries:
 \begin{verbatim}
 BDB_VERSION=53
-BDB_HOME=«dir»\lib\bdb
+BDB_HOME=«dir»/dependencies/bdb
 \end{verbatim}
 where \path|«dir»| is the absolute path of your \ac{pmnt} working copy.
 
 
 \subsection{Building BDB for Macintosh}
 
-On Macintosh, Berkeley DB follows the usual pattern of software based on the autoconf/automake/libtool suite.  Specifically, expand the BDB distribution archive file, and change to the \path|build_unix| subdirectory.  Then issue the following commands:
+On Macintosh, Berkeley DB follows the usual pattern of software based on the autoconf/automake/libtool suite.  Specifically, expand the BDB distribution archive file and change to the \path|build_unix| subdirectory.  Then issue the following commands:
 \begin{verbatim}
 env CC=clang CFLAGS="-fvisibility=default -arch x86_64"
      ../dist/configure
@@ -104,20 +109,16 @@ With recent Apple compiler versions, the \texttt{make} command above may fail wi
 
 \subsection{Building BDB for Linux}
 
-On Linux, Berkeley DB follows the usual pattern of software based on the autoconf/automake/libtool suite.  Here we modify that procedure slightly to create both 32- and 64-bit builds.  (For Linux distributions that only support 64-bits, skip the 32-bit commands below.)  First, decompress and un-archive the BDB distribution, and change to the \path|build_unix| subdirectory.  Next decide where you want to install Berkeley DB.  The default location is \path|/usr/local/BerkeleyDB.5.3|, but whatever location you choose will be called \path|«dir»| in the instructions below.  Once you have chosen this location, issue the following commands:
+On Linux, Berkeley DB follows the usual pattern of software based on the autoconf/automake/libtool suite.  Decompress and un-archive the BDB distribution, change to the \path|build_unix| subdirectory, and issue the following commands:
 \begin{verbatim}
-env CFLAGS="-m32" ../dist/configure --prefix=«dir»/32
-make
-sudo make install
-make realclean
-env CFLAGS="-m64" ../dist/configure --prefix=«dir»/64
+env CFLAGS="-m64" ../dist/configure
 make
 sudo make install
 \end{verbatim}
 You can tidy up after the build with the command \verb|make realclean|.  Once you have built and installed Berkeley DB, define the following environment variables so that the \ac{pmnt} build infrastructure can find the libraries:
 \begin{verbatim}
 BDB_VERSION=5.3
-BDB_HOME=«dir»
+BDB_HOME=/usr/local/BerkeleyDB.5.3
 \end{verbatim}
 
 With the newest GCC compiler, the \texttt{make} command above may fail with an error message about \verb|__atomic_compare_exchange|.  If so, replace all instances of that identifier with \verb|__atomic_compare_exchange_db| in the file \path|src/dbinc/atomic.h|.  Then run the \texttt{make} command again.
@@ -127,25 +128,30 @@ With the newest GCC compiler, the \texttt{make} command above may fail with an e
 \label{sec:BuildingBoost}
 
 Since the Boost project is unfamiliar to many, here is an introduction taken from the Boost web site:\urlcite{http://boost.org/}
-\begin{quote}\small
+\begin{quote}\sloppy
 Boost provides free peer-reviewed portable C++ source libraries.
 
 We emphasize libraries that work well with the C++ Standard Library. Boost libraries are intended to be widely useful, and usable across a broad spectrum of applications. The \href{http://www.boost.org/users/license.html}{Boost license} encourages both non-commercial and commercial use.
 
-We aim to establish ``existing practice'' and provide reference implementations so that Boost libraries are suitable for eventual standardization. Ten Boost libraries are already included in the \href{http://www.open-std.org/jtc1/sc22/wg21/}{C++ Standards Committee's} Library Technical Report (\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1745.pdf}{TR1}) and in the new C++11 Standard.  C++11 also includes several more Boost libraries in addition to those from TR1.  More Boost libraries are proposed for \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1810.html}{TR2}.
+We aim to establish ``existing practice'' and provide reference implementations so that Boost libraries are suitable for eventual standardization. Ten Boost libraries are already included in the \href{http://www.open-std.org/jtc1/sc22/wg21/}{C++ Standards Committee's} Library Technical Report (\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1745.pdf}{TR1}) and in the new C++11 Standard.  C++11 also includes several more Boost libraries in addition to those from TR1.  More Boost libraries are proposed for standardization in C++17.
 \end{quote}
 
-To get started, download the Boost source distribution (version 1.69.0 or later) from the Boost web site.  Unpack this to a handy location on your disk.  This location may be anywhere you like, but note that it is not temporary.  We will call this location \verb|BOOST_ROOT|, and you need to define an environment variable pointing there, such as
-\begin{verbatim}
-export BOOST_ROOT=~/boost_1_69_0
-\end{verbatim}
-or
-\begin{verbatim}
-set BOOST_ROOT=C:\boost_1_69_0
-\end{verbatim}
-From \acp{pmnt} point of view, there are two primary components contained within \verb|BOOST_ROOT|.  The first (and most obvious) is the boost libraries themselves.  Most of these are so-called ``header-only'' libraries, meaning that there is no pre-compiled library code or shared or dynamic library.  All of the code of such libraries is referenced via \verb|#include| directives and compiled along with the calling code.  Such libraries are extremely convenient, because they require virtually zero setup.  \ac{pmnt} uses several Boost libraries that are not header-only.  We will discuss how to build these libraries below.
+To get started, download the Boost source distribution (version 1.69.0 or later) from the Boost web site.  Unpack this to a handy location on your disk.  This location may be anywhere you like.  Define this environment variable pointing there:
 
-The second major Boost component is Boost.Build.  This is a cross-platform build system (located in the sub-directory \path|tools/build|) that is written in a specialized interpreted language whose interpreter is a command line program called \verb|b2|.  The Boost community does not provide \verb|b2| binaries.  Rather, the Boost distribution contains a bootstrapping script that builds \verb|b2| from source on your platform.  At a command line, go to the \verb|BOOST_ROOT| directory and issue the appropriate one of these commands:
+{
+	%\renewcommand{\arraystretch}{1.5}
+	\renewcommand{\tabcolsep}{0pt}
+	\begin{tabular}{l@{\hspace{2em}}l}
+		\verb|set BOOST_ROOT=C:\boost_1_69_0|
+			& (on Windows)\\
+		\verb|export BOOST_ROOT=~/boost_1_69_0|
+			& (on Macintosh and Linux)\\
+	\end{tabular}
+}
+
+From \acp{pmnt} point of view, there are two primary components contained within \verb|BOOST_ROOT|.  The first (and most obvious) is the boost libraries themselves.  Most of these are so-called ``header-only'' libraries, meaning that there is no pre-compiled library code.  All of the code of such libraries is referenced via \verb|#include| directives and compiled along with the calling code.  Such libraries are extremely convenient, because they require little setup.  \ac{pmnt} also uses several Boost libraries that are not header-only.  We will discuss how to build these libraries below.
+
+The second major Boost component is Boost.Build.  This is a cross-platform build system (located in the \path|BOOST_ROOT/tools/build|) that is written in a specialized interpreted language whose interpreter is a command called \verb|b2|.  The Boost community does not provide \verb|b2| binaries.  Rather, the Boost distribution contains a bootstrapping script that builds \verb|b2| from source on your platform.  At a command line, go to the \verb|BOOST_ROOT| directory and issue the appropriate one of these commands:
 
 {
 	%\renewcommand{\arraystretch}{1.5}
@@ -172,11 +178,11 @@ b2 -q --build-dir=build-msvc --stagedir=stage-msvc --with-atomic
 --with-chrono --with-date_time --with-filesystem --with-locale
 --with-log --with-regex --with-system --with-test --with-thread
 toolset=msvc-14.1 define=BOOST_TEST_ALTERNATIVE_INIT_API
-address-model=64,32 variant=debug,release threading=multi
-link=shared,static runtime-link=shared stage
+define=BOOST_LOCALE_HIDE_AUTO_PTR address-model=32,64
+variant=debug,release link=shared,static runtime-link=shared stage
 \end{verbatim}}
 
-The build process may issue warnings about missing components, such as Python and ICU.  These warnings are innocuous.  When the build finishes, the libraries will be located in \path|stage-msvc/lib|.  The directory \path|build-msvc| contains the intermediate build products and can be deleted to save disk space.
+The build process may issue some innocuous warnings about missing components, such as Python and ICU.  When the build finishes, the libraries will be located in \path|stage-msvc/lib|.  The directory \path|build-msvc| contains the intermediate build products and can be deleted to save disk space.
 
 \subsection{Building Boost on Macintosh}
 
@@ -185,33 +191,34 @@ Open a Terminal window, change to the \verb|BOOST_ROOT| directory, and issue the
 b2 -q --build-dir=build-clang --stagedir=stage-clang --with-atomic
 --with-chrono --with-date_time --with-filesystem --with-locale
 --with-log --with-regex --with-system --with-test --with-thread
---layout=versioned threading=multi toolset=clang
-define=BOOST_TEST_ALTERNATIVE_INIT_API address-model=32_64
+toolset=clang define=BOOST_TEST_ALTERNATIVE_INIT_API
+define=BOOST_LOCALE_HIDE_AUTO_PTR address-model=32_64
 variant=debug,release link=shared,static runtime-link=shared
-cxxflags="-std=c++17 -fvisibility=default" linkflags=-std=c++17
-stage
+cxxflags="-std=c++17" linkflags="-std=c++17" stage
 \end{verbatim}}
-The build process may issue warnings about missing components, such as Python and ICU.  These warnings are innocuous.  When the build finishes, the libraries will be located under \path|stage-clang/lib|.  The directory \path|build-clang| contains the intermediate build products and can be deleted to save disk space.
+The build process may issue some innocuous warnings about missing components, such as Python and ICU.  When the build finishes, the libraries will be located under \path|stage-clang/lib|.  The directory \path|build-clang| contains the intermediate build products and can be deleted to save disk space.
 
 \subsection{Building Boost on Linux}
 
 At a shell, change to the \verb|BOOST_ROOT| directory and issue the following command:
 {\small\begin{verbatim}
-b2 -q --build-dir=build-gcc --stagedir=stage-gcc --layout=versioned
---with-atomic --with-chrono --with-date_time --with-filesystem
---with-locale --with-log --with-regex --with-system --with-test
---with-thread define=BOOST_TEST_ALTERNATIVE_INIT_API
-address-model=64,32 variant=debug,release threading=multi
-link=shared,static runtime-link=shared cxxflags=-std=c++17
-linkflags=-std=c++17 stage
+b2 -q --build-dir=build-gcc --stagedir=stage-gcc --with-atomic
+--with-chrono --with-date_time --with-filesystem --with-locale
+--with-log --with-regex --with-system --with-test --with-thread
+define=BOOST_TEST_ALTERNATIVE_INIT_API
+define=BOOST_LOCALE_HIDE_AUTO_PTR address-model=64
+variant=debug,release link=shared,static runtime-link=shared
+cxxflags=-std=c++17 linkflags=-std=c++17 stage
 \end{verbatim}}
-If your compiler does not support the C++17 standard, change ``17'' to ``14'' or ``11'' in the above command (in two places).  The build process may issue warnings about missing components, such as Python and ICU.  These warnings are innocuous.  When the build finishes, the libraries will be located in \path|stage-gcc/lib|.  The directory \path|build-gcc| contains the intermediate build products and can be deleted to save disk space.
+If your compiler does not support the C++17 standard, change ``17'' to ``14'' or ``11'' in the above command (in two places).  The build process may issue some innocuous warnings about missing components, such as Python and ICU.  When the build finishes, the libraries will be located in \path|stage-gcc/lib|.  The directory \path|build-gcc| contains the intermediate build products and can be deleted to save disk space.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Configuring Boost.Build}
 
 Next we need to configure Boost.Build so that it can build \ac{pmnt}.  Start by defining the following environment variables:
 \begin{itemize}
+	\item\verb|JAVA_HOME|: The location of your JDK installation, which must be version 8 or higher.
+
 	\item\verb|BDB_VERSION|: As described above in Section~\ref{sec:BuildingBerkeleyDB}.
 
 	\item\verb|BDB_HOME|: As described above in Section~\ref{sec:BuildingBerkeleyDB}.
@@ -245,8 +252,6 @@ Next we need to configure Boost.Build so that it can build \ac{pmnt}.  Start by 
 		\caption{Possible Values of \texttt{BOOST\_TEST\_LOG\_LEVEL}}
 		\label{boost-test-log-level-values}
 	\end{table}
-
-	\item\verb|JAVA_HOME|: The location of your JDK installation, which must be version 8 or higher.
 \end{itemize}
 
 Next we create two Boost.Build configuration files, \path|site-config.jam| and \path|user-config.jam|.  Boost.Build reads these files on startup.  The two are separate so that the first one can be installed and maintained by a system administrator, and the second by the individual user.  These files can be placed in a number of locations. Table~\ref{boost-build-config-search} explains where Boost.Build searches to find these files.
@@ -285,11 +290,11 @@ Within your working copy of the \ac{pmnt} repository, in the directories \path|d
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Building \ac{pmnt} Itself}
 
-You are now ready to build \ac{pmnt}.  To do so, issue the command \path|ant| from the root directory of your \ac{pmnt} working copy --- \emph{but don't try this until you have read the next couple of paragraphs.}  This command will build the entire repository, including both native and Java code, and create a distribution-ready package in this directory:
+You are now ready to build \ac{pmnt}.  To do so, issue the command \path|ant| from the root directory of your \ac{pmnt} working copy --- \emph{but don't try this until you have read the next couple of paragraphs.}  This command builds the entire repository, including both native and Java code, and create a distribution-ready package in this directory:
 \begin{quote}
 	\texttt{targets/Parliament-v\textbf{\textit{X.Y.Z}}-\textbf{\textit{toolset}}}
 \end{quote}
-where \texttt{\textbf{\textit{X.Y.Z}}} is the \ac{pmnt} version number and \texttt{\textbf{\textit{toolset}}} indicates the platform on which the distribution runs, as shown in Table~\ref{tbl:ToolsetPlatformCorrespondence}.  The \path|ant clean| command will delete all build products.
+where \texttt{\textbf{\textit{X.Y.Z}}} is the \ac{pmnt} version number and \texttt{\textbf{\textit{toolset}}} indicates the platform on which the distribution runs, as shown in Table~\ref{tbl:ToolsetPlatformCorrespondence}.  The \path|ant clean| command builds as above and then run all of Parliament's unit and integration tests.  The \path|ant clean| command deletes all build products.
 
 The file \path|build.properties|, located in the root of your working copy, controls the \ac{pmnt} build.  This file does not exist by default.  If the build does not find it, it uses \path|build.properties.default| instead.  The latter contains the build options used to create an official release of \ac{pmnt}, which typically includes several different release builds.  To build a single debug variant, copy \path|build.properties.default| to \path|build.properties| and then customize the latter.  The file itself contains instructions.  Please change \path|build.properties.default| directly only if you intend to update the official release build options.
 
@@ -297,13 +302,12 @@ The \path|build.properties| file also contains an option that disables the nativ
 
 For more targeted builds, ant can be run from many sub-directories in your working copy.  Here is a road map to the various sub-projects:
 \begin{itemize}
+	\item\path|Parliament|: The native code at the heart of \ac{pmnt}, plus its \ac{jni} interface
+	\item\path|jena/JosekiParliamentClient|: A client-side Java library for communicating with a Joseki-\ac{pmnt} \ac{sparql} endpoint
 	\item\path|jena/JenaGraph|: Enables Jena to use \ac{pmnt} for storing models
 	\item\path|jena/JosekiExtensions|: Extensions to Joseki that, together with JenaGraph, create a \ac{sparql} endpoint on top of \ac{pmnt}
-	\item\path|jena/JosekiParliamentClient|: A client-side Java library for communicating with a Joseki-\ac{pmnt} \ac{sparql} endpoint
 	\item\path|jena/SpatialIndexProcessor|: A JenaGraph add-on for processing spatial queries efficiently
 	\item\path|jena/TemporalIndexProcessor|: A similar add-on to speed up temporal queries
-	\item\path|LUBM|: A customized version of the Lehigh University Benchmark\urlcite{http://swat.cse.lehigh.edu/projects/lubm/} for easy performance testing of \ac{pmnt}
-	\item\path|Parliament|: The native code at the heart of \ac{pmnt}, plus its \ac{jni} interface
 \end{itemize}
 
 When working on the native code portions of \ac{pmnt}, it can be useful to run the \path|b2| portion of the build directly.  To do so, change directory to \path|KbCore| (for the \ac{pmnt} \ac{dll} itself), \path|AdminClient| (for the command line interface to \ac{pmnt}), or \path|Test| (for the unit tests).  These directories are located within the \path|Parliament| sub-directory of your working copy.  Then issue the command

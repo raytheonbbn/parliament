@@ -15,6 +15,7 @@ log/
 /doc/UserGuide/ParliamentUserGuide.out
 /doc/UserGuide/ParliamentUserGuide.run.xml
 /doc/UserGuide/ParliamentUserGuide.synctex.gz
+/doc/UserGuide/ParliamentUserGuide.synctex(busy)
 /doc/UserGuide/ParliamentUserGuide.toc
 /doc/UserGuide/references.bib
 /jena/JosekiExtensions/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab/
