@@ -17,9 +17,10 @@ This appendix is provided primarily to guide the developer who needs to update t
 	\begin{verbatim}
    build_windows\Berkeley_DB_vs2010.sln
 	\end{verbatim}
-Allow the Visual Studio Conversion Wizard to convert the projects to its file format.
 
-\item For each configuration-platform pair listed in Table~\ref{vs-config-platform-pairs}, choose Build and then Configuration Manager from the menu and select that configuration and platform.  Then, in the Solution Explorer, right-click the ``db'' project and choose ``Project Only / Build Only db'' from the menu.
+\item If Visual Studio asks to update the projects' file format, allow it.  If not, right-click the solution in the Solution Explorer and choose Retarget Solution to cause the update to occur.
+
+\item For each configuration-platform pair listed in Table~\ref{vs-config-platform-pairs}, choose Configuration Manager from the Build menu and select that configuration and platform.  Then, in the Solution Explorer, right-click the ``db'' project and choose ``Project Only / Build Only db'' from the menu.
 
 	\begin{table}[htbp]
 		\centering
@@ -80,7 +81,7 @@ Allow the Visual Studio Conversion Wizard to convert the projects to its file fo
    build_windows\*.h
 \end{verbatim}
 
-\item Commit the above changes to \acp{pmnt} source code repository.
+\item \red{Commit the above changes to \acp{pmnt} source code repository.}
 
 \item Finally, delete the build directory that you created in Step~\ref{step-download} by unzipping the source code distribution.
 \end{enumerate}
