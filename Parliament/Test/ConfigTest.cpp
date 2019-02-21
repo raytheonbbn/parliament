@@ -275,11 +275,13 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultCtor)
 
 	BOOST_CHECK_EQUAL(false, c.readOnly());
 	BOOST_CHECK_EQUAL(15000u, c.fileSyncTimerDelay());
-	BOOST_CHECK_EQUAL(100000u, c.initialRsrcCapacity());
-	BOOST_CHECK_EQUAL(64u, c.avgRsrcLen());
-	BOOST_CHECK_EQUAL(1.25, c.rsrcGrowthFactor());
+	BOOST_CHECK_EQUAL(300000u, c.initialRsrcCapacity());
+	BOOST_CHECK_EQUAL(100u, c.avgRsrcLen());
+	BOOST_CHECK_EQUAL(600000u, c.rsrcGrowthIncrement());
+	BOOST_CHECK_EQUAL(0.0, c.rsrcGrowthFactor());
 	BOOST_CHECK_EQUAL(500000u, c.initialStmtCapacity());
-	BOOST_CHECK_EQUAL(1.25, c.stmtGrowthFactor());
+	BOOST_CHECK_EQUAL(1000000u, c.stmtGrowthIncrement());
+	BOOST_CHECK_EQUAL(0.0, c.stmtGrowthFactor());
 	BOOST_CHECK_EQUAL(string("32m,1"), c.bdbCacheSize());
 
 	BOOST_CHECK_EQUAL(true, c.normalizeTypedStringLiterals());
@@ -352,9 +354,11 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 		s << "  readOnly           = yes" << endl;
 		s << "  fileSyncTimerDelay = 10000" << endl;
 		s << "initialRsrcCapacity  = 100" << endl;
-		s << " \t avgRsrcLen       = 100" << endl;
+		s << " \t avgRsrcLen       = 128" << endl;
+		s << "rsrcGrowthIncrement  = 200 " << endl;
 		s << "rsrcGrowthFactor     = 2 " << endl;
 		s << "initialStmtCapacity  = 500 \t " << endl;
+		s << "stmtGrowthIncrement  = 1000" << endl;
 		s << "stmtGrowthFactor     = 2" << endl;
 		s << "bdbCacheSize         = 512m,2" << endl;
 		s << "normalizeTypedStringLiterals = no" << endl;
@@ -412,9 +416,11 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 		BOOST_CHECK_EQUAL(true, c.readOnly());
 		BOOST_CHECK_EQUAL(10000u, c.fileSyncTimerDelay());
 		BOOST_CHECK_EQUAL(100u, c.initialRsrcCapacity());
-		BOOST_CHECK_EQUAL(100u, c.avgRsrcLen());
+		BOOST_CHECK_EQUAL(128u, c.avgRsrcLen());
+		BOOST_CHECK_EQUAL(200u, c.rsrcGrowthIncrement());
 		BOOST_CHECK_EQUAL(2.0, c.rsrcGrowthFactor());
 		BOOST_CHECK_EQUAL(500u, c.initialStmtCapacity());
+		BOOST_CHECK_EQUAL(1000u, c.stmtGrowthIncrement());
 		BOOST_CHECK_EQUAL(2.0, c.stmtGrowthFactor());
 		BOOST_CHECK_EQUAL(string("512m,2"), c.bdbCacheSize());
 		BOOST_CHECK_EQUAL(false, c.normalizeTypedStringLiterals());
@@ -474,9 +480,11 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 		s << "readOnly             = yes" << endl;
 		s << "fileSyncTimerDelay   = 10000" << endl;
 		s << "initialRsrcCapacity  = 100" << endl;
-		s << "avgRsrcLen           = 100" << endl;
+		s << "avgRsrcLen           = 128" << endl;
+		s << "rsrcGrowthIncrement  = 200" << endl;
 		s << "rsrcGrowthFactor     = 2" << endl;
 		s << "initialStmtCapacity  = 500" << endl;
+		s << "stmtGrowthIncrement  = 1000" << endl;
 		s << "stmtGrowthFactor     = 2" << endl;
 		s << "bdbCacheSize         = 512m,2" << endl;
 		s << "normalizeTypedStringLiterals = no" << endl;
@@ -537,8 +545,10 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 	BOOST_CHECK_EQUAL(defaults.fileSyncTimerDelay(), c.fileSyncTimerDelay());
 	BOOST_CHECK_EQUAL(defaults.initialRsrcCapacity(), c.initialRsrcCapacity());
 	BOOST_CHECK_EQUAL(defaults.avgRsrcLen(), c.avgRsrcLen());
+	BOOST_CHECK_EQUAL(defaults.rsrcGrowthIncrement(), c.rsrcGrowthIncrement());
 	BOOST_CHECK_EQUAL(defaults.rsrcGrowthFactor(), c.rsrcGrowthFactor());
 	BOOST_CHECK_EQUAL(defaults.initialStmtCapacity(), c.initialStmtCapacity());
+	BOOST_CHECK_EQUAL(defaults.stmtGrowthIncrement(), c.stmtGrowthIncrement());
 	BOOST_CHECK_EQUAL(defaults.stmtGrowthFactor(), c.stmtGrowthFactor());
 	BOOST_CHECK_EQUAL(defaults.bdbCacheSize(), c.bdbCacheSize());
 	BOOST_CHECK_EQUAL(defaults.normalizeTypedStringLiterals(), c.normalizeTypedStringLiterals());

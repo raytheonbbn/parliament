@@ -18,8 +18,8 @@ class VarRecordTable
 {
 public:
 	VarRecordTable(const ::boost::filesystem::path& filePath, bool readOnly,
-			size_t capacity, double growthFactor)
-		: m_fixRecTbl(filePath, readOnly, capacity, growthFactor) {}
+			size_t capacity, size_t growthIncrement, double growthFactor)
+		: m_fixRecTbl(filePath, readOnly, capacity, growthIncrement, growthFactor) {}
 	VarRecordTable(const VarRecordTable&) = delete;
 	VarRecordTable& operator=(const VarRecordTable&) = delete;
 	VarRecordTable(VarRecordTable&&) = delete;

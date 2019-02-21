@@ -39,6 +39,10 @@ Version 2.7.12 (?, revision ?):
 
 * Changed the default KB directory from "." (the current working directory) to "kb-data"
 
+* Added configuration settings that enable linear growth of Parliament's resource and
+  statement tables.  The old behavior (geometric growth) is still available, but
+  disabled by default.
+
 
 
 =================================================

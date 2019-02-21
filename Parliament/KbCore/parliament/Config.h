@@ -171,6 +171,12 @@ public:
 	void avgRsrcLen(size_t newValue)
 		{ m_avgRsrcLen = newValue; }
 
+	// The increment by which the resource capacity should be grown whenever more space is required.
+	size_t rsrcGrowthIncrement() const
+		{ return m_rsrcGrowthIncrement; }
+	void rsrcGrowthIncrement(size_t newValue)
+		{ m_rsrcGrowthIncrement = newValue; }
+
 	// The factor by which the resource capacity should be grown whenever more space is required.
 	double rsrcGrowthFactor() const
 		{ return m_rsrcGrowthFactor; }
@@ -182,6 +188,12 @@ public:
 		{ return m_initialStmtCapacity; }
 	void initialStmtCapacity(size_t newValue)
 		{ m_initialStmtCapacity = newValue; }
+
+	// The increment by which the statement capacity should be grown whenever more space is required.
+	size_t stmtGrowthIncrement() const
+		{ return m_stmtGrowthIncrement; }
+	void stmtGrowthIncrement(size_t newValue)
+		{ m_stmtGrowthIncrement = newValue; }
 
 	// The factor by which the statement capacity should be grown whenever more space is required.
 	double stmtGrowthFactor() const
@@ -368,8 +380,10 @@ private:
 	size_t							m_fileSyncTimerDelay;
 	size_t							m_initialRsrcCapacity;
 	size_t							m_avgRsrcLen;
+	size_t							m_rsrcGrowthIncrement;
 	double							m_rsrcGrowthFactor;
 	size_t							m_initialStmtCapacity;
+	size_t							m_stmtGrowthIncrement;
 	double							m_stmtGrowthFactor;
 	::std::string					m_bdbCacheSize;
 
@@ -395,8 +409,8 @@ private:
 	bool								m_inferRdfsResource;
 	bool								m_inferOwlThing;
 
-	size_t								m_timeoutDuration;
-	::std::string						m_timeoutUnit;
+	size_t							m_timeoutDuration;
+	::std::string					m_timeoutUnit;
 };
 
 PARLIAMENT_NAMESPACE_END

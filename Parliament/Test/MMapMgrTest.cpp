@@ -88,13 +88,6 @@ BOOST_AUTO_TEST_CASE(testMMapMgrTblHeader)
 	BOOST_CHECK_THROW(th.checkCompatibility(filePath), Exception);
 }
 
-BOOST_AUTO_TEST_CASE(testMMapMgrGrowRecordCount)
-{
-	BOOST_CHECK(MMapMgr::growRecordCount(10, 2.0) >= 10000);			// Must grow to at least 10000 records
-	BOOST_CHECK(MMapMgr::growRecordCount(20000, 0.01) >= 21000);	// Must grow by at least 1000 records
-	BOOST_CHECK(MMapMgr::growRecordCount(20000, 1.5) >= 30000);		// Must grow by at least a factor of growthFactor
-}
-
 BOOST_AUTO_TEST_CASE(testMMapMgr)
 {
 	FileDeleter deleter(k_fName);

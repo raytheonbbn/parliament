@@ -147,7 +147,11 @@
 			token="kbDirectoryPath        = kb-data"
 			value="kbDirectoryPath        = test-kb-data"/>
 		<replaceregexp file="${testConfigFile}"
-			match="(initial[a-z]*capacity *= *)[0-9]+"
+			match="(initial((Rsrc)|(Stmt))Capacity *= *)[0-9]+"
+			replace="\120"
+			flags="mig"/>
+		<replaceregexp file="${testConfigFile}"
+			match="(((rsrc)|(stmt))GrowthIncrement *= *)[0-9]+"
 			replace="\120"
 			flags="mig"/>
 	</target>

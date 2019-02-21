@@ -44,9 +44,7 @@ public class ReificationTest {
 
 	@BeforeEach
 	public void beforeEach() {
-		config = new Config();
-		config.m_kbDirectoryPath = ".";
-		config.m_logToConsole = false;
+		config = Config.readFromFile();
 		try {
 			KbInstance.deleteKb(config, null);
 			kb = new KbInstance(config);

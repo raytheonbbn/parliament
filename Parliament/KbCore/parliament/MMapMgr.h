@@ -82,8 +82,6 @@ public:
 
 	void sync();
 
-	static size_t growRecordCount(size_t oldRecCount, double growthFactor);
-
 private:
 	FileHandle				m_file;
 	FileMapping				m_fileMap;

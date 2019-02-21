@@ -6,15 +6,10 @@
 
 // TODO: Test SWRLTrigger Rule
 
-#include <boost/filesystem/fstream.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/monomorphic.hpp>
 #include <boost/test/data/test_case.hpp>
-#include <algorithm>
-#include <fstream>
-#include <memory>
 #include <ostream>
-#include <string>
 #include "parliament/RuleEngine.h"
 #include "parliament/Config.h"
 #include "parliament/KbInstance.h"
@@ -36,13 +31,10 @@
 #include "TestUtils.h"
 
 namespace bdata = ::boost::unit_test::data;
-namespace bfs = ::boost::filesystem;
 
 using namespace ::bbn::parliament;
-using ::std::endl;
 using ::std::make_shared;
 using ::std::ostream;
-using ::std::string;
 
 enum class RuleInitPoint
 	{ k_beginning, k_middle, k_middle2, k_middle3, k_middle4, k_middle5, k_end };
@@ -142,60 +134,6 @@ static const RuleTestParams k_otherRuleTestParams[] =
 static auto g_log{Log::getSource("RuleEngineTest")};
 
 BOOST_AUTO_TEST_SUITE(RuleEngineTestSuite)
-
-static void writeConfigFile(const TChar* pKbPath, const bfs::path& configFilePath, bool areRulesOn)
-{
-	const char* pRulesOnFlag = areRulesOn ? "on" : "off";
-	bfs::ofstream s(configFilePath);
-	s << "kbDirectoryPath        = " << convertTCharToUtf8(pKbPath) << endl;
-	s << "stmtFileName           = statements.mem" << endl;
-	s << "rsrcFileName           = resources.mem" << endl;
-	s << "uriTableFileName       = uris.mem" << endl;
-	s << "uriToIntFileName       = u2i.db" << endl;
-	s << "stmtToIdFileName       = stmt2id.db" << endl;
-	s << endl;
-	s << "readOnly               = no" << endl;
-	s << "fileSyncTimerDelay     = 15000" << endl;
-	s << "keepDupStmtIdx         = no" << endl;
-	s << "initialRsrcCapacity    = 100000" << endl;
-	s << "avgRsrcLen             = 64" << endl;
-	s << "rsrcGrowthFactor       = 1.25" << endl;
-	s << "initialStmtCapacity    = 500000" << endl;
-	s << "stmtGrowthFactor       = 1.25" << endl;
-	s << "runAllRulesAtStartup   = no" << endl;
-	s << endl;
-	s << "SubclassRule           = " << pRulesOnFlag << endl;
-	s << "SubpropertyRule        = " << pRulesOnFlag << endl;
-	s << "DomainRule             = " << pRulesOnFlag << endl;
-	s << "RangeRule              = " << pRulesOnFlag << endl;
-	s << "EquivalentClassRule    = " << pRulesOnFlag << endl;
-	s << "EquivalentPropRule     = " << pRulesOnFlag << endl;
-	s << "InverseOfRule          = " << pRulesOnFlag << endl;
-	s << "SymmetricPropRule      = " << pRulesOnFlag << endl;
-	s << "FunctionalPropRule     = " << pRulesOnFlag << endl;
-	s << "InvFunctionalPropRule  = " << pRulesOnFlag << endl;
-	s << "TransitivePropRule     = " << pRulesOnFlag << endl;
-	s << endl;
-	s << "inferRdfsClass         = no" << endl;
-	s << "inferOwlClass          = no" << endl;
-	s << "inferRdfsResource      = no" << endl;
-	s << "inferOwlThing          = no" << endl;
-	s.close();
-}
-
-static void populateKbForTestRuleConfig(KbInstance& kb)
-{
-	ResourceId rdfsSubClassOfRsrcId	= kb.uriLib().m_rdfsSubClassOf.id();
-	ResourceId rdfTypeRsrcId = kb.uriLib().m_rdfType.id();
-	ResourceId dogRsrcId = kb.uriToRsrcId(k_dogRsrc, false, true);
-	ResourceId mammalRsrcId = kb.uriToRsrcId(k_mammalRsrc, false, true);
-	ResourceId animalRsrcId = kb.uriToRsrcId(k_animalRsrc, false, true);
-	ResourceId fidoRsrcId = kb.uriToRsrcId(k_fidoRsrc, false, true);
-
-	kb.addStmt(mammalRsrcId, rdfsSubClassOfRsrcId, animalRsrcId, false);
-	kb.addStmt(dogRsrcId, rdfsSubClassOfRsrcId, mammalRsrcId, false);
-	kb.addStmt(fidoRsrcId, rdfTypeRsrcId, dogRsrcId, false);
-}
 
 static bool isEntailed(const KbInstance& kb, ResourceId subjectId, ResourceId predicateId, ResourceId objectId)
 {
@@ -1086,37 +1024,33 @@ BOOST_DATA_TEST_CASE(
 	}
 }
 
-BOOST_AUTO_TEST_CASE(testRuleConfig)
+BOOST_DATA_TEST_CASE(
+	testRuleConfig,
+	bdata::make({ true, false }),
+	areRulesDisabled)
 {
-	static const TChar k_fName[] = _T("tempConfigFileForRuleEngineTest.txt");
-
-	TString envVar(_T("PARLIAMENT_CONFIG_PATH="));
-	envVar += k_fName;
-	setEnvVar(envVar.c_str());
-
+	Config config = Config::readFromFile();
+	config.kbDirectoryPath(k_dirName);
+	config.readOnly(false);
+	if (areRulesDisabled)
 	{
-		FileDeleter configDeleter(k_fName);
-		writeConfigFile(k_dirName, k_fName, false);
-		Config config = Config::readFromFile();
-		KbDeleter kbDeleter(config);
-		KbInstance kb(config);
-		populateKbForTestRuleConfig(kb);
-
-		BOOST_CHECK_EQUAL(3u, kb.stmtCount());
+		config.disableAllRules();
 	}
+	KbDeleter kbDeleter(config);
+	KbInstance kb(config);
 
-	{
-		FileDeleter configDeleter(k_fName);
-		writeConfigFile(k_dirName, k_fName, true);
-		Config config = Config::readFromFile();
-		KbDeleter kbDeleter(config);
-		KbInstance kb(config);
-		populateKbForTestRuleConfig(kb);
+	ResourceId rdfsSubClassOfRsrcId	= kb.uriLib().m_rdfsSubClassOf.id();
+	ResourceId rdfTypeRsrcId = kb.uriLib().m_rdfType.id();
+	ResourceId dogRsrcId = kb.uriToRsrcId(k_dogRsrc, false, true);
+	ResourceId mammalRsrcId = kb.uriToRsrcId(k_mammalRsrc, false, true);
+	ResourceId animalRsrcId = kb.uriToRsrcId(k_animalRsrc, false, true);
+	ResourceId fidoRsrcId = kb.uriToRsrcId(k_fidoRsrc, false, true);
 
-		BOOST_CHECK_EQUAL(6u, kb.stmtCount());
-	}
+	kb.addStmt(mammalRsrcId, rdfsSubClassOfRsrcId, animalRsrcId, false);
+	kb.addStmt(dogRsrcId, rdfsSubClassOfRsrcId, mammalRsrcId, false);
+	kb.addStmt(fidoRsrcId, rdfTypeRsrcId, dogRsrcId, false);
 
-	setEnvVar(_T("PARLIAMENT_CONFIG_PATH="));
+	BOOST_CHECK_EQUAL((areRulesDisabled ? 3u : 6u), kb.stmtCount());
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -50,13 +50,13 @@ uriToIntFileName       = u2i.db
 
 readOnly               = no
 fileSyncTimerDelay     = 15000
-initialRsrcCapacity    = 100000
-avgRsrcLen             = 64
-# Use 1,25 in European locales:
-rsrcGrowthFactor       = 1.25
+initialRsrcCapacity    = 300000
+avgRsrcLen             = 100
+rsrcGrowthIncrement    = 600000
+rsrcGrowthFactor       = 0
 initialStmtCapacity    = 500000
-# Use 1,25 in European locales:
-stmtGrowthFactor       = 1.25
+stmtGrowthIncrement    = 1000000
+stmtGrowthFactor       = 0
 
 # The amount of memory to be devoted to the Berkeley DB cache.  The portion before
 # the comma is the total cache size (with a k for kilobytes, m for megabytes, g for

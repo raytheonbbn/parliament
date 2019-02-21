@@ -117,6 +117,12 @@ public class Config
 	public long    m_avgRsrcLen;
 
 	/**
+	 * The increment by which the resource capacity should be grown whenever more
+	 * space is required
+	 */
+	public long    m_rsrcGrowthIncrement;
+
+	/**
 	 * The factor by which the resource capacity should be grown whenever more
 	 * space is required
 	 */
@@ -124,6 +130,12 @@ public class Config
 
 	/** The initial # of statements for which space should be allocated */
 	public long    m_initialStmtCapacity;
+
+	/**
+	 * The increment by which the statement capacity should be grown whenever more
+	 * space is required
+	 */
+	public long    m_stmtGrowthIncrement;
 
 	/**
 	 * The factor by which the statement capacity should be grown whenever more

@@ -57,8 +57,10 @@ static void assignCppConfigToJavaConfig(JNIEnv* pEnv, jobject obj, const Config&
 	JNIHelper::setLongFld(pEnv, obj,		"m_fileSyncTimerDelay",				config.fileSyncTimerDelay());
 	JNIHelper::setLongFld(pEnv, obj,		"m_initialRsrcCapacity",			config.initialRsrcCapacity());
 	JNIHelper::setLongFld(pEnv, obj,		"m_avgRsrcLen",						config.avgRsrcLen());
+	JNIHelper::setLongFld(pEnv, obj,		"m_rsrcGrowthIncrement",			config.rsrcGrowthIncrement());
 	JNIHelper::setDoubleFld(pEnv, obj,	"m_rsrcGrowthFactor",				config.rsrcGrowthFactor());
 	JNIHelper::setLongFld(pEnv, obj,		"m_initialStmtCapacity",			config.initialStmtCapacity());
+	JNIHelper::setLongFld(pEnv, obj,		"m_stmtGrowthIncrement",			config.stmtGrowthIncrement());
 	JNIHelper::setDoubleFld(pEnv, obj,	"m_stmtGrowthFactor",				config.stmtGrowthFactor());
 	JNIHelper::setStringFld(pEnv, obj,	"m_bdbCacheSize",						config.bdbCacheSize());
 	JNIHelper::setBooleanFld(pEnv, obj,	"m_normalizeTypedStringLiterals",config.normalizeTypedStringLiterals());

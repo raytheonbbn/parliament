@@ -5,6 +5,8 @@
 // All rights reserved.
 
 #include <boost/test/unit_test.hpp>
+#include <boost/test/data/monomorphic.hpp>
+#include <boost/test/data/test_case.hpp>
 #include <limits>
 #include <string>
 #include "parliament/FixRecordTable.h"
@@ -14,6 +16,8 @@
 #include "parliament/Log.h"
 #include "parliament/KbRsrc.h"
 #include "parliament/KbStmt.h"
+
+namespace bdata = ::boost::unit_test::data;
 
 using namespace ::bbn::parliament;
 using ::std::numeric_limits;
@@ -75,6 +79,9 @@ static const uint8 k_expectedResult[] =
 	};
 static const TChar k_fName[] = _T("tempFile");
 
+static const size_t k_growthIncrements[] = { 30u, 0u };
+static const double k_growthFactors[] = { 0.0, 2.0 };
+
 static auto g_log(Log::getSource("FixRecordTableTest"));
 
 BOOST_AUTO_TEST_SUITE(FixRecordTableTestSuite)
@@ -101,12 +108,15 @@ BOOST_AUTO_TEST_CASE(testFixRecordSizesAndOffsets)
 	BOOST_CHECK(0ul != FixRecordTable<KbRsrc>::testRecSize());
 }
 
-BOOST_AUTO_TEST_CASE(testFixRecordTable)
+BOOST_DATA_TEST_CASE(
+	testFixRecordTable,
+	bdata::make(k_growthIncrements) ^ bdata::make(k_growthFactors),
+	growthIncrement, growthFactor)
 {
 	FileDeleter deleter(k_fName);
 
 	{
-		FixRecordTable<TestRecord> frt(k_fName, false, 4, 2.0);
+		FixRecordTable<TestRecord> frt(k_fName, false, 4, growthIncrement, growthFactor);
 		BOOST_CHECK(frt.isEmpty());
 		const size_t maxSizeT = numeric_limits<size_t>::max();
 		BOOST_CHECK((maxSizeT - sizeof(MMapMgr::TblHeader)) / sizeof(TestRecord) <= frt.maxSize());
@@ -139,7 +149,7 @@ BOOST_AUTO_TEST_CASE(testFixRecordTable)
 	}
 
 	{
-		FixRecordTable<TestRecord> frt(k_fName, true, 4, 2.0);
+		FixRecordTable<TestRecord> frt(k_fName, true, 4, growthIncrement, growthFactor);
 		BOOST_CHECK(!frt.isEmpty());
 		BOOST_CHECK_EQUAL(arrayLen(k_testData1) + arrayLen(k_testData2) - 1, frt.recordCount());
 		BOOST_CHECK_EQUAL(frt.recordCount(), frt.capacity());

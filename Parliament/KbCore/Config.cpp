@@ -151,11 +151,13 @@ pmnt::Config::Config() :
 	m_uriToIntFileName("u2i.db"),
 	m_readOnly(false),
 	m_fileSyncTimerDelay(15000),
-	m_initialRsrcCapacity(100000),
-	m_avgRsrcLen(64),
-	m_rsrcGrowthFactor(1.25),
+	m_initialRsrcCapacity(300000),
+	m_avgRsrcLen(100),
+	m_rsrcGrowthIncrement(600000),
+	m_rsrcGrowthFactor(0),
 	m_initialStmtCapacity(500000),
-	m_stmtGrowthFactor(1.25),
+	m_stmtGrowthIncrement(1000000),
+	m_stmtGrowthFactor(0),
 	m_bdbCacheSize("32m,1"),
 	m_normalizeTypedStringLiterals(true),
 	m_runAllRulesAtStartup(false),
@@ -376,6 +378,10 @@ void pmnt::Config::parseKeyValuePair(const string& key,
 	{
 		cp.m_avgRsrcLen = parseUnsigned(value, lineNum);
 	}
+	else if (ba::iequals(key, "rsrcGrowthIncrement"))
+	{
+		cp.m_rsrcGrowthIncrement = parseUnsigned(value, lineNum);
+	}
 	else if (ba::iequals(key, "rsrcGrowthFactor"))
 	{
 		cp.m_rsrcGrowthFactor = parseDouble(value, lineNum);
@@ -383,6 +389,10 @@ void pmnt::Config::parseKeyValuePair(const string& key,
 	else if (ba::iequals(key, "initialStmtCapacity"))
 	{
 		cp.m_initialStmtCapacity = parseUnsigned(value, lineNum);
+	}
+	else if (ba::iequals(key, "stmtGrowthIncrement"))
+	{
+		cp.m_stmtGrowthIncrement = parseUnsigned(value, lineNum);
 	}
 	else if (ba::iequals(key, "stmtGrowthFactor"))
 	{

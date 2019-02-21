@@ -161,9 +161,7 @@ public class JniTest {
 	}
 
 	private static Config buildConfig(boolean withInference) {
-		Config cfg = new Config();
-		cfg.m_kbDirectoryPath = ".";
-		cfg.m_logToConsole = false;
+		Config cfg = Config.readFromFile();
 		if (!withInference) {
 			cfg.disableAllRules();
 		}
