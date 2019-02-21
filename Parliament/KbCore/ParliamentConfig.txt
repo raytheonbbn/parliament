@@ -42,7 +42,7 @@ logLevel                 = INFO
 
 #####   Data file options   #####
 
-kbDirectoryPath        = .
+kbDirectoryPath        = kb-data
 stmtFileName           = statements.mem
 rsrcFileName           = resources.mem
 uriTableFileName       = uris.mem

@@ -144,7 +144,7 @@ pmnt::Config::Config() :
 	m_logFileRotationTimePoint("02:00:00"),	// 2 AM
 	m_logLevel("INFO"),
 	m_logChannelLevel(),
-	m_kbDirectoryPath(convertUtf8ToPath(".")),
+	m_kbDirectoryPath(convertUtf8ToPath("kb-data")),
 	m_stmtFileName("statements.mem"),
 	m_rsrcFileName("resources.mem"),
 	m_uriTableFileName("uris.mem"),

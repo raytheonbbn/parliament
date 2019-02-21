@@ -267,7 +267,7 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultCtor)
 	BOOST_CHECK_EQUAL(string("INFO"), c.logLevel());
 	BOOST_CHECK(c.logChannelLevels().empty());
 
-	BOOST_CHECK_EQUAL(bfs::path(_T(".")), c.kbDirectoryPath());
+	BOOST_CHECK_EQUAL(bfs::path(_T("kb-data")), c.kbDirectoryPath());
 	BOOST_CHECK_EQUAL(string("statements.mem"), c.stmtFileName());
 	BOOST_CHECK_EQUAL(string("resources.mem"), c.rsrcFileName());
 	BOOST_CHECK_EQUAL(string("uris.mem"), c.uriTableFileName());

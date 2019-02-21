@@ -61,7 +61,7 @@ Once you have downloaded a distribution, these steps will yield a functioning \a
 \subsection{Upgrading an Existing Installation}
 \label{section-std-server-upgrade}
 
-When upgrading an existing \ac{pmnt} installation to a newer version, the procedures of Section~\ref{section-std-server-init-deploy} are generally not sufficient because they ignore the migration of the data.  The \ac{pmnt} development team strives to maintain compatibility of file formats whenever possible.  In such cases, all that is required is to move the \path|data| subdirectory of your \ac{pmnt} installation into the new \ac{pmnt} installation.  (Of course, if you have customized \acp{pmnt} configuration, you will also need to make those changes in the new installation as well.)
+When upgrading an existing \ac{pmnt} installation to a newer version, the procedures of Section~\ref{section-std-server-init-deploy} are generally not sufficient because they ignore the migration of the data.  The \ac{pmnt} development team strives to maintain compatibility of file formats whenever possible.  In such cases, all that is required is to move the \path|kb-data| subdirectory of your \ac{pmnt} installation into the new \ac{pmnt} installation.  (Of course, if you have customized \acp{pmnt} configuration, you will also need to make those changes in the new installation as well.)
 
 However, from time to time \acp{pmnt} file formats do change, and in such cases a different migration procedure is required.  Following this procedure even in those cases where it is not required has some benefits as well, since it frees up any unused space in the \ac{pmnt} files.  This is the way to perform such a migration:
 
@@ -236,7 +236,7 @@ The recognized settings are as follows.  Setting names are case-insensitive.
 
 	\item[logChannelLevel] Overrides the global logging level for a single channel.  (Generally a channel is equivalent to a class in the source code.)  The value of this setting takes the form \begin{quote}\emph{«channel-name» = «log-level»}\end{quote} where \emph{«log-level»} takes one of the values listed for the global logging level above.  This option may be repeated to override the level for multiple channels. \emph{Default: None}
 
-	\item[kbDirectoryPath] The path of the \ac{pmnt} knowledge base files.  If they do not yet exist, they will be created here.  \emph{Default: The current working directory, ``.''}
+	\item[kbDirectoryPath] The path of the \ac{pmnt} knowledge base files.  If they do not yet exist, they will be created here.  \emph{Default: \path|kb-data|}
 
 	\item[stmtFileName] The name of the memory-mapped file containing records of statements. \emph{Default: \path|statements.mem|}
 
@@ -268,7 +268,7 @@ The recognized settings are as follows.  Setting names are case-insensitive.
 
 	\item[normalizeTypedStringLiterals] Instructs \ac{pmnt} to convert typed string literals to plain literals, both upon insert and at query time, as mandated in \ac{rdf} 1.1.  In \ac{pmnt} versions before the implementation of this option (versions~2.7.9 and prior), the behavior was as if the option were set to ``no''.  Therefore, if you are migrating a \ac{pmnt} installation originally created with one of these older versions to a newer version, you must do one of two things:
 	\begin{enumerate}
-		\item Either before or after the upgrade, create an export of the entire triple store.  To do this, use the ``Export Repository'' option on the Export page of \acp{pmnt} Web-based administrative interface.  Then shut down \ac{pmnt} and delete its \path|data| directory.  This is the location identified by the \texttt{kbDirectoryPath} setting in the configuration file.  Then, after upgrading, import the backup using the ``Import Repository'' option on the Insert Data page of the administrative interface.
+		\item Either before or after the upgrade, create an export of the entire triple store.  To do this, use the ``Export Repository'' option on the Export page of \acp{pmnt} Web-based administrative interface.  Then shut down \ac{pmnt} and delete its \path|kb-data| (or \path|data|) directory.  This is the location identified by the \texttt{kbDirectoryPath} setting in the configuration file.  Then, after upgrading, import the backup using the ``Import Repository'' option on the Insert Data page of the administrative interface.
 
 		\item Set this option to ``no''.
 	\end{enumerate}
@@ -368,13 +368,9 @@ The most common way to deploy \ac{pmnt} uses the Jetty servlet container.  This 
 \end{quote}}
 	and change the following line:
 \begin{quote}
-\texttt{kbDirectoryPath = .}
+\texttt{kbDirectoryPath = kb-data}
 \end{quote}
-	to point to a directory suitable for storing your knowledge base.  In an operational deployment of \ac{pmnt}, this is often set to a large drive dedicated to the storage of the knowledge base, such as a \ac{raid}, \ac{nas}, or \ac{san}.  For testing purposes, set it to a relative path, such as:
-\begin{quote}
-\texttt{kbDirectoryPath = data}
-\end{quote}
-	This stores the knowledge base in \path|CATALINA_HOME/bin/data|.
+	to point to a directory suitable for storing your knowledge base.  In an operational deployment of \ac{pmnt}, this is often set to a large drive dedicated to the storage of the knowledge base, such as a \ac{raid}, \ac{nas}, or \ac{san}.  For testing purposes, the default is fine.  This will store the knowledge base in \path|CATALINA_HOME/bin/kb-data|.
 
 	\item If you have not already done so while installing Tomcat, create a file called \path|setenv.sh| in \path|CATALINA_HOME/bin| and within it set the environment variable \path|CATALINA_OPTS| like so:
 {\footnotesize\begin{verbatim}
@@ -412,7 +408,7 @@ When deploying \ac{pmnt} to Glassfish, note the following:
 \begin{itemize}
 	\item Glassfish sets it's own \verb|java.library.path| property.  The \ac{pmnt} libraries must either be copied into \path|«Glassfish install dir»/lib| or you must alter the Glassfish configuration such that the libraries are available on \verb|java.library.path|.
 
-	\item By default, \ac{pmnt} stores it's data files in the current working directory.  In the case of Glassfish, this will be \path|«Glassfish install dir»/domains/domain1/config|.  To change this, edit the configuration file, \path|ParliamentConfig.txt|, to set \verb|kbDirectoryPath| to the location (absolute path) where you would like your files to reside.
+	\item By default, \ac{pmnt} stores it's data files in the \path|kb-data| subdirectory of the current working directory.  In the case of Glassfish, this will be \path|«Glassfish install dir»/domains/domain1/config/kb-data|.  To change this, edit the configuration file, \path|ParliamentConfig.txt|, to set \verb|kbDirectoryPath| to the location (absolute path) where you would like your files to reside.
 
 	\item If \ac{pmnt} is redeployed into a running instance of Glassfish, the server will need to be restarted.
 \end{itemize}
@@ -495,7 +491,7 @@ Naturally, there is some setup required to make this work:
 
 	\item On Windows only, install the run-time libraries by running the installer in the \path|RedistributablePackages| subdirectory of your \ac{pmnt} distribution.
 
-	\item Customize the configuration file \path|ParliamentConfig.txt| as desired.  In particular, the \texttt{kbDirectoryPath} setting defaults to the current working directory.  To place your \ac{pmnt} \ac{kb} files in a different location, change this setting to the directory of your choice.  This is especially useful for placing the \ac{kb} files on a drive array, or for maintaining several \acp{kb} and switching between them.
+	\item Customize the configuration file \path|ParliamentConfig.txt| as desired.  In particular, the \texttt{kbDirectoryPath} setting defaults to the \path|kb-data| subdirectory of the current working directory.  To place your \ac{pmnt} \ac{kb} files in a different location, change this setting to the directory of your choice.  This is especially useful for placing the \ac{kb} files on a drive array, or for maintaining several \acp{kb} and switching between them.
 
 	\item Set the \verb|PARLIAMENT_CONFIG_PATH| environment variable to the configuration file's path.  On Windows, if this is not set the file will be loaded from the same directory as the \ac{pmnt} \ac{dll}, which is often a useful default.  On other platforms there is no default, and so this environment variable must be set.
 \end{enumerate}

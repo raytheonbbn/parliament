@@ -252,6 +252,16 @@ Next we need to configure Boost.Build so that it can build \ac{pmnt}.  Start by 
 		\caption{Possible Values of \texttt{BOOST\_TEST\_LOG\_LEVEL}}
 		\label{boost-test-log-level-values}
 	\end{table}
+
+	\item\verb|VS_ROOT|: \emph{(Windows only)} The root of your Visual C++ installation.  Usually \path|C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\|.
+
+	\item\verb|VS_BAT_PATH_32|: \emph{(Windows only)} The path to the batch file that sets up the environment for 32-bit builds.  Typically this is \path|%VS_ROOT%Auxiliary\Build\vcvarsamd64_x86.bat|.
+
+	\item\verb|VS_BAT_PATH_64|: \emph{(Windows only)} The path to the batch file that sets up the environment for 64-bit builds.  Typically this is \path|%VS_ROOT%Auxiliary\Build\vcvars64.bat|.
+
+	\item\verb|VS_REDIST_PATH_32|: \emph{(Windows only)} The path to the 32-bit redistributables installer.  Typically this is \path|%VS_ROOT%Redist\MSVC\14.16.27012\vc_redist.x86.exe|.
+
+	\item\verb|VS_REDIST_PATH_64|: \emph{(Windows only)} The path to the 64-bit redistributables installer.  Typically this is \path|%VS_ROOT%Redist\MSVC\14.16.27012\vc_redist.x64.exe|.
 \end{itemize}
 
 Next we create two Boost.Build configuration files, \path|site-config.jam| and \path|user-config.jam|.  Boost.Build reads these files on startup.  The two are separate so that the first one can be installed and maintained by a system administrator, and the second by the individual user.  These files can be placed in a number of locations. Table~\ref{boost-build-config-search} explains where Boost.Build searches to find these files.

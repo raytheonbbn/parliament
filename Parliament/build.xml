@@ -204,7 +204,6 @@
 
 		<antcall target="fixupNativeArtifacts">
 			<param name="toDir" value="${targetDir}/${deployableSvrDir}"/>
-			<param name="resetKbDir" value="true"/>
 		</antcall>
 	</target>
 
@@ -400,21 +399,12 @@
 	<!--
 		Performs a few "fixup" actions on a native build products directory
 		(as specified by ${toDir}) after that directory has been created by
-		the buildNativeForOneParamSet target.  Expects parameters toDir and
-		resetKbDir.
+		the buildNativeForOneParamSet target.  Expects parameter toDir.
 	-->
 	<target name="fixupNativeArtifacts">
 		<copy todir="${toDir}" preservelastmodified="true" flatten="true"
 			file="${basedir}/KbCore/ParliamentConfig.txt"/>
 		<chmod file="${toDir}/ParliamentAdmin" perm="ugo+rx" osfamily="unix" verbose="true"/>
-		<if>
-			<equals arg1="${resetKbDir}" arg2="true" casesensitive="false" trim="true"/>
-			<then>
-				<replace file="${toDir}/ParliamentConfig.txt"
-					token="kbDirectoryPath        = ."
-					value="kbDirectoryPath        = data"/>
-			</then>
-		</if>
 	</target>
 
 	<target name="jar" depends="compileJava">

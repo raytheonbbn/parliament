@@ -144,7 +144,7 @@
 			token="logToConsole             = yes"
 			value="logToConsole             = no"/>
 		<replace file="${testConfigFile}"
-			token="kbDirectoryPath        = ."
+			token="kbDirectoryPath        = kb-data"
 			value="kbDirectoryPath        = test-kb-data"/>
 		<replaceregexp file="${testConfigFile}"
 			match="(initial[a-z]*capacity *= *)[0-9]+"

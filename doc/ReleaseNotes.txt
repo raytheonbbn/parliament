@@ -2,14 +2,16 @@ Version 2.7.12 (?, revision ?):
 
 * Moved to GitHub
 
-* Updated to Boost 1.69.0 and MSVC 14.1 (Visual Studio 2017, 15.8.8)
+* Updated to Boost 1.69.0 and MSVC 14.1 (Visual Studio 2017, 15.9.7)
 
 * Updated C++ code to use Boost.FileSystem and the Win32 wide character (UTF-16) API
 
 * Numerous updates to C++ code to modernize towards C++14
 
-* Fixed bug in rule engine, in which trigger lists were updated from within
-  a loop over those lists' contents
+* Fixed a rule engine bug, in which trigger lists were updated from within a loop over
+  those lists' contents
+
+* Fixed a rule engine bug that caused a runaway recursion in rare circumstances
 
 * Merged into the trunk the SWRL rules engine created by Carl Andersen and Doug Reid
 
@@ -18,7 +20,7 @@ Version 2.7.12 (?, revision ?):
   Also added javadoc and source distribution files.
 
 * Fixed a bug that prevented the Admin web page from showing running queries due to a
-  JSON parse error.
+  JSON parse error
 
 * Added the script 'InstallService.sh' for Linux builds.  On systemd-based Linux
   distributions (including CentOS and Ubuntu), this will install Parliament as a daemon
@@ -28,21 +30,14 @@ Version 2.7.12 (?, revision ?):
   important use cases.
 
 * Added two configuration properties to ParliamentConfig.txt to cause long-running
-  queries to time out.
+  queries to time out
 
-* Fixed a few bugs in the temporal index implementation and unit tests.
+* Fixed a few bugs in the temporal index implementation and unit tests
 
 * Fixed a bug that increased the likelihood that an ungraceful shutdown would corrupt
-  the data files.
+  the data files
 
-
-Doc update notes:
-* dependencies directory and env var
-* MSVC redistributables env vars (paths vary with version):
-set VS_ROOT=C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\
-set VS_REDIST_PATH_32=!VS_ROOT!Redist\MSVC\14.16.27012\vc_redist.x86.exe
-set VS_REDIST_PATH_64=!VS_ROOT!Redist\MSVC\14.16.27012\vc_redist.x64.exe
-
+* Changed the default KB directory from "." (the current working directory) to "kb-data"
 
 
 
@@ -74,7 +69,7 @@ Version 2.7.11 (7/17/2017, revision 751):
   before Jetty needs it.
 
 * Fixed a bug in the startup batch files for Windows.  In particular, this bug
-  prevented the InstallParliamentService.bat script to fail.
+  caused the InstallParliamentService.bat script to fail.
 
 * Added support for media types to the RDFFormat enum.
 
