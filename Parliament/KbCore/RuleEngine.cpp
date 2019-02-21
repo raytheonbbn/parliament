@@ -7,11 +7,7 @@
 //TODO: Ensure that iterators are not invalidated within their iteration loops
 //TODO: Eliminate fixed-size RuleVariableBinding arrays (and possibly eliminate RuleVariableBinding entirely)
 //TODO: Allow rule callbacks implemented in Java
-//TODO: generate rules from SWRL
-//TODO: persist rules
-//TODO: support multiple body atoms
-//TODO: implement builtin atoms
-
+//TODO: Finish implementing builtin atoms
 //TODO: Add an option to create rules without running them (except for rule-creating rules)
 //TODO: Add an option to the admin client to run all rules to ensure entailments are complete
 

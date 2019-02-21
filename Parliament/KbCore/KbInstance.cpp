@@ -4,16 +4,12 @@
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
 
-//TODO: [Java] Fix Parliament SAIL so that KbUri and friends only translate the rsrcId to a string if necessary (problem: KbValue needs the string to handle a change in KbInstance references)
-//TODO: Add capability to dump KB as N-Triples and to load a new KB from an N-Triple file
-//TODO: Minimize includes throughout C++ code
+//TODO: Add capability to load a new KB from an N-Triples file
 //TODO: Allow new statement handlers written in Java
 //TODO: Add code to arrange owl:sameAs (and similar) sub-graphs so as to have a star topology so that query processing is minimized.
-//TODO: char --> TChar, so that Windows version uses wide character API
 //TODO: Add iterators over the resources (e.g., all resources that are used as subjects, or all resources matching a pattern)
 //TODO: Re-think statement deletion semantics
 //TODO: Re-order write operations so as to minimize the bad consequences of process termination (i.e., file corruption)
-//TODO: Add support for XSD types on literals
 //TODO: Support ACID transactions
 //TODO: Implement a DB_ENV->memp_trickle background thread
 //TODO: Experiment to see if file fragmentation is causing bad BDB performance
