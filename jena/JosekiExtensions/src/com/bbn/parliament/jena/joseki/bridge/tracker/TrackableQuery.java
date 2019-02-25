@@ -27,14 +27,14 @@ import com.hp.hpl.jena.sparql.engine.binding.Binding;
  */
 public class TrackableQuery extends Trackable {
 	private static Logger _log = LoggerFactory.getLogger(TrackableQuery.class);
-	
+
 	private static final Long TIMEOUT_DURATION;
 	private static final TimeUnit TIMEOUT_UNIT;
 
 	static {
 		Config config = Config.readFromFile();
 		TIMEOUT_DURATION = config.m_timeoutDuration;
-		TIMEOUT_UNIT = TimeUnit.valueOf(config.m_timeoutUnit);
+		TIMEOUT_UNIT = config.m_timeoutUnit;
 	}
 
 	private final Query _query;
