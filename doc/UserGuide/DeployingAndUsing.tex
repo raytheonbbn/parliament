@@ -180,62 +180,32 @@ You can change the host name (or IP address) and port of the \ac{sparql} endpoin
 
 Note that if you are running the server as a Windows service, you must change these parameters in the install script, and you will have to uninstall the service and reinstall it to make your changes effective.
 
-The file \path|ParliamentKB/conf/jetty.xml| configures the Jetty servlet container.  Generally, there is no need to modify this file.  The \ac{pmnt} configuration file (\path|ParliamentConfig.txt|) is discussed in Section~\ref{section-parliament-config-file}.
+The file \path|ParliamentKB/conf/jetty.xml| configures the Jetty servlet container.  Generally, there is no need to modify this file.  Other \ac{pmnt} configuration files are discussed in Section~\ref{section-parliament-config-file}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The \ac{pmnt} Configuration File}
+\section{The \ac{pmnt} Configuration Files}
 \label{section-parliament-config-file}
 
-Like many pieces of software, \ac{pmnt} has a configuration file.  It is typically called \path|ParliamentConfig.txt|, but it can be named anything.  Here is how \ac{pmnt} finds its configuration:
+\ac{pmnt} has two primary configuration files.  The first configures \acp{pmnt} native code logging and is called \path|ParliamentLogConfig.txt|.  This one is less important to everyday \ac{pmnt} users, and will be discussed second.  The more important file (\path|ParliamentKbConfig.txt|) contains settings pertaining to storage, query, and inference.  (Note that in both cases, these are the typical names for these files, but they can be named anything.)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\acp{pmnt} Main Configuration File}
+\label{section-parliament-main-config-file}
+
+Here is how \ac{pmnt} finds \path|ParliamentKbConfig.txt|:
 
 \begin{enumerate}
-	\item If the environment variable \verb|PARLIAMENT_CONFIG_PATH| is set, then its value is assumed to be the absolute path of the configuration file.  The \ac{pmnt} server startup scripts use this method to locate the file in the root directory of the server installation.
+	\item If the environment variable \verb|PARLIAMENT_KB_CONFIG_PATH| is set, its value is assumed to be the configuration file's absolute path.
 
-	\item \emph{On Windows only:}  If this environment variable is not set, then \ac{pmnt} looks for the file \path|ParliamentConfig.txt| in the same directory as the \ac{pmnt} \ac{dll}\footnote{Or ``shared library'' on UNIX-like systems.  For brevity, we will just use ``\ac{dll}.''}.
+	\item \emph{On Windows only:}  If this environment variable is not set, then \ac{pmnt} looks for a file named \path|ParliamentKbConfig.txt| in the same directory as the \ac{pmnt} \ac{dll}.
 
-	\item Otherwise, \ac{pmnt} looks for the file \path|ParliamentConfig.txt| in the current working directory of the server process.
+	\item Otherwise, \ac{pmnt} looks for a file named \path|ParliamentKbConfig.txt| in the current working directory of the server process.
 \end{enumerate}
 
-The configuration file is a plain text file containing name-value pairs.  Blank lines and comment lines (preceded by a `\#') are ignored.  Many of the settings are Boolean values, in which case the value is case-insensitive and may be ``true'', ``t'', ``yes'', ``y'', ``on'', or ``1'' (for true), or ``false'', ``f'', ``no'', ``n'', ``off'', or ``0'' (for false).
+The configuration file is a plain text file containing name-value pairs.  The names are case-insensitive.  Blank lines and comment lines (preceded by a `\#') are ignored.  Many of the settings are Boolean values, in which case the value is case-insensitive and may be ``true'', ``t'', ``yes'', ``y'', ``on'', or ``1'' (for true), or ``false'', ``f'', ``no'', ``n'', ``off'', or ``0'' (for false).
 
-The recognized settings are as follows.  Setting names are case-insensitive.
+The recognized settings are as follows:
 \begin{description}
-	\item[logToConsole] Indicates whether to log to the console. \emph{Default: ``yes''}
-
-	\item[logConsoleAsynchronous] Indicates whether to log asynchronously to the console. \emph{Default: ``no''}
-
-	\item[logConsoleAutoFlush] Indicates whether console log entries should be flushed after each log operation. \emph{Default: ``yes''}
-
-	\item[logToFile] Indicates whether to log to a file. \emph{Default: ``yes''}
-
-	\item[logFilePath] The path of the log file.  May include the following placeholders to add contextual information to the file name:
-	\begin{description}[noitemsep]
-		\item[\texttt{\%N}]Cardinal number of the log file.  A number between the \% and the N will left-pad with zeros to that many places.
-		\item[\texttt{\%Y}]Year
-		\item[\texttt{\%m}]Month
-		\item[\texttt{\%d}]Day
-		\item[\texttt{\%H}]Hours
-		\item[\texttt{\%M}]Minutes
-		\item[\texttt{\%S}]Seconds
-	\end{description}
-	\emph{Default:} \texttt{log/ParliamentNative\%3N\_\%Y-\%m-\%d\_\%H-\%M-\%S.log}
-
-	\item[logFileAsynchronous] Indicates whether to log asynchronously to the file. \emph{Default: ``no''}
-
-	\item[logFileAutoFlush] Indicates whether file log entries should be flushed after each log operation. \emph{Default: ``yes''}
-
-	\item[logFileRotationSize] The maximum approximate size (in bytes) of the log file.  When this value is exceeded, the log file will be rotated. \emph{Default: 10 MB}
-
-	\item[logFileMaxAccumSize] The maximum accumulated size of rotated log files.  When this value is exceeded, the oldest log file is deleted. \emph{Default: 150 MB}
-
-	\item[logFileMinFreeSpace] The minimum amount of free space on the volume where log files are stored.  When the free space dips below this value, old log files will be deleted so as to free up enough space. \emph{Default: 100 MB}
-
-	\item[logFileRotationTimePoint] The time of day at which the log file should be rotated regardless of its size.  Must be in the format ``HH:MM:SS''. \emph{Default: 2:00 AM}
-
-	\item[logLevel] The global logging level.  Must be one of TRACE, DEBUG, INFO, WARN, and ERROR. \emph{Default: ``INFO''}
-
-	\item[logChannelLevel] Overrides the global logging level for a single channel.  (Generally a channel is equivalent to a class in the source code.)  The value of this setting takes the form \begin{quote}\emph{«channel-name» = «log-level»}\end{quote} where \emph{«log-level»} takes one of the values listed for the global logging level above.  This option may be repeated to override the level for multiple channels. \emph{Default: None}
-
 	\item[kbDirectoryPath] The path of the \ac{pmnt} knowledge base files.  If they do not yet exist, they will be created here.  \emph{Default: \path|kb-data|}
 
 	\item[stmtFileName] The name of the memory-mapped file containing records of statements. \emph{Default: \path|statements.mem|}
@@ -277,6 +247,10 @@ The recognized settings are as follows.  Setting names are case-insensitive.
 		\item Set this option to ``no''.
 	\end{enumerate}
 	The first option is highly recommended.  It requires some effort, but will bring your triple store into compliance with \ac{rdf} 1.1 and deliver slightly better performance to boot.  \emph{Default: ``yes''}
+
+	\item[TimeoutDuration] Sets the query execution timeout. \emph{Default: ``5''}
+
+	\item[TimeoutUnit] Sets the units of the query execution timeout.  Valid values are ``nanoseconds'', ``microseconds'', ``milliseconds'', ``seconds'', ``minutes'', ``hours'', and ``days''. \emph{Default: ``minutes''}
 
 	\item[runAllRulesAtStartup] Causes \ac{pmnt} to evaluate each of the enabled rules at startup against the existing statements in the \ac{kb} to see if any new statements should be materialized.  Generally, this is unnecessary, because the rules are always evaluated against each statement as it is asserted.  However, if some of the rules were initially disabled when statements were being asserted, and are then enabled, it may be necessary to turn this on for one startup of \ac{pmnt} to ensure that the state of the \ac{kb} is in sync with the rule settings.  Alternately, in such a case this setting may be left off and the ParliamentAdmin tool may be run against the \ac{kb} with the ``guaranteeEntailments'' option.  Note that when this setting is turned on, \ac{kb} the startup time may be lengthy. \emph{Default: ``no''}
 
@@ -343,10 +317,49 @@ where ``IFP'' stands for ``InverseFunctionalProperty''. \emph{Default: ``on''}
 	\item[TransitivePropRule] Enables the following inference rule:
 \[P \in \text{owl:TransitiveProperty} \land P(X, Y) \land P(Y, Z) \Rightarrow P(X, Z)\]
 \emph{Default: ``on''}
+\end{description}
 
-	\item[TimeoutDuration] Sets an execution timeout on queries. \emph{Default: ``5''}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\acp{pmnt} Logging Configuration File}
+\label{section-parliament-log-config-file}
 
-	\item[TimeoutUnit] Sets the units of the execution timeout on queries.  Valid values are `SECONDS' and `MINUTES'. \emph{Default: ``MINUTES''}
+\acp{pmnt} second configuration file, \path|ParliamentLogConfig.txt|, has a format similar to \path|ParliamentKbConfig.txt|.  \ac{pmnt} also finds it in a similar way, with environment variable \verb|PARLIAMENT_LOG_CONFIG_PATH| and file name \path|ParliamentLogConfig.txt|.  The recognized settings are:
+\begin{description}
+	\item[logToConsole] Indicates whether to log to the console. \emph{Default: ``yes''}
+
+	\item[logConsoleAsynchronous] Indicates whether to log asynchronously to the console. \emph{Default: ``no''}
+
+	\item[logConsoleAutoFlush] Indicates whether console log entries should be flushed after each log operation. \emph{Default: ``yes''}
+
+	\item[logToFile] Indicates whether to log to a file. \emph{Default: ``yes''}
+
+	\item[logFilePath] The path of the log file.  May include the following placeholders to add contextual information to the file name:
+	\begin{description}[noitemsep]
+		\item[\texttt{\%N}]Cardinal number of the log file.  A number between the \% and the N will left-pad with zeros to that many places.
+		\item[\texttt{\%Y}]Year
+		\item[\texttt{\%m}]Month
+		\item[\texttt{\%d}]Day
+		\item[\texttt{\%H}]Hours
+		\item[\texttt{\%M}]Minutes
+		\item[\texttt{\%S}]Seconds
+	\end{description}
+	\emph{Default:} \texttt{log/ParliamentNative\%3N\_\%Y-\%m-\%d\_\%H-\%M-\%S.log}
+
+	\item[logFileAsynchronous] Indicates whether to log asynchronously to the file. \emph{Default: ``no''}
+
+	\item[logFileAutoFlush] Indicates whether file log entries should be flushed after each log operation. \emph{Default: ``yes''}
+
+	\item[logFileRotationSize] The maximum approximate size (in bytes) of the log file.  When this value is exceeded, the log file will be rotated. \emph{Default: 10 MB}
+
+	\item[logFileMaxAccumSize] The maximum accumulated size of rotated log files.  When this value is exceeded, the oldest log file is deleted. \emph{Default: 150 MB}
+
+	\item[logFileMinFreeSpace] The minimum amount of free space on the volume where log files are stored.  When the free space dips below this value, old log files will be deleted so as to free up enough space. \emph{Default: 100 MB}
+
+	\item[logFileRotationTimePoint] The time of day at which the log file should be rotated regardless of its size.  Must be in the format ``HH:MM:SS''. \emph{Default: 2:00 AM}
+
+	\item[logLevel] The global logging level.  Must be one of TRACE, DEBUG, INFO, WARN, and ERROR. \emph{Default: ``INFO''}
+
+	\item[logChannelLevel] Overrides the global logging level for a single channel.  (Generally a channel is equivalent to a class in the source code.)  The value of this setting takes the form \begin{quote}\emph{«channel-name» = «log-level»}\end{quote} where \emph{«log-level»} takes one of the values listed for the global logging level above.  This option may be repeated to override the level for multiple channels. \emph{Default: None}
 \end{description}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -368,7 +381,7 @@ The most common way to deploy \ac{pmnt} uses the Jetty servlet container.  This 
 
 	\item In your favorite text editor, open the file
 {\small\begin{quote}
-\path|CATALINA_HOME/bin/parliament/ParliamentConfig.txt|
+\path|CATALINA_HOME/bin/parliament/ParliamentKbConfig.txt|
 \end{quote}}
 	and change the following line:
 \begin{quote}
@@ -380,20 +393,22 @@ The most common way to deploy \ac{pmnt} uses the Jetty servlet container.  This 
 {\footnotesize\begin{verbatim}
 MIN_MEM=128m
 MAX_MEM=512m
-PARLIAMENT_BIN="$CATALINA_HOME/bin/parliament"
-export CATALINA_OPTS=-Djava.library.path=$PARLIAMENT_BIN
+PMNT_BIN="$CATALINA_HOME/bin/parliament"
+export CATALINA_OPTS=-Djava.library.path=$PMNT_BIN
 export CATALINA_OPTS="$CATALINA_OPTS -Xms$MIN_MEM -Xmx$MAX_MEM"
-export PARLIAMENT_CONFIG_PATH=$PARLIAMENT_BIN/ParliamentConfig.txt
-export LD_LIBRARY_PATH=$PARLIAMENT_BIN
+export PARLIAMENT_KB_CONFIG_PATH=$PMNT_BIN/ParliamentKbConfig.txt
+export PARLIAMENT_LOG_CONFIG_PATH=$PMNT_BIN/ParliamentLogConfig.txt
+export LD_LIBRARY_PATH=$PMNT_BIN
 \end{verbatim}}
 	On Windows, the file name should be \path|setenv.bat| and its content should look like this:
 {\footnotesize\begin{verbatim}
 set MIN_MEM=128m
 set MAX_MEM=512m
-set PARLIAMENT_BIN=%CATALINA_HOME%\bin\parliament
+set PMNT_BIN=%CATALINA_HOME%\bin\parliament
 set CATALINA_OPTS=-Xms%MIN_MEM% -Xmx%MAX_MEM%
-set PARLIAMENT_CONFIG_PATH=%PARLIAMENT_BIN%\ParliamentConfig.txt
-set PATH=%PARLIAMENT_BIN%;%PATH%
+set PARLIAMENT_KB_CONFIG_PATH=%PMNT_BIN%\ParliamentKbConfig.txt
+set PARLIAMENT_LOG_CONFIG_PATH=%PMNT_BIN%\ParliamentLogConfig.txt
+set PATH=%PMNT_BIN%;%PATH%
 \end{verbatim}}
 	Note that you can control the amount of memory set aside for the Java virtual machine by changing \verb|MIN_MEM| and \verb|MAX_MEM| in the scripts above.  While it is important to allow the \ac{jvm} sufficient memory, it is also important to realize that \ac{pmnt} is native code, and therefore does not use the Java heap.  Java programmers are often inclined to set \verb|MAX_MEM| close to the total memory of the machine, but this will starve \ac{pmnt} of the memory it needs to achieve good performance.  The default values given above, 128 MB and 512 MB, are reasonable values for machines with 4 to 8 GB of total memory.
 
@@ -412,7 +427,7 @@ When deploying \ac{pmnt} to Glassfish, note the following:
 \begin{itemize}
 	\item Glassfish sets it's own \verb|java.library.path| property.  The \ac{pmnt} libraries must either be copied into \path|«Glassfish install dir»/lib| or you must alter the Glassfish configuration such that the libraries are available on \verb|java.library.path|.
 
-	\item By default, \ac{pmnt} stores it's data files in the \path|kb-data| subdirectory of the current working directory.  In the case of Glassfish, this will be \path|«Glassfish install dir»/domains/domain1/config/kb-data|.  To change this, edit the configuration file, \path|ParliamentConfig.txt|, to set \verb|kbDirectoryPath| to the location (absolute path) where you would like your files to reside.
+	\item By default, \ac{pmnt} stores it's data files in the \path|kb-data| subdirectory of the current working directory.  In the case of Glassfish, this will be \path|«Glassfish install dir»/domains/domain1/config/kb-data|.  To change this, edit \path|ParliamentKbConfig.txt| to change the setting \verb|kbDirectoryPath| to the location (absolute path) where your data files reside.
 
 	\item If \ac{pmnt} is redeployed into a running instance of Glassfish, the server will need to be restarted.
 \end{itemize}
@@ -486,18 +501,19 @@ Naturally, there is some setup required to make this work:
 
 	\item Copy the following files from the \path|bin| directory of the \ac{pmnt} distribution to a convenient location, such as the directory used for the jar files above:
 	\begin{itemize}[noitemsep]
-		\item All of the \acp{dll} or shared libraries.
+		\item All of the \acp{dll}\footnote{Or ``shared libraries'' on UNIX-like systems.  For brevity, we will just use ``\acp{dll}.''}.
 		\item \path|ParliamentAdmin| (\path|ParliamentAdmin.exe| on Windows)
-		\item \path|ParliamentConfig.txt|
+		\item \path|ParliamentKbConfig.txt|
+		\item \path|ParliamentLogConfig.txt|
 	\end{itemize}
 
 	\item Ensure that the \ac{jvm} can find the \acp{dll} or shared libraries at run-time.  For Mac OS X, add their directory to the Java system property \verb|java.library.path|.  On Windows, add the directory to the \verb|Path| environment variable.  On Linux, it's \verb|LD_LIBRARY_PATH|.  Many flavors of UNIX also use \verb|LD_LIBRARY_PATH|, though some differ.  Consult your operating system documentation to be sure you use the correct variable.
 
 	\item On Windows only, install the run-time libraries by running the installer in the \path|RedistributablePackages| subdirectory of your \ac{pmnt} distribution.
 
-	\item Customize the configuration file \path|ParliamentConfig.txt| as desired.  In particular, the \texttt{kbDirectoryPath} setting defaults to the \path|kb-data| subdirectory of the current working directory.  To place your \ac{pmnt} \ac{kb} files in a different location, change this setting to the directory of your choice.  This is especially useful for placing the \ac{kb} files on a drive array, or for maintaining several \acp{kb} and switching between them.
+	\item Customize the configuration file \path|ParliamentKbConfig.txt| as desired.  In particular, the \texttt{kbDirectoryPath} setting defaults to the \path|kb-data| subdirectory of the current working directory.  To place your \ac{pmnt} \ac{kb} files in a different location, change this setting to the directory of your choice.  This is especially useful for placing the \ac{kb} files on a drive array, or for maintaining several \acp{kb} and switching between them.
 
-	\item Set the \verb|PARLIAMENT_CONFIG_PATH| environment variable to the configuration file's path.  On Windows, if this is not set the file will be loaded from the same directory as the \ac{pmnt} \ac{dll}, which is often a useful default.  On other platforms there is no default, and so this environment variable must be set.
+	\item Set the environment variable \verb|PARLIAMENT_KB_CONFIG_PATH| and its companion \verb|PARLIAMENT_LOG_CONFIG_PATH| to the paths of the corresponding configuration files.  On Windows, if these are not set the files will be loaded from the same directory as the \ac{pmnt} \ac{dll}, which is often a useful default.  On other platforms there is no default, and so this environment variable must be set.
 \end{enumerate}
 
 If you do not wish to use the \ac{pmnt} configuration file to configure your application, you can replace the first line of the method in Figure~\ref{figure-creating-jena-model}, \verb|createParliamentModel|, with a line that creates a Config instance using the default constructor and then set the Config fields yourself.  This may be useful for centralizing your application's configuration in a single file.
