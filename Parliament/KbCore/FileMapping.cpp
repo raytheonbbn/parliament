@@ -27,7 +27,7 @@ namespace pmnt = ::bbn::parliament;
 
 using ::boost::format;
 
-static auto g_log(pmnt::Log::getSource("FileMapping"));
+static auto g_log(pmnt::log::getSource("FileMapping"));
 
 pmnt::FileMapping::FileMapping(const FileHandle& file) :
 #if defined(PARLIAMENT_WINDOWS)
@@ -48,7 +48,7 @@ pmnt::FileMapping::~FileMapping()
 	}
 	catch (const Exception& ex)
 	{
-		PMNT_LOG(g_log, LogLevel::error) << format("Unable to dump virtual memory status:  %1%")
+		PMNT_LOG(g_log, log::Level::error) << format("Unable to dump virtual memory status:  %1%")
 			% ex.what();
 	}
 #endif
@@ -115,12 +115,12 @@ void pmnt::FileMapping::close()
 
 	if (viewErrCode != NOERROR)
 	{
-		PMNT_LOG(g_log, LogLevel::error) << format("Unable to unmap view of file:  %1% (%2%)")
+		PMNT_LOG(g_log, log::Level::error) << format("Unable to unmap view of file:  %1% (%2%)")
 			% Exception::getSysErrMsg(viewErrCode) % viewErrCode;
 	}
 	if (mapErrCode != NOERROR)
 	{
-		PMNT_LOG(g_log, LogLevel::error) << format("Unable to close file mapping:  %1% (%2%)")
+		PMNT_LOG(g_log, log::Level::error) << format("Unable to close file mapping:  %1% (%2%)")
 			% Exception::getSysErrMsg(mapErrCode) % mapErrCode;
 	}
 #else
@@ -132,7 +132,7 @@ void pmnt::FileMapping::close()
 	if (anErrorOccurred)
 	{
 		SysErrCode errCode = Exception::getSysErrCode();
-		PMNT_LOG(g_log, LogLevel::error) << format("Unable to unmap memory:  %1% (%2%)")
+		PMNT_LOG(g_log, log::Level::error) << format("Unable to unmap memory:  %1% (%2%)")
 			% Exception::getSysErrMsg(errCode) % errCode;
 	}
 #endif
@@ -147,7 +147,7 @@ void pmnt::FileMapping::sync()
 #endif
 	{
 		SysErrCode errCode = Exception::getSysErrCode();
-		PMNT_LOG(g_log, LogLevel::error) << format(
+		PMNT_LOG(g_log, log::Level::error) << format(
 			"Unable to synchronously flush mapped memory:  %1% (%2%)")
 			% Exception::getSysErrMsg(errCode) % errCode;
 	}

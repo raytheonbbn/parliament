@@ -29,7 +29,7 @@ using ::std::vector;
 const pmnt::FileHandle::HFile pmnt::FileHandle::k_nullFileHandle = INVALID_HANDLE_VALUE;
 #endif
 
-static auto g_log(pmnt::Log::getSource("FileHandle"));
+static auto g_log(pmnt::log::getSource("FileHandle"));
 
 pmnt::FileHandle::FileHandle(const bfs::path& filePath, bool readOnly, FileSize minSize) :
 	m_filePath(filePath),
@@ -82,7 +82,7 @@ void pmnt::FileHandle::close() noexcept
 	if (anErrorOccurred)
 	{
 		SysErrCode errCode = Exception::getSysErrCode();
-		PMNT_LOG(g_log, LogLevel::error) << format("Unable to close file:  %1% (%2%)")
+		PMNT_LOG(g_log, log::Level::error) << format("Unable to close file:  %1% (%2%)")
 			% Exception::getSysErrMsg(errCode) % errCode;
 	}
 }
@@ -257,7 +257,7 @@ pmnt::FileHandle::OSSeekMethod pmnt::FileHandle::xlateSeekMethod(SeekMethod meth
 	case SeekMethod::k_end:			return SEEK_END;
 #endif
 	default:	// This should never happen
-		PMNT_LOG(g_log, LogLevel::error) << "Encountered unrecognized SeekMethod enumeration value";
+		PMNT_LOG(g_log, log::Level::error) << "Encountered unrecognized SeekMethod enumeration value";
 		assert(false);
 #if defined(PARLIAMENT_WINDOWS)
 		return FILE_BEGIN;

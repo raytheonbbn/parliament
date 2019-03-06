@@ -19,7 +19,7 @@
 
 PARLIAMENT_NAMESPACE_BEGIN
 
-class Config;
+class KbConfig;
 struct KbRsrc;
 struct KbStmt;
 class NewStmtHandler;
@@ -34,14 +34,14 @@ class RuleEngine;
 class KbInstance
 {
 public:
-	PARLIAMENT_EXPORT KbInstance(const Config& config);
+	PARLIAMENT_EXPORT KbInstance(const KbConfig& config);
 	KbInstance(const KbInstance&) = delete;
 	KbInstance& operator=(const KbInstance&) = delete;
 	KbInstance(KbInstance&&) = delete;
 	KbInstance& operator=(KbInstance&&) = delete;
 	PARLIAMENT_EXPORT ~KbInstance();
 
-	PARLIAMENT_EXPORT const Config& config() const;
+	PARLIAMENT_EXPORT const KbConfig& config() const;
 	PARLIAMENT_EXPORT void sync();
 	PARLIAMENT_EXPORT void getExcessCapacity(/* out */ double& pctUnusedUriCapacity,
 		/* out */ double& pctUnusedRsrcCapacity, /* out */ double& pctUnusedStmtCapacity) const;
@@ -146,9 +146,9 @@ public:
 		bool includeFirstStmts = true, bool verboseFirstStmts = true) const;
 
 	PARLIAMENT_EXPORT static KbDisposition determineDisposition(
-		const Config& config, bool throwIfIndeterminate = false);
-	PARLIAMENT_EXPORT static void deleteKb(const Config& cfg, const ::boost::filesystem::path& dir);
-	PARLIAMENT_EXPORT static void deleteKb(const Config& cfg);
+		const KbConfig& config, bool throwIfIndeterminate = false);
+	PARLIAMENT_EXPORT static void deleteKb(const KbConfig& cfg, const ::boost::filesystem::path& dir);
+	PARLIAMENT_EXPORT static void deleteKb(const KbConfig& cfg);
 	PARLIAMENT_EXPORT static void deleteKb(const ::boost::filesystem::path& dir);
 	PARLIAMENT_EXPORT static void deleteKb();
 

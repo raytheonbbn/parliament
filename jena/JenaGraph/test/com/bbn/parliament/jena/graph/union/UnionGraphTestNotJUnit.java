@@ -18,7 +18,7 @@ import java.util.zip.ZipFile;
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.OptimizationMethod;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
-import com.bbn.parliament.jni.Config;
+import com.bbn.parliament.jni.KbConfig;
 import com.bbn.parliament.jni.KbInstance;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -115,7 +115,8 @@ public class UnionGraphTestNotJUnit {
 	private static KbGraph createGraph(File rootDir, String relativeDirectory) {
 		File dir = new File(rootDir, relativeDirectory);
 		dir.mkdirs();
-		Config config = Config.readFromFile();
+		KbConfig config = new KbConfig();
+		config.readFromFile();
 		config.m_kbDirectoryPath = dir.getPath();
 		KbInstance.deleteKb(config, null);
 		return new KbGraph(config, relativeDirectory, OptimizationMethod.DefaultOptimization);

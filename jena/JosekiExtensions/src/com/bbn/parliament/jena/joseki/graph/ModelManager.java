@@ -29,6 +29,7 @@ import com.bbn.parliament.jena.joseki.bridge.ActionRouter;
 import com.bbn.parliament.jena.joseki.bridge.configuration.ReasonerConfigurationHandler;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.modify.KbUpdateEngine;
+import com.bbn.parliament.jni.KbConfig;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -93,6 +94,11 @@ public class ModelManager {
 
 	public String getGraphDir(String namedGraphUri) {
 		return _kbGraphStore.getGraphDir(Node.createURI(namedGraphUri));
+	}
+
+	/** Get the default graph's configuration. */
+	public KbConfig getDefaultGraphConfig() {
+		return _kbGraphStore.getDefaultGraphConfig();
 	}
 
 	@SuppressWarnings("resource")

@@ -82,7 +82,7 @@ static const TChar k_fName[] = _T("tempFile");
 static const size_t k_growthIncrements[] = { 30u, 0u };
 static const double k_growthFactors[] = { 0.0, 2.0 };
 
-static auto g_log(Log::getSource("FixRecordTableTest"));
+static auto g_log(log::getSource("FixRecordTableTest"));
 
 BOOST_AUTO_TEST_SUITE(FixRecordTableTestSuite)
 
@@ -93,13 +93,13 @@ BOOST_AUTO_TEST_SUITE(FixRecordTableTestSuite)
 // we don't have a regression.
 BOOST_AUTO_TEST_CASE(testFixRecordSizesAndOffsets)
 {
-	PMNT_LOG(g_log, LogLevel::info) << "FixRecordTable<KbStmt>::k_firstRecOffset = "
+	PMNT_LOG(g_log, log::Level::info) << "FixRecordTable<KbStmt>::k_firstRecOffset = "
 		<< FixRecordTable<KbStmt>::testFirstRecOffset();
-	PMNT_LOG(g_log, LogLevel::info) << "FixRecordTable<KbStmt>::k_recSize        = "
+	PMNT_LOG(g_log, log::Level::info) << "FixRecordTable<KbStmt>::k_recSize        = "
 		<< FixRecordTable<KbStmt>::testRecSize();
-	PMNT_LOG(g_log, LogLevel::info) << "FixRecordTable<KbRsrc>::k_firstRecOffset = "
+	PMNT_LOG(g_log, log::Level::info) << "FixRecordTable<KbRsrc>::k_firstRecOffset = "
 		<< FixRecordTable<KbRsrc>::testFirstRecOffset();
-	PMNT_LOG(g_log, LogLevel::info) << "FixRecordTable<KbRsrc>::k_recSize        = "
+	PMNT_LOG(g_log, log::Level::info) << "FixRecordTable<KbRsrc>::k_recSize        = "
 		<< FixRecordTable<KbRsrc>::testRecSize();
 
 	BOOST_CHECK(0ul != FixRecordTable<KbStmt>::testFirstRecOffset());

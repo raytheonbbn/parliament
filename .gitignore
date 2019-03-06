@@ -31,4 +31,5 @@ log/
 /Parliament/Test/Debug_with_Linux GCC/
 /Parliament/Test/Debug_with_MacOSX GCC/
 /Parliament/Test/ParliamentConfig.txt
+/Parliament/Test/ParliamentLogConfig.txt
 /target/

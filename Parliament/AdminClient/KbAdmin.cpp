@@ -6,7 +6,7 @@
 
 #include "KbAdmin.h"
 #include "parliament/CharacterLiteral.h"
-#include "parliament/Config.h"
+#include "parliament/KbConfig.h"
 #include "parliament/Version.h"
 #include "parliament/KbInstance.h"
 #include "parliament/Exceptions.h"
@@ -364,7 +364,8 @@ void pmnt::KbAdmin::run()
 		{
 			HiResTimer timer;
 
-			Config config = Config::readFromFile();
+			KbConfig config;
+			config.readFromFile();
 			config.kbDirectoryPath(k_kbDir);
 			config.readOnly(false);
 			KbInstance kb(config);
@@ -384,7 +385,8 @@ void pmnt::KbAdmin::run()
 		{
 			HiResTimer timer;
 
-			Config config = Config::readFromFile();
+			KbConfig config;
+			config.readFromFile();
 			config.kbDirectoryPath(k_kbDir);
 			config.readOnly(false);
 			KbInstance kb(config);
@@ -406,7 +408,8 @@ void pmnt::KbAdmin::run()
 		{
 			HiResTimer timer;
 
-			Config config = Config::readFromFile();
+			KbConfig config;
+			config.readFromFile();
 			config.kbDirectoryPath(k_kbDir);
 			config.readOnly(false);
 			config.runAllRulesAtStartup(true);
@@ -427,7 +430,8 @@ void pmnt::KbAdmin::run()
 		}
 		else
 		{
-			Config config = Config::readFromFile();
+			KbConfig config;
+			config.readFromFile();
 			config.kbDirectoryPath(k_kbDir);
 			config.readOnly(true);
 			KbInstance kb(config);
@@ -591,7 +595,8 @@ void pmnt::KbAdmin::exportKB(KbInstance& kb)
 
 pmnt::KbDisposition pmnt::KbAdmin::determineDisposition()
 {
-	Config config = Config::readFromFile();
+	KbConfig config;
+	config.readFromFile();
 	config.kbDirectoryPath(k_kbDir);
 	return KbInstance::determineDisposition(config);
 }

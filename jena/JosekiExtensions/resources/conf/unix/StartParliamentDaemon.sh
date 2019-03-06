@@ -6,7 +6,8 @@ PMNT_DIR="`pwd`"
 cd - > /dev/null
 
 ######### User-settable configuration parameters: #########
-export PARLIAMENT_CONFIG_PATH=$PMNT_DIR/ParliamentConfig.txt
+export PARLIAMENT_KB_CONFIG_PATH=$PMNT_DIR/ParliamentConfig.txt
+export PARLIAMENT_LOG_CONFIG_PATH=$PMNT_DIR/ParliamentLogConfig.txt
 
 MIN_MEM=128m
 MAX_MEM=512m
@@ -27,8 +28,13 @@ if [ "$1" = "interactive" -a ! -d "$JAVA_HOME" ]; then
 	exit 1
 fi
 
-if [ ! -f "$PARLIAMENT_CONFIG_PATH" ]; then
+if [ ! -f "$PARLIAMENT_KB_CONFIG_PATH" ]; then
 	echo "Unable to find Parliament configuration file."
+	exit 1
+fi
+
+if [ ! -f "$PARLIAMENT_LOG_CONFIG_PATH" ]; then
+	echo "Unable to find Parliament log configuration file."
 	exit 1
 fi
 
@@ -50,7 +56,7 @@ CP=$CP:$i
 done
 
 ######### Compute the PID file location: #########
-KB_DIR=`sed -n 's/kbDirectoryPath[ \t]*=\(.*\)$/\1/p' $PARLIAMENT_CONFIG_PATH | tail -n 1 | tr -d '[:space:]'`
+KB_DIR=`sed -n 's/kbDirectoryPath[ \t]*=\(.*\)$/\1/p' $PARLIAMENT_KB_CONFIG_PATH | tail -n 1 | tr -d '[:space:]'`
 SAVED_DIR=`pwd`
 cd "$PMNT_DIR"
 if [ ! -d "$KB_DIR" ]; then

@@ -24,6 +24,7 @@
 
 		<delete dir="${targetDir}" deleteonexit="true"/>
 		<delete file="${basedir}/Parliament/Test/ParliamentConfig.txt"/>
+		<delete file="${basedir}/Parliament/Test/ParliamentLogConfig.txt"/>
 		<delete dir="${basedir}/Parliament/Test/kb-data"/>
 		<delete dir="${basedir}/indexes"/>
 		<delete dir="${basedir}/log"/>

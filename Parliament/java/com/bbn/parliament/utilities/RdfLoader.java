@@ -12,7 +12,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bbn.parliament.jni.Config;
+import com.bbn.parliament.jni.KbConfig;
 import com.bbn.parliament.jni.KbInstance;
 import com.hp.hpl.jena.rdf.arp.ARP;
 
@@ -52,7 +52,8 @@ public class RdfLoader
 		int exitStatus = EXIT_SUCCESS;
 		String batchSuffix = DEFAULT_SUFFIX;
 
-		Config config = Config.readFromFile();
+		KbConfig config = new KbConfig();
+		config.readFromFile();
 		config.m_kbDirectoryPath = ".";
 		config.m_readOnly = false;
 		try (KbInstance kb = new KbInstance(config))

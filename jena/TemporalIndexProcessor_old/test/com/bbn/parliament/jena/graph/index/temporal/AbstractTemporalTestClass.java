@@ -10,7 +10,7 @@ import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.OptimizationMethod;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.util.FileUtil;
-import com.bbn.parliament.jni.Config;
+import com.bbn.parliament.jni.KbConfig;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
@@ -29,7 +29,7 @@ public abstract class AbstractTemporalTestClass extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		Config c = new Config();
+		KbConfig c = new KbConfig();
 		c.m_kbDirectoryPath = DATA_PATH;
 		File f = new File(DATA_PATH);
 		f.mkdirs();

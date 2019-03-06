@@ -12,40 +12,19 @@
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/sources/severity_channel_logger.hpp>
 #include <boost/log/utility/setup/file.hpp>
+#include <string>
 
 PARLIAMENT_NAMESPACE_BEGIN
 
-class Config;
-
-enum class LogLevel { trace, debug, info, warn, error };
-
-class Log
+namespace log
 {
-public:
-	// Prevent instantiation:
-	Log() = delete;
-	Log(const Log&) = delete;
-	Log& operator=(const Log&) = delete;
-	Log(Log&&) = delete;
-	Log& operator=(Log&&) = delete;
-	~Log() = delete;
+	enum class Level { trace, debug, info, warn, error };
 
-	using Source = ::boost::log::sources::severity_channel_logger_mt<LogLevel, ::std::string>;
-	using RotationAtTimePoint = ::boost::log::sinks::file::rotation_at_time_point;
+	using Source = ::boost::log::sources::severity_channel_logger_mt<Level, ::std::string>;
 
-	// Always returns true to enable easy calling from initializer lists:
-	static bool init(const Config& config);
-
-	static Source getSource(const char* pChannelName);
-	static Source getSource(const ::std::string& channelName);
-
-	static RotationAtTimePoint rotTimeFromString(const ::std::string& rotTime);
-	static LogLevel levelFromString(const ::std::string& level, bool& wasRecognized);
-	static LogLevel levelFromString(const ::std::string& level);
-
-private:
-	static void unsynchronizedInit(const Config& config);
-};
+	Source getSource(const char* pChannelName);
+	Source getSource(const ::std::string& channelName);
+}
 
 #define PMNT_LOG(logger, lvl) BOOST_LOG_STREAM_SEV(logger, lvl)
 

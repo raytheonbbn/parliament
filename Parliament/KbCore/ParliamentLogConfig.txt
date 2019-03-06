@@ -1,0 +1,39 @@
+
+###########################################################
+#
+# Configuration file for Parliament's native code logging facility
+#
+###########################################################
+
+
+
+#####   Logging configuration   #####
+
+logToConsole             = yes
+logConsoleAsynchronous   = no
+logConsoleAutoFlush      = yes
+logToFile                = yes
+logFilePath              = log/ParliamentNative%3N_%Y-%m-%d_%H-%M-%S.log
+logFileAsynchronous      = no
+logFileAutoFlush         = yes
+logFileRotationSize      = 10485760
+logFileMaxAccumSize      = 157286400
+logFileMinFreeSpace      = 104857600
+logFileRotationTimePoint = 02:00:00
+
+# TRACE, DEBUG, INFO, WARN, ERROR
+logLevel                 = INFO
+#logChannelLevel          = Config=TRACE
+#logChannelLevel          = Exceptions=TRACE
+#logChannelLevel          = FileHandle=TRACE
+#logChannelLevel          = FileMapping=TRACE
+#logChannelLevel          = KbInstance=TRACE
+#logChannelLevel          = LiteralUtils=TRACE
+#logChannelLevel          = RuleEngine=TRACE
+#logChannelLevel          = StringToId=TRACE
+#logChannelLevel          = SWRLBuiltins=TRACE
+#logChannelLevel          = SWRLRuleBuilder=TRACE
+#logChannelLevel          = FixRecordTableTest=TRACE
+#logChannelLevel          = RuleEngineTest=TRACE
+#logChannelLevel          = TestMain=TRACE
+#logChannelLevel          = TestUtils=TRACE

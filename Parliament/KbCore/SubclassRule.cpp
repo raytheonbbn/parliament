@@ -5,7 +5,7 @@
 // All rights reserved.
 
 #include "parliament/SubclassRule.h"
-#include "parliament/Config.h"
+#include "parliament/KbConfig.h"
 #include "parliament/UriLib.h"
 
 #include <memory>

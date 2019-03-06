@@ -30,7 +30,7 @@ using ::std::exception;
 using ::std::string;
 using ::std::strncpy;
 
-static auto g_log(pmnt::Log::getSource("Exceptions"));
+static auto g_log(pmnt::log::getSource("Exceptions"));
 
 
 
@@ -119,7 +119,7 @@ string pmnt::Exception::getSysErrMsg(SysErrCode errCode)
 		else
 		{
 			// An error -- return an empty string
-			PMNT_LOG(g_log, LogLevel::error) << format{
+			PMNT_LOG(g_log, log::Level::error) << format{
 				"FormatMessage error.  numChars = %1%, error code = %2%"}
 				% numChars % errCode;
 			return string();

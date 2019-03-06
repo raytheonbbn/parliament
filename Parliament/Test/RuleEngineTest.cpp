@@ -11,7 +11,7 @@
 #include <boost/test/data/test_case.hpp>
 #include <ostream>
 #include "parliament/RuleEngine.h"
-#include "parliament/Config.h"
+#include "parliament/KbConfig.h"
 #include "parliament/KbInstance.h"
 #include "parliament/StmtIterator.h"
 #include "parliament/SubclassRule.h"
@@ -131,7 +131,7 @@ static const RuleTestParams k_otherRuleTestParams[] =
 		{ RuleInitPoint::k_end, false }
 	};
 
-static auto g_log{Log::getSource("RuleEngineTest")};
+static auto g_log{log::getSource("RuleEngineTest")};
 
 BOOST_AUTO_TEST_SUITE(RuleEngineTestSuite)
 
@@ -197,7 +197,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_subclassRuleTestParams),
 	rtp)
 {
-	Config config = Config::readFromFile();
+	KbConfig config;
+	config.readFromFile();
 	config.kbDirectoryPath(k_dirName);
 	config.readOnly(false);
 	config.disableAllRules();
@@ -248,7 +249,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	Config config = Config::readFromFile();
+	KbConfig config;
+	config.readFromFile();
 	config.kbDirectoryPath(k_dirName);
 	config.readOnly(false);
 	config.disableAllRules();
@@ -291,7 +293,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_inverseOfRuleTestParams),
 	rtp)
 {
-	Config config = Config::readFromFile();
+	KbConfig config;
+	config.readFromFile();
 	config.kbDirectoryPath(k_dirName);
 	config.readOnly(false);
 	config.disableAllRules();
@@ -339,7 +342,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	Config config = Config::readFromFile();
+	KbConfig config;
+	config.readFromFile();
 	config.kbDirectoryPath(k_dirName);
 	config.readOnly(false);
 	config.disableAllRules();
@@ -378,7 +382,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	Config config = Config::readFromFile();
+	KbConfig config;
+	config.readFromFile();
 	config.kbDirectoryPath(k_dirName);
 	config.readOnly(false);
 	config.disableAllRules();
@@ -445,7 +450,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	Config config = Config::readFromFile();
+	KbConfig config;
+	config.readFromFile();
 	config.kbDirectoryPath(k_dirName);
 	config.readOnly(false);
 	config.disableAllRules();
@@ -491,7 +497,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	Config config = Config::readFromFile();
+	KbConfig config;
+	config.readFromFile();
 	config.kbDirectoryPath(k_dirName);
 	config.readOnly(false);
 	config.disableAllRules();
@@ -543,7 +550,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	Config config = Config::readFromFile();
+	KbConfig config;
+	config.readFromFile();
 	config.kbDirectoryPath(k_dirName);
 	config.readOnly(false);
 	config.disableAllRules();
@@ -583,7 +591,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	Config config = Config::readFromFile();
+	KbConfig config;
+	config.readFromFile();
 	config.kbDirectoryPath(k_dirName);
 	config.readOnly(false);
 	config.disableAllRules();
@@ -632,7 +641,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	Config config = Config::readFromFile();
+	KbConfig config;
+	config.readFromFile();
 	config.kbDirectoryPath(k_dirName);
 	config.readOnly(false);
 	config.disableAllRules();
@@ -679,7 +689,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	Config config = Config::readFromFile();
+	KbConfig config;
+	config.readFromFile();
 	config.kbDirectoryPath(k_dirName);
 	config.readOnly(false);
 	config.disableAllRules();
@@ -731,7 +742,8 @@ struct Triple
 
 static void testHasValueRulesForOnePermutation(const RuleTestParams& rtp, int permutation[5])
 {
-	Config config = Config::readFromFile();
+	KbConfig config;
+	config.readFromFile();
 	config.kbDirectoryPath(k_dirName);
 	config.readOnly(false);
 	config.disableAllRules();
@@ -812,7 +824,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_multiAtomBodyRuleTestParams),
 	rtp)
 {
-	Config config = Config::readFromFile();
+	KbConfig config;
+	config.readFromFile();
 	config.kbDirectoryPath(k_dirName);
 	config.readOnly(false);
 	config.isSubclassRuleOn(false);
@@ -1029,7 +1042,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make({ true, false }),
 	areRulesDisabled)
 {
-	Config config = Config::readFromFile();
+	KbConfig config;
+	config.readFromFile();
 	config.kbDirectoryPath(k_dirName);
 	config.readOnly(false);
 	if (areRulesDisabled)

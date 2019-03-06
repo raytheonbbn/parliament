@@ -39,7 +39,7 @@ import org.openrdf.sesame.sail.query.Var;
 import org.openrdf.sesame.sail.util.EmptyStatementIterator;
 import org.openrdf.sesame.sailimpl.memory.MemNamespaceIterator;
 
-import com.bbn.parliament.jni.Config;
+import com.bbn.parliament.jni.KbConfig;
 import com.bbn.parliament.jni.KbInstance;
 import com.bbn.parliament.jni.StmtIterator;
 import com.bbn.parliament.queryoptimization.Constraint;
@@ -54,14 +54,14 @@ public class KbRdfSource implements RdfSource, ValueFactory
 
 	private static Logger      _logger = Logger.getLogger(KbRdfSource.class.getName());
 
-	private Config             _config              = null;
+	private KbConfig           _config              = null;
 	private String             _dir                 = null;
 	private KbInstance         _kb                  = null;
 	private boolean            _isWritable          = true;
 	protected SyncSail         _syncSail            = null;
 	private boolean            _useTreeOptimization = false;
 
-	protected Config getConfig()
+	protected KbConfig getConfig()
 	{
 		return _config;
 	}
@@ -79,7 +79,8 @@ public class KbRdfSource implements RdfSource, ValueFactory
 	protected void openKb(String dir, boolean writeable) throws Throwable
 	{
 		_isWritable = writeable;
-		_config = Config.readFromFile();
+		_config = new KbConfig();
+		_config.readFromFile();
 		_config.m_kbDirectoryPath = dir;
 		_config.m_readOnly = !_isWritable;
 		_kb = new KbInstance(_config);

@@ -140,12 +140,12 @@ public class KbInstance implements Closeable {
 	private static native void initStatic();
 
 	/** Creates or opens a KB. */
-	public KbInstance(Config config) throws Throwable {
+	public KbInstance(KbConfig config) throws Throwable {
 		init(config);
 	}
 
 	/** Intended only to be called by the KbInstance instance ctor. */
-	private native void init(Config config);
+	private native void init(KbConfig config);
 
 	/**
 	 * Frees system resources associated with the KB instance, and closes all KB
@@ -200,21 +200,21 @@ public class KbInstance implements Closeable {
 	 * Returns one of the four constants INDETERMINATE_KB_STATE,
 	 * KB_DOES_NOT_EXIST, KB_EXISTS_WITHOUT_URI_TO_INT, or KB_EXISTS.
 	 */
-	public static native short determineDisposition(Config config,
+	public static native short determineDisposition(KbConfig config,
 			boolean throwIfIndeterminate);
 
 	/**
 	 * Deletes a KB's files. The KB must be closed.
 	 *
-	 * @param cfg A Config instance from which the method takes the location and
-	 * names of the KB files.  If null, the method calls Config.readFile instead.
+	 * @param cfg A KbConfig instance from which the method takes the location and
+	 * names of the KB files.  If null, the method calls KbConfig.readFile instead.
 	 *
 	 * @param directory The directory in which the KB files are located.  If this
-	 * is null or empty, the directory in the Config parameter is used instead.
-	 * If both parameters are null, the directory in the Config instance returned
-	 * by Config.readFile is used.
+	 * is null or empty, the directory in the KbConfig parameter is used instead.
+	 * If both parameters are null, the directory in the KbConfig instance returned
+	 * by KbConfig.readFile is used.
 	 */
-	public static native void deleteKb(Config cfg, String directory);
+	public static native void deleteKb(KbConfig cfg, String directory);
 
 //	/** Deletes a KB's files. (KB must be closed.) */
 //	public static void deleteKb(String directory)

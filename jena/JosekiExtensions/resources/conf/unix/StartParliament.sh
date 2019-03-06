@@ -32,8 +32,6 @@ done
 # but sometimes it doesn't work, so set up the shared lib path as well:
 export LD_LIBRARY_PATH=./bin:$LD_LIBRARY_PATH
 
-#export PARLIAMENT_CONFIG_PATH=./ParliamentConfig.txt
-
 EXEC="java -server -Xms$MIN_MEM -Xmx$MAX_MEM -cp $CP -Djava.library.path=./bin"
 EXEC="$EXEC -Dcom.sun.management.jmxremote -Dlog4j.configuration=conf/log4j.properties"
 EXEC="$EXEC -Djetty.host=$JETTY_HOST -Djetty.port=$JETTY_PORT"

@@ -8,7 +8,7 @@
 
 #include "parliament/generated/com_bbn_parliament_jni_KbInstance.h"
 #include "parliament/Platform.h"
-#include "parliament/Config.h"
+#include "parliament/KbConfig.h"
 #include "parliament/KbInstance.h"
 #include "parliament/JNIHelper.h"
 #include "parliament/StmtIterator.h"
@@ -23,7 +23,7 @@ using ::std::string;
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* /* pVM */, void* /* pReserved */)
 {
-	return JNI_VERSION_1_4;
+	return JNI_VERSION_1_8;
 }
 
 JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* /* pVM */, void* /* pReserved */)
@@ -78,35 +78,8 @@ static void disposeInternal(JNIEnv* pEnv, jobject obj)
 
 // Note:  If you change this method, be sure to make parallel changes
 // to the method assignCppConfigToJavaConfig in ConfigJNI.cpp.
-static void assignJavaConfigToCppConfig(Config& config, JNIEnv* pEnv, jobject obj)
+static void assignJavaConfigToCppConfig(KbConfig& config, JNIEnv* pEnv, jobject obj)
 {
-	config.logToConsole(							JNIHelper::getBooleanFld(pEnv, obj,	"m_logToConsole"));
-	config.logConsoleAsynchronous(			JNIHelper::getBooleanFld(pEnv, obj,	"m_logConsoleAsynchronous"));
-	config.logConsoleAutoFlush(				JNIHelper::getBooleanFld(pEnv, obj,	"m_logConsoleAutoFlush"));
-	config.logToFile(								JNIHelper::getBooleanFld(pEnv, obj,	"m_logToFile"));
-	config.logFilePath(							JNIHelper::getStringFld(pEnv, obj,	"m_logFilePath"));
-	config.logFileAsynchronous(				JNIHelper::getBooleanFld(pEnv, obj,	"m_logFileAsynchronous"));
-	config.logFileAutoFlush(					JNIHelper::getBooleanFld(pEnv, obj,	"m_logFileAutoFlush"));
-	config.logFileRotationSize(				JNIHelper::getSizeTFld(pEnv, obj,	"m_logFileRotationSize"));
-	config.logFileMaxAccumSize(				JNIHelper::getSizeTFld(pEnv, obj,	"m_logFileMaxAccumSize"));
-	config.logFileMinFreeSpace(				JNIHelper::getSizeTFld(pEnv, obj,	"m_logFileMinFreeSpace"));
-	config.logFileRotationTimePoint(			JNIHelper::getStringFld(pEnv, obj,	"m_logFileRotationTimePoint"));
-	config.logLevel(								JNIHelper::getStringFld(pEnv, obj,	"m_logLevel"));
-
-	config.clearLogChannelLevel();
-	jmethodID mId = JNIHelper::getMethodID(pEnv, obj, "getLogChannelLevelsAs2dArray", "()[[Ljava/lang/String;");
-	jobjectArray mapAs2dArray = static_cast<jobjectArray>(pEnv->CallObjectMethod(obj, mId));
-	jsize arraySize = pEnv->GetArrayLength(mapAs2dArray);
-	for (jsize i = 0; i < arraySize; ++i)
-	{
-		jobjectArray mapEntry = static_cast<jobjectArray>(pEnv->GetObjectArrayElement(mapAs2dArray, i));
-		jstring jchannel = static_cast<jstring>(pEnv->GetObjectArrayElement(mapEntry, 0));
-		jstring jlevel = static_cast<jstring>(pEnv->GetObjectArrayElement(mapEntry, 1));
-		string channel = JNIHelper::jstringToCstring<char>(pEnv, jchannel);
-		string level = JNIHelper::jstringToCstring<char>(pEnv, jlevel);
-		config.addLogChannelLevel(channel, level);
-	}
-
 	config.kbDirectoryPath(						JNIHelper::getStringFld(pEnv, obj,	"m_kbDirectoryPath"));
 	config.stmtFileName(							JNIHelper::getStringFld(pEnv, obj,	"m_stmtFileName"));
 	config.rsrcFileName(							JNIHelper::getStringFld(pEnv, obj,	"m_rsrcFileName"));
@@ -123,6 +96,8 @@ static void assignJavaConfigToCppConfig(Config& config, JNIEnv* pEnv, jobject ob
 	config.stmtGrowthFactor(					JNIHelper::getDoubleFld(pEnv, obj,	"m_stmtGrowthFactor"));
 	config.bdbCacheSize(							JNIHelper::getStringFld(pEnv, obj,	"m_bdbCacheSize"));
 	config.normalizeTypedStringLiterals(	JNIHelper::getBooleanFld(pEnv, obj,	"m_normalizeTypedStringLiterals"));
+	config.timeoutDuration(						JNIHelper::getSizeTFld(pEnv, obj,	"m_timeoutDuration"));
+	config.timeoutUnit(							JNIHelper::getTimeoutUnitFld(pEnv, obj));
 	config.runAllRulesAtStartup(				JNIHelper::getBooleanFld(pEnv, obj,	"m_runAllRulesAtStartup"));
 	config.enableSWRLRuleEngine(				JNIHelper::getBooleanFld(pEnv, obj,	"m_enableSWRLRuleEngine"));
 	config.isSubclassRuleOn(					JNIHelper::getBooleanFld(pEnv, obj,	"m_isSubclassRuleOn"));
@@ -140,9 +115,6 @@ static void assignJavaConfigToCppConfig(Config& config, JNIEnv* pEnv, jobject ob
 	config.inferOwlClass(						JNIHelper::getBooleanFld(pEnv, obj,	"m_inferOwlClass"));
 	config.inferRdfsResource(					JNIHelper::getBooleanFld(pEnv, obj,	"m_inferRdfsResource"));
 	config.inferOwlThing(						JNIHelper::getBooleanFld(pEnv, obj,	"m_inferOwlThing"));
-
-	config.timeoutDuration(JNIHelper::getSizeTFld(pEnv, obj, "m_timeoutDuration"));
-	config.timeoutUnit(JNIHelper::getStringFld(pEnv, obj, "m_timeoutUnit"));
 }
 
 JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_init(
@@ -151,7 +123,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_init(
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
 		disposeInternal(pEnv, obj);
 
-		Config config;
+		KbConfig config;
 		assignJavaConfigToCppConfig(config, pEnv, jconfig);
 		KbInstance* pKb = new KbInstance(config);
 
@@ -221,7 +193,7 @@ JNIEXPORT jshort JNICALL Java_com_bbn_parliament_jni_KbInstance_determineDisposi
 {
 	jshort result = static_cast<jshort>(KbDisposition::k_indeterminateKbState);
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
-		Config cppConfig;
+		KbConfig cppConfig;
 		assignJavaConfigToCppConfig(cppConfig, pEnv, javaConfig);
 		result = static_cast<jshort>(KbInstance::determineDisposition(cppConfig,
 			!!throwIfIndeterminate));
@@ -247,7 +219,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_deleteKb(
 		}
 		else
 		{
-			Config cppConfig;
+			KbConfig cppConfig;
 			assignJavaConfigToCppConfig(cppConfig, pEnv, javaConfig);
 			if (directory == 0)
 			{

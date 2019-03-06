@@ -10,14 +10,11 @@
 #include "parliament/Types.h"
 
 #include <boost/filesystem/path.hpp>
-#include <string>
 #include <vector>
 
 PARLIAMENT_NAMESPACE_BEGIN
 
-class Config;
-
-void setEnvVar(const TChar* pEnvStr);
+class KbConfig;
 
 class FileDeleter
 {
@@ -40,8 +37,8 @@ private:
 class KbDeleter
 {
 public:
-	KbDeleter(const Config& config);
-	KbDeleter(const Config& config, const ::boost::filesystem::path& dataDir);
+	KbDeleter(const KbConfig& config);
+	KbDeleter(const KbConfig& config, const ::boost::filesystem::path& dataDir);
 	KbDeleter(const KbDeleter&) = delete;
 	KbDeleter& operator=(const KbDeleter&) = delete;
 	KbDeleter(KbDeleter&&) = delete;
@@ -49,9 +46,31 @@ public:
 	~KbDeleter();
 
 private:
-	const Config& m_config;
+	const KbConfig& m_config;
 	::boost::filesystem::path m_dataDir;
 	bool m_dataDirSupplied;
+};
+
+class EnvVarReset
+{
+public:
+	EnvVarReset(const TString& envVarName, const TString& newEnvVarValue);
+	EnvVarReset(const EnvVarReset&) = delete;
+	EnvVarReset& operator=(const EnvVarReset&) = delete;
+	EnvVarReset(EnvVarReset&&) = delete;
+	EnvVarReset& operator=(EnvVarReset&&) = delete;
+	~EnvVarReset();
+
+	void disableResetOnDestruct()
+		{ m_resetOnDestruct = false; }
+
+private:
+	static void tSetEnvVar(const TString& envVarName, const TString& newEnvVarValue);
+
+	TString m_envVarName;
+	TString m_newEnvVarValue;
+	TString m_oldEnvVarValue;
+	bool m_resetOnDestruct;
 };
 
 void readFileContents(const ::boost::filesystem::path& fileName, ::std::vector<uint8>& content);

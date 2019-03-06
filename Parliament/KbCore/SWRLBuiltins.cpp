@@ -25,7 +25,7 @@ static const auto k_rsrcColon = pmnt::convertToRsrcChar(":");
 static const auto k_rsrcHyphen = pmnt::convertToRsrcChar("-");
 static const auto k_rsrcTee = pmnt::convertToRsrcChar("T");
 
-static auto g_log(pmnt::Log::getSource("SWRLBuiltins"));
+static auto g_log(pmnt::log::getSource("SWRLBuiltins"));
 
 // TODO: complete this method
 bool pmnt::AddBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList& bindingList) const

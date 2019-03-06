@@ -47,7 +47,7 @@ const pmnt::RsrcString pmnt::LiteralUtils::k_langLiteralDatatype = pmnt::UriLib{
 pmnt::LiteralUtils::UriToEnumMap pmnt::LiteralUtils::g_uriToEnumMap;
 const bool pmnt::LiteralUtils::k_ensureMapInit = pmnt::LiteralUtils::initUriToEnumMap();
 
-static auto g_log = pmnt::Log::getSource("LiteralUtils");
+static auto g_log = pmnt::log::getSource("LiteralUtils");
 
 bool pmnt::LiteralUtils::initUriToEnumMap()
 {
@@ -218,11 +218,11 @@ pmnt::RsrcString pmnt::LiteralUtils::composeLangLiteral(const RsrcString& lexica
 {
 	// This is a bit of a hack, but it works for both UTF-8 and UTF-16
 	// because the characters for language tags are restricted:
-	PMNT_LOG(g_log, LogLevel::debug) << format{"composeLangLiteral(): Lang tag before translation: ''%1%''"}
+	PMNT_LOG(g_log, log::Level::debug) << format{"composeLangLiteral(): Lang tag before translation: ''%1%''"}
 		% convertFromRsrcChar(langTag);
 	transform(begin(langTag), end(langTag), begin(langTag),
 		[](RsrcChar ch){ return (ch >= 'A' && ch <= 'Z') ? 'a' + (ch - 'A') : ch; });
-	PMNT_LOG(g_log, LogLevel::debug) << format{"composeLangLiteral(): Lang tag after translation:  ''%1%''"}
+	PMNT_LOG(g_log, log::Level::debug) << format{"composeLangLiteral(): Lang tag after translation:  ''%1%''"}
 		% convertFromRsrcChar(langTag);
 	return k_quote + lexicalForm + k_langSep + langTag;
 }

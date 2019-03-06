@@ -67,16 +67,19 @@ public class DuplicateEntriesTest {
 		testServer.close();
 	}
 
+	@SuppressWarnings("static-method")
 	@BeforeEach
 	public void beforeEach() {
 		testServer.setupIndex();
 	}
 
+	@SuppressWarnings("static-method")
 	@AfterEach
 	public void afterEach() {
 		testServer.removeIndex();
 	}
 
+	@SuppressWarnings("static-method")
 	@Test
 	public void testDuplicateEntries() throws Exception {
 		try (Reader rdr = new StringReader(TRIPLES)) {

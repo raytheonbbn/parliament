@@ -69,10 +69,12 @@ using ::std::setw;
 using ::std::string;
 using ::std::tie;
 
-pmnt::KbInstance::KbInstance(const Config& config) :
+static auto g_log(pmnt::log::getSource("KbInstance"));
+
+pmnt::KbInstance::KbInstance(const KbConfig& config) :
 	m_pi(makeUnique<Impl>(config, this))
 {
-	PMNT_LOG(m_pi->m_log, LogLevel::info) << "Initializing KbInstance";
+	PMNT_LOG(g_log, log::Level::debug) << "Initializing KbInstance";
 
 	if (!m_pi->m_config.readOnly())
 	{
@@ -130,12 +132,12 @@ pmnt::KbInstance::KbInstance(const Config& config) :
 
 		m_pi->m_re.setEndOfStartupTime();	// Do not add any rules after this point
 
-		PMNT_LOG(m_pi->m_log, LogLevel::info) << "Finished initializing rule engine";
+		PMNT_LOG(g_log, log::Level::debug) << "Finished initializing rule engine";
 	}
 }
 
 pmnt::KbDisposition pmnt::KbInstance::determineDisposition(
-	const Config& config, bool throwIfIndeterminate)
+	const KbConfig& config, bool throwIfIndeterminate)
 {
 	bool uriTblExists		= is_regular_file(config.uriTableFilePath());
 	bool uriToIntExists	= is_regular_file(config.uriToIntFilePath());
@@ -167,10 +169,10 @@ pmnt::KbDisposition pmnt::KbInstance::determineDisposition(
 pmnt::KbInstance::~KbInstance()
 {
 	m_pi->m_stmtHndlrList.clear();	// Just in case...
-	PMNT_LOG(m_pi->m_log, LogLevel::info) << "KbInstance destructed";
+	PMNT_LOG(g_log, log::Level::debug) << "KbInstance destructed";
 }
 
-const pmnt::Config& pmnt::KbInstance::config() const
+const pmnt::KbConfig& pmnt::KbInstance::config() const
 {
 	return m_pi->m_config;
 }
@@ -224,20 +226,20 @@ pmnt::ResourceId pmnt::KbInstance::uriToRsrcId(
 	RsrcString normalizedLiteral;
 	if (isLiteral && m_pi->m_config.normalizeTypedStringLiterals())
 	{
-		PMNT_LOG(m_pi->m_log, LogLevel::debug) << format{"Normalizing '%1%'"}
+		PMNT_LOG(g_log, log::Level::debug) << format{"Normalizing '%1%'"}
 			% convertFromRsrcChar(RsrcString(pUri, pUri + uriLen));
 		RsrcString lexicalForm;
 		RsrcString datatypeUri;
 		RsrcString langTag;
 		::std::tie(lexicalForm, datatypeUri, langTag) = LiteralUtils::parseLiteral(pUri, pUri + uriLen);
-		PMNT_LOG(m_pi->m_log, LogLevel::debug) << format{"     parse: lex form = '%1%', dtype = '%2%', lang = '%3%'"}
+		PMNT_LOG(g_log, log::Level::debug) << format{"     parse: lex form = '%1%', dtype = '%2%', lang = '%3%'"}
 			% convertFromRsrcChar(lexicalForm) % convertFromRsrcChar(datatypeUri) % convertFromRsrcChar(langTag);
 		if (datatypeUri == LiteralUtils::k_plainLiteralDatatype)
 		{
 			normalizedLiteral = LiteralUtils::composePlainLiteral(lexicalForm);
 			pUri = normalizedLiteral.c_str();
 			uriLen = normalizedLiteral.length();
-			PMNT_LOG(m_pi->m_log, LogLevel::debug) << format{"         as '%1%'"}
+			PMNT_LOG(g_log, log::Level::debug) << format{"         as '%1%'"}
 				% convertFromRsrcChar(normalizedLiteral);
 		}
 		else if (!langTag.empty())
@@ -245,7 +247,7 @@ pmnt::ResourceId pmnt::KbInstance::uriToRsrcId(
 			normalizedLiteral = LiteralUtils::composeLangLiteral(lexicalForm, langTag);
 			pUri = normalizedLiteral.c_str();
 			uriLen = normalizedLiteral.length();
-			PMNT_LOG(m_pi->m_log, LogLevel::debug) << format{"         as '%1%'"}
+			PMNT_LOG(g_log, log::Level::debug) << format{"         as '%1%'"}
 				% convertFromRsrcChar(normalizedLiteral);
 		}
 	}
@@ -1337,7 +1339,7 @@ string pmnt::KbInstance::formatRsrcUri(ResourceId rsrcId, bool includeRsrcId) co
 	}
 }
 
-void pmnt::KbInstance::deleteKb(const Config& cfg, const bfs::path& dir)
+void pmnt::KbInstance::deleteKb(const KbConfig& cfg, const bfs::path& dir)
 {
 	remove(dir / cfg.uriTableFileName());
 	remove(dir / cfg.uriToIntFileName());
@@ -1345,7 +1347,7 @@ void pmnt::KbInstance::deleteKb(const Config& cfg, const bfs::path& dir)
 	remove(dir / cfg.rsrcFileName());
 }
 
-void pmnt::KbInstance::deleteKb(const Config& cfg)
+void pmnt::KbInstance::deleteKb(const KbConfig& cfg)
 {
 	remove(cfg.uriTableFilePath());
 	remove(cfg.uriToIntFilePath());
@@ -1355,12 +1357,16 @@ void pmnt::KbInstance::deleteKb(const Config& cfg)
 
 void pmnt::KbInstance::deleteKb(const bfs::path& dir)
 {
-	deleteKb(Config::readFromFile(), dir);
+	KbConfig config;
+	config.readFromFile();
+	deleteKb(config, dir);
 }
 
 void pmnt::KbInstance::deleteKb()
 {
-	deleteKb(Config::readFromFile());
+	KbConfig config;
+	config.readFromFile();
+	deleteKb(config);
 }
 
 size_t pmnt::KbInstance::ruleCount() const

@@ -10,7 +10,7 @@ import java.io.File;
 
 import com.bbn.parliament.jena.graph.union.KbUnionGraph;
 import com.bbn.parliament.jena.graph.union.KbUnionableGraph;
-import com.bbn.parliament.jni.Config;
+import com.bbn.parliament.jni.KbConfig;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.shared.uuid.JenaUUID;
 
@@ -22,7 +22,9 @@ public class KbGraphFactory {
 
 	/** Create a Parliament default graph. */
 	public static KbGraph createDefaultGraph() {
-		return new KbGraph(Config.readFromFile(), null, OPT_METHOD);
+		KbConfig config = new KbConfig();
+		config.readFromFile();
+		return new KbGraph(config, null, OPT_METHOD);
 	}
 
 	/** Create a Parliament master graph. */
@@ -49,8 +51,9 @@ public class KbGraphFactory {
 		return new KbUnionGraph(leftKbUnionableGraph, leftGraphName, rightKbUnionableGraph, rightGraphName);
 	}
 
-	private static Config getKbConfigForMasterGraph() {
-		Config config = Config.readFromFile();
+	private static KbConfig getKbConfigForMasterGraph() {
+		KbConfig config = new KbConfig();
+		config.readFromFile();
 		File kbDir = new File(config.m_kbDirectoryPath);
 		File masterDir = new File(kbDir, KbGraphStore.MASTER_GRAPH_DIR);
 		File oldMasterDir = new File(kbDir, KbGraphStore.OLD_MASTER_GRAPH_DIR);
@@ -64,8 +67,9 @@ public class KbGraphFactory {
 		return config;
 	}
 
-	private static Config getKbConfigForNamedGraph(String namedGraphSubDir) {
-		Config config = Config.readFromFile();
+	private static KbConfig getKbConfigForNamedGraph(String namedGraphSubDir) {
+		KbConfig config = new KbConfig();
+		config.readFromFile();
 		File kbDir = new File(config.m_kbDirectoryPath, namedGraphSubDir);
 		config.m_kbDirectoryPath = kbDir.getAbsolutePath();
 		return config;

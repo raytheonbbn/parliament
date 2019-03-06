@@ -4,9 +4,9 @@
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
 
-#include "parliament/generated/com_bbn_parliament_jni_Config.h"
+#include "parliament/generated/com_bbn_parliament_jni_KbConfig.h"
 #include "parliament/Platform.h"
-#include "parliament/Config.h"
+#include "parliament/KbConfig.h"
 #include "parliament/JNIHelper.h"
 #include "parliament/UnicodeIterator.h"
 
@@ -15,35 +15,8 @@ using ::std::string;
 
 // Note:  If you change this method, be sure to make parallel changes
 // to the method assignJavaConfigToCppConfig in KbInstanceJNI.cpp.
-static void assignCppConfigToJavaConfig(JNIEnv* pEnv, jobject obj, const Config& config)
+static void assignCppConfigToJavaConfig(JNIEnv* pEnv, jobject obj, const KbConfig& config)
 {
-	JNIHelper::setBooleanFld(pEnv, obj,	"m_logToConsole",						config.logToConsole());
-	JNIHelper::setBooleanFld(pEnv, obj,	"m_logConsoleAsynchronous",		config.logConsoleAsynchronous());
-	JNIHelper::setBooleanFld(pEnv, obj,	"m_logConsoleAutoFlush",			config.logConsoleAutoFlush());
-	JNIHelper::setBooleanFld(pEnv, obj,	"m_logToFile",							config.logToFile());
-#if defined(PARLIAMENT_WINDOWS)
-	JNIHelper::setStringFld(pEnv, obj,	"m_logFilePath",						pathAsUtf8(config.logFilePath()));
-#else
-	JNIHelper::setStringFld(pEnv, obj,	"m_logFilePath",						config.logFilePath().string());
-#endif
-	JNIHelper::setBooleanFld(pEnv, obj,	"m_logFileAsynchronous",			config.logFileAsynchronous());
-	JNIHelper::setBooleanFld(pEnv, obj,	"m_logFileAutoFlush",				config.logFileAutoFlush());
-	JNIHelper::setLongFld(pEnv, obj,		"m_logFileRotationSize",			config.logFileRotationSize());
-	JNIHelper::setLongFld(pEnv, obj,		"m_logFileMaxAccumSize",			config.logFileMaxAccumSize());
-	JNIHelper::setLongFld(pEnv, obj,		"m_logFileMinFreeSpace",			config.logFileMinFreeSpace());
-	JNIHelper::setStringFld(pEnv, obj,	"m_logFileRotationTimePoint",		config.logFileRotationTimePoint());
-	JNIHelper::setStringFld(pEnv, obj,	"m_logLevel",							config.logLevel());
-
-	jmethodID mId = JNIHelper::getMethodID(pEnv, obj, "clearLogChannelLevels", "()V");
-	pEnv->CallVoidMethod(obj, mId);
-	mId = JNIHelper::getMethodID(pEnv, obj, "addLogChannelLevel", "(Ljava/lang/String;Ljava/lang/String;)V");
-	for (const auto& entry : config.logChannelLevels())
-	{
-		jstring channel = JNIHelper::cstringToJstring(pEnv, entry.first);
-		jstring level = JNIHelper::cstringToJstring(pEnv, entry.second);
-		pEnv->CallVoidMethod(obj, mId, channel, level);
-	}
-
 #if defined(PARLIAMENT_WINDOWS)
 	JNIHelper::setStringFld(pEnv, obj,	"m_kbDirectoryPath",					pathAsUtf8(config.kbDirectoryPath()));
 #else
@@ -64,6 +37,8 @@ static void assignCppConfigToJavaConfig(JNIEnv* pEnv, jobject obj, const Config&
 	JNIHelper::setDoubleFld(pEnv, obj,	"m_stmtGrowthFactor",				config.stmtGrowthFactor());
 	JNIHelper::setStringFld(pEnv, obj,	"m_bdbCacheSize",						config.bdbCacheSize());
 	JNIHelper::setBooleanFld(pEnv, obj,	"m_normalizeTypedStringLiterals",config.normalizeTypedStringLiterals());
+	JNIHelper::setLongFld(pEnv, obj,		"m_timeoutDuration",					config.timeoutDuration());
+	JNIHelper::setTimeoutUnitFld(pEnv, obj,										config.javaTimeoutUnit().c_str());
 	JNIHelper::setBooleanFld(pEnv, obj,	"m_runAllRulesAtStartup",			config.runAllRulesAtStartup());
 	JNIHelper::setBooleanFld(pEnv, obj,	"m_enableSWRLRuleEngine",			config.enableSWRLRuleEngine());
 	JNIHelper::setBooleanFld(pEnv, obj,	"m_isSubclassRuleOn",				config.isSubclassRuleOn());
@@ -81,28 +56,23 @@ static void assignCppConfigToJavaConfig(JNIEnv* pEnv, jobject obj, const Config&
 	JNIHelper::setBooleanFld(pEnv, obj,	"m_inferOwlClass",					config.inferOwlClass());
 	JNIHelper::setBooleanFld(pEnv, obj,	"m_inferRdfsResource",				config.inferRdfsResource());
 	JNIHelper::setBooleanFld(pEnv, obj,	"m_inferOwlThing",					config.inferOwlThing());
-
-	JNIHelper::setLongFld(pEnv, obj, "m_timeoutDuration", config.timeoutDuration());
-	JNIHelper::setStringFld(pEnv, obj, "m_timeoutUnit", config.timeoutUnit());
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_Config_init(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbConfig_init(
 	JNIEnv* pEnv, jobject obj)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
-		Config config;
+		KbConfig config;
 		assignCppConfigToJavaConfig(pEnv, obj, config);
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT jobject JNICALL Java_com_bbn_parliament_jni_Config_readFromFile(
-	JNIEnv* pEnv, jclass cls)
+JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbConfig_readFromFile(
+	JNIEnv* pEnv, jobject obj)
 {
-	jobject result = 0;
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
-		Config config = Config::readFromFile();
-		result = JNIHelper::newObjectByDefaultCtor(pEnv, cls);
-		assignCppConfigToJavaConfig(pEnv, result, config);
+		KbConfig config;
+		config.readFromFile();
+		assignCppConfigToJavaConfig(pEnv, obj, config);
 	END_JNI_EXCEPTION_HANDLER(pEnv)
-	return result;
 }

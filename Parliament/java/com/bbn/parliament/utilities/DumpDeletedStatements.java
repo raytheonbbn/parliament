@@ -7,7 +7,7 @@
 
 package com.bbn.parliament.utilities;
 
-import com.bbn.parliament.jni.Config;
+import com.bbn.parliament.jni.KbConfig;
 import com.bbn.parliament.jni.KbInstance;
 import com.bbn.parliament.jni.StmtIterator;
 import com.bbn.parliament.jni.StmtIterator.Statement;
@@ -27,7 +27,8 @@ public class DumpDeletedStatements {
 		}
 		String dir = args[0];
 
-		Config config = Config.readFromFile();
+		KbConfig config = new KbConfig();
+		config.readFromFile();
 		config.m_kbDirectoryPath = dir;
 		config.m_readOnly = true;
 		try (

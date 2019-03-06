@@ -6,85 +6,22 @@
 
 package com.bbn.parliament.jni;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-public class Config
-{
-	/** Initializes a Config instance with default configuration values */
-	public Config()
-	{
-		clearLogChannelLevels();
+public class KbConfig {
+	/** Initializes a KbConfig instance with default configuration values */
+	public KbConfig() {
 		init();
 	}
 
-	public String[][] getLogChannelLevelsAs2dArray() {
-		String[][] result = new String[m_logChannelLevel.size()][];
-		int index = -1;
-		for (Map.Entry<String, String> e : m_logChannelLevel.entrySet()) {
-			String[] arrayEntry = new String[2];
-			arrayEntry[0] = e.getKey();
-			arrayEntry[1] = e.getValue();
-			result[++index] = arrayEntry;
-		}
-		return result;
-	}
-
-	public void clearLogChannelLevels() {
-		m_logChannelLevel = new HashMap<>();
-	}
-
-	public void addLogChannelLevel(String channel, String level) {
-		m_logChannelLevel.put(channel, level);
-	}
-
-	/** Intended only to be called by the Config ctor. */
+	/** Intended only to be called by the KbConfig ctor. */
 	private native void init();
 
 	/**
-	 * Creates a Config instance initialized according to the content of the
+	 * Creates a KbConfig instance initialized according to the content of the
 	 * configuration file
 	 */
-	public static native Config readFromFile();
-
-	/** Enables logging to the console */
-	public boolean m_logToConsole;
-
-	/** Sets whether console logging is asynchronous */
-	public boolean m_logConsoleAsynchronous;
-
-	/** Enables auto-flushing of the console log */
-	public boolean m_logConsoleAutoFlush;
-
-	/** Enables logging to a file */
-	public boolean m_logToFile;
-
-	/** Sets the log file name (and path).  %N = log file number, %Y-%m-%d = date, %H-%M-%S = time */
-	public String m_logFilePath;
-
-	/** Sets whether file logging is asynchronous */
-	public boolean m_logFileAsynchronous;
-
-	/** Enables auto-flushing of the log file */
-	public boolean m_logFileAutoFlush;
-
-	/** Sets the approximate size at which point log file rotation is performed */
-	public long m_logFileRotationSize;
-
-	/** Sets the maximum accumulated size of rotated log files, after which old files are deleted */
-	public long m_logFileMaxAccumSize;
-
-	/** Sets the minimum free space on the log file volume, under which old files are deleted */
-	public long m_logFileMinFreeSpace;
-
-	/** Sets the time of day at which log files are rotated, in HH:MM:SS format */
-	public String m_logFileRotationTimePoint;
-
-	/** Sets the global logging level */
-	public String m_logLevel;
-
-	/** Per-channel log level settings */
-	public Map<String, String> m_logChannelLevel;
+	public native void readFromFile();
 
 	/** Directory containing the Parliament KB files */
 	public String  m_kbDirectoryPath;
@@ -155,15 +92,24 @@ public class Config
 	/** Whether to translate typed string literals to plain literals */
 	public boolean m_normalizeTypedStringLiterals;
 
+	/** How long a query should be allowed to run before being aborted */
+	public long m_timeoutDuration;
+
+	/** The units for m_timeoutDuration */
+	public TimeUnit m_timeoutUnit;
+	public String getTimeoutUnit() {
+		return m_timeoutUnit.toString();
+	}
+	public void setTimeoutUnit(String newValue) {
+		m_timeoutUnit = TimeUnit.valueOf(newValue);
+	}
+
 	/** Whether to ensure all entailments at startup, or assume entailments
 	 * are correct from previous runs */
 	public boolean m_runAllRulesAtStartup;
 
 	/** Whether the SWRL rule engine is enabled */
 	public boolean m_enableSWRLRuleEngine;
-
-	/** The maximum size of the cache of jstrings */
-	public long    m_maxJStringCacheSize;
 
 	/**
 	 * Determines whether the following rules are turned on:
@@ -235,14 +181,7 @@ public class Config
 	/** Whether to infer owl:Thing based on subclass statements */
 	public boolean m_inferOwlThing;
 
-	/** How long a query should be allowed to run before being aborted */
-	public long m_timeoutDuration;
-
-	/** The units for m_timeoutDuration */
-	public String m_timeoutUnit;
-
-	public void disableAllRules()
-	{
+	public void disableAllRules() {
 		m_enableSWRLRuleEngine = false;
 		m_isSubclassRuleOn = false;
 		m_isSubpropertyRuleOn = false;
@@ -261,8 +200,7 @@ public class Config
 		m_inferOwlThing = false;
 	}
 
-	static
-	{
+	static {
 		System.loadLibrary("Parliament");
 	}
 }

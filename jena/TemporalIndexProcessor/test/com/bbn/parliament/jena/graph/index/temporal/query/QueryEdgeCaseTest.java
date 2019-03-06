@@ -10,10 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterAll;
@@ -58,12 +56,14 @@ public class QueryEdgeCaseTest {
 		testServer.close();
 	}
 
+	@SuppressWarnings("static-method")
 	@BeforeEach
 	public void beforeEach() {
 		testServer.setupIndex();
 		loadContent();
 	}
 
+	@SuppressWarnings("static-method")
 	@AfterEach
 	public void afterEach() {
 		testServer.removeIndex();
@@ -79,6 +79,7 @@ public class QueryEdgeCaseTest {
 		addThingWithTime(testServer.getModel(), "2006-02-16T00:00:01Z");
 	}
 
+	@SuppressWarnings("static-method")
 	@Test
 	public void testDuplicateEntries() {
 		String query = TemporalTestServer.COMMON_PREFIXES
@@ -95,6 +96,7 @@ public class QueryEdgeCaseTest {
 		}
 	}
 
+	@SuppressWarnings("static-method")
 	@Test
 	/** Tests the query processor's ability to filter through irrelevant triples with similar subjects */
 	public void testIndexFilter() {
@@ -114,6 +116,7 @@ public class QueryEdgeCaseTest {
 		}
 	}
 
+	@SuppressWarnings("static-method")
 	@Test
 	/** Tests the query processor's ability to filter through irrelevant triples with similar subjects */
 	public void PartialIndexQueryTest() {
@@ -134,6 +137,7 @@ public class QueryEdgeCaseTest {
 		}
 	}
 
+	@SuppressWarnings("static-method")
 	@Test
 	public void testBlankNodes() {
 		String query = TemporalTestServer.COMMON_PREFIXES
@@ -150,6 +154,7 @@ public class QueryEdgeCaseTest {
 		}
 	}
 
+	@SuppressWarnings("static-method")
 	@Test
 	public void testUnboundedOperands() {
 		String query = TemporalTestServer.COMMON_PREFIXES
