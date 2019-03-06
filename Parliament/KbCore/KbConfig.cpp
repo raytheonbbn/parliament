@@ -24,7 +24,7 @@ using ::std::string;
 static ::boost::once_flag g_onceInitFlag = BOOST_ONCE_INIT;
 static auto g_log = pmnt::log::getSource("KbConfig");
 static constexpr pmnt::TChar k_envVarName[] = _T("PARLIAMENT_KB_CONFIG_PATH");
-static constexpr pmnt::TChar k_defaultConfigFileName[] = _T("ParliamentConfig.txt");
+static constexpr pmnt::TChar k_defaultConfigFileName[] = _T("ParliamentKbConfig.txt");
 pmnt::KbConfig::ConfigEntryMap pmnt::KbConfig::g_ceMap;
 bool pmnt::KbConfig::g_isConfigEntryMapInitialized = pmnt::KbConfig::initConfigEntryMap();
 

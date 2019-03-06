@@ -30,6 +30,6 @@ log/
 /Parliament/Test/.settings/language.settings.xml
 /Parliament/Test/Debug_with_Linux GCC/
 /Parliament/Test/Debug_with_MacOSX GCC/
-/Parliament/Test/ParliamentConfig.txt
+/Parliament/Test/ParliamentKbConfig.txt
 /Parliament/Test/ParliamentLogConfig.txt
 /target/

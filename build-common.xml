@@ -24,7 +24,7 @@
 
 	<property name="deployableServersFile" value="${targetDir}/bin/DeployableServerDirs.txt"/>
 	<property name="antRunnableServersFile" value="${targetDir}/bin/AntRunnableServerDirs.txt"/>
-	<property name="testKbConfigFile" value="${targetDir}/test-bin/ParliamentConfig.txt"/>
+	<property name="testKbConfigFile" value="${targetDir}/test-bin/ParliamentKbConfig.txt"/>
 	<property name="testLogConfigFile" value="${targetDir}/test-bin/ParliamentLogConfig.txt"/>
 
 	<!-- Include ant-contrib -->

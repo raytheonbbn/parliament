@@ -14,7 +14,7 @@ path-constant KbCoreDir : ../KbCore ;
 
 # This run target is the recommended Boost.Build mechanism for running tests, but
 # it doesn't quite work as desired on Windows.  On Windows, Parliament needs
-# ParliamentConfig.txt and ParliamentLogConfig.txt to be present in the same
+# ParliamentKbConfig.txt and ParliamentLogConfig.txt to be present in the same
 # directory as the test executable.  The copy target below attempts to satisfy this
 # requirement.  However, the run target puts the test executable in this directory:
 #
@@ -54,9 +54,9 @@ run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 		<define>PARLIAMENT_UNIT_TEST
 		<visibility>hidden
 		<threading>multi
-		<dependency>ParliamentConfig.txt
+		<dependency>ParliamentKbConfig.txt
 		<dependency>ParliamentLogConfig.txt
-		<dependency>$(TestDir)/ParliamentConfig.txt
+		<dependency>$(TestDir)/ParliamentKbConfig.txt
 		<dependency>$(TestDir)/ParliamentLogConfig.txt
 		<os>NT:<testing.launcher>$(TestDir)\\TestLaunch.bat
 	:	ParliamentTest
@@ -64,9 +64,9 @@ run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 	;
 
 # These two are for Windows:
-explicit ParliamentConfig.txt ParliamentLogConfig.txt ;
-make ParliamentConfig.txt
-	: $(KbCoreDir)/ParliamentConfig.txt
+explicit ParliamentKbConfig.txt ParliamentLogConfig.txt ;
+make ParliamentKbConfig.txt
+	: $(KbCoreDir)/ParliamentKbConfig.txt
 	: @common.copy
 	: <relevant>toolset <relevant>variant <relevant>address-model <relevant>threading
 	;
@@ -77,8 +77,8 @@ make ParliamentLogConfig.txt
 	;
 
 # And these two are for UNIX-like platforms:
-explicit $(TestDir)/ParliamentConfig.txt $(TestDir)/ParliamentLogConfig.txt ;
-make $(TestDir)/ParliamentConfig.txt : $(KbCoreDir)/ParliamentConfig.txt : @common.copy ;
+explicit $(TestDir)/ParliamentKbConfig.txt $(TestDir)/ParliamentLogConfig.txt ;
+make $(TestDir)/ParliamentKbConfig.txt : $(KbCoreDir)/ParliamentKbConfig.txt : @common.copy ;
 make $(TestDir)/ParliamentLogConfig.txt : $(KbCoreDir)/ParliamentLogConfig.txt : @common.copy ;
 
 exe UnicodeTestCaseGen

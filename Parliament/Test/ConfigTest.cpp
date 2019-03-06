@@ -66,7 +66,7 @@ static ostream& operator<<(ostream& os, const GetConfigFilePathTestCase& tc)
 	return os;
 }
 
-static constexpr TChar k_defaultConfigFileName[] = _T("ParliamentConfig.txt");
+static constexpr TChar k_defaultConfigFileName[] = _T("ParliamentKbConfig.txt");
 static const GetConfigFilePathTestCase k_getConfigFilePathTestCases[] =
 	{
 #if defined(PARLIAMENT_WINDOWS)

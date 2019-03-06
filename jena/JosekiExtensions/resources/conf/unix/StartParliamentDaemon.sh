@@ -6,7 +6,7 @@ PMNT_DIR="`pwd`"
 cd - > /dev/null
 
 ######### User-settable configuration parameters: #########
-export PARLIAMENT_KB_CONFIG_PATH=$PMNT_DIR/ParliamentConfig.txt
+export PARLIAMENT_KB_CONFIG_PATH=$PMNT_DIR/ParliamentKbConfig.txt
 export PARLIAMENT_LOG_CONFIG_PATH=$PMNT_DIR/ParliamentLogConfig.txt
 
 MIN_MEM=128m
