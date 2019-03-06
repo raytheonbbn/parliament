@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <boost/filesystem/path.hpp>
 #include <boost/format.hpp>
+#include <cmath>
 #include <limits>
 
 PARLIAMENT_NAMESPACE_BEGIN
@@ -75,7 +76,7 @@ public:
 				size_t newRecCount = oldRecCount + numNewRecords;
 				if (m_growthFactor > 1.0)
 				{
-					newRecCount *= m_growthFactor;
+					newRecCount = ::std::llrint(m_growthFactor * newRecCount);
 				}
 				if (m_growthIncrement > 0)
 				{

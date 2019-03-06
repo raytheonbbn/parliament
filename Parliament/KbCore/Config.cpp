@@ -6,6 +6,8 @@
 
 #include "parliament/Config.h"
 #include "parliament/Exceptions.h"
+#include "parliament/Log.h"
+#include "parliament/UnicodeIterator.h"
 #include "parliament/Util.h"
 #include "parliament/Windows.h"
 
@@ -15,6 +17,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/format.hpp>
 #include <string>
+#include <vector>
 
 namespace ba = ::boost::algorithm;
 namespace bfs = ::boost::filesystem;
@@ -28,6 +31,8 @@ using ::std::string;
 
 static constexpr const char*const k_trueBoolValues[] = { "true", "t", "yes", "y", "on", "1" };
 static constexpr const char*const k_falseBoolValues[] = { "false", "f", "no", "n", "off", "0" };
+
+static auto g_log(pmnt::log::getSource("Config"));
 
 
 
@@ -58,7 +63,7 @@ static bfs::path getModulePathName(HMODULE hModule)
 {
 	for (DWORD bufferLen = 256;; bufferLen += 256)
 	{
-		vector<TChar> buffer(bufferLen, '\0');
+		::std::vector<TChar> buffer(bufferLen, '\0');
 		DWORD retVal = ::GetModuleFileName(hModule, &buffer[0], bufferLen);
 		if (retVal == 0)
 		{
@@ -97,7 +102,7 @@ bfs::path pmnt::Config::getConfigFilePath(const TChar* pEnvVarName, const TChar*
 		}
 		else
 		{
-			PMNT_LOG(g_log, LogLevel::info) << "Computed config file path '"
+			PMNT_LOG(g_log, log::Level::debug) << "Computed config file path '"
 				<< pathAsUtf8(configPath) << "' does not exist or is not a regular file."
 				"  Defaulting to the current directory.";
 		}

@@ -27,6 +27,7 @@ logLevel                 = INFO
 #logChannelLevel          = Exceptions=TRACE
 #logChannelLevel          = FileHandle=TRACE
 #logChannelLevel          = FileMapping=TRACE
+#logChannelLevel          = KbConfig=TRACE
 #logChannelLevel          = KbInstance=TRACE
 #logChannelLevel          = LiteralUtils=TRACE
 #logChannelLevel          = RuleEngine=TRACE
