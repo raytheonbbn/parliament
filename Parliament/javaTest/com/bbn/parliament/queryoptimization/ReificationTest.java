@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
-import com.bbn.parliament.jni.Config;
+import com.bbn.parliament.jni.KbConfig;
 import com.bbn.parliament.jni.KbInstance;
 import com.bbn.parliament.jni.KbInstance.CountStmtsResult;
 import com.bbn.parliament.jni.ReificationIterator;
@@ -23,7 +23,7 @@ import com.bbn.parliament.jni.StmtIterator.Statement;
 /** @author dkolas */
 @RunWith(JUnitPlatform.class)
 public class ReificationTest {
-	private Config config;
+	private KbConfig config;
 	private KbInstance kb;
 
 	private long a;
@@ -44,9 +44,8 @@ public class ReificationTest {
 
 	@BeforeEach
 	public void beforeEach() {
-		config = new Config();
-		config.m_kbDirectoryPath = ".";
-		config.m_logToConsole = false;
+		config = new KbConfig();
+		config.readFromFile();
 		try {
 			KbInstance.deleteKb(config, null);
 			kb = new KbInstance(config);

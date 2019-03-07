@@ -7,18 +7,18 @@
 package com.bbn.parliament.jena.graph.union;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Enumeration;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.OptimizationMethod;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
-import com.bbn.parliament.jni.Config;
+import com.bbn.parliament.jni.KbConfig;
 import com.bbn.parliament.jni.KbInstance;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -28,9 +28,9 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 /** @author dkolas */
 public class UnionGraphTestNotJUnit {
-	private static final File PMNT_DEPS = new File(System.getenv("PARLIAMENT_DEPENDENCIES"));
-	private static final File ONT_FILE = new File("../JosekiExtensions/test/univ-bench.owl");
-	private static final File INPUT_DATA_DIR = new File(PMNT_DEPS, "gendata-80");
+	private static final String ONT_RSRC = "univ-bench.owl";
+	private static final File INPUT_DATA_FILE = new File(
+		System.getProperty("test.data.path"), "gendata-80.zip");
 	private static final File KB_DATA_DIR = new File("./union-test-kb-data");
 
 	private static final String QUERY1 = "" +
@@ -115,7 +115,8 @@ public class UnionGraphTestNotJUnit {
 	private static KbGraph createGraph(File rootDir, String relativeDirectory) {
 		File dir = new File(rootDir, relativeDirectory);
 		dir.mkdirs();
-		Config config = Config.readFromFile();
+		KbConfig config = new KbConfig();
+		config.readFromFile();
 		config.m_kbDirectoryPath = dir.getPath();
 		KbInstance.deleteKb(config, null);
 		return new KbGraph(config, relativeDirectory, OptimizationMethod.DefaultOptimization);
@@ -123,32 +124,37 @@ public class UnionGraphTestNotJUnit {
 
 	private static Model createModel(KbGraph g) throws IOException {
 		Model m = ModelFactory.createModelForGraph(g);
-		populateModel(m, ONT_FILE);
+		RDFFormat rdfFmt = RDFFormat.parseFilename(ONT_RSRC);
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		try (InputStream strm = cl.getResourceAsStream(ONT_RSRC)) {
+			if (strm == null) {
+				throw new FileNotFoundException("Unable to load resource " + ONT_RSRC);
+			}
+			m.read(strm, null, rdfFmt.toString());
+		}
 		return m;
 	}
 
 	private static void loadUniversityData(Model m1, Model m2, int univNum) throws IOException {
 		System.out.format("Loading university #%1$d:%n", univNum);
-		for (File f : getFilesForUniversity(INPUT_DATA_DIR, univNum)) {
-			populateModel(m1, f);
-			populateModel(m2, f);
-			System.out.format("Loaded file '%1$s'%n", f.getPath());
+		Pattern pattern = Pattern.compile(
+			String.format("University%1$d_.*", univNum), Pattern.CASE_INSENSITIVE);
+		try (ZipFile zipFile = new ZipFile(INPUT_DATA_FILE)) {
+			Enumeration<? extends ZipEntry> entries = zipFile.entries();
+			while (entries.hasMoreElements()) {
+				ZipEntry zipEntry = entries.nextElement();
+				if (!zipEntry.isDirectory() && pattern.matcher(zipEntry.getName()).matches()) {
+					Model tmpModel = ModelFactory.createDefaultModel();
+					RDFFormat rdfFmt = RDFFormat.parseFilename(zipEntry.getName());
+					try (InputStream strm = zipFile.getInputStream(zipEntry)) {
+						tmpModel.read(strm, null, rdfFmt.toString());
+					}
+					m1.add(tmpModel);
+					m2.add(tmpModel);
+					System.out.format("Loaded file '%1$s'%n", zipEntry.getName());
+				}
+			}
 		}
-	}
-
-	private static void populateModel(Model m, File filePath) throws IOException {
-		RDFFormat rdfFmt = RDFFormat.parseFilename(filePath);
-		try (InputStream strm = new FileInputStream(filePath)) {
-			m.read(strm, null, rdfFmt.toString());
-		}
-	}
-
-	private static List<File> getFilesForUniversity(File dataFilesDir, int universityNum) {
-		String patternStr = String.format("University%1$d_.*", universityNum);
-		Pattern pattern = Pattern.compile(patternStr, Pattern.CASE_INSENSITIVE);
-		return Arrays.stream(dataFilesDir.listFiles())
-			.filter(f -> pattern.matcher(f.getName()).matches())
-			.collect(Collectors.toList());
 	}
 
 	private static void timeCount(String modelName, String query, Model model) {

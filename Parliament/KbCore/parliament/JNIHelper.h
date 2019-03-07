@@ -184,6 +184,14 @@ public:
 	template<typename t_char>
 	static void setStringFld(JNIEnv* pEnv, jobject obj, const char* pFldName, const ::std::basic_string<t_char>& value)
 		{ return setStringFld(pEnv, obj, pFldName, value.c_str()); }
+	static ::std::string getTimeoutUnitFld(JNIEnv* pEnv, jobject obj);
+	template<typename t_char>
+	static void setTimeoutUnitFld(JNIEnv* pEnv, jobject obj, const t_char* pValue)
+		{
+			jmethodID mId = getMethodID(pEnv, obj, "setTimeoutUnit", "(Ljava/lang/String;)V");
+			jstring jstr = cstringToJstring(pEnv, pValue);
+			pEnv->CallVoidMethod(obj, mId, jstr);
+		}
 	static bool getBooleanFld(JNIEnv* pEnv, jobject obj, const char* pFldName);
 	static void setBooleanFld(JNIEnv* pEnv, jobject obj, const char* pFldName, bool value);
 	static double getDoubleFld(JNIEnv* pEnv, jobject obj, const char* pFldName);

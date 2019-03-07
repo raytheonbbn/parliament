@@ -14,12 +14,12 @@ import com.hp.hpl.jena.graph.Node;
 public class TemporalIndexFactory extends IndexFactory<TemporalIndex, TemporalExtent> {
 	private static final String LABEL = "Temporal Index";
 
-	private Properties configuration;
+	private Properties config;
 
 	public TemporalIndexFactory() {
 		super(LABEL);
-		configuration = new Properties();
-		configuration.put(Constants.INDEX_TYPE, Constants.INDEX_PERSISTENT);
+		config = new Properties();
+		config.put(Constants.INDEX_TYPE, Constants.INDEX_PERSISTENT);
 		PrefixRegistry.getInstance().registerPrefix("time", Constants.TIME_NS);
 	}
 
@@ -27,7 +27,7 @@ public class TemporalIndexFactory extends IndexFactory<TemporalIndex, TemporalEx
 	@Override
 	public TemporalIndex createIndex(Graph graph, Node graphName, String indexDir) {
 		Properties props = new Properties();
-		props.putAll(configuration);
+		props.putAll(config);
 		String indexType = props.getProperty(Constants.INDEX_TYPE);
 
 		TemporalIndex index = null;
@@ -43,7 +43,7 @@ public class TemporalIndexFactory extends IndexFactory<TemporalIndex, TemporalEx
 	/**{@inheritDoc} */
 	@Override
 	public void configure(Properties configuration) {
-		this.configuration.putAll(configuration);
+		config.putAll(configuration);
 	}
 
 	/** {@inheritDoc} */

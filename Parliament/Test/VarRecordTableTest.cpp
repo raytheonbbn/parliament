@@ -5,6 +5,8 @@
 // All rights reserved.
 
 #include <boost/test/unit_test.hpp>
+#include <boost/test/data/monomorphic.hpp>
+#include <boost/test/data/test_case.hpp>
 #include <limits>
 #include <string>
 #include "parliament/VarRecordTable.h"
@@ -12,6 +14,8 @@
 #include "parliament/CharacterLiteral.h"
 #include "parliament/UnicodeIterator.h"
 #include "TestUtils.h"
+
+namespace bdata = ::boost::unit_test::data;
 
 using namespace ::bbn::parliament;
 using ::std::char_traits;
@@ -62,9 +66,15 @@ static const uint8 k_expectedResult[] =
 	C('G')C('o')C('o')C('d')C('b')C('y')C('e')C(' ')C('W')C('o')C('r')C('l')C('d')C('!')C('\0')
 };
 
+static const size_t k_growthIncrements[] = { 30u, 0u };
+static const double k_growthFactors[] = { 0.0, 2.0 };
+
 BOOST_AUTO_TEST_SUITE(VarRecordTableTestSuite)
 
-BOOST_AUTO_TEST_CASE(testVarRecordTable)
+BOOST_DATA_TEST_CASE(
+	testVarRecordTable,
+	bdata::make(k_growthIncrements) ^ bdata::make(k_growthFactors),
+	growthIncrement, growthFactor)
 {
 	size_t firstRecordOffset = 0;
 	size_t secondRecordOffset = 0;
@@ -72,7 +82,7 @@ BOOST_AUTO_TEST_CASE(testVarRecordTable)
 	FileDeleter deleter(k_fName);
 
 	{
-		VarRecordTable vrt(k_fName, false, k_testData1.length() + 1, 2.0);
+		VarRecordTable vrt(k_fName, false, k_testData1.length() + 1, growthIncrement, growthFactor);
 		BOOST_CHECK(vrt.isEmpty());
 		const size_t maxSizeT = numeric_limits<size_t>::max();
 		BOOST_CHECK((maxSizeT - sizeof(MMapMgr::TblHeader)) / sizeof(RsrcChar) <= vrt.maxSize());
@@ -95,7 +105,7 @@ BOOST_AUTO_TEST_CASE(testVarRecordTable)
 	}
 
 	{
-		VarRecordTable vrt(k_fName, true, 4, 2.0);
+		VarRecordTable vrt(k_fName, true, 4, growthIncrement, growthFactor);
 		BOOST_CHECK(!vrt.isEmpty());
 		BOOST_CHECK_EQUAL(k_testData1.length() + k_testData2.length() + 2, vrt.size());
 		BOOST_CHECK(vrt.capacity() >= k_testData1.length() + k_testData2.length() + 2);
@@ -126,6 +136,7 @@ BOOST_AUTO_TEST_CASE(testVarRecordTableBug1381)
 	// different base address when the file grows, we start with a small file
 	// but use a very large growth factor:
 	static const size_t k_initialSize = 1024;
+	static const size_t k_growthIncrement = 0;
 #if defined(PARLIAMENT_64BITS)
 	static const double k_growthFactor = 1024.0 * 1024.0;
 #else
@@ -134,7 +145,7 @@ BOOST_AUTO_TEST_CASE(testVarRecordTableBug1381)
 
 	// Create a new VarRecordTable:
 	FileDeleter deleter(k_fName);
-	VarRecordTable vrt(k_fName, false, k_initialSize, k_growthFactor);
+	VarRecordTable vrt(k_fName, false, k_initialSize, k_growthIncrement, k_growthFactor);
 
 	// Insert a tiny string that fits within the file's capacity so that
 	// the file will not grow:

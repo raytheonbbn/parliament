@@ -20,11 +20,13 @@ import com.bbn.parliament.jena.graph.index.temporal.query.TestIndexFactory;
 
 @RunWith(JUnitPlatform.class)
 public class BeforeTest extends BaseOperandTestClass {
+	@Override
 	@BeforeEach
 	public void beforeEach() {
 		super.beforeEach();
 	}
 
+	@Override
 	@AfterEach
 	public void afterEach() {
 		super.afterEach();

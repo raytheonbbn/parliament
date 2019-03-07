@@ -20,7 +20,7 @@ import com.bbn.parliament.jena.graph.index.Index;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.graph.union.KbUnionableGraph;
 import com.bbn.parliament.jena.util.NodeUtil;
-import com.bbn.parliament.jni.Config;
+import com.bbn.parliament.jni.KbConfig;
 import com.bbn.parliament.jni.KbInstance;
 import com.bbn.parliament.jni.KbInstance.CountStmtsResult;
 import com.bbn.parliament.jni.KbInstance.GetExcessCapacityResult;
@@ -42,7 +42,7 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 
 	private static Logger log = LoggerFactory.getLogger(KbGraph.class);
 	private KbInstance kb;
-	private Config config;
+	private KbConfig config;
 	private boolean isClosed;
 	// private NodeIdHash nodeIdHash;
 	private Map<Node, Long> nodeIdHash;
@@ -57,7 +57,7 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 
 	/**
 	 * Creates a KbGraph that wraps the Parliament instance referred to by the
-	 * given Config instance.
+	 * given KbConfig instance.
 	 *
 	 * @param config The configuration to pass to the underlying Parliament
 	 *        instance.
@@ -69,7 +69,7 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 	 * @param optMethod The optimization method that the query optimizer should
 	 *        use. Should be set to OptimizationMethod.DefaultOptimization.
 	 */
-	public KbGraph(Config config, String relativeDirectory, OptimizationMethod optMethod) {
+	public KbGraph(KbConfig config, String relativeDirectory, OptimizationMethod optMethod) {
 		try {
 			kb = new KbInstance(config);
 		} catch (Throwable t) {
@@ -84,7 +84,7 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 		this.optimizationMethod = optMethod;
 	}
 
-	public Config getConfig() {
+	public KbConfig getConfig() {
 		return config;
 	}
 

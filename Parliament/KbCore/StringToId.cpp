@@ -46,7 +46,7 @@ using RsrcOFStream = bfs::basic_ofstream<pmnt::RsrcChar>;
 
 static const char k_optionRegExStr[] = "^[ \t]*([0-9]+)[ \t]*([kKmMgG])[ \t]*,[ \t]*([0-9]+)[ \t]*$";
 
-static auto g_log(pmnt::Log::getSource("StringToId"));
+static auto g_log(pmnt::log::getSource("StringToId"));
 
 static void initInDbt(DBT& dbt, const void* pData, size_t dataLen)
 {
@@ -189,7 +189,7 @@ void pmnt::StrToIdEntryIterator::closeCursor()
 		m_pCursor = nullptr;
 		if (err != 0)
 		{
-			PMNT_LOG(g_log, LogLevel::error)
+			PMNT_LOG(g_log, log::Level::error)
 				<< format("Unable to close Berkeley DB cursor:  %1% (%2%)")
 					% db_strerror(err) % err;
 		}
@@ -451,7 +451,7 @@ pmnt::StringToId::~StringToId()
 		}
 	}
 	timer.stop();
-	PMNT_LOG(g_log, LogLevel::debug) << format("Time to write string-to-id map = %1% seconds")
+	PMNT_LOG(g_log, log::Level::debug) << format("Time to write string-to-id map = %1% seconds")
 		% timer.getSec();
 #else
 	if (m_pDB != nullptr)
@@ -460,7 +460,7 @@ pmnt::StringToId::~StringToId()
 		m_pDB = nullptr;
 		if (err != 0)
 		{
-			PMNT_LOG(g_log, LogLevel::error) << format("Unable to close Berkeley DB:  %1% (%2%)")
+			PMNT_LOG(g_log, log::Level::error) << format("Unable to close Berkeley DB:  %1% (%2%)")
 				% db_strerror(err) % err;
 		}
 	}

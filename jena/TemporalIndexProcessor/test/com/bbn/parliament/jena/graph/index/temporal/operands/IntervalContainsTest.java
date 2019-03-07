@@ -3,6 +3,7 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.graph.index.temporal.operands;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -25,11 +26,13 @@ import com.bbn.parliament.jena.graph.index.temporal.query.TestIndexFactory;
 
 @RunWith(JUnitPlatform.class)
 public class IntervalContainsTest extends BaseOperandTestClass {
+	@Override
 	@BeforeEach
 	public void beforeEach() {
 		super.beforeEach();
 	}
 
+	@Override
 	@AfterEach
 	public void afterEach() {
 		super.afterEach();

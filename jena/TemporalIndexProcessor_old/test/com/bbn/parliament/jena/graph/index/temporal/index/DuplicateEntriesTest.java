@@ -6,8 +6,6 @@
 
 package com.bbn.parliament.jena.graph.index.temporal.index;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 import com.bbn.parliament.jena.graph.index.temporal.AbstractTemporalTestClass;
@@ -50,10 +48,6 @@ public class DuplicateEntriesTest extends AbstractTemporalTestClass {
 		Constants.TIME_NS + "xsdDateTime");
 
 	private static int counter = -1;
-
-	@Override
-	public void doSetup() {
-	}
 
 	@Test
 	public void testDuplicateEntries() throws Exception {

@@ -2,13 +2,12 @@ package com.bbn.parliament.jena.joseki.bridge.tracker;
 
 import java.beans.ConstructorProperties;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
-import com.bbn.parliament.jni.Config;
+import com.bbn.parliament.jni.KbConfig;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -27,15 +26,6 @@ import com.hp.hpl.jena.sparql.engine.binding.Binding;
  */
 public class TrackableQuery extends Trackable {
 	private static Logger _log = LoggerFactory.getLogger(TrackableQuery.class);
-	
-	private static final Long TIMEOUT_DURATION;
-	private static final TimeUnit TIMEOUT_UNIT;
-
-	static {
-		Config config = Config.readFromFile();
-		TIMEOUT_DURATION = config.m_timeoutDuration;
-		TIMEOUT_UNIT = TimeUnit.valueOf(config.m_timeoutUnit);
-	}
 
 	private final Query _query;
 	// private final AtomicBoolean _cancelled;
@@ -66,7 +56,7 @@ public class TrackableQuery extends Trackable {
 				try {
 					cancel();
 				} catch (TrackableException e) {
-					_log.error("While releasing, error while cancelling query.", e);
+					_log.error("While releasing, error while canceling query.", e);
 				}
 			}
 			if (!isCancelled()) {
@@ -76,13 +66,11 @@ public class TrackableQuery extends Trackable {
 	}
 
 	private void createQueryExecution() {
-		if (!_query.hasDatasetDescription()) {
-			_qExec = QueryExecutionFactory.create(_query, ModelManager.inst()
-				.getDataset());
-		} else {
-			_qExec = QueryExecutionFactory.create(_query);
-		}
-		_qExec.setTimeout(TIMEOUT_DURATION, TIMEOUT_UNIT);
+		_qExec = !_query.hasDatasetDescription()
+			? QueryExecutionFactory.create(_query, ModelManager.inst().getDataset())
+			: QueryExecutionFactory.create(_query);
+		KbConfig cfg = ModelManager.inst().getDefaultGraphConfig();
+		_qExec.setTimeout(cfg.m_timeoutDuration, cfg.m_timeoutUnit);
 
 		// add a cancel flag to the query execution context. The context is a
 		// copy of the ARQ global context (The constructor for
@@ -124,7 +112,6 @@ public class TrackableQuery extends Trackable {
 		} else if (_query.isDescribeType()) {
 			_queryResult = _qExec.execDescribe();
 		}
-
 	}
 
 	public Object getQueryResult() {

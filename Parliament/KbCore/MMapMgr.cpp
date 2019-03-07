@@ -10,16 +10,12 @@
 #include "parliament/UnicodeIterator.h"
 #include "parliament/Util.h"
 
-#include <algorithm>
 #include <boost/format.hpp>
-#include <cmath>
 
 namespace bfs = ::boost::filesystem;
 namespace pmnt = ::bbn::parliament;
 
 using ::boost::format;
-using ::std::ceil;
-using ::std::max;
 
 // Constants:
 const char pmnt::MMapMgr::TblHeader::k_magicFileFormatId[] = "Parliament";
@@ -131,14 +127,4 @@ void pmnt::MMapMgr::sync()
 #if defined(PARLIAMENT_WINDOWS)
 	m_file.sync();
 #endif
-}
-
-size_t pmnt::MMapMgr::growRecordCount(size_t oldRecCount, double growthFactor)
-{
-	// Ensure that (a) there are at least 10000 records,
-	// (b) the file grows by at least 1000 records, and
-	// (c) the file grows by at least a factor of growthFactor.
-	return max(static_cast<size_t>(10000),
-		max(oldRecCount + 1000,
-			static_cast<size_t>(ceil(oldRecCount * growthFactor))));
 }

@@ -7,16 +7,12 @@
 //TODO: Ensure that iterators are not invalidated within their iteration loops
 //TODO: Eliminate fixed-size RuleVariableBinding arrays (and possibly eliminate RuleVariableBinding entirely)
 //TODO: Allow rule callbacks implemented in Java
-//TODO: generate rules from SWRL
-//TODO: persist rules
-//TODO: support multiple body atoms
-//TODO: implement builtin atoms
-
+//TODO: Finish implementing builtin atoms
 //TODO: Add an option to create rules without running them (except for rule-creating rules)
 //TODO: Add an option to the admin client to run all rules to ensure entailments are complete
 
 #include "parliament/RuleEngine.h"
-#include "parliament/Config.h"
+#include "parliament/KbConfig.h"
 #include "parliament/Exceptions.h"
 #include "parliament/LiteralUtils.h"
 #include "parliament/Log.h"
@@ -51,7 +47,7 @@ using ::std::ostream;
 using ::std::shared_ptr;
 using ::std::string;
 
-static auto g_log = pmnt::Log::getSource("RuleEngine");
+static auto g_log = pmnt::log::getSource("RuleEngine");
 
 // ==========   RuleAtomSlot implementation   ==========
 
@@ -87,7 +83,7 @@ bool pmnt::SWRLBuiltinRuleAtom::evaluate(KbInstance* pKB, BindingList& bindingLi
 	const auto argCountLimits = getArgCountLimits();
 	if (getAtomSlotList().size() < argCountLimits.m_min)
 	{
-		PMNT_LOG(g_log, LogLevel::warn) << format(
+		PMNT_LOG(g_log, log::Level::warn) << format(
 			"SWRL built-in '%1%' requires at least %2% arguments, but has only %3%")
 			% convertFromRsrcChar(m_id) % argCountLimits.m_min % getAtomSlotList().size();
 		return false;
@@ -95,7 +91,7 @@ bool pmnt::SWRLBuiltinRuleAtom::evaluate(KbInstance* pKB, BindingList& bindingLi
 	else if (argCountLimits.m_max != ArgCountLimits::k_unbounded
 		&& getAtomSlotList().size() > argCountLimits.m_max)
 	{
-		PMNT_LOG(g_log, LogLevel::warn) << format(
+		PMNT_LOG(g_log, log::Level::warn) << format(
 			"SWRL built-in '%1%' takes at most %2% arguments, but has %3%")
 			% convertFromRsrcChar(m_id) % argCountLimits.m_max % getAtomSlotList().size();
 		return false;
@@ -107,7 +103,7 @@ bool pmnt::SWRLBuiltinRuleAtom::evaluate(KbInstance* pKB, BindingList& bindingLi
 	}
 	catch (const ::std::exception& ex)
 	{
-		PMNT_LOG(g_log, LogLevel::warn) << format(
+		PMNT_LOG(g_log, log::Level::warn) << format(
 			"Exception while processing SWRL built-in '%1%':  '%1%' (%2%)")
 			% convertFromRsrcChar(m_id) % ex.what() % typeid(ex).name();
 		return false;
@@ -209,7 +205,7 @@ double pmnt::SWRLBuiltinRuleAtom::getDoubleFromLiteralStr(const RsrcChar* pLiter
 	{
 		auto fmt = format("Unable to convert SWRL built-in argument '%1%' to double:  %2%")
 			% pLiteral % ex.what();
-		PMNT_LOG(g_log, LogLevel::error) << fmt;
+		PMNT_LOG(g_log, log::Level::error) << fmt;
 		throw Exception(fmt);
 	}
 }
@@ -242,7 +238,7 @@ void pmnt::Rule::printHead(ostream& s) const
 //TODO: for head vars, distinguish between literals and URIs (probably using info from the body vars)
 void pmnt::StandardRule::applyRuleHead(BindingList& variableBindings)
 {
-	PMNT_LOG(g_log, LogLevel::debug) << "applyRuleHead(): applying rule";
+	PMNT_LOG(g_log, log::Level::debug) << "applyRuleHead(): applying rule";
 	for (const auto& atom : m_head)
 	{
 		ResourceId subjectId = atom.m_subjSlot.isVariable()
@@ -255,7 +251,7 @@ void pmnt::StandardRule::applyRuleHead(BindingList& variableBindings)
 			? variableBindings[atom.m_objSlot.getVarIndexId()].getBinding()
 			: atom.m_objSlot.getRsrcId();
 
-		PMNT_LOG(g_log, LogLevel::debug) << format("applyRuleHead(): adding a new statement: %1% %2% %3%")
+		PMNT_LOG(g_log, log::Level::debug) << format("applyRuleHead(): adding a new statement: %1% %2% %3%")
 			% subjectId % predicateId % objectId;
 
 		if (subjectId != k_nullRsrcId && predicateId != k_nullRsrcId && objectId != k_nullRsrcId)
@@ -340,7 +336,7 @@ void pmnt::RuleEngine::setTriggers(RuleIndex ruleIdx)
 		throw Exception("Illegal argument in RuleEngine::setTriggers()");
 	}
 
-	PMNT_LOG(g_log, LogLevel::debug) << format("Setting triggers for %1% atoms")
+	PMNT_LOG(g_log, log::Level::debug) << format("Setting triggers for %1% atoms")
 		% m_ruleList[ruleIdx]->getBody().size();
 
 	auto beginIt = cBegin(m_ruleList[ruleIdx]->getBody());
@@ -376,7 +372,7 @@ void pmnt::RuleEngine::setTriggers(RuleIndex ruleIdx)
 		// TODO: is this correct ?
 		auto atomIdx = distance(builtinBegin, builtinAtomIt);
 
-		PMNT_LOG(g_log, LogLevel::debug) << "setting triggers for builtin";
+		PMNT_LOG(g_log, log::Level::debug) << "setting triggers for builtin";
 
 		for (const auto& atomSlot : (*builtinAtomIt)->getAtomSlotList())
 		{
@@ -395,7 +391,7 @@ void pmnt::RuleEngine::setTrigger(RuleTriggerMap& triggerMap,
 bool pmnt::RuleEngine::checkStatementAddBinding(const RuleAtom& atom,
 	const Statement& stmt, BindingList& bindingList)
 {
-	PMNT_LOG(g_log, LogLevel::debug) << "RuleEngine::checkStatementAddBinding() -- standard atom check...";
+	PMNT_LOG(g_log, log::Level::debug) << "RuleEngine::checkStatementAddBinding() -- standard atom check...";
 	return atom.m_subjSlot.checkSlotAddBinding(stmt.getSubjectId(), bindingList)
 			&& atom.m_predSlot.checkSlotAddBinding(stmt.getPredicateId(), bindingList)
 			&& atom.m_objSlot.checkSlotAddBinding(stmt.getObjectId(), bindingList);
@@ -405,7 +401,7 @@ bool pmnt::RuleEngine::checkStatementAddBinding(const RuleAtom& atom,
 bool pmnt::RuleEngine::checkStatementAddBinding(const SWRLBuiltinRuleAtom& atom,
 	const Statement& stmt, BindingList& bindingList)
 {
-	PMNT_LOG(g_log, LogLevel::debug) << "RuleEngine::checkStatementAddBinding() -- builtin atom check...";
+	PMNT_LOG(g_log, log::Level::debug) << "RuleEngine::checkStatementAddBinding() -- builtin atom check...";
 
 	// TODO: statement?
 
@@ -427,13 +423,13 @@ void pmnt::RuleEngine::checkBuiltinTriggers(ResourceId rsrcId, const Statement& 
 //
 //		if (checkStatementAddBinding(*atom, stmt, pFCNode->getBindingList()))
 //		{
-//			PMNT_LOG(g_log, LogLevel::debug) << "checkStatementAddBinding successful";
+//			PMNT_LOG(g_log, log::Level::debug) << "checkStatementAddBinding successful";
 //			pFCNode->getMatchList()[trigger.m_atomIdx] = true;
 //			traverseFwdChainTree(::std::move(pFCNode));
 //		}
 //		else
 //		{
-//			PMNT_LOG(g_log, LogLevel::debug) << "checkStatementAddBinding NOT successful";
+//			PMNT_LOG(g_log, log::Level::debug) << "checkStatementAddBinding NOT successful";
 //		}
 //	}
 }
@@ -460,13 +456,13 @@ void pmnt::RuleEngine::checkTriggers(const RuleTriggerMap& triggerMap,
 		const RuleAtom& atom = m_ruleList[trigger.m_ruleIdx]->getBody()[trigger.m_atomIdx];
 		if (checkStatementAddBinding(atom, stmt, pFCNode->getBindingList()))
 		{
-			PMNT_LOG(g_log, LogLevel::debug) << "checkStatementAddBinding successful";
+			PMNT_LOG(g_log, log::Level::debug) << "checkStatementAddBinding successful";
 			pFCNode->getMatchList()[trigger.m_atomIdx] = true;
 			traverseFwdChainTree(::std::move(pFCNode));
 		}
 		else
 		{
-			PMNT_LOG(g_log, LogLevel::debug) << "checkStatementAddBinding NOT successful";
+			PMNT_LOG(g_log, log::Level::debug) << "checkStatementAddBinding NOT successful";
 		}
 	}
 }
@@ -519,14 +515,14 @@ void pmnt::RuleEngine::printTriggerMap(ostream& s,
 
 void pmnt::RuleEngine::expandFwdChainNode(FwdChainNode& fcNode)
 {
-	PMNT_LOG(g_log, LogLevel::debug) << "expandFwdChainNode";
+	PMNT_LOG(g_log, log::Level::debug) << "expandFwdChainNode";
 
 	//next line is the query optimization code
 	const AtomIndex nextAtomIdx = fcNode.chooseMatchAtomIndex();
 	if (nextAtomIdx == FwdChainNode::k_noMatchedAtom)
 	{
 		// look at builtins, then apply head
-		PMNT_LOG(g_log, LogLevel::debug) << "expandFwdChainNode -- no matched atom yet, checking builtins now...";
+		PMNT_LOG(g_log, log::Level::debug) << "expandFwdChainNode -- no matched atom yet, checking builtins now...";
 
 		for (const auto& bodyBuiltin : fcNode.getBodyBuiltIns())
 		{
@@ -537,7 +533,7 @@ void pmnt::RuleEngine::expandFwdChainNode(FwdChainNode& fcNode)
 			}
 		}
 
-		PMNT_LOG(g_log, LogLevel::debug) << "expandFwdChainNode -- applying rule head";
+		PMNT_LOG(g_log, log::Level::debug) << "expandFwdChainNode -- applying rule head";
 		fcNode.applyRuleHead(fcNode.getBindingList());
 		return;
 	}
@@ -555,12 +551,12 @@ void pmnt::RuleEngine::expandFwdChainNode(FwdChainNode& fcNode)
 		? k_nullRsrcId
 		: atom.m_objSlot.getRsrcId();
 
-	PMNT_LOG(g_log, LogLevel::debug) << format("expandFwdChainNode -- looking for: %1% %2% %3%")
+	PMNT_LOG(g_log, log::Level::debug) << format("expandFwdChainNode -- looking for: %1% %2% %3%")
 		% subjectId % predicateId % objectId;
 
 	for (StmtIterator iter = m_pKB->find(subjectId, predicateId, objectId); iter != m_pKB->end(); ++iter)
 	{
-		PMNT_LOG(g_log, LogLevel::debug) << "expandFwdChainNode -- inside iterator loop";
+		PMNT_LOG(g_log, log::Level::debug) << "expandFwdChainNode -- inside iterator loop";
 
 		auto pFCNode2 = makeUnique<FwdChainNode>(fcNode);
 		pFCNode2->getMatchList()[nextAtomIdx] = true;
@@ -570,7 +566,7 @@ void pmnt::RuleEngine::expandFwdChainNode(FwdChainNode& fcNode)
 		}
 	}
 
-	PMNT_LOG(g_log, LogLevel::debug) << "expandFwdChainNode -- method end";
+	PMNT_LOG(g_log, log::Level::debug) << "expandFwdChainNode -- method end";
 }
 
 void pmnt::RuleEngine::traverseFwdChainTree(FwdChainNodePtr pRootFCNode)
@@ -578,7 +574,7 @@ void pmnt::RuleEngine::traverseFwdChainTree(FwdChainNodePtr pRootFCNode)
 	//setup fcNodeList
 	m_fwdChainList.push_back(::std::move(pRootFCNode));
 
-	PMNT_LOG(g_log, LogLevel::debug) << "traverseFwdChainNode";
+	PMNT_LOG(g_log, log::Level::debug) << "traverseFwdChainNode";
 
 	//main fcNode loop
 	while (!m_fwdChainList.empty()) {
@@ -605,7 +601,7 @@ bool pmnt::RuleEngine::constructRuleHeadOrBody(StandardRule* pNewRule,
 		ResourceId restId = m_pKB->findAndGetObjectId(listId, uriLib().m_rdfListRest.id());
 		if (firstId == k_nullRsrcId || restId == k_nullRsrcId)
 		{
-			PMNT_LOG(g_log, LogLevel::error) << format("Invalid RDF list -- need both first and "
+			PMNT_LOG(g_log, log::Level::error) << format("Invalid RDF list -- need both first and "
 				"rest arguments:  Unprocessed rule id %1% contains badly formatted atom number %2%")
 				% m_pKB->rsrcIdToUri(pNewRule->getRsrcId()) % atomNumber;
 			return false;
@@ -617,7 +613,7 @@ bool pmnt::RuleEngine::constructRuleHeadOrBody(StandardRule* pNewRule,
 		}
 		catch (const Exception& ex)
 		{
-			PMNT_LOG(g_log, LogLevel::error) << format(
+			PMNT_LOG(g_log, log::Level::error) << format(
 				"Error:  Unprocessed rule id %1% contains badly formatted atom number %2%:  %3%")
 				% m_pKB->rsrcIdToUri(pNewRule->getRsrcId()) % atomNumber % ex.what();
 			return false;
@@ -640,7 +636,7 @@ void pmnt::RuleEngine::addNewRules()
 	StmtIterator end = m_pKB->end();
 	for (; iter != end; ++iter)
 	{
-		PMNT_LOG(g_log, LogLevel::debug) << "RuleEngine::addNewRules() -- found a rule";
+		PMNT_LOG(g_log, log::Level::debug) << "RuleEngine::addNewRules() -- found a rule";
 
 		ResourceId ruleId = m_pKB->subject(iter.statement().getStatementId());
 		//ensure we have not processed this rule before
@@ -655,7 +651,7 @@ void pmnt::RuleEngine::addNewRules()
 		ResourceId headId = m_pKB->findAndGetObjectId(ruleId, uriLib().m_swrlHead.id());
 		if (headId == k_nullRsrcId)
 		{
-			PMNT_LOG(g_log, LogLevel::error) << format("Error:  Unprocessed rule id %1% contains no rule head")
+			PMNT_LOG(g_log, log::Level::error) << format("Error:  Unprocessed rule id %1% contains no rule head")
 				% m_pKB->rsrcIdToUri(ruleId);
 			continue;
 		}
@@ -664,7 +660,7 @@ void pmnt::RuleEngine::addNewRules()
 		ResourceId bodyId = m_pKB->findAndGetObjectId(ruleId, uriLib().m_swrlBody.id());
 		if (bodyId == k_nullRsrcId)
 		{
-			PMNT_LOG(g_log, LogLevel::error) << format("Error:  Unprocessed rule id %1% contains no rule body")
+			PMNT_LOG(g_log, log::Level::error) << format("Error:  Unprocessed rule id %1% contains no rule body")
 				% m_pKB->rsrcIdToUri(ruleId);
 			continue;
 		}
@@ -674,20 +670,20 @@ void pmnt::RuleEngine::addNewRules()
 		//construct rule body
 		if (!constructRuleHeadOrBody(pRule.get(), bodyId, false, varMap))
 		{
-			PMNT_LOG(g_log, LogLevel::debug) << "RuleEngine::addNewRules() -- could not construct body";
+			PMNT_LOG(g_log, log::Level::debug) << "RuleEngine::addNewRules() -- could not construct body";
 			continue;
 		}
 
 		//construct rule head
 		if (!constructRuleHeadOrBody(pRule.get(), headId, true, varMap))
 		{
-			PMNT_LOG(g_log, LogLevel::debug) << "RuleEngine::addNewRules() -- could not construct head";
+			PMNT_LOG(g_log, log::Level::debug) << "RuleEngine::addNewRules() -- could not construct head";
 			continue;
 		}
 
 		addRule(pRule);
 		m_loadedRules.insert(ruleId);
 
-		PMNT_LOG(g_log, LogLevel::debug) << "RuleEngine::addNewRules() -- rule added!";
+		PMNT_LOG(g_log, log::Level::debug) << "RuleEngine::addNewRules() -- rule added!";
 	}
 }

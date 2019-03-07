@@ -3,9 +3,11 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.graph.index.temporal;
 
 import java.util.Properties;
+
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.QueryableIndex;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
@@ -51,7 +53,7 @@ public abstract class TemporalIndex implements QueryableIndex<TemporalExtent> {
 
 	/** {@inheritDoc} */
 	@Override
-	public void register(Graph graph, Node graphName) {
+	public void register(Graph graphToRegister, Node graphName) {
 		IndexPropertyFunctionFactory<TemporalExtent> factory = getPropertyFunctionFactory();
 		PropertyFunctionRegistry registry = PropertyFunctionRegistry.get();
 		for (Operand op : Operand.values()) {
@@ -61,7 +63,7 @@ public abstract class TemporalIndex implements QueryableIndex<TemporalExtent> {
 
 	/** {@inheritDoc} */
 	@Override
-	public void unregister(Graph graph, Node graphName) {
+	public void unregister(Graph graphToRegister, Node graphName) {
 		PropertyFunctionRegistry registry = PropertyFunctionRegistry.get();
 		for (Operand op : Operand.values()) {
 			registry.remove(op.getUri());

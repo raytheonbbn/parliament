@@ -18,10 +18,10 @@ constant Compiler : clang-darwin100 ;
 
 constant BoostPfx : <source>$(BoostDir)/stage-clang/lib/libboost_ ;
 
-constant BoostDyDbgLibPfx : <variant>debug,<link>shared:$(BoostPfx) ;
-constant BoostDyRlsLibPfx : <variant>release,<link>shared:$(BoostPfx) ;
-constant BoostStDbgLibPfx : <variant>debug,<link>static:$(BoostPfx) ;
-constant BoostStRlsLibPfx : <variant>release,<link>static:$(BoostPfx) ;
+constant BoostDyDbgLibPfx : <variant>debug,<link>shared\:$(BoostPfx) ;
+constant BoostDyRlsLibPfx : <variant>release,<link>shared\:$(BoostPfx) ;
+constant BoostStDbgLibPfx : <variant>debug,<link>static\:$(BoostPfx) ;
+constant BoostStRlsLibPfx : <variant>release,<link>static\:$(BoostPfx) ;
 
 constant BoostDyDbgLibSfx : -$(Compiler)-mt-d-x32_64-$(BoostVersionAbbrv).dylib ;
 constant BoostDyRlsLibSfx : -$(Compiler)-mt-x32_64-$(BoostVersionAbbrv).dylib ;

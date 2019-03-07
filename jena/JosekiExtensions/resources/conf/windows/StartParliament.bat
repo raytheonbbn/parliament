@@ -34,8 +34,6 @@ rem The Java property "java.library.path" below is supposed to take care
 rem of this, but sometimes it doesn't work, so set up the Path as well:
 set Path=%KBROOT%bin;%Path%
 
-rem set PARLIAMENT_CONFIG_PATH=%KBROOT%ParliamentConfig.txt
-
 set LCP=
 for /r "%KBROOT%lib" %%i in (*.jar) do set LCP=!LCP!;%%i
 

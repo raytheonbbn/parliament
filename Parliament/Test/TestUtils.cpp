@@ -7,14 +7,16 @@
 #include "TestUtils.h"
 
 #include "parliament/CharacterLiteral.h"
-#include "parliament/Config.h"
 #include "parliament/Exceptions.h"
+#include "parliament/KbConfig.h"
 #include "parliament/KbInstance.h"
 #include "parliament/Log.h"
+#include "parliament/Util.h"
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/format.hpp>
 #include <cstdio>
+#include <cstdlib>
 #include <stdexcept>
 
 namespace bfs = ::boost::filesystem;
@@ -27,15 +29,14 @@ using ::std::string;
 using ::std::vector;
 
 #if defined(PARLIAMENT_WINDOWS)
-#	define FOPEN_MODE_SUFFIX _T("b")
+static constexpr pmnt::TChar k_fopenReadMode[] = _T("rb");
+static constexpr pmnt::TChar k_fopenWriteMode[] = _T("wb");
 #else
-#	define FOPEN_MODE_SUFFIX
+static constexpr pmnt::TChar k_fopenReadMode[] = _T("r");
+static constexpr pmnt::TChar k_fopenWriteMode[] = _T("w");
 #endif
 
-static const pmnt::TChar k_fopenReadMode[] = _T("r") FOPEN_MODE_SUFFIX;
-static const pmnt::TChar k_fopenWriteMode[] = _T("w") FOPEN_MODE_SUFFIX;
-
-static auto g_log(pmnt::Log::getSource("TestUtils"));
+static auto g_log(pmnt::log::getSource("TestUtils"));
 
 pmnt::FileDeleter::FileDeleter(const bfs::path& filePath) :
 	m_filePath(filePath), m_deleteOnDestruct(true)
@@ -51,7 +52,7 @@ pmnt::FileDeleter::~FileDeleter()
 	}
 }
 
-pmnt::KbDeleter::KbDeleter(const Config& config) :
+pmnt::KbDeleter::KbDeleter(const KbConfig& config) :
 	m_config(config),
 	m_dataDir(),
 	m_dataDirSupplied(false)
@@ -59,7 +60,7 @@ pmnt::KbDeleter::KbDeleter(const Config& config) :
 	KbInstance::deleteKb(m_config);
 }
 
-pmnt::KbDeleter::KbDeleter(const Config& config, const bfs::path& dataDir) :
+pmnt::KbDeleter::KbDeleter(const KbConfig& config, const bfs::path& dataDir) :
 	m_config(config),
 	m_dataDir(dataDir),
 	m_dataDirSupplied(true)
@@ -79,20 +80,47 @@ pmnt::KbDeleter::~KbDeleter()
 	}
 }
 
-void pmnt::setEnvVar(const TChar* pEnvStr)
+pmnt::EnvVarReset::EnvVarReset(const TString& envVarName, const TString& newEnvVarValue) :
+	m_envVarName(envVarName),
+	m_newEnvVarValue(newEnvVarValue),
+	m_oldEnvVarValue(tGetEnvVar(envVarName.c_str())),
+	m_resetOnDestruct(true)
 {
-#if !defined(PARLIAMENT_WINDOWS)
-	if (putenv(const_cast<char*>(pEnvStr)) != 0)
-#elif defined(UNICODE)
-	if (_wputenv(pEnvStr) != 0)
-#else
-	if (_putenv(pEnvStr) != 0)
-#endif
+	tSetEnvVar(m_envVarName, m_newEnvVarValue);
+}
+
+pmnt::EnvVarReset::~EnvVarReset()
+{
+	if (m_resetOnDestruct)
 	{
-		//Must throw something more specific than the base exception
-		//class b/c the constructor that takes a char* is Windows-specific.
-		throw runtime_error("putenv failed in unit test");
+		tSetEnvVar(m_envVarName, m_oldEnvVarValue);
 	}
+}
+
+void pmnt::EnvVarReset::tSetEnvVar(const TString& envVarName, const TString& newEnvVarValue)
+{
+#if defined(PARLIAMENT_WINDOWS)
+#	if defined(UNICODE)
+	if (_wputenv_s(envVarName.c_str(), newEnvVarValue.c_str()) != 0)
+#	else
+	if (_putenv_s(envVarName.c_str(), newEnvVarValue.c_str()) != 0)
+#	endif
+	{
+		throw runtime_error("_putenv_s failed in unit test");
+	}
+#else
+	if (newEnvVarValue.empty())
+	{
+		if (unsetenv(envVarName.c_str()) != 0)
+		{
+			throw runtime_error("unsetenv failed in unit test");
+		}
+	}
+	else if (setenv(envVarName.c_str(), newEnvVarValue.c_str(), true) != 0)
+	{
+		throw runtime_error("setenv failed in unit test");
+	}
+#endif
 }
 
 void pmnt::readFileContents(const bfs::path& fileName, vector<uint8>& content)
@@ -127,7 +155,7 @@ void pmnt::readFileContents(const bfs::path& fileName, vector<uint8>& content)
 	catch (const exception& ex)
 	{
 		pmnt::SysErrCode errCode = pmnt::Exception::getSysErrCode();
-		PMNT_LOG(g_log, pmnt::LogLevel::error) <<
+		PMNT_LOG(g_log, pmnt::log::Level::error) <<
 			format{"Exception in readFileContents():  %1% (exception type %2%, system error %3%, %4%)"}
 			% ex.what() % typeid(ex).name() % errCode % pmnt::Exception::getSysErrMsg(errCode);
 		throw;
@@ -162,7 +190,7 @@ void pmnt::writeBytesToFile(const bfs::path& fileName, const vector<uint8>& cont
 	catch (const exception& ex)
 	{
 		pmnt::SysErrCode errCode = pmnt::Exception::getSysErrCode();
-		PMNT_LOG(g_log, pmnt::LogLevel::error) <<
+		PMNT_LOG(g_log, pmnt::log::Level::error) <<
 			format{"Exception in writeBytesToFile():  %1% (exception type %2%, system error %3%, %4%)"}
 			% ex.what() % typeid(ex).name() % errCode % pmnt::Exception::getSysErrMsg(errCode);
 		throw;

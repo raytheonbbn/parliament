@@ -23,14 +23,14 @@ constant COMPILER : $(COMPILER_$(LinuxDistro)) ;
 
 constant BoostPfx : <source>$(BoostDir)/stage-gcc-$(LinuxDistro)/lib/libboost_ ;
 
-constant Boost64DyDbgLibPfx : <address-model>64,<link>shared,<variant>debug:$(BoostPfx) ;
-constant Boost64DyRlsLibPfx : <address-model>64,<link>shared,<variant>release:$(BoostPfx) ;
-constant Boost64StDbgLibPfx : <address-model>64,<link>static,<variant>debug:$(BoostPfx) ;
-constant Boost64StRlsLibPfx : <address-model>64,<link>static,<variant>release:$(BoostPfx) ;
-constant Boost32DyDbgLibPfx : <address-model>32,<link>shared,<variant>debug:$(BoostPfx) ;
-constant Boost32DyRlsLibPfx : <address-model>32,<link>shared,<variant>release:$(BoostPfx) ;
-constant Boost32StDbgLibPfx : <address-model>32,<link>static,<variant>debug:$(BoostPfx) ;
-constant Boost32StRlsLibPfx : <address-model>32,<link>static,<variant>release:$(BoostPfx) ;
+constant Boost64DyDbgLibPfx : <address-model>64,<link>shared,<variant>debug\:$(BoostPfx) ;
+constant Boost64DyRlsLibPfx : <address-model>64,<link>shared,<variant>release\:$(BoostPfx) ;
+constant Boost64StDbgLibPfx : <address-model>64,<link>static,<variant>debug\:$(BoostPfx) ;
+constant Boost64StRlsLibPfx : <address-model>64,<link>static,<variant>release\:$(BoostPfx) ;
+constant Boost32DyDbgLibPfx : <address-model>32,<link>shared,<variant>debug\:$(BoostPfx) ;
+constant Boost32DyRlsLibPfx : <address-model>32,<link>shared,<variant>release\:$(BoostPfx) ;
+constant Boost32StDbgLibPfx : <address-model>32,<link>static,<variant>debug\:$(BoostPfx) ;
+constant Boost32StRlsLibPfx : <address-model>32,<link>static,<variant>release\:$(BoostPfx) ;
 
 constant Boost64DyDbgLibSfx : -$(COMPILER)-mt-d-x64-$(BoostVersionAbbrv).so.$(BoostVersionDotted) ;
 constant Boost64DyRlsLibSfx : -$(COMPILER)-mt-x64-$(BoostVersionAbbrv).so.$(BoostVersionDotted) ;

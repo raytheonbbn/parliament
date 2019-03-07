@@ -28,14 +28,14 @@ constant BoostLibDir : $(BoostDir)/stage-msvc/lib ;
 constant BoostDyPfx : <source>$(BoostLibDir)/boost_ ;
 constant BoostStPfx : <source>$(BoostLibDir)/libboost_ ;
 
-constant Boost64DyDbgLibPfx : <address-model>64,<link>shared,<variant>debug:$(BoostDyPfx) ;
-constant Boost64DyRlsLibPfx : <address-model>64,<link>shared,<variant>release:$(BoostDyPfx) ;
-constant Boost64StDbgLibPfx : <address-model>64,<link>static,<variant>debug:$(BoostStPfx) ;
-constant Boost64StRlsLibPfx : <address-model>64,<link>static,<variant>release:$(BoostStPfx) ;
-constant Boost32DyDbgLibPfx : <address-model>32,<link>shared,<variant>debug:$(BoostDyPfx) ;
-constant Boost32DyRlsLibPfx : <address-model>32,<link>shared,<variant>release:$(BoostDyPfx) ;
-constant Boost32StDbgLibPfx : <address-model>32,<link>static,<variant>debug:$(BoostStPfx) ;
-constant Boost32StRlsLibPfx : <address-model>32,<link>static,<variant>release:$(BoostStPfx) ;
+constant Boost64DyDbgLibPfx : <address-model>64,<link>shared,<variant>debug\:$(BoostDyPfx) ;
+constant Boost64DyRlsLibPfx : <address-model>64,<link>shared,<variant>release\:$(BoostDyPfx) ;
+constant Boost64StDbgLibPfx : <address-model>64,<link>static,<variant>debug\:$(BoostStPfx) ;
+constant Boost64StRlsLibPfx : <address-model>64,<link>static,<variant>release\:$(BoostStPfx) ;
+constant Boost32DyDbgLibPfx : <address-model>32,<link>shared,<variant>debug\:$(BoostDyPfx) ;
+constant Boost32DyRlsLibPfx : <address-model>32,<link>shared,<variant>release\:$(BoostDyPfx) ;
+constant Boost32StDbgLibPfx : <address-model>32,<link>static,<variant>debug\:$(BoostStPfx) ;
+constant Boost32StRlsLibPfx : <address-model>32,<link>static,<variant>release\:$(BoostStPfx) ;
 
 constant Boost64DyDbgLibSfx : -$(COMPILER)-mt-gd-x64-$(BoostVersionAbbrv).dll ;
 constant Boost64DyRlsLibSfx : -$(COMPILER)-mt-x64-$(BoostVersionAbbrv).dll ;

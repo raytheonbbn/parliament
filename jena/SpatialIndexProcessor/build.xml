@@ -62,7 +62,6 @@
 	<target name="compileTests" depends="buildTestDependencies,jar">
 		<copy todir="${testBinDir}">
 			<fileset dir="${basedir}/test" excludes="**/*.java"/>
-			<fileset dir="${basedir}/resources"/>
 		</copy>
 		<javac destdir="${testBinDir}" srcdir="${basedir}/test" debug="on" deprecation="on"
 				includeAntRuntime="false">
@@ -86,9 +85,9 @@
 			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
 			<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
 			<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
-			<env key="PARLIAMENT_CONFIG_PATH" value="${testConfigFile}"/>
+			<env key="PARLIAMENT_KB_CONFIG_PATH" value="${testKbConfigFile}"/>
+			<env key="PARLIAMENT_LOG_CONFIG_PATH" value="${testLogConfigFile}"/>
 			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
-			<sysproperty key="test.data.path" value="${basedir}/resources"/>
 			<classpath refid="testClassPath"/>
 			<classpath path="${testBinDir}"/>
 			<formatter type="xml"/>

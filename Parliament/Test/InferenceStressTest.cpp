@@ -6,7 +6,7 @@
 
 #include <boost/format.hpp>
 #include <boost/test/unit_test.hpp>
-#include "parliament/Config.h"
+#include "parliament/KbConfig.h"
 #include "parliament/KbInstance.h"
 #include "parliament/UnicodeIterator.h"
 #include "parliament/UriLib.h"
@@ -24,7 +24,7 @@ static const RsrcString	k_aircraftCls	= convertToRsrcChar("http://example.org/tb
 
 BOOST_AUTO_TEST_CASE(inferenceStressTest)
 {
-	Config config;
+	KbConfig config;
 	config.kbDirectoryPath("test-kb-data");
 	KbInstance::deleteKb(config);
 

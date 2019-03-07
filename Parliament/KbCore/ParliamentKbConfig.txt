@@ -1,41 +1,6 @@
-
-###########################################################
-#
-# Parameters file for the native Parliament core
-#
-###########################################################
-
-
-
-#####   Logging configuration   #####
-
-logToConsole             = yes
-logConsoleAsynchronous   = no
-logConsoleAutoFlush      = yes
-logToFile                = yes
-logFilePath              = log/ParliamentNative%3N_%Y-%m-%d_%H-%M-%S.log
-logFileAsynchronous      = no
-logFileAutoFlush         = yes
-logFileRotationSize      = 10485760
-logFileMaxAccumSize      = 157286400
-logFileMinFreeSpace      = 104857600
-logFileRotationTimePoint = 02:00:00
-
-# TRACE, DEBUG, INFO, WARN, ERROR
-logLevel                 = INFO
-#logChannelLevel          = FileHandle=TRACE
-#logChannelLevel          = FileMapping=TRACE
-#logChannelLevel          = KbInstance=TRACE
-#logChannelLevel          = RuleEngine=TRACE
-#logChannelLevel          = StringToId=TRACE
-#logChannelLevel          = StrToIdEntryIterator=TRACE
-#logChannelLevel          = FixRecordTableTest=TRACE
-
-
-
 #####   Data file options   #####
 
-kbDirectoryPath        = .
+kbDirectoryPath        = kb-data
 stmtFileName           = statements.mem
 rsrcFileName           = resources.mem
 uriTableFileName       = uris.mem
@@ -43,13 +8,13 @@ uriToIntFileName       = u2i.db
 
 readOnly               = no
 fileSyncTimerDelay     = 15000
-initialRsrcCapacity    = 100000
-avgRsrcLen             = 64
-# Use 1,25 in European locales:
-rsrcGrowthFactor       = 1.25
+initialRsrcCapacity    = 300000
+avgRsrcLen             = 100
+rsrcGrowthIncrement    = 600000
+rsrcGrowthFactor       = 0
 initialStmtCapacity    = 500000
-# Use 1,25 in European locales:
-stmtGrowthFactor       = 1.25
+stmtGrowthIncrement    = 1000000
+stmtGrowthFactor       = 0
 
 # The amount of memory to be devoted to the Berkeley DB cache.  The portion before
 # the comma is the total cache size (with a k for kilobytes, m for megabytes, g for
@@ -61,6 +26,10 @@ bdbCacheSize           = 32m,1
 # If upgrading a triple store from version 2.7.9 or prior, either set this option
 # to "no" or export, clear, and then restore the backup:
 normalizeTypedStringLiterals = yes
+
+# Query execution configuration
+TimeoutDuration        = 5
+TimeoutUnit            = minutes
 
 
 
@@ -122,9 +91,3 @@ InvFunctionalPropRule  = off
 # Sets up the following rule:
 # * "P is a transitive property" ^ "P(X, Y)" ^ "P(Y, Z)" ==> "P(X, Z)"
 TransitivePropRule     = on
-
-
-
-#####   Query execution configuration   #####
-TimeoutDuration        = 5
-TimeoutUnit            = MINUTES

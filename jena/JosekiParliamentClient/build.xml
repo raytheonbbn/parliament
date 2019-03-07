@@ -88,7 +88,7 @@
 			<classpath refid="testClassPath"/>
 			<arg value="localhost"/>
 			<arg value="8089"/>
-			<arg value="/Users/iemmons/Desktop/rvdata.nt"/>
+			<arg value="${parliamentDependenciesDir}/data/deft-data-load.nt"/>
 		</java>
 	</target>
 

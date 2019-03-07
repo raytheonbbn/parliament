@@ -8,8 +8,10 @@ package com.bbn.parliament.jena.graph.index.temporal.bdb;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalIndex;
@@ -96,34 +98,31 @@ public class PersistentTemporalIndex extends TemporalIndex {
 		DatabaseEntry key = new DatabaseEntry();
 		DatabaseEntry value = new DatabaseEntry();
 
-		SecondaryCursor cursor = startsDatabase.openCursor(null, CursorConfig.READ_UNCOMMITTED);
-		// Cursor cursor = startsDatabase.openCursor(null,
-		// CursorConfig.READ_UNCOMMITTED);
-		// OperationStatus retVal = cursor.getSearchKey(key, value,
-		// LockMode.READ_UNCOMMITTED);
-
-		OperationStatus status = cursor.getFirst(key, value,
-			LockMode.READ_UNCOMMITTED);
-
-		// If we get one thing back, there is at least one element in the db
-		if (status == OperationStatus.SUCCESS) {
-			minStart = getLongForBytes(value.getData(), 0);
-			cursor.getLast(key, value, LockMode.READ_UNCOMMITTED);
-
-			maxStart = getLongForBytes(value.getData(), 0);
-			cursor.close();
-			cursor = endsDatabase.openCursor(null, CursorConfig.READ_UNCOMMITTED);
-			cursor.getFirst(key, value, LockMode.READ_UNCOMMITTED);
-			minEnd = getLongForBytes(value.getData(), 8);
-			cursor.getLast(key, value, LockMode.READ_UNCOMMITTED);
-			maxEnd = getLongForBytes(value.getData(), 8);
-		} else {
-			minStart = 0L;
-			maxStart = Long.MAX_VALUE;
-			minEnd = 0L;
-			maxEnd = Long.MAX_VALUE;
+		try (SecondaryCursor cursor = startsDatabase.openCursor(null, CursorConfig.READ_UNCOMMITTED)) {
+			OperationStatus status = cursor.getFirst(key, value, LockMode.READ_UNCOMMITTED);
+			if (status == OperationStatus.SUCCESS) {
+				// If we get one thing back, there is at least one element in the db
+				minStart = getLongForBytes(value.getData(), 0);
+				cursor.getLast(key, value, LockMode.READ_UNCOMMITTED);
+				maxStart = getLongForBytes(value.getData(), 0);
+			} else {
+				minStart = 0L;
+				maxStart = Long.MAX_VALUE;
+			}
 		}
-		cursor.close();
+
+		try (SecondaryCursor cursor = endsDatabase.openCursor(null, CursorConfig.READ_UNCOMMITTED)) {
+			OperationStatus status = cursor.getFirst(key, value, LockMode.READ_UNCOMMITTED);
+			if (status == OperationStatus.SUCCESS) {
+				// If we get one thing back, there is at least one element in the db
+				minEnd = getLongForBytes(value.getData(), 8);
+				cursor.getLast(key, value, LockMode.READ_UNCOMMITTED);
+				maxEnd = getLongForBytes(value.getData(), 8);
+			} else {
+				minEnd = 0L;
+				maxEnd = Long.MAX_VALUE;
+			}
+		}
 
 		size = nodeIndexedDatabase.count();
 	}
@@ -306,40 +305,26 @@ public class PersistentTemporalIndex extends TemporalIndex {
 		return nodeIndexedDatabase;
 	}
 
-	public long estimate(long minStart, long maxStart, long minEnd, long maxEnd) {
+	public long estimate(long minimumStart, long maximumStart, long minimumEnd, long maximumEnd) {
 		if (alwaysUseFirst) {
 			return 0;
 		}
-		//return Math.min(estimateStartsForRange(minStart, maxStart),
-		//	estimateEndsForRange(minEnd, maxEnd));
+		//return Math.min(estimateStartsForRange(minimumStart, maximumStart),
+		//	estimateEndsForRange(minimumEnd, maximumEnd));
 
-		long countMinStart;
-		long countMinEnd;
-		long countMaxStart;
-		long countMaxEnd;
+		long countMinStart = (minimumStart == minStart)
+			? size
+			: countRecords(minimumStart, true);
+		long countMaxStart = (maximumStart == minimumStart)
+			? countMinStart
+			: countRecords(maximumStart, true);
 
-		if (minStart == this.minStart) {
-			countMinStart = size;
-		} else {
-			countMinStart = countRecords(minStart, true);
-		}
-		if (maxStart == minStart) {
-			countMaxStart = countMinStart;
-		} else {
-			countMaxStart = countRecords(maxStart, true);
-		}
-
-		if (minEnd == this.minEnd) {
-			countMinEnd = size;
-		} else {
-			countMinEnd = countRecords(minEnd, false);
-		}
-		if (maxEnd == minEnd) {
-			countMaxEnd = countMinEnd;
-		} else {
-			countMaxEnd = countRecords(maxEnd, false);
-		}
-
+		long countMinEnd = (minimumEnd == minEnd)
+			? size
+			: countRecords(minimumEnd, false);
+		long countMaxEnd = (maximumEnd == minimumEnd)
+			? countMinEnd
+			: countRecords(maximumEnd, false);
 
 		long startsEstimate = countMinStart - countMaxStart;
 		long endsEstimate = countMinEnd - countMaxEnd;
@@ -348,19 +333,12 @@ public class PersistentTemporalIndex extends TemporalIndex {
 	}
 
 	private long countRecords(long time, boolean starts) {
+		@SuppressWarnings("resource")
 		SecondaryDatabase sdb = (starts) ? getStartsDatabase() : getEndsDatabase();
-
 		DatabaseEntry key = new DatabaseEntry(PersistentTemporalIndex.getBytesForLong(time));
-
 		DatabaseEntry data = new DatabaseEntry();
-
-		OperationStatus status;
-
-		SecondaryCursor cursor = null;
-		try {
-			cursor = sdb.openCursor(null, CursorConfig.READ_UNCOMMITTED);
-
-			status = cursor.getSearchKeyRange( key, data, LockMode.READ_UNCOMMITTED);
+		try (SecondaryCursor cursor = sdb.openCursor(null, CursorConfig.READ_UNCOMMITTED)) {
+			OperationStatus status = cursor.getSearchKeyRange( key, data, LockMode.READ_UNCOMMITTED);
 			if (OperationStatus.SUCCESS.equals(status)) {
 				int count = 1;
 				long start = System.currentTimeMillis();
@@ -370,10 +348,6 @@ public class PersistentTemporalIndex extends TemporalIndex {
 				long length = System.currentTimeMillis() - start;
 				LOG.debug("Search took: " + length);
 				return count;
-			}
-		} finally {
-			if (null != cursor) {
-				cursor.close();
 			}
 		}
 		return Long.MAX_VALUE;

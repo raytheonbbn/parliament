@@ -204,7 +204,6 @@
 
 		<antcall target="fixupNativeArtifacts">
 			<param name="toDir" value="${targetDir}/${deployableSvrDir}"/>
-			<param name="resetKbDir" value="true"/>
 		</antcall>
 	</target>
 
@@ -400,21 +399,13 @@
 	<!--
 		Performs a few "fixup" actions on a native build products directory
 		(as specified by ${toDir}) after that directory has been created by
-		the buildNativeForOneParamSet target.  Expects parameters toDir and
-		resetKbDir.
+		the buildNativeForOneParamSet target.  Expects parameter toDir.
 	-->
 	<target name="fixupNativeArtifacts">
-		<copy todir="${toDir}" preservelastmodified="true" flatten="true"
-			file="${basedir}/KbCore/ParliamentConfig.txt"/>
-		<chmod file="${toDir}/ParliamentAdmin" perm="ugo+rx" osfamily="unix" verbose="true"/>
-		<if>
-			<equals arg1="${resetKbDir}" arg2="true" casesensitive="false" trim="true"/>
-			<then>
-				<replace file="${toDir}/ParliamentConfig.txt"
-					token="kbDirectoryPath        = ."
-					value="kbDirectoryPath        = data"/>
-			</then>
-		</if>
+		<copy todir="${toDir}" preservelastmodified="true" flatten="true">
+			<fileset dir="${basedir}/KbCore" includes="Parliament*Config.txt"/>
+		</copy>
+		<chmod file="${toDir}/bin/ParliamentAdmin" perm="ugo+rx" osfamily="unix" verbose="true"/>
 	</target>
 
 	<target name="jar" depends="compileJava">
@@ -449,16 +440,21 @@
 	</target>
 
 	<!-- called from deliverArtifactsForOneParamSet - do not invoke externally -->
-	<target name="runTests" depends="compileJavaTests">
+	<target name="runTests" depends="createTestConfig,compileJavaTests">
 		<echo message="Native artifacts directory:  '${deployableSvrDir}'"/>
 		<mkdir dir="${reportsDir}/${deployableSvrDir}"/>
 		<junit fork="yes" printsummary="yes" haltonfailure="${haltUnitTestsOnFailure}">
 			<env key="LD_LIBRARY_PATH" path="${targetDir}/${deployableSvrDir}/bin;${env.LD_LIBRARY_PATH}"/>
 			<env key="PATH" path="${targetDir}/${deployableSvrDir}/bin;${env.PATH}"/>
+			<env key="PARLIAMENT_KB_CONFIG_PATH" value="${testKbConfigFile}"/>
+			<env key="PARLIAMENT_LOG_CONFIG_PATH" value="${testLogConfigFile}"/>
+
+			<!-- These env vars are for running under clang's 'santizer' options: -->
 			<!-- env key="DYLD_INSERT_LIBRARIES" path="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib"/ -->
 			<!-- env key="UBSAN_OPTIONS" value="print_stacktrace=1"/ -->
+
 			<sysproperty key="java.library.path" value="${targetDir}/${deployableSvrDir}/bin"/>
-			<sysproperty key="test.data.path" value="${basedir}/data"/>
+			<sysproperty key="log4j.configuration" value="file://${kbRootDir}/log4j.junit.properties"/>
 			<classpath>
 				<pathelement location="${testBinDir}"/>
 				<pathelement location="${jarFile}"/>

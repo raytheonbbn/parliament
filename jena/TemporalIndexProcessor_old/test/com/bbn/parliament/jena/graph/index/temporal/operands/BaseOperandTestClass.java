@@ -69,7 +69,7 @@ public abstract class BaseOperandTestClass extends TestCase {
 		pf.build(argSubject, predicate, argObject, context);
 	}
 
-	protected void compareExtentIteratorToExpected(Iterator<Record<TemporalExtent>> it,
+	protected static void compareExtentIteratorToExpected(Iterator<Record<TemporalExtent>> it,
 		Set<String> answerKey) {
 		Set<String> results = new TreeSet<>();
 

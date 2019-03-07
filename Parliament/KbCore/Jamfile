@@ -35,7 +35,7 @@ lib Parliament
 		<visibility>hidden
 		<threading>multi
 		<os>NT:<source>Version.rc
-		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_Config.h
+		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_KbConfig.h
 		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_KbInstance.h
 		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_StmtIterator.h
 		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_ReificationIterator.h
@@ -43,12 +43,12 @@ lib Parliament
 	:	<include>.
 	;
 
-explicit parliament/generated/com_bbn_parliament_jni_Config.h ;
+explicit parliament/generated/com_bbn_parliament_jni_KbConfig.h ;
 explicit parliament/generated/com_bbn_parliament_jni_KbInstance.h ;
 explicit parliament/generated/com_bbn_parliament_jni_StmtIterator.h ;
 explicit parliament/generated/com_bbn_parliament_jni_ReificationIterator.h ;
 
-h parliament/generated/com_bbn_parliament_jni_Config.h : Parliament.jar ;
+h parliament/generated/com_bbn_parliament_jni_KbConfig.h : Parliament.jar ;
 h parliament/generated/com_bbn_parliament_jni_KbInstance.h : Parliament.jar ;
 h parliament/generated/com_bbn_parliament_jni_StmtIterator.h : Parliament.jar ;
 h parliament/generated/com_bbn_parliament_jni_ReificationIterator.h : Parliament.jar ;

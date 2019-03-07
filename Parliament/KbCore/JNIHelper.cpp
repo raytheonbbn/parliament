@@ -106,6 +106,13 @@ string pmnt::JNIHelper::getStringFld(JNIEnv* pEnv, jobject obj, const char* pFld
 	return jstringToCstring<char>(pEnv, jstr);
 }
 
+string pmnt::JNIHelper::getTimeoutUnitFld(JNIEnv* pEnv, jobject obj)
+{
+	jmethodID mId = getMethodID(pEnv, obj, "getTimeoutUnit", "()Ljava/lang/String;");
+	jstring jstr = static_cast<jstring>(pEnv->CallObjectMethod(obj, mId));
+	return jstringToCstring<char>(pEnv, jstr);
+}
+
 bool pmnt::JNIHelper::getBooleanFld(JNIEnv* pEnv, jobject obj, const char* pFldName)
 {
 	jfieldID fid = getFieldId(pEnv, obj, pFldName, "Z");

@@ -12,7 +12,7 @@
 #include <string>
 #include "parliament/KbInstance.h"
 #include "parliament/CharacterLiteral.h"
-#include "parliament/Config.h"
+#include "parliament/KbConfig.h"
 #include "parliament/StmtIterator.h"
 #include "parliament/UnicodeIterator.h"
 #include "parliament/UriLib.h"
@@ -41,9 +41,9 @@ static const RsrcString	k_typedText	= convertToRsrcChar("\"Mike Dean\"^^http://w
 static const RsrcString	k_langText1	= convertToRsrcChar("\"Mike Dean\"@en-us");
 static const RsrcString	k_langText2	= convertToRsrcChar("\"Mike Dean\"@en-US");
 
-static Config createTestConfig(bool withInference)
+static KbConfig createTestConfig(bool withInference)
 {
-	Config config;
+	KbConfig config;
 	config.kbDirectoryPath(k_dirName);
 
 	if (!withInference)
@@ -93,7 +93,7 @@ static void checkStmtAndRsrcCounts(const KbInstance& kb)
 	BOOST_CHECK_EQUAL(numDelAndInferredStmts, 0u);
 }
 
-static void runCreateTest(Config& config)
+static void runCreateTest(KbConfig& config)
 {
 	config.readOnly(false);
 	KbInstance kb(config);
@@ -153,7 +153,7 @@ static void runCreateTest(Config& config)
 	checkStmtAndRsrcCounts(kb);
 }
 
-static void runOpenTest(Config& config)
+static void runOpenTest(KbConfig& config)
 {
 	config.readOnly(true);
 	KbInstance kb(config);
@@ -172,7 +172,7 @@ static void runOpenTest(Config& config)
 
 static void runRsrcMethodTests(bool normalizeTypedStringLiterals)
 {
-	Config config = createTestConfig(false);
+	KbConfig config = createTestConfig(false);
 	config.normalizeTypedStringLiterals(normalizeTypedStringLiterals);
 	KbDeleter deleter(config);
 	KbInstance kb(config);
@@ -273,7 +273,7 @@ BOOST_AUTO_TEST_SUITE(KbInstanceTestSuite)
 
 BOOST_AUTO_TEST_CASE(testByQuickOverview)
 {
-	Config config = createTestConfig(true);
+	KbConfig config = createTestConfig(true);
 	KbDeleter deleter(config);
 
 	runCreateTest(config);
@@ -282,12 +282,12 @@ BOOST_AUTO_TEST_CASE(testByQuickOverview)
 
 BOOST_AUTO_TEST_CASE(testKbDeletion)
 {
-	Config config = createTestConfig(false);
+	KbConfig config = createTestConfig(false);
 }
 
 BOOST_AUTO_TEST_CASE(testDisposition)
 {
-	Config config = createTestConfig(false);
+	KbConfig config = createTestConfig(false);
 }
 
 BOOST_AUTO_TEST_CASE(testRsrcMethods)

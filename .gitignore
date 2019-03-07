@@ -1,10 +1,23 @@
 bin/
+indexes/
 lib/
 log/
 
 /build.properties
 /dependencies/
 /doc/UserGuide/acronyms.tex
+/doc/UserGuide/ParliamentUserGuide.aux
+/doc/UserGuide/ParliamentUserGuide.bbl
+/doc/UserGuide/ParliamentUserGuide.bcf
+/doc/UserGuide/ParliamentUserGuide.blg
+/doc/UserGuide/ParliamentUserGuide.lof
+/doc/UserGuide/ParliamentUserGuide.log
+/doc/UserGuide/ParliamentUserGuide.lot
+/doc/UserGuide/ParliamentUserGuide.out
+/doc/UserGuide/ParliamentUserGuide.run.xml
+/doc/UserGuide/ParliamentUserGuide.synctex.gz
+/doc/UserGuide/ParliamentUserGuide.synctex(busy)
+/doc/UserGuide/ParliamentUserGuide.toc
 /doc/UserGuide/references.bib
 /jena/JosekiExtensions/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab/
 /Parliament/AdminClient/.settings/language.settings.xml
@@ -17,5 +30,6 @@ log/
 /Parliament/Test/.settings/language.settings.xml
 /Parliament/Test/Debug_with_Linux GCC/
 /Parliament/Test/Debug_with_MacOSX GCC/
-/Parliament/Test/ParliamentConfig.txt
+/Parliament/Test/ParliamentKbConfig.txt
+/Parliament/Test/ParliamentLogConfig.txt
 /target/

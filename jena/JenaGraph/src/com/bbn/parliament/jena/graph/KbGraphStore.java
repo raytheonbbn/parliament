@@ -19,7 +19,7 @@ import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.graph.union.KbUnionGraph;
 import com.bbn.parliament.jena.graph.union.KbUnionableGraph;
 import com.bbn.parliament.jena.joseki.client.StreamUtil;
-import com.bbn.parliament.jni.Config;
+import com.bbn.parliament.jni.KbConfig;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -54,7 +54,7 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 
 	private static Logger log = LoggerFactory.getLogger(KbGraphStore.class);
 
-	public KbGraphStore(Graph defaultGraph) {
+	public KbGraphStore(KbGraph defaultGraph) {
 		super(defaultGraph);
 	}
 
@@ -64,6 +64,7 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 		addGraph(Node.createURI(MASTER_GRAPH), masterGraph, MASTER_GRAPH_DIR, false);
 
 		if (isIndexingEnabled(DEFAULT_GRAPH_NODE)) {
+			@SuppressWarnings("resource")
 			Graph graph = getDefaultGraph();
 			if (!IndexManager.getInstance().hasIndexes(graph)) {
 				IndexManager.getInstance().createAndRegisterAll(graph, DEFAULT_GRAPH_NODE);
@@ -106,6 +107,17 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 		} finally {
 			closeQuietly(it);
 		}
+	}
+
+	/** Get the default graph's configuration. */
+	public KbConfig getDefaultGraphConfig() {
+		return getDefaultGraph().getConfig();
+	}
+
+	/** Get the default graph. */
+	@Override
+	public KbGraph getDefaultGraph() {
+		return (KbGraph) super.getDefaultGraph();
 	}
 
 	/** Get the master graph, which contains references to all named graphs. */
@@ -236,6 +248,7 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 	 * @param graphName The URI of the graph to delete, or the empty string
 	 * for the default graph.
 	 */
+	@SuppressWarnings("resource")
 	@Override
 	public void removeGraph(Node graphName) {
 		Graph toReturn = null;
@@ -310,7 +323,7 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 
 		// Delete the files
 		if (isKbGraph) {
-			Config config = ((KbGraph)toReturn).getConfig();
+			KbConfig config = ((KbGraph)toReturn).getConfig();
 			File kbDir = new File(config.m_kbDirectoryPath); // apparently the relative directory is not relative to the kb directory path
 			//         File kbDir = (null == graphDir) ?
 			//            new File(config.m_kbDirectoryPath) :
@@ -345,9 +358,9 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 		return toReturn;
 	}
 
-
 	/** Flush all graphs. */
 	public void flush() {
+		@SuppressWarnings("resource")
 		Graph defaultGraph = getDefaultGraph();
 		if (null != defaultGraph) {
 			flushGraph(defaultGraph, null);

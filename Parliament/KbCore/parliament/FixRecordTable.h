@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <boost/filesystem/path.hpp>
 #include <boost/format.hpp>
+#include <cmath>
 #include <limits>
 
 PARLIAMENT_NAMESPACE_BEGIN
@@ -27,14 +28,17 @@ public:
 	using RecordType = RT;
 
 	FixRecordTable(const ::boost::filesystem::path& filePath, bool readOnly,
-			size_t initRecCount, double growthFactor) :
+			size_t initRecCount, size_t growthIncrement, double growthFactor) :
 		m_mMap(filePath, readOnly, computeFileSize(initRecCount)),
+		m_growthIncrement(growthIncrement),
 		m_growthFactor(growthFactor)
 		{
-			if (m_growthFactor <= 1.0)
+			if (m_growthIncrement < 1 && m_growthFactor <= 1.0)
 			{
-				throw Exception(::boost::format("FixRecordTable growth factor "
-					"must be greater than 1.0 for KB file \"%1%\"") % pathAsUtf8(m_mMap.filePath()));
+				throw Exception(::boost::format(
+					"FixRecordTable:  Either the growth increment must be positive or "
+					"the growth factor must be greater than 1.0 for KB file \"%1%\"")
+					% pathAsUtf8(m_mMap.filePath()));
 			}
 		}
 	FixRecordTable(const FixRecordTable&) = delete;
@@ -69,8 +73,23 @@ public:
 
 			if (oldRecCount + numNewRecords > capacity())
 			{
-				m_mMap.reallocate(computeFileSize(MMapMgr::growRecordCount(
-					oldRecCount + numNewRecords, m_growthFactor)));
+				size_t newRecCount = oldRecCount + numNewRecords;
+				if (m_growthFactor > 1.0)
+				{
+					newRecCount = ::std::llrint(m_growthFactor * newRecCount);
+				}
+				if (m_growthIncrement > 0)
+				{
+					newRecCount += m_growthIncrement;
+				}
+				if (newRecCount <= oldRecCount + numNewRecords)
+				{
+					throw Exception(::boost::format(
+						"FixRecordTable:  Growth increment of %1% and growth factor of "
+						"%2% failed to grow KB file \"%3%\"")
+						% m_growthIncrement % m_growthFactor % pathAsUtf8(m_mMap.filePath()));
+				}
+				m_mMap.reallocate(computeFileSize(newRecCount));
 				pResult = &uncheckedGetRecordAt(oldRecCount);
 			}
 
@@ -138,7 +157,8 @@ private:
 		}
 
 	MMapMgr			m_mMap;
-	const double		m_growthFactor;
+	const size_t	m_growthIncrement;
+	const double	m_growthFactor;
 };
 
 PARLIAMENT_NAMESPACE_END

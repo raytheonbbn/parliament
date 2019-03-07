@@ -16,11 +16,16 @@
 	<property name="artifactsDir" value="${targetDir}/artifacts"/>
 	<property name="reportsDir" value="${targetDir}/reports"/>
 	<property name="ivyDir" location="${kbRootDir}/ivy"/>
-	<property name="parliamentDependenciesDir" location="${env.PARLIAMENT_DEPENDENCIES}"/>
+	<condition property="parliamentDependenciesDir"
+			value="${env.PARLIAMENT_DEPENDENCIES}"
+			else="${kbRootDir}/dependencies">
+		<isset property="env.PARLIAMENT_DEPENDENCIES"/>
+	</condition>
 
 	<property name="deployableServersFile" value="${targetDir}/bin/DeployableServerDirs.txt"/>
 	<property name="antRunnableServersFile" value="${targetDir}/bin/AntRunnableServerDirs.txt"/>
-	<property name="testConfigFile" value="${targetDir}/test-bin/ParliamentConfig.txt"/>
+	<property name="testKbConfigFile" value="${targetDir}/test-bin/ParliamentKbConfig.txt"/>
+	<property name="testLogConfigFile" value="${targetDir}/test-bin/ParliamentLogConfig.txt"/>
 
 	<!-- Include ant-contrib -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
@@ -128,23 +133,34 @@
 	</target>
 
 	<!--
-		Create a configuration file for testing with:
+		Create configuration files for testing with:
 		* Console logging off to reduce the spew of text scrolling by during a build,
 		* A test-specific KB directory to sequester those temporary files, and
 		* Reduced initial statement and resource capacity to make test run faster.
 	-->
 	<target name="createTestConfig">
-		<copy todir="${targetDir}/test-bin" preservelastmodified="true" flatten="true"
-			file="${kbRootDir}/Parliament/KbCore/ParliamentConfig.txt"/>
-		<replace file="${testConfigFile}"
-			token="logToConsole             = yes"
-			value="logToConsole             = no"/>
-		<replace file="${testConfigFile}"
-			token="kbDirectoryPath        = ."
-			value="kbDirectoryPath        = test-kb-data"/>
-		<replaceregexp file="${testConfigFile}"
-			match="(initial[a-z]*capacity *= *)[0-9]+"
-			replace="\120"
-			flags="mig"/>
+		<copy todir="${targetDir}/test-bin" preservelastmodified="true" flatten="true">
+			<fileset dir="${kbRootDir}/Parliament/KbCore" includes="Parliament*Config.txt"/>
+		</copy>
+		<replaceregexp flags="mig"
+			match="(logToConsole *= *)yes"
+			replace="\1no">
+			<fileset dir="${targetDir}/test-bin" includes="Parliament*Config.txt"/>
+		</replaceregexp>
+		<replaceregexp flags="mig"
+			match="(kbDirectoryPath *= *)kb-data"
+			replace="\1test-kb-data">
+			<fileset dir="${targetDir}/test-bin" includes="Parliament*Config.txt"/>
+		</replaceregexp>
+		<replaceregexp flags="mig"
+			match="(initial((Rsrc)|(Stmt))Capacity *= *)[0-9]+"
+			replace="\120">
+			<fileset dir="${targetDir}/test-bin" includes="Parliament*Config.txt"/>
+		</replaceregexp>
+		<replaceregexp flags="mig"
+			match="(((rsrc)|(stmt))GrowthIncrement *= *)[0-9]+"
+			replace="\120">
+			<fileset dir="${targetDir}/test-bin" includes="Parliament*Config.txt"/>
+		</replaceregexp>
 	</target>
 </project>

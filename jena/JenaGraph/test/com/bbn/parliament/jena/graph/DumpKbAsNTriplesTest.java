@@ -24,7 +24,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
-import com.bbn.parliament.jni.Config;
+import com.bbn.parliament.jni.KbConfig;
 import com.bbn.parliament.jni.KbInstance;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -39,14 +39,16 @@ public class DumpKbAsNTriplesTest {
 	private static final File TEST_INPUT = new File(TEST_DATA_DIR, "DumpTestData.ttl");
 	private static final String OUTPUT_DELIMITER = "########## Actual dump output ##########";
 
-	private Config config;
+	private KbConfig config;
 	private KbGraph graph;
 	private Model model;
 
 	@BeforeEach
 	public void beforeEach() {
 		afterEach();
-		config = Config.readFromFile();
+		config = new KbConfig();
+		config.readFromFile();
+		KbInstance.deleteKb(config, null);
 		graph = KbGraphFactory.createDefaultGraph();
 		model = ModelFactory.createModelForGraph(graph);
 	}

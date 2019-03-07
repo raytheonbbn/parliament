@@ -2,15 +2,11 @@
 % !TEX TS-program = XeLaTeX
 % !BIB TS-program = biber
 % !TEX useTabsWithFiles
+% !TEX tabbedFile{TitlePage.tex}
 % !TEX tabbedFile{Introduction.tex}
 % !TEX tabbedFile{DeployingAndUsing.tex}
 % !TEX tabbedFile{Building.tex}
 % !TEX tabbedFile{Appendices.tex}
-
-%TODO: Install Ivy to be available by default within ant
-%TODO: Download X zip files, unzip, set PARLIAMENT_DEPENDENCIES
-%TODO: Create .project in that location with name X
-%TODO: Install Ivy (http://ant.apache.org/ivy/history/latest-milestone/install.html).  Easiest:  Download with-dependencies, unzip, copy all jars into ant's lib directory or ~/.ant/lib.  On Centos:  Use package manager.  http://ant.apache.org/ivy/history/latest-milestone/install.html
 
 \documentclass[12pt,letterpaper,openany,oneside,draft]{book}
 
@@ -51,7 +47,7 @@
 \usepackage{unicode-math}
 \usepackage[final]{hyperref}	% Should be the last use-package command
 
-%\newcommand{\red}[1]{{\color{red}#1}}
+\newcommand{\red}[1]{{\color{red}#1}}
 %\newcommand{\paraleader}[1]{\textbf{#1}}
 \newcommand{\urlcite}[1]{\footnote{\url{#1}}}
 \newcommand{\headingrule}{\midrule[\heavyrulewidth]}
@@ -60,12 +56,7 @@
 \newcommand{\icm}[1]{}
 
 \input{acronyms.tex}
-%\acuse{asio} % We only want long & short forms, never "first appearance"
-\acuse{pmnt} % We only want long & short forms, never "first appearance"
-
 \bibliography{references}
-%\defbibheading{bibliography}[\bibname]{\section{#1}\markboth{#1}{#1}}
-%\defbibheading{bibliography}[\refname]{\section{#1}\markboth{#1}{#1}}
 
 \title{\acl{pmnt} User Guide}
 \author{Ian Emmons}
@@ -82,11 +73,10 @@
 \setmainfont{Georgia}
 %\setmainfont{TeX Gyre Pagella}[Numbers=Uppercase]
 %\setmainfont{Constantia}[Numbers=Uppercase]
-\setsansfont{Candara}[Scale=MatchLowercase]
-%\setsansfont{Corbel}[Scale=MatchLowercase]
+\setsansfont{Verdana}[Scale=MatchLowercase]
 %\setsansfont{TeX Gyre Heros}[Scale=MatchLowercase]
-%\setmonofont{Menlo}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
 \setmonofont{Consolas}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
+%\setmonofont{Menlo}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
 %\setmathfont{TeX Gyre Pagella Math}
 %\setmathfont{STIX Math}
 \setmathfont{Cambria Math}
@@ -95,7 +85,7 @@
 \renewcommand{\chaptermark}[1]
 	{\markboth{\chaptername \ \thechapter.\ #1}{}}
 \fancyhead[L]{\textsl{\leftmark}}
-\fancyhead[R]{\thepage}
+\fancyhead[R]{}
 \setlength{\headheight}{15pt}
 
 %\urlstyle{rm}
@@ -127,12 +117,11 @@
 \hyphenation{war-fight-er war-fight-ers}
 
 \begin{document}
+\acuse{pmnt} % Only long & short forms, never "first appearance"
+\acuse{url} % This one is too common to bother spelling it out
+
 \frontmatter
-\maketitle
-\tableofcontents
-\listoffigures
-\listoftables
-%\input{titlepage.tex}
+\input{TitlePage.tex}
 \mainmatter
 
 \input{Introduction.tex}

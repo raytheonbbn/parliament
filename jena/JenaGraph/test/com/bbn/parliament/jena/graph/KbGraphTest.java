@@ -22,7 +22,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.NodeCreateUtils;
-import com.bbn.parliament.jni.Config;
+import com.bbn.parliament.jni.KbConfig;
 import com.bbn.parliament.jni.KbInstance;
 import com.hp.hpl.jena.graph.Factory;
 import com.hp.hpl.jena.graph.Graph;
@@ -44,12 +44,13 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 /** @author dkolas */
 @RunWith(JUnitPlatform.class)
 public class KbGraphTest {
-	private Config config;
+	private KbConfig config;
 	private KbGraph graph;
 
 	@BeforeEach
 	protected void beforeEach() {
-		config = Config.readFromFile();
+		config = new KbConfig();
+		config.readFromFile();
 	}
 
 	@AfterEach
@@ -86,7 +87,8 @@ public class KbGraphTest {
 	}
 
 	public static void main(String[] args) {
-		Config config = Config.readFromFile();
+		KbConfig config = new KbConfig();
+		config.readFromFile();
 		KbInstance.deleteKb(config, null);
 		try (KbGraph graph = KbGraphFactory.createDefaultGraph()) {
 			Model model = ModelFactory.createModelForGraph(graph);

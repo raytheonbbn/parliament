@@ -23,14 +23,18 @@
 		<echo message="Using JDK ${ant.java.version}"/>
 
 		<delete dir="${targetDir}" deleteonexit="true"/>
-		<delete file="${basedir}/Parliament/Test/ParliamentConfig.txt"/>
-		<delete dir="${basedir}/data"/>
+		<delete file="${basedir}/Parliament/Test/ParliamentKbConfig.txt"/>
+		<delete file="${basedir}/Parliament/Test/ParliamentLogConfig.txt"/>
+		<delete dir="${basedir}/Parliament/Test/kb-data"/>
 		<delete dir="${basedir}/indexes"/>
 		<delete dir="${basedir}/log"/>
 		<delete dir="${basedir}/Parliament/log"/>
 		<delete dir="${basedir}/Parliament/Test/log"/>
+		<delete dir="${basedir}/jena/JenaGraph/log"/>
+		<delete dir="${basedir}/jena/TemporalIndexProcessor/log"/>
 
 		<delete dir="${basedir}/jena/JenaGraph/lib"/>
+		<delete dir="${basedir}/jena/JenaGraph/union-test-kb-data"/>
 		<delete dir="${basedir}/jena/JosekiExtensions/lib"/>
 		<delete dir="${basedir}/jena/JosekiParliamentClient/lib"/>
 		<delete dir="${basedir}/jena/NumericIndex/lib"/>
@@ -68,19 +72,9 @@
 		<delete dir="${basedir}/Sesame/SameAsSail/bin"/>
 		<delete dir="${basedir}/Sesame/Swrl2Sesame/bin"/>
 
-		<delete>
-			<fileset dir="${basedir}/Parliament/KbCore" includes="Debug_with_*/*"/>
-			<dirset dir="${basedir}/Parliament/KbCore" includes="Debug_with_*"/>
-			<fileset dir="${basedir}/Parliament/KbCore" includes="Release_with_*/*"/>
-			<dirset dir="${basedir}/Parliament/KbCore" includes="Release_with_*"/>
-			<fileset dir="${basedir}/Parliament/AdminClient" includes="Debug_with_*/*"/>
-			<dirset dir="${basedir}/Parliament/AdminClient" includes="Debug_with_*"/>
-			<fileset dir="${basedir}/Parliament/AdminClient" includes="Release_with_*/*"/>
-			<dirset dir="${basedir}/Parliament/AdminClient" includes="Release_with_*"/>
-			<fileset dir="${basedir}/Parliament/Test" includes="Debug_with_*/*"/>
-			<dirset dir="${basedir}/Parliament/Test" includes="Debug_with_*"/>
-			<fileset dir="${basedir}/Parliament/Test" includes="Release_with_*/*"/>
-			<dirset dir="${basedir}/Parliament/Test" includes="Release_with_*"/>
+		<delete includeemptydirs="true">
+			<fileset dir="${basedir}/Parliament" includes="**/Debug_with_*/"/>
+			<fileset dir="${basedir}/Parliament" includes="**/Release_with_*/"/>
 		</delete>
 	</target>
 
@@ -165,9 +159,7 @@
 		<ant dir="${basedir}/jena/JenaGraph" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JosekiExtensions" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/jena/NumericIndex" target="runTests" inheritAll="false"/>
-		<!--
-		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="runTests" inheritAll="false"/>
-		-->
+		<!-- ant dir="${basedir}/jena/SpatialIndexProcessor" target="runTests" inheritAll="false"/ -->
 		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="runTests" inheritAll="false"/>
 		<!--
 		<ant dir="${basedir}/Sesame/CSameAsSail" target="runTests" inheritAll="false"/>

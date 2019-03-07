@@ -12,7 +12,7 @@
 #include <unordered_map>
 
 #include "parliament/CharacterLiteral.h"
-#include "parliament/Config.h"
+#include "parliament/KbConfig.h"
 #include "parliament/KbInstance.h"
 #include "parliament/RegEx.h"
 #include "parliament/UnicodeIterator.h"
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(testDeftLoad)
 		return;
 	}
 
-	Config config;
+	KbConfig config;
 	config.kbDirectoryPath("test-kb-data");
 	KbInstance::deleteKb(config);
 

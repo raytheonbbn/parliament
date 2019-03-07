@@ -38,7 +38,7 @@ public class JniTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testUnicodeTransfer() {
-		Config cfg = buildConfig(false);
+		KbConfig cfg = buildConfig(false);
 
 		// Clearing away old KB leftovers:
 		KbInstance.deleteKb(cfg, null);
@@ -60,7 +60,7 @@ public class JniTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testByQuickOverview() {
-		Config cfg = buildConfig(true);
+		KbConfig cfg = buildConfig(true);
 
 		// Clearing away old KB leftovers:
 		KbInstance.deleteKb(cfg, null);
@@ -160,10 +160,9 @@ public class JniTest {
 		}
 	}
 
-	private static Config buildConfig(boolean withInference) {
-		Config cfg = new Config();
-		cfg.m_kbDirectoryPath = ".";
-		cfg.m_logToConsole = false;
+	private static KbConfig buildConfig(boolean withInference) {
+		KbConfig cfg = new KbConfig();
+		cfg.readFromFile();
 		if (!withInference) {
 			cfg.disableAllRules();
 		}

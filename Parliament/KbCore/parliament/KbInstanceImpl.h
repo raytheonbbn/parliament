@@ -9,7 +9,7 @@
 
 // This file should be included ONLY from KbInstance.cpp and KbValidation.cpp!
 
-#include "parliament/Config.h"
+#include "parliament/KbConfig.h"
 #include "parliament/FixRecordTable.h"
 #include "parliament/KbRsrc.h"
 #include "parliament/KbStmt.h"
@@ -64,21 +64,20 @@ struct KbInstance::Impl
 	using StmtTable = FixRecordTable<KbStmt>;
 	using AddStmtStack = ::std::vector<StmtToAdd>;
 
-	Impl(const Config& config, KbInstance* pKB) :
+	Impl(const KbConfig& config, KbInstance* pKB) :
 		m_config(config.ensureKbDirExists()),
 		m_dontNeedToRunAddNewRules(),
-		m_isLogEngineInitialized(Log::init(m_config)),
-		m_log(Log::getSource("KbInstance")),
 		m_stmtHndlrList(),
 		m_reificationMap(),
 		m_disposition(determineDisposition(m_config, true)),
 		m_uriTbl(m_config.uriTableFilePath(), m_config.readOnly(),
-			m_config.initialRsrcCapacity() * m_config.avgRsrcLen(), m_config.rsrcGrowthFactor()),
+			m_config.initialRsrcCapacity() * m_config.avgRsrcLen(),
+			m_config.rsrcGrowthIncrement() * m_config.avgRsrcLen(), m_config.rsrcGrowthFactor()),
 		m_uriToRsrcId(m_config.uriToIntFilePath(), m_config.bdbCacheSize(), m_config.readOnly()),
 		m_rsrcTbl(m_config.rsrcFilePath(), m_config.readOnly(), m_config.initialRsrcCapacity(),
-			m_config.rsrcGrowthFactor()),
+			m_config.rsrcGrowthIncrement(), m_config.rsrcGrowthFactor()),
 		m_stmtTbl(m_config.stmtFilePath(), m_config.readOnly(), m_config.initialStmtCapacity(),
-			m_config.stmtGrowthFactor()),
+			m_config.stmtGrowthIncrement(), m_config.stmtGrowthFactor()),
 		m_uriLib(pKB),
 		m_addStmtStack(),
 		m_re(pKB)
@@ -107,11 +106,8 @@ struct KbInstance::Impl
 		return !m_dontNeedToRunAddNewRules.test_and_set();
 	}
 
-	const Config			m_config;			// Configuration parameters passed at initialization
+	const KbConfig			m_config;			// Configuration parameters passed at initialization
 	mutable AtomicBool	m_dontNeedToRunAddNewRules;	// Whether to run addNewRules prior to a find()
-
-	const bool				m_isLogEngineInitialized;
-	Log::Source				m_log;
 
 	StmtHandlerList		m_stmtHndlrList;	// List of callbacks called when new statments are added
 	ReificationMap			m_reificationMap;	// Stores partial reifications
