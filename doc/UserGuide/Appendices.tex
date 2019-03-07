@@ -40,7 +40,7 @@ This appendix is provided primarily to guide the developer who needs to update t
 
 \item Close Visual Studio.
 
-\item\label{step-creates-dirs}Create the directory hierarchy shown in Figure~\ref{fig:bdbDirTree} at the root level of your dependencies directory.
+\item\label{step-creates-dirs}Create the directory hierarchy shown in Figure~\ref{fig:bdbDirTree} at the root level of your dependencies directory.  (You will likely need to move or rename the \path|bdb| directory that is already present in that location.)
 \begin{figure}[htbp]
 	\centering
 	\begin{minipage}[t]{3in}
@@ -81,7 +81,20 @@ This appendix is provided primarily to guide the developer who needs to update t
    build_windows\*.h
 \end{verbatim}
 
-\item \red{Commit the above changes to \acp{pmnt} source code repository.}
+\item\label{step-zip-dependencies}Zip the dependencies directory into a file named
+\begin{verbatim}
+   parliament-dependencies-YYYY-MM-DD.zip
+\end{verbatim}
+with the current date in the obvious location.
+
+\item Tag the repository with a command like the following:
+\begin{verbatim}
+   git tag -a -m "Tag made on YYYY-MM-DD just prior to
+   version X.Y.Z.  Denotes time dependencies zip was
+   released." dependencies-YYYY-MM-DD
+\end{verbatim}
+
+\item On GitHub, create a new release for the tag with the zip file from Step~\ref{step-zip-dependencies} as an attached binary.
 
 \item Finally, delete the build directory that you created in Step~\ref{step-download} by unzipping the source code distribution.
 \end{enumerate}
