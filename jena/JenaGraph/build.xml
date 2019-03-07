@@ -85,41 +85,20 @@
 			<!-- env key="UBSAN_OPTIONS" value="print_stacktrace=1"/ -->
 
 			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
-			<sysproperty key="log4j.configuration" value="file://${kbRootDir}/log4j.junit.properties"/>
-			<classpath>
-				<pathelement location="${testBinDir}"/>
-				<path refid="testPath"/>
-			</classpath>
-			<formatter type="xml"/>
-			<batchtest fork="yes" todir="${reportsDir}/${ant.project.name}">
-				<fileset dir="${basedir}/test" includes="**/*Test.java"/>
-				<!--fileset dir="${basedir}/test" includes="**/IndexExecutionTest.java"/-->
-				<!--fileset dir="${basedir}/test" includes="**/KbOpExecutorDAWGTest.java"/-->
-				<!--fileset dir="${basedir}/test" includes="**/KbUnionGraphTest.java"/-->
-			</batchtest>
-		</junit>
-	</target>
-
-	<target name="runUnionTest" depends="createTestConfig,compileTests,buildDeployableServerList">
-		<foreach target="runUnionTestForOneNativeDir" param="nativeArtifactsDir"
-			list="${antRunnableServerList}" delimiter="|" inheritall="true"/>
-	</target>
-
-	<!-- Runs the test for a specific native directory (the name of which is expected as a parameter) -->
-	<target name="runUnionTestForOneNativeDir">
-		<echo message="nativeArtifactsDir = '${nativeArtifactsDir}'"/>
-		<java classname="com.bbn.parliament.jena.graph.union.UnionGraphTestNotJUnit" fork="yes">
-			<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
-			<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
-			<env key="PARLIAMENT_KB_CONFIG_PATH" value="${testKbConfigFile}"/>
-			<env key="PARLIAMENT_LOG_CONFIG_PATH" value="${testLogConfigFile}"/>
-			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
 			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
 			<sysproperty key="test.data.path" value="${parliamentDependenciesDir}/data"/>
 			<classpath>
 				<pathelement location="${testBinDir}"/>
 				<path refid="testPath"/>
 			</classpath>
-		</java>
+			<formatter type="xml"/>
+			<batchtest fork="yes" todir="${reportsDir}/${ant.project.name}">
+				<fileset dir="${basedir}/test" includes="**/*Test.java"
+					excludes="**/ComplexUnionGraphTest.java"/>
+				<!--fileset dir="${basedir}/test" includes="**/IndexExecutionTest.java"/-->
+				<!--fileset dir="${basedir}/test" includes="**/KbOpExecutorDAWGTest.java"/-->
+				<!--fileset dir="${basedir}/test" includes="**/KbUnionGraphTest.java"/-->
+			</batchtest>
+		</junit>
 	</target>
 </project>

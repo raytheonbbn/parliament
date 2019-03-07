@@ -2,6 +2,7 @@ bin/
 indexes/
 lib/
 log/
+union-test-kb-data/
 
 /build.properties
 /dependencies/

@@ -1,10 +1,12 @@
 // Parliament is licensed under the BSD License from the Open Source
 // Initiative, http://www.opensource.org/licenses/bsd-license.php
 //
-// Copyright (c) 2001-2018, BBN Technologies, Inc.
+// Copyright (c) 2001-2019, BBN Technologies, Inc.
 // All rights reserved.
 
 package com.bbn.parliament.jena.graph.union;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,6 +16,12 @@ import java.util.Enumeration;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.OptimizationMethod;
@@ -26,55 +34,59 @@ import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-/** @author dkolas */
-public class UnionGraphTestNotJUnit {
+@RunWith(JUnitPlatform.class)
+public class ComplexUnionGraphTest {
 	private static final String ONT_RSRC = "univ-bench.owl";
 	private static final File INPUT_DATA_FILE = new File(
 		System.getProperty("test.data.path"), "gendata-80.zip");
 	private static final File KB_DATA_DIR = new File("./union-test-kb-data");
 
 	private static final String QUERY1 = "" +
-		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" +
-		"PREFIX ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#>" +
-		"SELECT ?x ?y ?z WHERE {" +
-		"	?x a ub:GraduateStudent ." +
-		"	?y a ub:University ." +
-		"	?z a ub:Department ." +
-		"	?x ub:memberOf ?z ." +
-		"	?z ub:subOrganizationOf ?y ." +
-		"	?x ub:undergraduateDegreeFrom ?y" +
+		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+		"PREFIX ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> " +
+		"SELECT ?x ?y ?z WHERE { " +
+		"	?x a ub:GraduateStudent . " +
+		"	?y a ub:University . " +
+		"	?z a ub:Department . " +
+		"	?x ub:memberOf ?z . " +
+		"	?z ub:subOrganizationOf ?y . " +
+		"	?x ub:undergraduateDegreeFrom ?y . " +
 		"}";
 	private static final String QUERY2 = "" +
-		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" +
-		"PREFIX ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#>" +
-		"SELECT ?x ?y1 ?y2 ?y3 WHERE {" +
-		"	?x a ub:Professor;" +
-		"		ub:worksFor <http://www.Department0.University0.edu>;" +
-		"		ub:name ?y1;" +
-		"		ub:emailAddress ?y2;" +
-		"		ub:telephone ?y3." +
+		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+		"PREFIX ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> " +
+		"SELECT ?x ?y1 ?y2 ?y3 WHERE { " +
+		"	?x a ub:Professor ; " +
+		"		ub:worksFor <http://www.Department0.University0.edu> ; " +
+		"		ub:name ?y1 ; " +
+		"		ub:emailAddress ?y2 ; " +
+		"		ub:telephone ?y3 . " +
 		"}";
 	private static final String QUERY3 = "" +
-		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" +
-		"PREFIX ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#>" +
-		"SELECT ?x ?y ?z WHERE {" +
-		"	?x a ub:Student ." +
-		"	?y a ub:Faculty ." +
-		"	?z a ub:Course ." +
-		"	?x ub:advisor ?y ." +
-		"	?y ub:teacherOf ?z ." +
-		"	?x ub:takesCourse ?z ." +
+		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+		"PREFIX ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> " +
+		"SELECT ?x ?y ?z WHERE { " +
+		"	?x a ub:Student . " +
+		"	?y a ub:Faculty . " +
+		"	?z a ub:Course . " +
+		"	?x ub:advisor ?y . " +
+		"	?y ub:teacherOf ?z . " +
+		"	?x ub:takesCourse ?z . " +
 		"}";
 	private static final String QUERY4 = "" +
-		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" +
-		"PREFIX ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#>" +
-		"SELECT ?x ?y WHERE {" +
-		"	?x a ub:GraduateStudent ;" +
-		"		ub:name ?y ." +
+		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+		"PREFIX ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> " +
+		"SELECT ?x ?y WHERE { " +
+		"	?x a ub:GraduateStudent ; " +
+		"		ub:name ?y . " +
 		"}";
 	private static final String[] QUERYS = { QUERY1, QUERY2, QUERY3, QUERY4 };
 
-	public static void main(String[] args) throws IOException {
+	private static final Logger LOG = LoggerFactory.getLogger(ComplexUnionGraphTest.class);
+
+	@SuppressWarnings("static-method")
+	@Test
+	public void testCreateUnionGraph() throws IOException {
 		try (
 			KbGraph bigGraph = createGraph(KB_DATA_DIR, "big");
 			KbGraph graph0 = createGraph(KB_DATA_DIR, "0");
@@ -103,11 +115,17 @@ public class UnionGraphTestNotJUnit {
 			loadUniversityData(bigModel, model1, 1);
 			loadUniversityData(bigModel, model2, 2);
 
+			LOG.info("Big model contains {} statements", bigModel.size());
+			LOG.info("Model 0 contains {} statements", model0.size());
+			LOG.info("Model 1 contains {} statements", model1.size());
+			LOG.info("Model 2 contains {} statements", model2.size());
+
 			//unionGraph.setFiltering(false);
 			for (int i = 0; i < QUERYS.length; ++i) {
-				System.out.format("Running query #%1$d...%n", i);
-				timeCount("big", QUERYS[i], bigModel);
-				timeCount("union", QUERYS[i], unionModel);
+				LOG.info("Running query #{}...", i);
+				long bigCount = timeCount("big", QUERYS[i], bigModel);
+				long unionCount = timeCount("union", QUERYS[i], unionModel);
+				assertEquals(bigCount, unionCount);
 			}
 		}
 	}
@@ -136,9 +154,9 @@ public class UnionGraphTestNotJUnit {
 	}
 
 	private static void loadUniversityData(Model m1, Model m2, int univNum) throws IOException {
-		System.out.format("Loading university #%1$d:%n", univNum);
+		LOG.info("Loading university #{}:", univNum);
 		Pattern pattern = Pattern.compile(
-			String.format("University%1$d_.*", univNum), Pattern.CASE_INSENSITIVE);
+			String.format("^.*/University%1$d_.*$", univNum), Pattern.CASE_INSENSITIVE);
 		try (ZipFile zipFile = new ZipFile(INPUT_DATA_FILE)) {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			while (entries.hasMoreElements()) {
@@ -151,21 +169,22 @@ public class UnionGraphTestNotJUnit {
 					}
 					m1.add(tmpModel);
 					m2.add(tmpModel);
-					System.out.format("Loaded file '%1$s'%n", zipEntry.getName());
+					LOG.info("   Loaded {} statements from file '{}'", tmpModel.size(), zipEntry.getName());
 				}
 			}
 		}
 	}
 
-	private static void timeCount(String modelName, String query, Model model) {
-		long now = System.currentTimeMillis();
+	private static long timeCount(String modelName, String query, Model model) {
+		long start = System.currentTimeMillis();
 		ResultSet results = QueryExecutionFactory.create(query, model).execSelect();
-		int count = 0;
+		long count = 0;
 		while (results.hasNext()) {
 			results.next();
 			++count;
 		}
-		long duration = System.currentTimeMillis() - now;
-		System.out.format("%1$s [%2$d] results in %3$d ms%n", modelName, count, duration);
+		long duration = System.currentTimeMillis() - start;
+		LOG.info("{} results from {} model in {} ms", count, modelName, duration);
+		return count;
 	}
 }
