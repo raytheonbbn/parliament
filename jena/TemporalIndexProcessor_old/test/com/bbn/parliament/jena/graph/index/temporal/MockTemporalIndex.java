@@ -3,6 +3,7 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.graph.index.temporal;
 
 import java.util.Properties;
@@ -10,17 +11,9 @@ import java.util.Properties;
 import com.bbn.parliament.jena.graph.index.temporal.memory.MemoryTemporalIndex;
 import com.hp.hpl.jena.graph.Graph;
 
-/**
- * @author rbattle
- *
- */
+/** @author rbattle */
 public class MockTemporalIndex extends MemoryTemporalIndex {
-
-    /**
-     *
-     */
-    public MockTemporalIndex(Graph graph, Properties configuration) {
-       super(graph, configuration);
-    }
-
+	public MockTemporalIndex(Graph graph, Properties configuration) {
+		super(graph, configuration);
+	}
 }

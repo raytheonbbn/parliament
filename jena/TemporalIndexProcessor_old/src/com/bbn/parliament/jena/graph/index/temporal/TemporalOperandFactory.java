@@ -1,12 +1,11 @@
-/**
- *
- */
 package com.bbn.parliament.jena.graph.index.temporal;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInterval;
@@ -67,7 +66,7 @@ public class TemporalOperandFactory extends OperandFactoryBase<TemporalExtent> {
 		return interval;
 	}
 
-	private TemporalInstant extractInstant(Node rootNode, BasicPattern pattern,
+	private static TemporalInstant extractInstant(Node rootNode, BasicPattern pattern,
 		Binding binding, List<Triple> usedTriples) {
 		TemporalInstant extent = null;
 		for (Triple t : pattern) {

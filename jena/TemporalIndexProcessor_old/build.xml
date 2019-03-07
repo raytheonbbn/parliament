@@ -16,9 +16,11 @@
 	</path>
 
 	<path id="testClassPath">
-		<fileset dir="${artifactsDir}" includes="JenaParliament.jar"/>
-		<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
 		<fileset dir="${basedir}/lib/test" includes="*.jar"/>
+		<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
+		<fileset dir="${artifactsDir}" includes="JenaParliament.jar"/>
+		<fileset dir="${artifactsDir}" includes="JenaParliament-tests.jar"/>
+		<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
 		<fileset file="${jarFile}"/>
 	</path>
 
