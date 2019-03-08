@@ -3,19 +3,18 @@
 // Parliament is licensed under the BSD License from the Open Source
 // Initiative, http://www.opensource.org/licenses/bsd-license.php
 //
-// Copyright (c) 2001-2009, BBN Technologies, Inc.
+// Copyright (c) 2001-2019, BBN Technologies, Inc.
 // All rights reserved.
 -->
 
-<project name="KBMasterBuild" default="createDistro" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="KBMasterBuild" default="runTests" xmlns:ivy="antlib:org.apache.ivy.ant">
 	<description>Master build script for the KB repository.</description>
 
 	<import file="${basedir}/build-common.xml"/>
 
 	<property name="distroDir" value="${targetDir}/distro"/>
 	<property name="javadocDir" value="${targetDir}/bin/javadoc"/>
-	<property name="javadocZip" value="${distroDir}/parliament-javadoc.zip"/>
-	<property name="srcZip" value="${distroDir}/parliament-src.zip"/>
+	<property name ="javadocCompleteFlag" value="${targetDir}/bin/javadoc-created.txt"/>
 	<property name="windowsReleaseDir" value="${artifactsDir}/msvc-14.1/release"/>
 	<property name="macosReleaseDir" value="${artifactsDir}/clang/release/universal"/>
 
@@ -93,37 +92,6 @@
 		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="resolve" inheritAll="false"/>
 	</target>
 
-	<target name="createDistro" description="Create the binary distribution"
-		depends="buildCode,zipJavadocs,zipSources,buildDeployableServerList">
-		<foreach target="copyDocs" param="toDir" list="${deployableServerList}"
-			delimiter="|" inheritall="true"/>
-		<foreach target="zipDeployableServer" param="srcDir" list="${deployableServerList}"
-			delimiter="|" inheritall="true"/>
-	</target>
-
-	<!-- Copy docs to the ${toDir} directory.  Expects parameter toDir. -->
-	<target name="copyDocs">
-		<copy todir="${toDir}" file="${kbRootDir}/doc/UserGuide/ParliamentUserGuide.pdf"/>
-		<copy todir="${toDir}/License">
-			<fileset dir="${basedir}/License"/>
-		</copy>
-		<copy tofile="${toDir}/License/Parliament-License.md" file="${basedir}/LICENSE.md"/>
-	</target>
-
-	<!-- Copy docs to the ${srcDir} directory.  Expects parameter srcDir. -->
-	<target name="zipDeployableServer">
-		<basename property="zipName" file="${srcDir}"/>
-		<delete file="${distroDir}/${zipName}.zip"/>
-		<mkdir dir="${distroDir}"/>
-		<zip
-			basedir="${srcDir}"
-			destfile="${distroDir}/${zipName}.zip"
-			encoding="UTF8"
-			level="9"
-			compress="true"
-			whenempty="create"/>
-	</target>
-
 	<target name="reportAll" depends="init" description="Runs ivy reports on all projects">
 		<ant dir="${basedir}/Parliament" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JosekiParliamentClient" target="report" inheritAll="false"/>
@@ -137,6 +105,30 @@
 		<ant dir="${basedir}/Sesame/LuceneSail" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/SameAsSail" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="report" inheritAll="false"/>
+	</target>
+
+	<target name="runTests" depends="createDistro" description="Runs extended unit and integration tests">
+		<ant dir="${basedir}/jena/JosekiParliamentClient" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/jena/JenaGraph" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/jena/JosekiExtensions" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/jena/NumericIndex" target="runTests" inheritAll="false"/>
+		<!-- ant dir="${basedir}/jena/SpatialIndexProcessor" target="runTests" inheritAll="false"/ -->
+		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="runTests" inheritAll="false"/>
+		<!--
+		<ant dir="${basedir}/Sesame/CSameAsSail" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/ParliamentSail" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/LuceneSail" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/SameAsSail" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="runTests" inheritAll="false"/>
+		-->
+	</target>
+
+	<target name="createDistro" description="Create the binary distribution"
+		depends="buildCode,compileJavadoc,buildDeployableServerList">
+		<foreach target="copyDocs" param="toDir" list="${deployableServerList}"
+			delimiter="|" inheritall="true"/>
+		<foreach target="zipDeployableServer" param="srcDir" list="${deployableServerList}"
+			delimiter="|" inheritall="true"/>
 	</target>
 
 	<target name="buildCode" depends="init">
@@ -154,20 +146,30 @@
 		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="jar" inheritAll="false"/>
 	</target>
 
-	<target name="runTests" depends="createDistro" description="Runs extended unit and integration tests">
-		<ant dir="${basedir}/jena/JosekiParliamentClient" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/jena/JenaGraph" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/jena/JosekiExtensions" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/jena/NumericIndex" target="runTests" inheritAll="false"/>
-		<!-- ant dir="${basedir}/jena/SpatialIndexProcessor" target="runTests" inheritAll="false"/ -->
-		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="runTests" inheritAll="false"/>
-		<!--
-		<ant dir="${basedir}/Sesame/CSameAsSail" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/ParliamentSail" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/LuceneSail" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/SameAsSail" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="runTests" inheritAll="false"/>
-		-->
+	<!-- Copy docs to the ${toDir} directory.  Expects parameter toDir. -->
+	<target name="copyDocs">
+		<copy todir="${toDir}" file="${kbRootDir}/doc/UserGuide/ParliamentUserGuide.pdf"/>
+		<copy todir="${toDir}/License">
+			<fileset dir="${basedir}/License"/>
+		</copy>
+		<copy tofile="${toDir}/License/Parliament-License.md" file="${basedir}/LICENSE.md"/>
+		<copy todir="${toDir}/javadoc">
+			<fileset dir="${javadocDir}"/>
+		</copy>
+	</target>
+
+	<!-- Copy docs to the ${srcDir} directory.  Expects parameter srcDir. -->
+	<target name="zipDeployableServer">
+		<basename property="zipName" file="${srcDir}"/>
+		<delete file="${distroDir}/${zipName}.zip"/>
+		<mkdir dir="${distroDir}"/>
+		<zip
+			basedir="${srcDir}"
+			destfile="${distroDir}/${zipName}.zip"
+			encoding="UTF8"
+			level="9"
+			compress="true"
+			whenempty="create"/>
 	</target>
 
 	<target name="generateTestReport" depends="testSummaryUpToDateCheck"
@@ -212,7 +214,13 @@
 		<include name="Sesame/Swrl2Sesame/src/**/*.java"/ -->
 	</fileset>
 
-	<target name="javadoc" depends="init">
+	<target name="javadocUpToDateCheck">
+		<uptodate property="javadocUpToDate" targetfile="${javadocCompleteFlag}">
+			<srcfiles refid="javadocSrcPath"/>
+		</uptodate>
+	</target>
+
+	<target name="compileJavadoc" depends="init,javadocUpToDateCheck" unless="javadocUpToDate" description="Builds the javadocs">
 		<delete dir="${javadocDir}"/>
 		<mkdir dir="${javadocDir}"/>
 		<javadoc
@@ -255,43 +263,13 @@
 			<arg value="-quiet"/>
 			<arg value="-Xdoclint:all,-missing"/>
 		</javadoc>
-	</target>
-
-	<target name="javadocUpToDateCheck">
-		<uptodate property="javadocUpToDate" targetfile="${javadocZip}">
-			<srcfiles refid="javadocSrcPath"/>
-		</uptodate>
-	</target>
-
-	<target name="zipJavadocs" depends="javadocUpToDateCheck,javadoc" unless="javadocUpToDate"
-		description="Builds the javadocs">
-		<delete file="${javadocZip}"/>
-		<mkdir dir="${distroDir}"/>
-		<zip
-			basedir="${javadocDir}"
-			destfile="${javadocZip}"
-			encoding="UTF8"
-			level="9"
-			compress="true"
-			whenempty="create"/>
+		<touch file="${javadocCompleteFlag}"/>
 	</target>
 
 	<target name="init">
 		<echo message="Using JDK ${ant.java.version}"/>
 		<mkdir dir="${artifactsDir}"/>
 		<mkdir dir="${reportsDir}"/>
-	</target>
-
-	<target name="zipSources">
-		<delete file="${srcZip}"/>
-		<mkdir dir="${distroDir}"/>
-		<zip destfile="${srcZip}" encoding="UTF8" compress="true" level="9" duplicate="fail">
-			<zipfileset dir="${basedir}/Parliament" prefix="Parliament"
-				includes="**/*.java **/*.h **/*.cpp"/>
-			<zipfileset dir="${parliamentDependenciesDir}/bdb" prefix="bdb" includes="**/*.h"/>
-			<fileset dir="${basedir}/jena" includes="**/*.java"/>
-			<!-- fileset dir="${basedir}/Sesame" includes="**/*.java"/ -->
-		</zip>
 	</target>
 
 	<target name="continuous-build" depends="svn-update, createDistro"
