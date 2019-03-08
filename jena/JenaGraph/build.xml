@@ -93,11 +93,9 @@
 			</classpath>
 			<formatter type="xml"/>
 			<batchtest fork="yes" todir="${reportsDir}/${ant.project.name}">
-				<fileset dir="${basedir}/test" includes="**/*Test.java"
-					excludes="**/ComplexUnionGraphTest.java"/>
-				<!--fileset dir="${basedir}/test" includes="**/IndexExecutionTest.java"/-->
+				<fileset dir="${basedir}/test" includes="**/*Test.java"/>
 				<!--fileset dir="${basedir}/test" includes="**/KbOpExecutorDAWGTest.java"/-->
-				<!--fileset dir="${basedir}/test" includes="**/KbUnionGraphTest.java"/-->
+				<!--fileset dir="${basedir}/test" includes="**/ComplexUnionGraphTest.java"/-->
 			</batchtest>
 		</junit>
 	</target>

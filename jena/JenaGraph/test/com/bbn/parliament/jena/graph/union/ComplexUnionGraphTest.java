@@ -38,9 +38,10 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 public class ComplexUnionGraphTest {
 	private static final String ONT_RSRC = "univ-bench.owl";
 	private static final File INPUT_DATA_FILE = new File(
-		System.getProperty("test.data.path"), "gendata-80.zip");
+		System.getProperty("test.data.path"), "univ-bench-03.zip");
 	private static final File KB_DATA_DIR = new File("./union-test-kb-data");
 
+	@SuppressWarnings("unused")
 	private static final String QUERY1 = "" +
 		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
 		"PREFIX ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> " +
@@ -62,6 +63,7 @@ public class ComplexUnionGraphTest {
 		"		ub:emailAddress ?y2 ; " +
 		"		ub:telephone ?y3 . " +
 		"}";
+	@SuppressWarnings("unused")
 	private static final String QUERY3 = "" +
 		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
 		"PREFIX ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> " +
@@ -80,13 +82,18 @@ public class ComplexUnionGraphTest {
 		"	?x a ub:GraduateStudent ; " +
 		"		ub:name ?y . " +
 		"}";
-	private static final String[] QUERYS = { QUERY1, QUERY2, QUERY3, QUERY4 };
+	private static final String[] QUERYS = {
+		//QUERY1,
+		QUERY2,
+		//QUERY3,
+		QUERY4
+	};
 
 	private static final Logger LOG = LoggerFactory.getLogger(ComplexUnionGraphTest.class);
 
 	@SuppressWarnings("static-method")
 	@Test
-	public void testCreateUnionGraph() throws IOException {
+	public void testComplexUnionGraph() throws IOException {
 		try (
 			KbGraph bigGraph = createGraph(KB_DATA_DIR, "big");
 			KbGraph graph0 = createGraph(KB_DATA_DIR, "0");
@@ -134,8 +141,13 @@ public class ComplexUnionGraphTest {
 		File dir = new File(rootDir, relativeDirectory);
 		dir.mkdirs();
 		KbConfig config = new KbConfig();
+		KbConfig defaultConfig = new KbConfig();
 		config.readFromFile();
 		config.m_kbDirectoryPath = dir.getPath();
+		config.m_initialRsrcCapacity = defaultConfig.m_initialRsrcCapacity;
+		config.m_initialStmtCapacity = defaultConfig.m_initialStmtCapacity;
+		config.m_rsrcGrowthIncrement = defaultConfig.m_rsrcGrowthIncrement;
+		config.m_stmtGrowthIncrement = defaultConfig.m_stmtGrowthIncrement;
 		KbInstance.deleteKb(config, null);
 		return new KbGraph(config, relativeDirectory, OptimizationMethod.DefaultOptimization);
 	}
@@ -155,6 +167,7 @@ public class ComplexUnionGraphTest {
 
 	private static void loadUniversityData(Model m1, Model m2, int univNum) throws IOException {
 		LOG.info("Loading university #{}:", univNum);
+		long start = System.currentTimeMillis();
 		Pattern pattern = Pattern.compile(
 			String.format("^.*/University%1$d_.*$", univNum), Pattern.CASE_INSENSITIVE);
 		try (ZipFile zipFile = new ZipFile(INPUT_DATA_FILE)) {
@@ -164,15 +177,22 @@ public class ComplexUnionGraphTest {
 				if (!zipEntry.isDirectory() && pattern.matcher(zipEntry.getName()).matches()) {
 					Model tmpModel = ModelFactory.createDefaultModel();
 					RDFFormat rdfFmt = RDFFormat.parseFilename(zipEntry.getName());
+					long parseStart = System.currentTimeMillis();
 					try (InputStream strm = zipFile.getInputStream(zipEntry)) {
 						tmpModel.read(strm, null, rdfFmt.toString());
 					}
+					long parseDuration = System.currentTimeMillis() - parseStart;
+					long addStart = System.currentTimeMillis();
 					m1.add(tmpModel);
 					m2.add(tmpModel);
-					LOG.info("   Loaded {} statements from file '{}'", tmpModel.size(), zipEntry.getName());
+					long addDuration = System.currentTimeMillis() - addStart;
+					LOG.info("   Loaded {} statements from file '{}' in {} ms, added in {} ms",
+						tmpModel.size(), zipEntry.getName(), parseDuration, addDuration);
 				}
 			}
 		}
+		long duration = System.currentTimeMillis() - start;
+		LOG.info("Loaded university #{} in {} ms", univNum, duration);
 	}
 
 	private static long timeCount(String modelName, String query, Model model) {
