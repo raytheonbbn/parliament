@@ -1,32 +1,20 @@
-Version 2.7.12 (?, revision ?):
+Version 2.7.12 (?):
 
-* Moved to GitHub
+----------------------   Important -- Please Read !!!   -----------------------
+---                                                                         ---
+---  The file format of version 2.7.12 is not backwards compatible with     ---
+---  older versions.  To upgrade the data stored in a prior release of      ---
+---  Parliament, please follow the procedure in Section 2.1.2, "Upgrading   ---
+---  an Existing Installation", in the Parliament User Guide.  This can be  ---
+---  found in your Parliament download, and it is also available here:      ---
+---                                                                         ---
+---  https://github.com/SemWebCentral/parliament/tree/master/doc/UserGuide  ---
+---                                                                         ---
+-------------------------------------------------------------------------------
 
-* Refactored ParliamentConfig.txt into two configuration files, ParliamentKbConfig.txt
-  and ParliamentLogConfig.txt.  The latter configures Parliament's native code logging,
-  and the latter configures everything else.  (The reason: Logging is configured at
-  static initialization time, but the ParliamentConfig.txt file was not specified until
-  later, causing some very messy code.)
-
-* Updated to Boost 1.69.0 and MSVC 14.1 (Visual Studio 2017, 15.9.7)
-
-* Updated C++ code to use Boost.FileSystem and the Win32 wide character (UTF-16) API
-
-* Numerous updates to C++ code to modernize towards C++14
-
-* Fixed a rule engine bug, in which trigger lists were updated from within a loop over
-  those lists' contents
-
-* Fixed a rule engine bug that caused a runaway recursion in rare circumstances
+* Moved Parliament from Subversion-based SemWebCentral to GitHub
 
 * Merged into the trunk the SWRL rules engine created by Carl Andersen and Doug Reid
-
-* Removed the old-style binary zip file from the build infrastructure and documentation,
-  and renamed the "quick start" binaries to indicate their status as the new standard.
-  Also added javadoc and source distribution files.
-
-* Fixed a bug that prevented the Admin web page from showing running queries due to a
-  JSON parse error
 
 * Added the script 'InstallService.sh' for Linux builds.  On systemd-based Linux
   distributions (including CentOS and Ubuntu), this will install Parliament as a daemon
@@ -35,19 +23,43 @@ Version 2.7.12 (?, revision ?):
   other variants of Linux and to UNIX, but this is a good start that will cover our most
   important use cases.
 
-* Added two configuration properties to ParliamentKbConfig.txt to cause long-running
-  queries to time out
-
-* Fixed a few bugs in the temporal index implementation and unit tests
-
-* Fixed a bug that increased the likelihood that an ungraceful shutdown would corrupt
-  the data files
-
-* Changed the default KB directory from "." (the current working directory) to "kb-data"
+* Long-running queries will now time out.  Two new configuration properties in
+  ParliamentKbConfig.txt, TimeoutDuration and TimeoutUnit, control this behavior.
 
 * Added configuration settings that enable linear growth of Parliament's resource and
   statement tables.  The old behavior (geometric growth) is still available, but
   disabled by default.
+
+* Refactored ParliamentConfig.txt into two configuration files, ParliamentKbConfig.txt
+  and ParliamentLogConfig.txt.  The latter configures Parliament's native code logging,
+  and the latter configures everything else.  (The reason: Logging is configured at
+  static initialization time, but the ParliamentConfig.txt file was not specified until
+  later, forcing messy initialization code.)
+
+* Changed the default KB directory from "." (the current working directory) to "kb-data"
+
+* Removed the old-style binary zip file from the build infrastructure and documentation,
+  and renamed the "quick start" binaries to indicate their status as the new standard.
+  Also added javadocs.
+
+* Fixed a bug that increased the likelihood that an ungraceful shutdown would corrupt
+  the data files
+
+* Fixed a rule engine bug that caused a runaway recursion in rare circumstances
+
+* Fixed a rule engine bug, in which trigger lists were updated from within a loop over
+  those lists' contents
+
+* Fixed a bug that prevented the Admin web page from showing running queries due to a
+  JSON parse error
+
+* Fixed a few bugs in the temporal index implementation and unit tests
+
+* Updated C++ code to use Boost.FileSystem and the Win32 wide character (UTF-16) API
+
+* Numerous updates to C++ code to modernize towards C++14
+
+* Updated to Boost 1.69.0 and MSVC 14.1 (Visual Studio 2017, 15.9.7)
 
 
 
@@ -55,38 +67,12 @@ Version 2.7.12 (?, revision ?):
 
 Version 2.7.11 (7/17/2017, revision 751):
 
+* Added logging to the native code layer.
+
 * Changed the default settings so that the inference rules for functional and
   inverse functional properties are disabled.  This is because these rules
   result in owl:sameAs statements, which Parliament does not act upon.  These
   rules can be reenabled via the ParliamentConfig.txt configuration file.
-
-* Added logging to the native code layer.
-
-* Updated to Berkeley DB Java Edition version 5.0.73.
-
-* Updated to Microsoft Visual Studio 2013 Update 5 and 2015 Update 3.
-
-* Decreased the size of the Windows binary packages by including only the Microsoft
-  Visual C++ redistributable installers required by each one.
-
-* Fixed a RemoteModel bug, in which the deleteStatements() methods ignored the
-  named graph argument.
-
-* Fixed the Jetty configuration to set a temporary directory local to the server
-  directory.  This ensures that Jetty does not use the system temp location, which
-  causes problems on managed servers that auto-clear their tmp directory on a
-  scheduled basis.  Also fixed the startup code to ensure the tmp directory exists
-  before Jetty needs it.
-
-* Fixed a bug in the startup batch files for Windows.  In particular, this bug
-  caused the InstallParliamentService.bat script to fail.
-
-* Added support for media types to the RDFFormat enum.
-
-* Removed the need for the JNI_HEADERS environment variable on MacOS.
-
-* Eliminated commons-logging.jar from the distribution so that slf4j can reliably
-  intercept commons logging and reroute it into the Parliament log file.
 
 * Deprecated the obsolete keepDupStmtIdx and stmtToIdFileName settings in the
   configuration file.  These settings are now ignored.  If the setting
@@ -96,8 +82,34 @@ Version 2.7.11 (7/17/2017, revision 751):
   configuration file.  If your configuration has keepDupStmtIdx turned off,
   simply these two settings from your configuration file.
 
+* Decreased the size of the Windows binary packages by including only the Microsoft
+  Visual C++ redistributable installers required by each one.
+
+* Removed the need for the JNI_HEADERS environment variable on MacOS.
+
+* Eliminated commons-logging.jar from the distribution so that slf4j can reliably
+  intercept commons logging and reroute it into the Parliament log file.
+
+* Added support for media types to the RDFFormat enum.
+
+* Fixed the Jetty configuration to set a temporary directory local to the server
+  directory.  This ensures that Jetty does not use the system temp location, which
+  causes problems on managed servers that auto-clear their tmp directory on a
+  scheduled basis.  Also fixed the startup code to ensure the tmp directory exists
+  before Jetty needs it.
+
 * Fixed the native code's N-Triples export, added tests for it, and exposed it
   to the Java code via the KbGraph class.
+
+* Fixed a RemoteModel bug, in which the deleteStatements() methods ignored the
+  named graph argument.
+
+* Fixed a bug in the startup batch files for Windows.  In particular, this bug
+  caused the InstallParliamentService.bat script to fail.
+
+* Updated to Berkeley DB Java Edition version 5.0.73.
+
+* Updated to Microsoft Visual Studio 2013 Update 5 and 2015 Update 3.
 
 * Made numerous enhancements to the C++ code to begin the migration to C++11.
 
@@ -107,18 +119,18 @@ Version 2.7.11 (7/17/2017, revision 751):
 
 Version 2.7.10 (1/6/2016, revision 709):
 
-======================   Important -- Please Read !!!   =====================
-===                                                                       ===
-===  The file format of version 2.7.10 is not backwards compatible with   ===
-===  older versions.  To upgrade the data stored in a prior release of    ===
-===  Parliament, please follow the procedure in Section 2.1.2,            ===
-===  "Upgrading an Existing Installation", in the Parliament User Guide.  ===
-===  This can be found in your Parliament download, and it is also        ===
-===  available here:                                                      ===
-===                                                                       ===
-===     http://parliament.semwebcentral.org/ParliamentUserGuide.pdf       ===
-===                                                                       ===
-=============================================================================
+----------------------   Important -- Please Read !!!   ---------------------
+---                                                                       ---
+---  The file format of version 2.7.10 is not backwards compatible with   ---
+---  older versions.  To upgrade the data stored in a prior release of    ---
+---  Parliament, please follow the procedure in Section 2.1.2,            ---
+---  "Upgrading an Existing Installation", in the Parliament User Guide.  ---
+---  This can be found in your Parliament download, and it is also        ---
+---  available here:                                                      ---
+---                                                                       ---
+---     http://parliament.semwebcentral.org/ParliamentUserGuide.pdf       ---
+---                                                                       ---
+-----------------------------------------------------------------------------
 
 Parliament 2.7.10 change list:
 

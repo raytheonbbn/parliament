@@ -237,6 +237,7 @@
 			charset="UTF-8"
 			docencoding="UTF-8"
 			verbose="false"
+			additionalparam="-Xdoclint:all"
 			noqualifier="java.lang:java.util:java.io"
 			useexternalfile="yes">
 			<bottom>

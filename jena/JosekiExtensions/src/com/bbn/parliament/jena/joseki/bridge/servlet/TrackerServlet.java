@@ -17,7 +17,7 @@ import com.bbn.parliament.jena.joseki.bridge.tracker.Tracker;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TrackerServlet extends HttpServlet {
-	private static final long serialVersionUID = -7345801993380970907L;
+	private static final long serialVersionUID = 1L;
 	private static final ObjectMapper MAPPER = new ObjectMapper();
 
 	@Override
@@ -51,9 +51,8 @@ public class TrackerServlet extends HttpServlet {
 		long id = Long.parseLong(trackerNumParam);
 		try {
 			Tracker.getInstance().cancel(id);
-		}
-		catch(TrackableException e) {
-			throw new ServletException(e);
+		} catch (TrackableException ex) {
+			throw new ServletException(ex);
 		}
 	}
 }
