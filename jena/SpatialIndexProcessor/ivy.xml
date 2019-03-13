@@ -29,7 +29,7 @@
 			conf="default->default"/>
 		<dependency org="org.apache.jena" name="jena-arq" rev="2.9.4"
 			conf="default->default"/>
-		<dependency org="org.postgresql" name="postgresql" rev="9.3-1103-jdbc3"
+		<dependency org="org.postgresql" name="postgresql" rev="9.4.1208"
 			conf="default->default"/>
 		<dependency org="org.slf4j" name="jcl-over-slf4j" rev="1.7.7"
 			conf="default->default"/>
