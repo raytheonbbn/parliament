@@ -294,7 +294,7 @@ const pmnt::RsrcChar* pmnt::KbInstance::rsrcIdToUri(ResourceId rsrcId) const
 
 	KbRsrc& rsrc = m_pi->m_rsrcTbl.getRecordAt(rsrcId);
 
-	if (!rsrc.isAnonymous() && !rsrc.testFlag(ResourceFlags::k_rsrcFlagStatementTag))
+	if (rsrc.isValid() && !rsrc.isAnonymous() && !rsrc.isStatementTag())
 	{
 		pResult = m_pi->m_uriTbl.getRecordAt(rsrc.m_uriOffset);
 	}
@@ -363,9 +363,9 @@ double pmnt::KbInstance::averageRsrcLength() const
 	ResourceId numRsrcs = rsrcCount();
 	for (ResourceId rsrcId = 0; rsrcId < numRsrcs; ++rsrcId)
 	{
-		if (isRsrcValid(rsrcId) && !isRsrcAnonymous(rsrcId))
+		const RsrcChar* pRsrcStr = rsrcIdToUri(rsrcId);
+		if (pRsrcStr != nullptr)
 		{
-			const RsrcChar* pRsrcStr = rsrcIdToUri(rsrcId);
 			size_t len = char_traits<RsrcChar>::length(pRsrcStr);
 			accumulatedLength += len;
 		}
@@ -1067,72 +1067,68 @@ void pmnt::KbInstance::dumpKbAsNTriples(ostream& strm,
 			|| (isDel && delStmtsAction == DeletedStmtsAction::include)
 			|| (isInf && infStmtsAction == InferredStmtsAction::include))
 		{
-			encodeRsrc(strm, stmt.getSubjectId(), charSet, EncodingType::IRI);
+			encodeRsrc(strm, stmt.getSubjectId(), charSet);
 			strm << ' ';
-			encodeRsrc(strm, stmt.getPredicateId(), charSet, EncodingType::IRI);
+			encodeRsrc(strm, stmt.getPredicateId(), charSet);
 			strm << ' ';
-			auto encType = isRsrcLiteral(stmt.getObjectId())
-				? EncodingType::LITERAL : EncodingType::IRI;
-			encodeRsrc(strm, stmt.getObjectId(), charSet, encType);
+			encodeRsrc(strm, stmt.getObjectId(), charSet);
 			strm << " ." << endl;
 		}
 	}
 }
 
 void pmnt::KbInstance::encodeRsrc(ostream& strm, ResourceId rsrcId,
-	EncodingCharSet charSet, EncodingType encType) const
+	EncodingCharSet charSet) const
 {
-	if (rsrcId != k_nullRsrcId)
+	if (rsrcId == k_nullRsrcId)
 	{
-		if (encType == EncodingType::IRI)
+		// Do nothing
+	}
+	else if (isRsrcLiteral(rsrcId))
+	{
+		auto pRsrc = rsrcIdToUri(rsrcId);
+		RsrcString lexicalForm;
+		RsrcString datatypeUri;
+		RsrcString langTag;
+		::std::tie(lexicalForm, datatypeUri, langTag) = LiteralUtils::parseLiteral(pRsrc);
+		if (datatypeUri.empty() && langTag.empty())
 		{
-			if (isRsrcAnonymous(rsrcId))
-			{
-				strm << "_:bn" << hex << setfill('0') << setw(8) << rsrcId
-					<< setfill(' ') << dec;
-			}
-			else
-			{
-				auto pRsrc = rsrcIdToUri(rsrcId);
-				strm << '<';
-				encodeUnicodeString(strm, pRsrc, charSet, encType);
-				strm << '>';
-			}
+			strm << '"';
+			encodeUnicodeString(strm, lexicalForm.c_str(), charSet);
+			strm << '"';
+		}
+		else if (langTag.empty())
+		{
+			strm << '"';
+			encodeUnicodeString(strm, lexicalForm.c_str(), charSet);
+			strm << "\"^^<";
+			encodeUnicodeString(strm, datatypeUri.c_str(), charSet);
+			strm << '>';
 		}
 		else
 		{
-			auto pRsrc = rsrcIdToUri(rsrcId);
-			RsrcString lexicalForm;
-			RsrcString datatypeUri;
-			RsrcString langTag;
-			::std::tie(lexicalForm, datatypeUri, langTag) = LiteralUtils::parseLiteral(pRsrc);
-			if (datatypeUri.empty() && langTag.empty())
-			{
-				strm << '"';
-				encodeUnicodeString(strm, lexicalForm.c_str(), charSet, encType);
-				strm << '"';
-			}
-			else if (langTag.empty())
-			{
-				strm << '"';
-				encodeUnicodeString(strm, lexicalForm.c_str(), charSet, encType);
-				strm << "\"^^<";
-				encodeUnicodeString(strm, datatypeUri.c_str(), charSet, encType);
-				strm << '>';
-			}
-			else
-			{
-				strm << '"';
-				encodeUnicodeString(strm, lexicalForm.c_str(), charSet, encType);
-				strm << "\"@";
-				encodeUnicodeString(strm, langTag.c_str(), charSet, encType);
-			}
+			strm << '"';
+			encodeUnicodeString(strm, lexicalForm.c_str(), charSet);
+			strm << "\"@";
+			encodeUnicodeString(strm, langTag.c_str(), charSet);
 		}
+	}
+	else if (isRsrcAnonymous(rsrcId))
+	{
+		strm << "_:bn" << hex << setfill('0') << setw(8) << rsrcId
+			<< setfill(' ') << dec;
+	}
+	else
+	{
+		auto pRsrc = rsrcIdToUri(rsrcId);
+		strm << '<';
+		encodeUnicodeString(strm, pRsrc, charSet);
+		strm << '>';
 	}
 }
 
 void pmnt::KbInstance::encodeUnicodeString(ostream& strm, const RsrcChar* pRsrc,
-	EncodingCharSet charSet, EncodingType encType)
+	EncodingCharSet charSet)
 {
 	using UnicodeIter = UnicodeIterator<RsrcChar, const RsrcChar*>;
 

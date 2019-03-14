@@ -165,8 +165,6 @@ public:
 #endif
 
 private:
-	enum class EncodingType { LITERAL, IRI };
-
 	static double computeExcessCapacity(size_t capacity, size_t recCount);
 	ResourceId createStmtTagRsrc(StatementId reifiedStmtId);
 	KbRsrc* rsrcIdToRsrc(ResourceId rsrcId) const;
@@ -188,9 +186,9 @@ private:
 	bool isStartOfRsrcStr(size_t rsrcOffset) const;
 
 	void encodeRsrc(::std::ostream& strm, ResourceId rsrcId,
-		EncodingCharSet charSet, EncodingType encType) const;
+		EncodingCharSet charSet) const;
 	static void encodeUnicodeString(::std::ostream& strm, const RsrcChar* pRsrc,
-		EncodingCharSet charSet, EncodingType encType);
+		EncodingCharSet charSet);
 
 	struct Impl;
 	::std::unique_ptr<Impl> m_pi;	// pointer to implementation

@@ -359,7 +359,6 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 		return isClosed;
 	}
 
-
 	public Node getResourceNodeForId(long resourceId) {
 		String representation = kb.rsrcIdToUri(resourceId);
 		Node result = null;

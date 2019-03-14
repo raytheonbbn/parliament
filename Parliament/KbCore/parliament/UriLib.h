@@ -49,11 +49,16 @@ public:
 	const LazyRsrc m_rdfsSubClassOf;
 	const LazyRsrc m_rdfsSubPropertyOf;
 	const LazyRsrc m_rdfsClass;
+	const LazyRsrc m_rdfsComment;
 	const LazyRsrc m_rdfsResource;
 	const LazyRsrc m_rdfsDomain;
+	const LazyRsrc m_rdfsLabel;
 	const LazyRsrc m_rdfsRange;
 	const LazyRsrc m_rdfsDatatype;
+	const LazyRsrc m_owlCard;
 	const LazyRsrc m_owlClass;
+	const LazyRsrc m_owlMaxCard;
+	const LazyRsrc m_owlMinCard;
 	const LazyRsrc m_owlThing;
 	const LazyRsrc m_owlInverseOf;
 	const LazyRsrc m_owlObjectProp;

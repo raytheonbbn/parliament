@@ -59,6 +59,8 @@ struct KbRsrc
 		{ return testFlag(ResourceFlags::k_rsrcFlagLiteral); }
 	bool isAnonymous() const noexcept
 		{ return testFlag(ResourceFlags::k_rsrcFlagAnonymous); }
+	bool isStatementTag() const noexcept
+		{ return testFlag(ResourceFlags::k_rsrcFlagStatementTag); }
 };
 
 PARLIAMENT_NAMESPACE_END

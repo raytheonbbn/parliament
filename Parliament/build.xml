@@ -227,6 +227,16 @@
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
 			<param name="callingBinary" value="ParliamentAdmin"/>
+			<param name="calledBinary" value="libboost_filesystem${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="ParliamentAdmin"/>
+			<param name="calledBinary" value="libboost_system${boostLibSuffix}"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinary" value="ParliamentAdmin"/>
 			<param name="calledBinary" value="libParliament.dylib"/>
 		</antcall>
 

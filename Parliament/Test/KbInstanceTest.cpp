@@ -5,19 +5,25 @@
 // All rights reserved.
 
 #include <boost/test/unit_test.hpp>
+#include <boost/test/data/monomorphic.hpp>
+#include <boost/test/data/test_case.hpp>
 #include <cstdio>
 #include <exception>
 #include <limits>
 #include <set>
+#include <sstream>
 #include <string>
-#include "parliament/KbInstance.h"
+#include "parliament/ArrayLength.h"
 #include "parliament/CharacterLiteral.h"
 #include "parliament/KbConfig.h"
+#include "parliament/KbInstance.h"
 #include "parliament/StmtIterator.h"
 #include "parliament/UnicodeIterator.h"
 #include "parliament/UriLib.h"
 #include "parliament/Util.h"
 #include "TestUtils.h"
+
+namespace bdata = ::boost::unit_test::data;
 
 using namespace ::bbn::parliament;
 using ::std::exception;
@@ -36,10 +42,25 @@ static const RsrcString	k_dickUri	= convertToRsrcChar("http://example.org/#Dick"
 static const RsrcString	k_janeUri	= convertToRsrcChar("http://example.org/#Jane");
 static const RsrcString	k_spotUri	= convertToRsrcChar("http://example.org/#Spot");
 static const RsrcString	k_puffUri	= convertToRsrcChar("http://example.org/#Puff");
+static const RsrcString	k_mikeUri	= convertToRsrcChar("http://example.org/#Mike");
+static const RsrcString	k_cNameUri	= convertToRsrcChar("http://example.org/#canonicalName");
 static const RsrcString	k_plainText	= convertToRsrcChar("\"Mike Dean\"");
 static const RsrcString	k_typedText	= convertToRsrcChar("\"Mike Dean\"^^http://www.w3.org/2001/XMLSchema#string");
 static const RsrcString	k_langText1	= convertToRsrcChar("\"Mike Dean\"@en-us");
 static const RsrcString	k_langText2	= convertToRsrcChar("\"Mike Dean\"@en-US");
+static const RsrcString	k_integer	= convertToRsrcChar("\"1\"^^http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
+
+static const char*const k_expectedDumpLines[] =
+{
+	"<http://example.org/#Mike> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/#Human> .",
+	"<http://example.org/#Mike> <http://www.w3.org/2000/01/rdf-schema#label> \"Mike Dean\" .",
+	"<http://example.org/#Mike> <http://www.w3.org/2000/01/rdf-schema#label> \"Mike Dean\"@en-us .",
+	"<http://example.org/#Human> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .",
+	"<http://example.org/#Human> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:bn0000001d .",
+	"_:bn0000001d <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .",
+	"_:bn0000001d <http://www.w3.org/2002/07/owl#onProperty> <http://example.org/#canonicalName> .",
+	"_:bn0000001d <http://www.w3.org/2002/07/owl#maxCardinality> \"1\"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .",
+};
 
 static KbConfig createTestConfig(bool withInference)
 {
@@ -51,6 +72,18 @@ static KbConfig createTestConfig(bool withInference)
 		config.disableAllRules();
 	}
 	return config;
+}
+
+template<typename T>
+static void checkSetsEqual(const ::std::set<T>& expectedSet, const ::std::set<T>& actualSet)
+{
+	BOOST_CHECK_EQUAL(expectedSet.size(), actualSet.size());
+	for (auto it1 = cBegin(expectedSet), it2 = cBegin(actualSet);
+		it1 != cEnd(expectedSet) && it2 != cEnd(actualSet);
+		++it1, ++it2)
+	{
+		BOOST_CHECK_EQUAL(*it1, *it2);
+	}
 }
 
 static void findInstances(KbInstance& kb, ResourceId classRsrcId,
@@ -66,13 +99,7 @@ static void findInstances(KbInstance& kb, ResourceId classRsrcId,
 		actualResults.insert(it.statement().getSubjectId());
 	}
 
-	BOOST_CHECK_EQUAL(actualResults.size(), expectedResults.size());
-	for (auto it1 = cBegin(actualResults), it2 = cBegin(expectedResults);
-		it1 != cEnd(actualResults) && it2 != cEnd(expectedResults);
-		++it1, ++it2)
-	{
-		BOOST_CHECK_EQUAL(*it1, *it2);
-	}
+	checkSetsEqual(expectedResults, actualResults);
 }
 
 static void checkStmtAndRsrcCounts(const KbInstance& kb)
@@ -170,7 +197,31 @@ static void runOpenTest(KbConfig& config)
 	checkStmtAndRsrcCounts(kb);
 }
 
-static void runRsrcMethodTests(bool normalizeTypedStringLiterals)
+BOOST_AUTO_TEST_SUITE(KbInstanceTestSuite)
+
+BOOST_AUTO_TEST_CASE(testByQuickOverview)
+{
+	KbConfig config = createTestConfig(true);
+	KbDeleter deleter(config);
+
+	runCreateTest(config);
+	runOpenTest(config);
+}
+
+BOOST_AUTO_TEST_CASE(testKbDeletion)
+{
+	KbConfig config = createTestConfig(false);
+}
+
+BOOST_AUTO_TEST_CASE(testDisposition)
+{
+	KbConfig config = createTestConfig(false);
+}
+
+BOOST_DATA_TEST_CASE(
+	testRsrcMethods,
+	bdata::make({ true, false }),
+	normalizeTypedStringLiterals)
 {
 	KbConfig config = createTestConfig(false);
 	config.normalizeTypedStringLiterals(normalizeTypedStringLiterals);
@@ -269,37 +320,76 @@ static void runRsrcMethodTests(bool normalizeTypedStringLiterals)
 	}
 }
 
-BOOST_AUTO_TEST_SUITE(KbInstanceTestSuite)
-
-BOOST_AUTO_TEST_CASE(testByQuickOverview)
-{
-	KbConfig config = createTestConfig(true);
-	KbDeleter deleter(config);
-
-	runCreateTest(config);
-	runOpenTest(config);
-}
-
-BOOST_AUTO_TEST_CASE(testKbDeletion)
-{
-	KbConfig config = createTestConfig(false);
-}
-
-BOOST_AUTO_TEST_CASE(testDisposition)
-{
-	KbConfig config = createTestConfig(false);
-}
-
-BOOST_AUTO_TEST_CASE(testRsrcMethods)
-{
-	runRsrcMethodTests(false);
-	runRsrcMethodTests(true);
-}
-
 BOOST_AUTO_TEST_CASE(testDumpKbAsNTriples)
 {
-	runRsrcMethodTests(false);
-	runRsrcMethodTests(true);
+	auto config{createTestConfig(true)};
+	KbDeleter deleter{config};
+	KbInstance kb{config};
+
+	auto rdfTypeRsrcId{			kb.uriLib().m_rdfType.id()};
+	auto rdfsLabelRsrcId{		kb.uriLib().m_rdfsLabel.id()};
+	auto rdfsSubClassOfRsrcId{	kb.uriLib().m_rdfsSubClassOf.id()};
+	auto owlClassRsrcId{			kb.uriLib().m_owlClass.id()};
+	auto owlRestrictionRsrcId{	kb.uriLib().m_owlRestriction.id()};
+	auto owlOnPropRsrcId{		kb.uriLib().m_owlOnProp.id()};
+	auto owlMaxCardRsrcId{		kb.uriLib().m_owlMaxCard.id()};
+
+	auto humanRsrcId{				kb.uriToRsrcId(k_humanUri, false, true)};
+	auto restrictionRsrcId{		kb.createAnonymousRsrc()};
+	auto cNameRsrcId{				kb.uriToRsrcId(k_cNameUri, false, true)};
+	auto mikeRsrcId{				kb.uriToRsrcId(k_mikeUri, false, true)};
+
+	auto plainLit{					kb.uriToRsrcId(k_plainText, true, true)};
+	auto typedLit{					kb.uriToRsrcId(k_typedText, true, true)};
+	auto langLit{					kb.uriToRsrcId(k_langText1, true, true)};
+	auto intLit{					kb.uriToRsrcId(k_integer, true, true)};
+
+	kb.addStmt(mikeRsrcId, rdfTypeRsrcId, humanRsrcId, false);
+	kb.addStmt(mikeRsrcId, rdfsLabelRsrcId, plainLit, false);
+	kb.addStmt(mikeRsrcId, rdfsLabelRsrcId, typedLit, false);
+	kb.addStmt(mikeRsrcId, rdfsLabelRsrcId, langLit, false);
+
+	kb.addStmt(humanRsrcId, rdfTypeRsrcId, owlClassRsrcId, false);
+	kb.addStmt(humanRsrcId, rdfsSubClassOfRsrcId, restrictionRsrcId, false);
+	kb.addStmt(restrictionRsrcId, rdfTypeRsrcId, owlRestrictionRsrcId, false);
+	kb.addStmt(restrictionRsrcId, owlOnPropRsrcId, cNameRsrcId, false);
+	kb.addStmt(restrictionRsrcId, owlMaxCardRsrcId, intLit, false);
+
+	::std::ostringstream out;
+	kb.dumpKbAsNTriples(out, InferredStmtsAction::exclude, DeletedStmtsAction::exclude, EncodingCharSet::utf8);
+	out.flush();
+	auto dump{out.str()};
+
+	BOOST_TEST_MESSAGE(
+		"======= Output from dumpKbAsNTriples: =======\r\n"
+		<< dump <<
+		"=============================================");
+
+	::std::set<string> actualLineSet;
+	for (::std::istringstream in{dump}; !in.eof();)
+	{
+		if (!in)
+		{
+			throw ::std::runtime_error("IO error reading from data file");
+		}
+		else
+		{
+			string line;
+			::std::getline(in, line);
+			if (!line.empty())
+			{
+				actualLineSet.insert(line);
+			}
+		}
+	}
+
+	::std::set<string> expectedLineSet;
+	for (auto i = 0u; i < arrayLen(k_expectedDumpLines); ++i)
+	{
+		expectedLineSet.insert(k_expectedDumpLines[i]);
+	}
+
+	checkSetsEqual(expectedLineSet, actualLineSet);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
