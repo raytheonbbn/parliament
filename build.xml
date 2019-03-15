@@ -135,7 +135,7 @@
 	<target name="copyDocs">
 		<copy todir="${toDir}" file="${kbRootDir}/doc/UserGuide/ParliamentUserGuide.pdf"/>
 		<copy todir="${toDir}/License">
-			<fileset dir="${basedir}/License"/>
+			<fileset dir="${basedir}/License" includes="*.html,*.md,*.txt"/>
 		</copy>
 		<copy tofile="${toDir}/License/Parliament-License.md" file="${basedir}/LICENSE.md"/>
 		<copy todir="${toDir}/javadoc">
