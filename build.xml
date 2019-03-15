@@ -77,22 +77,7 @@
 		</delete>
 	</target>
 
-	<target name="resolveAll" description="Run ivy resolve on all projects">
-		<ant dir="${basedir}/jena/JenaGraph" target="resolve" inheritAll="false"/>
-		<ant dir="${basedir}/jena/JosekiExtensions" target="resolve" inheritAll="false"/>
-		<ant dir="${basedir}/jena/JosekiParliamentClient" target="resolve" inheritAll="false"/>
-		<ant dir="${basedir}/jena/NumericIndex" target="resolve" inheritAll="false"/>
-		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="resolve" inheritAll="false"/>
-		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="resolve" inheritAll="false"/>
-		<ant dir="${basedir}/Parliament" target="resolve" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/CSameAsSail" target="resolve" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/LuceneSail" target="resolve" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/ParliamentSail" target="resolve" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/SameAsSail" target="resolve" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="resolve" inheritAll="false"/>
-	</target>
-
-	<target name="reportAll" depends="init" description="Runs ivy reports on all projects">
+	<target name="reportAll" depends="init" description="Runs ivy reports (and resolve) on all projects">
 		<ant dir="${basedir}/Parliament" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JosekiParliamentClient" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JenaGraph" target="report" inheritAll="false"/>
@@ -100,8 +85,8 @@
 		<ant dir="${basedir}/jena/NumericIndex" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="report" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/CSameAsSail" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/ParliamentSail" target="report" inheritAll="false"/>
+		<ant dir="${basedir}/Sesame/CSameAsSail" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/LuceneSail" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/SameAsSail" target="report" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="report" inheritAll="false"/>

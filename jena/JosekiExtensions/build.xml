@@ -172,9 +172,24 @@
 					<fileset dir="${configDir}/windows" includes="*.bat"/>
 				</copy>
 			</then>
+			<elseif>
+				<os family="mac"/>
+				<then>
+					<copy todir="${deployableSvrDir}">
+						<fileset dir="${configDir}/unix">
+							<include name="*.sh"/>
+							<exclude name="InstallService.sh"/>
+						</fileset>
+					</copy>
+					<chmod file="${deployableSvrDir}/*.sh" perm="ugo+rx" verbose="true"/>
+				</then>
+			</elseif>
 			<else>
 				<copy todir="${deployableSvrDir}">
-					<fileset dir="${configDir}/unix" includes="*.sh,*.service"/>
+					<fileset dir="${configDir}/unix">
+						<include name="*.sh"/>
+						<include name="*.service"/>
+					</fileset>
 				</copy>
 				<chmod file="${deployableSvrDir}/*.sh" perm="ugo+rx" verbose="true"/>
 			</else>

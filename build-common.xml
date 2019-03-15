@@ -69,29 +69,6 @@
 		</filterchain>
 	</loadfile>
 
-	<!-- Compute the Parliament release platform name -->
-	<!-- The test for Ubuntu Linux below isn't specific enough.  How do we improve it? -->
-	<!--condition property="parliamentReleasePlatformName" value="Windows">
-		<os family="winnt"/>
-	</condition>
-	<condition property="parliamentReleasePlatformName" value="Macintosh">
-		<os family="mac"/>
-	</condition>
-	<condition property="parliamentReleasePlatformName" value="UbuntuLinux">
-		<and>
-			<os family="unix"/>
-			<not><os family="mac"/></not>
-		</and>
-	</condition>
-	<condition property="parliamentReleasePlatformName" value="UnknownPlatform">
-		<not><isset property="parliamentReleasePlatformName"/></not>
-	</condition-->
-
-	<!-- Get the default toolset for the Mac platform (used only during Mac builds) -->
-	<condition property="defaultMacToolset" value="darwin" else="clang">
-		<equals arg1="${env.BOOST_MAC_TOOLSET}" arg2="darwin"/>
-	</condition>
-
 	<!-- Load the appropriate properties file -->
 	<condition property="buildPropFile"
 			value="${kbRootDir}/build.properties"

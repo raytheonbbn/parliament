@@ -17,7 +17,7 @@
 		<condition property="genericToolset" value="msvc">
 			<os family="winnt"/>
 		</condition>
-		<condition property="genericToolset" value="${defaultMacToolset}">
+		<condition property="genericToolset" value="clang">
 			<os family="mac"/>
 		</condition>
 		<condition property="genericToolset" value="gcc">
@@ -528,10 +528,7 @@
 			<equals arg1="${addrModel}" arg2="universal"/>
 		</condition>
 		<condition property="ccValue" value="clang" else="">
-			<and>
-				<os family="mac"/>
-				<equals arg1="${defaultMacToolset}" arg2="clang"/>
-			</and>
+			<os family="mac"/>
 		</condition>
 
 		<chmod file="${untarPath}/src/native/unix/configure" perm="ugo+rx"
