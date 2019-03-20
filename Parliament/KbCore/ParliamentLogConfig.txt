@@ -23,7 +23,6 @@ logFileRotationTimePoint = 02:00:00
 
 # TRACE, DEBUG, INFO, WARN, ERROR
 logLevel                 = INFO
-#logChannelLevel          = Config=TRACE
 #logChannelLevel          = Exceptions=TRACE
 #logChannelLevel          = FileHandle=TRACE
 #logChannelLevel          = FileMapping=TRACE

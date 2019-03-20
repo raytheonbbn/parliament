@@ -6,7 +6,6 @@
 
 #include "parliament/Config.h"
 #include "parliament/Exceptions.h"
-#include "parliament/Log.h"
 #include "parliament/UnicodeIterator.h"
 #include "parliament/Util.h"
 #include "parliament/Windows.h"
@@ -31,8 +30,6 @@ using ::std::string;
 
 static constexpr const char*const k_trueBoolValues[] = { "true", "t", "yes", "y", "on", "1" };
 static constexpr const char*const k_falseBoolValues[] = { "false", "f", "no", "n", "off", "0" };
-
-static auto g_log(pmnt::log::getSource("Config"));
 
 
 
@@ -85,7 +82,7 @@ PARLIAMENT_NAMESPACE_END
 
 bfs::path pmnt::Config::getConfigFilePath(const TChar* pEnvVarName, const TChar* pDefaultConfigFileName)
 {
-	auto envVarValue = tGetEnvVar(pEnvVarName);
+	auto envVarValue{tGetEnvVar(pEnvVarName)};
 	if (!envVarValue.empty())
 	{
 		return envVarValue;
@@ -93,18 +90,12 @@ bfs::path pmnt::Config::getConfigFilePath(const TChar* pEnvVarName, const TChar*
 	else
 	{
 #if defined(PARLIAMENT_WINDOWS)
-		HMODULE hModule = getCurrentModuleHandle();
-		auto configPath = getModulePathName(hModule).parent_path();
+		auto hModule{getCurrentModuleHandle()};
+		auto configPath{getModulePathName(hModule).parent_path()};
 		configPath /= pDefaultConfigFileName;
 		if (exists(configPath) && is_regular_file(configPath))
 		{
 			return configPath;
-		}
-		else
-		{
-			PMNT_LOG(g_log, log::Level::debug) << "Computed config file path '"
-				<< pathAsUtf8(configPath) << "' does not exist or is not a regular file."
-				"  Defaulting to the current directory.";
 		}
 #endif
 

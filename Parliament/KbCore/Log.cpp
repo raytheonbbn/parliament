@@ -28,6 +28,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <iostream>
 #include <istream>
 #include <iterator>
 #include <map>
@@ -37,7 +38,6 @@ namespace ba = ::boost::algorithm;
 namespace bl = ::boost::log;
 namespace expr = ::boost::log::expressions;
 namespace keywd = ::boost::log::keywords;
-namespace pmnt = ::bbn::parliament;
 
 using ::boost::format;
 using ::boost::lexical_cast;
@@ -45,26 +45,21 @@ using ::boost::make_iterator_range;
 using ::boost::make_shared;
 using ::boost::posix_time::ptime;
 using ::boost::shared_ptr;
-using ::std::basic_istream;
 using ::std::basic_ostream;
-using ::std::basic_string;
 using ::std::begin;
+using ::std::cerr;
 using ::std::end;
+using ::std::endl;
 using ::std::size_t;
 using ::std::string;
 
+using RotationAtTimePoint = bl::sinks::file::rotation_at_time_point;
+
 PARLIAMENT_NAMESPACE_BEGIN namespace log {
 
-BOOST_LOG_ATTRIBUTE_KEYWORD(logLevelKeywd, "Severity", Level)
-BOOST_LOG_ATTRIBUTE_KEYWORD(channelKeywd, "Channel", string)
-BOOST_LOG_ATTRIBUTE_KEYWORD(threadIdKeywd, "ThreadID",
-	bl::attributes::current_thread_id::value_type)
-
-using RotationAtTimePoint = ::boost::log::sinks::file::rotation_at_time_point;
-
 static ::boost::once_flag g_onceInitFlag = BOOST_ONCE_INIT;
-static const char k_optionRegExStr[] = "^[ \t]*([0-9][0-9]?):([0-9][0-9]?):([0-9][0-9]?)[ \t]*$";
-static const char*const k_levelStrings[] =
+static constexpr char k_optionRegExStr[] = "^[ \t]*([0-9][0-9]?):([0-9][0-9]?):([0-9][0-9]?)[ \t]*$";
+static constexpr char*const k_levelStrings[] =
 {
 	"TRACE",
 	"DEBUG",
@@ -75,13 +70,18 @@ static const char*const k_levelStrings[] =
 static Level g_level = Level::info;
 static ::std::map<string, Level> g_channelToLevelMap;
 
+BOOST_LOG_ATTRIBUTE_KEYWORD(logLevelKeywd, "Severity", Level)
+BOOST_LOG_ATTRIBUTE_KEYWORD(channelKeywd, "Channel", string)
+BOOST_LOG_ATTRIBUTE_KEYWORD(threadIdKeywd, "ThreadID",
+	bl::attributes::current_thread_id::value_type)
+
 static Level levelFromString(const string& level, bool& wasRecognized)
 {
-	Level result = Level::info;
+	auto result{Level::info};
 	wasRecognized = false;
-	string trimmedLevel = ba::trim_copy(level);
-	auto it = ::std::find_if(begin(k_levelStrings), end(k_levelStrings),
-		[&trimmedLevel](const string& str) { return ba::iequals(trimmedLevel, str); });
+	auto trimmedLevel{ba::trim_copy(level)};
+	auto it{::std::find_if(begin(k_levelStrings), end(k_levelStrings),
+		[&trimmedLevel](const string& str) { return ba::iequals(trimmedLevel, str); })};
 	if (it != end(k_levelStrings))
 	{
 		result = static_cast<Level>(::std::distance(begin(k_levelStrings), it));
@@ -92,40 +92,40 @@ static Level levelFromString(const string& level, bool& wasRecognized)
 
 static Level levelFromString(const string& level)
 {
-	bool wasRecognized = false;
-	Level result = levelFromString(level, wasRecognized);
+	auto wasRecognized{false};
+	auto result{levelFromString(level, wasRecognized)};
 	if (!wasRecognized)
 	{
-		auto levelList = accumulate(make_iterator_range(k_levelStrings), string(), StringJoinOp("', '"));
-		format fmt("'%1%' is not one of the recognized logging levels:  '%2%'");
-		::std::cerr << (fmt % level % levelList) << ::std::endl;
+		auto levelList{accumulate(make_iterator_range(k_levelStrings), string(), StringJoinOp("', '"))};
+		format fmt{"'%1%' is not one of the recognized logging levels:  '%2%'"};
+		cerr << (fmt % level % levelList) << endl;
 	}
 	return result;
 }
 
 static bool isInBounds(uint16 actualValue, uint16 maxValue, const char* pName)
 {
-	bool result = true;
+	auto result{true};
 	if (actualValue > maxValue)
 	{
 		result = false;
-		format fmt("In logFileRotationTimePoint option, %1% (%2%) must be between 0 and %3%, inclusive");
-		::std::cerr << (fmt % pName % actualValue % maxValue) << ::std::endl;
+		format fmt{"In logFileRotationTimePoint option, %1% (%2%) must be between 0 and %3%, inclusive"};
+		cerr << (fmt % pName % actualValue % maxValue) << endl;
 	}
 	return result;
 }
 
 static RotationAtTimePoint rotTimeFromString(const string& rotTime)
 {
-	RegEx rex = compileRegEx(k_optionRegExStr);
+	auto rex{compileRegEx(k_optionRegExStr)};
 	SMatch captures;
 	if (regExMatch(rotTime, captures, rex))
 	{
 		try
 		{
-			uint16 hours = lexical_cast<uint16>(captures[1].str());
-			uint16 minutes = lexical_cast<uint16>(captures[2].str());
-			uint16 seconds = lexical_cast<uint16>(captures[3].str());
+			auto hours{lexical_cast<uint16>(captures[1].str())};
+			auto minutes{lexical_cast<uint16>(captures[2].str())};
+			auto seconds{lexical_cast<uint16>(captures[3].str())};
 			if (isInBounds(hours, 23, "hours")
 				&& isInBounds(minutes, 59, "minutes")
 				&& isInBounds(seconds, 59, "seconds"))
@@ -138,14 +138,14 @@ static RotationAtTimePoint rotTimeFromString(const string& rotTime)
 		}
 		catch (const ::boost::bad_lexical_cast& ex)
 		{
-			format fmt("Numeric conversion error in logFileRotationTimePoint option string \"%1%\":  %2%");
-			::std::cerr << (fmt % rotTime % ex.what()) << ::std::endl;
+			format fmt{"Numeric conversion error in logFileRotationTimePoint option string \"%1%\":  %2%"};
+			cerr << (fmt % rotTime % ex.what()) << endl;
 		}
 	}
 	else
 	{
-		format fmt("Syntax error in logFileRotationTimePoint option string \"%1%\"");
-		::std::cerr << (fmt % rotTime) << ::std::endl;
+		format fmt{"Syntax error in logFileRotationTimePoint option string \"%1%\""};
+		cerr << (fmt % rotTime) << endl;
 	}
 	return RotationAtTimePoint(2, 0, 0);
 }
@@ -156,7 +156,7 @@ static basic_ostream<CharT, TraitsT>& operator<<(
 {
 	if (strm.good())
 	{
-		size_t levelInt = static_cast<size_t>(level);
+		auto levelInt{static_cast<size_t>(level)};
 		if (levelInt < arrayLen(k_levelStrings))
 		{
 			strm << k_levelStrings[levelInt];
@@ -174,7 +174,7 @@ static basic_ostream<CharT, TraitsT>& operator<<(
 template<template <typename...> class FEType, typename BEType>
 static void setFrontEndSink(const shared_ptr<BEType>& pBackend)
 {
-	auto pSink = make_shared<FEType<BEType>>(pBackend);
+	auto pSink{make_shared<FEType<BEType>>(pBackend)};
 	pSink->set_formatter(
 		expr::format("%1% [%2%] %3% [%4%] %5%")
 			% expr::format_date_time<ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S.%f")
@@ -190,14 +190,14 @@ static bool logFilter(
 	const bl::value_ref<Level, tag::logLevelKeywd>& currentLevel,
 	const bl::value_ref<string, tag::channelKeywd>& channel)
 {
-	bool result = false;
+	auto result{false};
 	if (currentLevel >= g_level)
 	{
 		result = true;
 	}
 	else if (!channel.empty())
 	{
-		auto it = g_channelToLevelMap.find(channel.get());
+		auto it{g_channelToLevelMap.find(channel.get())};
 		if (it != g_channelToLevelMap.end() && currentLevel >= it->second)
 		{
 			result = true;
@@ -208,75 +208,88 @@ static bool logFilter(
 
 static void unsynchronizedInit()
 {
-	LogConfig config;
-	config.readFromFile();
-
-	bl::add_common_attributes();
-
-	if (config.logToConsole())
+	try
 	{
-		// Create the back end:
-		auto pBackend = make_shared<bl::sinks::text_ostream_backend>();
-		pBackend->add_stream(
-			shared_ptr<::std::ostream>{&::std::clog, ::boost::null_deleter()});
+		LogConfig config;
+		config.readFromFile();
 
-		// Enable auto-flushing after each log record written:
-		pBackend->auto_flush(config.logConsoleAutoFlush());
+		bl::add_common_attributes();
 
-		if (config.logConsoleAsynchronous())
+		if (config.logToConsole())
 		{
-			setFrontEndSink<bl::sinks::asynchronous_sink,
-				bl::sinks::text_ostream_backend>(pBackend);
+			// Create the back end:
+			auto pBackend{make_shared<bl::sinks::text_ostream_backend>()};
+			pBackend->add_stream(
+				shared_ptr<::std::ostream>{&::std::clog, ::boost::null_deleter()});
+
+			// Enable auto-flushing after each log record written:
+			pBackend->auto_flush(config.logConsoleAutoFlush());
+
+			if (config.logConsoleAsynchronous())
+			{
+				setFrontEndSink<bl::sinks::asynchronous_sink,
+					bl::sinks::text_ostream_backend>(pBackend);
+			}
+			else
+			{
+				setFrontEndSink<bl::sinks::synchronous_sink,
+					bl::sinks::text_ostream_backend>(pBackend);
+			}
 		}
-		else
+
+		if (config.logToFile())
 		{
-			setFrontEndSink<bl::sinks::synchronous_sink,
-				bl::sinks::text_ostream_backend>(pBackend);
+			auto pBackend{make_shared<bl::sinks::text_file_backend>(
+					keywd::file_name = config.logFilePath(),					// file name pattern
+					keywd::target = config.logFilePath().parent_path(),	// log file directory
+					keywd::auto_flush = config.logFileAutoFlush(),
+					keywd::rotation_size = config.logFileRotationSize(),
+					keywd::time_based_rotation = rotTimeFromString(config.logFileRotationTimePoint()),
+					keywd::max_size = config.logFileMaxAccumSize(),
+					keywd::min_free_space = config.logFileMinFreeSpace()
+				)};
+
+			if (config.logFileAsynchronous())
+			{
+				setFrontEndSink<bl::sinks::asynchronous_sink,
+					bl::sinks::text_file_backend>(pBackend);
+			}
+			else
+			{
+				setFrontEndSink<bl::sinks::synchronous_sink,
+					bl::sinks::text_file_backend>(pBackend);
+			}
 		}
+
+		g_level = levelFromString(config.logLevel());
+		for (const auto& entry : config.logChannelLevels())
+		{
+			auto wasRecognized{false};
+			auto lvl{levelFromString(entry.second, wasRecognized)};
+			if (wasRecognized)
+			{
+				g_channelToLevelMap.insert(make_pair(entry.first, lvl));
+			}
+			else
+			{
+				format fmt{"Unrecognized log level \"%1%\" for channel \"%2%\""};
+				cerr << (fmt % entry.second % entry.first) << endl;
+			}
+		}
+
+		bl::core::get()->set_filter(::boost::phoenix::bind(&logFilter,
+			logLevelKeywd.or_none(), channelKeywd.or_none()));
 	}
-
-	if (config.logToFile())
+	catch (const Exception& ex)
 	{
-		auto pBackend = make_shared<bl::sinks::text_file_backend>(
-				keywd::file_name = config.logFilePath(),					// file name pattern
-				keywd::target = config.logFilePath().parent_path(),	// log file directory
-				keywd::auto_flush = config.logFileAutoFlush(),
-				keywd::rotation_size = config.logFileRotationSize(),
-				keywd::time_based_rotation = rotTimeFromString(config.logFileRotationTimePoint()),
-				keywd::max_size = config.logFileMaxAccumSize(),
-				keywd::min_free_space = config.logFileMinFreeSpace()
-			);
-
-		if (config.logFileAsynchronous())
-		{
-			setFrontEndSink<bl::sinks::asynchronous_sink,
-				bl::sinks::text_file_backend>(pBackend);
-		}
-		else
-		{
-			setFrontEndSink<bl::sinks::synchronous_sink,
-				bl::sinks::text_file_backend>(pBackend);
-		}
+		format fmt{"Unable to initialize logging (%1%):  %2%"};
+		cerr << (fmt % typeid(ex).name() % ex.what()) << endl;
 	}
-
-	g_level = levelFromString(config.logLevel());
-	for (const auto& entry : config.logChannelLevels())
+	catch (const ::std::exception& ex)
 	{
-		bool wasRecognized = false;
-		Level lvl = levelFromString(entry.second, wasRecognized);
-		if (wasRecognized)
-		{
-			g_channelToLevelMap.insert(make_pair(entry.first, lvl));
-		}
-		else
-		{
-			format fmt("Unrecognized log level \"%1%\" for channel \"%2%\"");
-			::std::cerr << (fmt % entry.second % entry.first) << ::std::endl;
-		}
+		format fmt{"Unable to initialize logging (%1%):  %2%"};
+		cerr << (fmt % typeid(ex).name() % ex.what()) << endl;
 	}
-
-	bl::core::get()->set_filter(::boost::phoenix::bind(&logFilter,
-		logLevelKeywd.or_none(), channelKeywd.or_none()));
 }
 
 static void init()
