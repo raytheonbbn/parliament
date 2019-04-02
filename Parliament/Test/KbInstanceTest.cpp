@@ -322,27 +322,27 @@ BOOST_DATA_TEST_CASE(
 
 BOOST_AUTO_TEST_CASE(testDumpKbAsNTriples)
 {
-	auto config{createTestConfig(true)};
-	KbDeleter deleter{config};
-	KbInstance kb{config};
+	auto config = createTestConfig(true);
+	KbDeleter deleter(config);
+	KbInstance kb(config);
 
-	auto rdfTypeRsrcId{			kb.uriLib().m_rdfType.id()};
-	auto rdfsLabelRsrcId{		kb.uriLib().m_rdfsLabel.id()};
-	auto rdfsSubClassOfRsrcId{	kb.uriLib().m_rdfsSubClassOf.id()};
-	auto owlClassRsrcId{			kb.uriLib().m_owlClass.id()};
-	auto owlRestrictionRsrcId{	kb.uriLib().m_owlRestriction.id()};
-	auto owlOnPropRsrcId{		kb.uriLib().m_owlOnProp.id()};
-	auto owlMaxCardRsrcId{		kb.uriLib().m_owlMaxCard.id()};
+	auto rdfTypeRsrcId			= kb.uriLib().m_rdfType.id();
+	auto rdfsLabelRsrcId		= kb.uriLib().m_rdfsLabel.id();
+	auto rdfsSubClassOfRsrcId	= kb.uriLib().m_rdfsSubClassOf.id();
+	auto owlClassRsrcId			= kb.uriLib().m_owlClass.id();
+	auto owlRestrictionRsrcId	= kb.uriLib().m_owlRestriction.id();
+	auto owlOnPropRsrcId		= kb.uriLib().m_owlOnProp.id();
+	auto owlMaxCardRsrcId		= kb.uriLib().m_owlMaxCard.id();
 
-	auto humanRsrcId{				kb.uriToRsrcId(k_humanUri, false, true)};
-	auto restrictionRsrcId{		kb.createAnonymousRsrc()};
-	auto cNameRsrcId{				kb.uriToRsrcId(k_cNameUri, false, true)};
-	auto mikeRsrcId{				kb.uriToRsrcId(k_mikeUri, false, true)};
+	auto humanRsrcId				= kb.uriToRsrcId(k_humanUri, false, true);
+	auto restrictionRsrcId		= kb.createAnonymousRsrc();
+	auto cNameRsrcId				= kb.uriToRsrcId(k_cNameUri, false, true);
+	auto mikeRsrcId				= kb.uriToRsrcId(k_mikeUri, false, true);
 
-	auto plainLit{					kb.uriToRsrcId(k_plainText, true, true)};
-	auto typedLit{					kb.uriToRsrcId(k_typedText, true, true)};
-	auto langLit{					kb.uriToRsrcId(k_langText1, true, true)};
-	auto intLit{					kb.uriToRsrcId(k_integer, true, true)};
+	auto plainLit					= kb.uriToRsrcId(k_plainText, true, true);
+	auto typedLit					= kb.uriToRsrcId(k_typedText, true, true);
+	auto langLit					= kb.uriToRsrcId(k_langText1, true, true);
+	auto intLit					= kb.uriToRsrcId(k_integer, true, true);
 
 	kb.addStmt(mikeRsrcId, rdfTypeRsrcId, humanRsrcId, false);
 	kb.addStmt(mikeRsrcId, rdfsLabelRsrcId, plainLit, false);
@@ -358,7 +358,7 @@ BOOST_AUTO_TEST_CASE(testDumpKbAsNTriples)
 	::std::ostringstream out;
 	kb.dumpKbAsNTriples(out, InferredStmtsAction::exclude, DeletedStmtsAction::exclude, EncodingCharSet::utf8);
 	out.flush();
-	auto dump{out.str()};
+	auto dump = out.str();
 
 	BOOST_TEST_MESSAGE(
 		"======= Output from dumpKbAsNTriples: =======\r\n"
@@ -366,7 +366,7 @@ BOOST_AUTO_TEST_CASE(testDumpKbAsNTriples)
 		"=============================================");
 
 	::std::set<string> actualLineSet;
-	for (::std::istringstream in{dump}; !in.eof();)
+	for (::std::istringstream in(dump); !in.eof();)
 	{
 		if (!in)
 		{

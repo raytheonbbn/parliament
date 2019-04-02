@@ -58,8 +58,8 @@ using RotationAtTimePoint = bl::sinks::file::rotation_at_time_point;
 PARLIAMENT_NAMESPACE_BEGIN namespace log {
 
 static ::boost::once_flag g_onceInitFlag = BOOST_ONCE_INIT;
-static constexpr char k_optionRegExStr[] = "^[ \t]*([0-9][0-9]?):([0-9][0-9]?):([0-9][0-9]?)[ \t]*$";
-static constexpr char*const k_levelStrings[] =
+static const char k_optionRegExStr[] = "^[ \t]*([0-9][0-9]?):([0-9][0-9]?):([0-9][0-9]?)[ \t]*$";
+static const char*const k_levelStrings[] =
 {
 	"TRACE",
 	"DEBUG",
@@ -77,11 +77,11 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(threadIdKeywd, "ThreadID",
 
 static Level levelFromString(const string& level, bool& wasRecognized)
 {
-	auto result{Level::info};
+	auto result = Level::info;
 	wasRecognized = false;
-	auto trimmedLevel{ba::trim_copy(level)};
-	auto it{::std::find_if(begin(k_levelStrings), end(k_levelStrings),
-		[&trimmedLevel](const string& str) { return ba::iequals(trimmedLevel, str); })};
+	auto trimmedLevel = ba::trim_copy(level);
+	auto it = ::std::find_if(begin(k_levelStrings), end(k_levelStrings),
+		[&trimmedLevel](const string& str) { return ba::iequals(trimmedLevel, str); });
 	if (it != end(k_levelStrings))
 	{
 		result = static_cast<Level>(::std::distance(begin(k_levelStrings), it));
@@ -92,11 +92,11 @@ static Level levelFromString(const string& level, bool& wasRecognized)
 
 static Level levelFromString(const string& level)
 {
-	auto wasRecognized{false};
-	auto result{levelFromString(level, wasRecognized)};
+	auto wasRecognized = false;
+	auto result = levelFromString(level, wasRecognized);
 	if (!wasRecognized)
 	{
-		auto levelList{accumulate(make_iterator_range(k_levelStrings), string(), StringJoinOp("', '"))};
+		auto levelList = accumulate(make_iterator_range(k_levelStrings), string(), StringJoinOp("', '"));
 		format fmt{"'%1%' is not one of the recognized logging levels:  '%2%'"};
 		cerr << (fmt % level % levelList) << endl;
 	}
@@ -105,7 +105,7 @@ static Level levelFromString(const string& level)
 
 static bool isInBounds(uint16 actualValue, uint16 maxValue, const char* pName)
 {
-	auto result{true};
+	auto result = true;
 	if (actualValue > maxValue)
 	{
 		result = false;
@@ -117,15 +117,15 @@ static bool isInBounds(uint16 actualValue, uint16 maxValue, const char* pName)
 
 static RotationAtTimePoint rotTimeFromString(const string& rotTime)
 {
-	auto rex{compileRegEx(k_optionRegExStr)};
+	auto rex = compileRegEx(k_optionRegExStr);
 	SMatch captures;
 	if (regExMatch(rotTime, captures, rex))
 	{
 		try
 		{
-			auto hours{lexical_cast<uint16>(captures[1].str())};
-			auto minutes{lexical_cast<uint16>(captures[2].str())};
-			auto seconds{lexical_cast<uint16>(captures[3].str())};
+			auto hours = lexical_cast<uint16>(captures[1].str());
+			auto minutes = lexical_cast<uint16>(captures[2].str());
+			auto seconds = lexical_cast<uint16>(captures[3].str());
 			if (isInBounds(hours, 23, "hours")
 				&& isInBounds(minutes, 59, "minutes")
 				&& isInBounds(seconds, 59, "seconds"))
@@ -156,7 +156,7 @@ static basic_ostream<CharT, TraitsT>& operator<<(
 {
 	if (strm.good())
 	{
-		auto levelInt{static_cast<size_t>(level)};
+		auto levelInt = static_cast<size_t>(level);
 		if (levelInt < arrayLen(k_levelStrings))
 		{
 			strm << k_levelStrings[levelInt];
@@ -174,7 +174,7 @@ static basic_ostream<CharT, TraitsT>& operator<<(
 template<template <typename...> class FEType, typename BEType>
 static void setFrontEndSink(const shared_ptr<BEType>& pBackend)
 {
-	auto pSink{make_shared<FEType<BEType>>(pBackend)};
+	auto pSink = make_shared<FEType<BEType>>(pBackend);
 	pSink->set_formatter(
 		expr::format("%1% [%2%] %3% [%4%] %5%")
 			% expr::format_date_time<ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S.%f")
@@ -190,14 +190,14 @@ static bool logFilter(
 	const bl::value_ref<Level, tag::logLevelKeywd>& currentLevel,
 	const bl::value_ref<string, tag::channelKeywd>& channel)
 {
-	auto result{false};
+	auto result = false;
 	if (currentLevel >= g_level)
 	{
 		result = true;
 	}
 	else if (!channel.empty())
 	{
-		auto it{g_channelToLevelMap.find(channel.get())};
+		auto it = g_channelToLevelMap.find(channel.get());
 		if (it != g_channelToLevelMap.end() && currentLevel >= it->second)
 		{
 			result = true;
@@ -218,9 +218,9 @@ static void unsynchronizedInit()
 		if (config.logToConsole())
 		{
 			// Create the back end:
-			auto pBackend{make_shared<bl::sinks::text_ostream_backend>()};
+			auto pBackend = make_shared<bl::sinks::text_ostream_backend>();
 			pBackend->add_stream(
-				shared_ptr<::std::ostream>{&::std::clog, ::boost::null_deleter()});
+				shared_ptr<::std::ostream>(&::std::clog, ::boost::null_deleter()));
 
 			// Enable auto-flushing after each log record written:
 			pBackend->auto_flush(config.logConsoleAutoFlush());
@@ -239,7 +239,7 @@ static void unsynchronizedInit()
 
 		if (config.logToFile())
 		{
-			auto pBackend{make_shared<bl::sinks::text_file_backend>(
+			auto pBackend = make_shared<bl::sinks::text_file_backend>(
 					keywd::file_name = config.logFilePath(),					// file name pattern
 					keywd::target = config.logFilePath().parent_path(),	// log file directory
 					keywd::auto_flush = config.logFileAutoFlush(),
@@ -247,7 +247,7 @@ static void unsynchronizedInit()
 					keywd::time_based_rotation = rotTimeFromString(config.logFileRotationTimePoint()),
 					keywd::max_size = config.logFileMaxAccumSize(),
 					keywd::min_free_space = config.logFileMinFreeSpace()
-				)};
+				);
 
 			if (config.logFileAsynchronous())
 			{
@@ -264,8 +264,8 @@ static void unsynchronizedInit()
 		g_level = levelFromString(config.logLevel());
 		for (const auto& entry : config.logChannelLevels())
 		{
-			auto wasRecognized{false};
-			auto lvl{levelFromString(entry.second, wasRecognized)};
+			auto wasRecognized = false;
+			auto lvl = levelFromString(entry.second, wasRecognized);
 			if (wasRecognized)
 			{
 				g_channelToLevelMap.insert(make_pair(entry.first, lvl));

@@ -44,14 +44,15 @@ echo.
 set LCP=
 for /r "%KBROOT%lib" %%i in (*.jar) do set LCP=!LCP!;%%i
 
-set EXEC="%KBROOT%bin\ParliamentService.exe" install --DisplayName "Parliament Triple Store"
+set EXEC="%KBROOT%bin\ParliamentService.exe" //US//Parliament --DisplayName "Parliament"
 set EXEC=%EXEC% --Description "Parliament triple store and SPARQL endpoint, from Raytheon BBN Technologies"
+set EXEC=%EXEC% --Install "%KBROOT%bin\ParliamentService.exe"
 rem set EXEC=%EXEC% --ServiceUser "domain\your_user_name_here"
 rem set EXEC=%EXEC% --ServicePassword "your_user_password_here"
 set EXEC=%EXEC% --LibraryPath "%KBROOT%bin"
 set EXEC=%EXEC% --Jvm "%JVM_DLL%" --JvmMs "%MIN_MEM%" --JvmMx "%MAX_MEM%"
 set EXEC=%EXEC% --Classpath "%LCP%"
-set EXEC=%EXEC% ++JvmOptions -Dcom.sun.management.jmxremote
+set EXEC=%EXEC% --JvmOptions -Dcom.sun.management.jmxremote
 set EXEC=%EXEC% ++JvmOptions -Dlog4j.configuration=conf/log4j.properties
 set EXEC=%EXEC% ++JvmOptions -Djetty.host=%JETTY_HOST%
 set EXEC=%EXEC% ++JvmOptions -Djetty.port=%JETTY_PORT%
@@ -60,9 +61,8 @@ set EXEC=%EXEC% --StartMode jvm --StartMethod start
 set EXEC=%EXEC% --StartClass com.bbn.parliament.jena.jetty.JettyService
 set EXEC=%EXEC% --StopMode jvm --StopMethod stop
 set EXEC=%EXEC% --StopClass com.bbn.parliament.jena.jetty.JettyService
-rem Error, Info, Warn, or Debug:
-set EXEC=%EXEC% --LogLevel Info
-set EXEC=%EXEC% --LogPath "%KBROOT%log" --StdOutput auto --StdError auto
+rem LogLevel is Error, Info, Warn, or Debug:
+set EXEC=%EXEC% --LogLevel Info --LogPath "%KBROOT%log" --StdOutput auto --StdError auto
 
 rem Debugging statements:
 rem echo KBROOT = "%KBROOT%."

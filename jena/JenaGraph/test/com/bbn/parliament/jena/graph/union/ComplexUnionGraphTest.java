@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -29,6 +30,7 @@ import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jni.KbConfig;
 import com.bbn.parliament.jni.KbInstance;
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -40,12 +42,11 @@ public class ComplexUnionGraphTest {
 	private static final File INPUT_DATA_FILE = new File(
 		System.getProperty("test.data.path"), "univ-bench-03.zip");
 	private static final File KB_DATA_DIR = new File("./union-test-kb-data");
+	private static final String PREFIXES = "prefix ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> ";
 
 	@SuppressWarnings("unused")
-	private static final String QUERY1 = "" +
-		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
-		"PREFIX ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> " +
-		"SELECT ?x ?y ?z WHERE { " +
+	private static final String QUERY1 = PREFIXES +
+		"select ?x ?y ?z where { " +
 		"	?x a ub:GraduateStudent . " +
 		"	?y a ub:University . " +
 		"	?z a ub:Department . " +
@@ -53,10 +54,8 @@ public class ComplexUnionGraphTest {
 		"	?z ub:subOrganizationOf ?y . " +
 		"	?x ub:undergraduateDegreeFrom ?y . " +
 		"}";
-	private static final String QUERY2 = "" +
-		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
-		"PREFIX ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> " +
-		"SELECT ?x ?y1 ?y2 ?y3 WHERE { " +
+	private static final String QUERY2 = PREFIXES +
+		"select ?x ?y1 ?y2 ?y3 where { " +
 		"	?x a ub:Professor ; " +
 		"		ub:worksFor <http://www.Department0.University0.edu> ; " +
 		"		ub:name ?y1 ; " +
@@ -64,10 +63,8 @@ public class ComplexUnionGraphTest {
 		"		ub:telephone ?y3 . " +
 		"}";
 	@SuppressWarnings("unused")
-	private static final String QUERY3 = "" +
-		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
-		"PREFIX ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> " +
-		"SELECT ?x ?y ?z WHERE { " +
+	private static final String QUERY3 = PREFIXES +
+		"select ?x ?y ?z where { " +
 		"	?x a ub:Student . " +
 		"	?y a ub:Faculty . " +
 		"	?z a ub:Course . " +
@@ -75,10 +72,8 @@ public class ComplexUnionGraphTest {
 		"	?y ub:teacherOf ?z . " +
 		"	?x ub:takesCourse ?z . " +
 		"}";
-	private static final String QUERY4 = "" +
-		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
-		"PREFIX ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> " +
-		"SELECT ?x ?y WHERE { " +
+	private static final String QUERY4 = PREFIXES +
+		"select ?x ?y where { " +
 		"	?x a ub:GraduateStudent ; " +
 		"		ub:name ?y . " +
 		"}";
@@ -197,7 +192,9 @@ public class ComplexUnionGraphTest {
 
 	private static long timeCount(String modelName, String query, Model model) {
 		long start = System.currentTimeMillis();
-		ResultSet results = QueryExecutionFactory.create(query, model).execSelect();
+		QueryExecution qe = QueryExecutionFactory.create(query, model);
+		qe.setTimeout(30, TimeUnit.SECONDS);
+		ResultSet results = qe.execSelect();
 		long count = 0;
 		while (results.hasNext()) {
 			results.next();

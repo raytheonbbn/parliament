@@ -12,7 +12,7 @@ There are several ways to use \ac{pmnt}.  By far the most common is as a server 
 
 Pre-built binaries for common platforms are available on the \ac{pmnt} Web site\urlcite{http://parliament.semwebcentral.org/}.  You can also build \ac{pmnt} yourself (see Chapter~\ref{chapter-building-parliament}).
 
-This chapter starts with instructions for installing a \ac{pmnt} server (Section~\ref{section-std-server-deploy}), followed by a discussion of the \ac{pmnt} configuration file (Section~\ref{section-parliament-config-file}).  Then comes a detailed discussion of each of the less common deployment scenarios.  The chapter concludes with discussions of \ac{pmnt} utilities and troubleshooting (Sections~\ref{section-parliamentadmin-utility} and~\ref{section-troubleshooting}).
+This chapter starts with instructions for installing a \ac{pmnt} server (Section~\ref{section-std-server-deploy}), followed by a discussion of the \ac{pmnt} configuration file (Section~\ref{section-configuring-pmnt}).  Then comes a detailed discussion of each of the less common deployment scenarios.  The chapter concludes with discussions of \ac{pmnt} utilities and troubleshooting (Sections~\ref{section-parliamentadmin-utility} and~\ref{section-troubleshooting}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Deploying a \ac{pmnt} Server}
@@ -58,6 +58,31 @@ Once you have downloaded a distribution, these steps will yield a functioning \a
 	\item From the \path|ParliamentKB| directory, invoke the startup script to start the \ac{pmnt} server.  This is called \path|StartParliament.bat| on Windows and \path|StartParliament.sh| on other platforms\footnote{On all platforms, these scripts locate your Java installation by simply invoking the command \path|java| and relying on the operating system's native facilities for locating the \ac{jvm} executable.  See Section~\ref{section-troubleshooting} for more information.}.
 \end{enumerate}
 
+The procedure above uses \acp{pmnt} standard startup script, which directly starts the server.  However, in many cases it is preferable to run \ac{pmnt} as a Windows service or as a UNIX daemon.
+
+\subsubsection{Installing as a Windows Service}
+
+The script \path|InstallParliamentService.bat| installs \ac{pmnt} as a Windows service.  This script uses the \verb|JAVA_HOME| environment variable to locate your Java installation\footnote{See Section~\ref{section-troubleshooting} for information about choosing among multiple Java installations.}.  After running this script, use the Services management console to start and stop \ac{pmnt} and to run \ac{pmnt} automatically upon system startup.
+
+Usually, \ac{pmnt} cannot be installed as a Windows service if it resides on a mapped network drive.  This is because the mapping is an artifact of your user login, and services run outside that context.
+
+If you change any of the parameters in \path|InstallParliamentService.bat| (see Section~\ref{section-configuring-pmnt}), you will need to re-run it in order to have those changes reflected in the installed service definition.
+
+Uninstall the service with \path|UninstallParliamentService.bat|.
+
+\subsubsection{Installing as a Linux/UNIX Daemon}
+
+For variants of Linux that support System D, such as CentOS and Ubuntu, Parliament includes the \path|InstallService.sh| script, which will install \ac{pmnt} as a System D service.  (You will likely need elevated rights to run this script, such as those provided by \path|sudo|.)  Thereafter, \ac{pmnt} can be controlled via the \path|systemctl| command.
+
+To uninstall \ac{pmnt} as a System D service, simply delete this file:
+\begin{quote}
+	\path|/etc/systemd/system/parliament.service|
+\end{quote}
+
+For other Linux variants (and for UNIX), the \path|StartParliamentDaemon.sh| script will start \ac{pmnt} as a daemon.  The exact method for wiring this into the operating system's infrastructure for starting and stopping daemon processes varies from platform to platform.
+
+
+
 \subsection{Upgrading an Existing Installation}
 \label{section-std-server-upgrade}
 
@@ -77,7 +102,7 @@ However, from time to time \acp{pmnt} file formats do change, and in such cases 
 
 	\item Unzip the new version of \ac{pmnt} to your desired location.
 
-	\item Customize the new installation's settings as required.  For more information, see Sections~\ref{section-std-server-config} and~\ref{section-parliament-config-file}.
+	\item Customize the new installation's settings as required.  For more information, see Section~\ref{section-configuring-pmnt}.
 
 	\item Start up the new \ac{pmnt} installation.
 
@@ -93,9 +118,9 @@ Once you see the ``Insert operation successful'' message, your upgraded \ac{pmnt
 \subsection{Usage}
 \label{section-std-server-usage}
 
-\emph{Important note:}  When you shut down \ac{pmnt}, it is important to shut it down gracefully.  Otherwise, the \ac{pmnt} files may not be flushed to disk before they are closed, and they may be badly corrupted.  If you run \ac{pmnt} as a Windows service or UNIX Daemon (see Section~\ref{section-std-server-config}), this is generally not a problem, because the operating system sends a shut-down message at the appropriate times.  If, however, you run \ac{pmnt} explicitly via \path|StartParliament.sh| (or \path|StartParliament.bat| on Windows), you will need to shut it down yourself by typing the command ``exit'' followed by «return» or «enter».
+\emph{Important note:}  When you shut down \ac{pmnt}, it is important to shut it down gracefully.  Otherwise, the \ac{pmnt} files may not be flushed to disk before they are closed, and they may be badly corrupted.  If you run \ac{pmnt} as a Windows service or UNIX Daemon (see Section~\ref{section-std-server-init-deploy}), this is generally not a problem, because the operating system sends a shut-down message at the appropriate times.  If, however, you run \ac{pmnt} explicitly via \path|StartParliament.sh| (or \path|StartParliament.bat| on Windows), you will need to shut it down yourself by typing the command ``exit'' followed by «return» or «enter».
 
-To use the \ac{pmnt} server, you will need the the connection \acp{url} listed in Table~\ref{table-pmnt-connect-urls}.  (See Section~\ref{section-std-server-config} to configure your server to run on a host name and port other than ``localhost'' and ``8089''.)
+To use the \ac{pmnt} server, you will need the the connection \acp{url} listed in Table~\ref{table-pmnt-connect-urls}.  (See Section~\ref{section-configuring-pmnt} to configure your server to run on a host name and port other than ``localhost'' and ``8089''.)
 \begin{table}[htbp]
 	\centering\small
 	\begin{tabular}{ll}
@@ -165,37 +190,30 @@ void useRemoteParliamentModel()
 \end{figure}
 Note that the query strings passed to the remote model in Figure~\ref{figure-using-remote-jena-model} follow standard \ac{sparql} and \ac{sparql}-UPDATE formats, including support for named graphs.  Also note that the \verb|RemoteModel| class exposes the bulk loading feature of the \ac{pmnt} server, allowing the loading of large bodies of \ac{rdf} efficiently.
 
-\subsection{Configuration}
-\label{section-std-server-config}
 
-This section explores the most important configuration options for your \ac{pmnt} server.  The installation procedure in Section~\ref{section-std-server-init-deploy} simply accepts the defaults for these options, but many deployments will require some level of customization.
-
-Section~\ref{section-std-server-init-deploy} mentions \acp{pmnt} start script, which is used to directly start the server.  However, in many cases it is preferable to run \ac{pmnt} as a Windows service or as a UNIX daemon.
-
-The script \path|InstallParliamentService.bat| installs \ac{pmnt} as a Windows service.  In order for this script to have the permissions it requires, you usually need to right-click the Command Prompt shortcut and choose ``Run as Administrator.''  This script locates your Java installation by using the \verb|JAVA_HOME| environment variable\footnote{See Section~\ref{section-troubleshooting} for information about choosing among multiple Java installations.}.  After running this script, use the Services management console to start and stop \ac{pmnt} and to run \ac{pmnt} automatically upon system startup.  Uninstall the service with \path|UninstallParliamentService.bat|.
-
-The \path|StartParliamentDaemon.sh| script will start \ac{pmnt} as a daemon on UNIX-like systems.  The exact method for wiring this into the operating system's infrastructure for starting and stopping daemon processes varies from platform to platform.  For variants of Linux that do support System D, such as CentOS and Ubuntu, Parliament includes the \path|InstallService.sh| script, which will install \ac{pmnt} as a System D service, so that it can be controlled via the \path|systemctl| command.
-
-You can change the host name (or IP address) and port of the \ac{sparql} endpoint by setting \verb|JETTY_HOST| and \verb|JETTY_PORT| in the start script.  These default to \verb|localhost| and 8089, respectively.  Also, you can control the amount of memory set aside for the Java virtual machine's heap by setting \verb|MIN_MEM| and \verb|MAX_MEM| in the same location.  While it is important to allow the \ac{jvm} sufficient memory, it is also important to realize that a significant portion of \ac{pmnt} is native code, and therefore does not use the Java heap.  Java programmers are often inclined to set \verb|MAX_MEM| close to the total memory of the machine, but this will starve \acp{pmnt} native code of the memory it needs to achieve good performance.  The default heap size ranges from 128 MB to 512 MB, which is reasonable for machines with 4 to 8 GB of total memory.
-
-Note that if you are running the server as a Windows service, you must change these parameters in the install script, and you will have to uninstall the service and reinstall it to make your changes effective.
-
-The file \path|ParliamentKB/conf/jetty.xml| configures the Jetty servlet container.  Generally, there is no need to modify this file.  Other \ac{pmnt} configuration files are discussed in Section~\ref{section-parliament-config-file}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The \ac{pmnt} Configuration Files}
-\label{section-parliament-config-file}
+\section{Configuring \ac{pmnt}}
+\label{section-configuring-pmnt}
 
-\ac{pmnt} has two primary configuration files.  The first configures \acp{pmnt} native code logging and is called \path|ParliamentLogConfig.txt|.  This one is less important to everyday \ac{pmnt} users, and will be discussed second.  The more important file (\path|ParliamentKbConfig.txt|) contains settings pertaining to storage, query, and inference.  (Note that in both cases, these are the typical names for these files, but they can be named anything.)
+\ac{pmnt} has a few configuration files, discussed in the sections below.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{\acp{pmnt} Main Configuration File}
-\label{section-parliament-main-config-file}
+\subsubsection{\acp{pmnt} Startup Scripts}
 
-Here is how \ac{pmnt} finds \path|ParliamentKbConfig.txt|:
+You can change the host name (or IP address) and port of the \ac{sparql} endpoint by setting \verb|JETTY_HOST| and \verb|JETTY_PORT| in the startup script.  These default to \verb|localhost| and 8089, respectively.  To make \ac{pmnt} addressable on any of a host's network interfaces, change \verb|JETTY_HOST| to ``0.0.0.0''.
+
+You can control the amount of memory set aside for the Java virtual machine's heap by setting \verb|MIN_MEM| and \verb|MAX_MEM| in the same location.  While it is important to allow the \ac{jvm} sufficient memory, it is also important to realize that a significant portion of \ac{pmnt} is native code, and therefore does not use the Java heap.  Java programmers are often inclined to set \verb|MAX_MEM| close to the total memory of the machine, but this will starve \acp{pmnt} native code of the memory it needs to achieve good performance.  The default heap size ranges from 128 MB to 512 MB, which is reasonable for machines with 4 to 8 GB of total memory.
+
+Note that if you are running the server as a Windows service, you must change these parameters in the install script, and you will have to re-run the install script to make your changes effective.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{\acp{pmnt} Main Configuration File}
+
+\acp{pmnt} main configuration file contains settings pertaining to storage, query, and inference.  It is typically called \path|ParliamentKbConfig.txt|, and \ac{pmnt} finds it like so:
 
 \begin{enumerate}
-	\item If the environment variable \verb|PARLIAMENT_KB_CONFIG_PATH| is set, its value is assumed to be the configuration file's absolute path.
+	\item If the environment variable \verb|PARLIAMENT_KB_CONFIG_PATH| is set, its value is assumed to be the configuration file's absolute path.  Note that using this option, you can rename the file to anything you wish.
 
 	\item \emph{On Windows only:}  If this environment variable is not set, then \ac{pmnt} looks for a file named \path|ParliamentKbConfig.txt| in the same directory as the \ac{pmnt} \ac{dll}.
 
@@ -320,10 +338,11 @@ where ``IFP'' stands for ``InverseFunctionalProperty''. \emph{Default: ``on''}
 \end{description}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{\acp{pmnt} Logging Configuration File}
-\label{section-parliament-log-config-file}
+\subsubsection{\acp{pmnt} Logging Configuration}
 
-\acp{pmnt} second configuration file, \path|ParliamentLogConfig.txt|, has a format similar to \path|ParliamentKbConfig.txt|.  \ac{pmnt} also finds it in a similar way, with environment variable \verb|PARLIAMENT_LOG_CONFIG_PATH| and file name \path|ParliamentLogConfig.txt|.  The recognized settings are:
+The file \path|ParliamentKB/conf/log4j.properties| configures logging for \acp{pmnt} Java code.  This is a standard Log4J configuration file.
+
+The file \path|ParliamentLogConfig.txt| controls \acp{pmnt} native code logging.  Its format is similar to \path|ParliamentKbConfig.txt|.  \ac{pmnt} also locates it in a similar way, using file name \path|ParliamentLogConfig.txt| and the environment variable \verb|PARLIAMENT_LOG_CONFIG_PATH|.  The recognized settings are:
 \begin{description}
 	\item[logToConsole] Indicates whether to log to the console. \emph{Default: ``yes''}
 
@@ -361,6 +380,13 @@ where ``IFP'' stands for ``InverseFunctionalProperty''. \emph{Default: ``on''}
 
 	\item[logChannelLevel] Overrides the global logging level for a single channel.  (Generally a channel is equivalent to a class in the source code.)  The value of this setting takes the form \begin{quote}\emph{«channel-name» = «log-level»}\end{quote} where \emph{«log-level»} takes one of the values listed for the global logging level above.  This option may be repeated to override the level for multiple channels. \emph{Default: None}
 \end{description}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{\acp{pmnt} Servlet Container Configuration File}
+
+The file \path|ParliamentKB/conf/jetty.xml| configures the Jetty servlet container.  Generally, there is no need to modify this file.
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{\ac{pmnt} in Other Servlet Containers}
@@ -422,7 +448,6 @@ set PATH=%PMNT_BIN%;%PATH%
 \end{enumerate}
 
 \subsubsection{Glassfish Notes}
-\label{section-glassfish-notes}
 When deploying \ac{pmnt} to Glassfish, note the following:
 \begin{itemize}
 	\item Glassfish sets it's own \verb|java.library.path| property.  The \ac{pmnt} libraries must either be copied into \path|«Glassfish install dir»/lib| or you must alter the Glassfish configuration such that the libraries are available on \verb|java.library.path|.

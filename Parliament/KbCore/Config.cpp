@@ -82,7 +82,7 @@ PARLIAMENT_NAMESPACE_END
 
 bfs::path pmnt::Config::getConfigFilePath(const TChar* pEnvVarName, const TChar* pDefaultConfigFileName)
 {
-	auto envVarValue{tGetEnvVar(pEnvVarName)};
+	auto envVarValue = tGetEnvVar(pEnvVarName);
 	if (!envVarValue.empty())
 	{
 		return envVarValue;

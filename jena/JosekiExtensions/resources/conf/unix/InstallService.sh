@@ -20,13 +20,13 @@ while [ "$1" != "" ]; do
 		-u|--username)	shift
 						username=$1
 						;;
-		-d|--d)			shift
+		-d|--directory)	shift
 						directory=$1
 						;;
 		-j|--javahome)	shift
 						javahome=$1
 						;;
-		-h|--help)		echo "$usage" >&2
+		-h|--help)	echo "$usage" >&2
 						exit
 						;;
 		*)				echo "$usage" >&2
