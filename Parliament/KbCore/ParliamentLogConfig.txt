@@ -33,6 +33,8 @@ logLevel                 = INFO
 #logChannelLevel          = StringToId=TRACE
 #logChannelLevel          = SWRLBuiltins=TRACE
 #logChannelLevel          = SWRLRuleBuilder=TRACE
+
+#logChannelLevel          = DeftLoadTest=TRACE
 #logChannelLevel          = FixRecordTableTest=TRACE
 #logChannelLevel          = RuleEngineTest=TRACE
 #logChannelLevel          = TestMain=TRACE

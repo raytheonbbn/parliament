@@ -53,6 +53,7 @@ using ::std::endl;
 using ::std::size_t;
 using ::std::string;
 
+using ChannelToLevelMap = ::std::map<string, ::bbn::parliament::log::Level>;
 using RotationAtTimePoint = bl::sinks::file::rotation_at_time_point;
 
 PARLIAMENT_NAMESPACE_BEGIN namespace log {
@@ -68,12 +69,18 @@ static const char*const k_levelStrings[] =
 	"ERROR"
 };
 static Level g_level = Level::info;
-static ::std::map<string, Level> g_channelToLevelMap;
 
-BOOST_LOG_ATTRIBUTE_KEYWORD(logLevelKeywd, "Severity", Level)
-BOOST_LOG_ATTRIBUTE_KEYWORD(channelKeywd, "Channel", string)
+BOOST_LOG_ATTRIBUTE_KEYWORD(logLevelKeywd, "Severity", Level);
+BOOST_LOG_ATTRIBUTE_KEYWORD(channelKeywd, "Channel", string);
 BOOST_LOG_ATTRIBUTE_KEYWORD(threadIdKeywd, "ThreadID",
-	bl::attributes::current_thread_id::value_type)
+	bl::attributes::current_thread_id::value_type);
+
+// Encapsulating the map here avoids static initialization ordering problems
+static ChannelToLevelMap& getChToLvlMap()
+{
+	static ChannelToLevelMap g_channelToLevelMap;
+	return g_channelToLevelMap;
+}
 
 static Level levelFromString(const string& level, bool& wasRecognized)
 {
@@ -197,8 +204,8 @@ static bool logFilter(
 	}
 	else if (!channel.empty())
 	{
-		auto it = g_channelToLevelMap.find(channel.get());
-		if (it != g_channelToLevelMap.end() && currentLevel >= it->second)
+		auto it = getChToLvlMap().find(channel.get());
+		if (it != end(getChToLvlMap()) && currentLevel >= it->second)
 		{
 			result = true;
 		}
@@ -268,7 +275,7 @@ static void unsynchronizedInit()
 			auto lvl = levelFromString(entry.second, wasRecognized);
 			if (wasRecognized)
 			{
-				g_channelToLevelMap.insert(make_pair(entry.first, lvl));
+				getChToLvlMap().insert(make_pair(entry.first, lvl));
 			}
 			else
 			{
