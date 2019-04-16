@@ -1,4 +1,4 @@
-Version 2.7.12 (?):
+Version 2.7.12 (4/16/2019):
 
 ----------------------   Important -- Please Read !!!   -----------------------
 ---                                                                         ---
@@ -62,7 +62,7 @@ Version 2.7.12 (?):
 
 * Numerous updates to C++ code to modernize towards C++14
 
-* Updated to Boost 1.69.0 and MSVC 14.1 (Visual Studio 2017, 15.9.7)
+* Updated to Boost 1.69.0 and MSVC 14.1 (Visual Studio 2017, 15.9.11)
 
 
 
