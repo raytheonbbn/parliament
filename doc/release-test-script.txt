@@ -1,0 +1,56 @@
+* Set short query timeout
+* load deft data
+* explore a bit
+* run a query:
+
+select distinct ?cls ?p ?value where {
+   values ?pred { owl:maxQualifiedCardinality owl:qualifiedCardinality }
+   ?cls rdfs:subClassOf ?r .
+   ?r a owl:Restriction ;
+      owl:onProperty ?p ;
+      ?pred ?value .
+} order by ?cls ?p
+
+select distinct ?value where {
+   values ?pred { owl:maxQualifiedCardinality owl:qualifiedCardinality }
+   ?cls rdfs:subClassOf ?r .
+   ?r a owl:Restriction ;
+      owl:onProperty ?p ;
+      ?pred ?value .
+}
+group by ?value
+order by ?value
+
+* run a long query, see it on the admin page, watch it time out:
+
+select distinct ?x1 ?y1 ?x2 ?y2 where {
+   ?x1 rdfs:subClassOf ?y1 .
+   ?x2 rdfs:subClassOf ?y2 .
+}
+
+* export the data as TTL and NT
+* shut down the server
+* run these commands:
+
+env DYLD_LIBRARY_PATH=../bin PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt ../bin/ParliamentAdmin -s
+
+env DYLD_LIBRARY_PATH=../bin PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt ../bin/ParliamentAdmin -t -e foo.nt
+
+* Install as service (Windows and Linux)
+* Start as service (Windows and Linux) or Daemon (Mac)
+* Run a query
+* Shut it down
+* Uninstall as service (Windows and Linux)
+
+
+
+
+
+
+
+
+
+
+
+
+env DYLD_LIBRARY_PATH=../bin PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt lldb -- ../bin/ParliamentAdmin -s
