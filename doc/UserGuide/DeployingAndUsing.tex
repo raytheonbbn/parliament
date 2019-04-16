@@ -290,28 +290,30 @@ The recognized settings are as follows:
 	\item[SubclassRule] Enables the following inference rules:
 \[A \subset B \land B \subset C \Rightarrow A \subset C\]
 \[X \in A \land A \subset B \Rightarrow X \in B\]
-where $\subset$ means ``is a sub-class of'' and $\in$ means ``is of type''. \emph{Default: ``on''}
+\[X \in \text{rdfs:Class} \Rightarrow X \subset X\]
+\[X \in \text{owl:Class} \Rightarrow X \subset X\]
+where $\subset$ means ``sub-class of'' and $\in$ means ``of type''. \emph{Default: ``on''}
 
 	\item[inferRdfsClass] When both this setting and ``SubclassRule'' are turned on, this enables the following inference rule:
 \[A \subset B \Rightarrow A \in \text{rdfs:Class} \land B \in \text{rdfs:Class}\]
-where $\subset$ means ``is a sub-class of'' and $\in$ means ``is of type''. \emph{Default: ``off''}
+where $\subset$ means ``sub-class of'' and $\in$ means ``of type''. \emph{Default: ``off''}
 
 	\item[inferOwlClass] When both this setting and ``SubclassRule'' are turned on, this enables the following inference rule:
 \[A \subset B \Rightarrow A \in \text{owl:Class} \land B \in \text{owl:Class}\]
-where $\subset$ means ``is a sub-class of'' and $\in$ means ``is of type''. \emph{Default: ``off''}
+where $\subset$ means ``sub-class of'' and $\in$ means ``of type''. \emph{Default: ``off''}
 
 	\item[inferRdfsResource] When both this and the ``SubclassRule'' settings are turned on, the following inference rule is enabled:
 \[A \subset B \Rightarrow A \subset \text{rdfs:Resource} \land B \subset \text{rdfs:Resource}\]
-where $\subset$ means ``is a sub-class of''. \emph{Default: ``off''}
+where $\subset$ means ``sub-class of''. \emph{Default: ``off''}
 
 	\item[inferOwlThing] When both this setting and ``SubclassRule'' are turned on, this enables the following inference rule:
 \[A \subset B \Rightarrow A \subset \text{owl:Thing} \land B \subset \text{owl:Thing}\]
-where $\subset$ means ``is a sub-class of''. \emph{Default: ``off''}
+where $\subset$ means ``sub-class of''. \emph{Default: ``off''}
 
 	\item[SubpropertyRule] Enables the following inference rules:
 \[P \sqsubset Q \land Q \sqsubset R \Rightarrow P \sqsubset R\]
 \[P \sqsubset Q \land P(X, Y) \Rightarrow Q(X, Y)\]
-where $\sqsubset$ means ``is a sub-property of''. \emph{Default: ``on''}
+where $\sqsubset$ means ``sub-property of''. \emph{Default: ``on''}
 
 	\item[DomainRule] Enables the following inference rule:
 \[\text{rdfs:domain}(P,C) \land P(X, Y) \Rightarrow X \in C\]
@@ -323,11 +325,11 @@ where $\sqsubset$ means ``is a sub-property of''. \emph{Default: ``on''}
 
 	\item[EquivalentClassRule] Enables the following inference rule:
 \[\text{owl:equivalentClass}(A,B) \Rightarrow A \subset B \land B \subset A\]
-where $\subset$ means ``is a sub-class of''. \emph{Default: ``on''}
+where $\subset$ means ``sub-class of''. \emph{Default: ``on''}
 
 	\item[EquivalentPropRule] Enables the following inference rule:
 \[\text{owl:equivalentProperty}(P,Q) \Rightarrow P \sqsubset Q \land Q \sqsubset P\]
-where $\sqsubset$ means ``is a sub-property of''. \emph{Default: ``on''}
+where $\sqsubset$ means ``sub-property of''. \emph{Default: ``on''}
 
 	\item[InverseOfRule] Enables the following inference rule:
 \[\text{owl:inverseOf}(P, Q) \land P(X, Y) \Rightarrow Q(Y, X)\]

@@ -18,6 +18,23 @@ pmnt::SubclassRule::SubclassRule(KbInstance* pKB, RuleEngine* pRE) :
 	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
 		RuleAtomSlot::createForRsrc(uriLib().m_rdfsSubClassOf.id()),
 		RuleAtomSlot::createForVar(1)));
+
+	installSubClassOfSelfRule(pKB, pRE, uriLib().m_rdfsClass.id());
+	installSubClassOfSelfRule(pKB, pRE, uriLib().m_owlClass.id());
+}
+
+void pmnt::SubclassRule::installSubClassOfSelfRule(KbInstance* pKB, RuleEngine* pRE, ResourceId clsRsrcId)
+{
+	auto pRdfsClassRule = ::std::make_shared<StandardRule>(pKB, pRE, pRE->uriLib().m_ruleSelfSubclass.id());
+	pRdfsClassRule->bodyPushBack(RuleAtom(
+		RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(pRE->uriLib().m_rdfType.id()),
+		RuleAtomSlot::createForRsrc(clsRsrcId)));
+	pRdfsClassRule->headPushBack(RuleAtom(
+		RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(pRE->uriLib().m_rdfsSubClassOf.id()),
+		RuleAtomSlot::createForVar(0)));
+	pRE->addRule(pRdfsClassRule);
 }
 
 void pmnt::SubclassRule::applyRuleHead(BindingList& variableBindings)

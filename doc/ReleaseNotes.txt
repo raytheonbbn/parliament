@@ -30,6 +30,9 @@ Version 2.7.12 (?):
   statement tables.  The old behavior (geometric growth) is still available, but
   disabled by default.
 
+* Enhanced the inference engine so that whenever the subclass rule is on, statements of
+  the form "?x a rdfs:class" or "?x a owl:class" will result in "?x rdfs:subClassOf ?x".
+
 * Refactored ParliamentConfig.txt into two configuration files, ParliamentKbConfig.txt
   and ParliamentLogConfig.txt.  The latter configures Parliament's native code logging,
   and the latter configures everything else.  (The reason: Logging is configured at

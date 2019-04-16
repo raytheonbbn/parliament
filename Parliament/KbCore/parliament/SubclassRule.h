@@ -19,6 +19,9 @@ public:
 	void applyRuleHead(BindingList &bindingList) override;
 	bool mustRunAtStartup() const override
 		{ return true; }
+
+private:
+	static void installSubClassOfSelfRule(KbInstance* pKB, RuleEngine* pRE, ResourceId clsRsrcId);
 };
 
 class SubclassHelperRule : public StandardRule

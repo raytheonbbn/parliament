@@ -86,6 +86,7 @@ pmnt::UriLib::UriLib(KbInstance* pKB) :
 	m_owlHasValue(pKB, "http://www.w3.org/2002/07/owl#hasValue"),
 	m_owlRestriction(pKB, "http://www.w3.org/2002/07/owl#Restriction"),
 	m_ruleSubclass(pKB, "http://www.bbn.com/2005/09/rules/rdfs#subclass"),
+	m_ruleSelfSubclass(pKB, "http://www.bbn.com/2005/09/rules/rdfs#selfSubclass"),
 	m_ruleSubproperty(pKB, "http://www.bbn.com/2005/09/rules/rdfs#subproperty"),
 	m_ruleDomain(pKB, "http://www.bbn.com/2005/09/rules/rdfs#domain"),
 	m_ruleRange(pKB, "http://www.bbn.com/2005/09/rules/rdfs#range"),

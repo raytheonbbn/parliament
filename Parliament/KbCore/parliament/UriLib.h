@@ -75,6 +75,7 @@ public:
 	const LazyRsrc m_owlHasValue;
 	const LazyRsrc m_owlRestriction;
 	const LazyRsrc m_ruleSubclass;
+	const LazyRsrc m_ruleSelfSubclass;
 	const LazyRsrc m_ruleSubproperty;
 	const LazyRsrc m_ruleDomain;
 	const LazyRsrc m_ruleRange;

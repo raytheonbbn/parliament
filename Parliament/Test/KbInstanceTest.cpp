@@ -56,10 +56,10 @@ static const char*const k_expectedDumpLines[] =
 	"<http://example.org/#Mike> <http://www.w3.org/2000/01/rdf-schema#label> \"Mike Dean\" .",
 	"<http://example.org/#Mike> <http://www.w3.org/2000/01/rdf-schema#label> \"Mike Dean\"@en-us .",
 	"<http://example.org/#Human> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .",
-	"<http://example.org/#Human> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:bn0000001d .",
-	"_:bn0000001d <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .",
-	"_:bn0000001d <http://www.w3.org/2002/07/owl#onProperty> <http://example.org/#canonicalName> .",
-	"_:bn0000001d <http://www.w3.org/2002/07/owl#maxCardinality> \"1\"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .",
+	"<http://example.org/#Human> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:bn0000001f .",
+	"_:bn0000001f <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .",
+	"_:bn0000001f <http://www.w3.org/2002/07/owl#onProperty> <http://example.org/#canonicalName> .",
+	"_:bn0000001f <http://www.w3.org/2002/07/owl#maxCardinality> \"1\"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .",
 };
 
 static KbConfig createTestConfig(bool withInference)

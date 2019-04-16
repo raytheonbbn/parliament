@@ -157,21 +157,26 @@ static void assertEntailments(KbInstance& kb, bool includeFinalEntailments,
 
 	BOOST_CHECK(isEntailed(kb, owlThingRsrcId, rdfTypeRsrcId, rdfsClassRsrcId));
 	BOOST_CHECK(isEntailed(kb, owlThingRsrcId, rdfTypeRsrcId, owlClassRsrcId));
+	BOOST_CHECK(isEntailed(kb, owlThingRsrcId, rdfsSubClassOfRsrcId, owlThingRsrcId));
 	BOOST_CHECK(isEntailed(kb, rdfsResourceRsrcId, rdfTypeRsrcId, rdfsClassRsrcId));
 	BOOST_CHECK(isEntailed(kb, rdfsResourceRsrcId, rdfTypeRsrcId, owlClassRsrcId));
+	BOOST_CHECK(isEntailed(kb, rdfsResourceRsrcId, rdfsSubClassOfRsrcId, rdfsResourceRsrcId));
 
 	BOOST_CHECK(isEntailed(kb, dogRsrcId, rdfTypeRsrcId, rdfsClassRsrcId));
 	BOOST_CHECK(isEntailed(kb, dogRsrcId, rdfTypeRsrcId, owlClassRsrcId));
+	BOOST_CHECK(isEntailed(kb, dogRsrcId, rdfsSubClassOfRsrcId, dogRsrcId));
 	BOOST_CHECK(isEntailed(kb, dogRsrcId, rdfsSubClassOfRsrcId, rdfsResourceRsrcId));
 	BOOST_CHECK(isEntailed(kb, dogRsrcId, rdfsSubClassOfRsrcId, owlThingRsrcId));
 
 	BOOST_CHECK(isEntailed(kb, mammalRsrcId, rdfTypeRsrcId, rdfsClassRsrcId));
 	BOOST_CHECK(isEntailed(kb, mammalRsrcId, rdfTypeRsrcId, owlClassRsrcId));
+	BOOST_CHECK(isEntailed(kb, mammalRsrcId, rdfsSubClassOfRsrcId, mammalRsrcId));
 	BOOST_CHECK(isEntailed(kb, mammalRsrcId, rdfsSubClassOfRsrcId, rdfsResourceRsrcId));
 	BOOST_CHECK(isEntailed(kb, mammalRsrcId, rdfsSubClassOfRsrcId, owlThingRsrcId));
 
 	BOOST_CHECK(isEntailed(kb, animalRsrcId, rdfTypeRsrcId, rdfsClassRsrcId));
 	BOOST_CHECK(isEntailed(kb, animalRsrcId, rdfTypeRsrcId, owlClassRsrcId));
+	BOOST_CHECK(isEntailed(kb, animalRsrcId, rdfsSubClassOfRsrcId, animalRsrcId));
 	BOOST_CHECK(isEntailed(kb, animalRsrcId, rdfsSubClassOfRsrcId, rdfsResourceRsrcId));
 	BOOST_CHECK(isEntailed(kb, animalRsrcId, rdfsSubClassOfRsrcId, owlThingRsrcId));
 
@@ -184,11 +189,11 @@ static void assertEntailments(KbInstance& kb, bool includeFinalEntailments,
 		BOOST_CHECK(isEntailed(kb, fidoRsrcId, rdfTypeRsrcId, mammalRsrcId));
 		BOOST_CHECK(isEntailed(kb, fidoRsrcId, rdfTypeRsrcId, animalRsrcId));
 
-		BOOST_CHECK_EQUAL(24u, kb.stmtCount());
+		BOOST_CHECK_EQUAL(29u, kb.stmtCount());
 	}
 	else
 	{
-		BOOST_CHECK_EQUAL(19u, kb.stmtCount());
+		BOOST_CHECK_EQUAL(24u, kb.stmtCount());
 	}
 }
 
