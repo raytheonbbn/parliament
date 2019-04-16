@@ -204,9 +204,7 @@ alias JavaJNI
 
 alias BerkeleyDB
 	:	# no sources
-	:	<address-model>32:<source>$(BdbDir)/32/lib/libdb-$(BdbVersion).so
-		<address-model>64:<source>$(BdbDir)/64/lib/libdb-$(BdbVersion).so
+	:	<source>$(BdbDir)/lib/libdb-$(BdbVersion).so
 	:	# no default build
-	:	<address-model>32:<include>$(BdbDir)/32/include
-		<address-model>64:<include>$(BdbDir)/64/include
+	:	<include>$(BdbDir)/include
 	;
