@@ -1,6 +1,6 @@
 # News
 
-Parliament™ version 2.7.12 was released on April 17, 2019.  Changes of note:
+April 17, 2019:  Released Parliament™ version 2.7.12.  Changes of note:
 
 * Parliament was recently moved to this GitHub project from its long-time home on [SemWebCentral](http://parliament.semwebcentral.org/)
 
