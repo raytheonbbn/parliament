@@ -148,13 +148,18 @@
 		<basename property="zipName" file="${srcDir}"/>
 		<delete file="${distroDir}/${zipName}.zip"/>
 		<mkdir dir="${distroDir}"/>
-		<zip
-			basedir="${srcDir}"
-			destfile="${distroDir}/${zipName}.zip"
-			encoding="UTF8"
-			level="9"
-			compress="true"
-			whenempty="create"/>
+		<zip destfile="${distroDir}/${zipName}.zip" encoding="UTF8" level="9">
+			<zipfileset dir="${srcDir}" prefix="${zipName}">
+				<exclude name="*.sh"/>
+				<exclude name="bin/jsvc"/>
+				<exclude name="bin/ParliamentAdmin"/>
+			</zipfileset>
+			<zipfileset dir="${srcDir}" prefix="${zipName}" filemode="755">
+				<include name="*.sh"/>
+				<include name="bin/jsvc"/>
+				<include name="bin/ParliamentAdmin"/>
+			</zipfileset>
+		</zip>
 	</target>
 
 	<target name="generateTestReport" depends="testSummaryUpToDateCheck"
