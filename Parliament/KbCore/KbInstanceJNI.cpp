@@ -202,35 +202,26 @@ JNIEXPORT jshort JNICALL Java_com_bbn_parliament_jni_KbInstance_determineDisposi
 }
 
 JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_deleteKb(
-	JNIEnv* pEnv, jclass /* cls */, jobject javaConfig, jstring directory)
+	JNIEnv* pEnv, jclass /* cls */, jobject javaConfig, jstring directory, jboolean deleteContainingDir)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
+		KbConfig cppConfig;
 		if (javaConfig == 0)
 		{
-			if (directory == 0)
-			{
-				KbInstance::deleteKb();
-			}
-			else
-			{
-				string dir = JNIHelper::jstringToCstring<char>(pEnv, directory);
-				KbInstance::deleteKb(dir);
-			}
+			cppConfig.readFromFile();
 		}
 		else
 		{
-			KbConfig cppConfig;
 			assignJavaConfigToCppConfig(cppConfig, pEnv, javaConfig);
-			if (directory == 0)
-			{
-				KbInstance::deleteKb(cppConfig);
-			}
-			else
-			{
-				string dir = JNIHelper::jstringToCstring<char>(pEnv, directory);
-				KbInstance::deleteKb(cppConfig, dir);
-			}
 		}
+
+		if (directory != 0)
+		{
+			cppConfig.kbDirectoryPath(
+				JNIHelper::jstringToCstring<char>(pEnv, directory));
+		}
+
+		KbInstance::deleteKb(cppConfig, !!deleteContainingDir);
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 

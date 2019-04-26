@@ -55,7 +55,31 @@ static ostream& operator<<(ostream& os, const RuleTestParams& rtp)
 	return os;
 }
 
-static const TChar		k_dirName[] = _T(".");
+enum class RuleEnablement
+	{ k_allDisabled, k_default, k_allEnabled };
+static const char*const k_ruleEnablementLbls[] =
+	{ "No", "Default", "All" };
+struct RuleConfigTestParams
+{
+	RuleEnablement	m_ruleEnablement;
+	size_t			m_expectedNumStmts;
+};
+static const RuleConfigTestParams k_ruleConfigTestParams[] =
+{
+	{ RuleEnablement::k_allDisabled, 3u },
+	{ RuleEnablement::k_default, 6u },
+	{ RuleEnablement::k_allEnabled, 29u },
+};
+
+// Required for BOOST_DATA_TEST_CASE:
+static ostream& operator<<(ostream& os, const RuleConfigTestParams& rtci)
+{
+	os << k_ruleEnablementLbls[static_cast<int>(rtci.m_ruleEnablement)]
+		<< " rules enabled, expecting "  << rtci.m_expectedNumStmts << " statements";
+	return os;
+}
+
+static const TChar		k_dirName[] = _T("test-kb-data");
 
 static const RsrcString	k_personRsrc				= convertToRsrcChar("http://example.org/#Person");
 static const RsrcString	k_humanRsrc					= convertToRsrcChar("http://example.org/#Human");
@@ -133,6 +157,21 @@ static const RuleTestParams k_otherRuleTestParams[] =
 
 static auto g_log{log::getSource("RuleEngineTest")};
 
+static KbConfig createTestConfig(RuleEnablement ruleEnablement)
+{
+	KbConfig config;
+	config.kbDirectoryPath(k_dirName);
+	if (ruleEnablement == RuleEnablement::k_allDisabled)
+	{
+		config.disableAllRules();
+	}
+	else if (ruleEnablement == RuleEnablement::k_allEnabled)
+	{
+		config.enableAllRules();
+	}
+	return config;
+}
+
 BOOST_AUTO_TEST_SUITE(RuleEngineTestSuite)
 
 static bool isEntailed(const KbInstance& kb, ResourceId subjectId, ResourceId predicateId, ResourceId objectId)
@@ -202,16 +241,12 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_subclassRuleTestParams),
 	rtp)
 {
-	KbConfig config;
-	config.readFromFile();
-	config.kbDirectoryPath(k_dirName);
-	config.readOnly(false);
-	config.disableAllRules();
+	auto config = createTestConfig(RuleEnablement::k_allDisabled);
 	config.inferRdfsClass(true);
 	config.inferOwlClass(true);
 	config.inferRdfsResource(true);
 	config.inferOwlThing(true);
-	KbDeleter deleter(config);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 
 	if (rtp.m_initPoint == RuleInitPoint::k_beginning)
@@ -254,12 +289,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	KbConfig config;
-	config.readFromFile();
-	config.kbDirectoryPath(k_dirName);
-	config.readOnly(false);
-	config.disableAllRules();
-	KbDeleter deleter(config);
+	auto config = createTestConfig(RuleEnablement::k_allDisabled);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 
 	if (rtp.m_initPoint == RuleInitPoint::k_beginning)
@@ -298,12 +329,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_inverseOfRuleTestParams),
 	rtp)
 {
-	KbConfig config;
-	config.readFromFile();
-	config.kbDirectoryPath(k_dirName);
-	config.readOnly(false);
-	config.disableAllRules();
-	KbDeleter deleter(config);
+	auto config = createTestConfig(RuleEnablement::k_allDisabled);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 
 	if (rtp.m_initPoint == RuleInitPoint::k_beginning)
@@ -347,12 +374,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	KbConfig config;
-	config.readFromFile();
-	config.kbDirectoryPath(k_dirName);
-	config.readOnly(false);
-	config.disableAllRules();
-	KbDeleter deleter(config);
+	auto config = createTestConfig(RuleEnablement::k_allDisabled);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 
 	if (rtp.m_initPoint == RuleInitPoint::k_beginning)
@@ -387,12 +410,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	KbConfig config;
-	config.readFromFile();
-	config.kbDirectoryPath(k_dirName);
-	config.readOnly(false);
-	config.disableAllRules();
-	KbDeleter deleter(config);
+	auto config = createTestConfig(RuleEnablement::k_allDisabled);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 
 	if (rtp.m_initPoint == RuleInitPoint::k_beginning)
@@ -455,12 +474,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	KbConfig config;
-	config.readFromFile();
-	config.kbDirectoryPath(k_dirName);
-	config.readOnly(false);
-	config.disableAllRules();
-	KbDeleter deleter(config);
+	auto config = createTestConfig(RuleEnablement::k_allDisabled);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 
 	if (rtp.m_initPoint == RuleInitPoint::k_beginning)
@@ -502,12 +517,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	KbConfig config;
-	config.readFromFile();
-	config.kbDirectoryPath(k_dirName);
-	config.readOnly(false);
-	config.disableAllRules();
-	KbDeleter deleter(config);
+	auto config = createTestConfig(RuleEnablement::k_allDisabled);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 
 	if (rtp.m_initPoint == RuleInitPoint::k_beginning)
@@ -555,12 +566,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	KbConfig config;
-	config.readFromFile();
-	config.kbDirectoryPath(k_dirName);
-	config.readOnly(false);
-	config.disableAllRules();
-	KbDeleter deleter(config);
+	auto config = createTestConfig(RuleEnablement::k_allDisabled);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 
 	if (rtp.m_initPoint == RuleInitPoint::k_beginning)
@@ -596,12 +603,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	KbConfig config;
-	config.readFromFile();
-	config.kbDirectoryPath(k_dirName);
-	config.readOnly(false);
-	config.disableAllRules();
-	KbDeleter deleter(config);
+	auto config = createTestConfig(RuleEnablement::k_allDisabled);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 
 	if (rtp.m_initPoint == RuleInitPoint::k_beginning)
@@ -646,12 +649,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	KbConfig config;
-	config.readFromFile();
-	config.kbDirectoryPath(k_dirName);
-	config.readOnly(false);
-	config.disableAllRules();
-	KbDeleter deleter(config);
+	auto config = createTestConfig(RuleEnablement::k_allDisabled);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 
 	if (rtp.m_initPoint == RuleInitPoint::k_beginning)
@@ -694,12 +693,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_otherRuleTestParams),
 	rtp)
 {
-	KbConfig config;
-	config.readFromFile();
-	config.kbDirectoryPath(k_dirName);
-	config.readOnly(false);
-	config.disableAllRules();
-	KbDeleter deleter(config);
+	auto config = createTestConfig(RuleEnablement::k_allDisabled);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 
 	if (rtp.m_initPoint == RuleInitPoint::k_beginning)
@@ -747,12 +742,8 @@ struct Triple
 
 static void testHasValueRulesForOnePermutation(const RuleTestParams& rtp, int permutation[5])
 {
-	KbConfig config;
-	config.readFromFile();
-	config.kbDirectoryPath(k_dirName);
-	config.readOnly(false);
-	config.disableAllRules();
-	KbDeleter deleter(config);
+	auto config = createTestConfig(RuleEnablement::k_allDisabled);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 
 	if (rtp.m_initPoint == RuleInitPoint::k_beginning)
@@ -829,18 +820,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_multiAtomBodyRuleTestParams),
 	rtp)
 {
-	KbConfig config;
-	config.readFromFile();
-	config.kbDirectoryPath(k_dirName);
-	config.readOnly(false);
-	config.isSubclassRuleOn(false);
-	config.isSubpropertyRuleOn(false);
-	config.isInverseOfRuleOn(false);
-	config.isSymmetricPropRuleOn(false);
-	config.isFunctionalPropRuleOn(false);
-	config.isInvFunctionalPropRuleOn(false);
-	config.isTransitivePropRuleOn(false);
-	KbDeleter deleter(config);
+	auto config = createTestConfig(RuleEnablement::k_allDisabled);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 
 	//the following might be improper rdf?  but for testing purposes it ought not to matter
@@ -1044,18 +1025,11 @@ BOOST_DATA_TEST_CASE(
 
 BOOST_DATA_TEST_CASE(
 	testRuleConfig,
-	bdata::make({ true, false }),
-	areRulesDisabled)
+	bdata::make(k_ruleConfigTestParams),
+	rcti)
 {
-	KbConfig config;
-	config.readFromFile();
-	config.kbDirectoryPath(k_dirName);
-	config.readOnly(false);
-	if (areRulesDisabled)
-	{
-		config.disableAllRules();
-	}
-	KbDeleter kbDeleter(config);
+	auto config = createTestConfig(rcti.m_ruleEnablement);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 
 	ResourceId rdfsSubClassOfRsrcId	= kb.uriLib().m_rdfsSubClassOf.id();
@@ -1069,7 +1043,7 @@ BOOST_DATA_TEST_CASE(
 	kb.addStmt(dogRsrcId, rdfsSubClassOfRsrcId, mammalRsrcId, false);
 	kb.addStmt(fidoRsrcId, rdfTypeRsrcId, dogRsrcId, false);
 
-	BOOST_CHECK_EQUAL((areRulesDisabled ? 3u : 6u), kb.stmtCount());
+	BOOST_CHECK_EQUAL(rcti.m_expectedNumStmts, kb.stmtCount());
 }
 
 BOOST_AUTO_TEST_SUITE_END()

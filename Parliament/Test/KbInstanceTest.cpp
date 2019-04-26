@@ -32,7 +32,7 @@ using ::std::string;
 
 using RsrcList = ::std::set<ResourceId>;
 
-static const TChar		k_dirName[]	= _T(".");
+static const TChar		k_dirName[]	= _T("test-kb-data");
 static const RsrcString	k_humanUri	= convertToRsrcChar("http://example.org/#Human");
 static const RsrcString	k_dogUri		= convertToRsrcChar("http://example.org/#Dog");
 static const RsrcString	k_catUri		= convertToRsrcChar("http://example.org/#Cat");
@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_SUITE(KbInstanceTestSuite)
 BOOST_AUTO_TEST_CASE(testByQuickOverview)
 {
 	KbConfig config = createTestConfig(true);
-	KbDeleter deleter(config);
+	KbDeleter deleter(config, true);
 
 	runCreateTest(config);
 	runOpenTest(config);
@@ -225,7 +225,7 @@ BOOST_DATA_TEST_CASE(
 {
 	KbConfig config = createTestConfig(false);
 	config.normalizeTypedStringLiterals(normalizeTypedStringLiterals);
-	KbDeleter deleter(config);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 	RsrcString rdfTypeUri = kb.uriLib().m_rdfType.str();
 
@@ -323,7 +323,7 @@ BOOST_DATA_TEST_CASE(
 BOOST_AUTO_TEST_CASE(testDumpKbAsNTriples)
 {
 	auto config = createTestConfig(true);
-	KbDeleter deleter(config);
+	KbDeleter deleter(config, true);
 	KbInstance kb(config);
 
 	auto rdfTypeRsrcId			= kb.uriLib().m_rdfType.id();

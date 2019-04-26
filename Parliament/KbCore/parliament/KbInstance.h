@@ -147,10 +147,7 @@ public:
 
 	PARLIAMENT_EXPORT static KbDisposition determineDisposition(
 		const KbConfig& config, bool throwIfIndeterminate = false);
-	PARLIAMENT_EXPORT static void deleteKb(const KbConfig& cfg, const ::boost::filesystem::path& dir);
-	PARLIAMENT_EXPORT static void deleteKb(const KbConfig& cfg);
-	PARLIAMENT_EXPORT static void deleteKb(const ::boost::filesystem::path& dir);
-	PARLIAMENT_EXPORT static void deleteKb();
+	PARLIAMENT_EXPORT static void deleteKb(const KbConfig& cfg, bool deleteContainingDir);
 
 	PARLIAMENT_EXPORT size_t ruleCount() const;
 	PARLIAMENT_EXPORT void printRules(::std::ostream& s) const;

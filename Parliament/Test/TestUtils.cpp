@@ -52,32 +52,16 @@ pmnt::FileDeleter::~FileDeleter()
 	}
 }
 
-pmnt::KbDeleter::KbDeleter(const KbConfig& config) :
+pmnt::KbDeleter::KbDeleter(const KbConfig& config, bool deleteContainingDir) :
 	m_config(config),
-	m_dataDir(),
-	m_dataDirSupplied(false)
+	m_deleteContainingDir(deleteContainingDir)
 {
-	KbInstance::deleteKb(m_config);
-}
-
-pmnt::KbDeleter::KbDeleter(const KbConfig& config, const bfs::path& dataDir) :
-	m_config(config),
-	m_dataDir(dataDir),
-	m_dataDirSupplied(true)
-{
-	KbInstance::deleteKb(m_config, m_dataDir);
+	KbInstance::deleteKb(m_config, m_deleteContainingDir);
 }
 
 pmnt::KbDeleter::~KbDeleter()
 {
-	if (m_dataDirSupplied)
-	{
-		KbInstance::deleteKb(m_config, m_dataDir);
-	}
-	else
-	{
-		KbInstance::deleteKb(m_config);
-	}
+	KbInstance::deleteKb(m_config, m_deleteContainingDir);
 }
 
 pmnt::EnvVarReset::EnvVarReset(const TString& envVarName, const TString& newEnvVarValue) :

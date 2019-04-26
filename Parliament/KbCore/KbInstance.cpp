@@ -1335,34 +1335,20 @@ string pmnt::KbInstance::formatRsrcUri(ResourceId rsrcId, bool includeRsrcId) co
 	}
 }
 
-void pmnt::KbInstance::deleteKb(const KbConfig& cfg, const bfs::path& dir)
-{
-	remove(dir / cfg.uriTableFileName());
-	remove(dir / cfg.uriToIntFileName());
-	remove(dir / cfg.stmtFileName());
-	remove(dir / cfg.rsrcFileName());
-}
-
-void pmnt::KbInstance::deleteKb(const KbConfig& cfg)
+void pmnt::KbInstance::deleteKb(const KbConfig& cfg, bool deleteContainingDir)
 {
 	remove(cfg.uriTableFilePath());
 	remove(cfg.uriToIntFilePath());
 	remove(cfg.stmtFilePath());
 	remove(cfg.rsrcFilePath());
-}
 
-void pmnt::KbInstance::deleteKb(const bfs::path& dir)
-{
-	KbConfig config;
-	config.readFromFile();
-	deleteKb(config, dir);
-}
-
-void pmnt::KbInstance::deleteKb()
-{
-	KbConfig config;
-	config.readFromFile();
-	deleteKb(config);
+	if (deleteContainingDir
+		&& exists(cfg.kbDirectoryPath())
+		&& is_directory(cfg.kbDirectoryPath())
+		&& is_empty(cfg.kbDirectoryPath()))
+	{
+		remove(cfg.kbDirectoryPath());
+	}
 }
 
 size_t pmnt::KbInstance::ruleCount() const

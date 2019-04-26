@@ -22,6 +22,7 @@
 #include "parliament/RegEx.h"
 #include "parliament/UnicodeIterator.h"
 #include "parliament/Util.h"
+#include "TestUtils.h"
 
 namespace bdata = ::boost::unit_test::data;
 namespace bfs = ::boost::filesystem;
@@ -39,6 +40,7 @@ using BlankNodeMap = ::std::unordered_map<::std::string, ResourceId>;
 BOOST_AUTO_TEST_SUITE(DeftTestSuite)
 
 static const TChar k_pmntDepsEnvVar[] = _T("PARLIAMENT_DEPENDENCIES");
+static const TChar k_defaultDepsDir[] = _T("../../dependencies");
 static const TChar k_dataFileDir[] = _T("data");
 static const TChar k_deftDataFileName[] = _T("deft-data-load.nt");
 static const char k_blankOrCommentRegExStr[] = "^[ \t]*(?:#.*)?$";
@@ -70,9 +72,10 @@ static ::std::vector<bfs::path> filesToLoad()
 	auto envVarValue = tGetEnvVar(k_pmntDepsEnvVar);
 	if (envVarValue.empty())
 	{
-		PMNT_LOG(g_log, log::Level::warn) << "Skipping test:  Environment variable "
-			<< convertTCharToUtf8(k_pmntDepsEnvVar) << " is not defined.";
-		return result;
+		envVarValue = k_defaultDepsDir;
+		PMNT_LOG(g_log, log::Level::debug) << "Environment variable "
+			<< convertTCharToUtf8(k_pmntDepsEnvVar) << " is not defined.  Defaulting to "
+			<< convertTCharToUtf8(envVarValue);
 	}
 
 	bfs::path dataDir{envVarValue};
@@ -123,111 +126,106 @@ BOOST_DATA_TEST_CASE(
 	HiResTimer timer;
 
 	KbConfig config;
-	config.kbDirectoryPath("test-kb-data");
-	KbInstance::deleteKb(config);
+	config.kbDirectoryPath(_T("test-kb-data"));
+	KbDeleter deleter(config, true);
+	KbInstance kb(config);
 
+	BlankNodeMap bnodeMap;
+	RegEx blankOrCommentRex = compileRegEx(k_blankOrCommentRegExStr);
+	RegEx tripleRex = compileRegEx(k_nTripleRegExStr);
+	for (bfs::ifstream in(dataFile, ::std::ios::in); !in.eof();)
 	{
-		KbInstance kb(config);
-
-		BlankNodeMap bnodeMap;
-		RegEx blankOrCommentRex = compileRegEx(k_blankOrCommentRegExStr);
-		RegEx tripleRex = compileRegEx(k_nTripleRegExStr);
-		for (bfs::ifstream in(dataFile, ::std::ios::in); !in.eof();)
+		if (!in)
 		{
-			if (!in)
-			{
-				throw runtime_error("IO error reading from data file");
-			}
-			else
-			{
-				string line;
-				getline(in, line);
-				SMatch blankOrCommentCaptures;
-				SMatch tripleCaptures;
-				if (regExMatch(line, blankOrCommentCaptures, blankOrCommentRex))
-				{
-					// Do nothing
-				}
-				else if (regExMatch(line, tripleCaptures, tripleRex))
-				{
-					string uriSubj = tripleCaptures[1].str();
-					string blankSubj = tripleCaptures[2].str();
-					string pred = tripleCaptures[3].str();
-					string uriObj = tripleCaptures[4].str();
-					string blankObj = tripleCaptures[5].str();
-					string litObj = tripleCaptures[6].str();
-
-					//if (!uriSubj.empty()) { BOOST_TEST_MESSAGE("URI Subject:  '" << uriSubj << "'"); }
-					//if (!blankSubj.empty()) { BOOST_TEST_MESSAGE("Blank Subject:  '" << blankSubj << "'"); }
-					//BOOST_TEST_MESSAGE("Predicate:  '" << pred << "'");
-					//if (!uriObj.empty()) { BOOST_TEST_MESSAGE("URI Object:  '" << uriObj << "'"); }
-					//if (!blankObj.empty()) { BOOST_TEST_MESSAGE("Blank Object:  '" << blankObj << "'"); }
-					//if (!litObj.empty()) { BOOST_TEST_MESSAGE("Literal Object:  '" << litObj << "'"); }
-
-					ResourceId subjId;
-					if (!uriSubj.empty())
-					{
-						subjId = kb.uriToRsrcId(convertToRsrcChar(uriSubj), false, true);
-					}
-					else
-					{
-						subjId = getBNodeId(kb, bnodeMap, blankSubj);
-					}
-					ResourceId predId = kb.uriToRsrcId(convertToRsrcChar(pred), false, true);
-					ResourceId objId;
-					if (!uriObj.empty())
-					{
-						objId = kb.uriToRsrcId(convertToRsrcChar(uriObj), false, true);
-					}
-					else if (!litObj.empty())
-					{
-						objId = kb.uriToRsrcId(convertToRsrcChar(litObj), true, true);
-					}
-					else
-					{
-						objId = getBNodeId(kb, bnodeMap, blankObj);
-					}
-
-					kb.addStmt(subjId, predId, objId, false);
-				}
-				else
-				{
-					BOOST_TEST_MESSAGE("Line doesn't match:  \"" << line << "\"");
-				}
-			}
-		}
-
-		timer.stop();
-		BOOST_TEST_MESSAGE("Time to load'" << dataFile.generic_string()
-			<< "':  " << timer.getSec() << " sec");
-
-		size_t total = 0;
-		size_t numDel = 0;
-		size_t numInferred = 0;
-		size_t numDelAndInferred = 0;
-		size_t numHidden = 0;
-		size_t numVirtual = 0;
-		kb.countStmts(total, numDel, numInferred, numDelAndInferred, numHidden, numVirtual);
-
-		if (dataFile.filename() == k_deftDataFileName)
-		{
-			// Note:  The total above does not count virtual statements.
-			const size_t k_numStmtsInFile = 59837u;
-			const size_t k_numReifications = 5994u;
-			BOOST_CHECK_EQUAL(2u, numDel);
-			BOOST_CHECK_EQUAL(0u, numDelAndInferred);
-			BOOST_CHECK_EQUAL(k_numReifications, numHidden);
-			BOOST_CHECK_EQUAL(4 * k_numReifications, numVirtual);
-			BOOST_CHECK_EQUAL(k_numStmtsInFile, total + numVirtual - numInferred - numDel - numHidden);
-			BOOST_CHECK_EQUAL(37186u, numInferred);
+			throw runtime_error("IO error reading from data file");
 		}
 		else
 		{
-			BOOST_CHECK(total > 0u);
+			string line;
+			getline(in, line);
+			SMatch blankOrCommentCaptures;
+			SMatch tripleCaptures;
+			if (regExMatch(line, blankOrCommentCaptures, blankOrCommentRex))
+			{
+				// Do nothing
+			}
+			else if (regExMatch(line, tripleCaptures, tripleRex))
+			{
+				string uriSubj = tripleCaptures[1].str();
+				string blankSubj = tripleCaptures[2].str();
+				string pred = tripleCaptures[3].str();
+				string uriObj = tripleCaptures[4].str();
+				string blankObj = tripleCaptures[5].str();
+				string litObj = tripleCaptures[6].str();
+
+				//if (!uriSubj.empty()) { BOOST_TEST_MESSAGE("URI Subject:  '" << uriSubj << "'"); }
+				//if (!blankSubj.empty()) { BOOST_TEST_MESSAGE("Blank Subject:  '" << blankSubj << "'"); }
+				//BOOST_TEST_MESSAGE("Predicate:  '" << pred << "'");
+				//if (!uriObj.empty()) { BOOST_TEST_MESSAGE("URI Object:  '" << uriObj << "'"); }
+				//if (!blankObj.empty()) { BOOST_TEST_MESSAGE("Blank Object:  '" << blankObj << "'"); }
+				//if (!litObj.empty()) { BOOST_TEST_MESSAGE("Literal Object:  '" << litObj << "'"); }
+
+				ResourceId subjId;
+				if (!uriSubj.empty())
+				{
+					subjId = kb.uriToRsrcId(convertToRsrcChar(uriSubj), false, true);
+				}
+				else
+				{
+					subjId = getBNodeId(kb, bnodeMap, blankSubj);
+				}
+				ResourceId predId = kb.uriToRsrcId(convertToRsrcChar(pred), false, true);
+				ResourceId objId;
+				if (!uriObj.empty())
+				{
+					objId = kb.uriToRsrcId(convertToRsrcChar(uriObj), false, true);
+				}
+				else if (!litObj.empty())
+				{
+					objId = kb.uriToRsrcId(convertToRsrcChar(litObj), true, true);
+				}
+				else
+				{
+					objId = getBNodeId(kb, bnodeMap, blankObj);
+				}
+
+				kb.addStmt(subjId, predId, objId, false);
+			}
+			else
+			{
+				BOOST_TEST_MESSAGE("Line doesn't match:  \"" << line << "\"");
+			}
 		}
 	}
 
-	KbInstance::deleteKb(config);
+	timer.stop();
+	BOOST_TEST_MESSAGE("Time to load'" << dataFile.generic_string()
+		<< "':  " << timer.getSec() << " sec");
+
+	size_t total = 0;
+	size_t numDel = 0;
+	size_t numInferred = 0;
+	size_t numDelAndInferred = 0;
+	size_t numHidden = 0;
+	size_t numVirtual = 0;
+	kb.countStmts(total, numDel, numInferred, numDelAndInferred, numHidden, numVirtual);
+
+	if (dataFile.filename() == k_deftDataFileName)
+	{
+		// Note:  The total above does not count virtual statements.
+		const size_t k_numStmtsInFile = 59837u;
+		const size_t k_numReifications = 5994u;
+		BOOST_CHECK_EQUAL(2u, numDel);
+		BOOST_CHECK_EQUAL(0u, numDelAndInferred);
+		BOOST_CHECK_EQUAL(k_numReifications, numHidden);
+		BOOST_CHECK_EQUAL(4 * k_numReifications, numVirtual);
+		BOOST_CHECK_EQUAL(k_numStmtsInFile, total + numVirtual - numInferred - numDel - numHidden);
+		BOOST_CHECK_EQUAL(37186u, numInferred);
+	}
+	else
+	{
+		BOOST_CHECK(total > 0u);
+	}
 }
 
 BOOST_AUTO_TEST_SUITE_END()

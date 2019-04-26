@@ -18,7 +18,7 @@ public class KbInstance implements Closeable {
 	 */
 	public static class CountStmtsResult {
 		public CountStmtsResult(long total, long numDel, long numInferred,
-				long numDelAndInferred, long numHidden, long numVirtual) {
+			long numDelAndInferred, long numHidden, long numVirtual) {
 			_total = total;
 			_numDel = numDel;
 			_numInferred = numInferred;
@@ -65,7 +65,7 @@ public class KbInstance implements Closeable {
 	 */
 	public static class GetExcessCapacityResult {
 		public GetExcessCapacityResult(double pctUnusedUriCapacity,
-				double pctUnusedRsrcCapacity, double pctUnusedStmtCapacity) {
+			double pctUnusedRsrcCapacity, double pctUnusedStmtCapacity) {
 			_pctUnusedUriCapacity = pctUnusedUriCapacity;
 			_pctUnusedRsrcCapacity = pctUnusedRsrcCapacity;
 			_pctUnusedStmtCapacity = pctUnusedStmtCapacity;
@@ -201,7 +201,7 @@ public class KbInstance implements Closeable {
 	 * KB_DOES_NOT_EXIST, KB_EXISTS_WITHOUT_URI_TO_INT, or KB_EXISTS.
 	 */
 	public static native short determineDisposition(KbConfig config,
-			boolean throwIfIndeterminate);
+		boolean throwIfIndeterminate);
 
 	/**
 	 * Deletes a KB's files. The KB must be closed.
@@ -214,13 +214,10 @@ public class KbInstance implements Closeable {
 	 * If both parameters are null, the directory in the KbConfig instance returned
 	 * by KbConfig.readFile is used.
 	 */
-	public static native void deleteKb(KbConfig cfg, String directory);
-
-//	/** Deletes a KB's files. (KB must be closed.) */
-//	public static void deleteKb(String directory)
-//	{
-//		deleteKb(null, directory);
-//	}
+	public static native void deleteKb(KbConfig cfg, String directory, boolean deleteContainingDir);
+	public static void deleteKb(KbConfig cfg, String directory) {
+		deleteKb(cfg, directory, false);
+	}
 
 	/**
 	 * Return the number of statements in the KB (including deleted and
@@ -250,7 +247,7 @@ public class KbInstance implements Closeable {
 	 * other combination is allowed.)
 	 */
 	public native StmtIterator find(long subjectId, long predicateId,
-			long objectId, int flags);
+		long objectId, int flags);
 
 	/**
 	 * Returns the number of statements in which the specified resource occurs
@@ -287,7 +284,7 @@ public class KbInstance implements Closeable {
 
 	/** Creates a new statement and returns its index. */
 	public native long addStmt(long subjectId, long predicateId, long objectId,
-			boolean isInferred);
+		boolean isInferred);
 
 	/** Marks the specified statement as deleted. */
 	public native void deleteStmt(long subjectId, long predicateId, long objectId);
@@ -301,11 +298,11 @@ public class KbInstance implements Closeable {
 
 	/** Prints a textual representation of all the statements. */
 	public native void printStatements(PrintStream s, boolean includeNextStmts,
-			boolean verboseNextStmts);
+		boolean verboseNextStmts);
 
 	/** Prints a textual representation of all the resources. */
 	public native void printResources(PrintStream s, boolean includeFirstStmts,
-			boolean verboseFirstStmts);
+		boolean verboseFirstStmts);
 
 	/** Returns the number of rules currently in use */
 	public native long ruleCount();
@@ -318,16 +315,16 @@ public class KbInstance implements Closeable {
 
 	/** Adds a reification of the given statement to the kb.  FOR TESTING PURPOSES ONLY.*/
 	public native void addReification(long statementName, long subjectId,
-			long predicateId, long objectId);
+		long predicateId, long objectId);
 
 	/** Removes a reification from the KB.  FOR TESTING PURPOSES ONLY. */
 	public native void deleteReification(long statementName, long subjectId,
-			long predicateId, long objectId);
+		long predicateId, long objectId);
 
 	/**
 	 * Finds reification quads in the kb, given some combination of
 	 * statementName, subject, predicate, and object
 	 */
 	public native ReificationIterator findReifications(long statementName,
-			long subjectId, long predicateId, long objectId);
+		long subjectId, long predicateId, long objectId);
 }

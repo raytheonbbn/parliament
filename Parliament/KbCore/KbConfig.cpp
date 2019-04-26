@@ -255,26 +255,26 @@ void pmnt::KbConfig::timeoutUnit(const string& newValue) {
 	}
 }
 
-void pmnt::KbConfig::disableAllRules()
+void pmnt::KbConfig::setStatusOfAllRules(bool enableAllRules)
 {
-	m_enableSWRLRuleEngine			= false;
+	m_enableSWRLRuleEngine			= enableAllRules;
 
-	m_isSubclassRuleOn				= false;
-	m_isSubpropertyRuleOn			= false;
-	m_isDomainRuleOn					= false;
-	m_isRangeRuleOn					= false;
-	m_isEquivalentClassRuleOn		= false;
-	m_isEquivalentPropRuleOn		= false;
-	m_isInverseOfRuleOn				= false;
-	m_isSymmetricPropRuleOn			= false;
-	m_isFunctionalPropRuleOn		= false;
-	m_isInvFunctionalPropRuleOn	= false;
-	m_isTransitivePropRuleOn		= false;
+	m_isSubclassRuleOn				= enableAllRules;
+	m_isSubpropertyRuleOn			= enableAllRules;
+	m_isDomainRuleOn					= enableAllRules;
+	m_isRangeRuleOn					= enableAllRules;
+	m_isEquivalentClassRuleOn		= enableAllRules;
+	m_isEquivalentPropRuleOn		= enableAllRules;
+	m_isInverseOfRuleOn				= enableAllRules;
+	m_isSymmetricPropRuleOn			= enableAllRules;
+	m_isFunctionalPropRuleOn		= enableAllRules;
+	m_isInvFunctionalPropRuleOn	= enableAllRules;
+	m_isTransitivePropRuleOn		= enableAllRules;
 
-	m_inferRdfsClass					= false;
-	m_inferOwlClass					= false;
-	m_inferRdfsResource				= false;
-	m_inferOwlThing					= false;
+	m_inferRdfsClass					= enableAllRules;
+	m_inferOwlClass					= enableAllRules;
+	m_inferRdfsResource				= enableAllRules;
+	m_inferOwlThing					= enableAllRules;
 }
 
 const pmnt::KbConfig& pmnt::KbConfig::ensureKbDirExists() const

@@ -7,14 +7,13 @@
 #if !defined(PARLIAMENT_TESTUTILS_H_INCLUDED)
 #define PARLIAMENT_TESTUTILS_H_INCLUDED
 
+#include "parliament/KbConfig.h"
 #include "parliament/Types.h"
 
 #include <boost/filesystem/path.hpp>
 #include <vector>
 
 PARLIAMENT_NAMESPACE_BEGIN
-
-class KbConfig;
 
 class FileDeleter
 {
@@ -37,18 +36,18 @@ private:
 class KbDeleter
 {
 public:
-	KbDeleter(const KbConfig& config);
-	KbDeleter(const KbConfig& config, const ::boost::filesystem::path& dataDir);
+	KbDeleter(const KbConfig& config, bool deleteContainingDir);
+
 	KbDeleter(const KbDeleter&) = delete;
 	KbDeleter& operator=(const KbDeleter&) = delete;
 	KbDeleter(KbDeleter&&) = delete;
 	KbDeleter& operator=(KbDeleter&&) = delete;
+
 	~KbDeleter();
 
 private:
-	const KbConfig& m_config;
-	::boost::filesystem::path m_dataDir;
-	bool m_dataDirSupplied;
+	const KbConfig m_config;
+	const bool m_deleteContainingDir;
 };
 
 class EnvVarReset

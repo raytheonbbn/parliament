@@ -243,7 +243,11 @@ public:
 	void inferOwlThing(bool newValue)
 		{ m_inferOwlThing = newValue; }
 
-	void disableAllRules();
+	void disableAllRules()
+		{ setStatusOfAllRules(false); }
+	void enableAllRules()
+		{ setStatusOfAllRules(true); }
+	void setStatusOfAllRules(bool enableAllRules);
 
 	const KbConfig& ensureKbDirExists() const;
 

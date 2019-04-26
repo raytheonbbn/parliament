@@ -35,7 +35,6 @@ import com.bbn.parliament.jena.graph.OptimizationMethod;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jni.KbConfig;
 import com.bbn.parliament.jni.KbInstance;
-import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.QueryCancelledException;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -149,11 +148,13 @@ public class ComplexUnionGraphTest {
 		closeGraph(graph0);
 		closeGraph(graph1);
 		closeGraph(graph2);
+		KB_DATA_DIR.delete();
 	}
 
-	private static void closeGraph(Graph g) {
+	private static void closeGraph(KbGraph g) {
 		if (g != null) {
 			g.close();
+			KbInstance.deleteKb(g.getConfig(), null, true);
 		}
 	}
 
