@@ -13,13 +13,13 @@
 	</configurations>
 
 	<dependencies>
-		<dependency org="com.sleepycat" name="je" rev="5.0.73"
+		<dependency org="com.sleepycat" name="je" rev="${berkeleydb-je.version}"
 			conf="default->default"/>
 		<dependency org="org.apache.jena" name="jena-arq" rev="2.9.4"
 			conf="default->default"/>
-		<dependency org="org.slf4j" name="jcl-over-slf4j" rev="1.7.7"
+		<dependency org="org.slf4j" name="jcl-over-slf4j" rev="${slf4j.version}"
 			conf="default->default"/>
-		<dependency org="org.slf4j" name="slf4j-log4j12" rev="1.7.7"
+		<dependency org="org.slf4j" name="slf4j-log4j12" rev="${slf4j.version}"
 			conf="default->default"/>
 
 		<dependency org="junit" name="junit" rev="4.12" conf="test->default"/>

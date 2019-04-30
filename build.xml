@@ -97,8 +97,8 @@
 		<ant dir="${basedir}/jena/JenaGraph" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JosekiExtensions" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/jena/NumericIndex" target="runTests" inheritAll="false"/>
-		<!-- ant dir="${basedir}/jena/SpatialIndexProcessor" target="runTests" inheritAll="false"/ -->
 		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="runTests" inheritAll="false"/>
 		<!--
 		<ant dir="${basedir}/Sesame/CSameAsSail" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/ParliamentSail" target="runTests" inheritAll="false"/>

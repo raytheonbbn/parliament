@@ -52,7 +52,7 @@ public class JsonLdRdfReader implements RDFReader {
 	@Override
 	public void read(Model model, String url) {
 		try {
-			Object jsonObj = JsonUtils.fromURL(new URL(url));
+			Object jsonObj = JsonUtils.fromURL(new URL(url), JsonUtils.getDefaultHttpClient());
 			insertJsonIntoModel(model, url, jsonObj);
 		} catch (IOException | JsonLdError ex) {
 			error(ex);

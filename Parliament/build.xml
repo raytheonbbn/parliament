@@ -176,11 +176,13 @@
 	<target name="buildNativeForOneParamSet">
 		<exec executable="b2" dir="${basedir}/KbCore" failonerror="true">
 			<arg value="-q"/>
+			<arg value="-j3"/>
 			<arg line="${buildParams}"/>
 		</exec>
 		<delete dir="${targetDir}/drop-box" quiet="true"/>
 		<exec executable="b2" dir="${basedir}/AdminClient" failonerror="true">
 			<arg value="-q"/>
+			<arg value="-j3"/>
 			<arg line="${buildParams}"/>
 			<env key="ADMIN_CLIENT_INSTALL_DIR" value="${targetDir}/${deployableSvrDir}/bin"/>
 		</exec>
@@ -197,6 +199,7 @@
 			<else>
 				<exec executable="b2" dir="${basedir}/Test" failonerror="true">
 					<arg value="-q"/>
+					<arg value="-j3"/>
 					<arg line="${buildParams}"/>
 				</exec>
 			</else>

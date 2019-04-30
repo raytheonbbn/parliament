@@ -3,9 +3,16 @@
 <ivysettings>
 	<property name="ivy.ssh.keyfile" value="${ivy.default.ivy.user.dir}/loki.keyfile"/>
 	<property name="ivy.retrieve.pattern" value="${ivy.lib.dir}/[conf]/[artifact]-[revision].[ext]"/>
-	<property name="httpclient-cache.version" value="4.3.6"/>
-	<property name="httpclient.version" value="4.3.6"/>
-	<property name="httpcore.version" value="4.3.3"/>
+
+	<property name="berkeleydb-je.version" value="18.3.12"/>
+	<property name="commons-dbcp.version" value="1.4"/>
+	<property name="geotools.version" value="2.7.2"/>
+	<property name="httpclient-cache.version" value="4.5.2"/>
+	<property name="httpclient.version" value="4.5.2"/>
+	<property name="httpcore.version" value="4.4.4"/>
+	<property name="jetty.version" value="9.4.12.v20180830"/>
+	<property name="jsonld-java.version" value="0.8.3"/>
+	<property name="slf4j.version" value="1.7.21"/>
 
 	<!-- If no resolver is specified, use the default chain -->
 	<settings defaultResolver="default"/>

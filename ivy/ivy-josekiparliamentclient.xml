@@ -41,9 +41,9 @@
 	<dependencies>
 		<dependency org="org.apache.jena" name="jena-arq" rev="2.9.4"
 			conf="compile-ide->master;runtime-ide->default"/>
-		<dependency org="org.slf4j" name="slf4j-log4j12" rev="1.7.7"
+		<dependency org="org.slf4j" name="slf4j-log4j12" rev="${slf4j.version}"
 			conf="compile-ide->master;runtime-ide->default"/>
-		<dependency org="org.slf4j" name="jcl-over-slf4j" rev="1.7.7"
+		<dependency org="org.slf4j" name="jcl-over-slf4j" rev="${slf4j.version}"
 			conf="compile-ide->master;runtime-ide->default"/>
 		<dependency org="org.apache.httpcomponents" name="httpclient" rev="4.3.6"
 			conf="compile-ide->master;runtime-ide->default"/>
