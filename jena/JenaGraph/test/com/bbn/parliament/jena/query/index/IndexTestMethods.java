@@ -53,10 +53,10 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 	public IndexTestMethods() {
 		if (KB_DIR.exists() && !KB_DIR.isDirectory()) {
 			throw new RuntimeException(String.format(
-				"%1$s exists but is not a directory%n", KB_DIR.getPath()));
+				"%1$s exists but is not a directory%n", KB_DIR.getAbsolutePath()));
 		} else if (KB_DIR.isDirectory() && KB_DIR.listFiles().length > 0) {
 			throw new RuntimeException(String.format(
-				"%1$s is a non-empty directory%n", KB_DIR.getPath()));
+				"%1$s is a non-empty directory%n", KB_DIR.getAbsolutePath()));
 		}
 
 		@SuppressWarnings("resource")
@@ -103,7 +103,7 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 		if (KB_DIR.isDirectory()) {
 			if (KB_DIR.listFiles().length > 0) {
 				throw new RuntimeException(String.format(
-					"Unable to delete %1$s (directory is not empty)%n", KB_DIR.getPath()));
+					"Unable to delete %1$s (directory is not empty)%n", KB_DIR.getAbsolutePath()));
 			} else {
 				KB_DIR.delete();
 			}

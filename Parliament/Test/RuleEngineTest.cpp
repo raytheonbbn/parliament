@@ -221,6 +221,11 @@ static void assertEntailments(KbInstance& kb, bool includeFinalEntailments,
 
 	BOOST_CHECK(isEntailed(kb, dogRsrcId, rdfsSubClassOfRsrcId, animalRsrcId));
 
+	// Sub-class of self:
+	BOOST_CHECK(isEntailed(kb, dogRsrcId, rdfsSubClassOfRsrcId, dogRsrcId));
+	BOOST_CHECK(isEntailed(kb, mammalRsrcId, rdfsSubClassOfRsrcId, mammalRsrcId));
+	BOOST_CHECK(isEntailed(kb, animalRsrcId, rdfsSubClassOfRsrcId, animalRsrcId));
+
 	if (includeFinalEntailments)
 	{
 		BOOST_CHECK(isEntailed(kb, fidoRsrcId, rdfTypeRsrcId, rdfsResourceRsrcId));
@@ -298,6 +303,8 @@ BOOST_DATA_TEST_CASE(
 		kb.ruleEngine().addRule(make_shared<SubpropRule>(&kb, &(kb.ruleEngine())));
 	}
 
+	ResourceId rdfTypeRsrcId = kb.uriLib().m_rdfType.id();
+	ResourceId datatypePropRsrcId = kb.uriLib().m_owlDatatypeProp.id();
 	ResourceId rdfsSubPropOfRsrcId = kb.uriLib().m_rdfsSubPropertyOf.id();
 	ResourceId fidoRsrcId = kb.uriToRsrcId(k_fidoRsrc, false, true);
 	ResourceId hasColorRsrcId = kb.uriToRsrcId(k_hasColorRsrc, false, true);
@@ -307,6 +314,9 @@ BOOST_DATA_TEST_CASE(
 
 	BOOST_CHECK_EQUAL(0u, kb.stmtCount());
 
+	kb.addStmt(hasColorRsrcId, rdfTypeRsrcId, datatypePropRsrcId, false);
+	kb.addStmt(hasFurTypeRsrcId, rdfTypeRsrcId, datatypePropRsrcId, false);
+	kb.addStmt(testPropRsrcId, rdfTypeRsrcId, datatypePropRsrcId, false);
 	kb.addStmt(hasColorRsrcId, rdfsSubPropOfRsrcId, hasFurTypeRsrcId, false);
 	kb.addStmt(hasFurTypeRsrcId, rdfsSubPropOfRsrcId, testPropRsrcId, false);
 	kb.addStmt(fidoRsrcId, hasColorRsrcId, blackRsrcId, false);
@@ -321,7 +331,12 @@ BOOST_DATA_TEST_CASE(
 	BOOST_CHECK(isEntailed(kb, fidoRsrcId, hasFurTypeRsrcId, blackRsrcId));
 	BOOST_CHECK(isEntailed(kb, fidoRsrcId, testPropRsrcId, blackRsrcId));
 
-	BOOST_CHECK_EQUAL(6u, kb.stmtCount());
+	// Sub-prop of self:
+	BOOST_CHECK(isEntailed(kb, hasColorRsrcId, rdfsSubPropOfRsrcId, hasColorRsrcId));
+	BOOST_CHECK(isEntailed(kb, hasFurTypeRsrcId, rdfsSubPropOfRsrcId, hasFurTypeRsrcId));
+	BOOST_CHECK(isEntailed(kb, testPropRsrcId, rdfsSubPropOfRsrcId, testPropRsrcId));
+
+	BOOST_CHECK_EQUAL(12u, kb.stmtCount());
 }
 
 BOOST_DATA_TEST_CASE(

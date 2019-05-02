@@ -1,5 +1,18 @@
 Version 2.7.13 (?):
 
+* Enhanced the inference engine so that whenever the subproperty rule is on, statements
+  of the form "?x a ?y" where ?y is one of the standard property classes will result in
+  "?x rdfs:subPropertyOf ?x".  (The property classes are owl:AnnotationProperty,
+  owl:AsymmetricProperty, owl:DatatypeProp, owl:DeprecatedProperty, owl:FuncProp,
+  owl:InvFuncProp, owl:IrreflexiveProperty, owl:ObjectProp, owl:ReflexiveProperty,
+  owl:SymmetricProp, owl:TransitiveProp, and rdf:Property.)
+
+* Added a directory prefix and fixed execute permissions in the distribution zip files
+
+* Fixed the build of the Boost libraries so that the ICU library is no longer required
+
+* Updated a number of dependency versions
+
 
 
 =================================================

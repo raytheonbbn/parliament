@@ -17,6 +17,33 @@ pmnt::SubpropRule::SubpropRule(KbInstance* pKB, RuleEngine* pRE) :
 	bodyPushBack(RuleAtom(RuleAtomSlot::createForVar(0),
 		RuleAtomSlot::createForRsrc(uriLib().m_rdfsSubPropertyOf.id()),
 		RuleAtomSlot::createForVar(1)));
+
+	installSubPropOfSelfRule(pKB, pRE, uriLib().m_owlAnnotationProperty.id());
+	installSubPropOfSelfRule(pKB, pRE, uriLib().m_owlAsymmetricProperty.id());
+	installSubPropOfSelfRule(pKB, pRE, uriLib().m_owlDatatypeProp.id());
+	installSubPropOfSelfRule(pKB, pRE, uriLib().m_owlDeprecatedProperty.id());
+	installSubPropOfSelfRule(pKB, pRE, uriLib().m_owlFuncProp.id());
+	installSubPropOfSelfRule(pKB, pRE, uriLib().m_owlInvFuncProp.id());
+	installSubPropOfSelfRule(pKB, pRE, uriLib().m_owlIrreflexiveProperty.id());
+	installSubPropOfSelfRule(pKB, pRE, uriLib().m_owlObjectProp.id());
+	installSubPropOfSelfRule(pKB, pRE, uriLib().m_owlReflexiveProperty.id());
+	installSubPropOfSelfRule(pKB, pRE, uriLib().m_owlSymmetricProp.id());
+	installSubPropOfSelfRule(pKB, pRE, uriLib().m_owlTransitiveProp.id());
+	installSubPropOfSelfRule(pKB, pRE, uriLib().m_rdfProperty.id());
+}
+
+void pmnt::SubpropRule::installSubPropOfSelfRule(KbInstance* pKB, RuleEngine* pRE, ResourceId clsRsrcId)
+{
+	auto pRule = ::std::make_shared<StandardRule>(pKB, pRE, pRE->uriLib().m_ruleSelfSubprop.id());
+	pRule->bodyPushBack(RuleAtom(
+		RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(pRE->uriLib().m_rdfType.id()),
+		RuleAtomSlot::createForRsrc(clsRsrcId)));
+	pRule->headPushBack(RuleAtom(
+		RuleAtomSlot::createForVar(0),
+		RuleAtomSlot::createForRsrc(pRE->uriLib().m_rdfsSubPropertyOf.id()),
+		RuleAtomSlot::createForVar(0)));
+	pRE->addRule(pRule);
 }
 
 void pmnt::SubpropRule::applyRuleHead(BindingList &variableBindings)

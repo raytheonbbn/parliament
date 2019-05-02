@@ -220,7 +220,7 @@ BOOST_DATA_TEST_CASE(
 		BOOST_CHECK_EQUAL(k_numReifications, numHidden);
 		BOOST_CHECK_EQUAL(4 * k_numReifications, numVirtual);
 		BOOST_CHECK_EQUAL(k_numStmtsInFile, total + numVirtual - numInferred - numDel - numHidden);
-		BOOST_CHECK_EQUAL(37186u, numInferred);
+		BOOST_CHECK_EQUAL(37257u, numInferred);
 	}
 	else
 	{

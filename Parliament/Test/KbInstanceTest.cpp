@@ -4,6 +4,7 @@
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
 
+#include <boost/format.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/monomorphic.hpp>
 #include <boost/test/data/test_case.hpp>
@@ -26,6 +27,7 @@
 namespace bdata = ::boost::unit_test::data;
 
 using namespace ::bbn::parliament;
+using ::boost::format;
 using ::std::exception;
 using ::std::numeric_limits;
 using ::std::string;
@@ -56,10 +58,10 @@ static const char*const k_expectedDumpLines[] =
 	"<http://example.org/#Mike> <http://www.w3.org/2000/01/rdf-schema#label> \"Mike Dean\" .",
 	"<http://example.org/#Mike> <http://www.w3.org/2000/01/rdf-schema#label> \"Mike Dean\"@en-us .",
 	"<http://example.org/#Human> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .",
-	"<http://example.org/#Human> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:bn0000001f .",
-	"_:bn0000001f <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .",
-	"_:bn0000001f <http://www.w3.org/2002/07/owl#onProperty> <http://example.org/#canonicalName> .",
-	"_:bn0000001f <http://www.w3.org/2002/07/owl#maxCardinality> \"1\"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .",
+	"<http://example.org/#Human> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:bn%|1$08x| .",
+	"_:bn%|1$08x| <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .",
+	"_:bn%|1$08x| <http://www.w3.org/2002/07/owl#onProperty> <http://example.org/#canonicalName> .",
+	"_:bn%|1$08x| <http://www.w3.org/2002/07/owl#maxCardinality> \"1\"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .",
 };
 
 static KbConfig createTestConfig(bool withInference)
@@ -386,7 +388,13 @@ BOOST_AUTO_TEST_CASE(testDumpKbAsNTriples)
 	::std::set<string> expectedLineSet;
 	for (auto i = 0u; i < arrayLen(k_expectedDumpLines); ++i)
 	{
-		expectedLineSet.insert(k_expectedDumpLines[i]);
+		string expectedDumpLine{k_expectedDumpLines[i]};
+		format expectedDumpLineFmt{expectedDumpLine};
+		if (expectedDumpLine.find("%|1$") != string::npos)
+		{
+			expectedDumpLineFmt % restrictionRsrcId;
+		}
+		expectedLineSet.insert(str(expectedDumpLineFmt));
 	}
 
 	checkSetsEqual(expectedLineSet, actualLineSet);
