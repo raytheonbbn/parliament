@@ -174,6 +174,7 @@ private:
 	StatementId addStmtCore(ResourceId subjectId, ResourceId predicateId,
 		ResourceId objectId, bool isHidden, bool isDeleted, bool isInferred);
 	void excludeReservedIris(ResourceId subjectId, ResourceId predicateId, ResourceId objectId);
+	void excludeReservedIris(ResourceId rsrcIdToTest);
 	void excludeReservedIris(ResourceId rsrcIdToTest, const LazyRsrc& excludedRsrc);
 	void printStmt(const KbStmt& stmt, StatementId stmtId, ::std::ostream& s, bool includeNextStmts, bool verboseNextStmts) const;
 	void printRsrc(const KbRsrc& rsrc, ResourceId rsrcId, ::std::ostream& s, bool includeFirstStmts, bool verboseFirstStmts) const;

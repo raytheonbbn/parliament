@@ -438,6 +438,7 @@ pmnt::StatementId pmnt::KbInstance::addStmt(ResourceId subjectId,
 	ResourceId predicateId, ResourceId objectId, bool isInferred)
 {
 	ensureNotReadOnly("KbInstance::addStmt");
+	excludeReservedIris(subjectId, predicateId, objectId);
 
 	if (m_pi->m_addStmtStack.empty())
 	{
@@ -481,6 +482,8 @@ pmnt::StatementId pmnt::KbInstance::addStmt(ResourceId subjectId,
 pmnt::StatementId pmnt::KbInstance::addStmtInternal(ResourceId subjectId,
 	ResourceId predicateId, ResourceId objectId, bool isInferred)
 {
+	excludeReservedIris(subjectId, predicateId, objectId);
+
 	// Test to see if this statement is part of a reification
 	if (predicateId == uriLib().m_rdfSubject.id()
 		|| predicateId == uriLib().m_rdfPredicate.id()
@@ -584,15 +587,15 @@ pmnt::StatementId pmnt::KbInstance::addStmtCore(ResourceId subjectId, ResourceId
 void pmnt::KbInstance::excludeReservedIris(ResourceId subjectId, ResourceId predicateId,
 	ResourceId objectId)
 {
-	const LazyRsrc& dsco = uriLib().m_parDirectSubClassOf;
-	const LazyRsrc& dt = uriLib().m_parDirectType;
+	excludeReservedIris(subjectId);
+	excludeReservedIris(predicateId);
+	excludeReservedIris(objectId);
+}
 
-	excludeReservedIris(subjectId, dsco);
-	excludeReservedIris(subjectId, dt);
-	excludeReservedIris(predicateId, dsco);
-	excludeReservedIris(predicateId, dt);
-	excludeReservedIris(objectId, dsco);
-	excludeReservedIris(objectId, dt);
+void pmnt::KbInstance::excludeReservedIris(ResourceId rsrcIdToTest)
+{
+	excludeReservedIris(rsrcIdToTest, uriLib().m_parDirectSubClassOf);
+	excludeReservedIris(rsrcIdToTest, uriLib().m_parDirectType);
 }
 
 void pmnt::KbInstance::excludeReservedIris(ResourceId rsrcIdToTest, const LazyRsrc& excludedRsrc)

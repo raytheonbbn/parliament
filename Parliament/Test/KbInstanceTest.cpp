@@ -429,6 +429,26 @@ BOOST_AUTO_TEST_CASE(testReservedPredicates)
 	ResourceId animalRsrcId						= kb.uriToRsrcId(k_animalUri, false, true);
 	ResourceId janeRsrcId						= kb.uriToRsrcId(k_janeUri, false, true);
 
+	// Check that the reserved predicates cannot be inserted:
+	BOOST_CHECK_THROW(
+		kb.addStmt(parDirectSubClassOfRsrcId, rdfTypeRsrcId, animalRsrcId, false),
+		Exception);
+	BOOST_CHECK_THROW(
+		kb.addStmt(mammalRsrcId, parDirectSubClassOfRsrcId, animalRsrcId, false),
+		Exception);
+	BOOST_CHECK_THROW(
+		kb.addStmt(janeRsrcId, rdfTypeRsrcId, parDirectSubClassOfRsrcId, false),
+		Exception);
+	BOOST_CHECK_THROW(
+		kb.addStmt(parDirectTypeRsrcId, rdfTypeRsrcId, animalRsrcId, false),
+		Exception);
+	BOOST_CHECK_THROW(
+		kb.addStmt(janeRsrcId, parDirectTypeRsrcId, animalRsrcId, false),
+		Exception);
+	BOOST_CHECK_THROW(
+		kb.addStmt(janeRsrcId, rdfTypeRsrcId, parDirectTypeRsrcId, false),
+		Exception);
+
 	// Set up some classes and an instance:
 	kb.addStmt(humanRsrcId, rdfTypeRsrcId, owlClass, false);
 	kb.addStmt(mammalRsrcId, rdfTypeRsrcId, owlClass, false);
@@ -462,6 +482,16 @@ BOOST_AUTO_TEST_CASE(testReservedPredicates)
 	RsrcList expectedDirectHumanSuperClasses;
 	expectedDirectHumanSuperClasses.insert(mammalRsrcId);
 	checkSetsEqual(expectedDirectHumanSuperClasses, actualDirectHumanSuperClasses);
+
+	// Check statement counts:
+	BOOST_CHECK_EQUAL(0u, kb.subjectCount(parDirectSubClassOfRsrcId));
+	BOOST_CHECK_EQUAL(kb.predicateCount(rdfsSubClassOfRsrcId),
+		kb.predicateCount(parDirectSubClassOfRsrcId));
+	BOOST_CHECK_EQUAL(0u, kb.objectCount(parDirectSubClassOfRsrcId));
+	BOOST_CHECK_EQUAL(0u, kb.subjectCount(parDirectTypeRsrcId));
+	BOOST_CHECK_EQUAL(kb.predicateCount(rdfTypeRsrcId),
+		kb.predicateCount(parDirectTypeRsrcId));
+	BOOST_CHECK_EQUAL(0u, kb.objectCount(parDirectTypeRsrcId));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
