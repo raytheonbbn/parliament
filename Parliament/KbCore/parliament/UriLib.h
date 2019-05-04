@@ -27,6 +27,8 @@ public:
 	PARLIAMENT_EXPORT ResourceId id() const;
 	PARLIAMENT_EXPORT const RsrcString& str() const;
 	PARLIAMENT_EXPORT RsrcString strNoCache() const;
+	PARLIAMENT_EXPORT const char* strU8() const
+		{ return m_pUri; }
 
 private:
 	KbInstance*				m_pKB;
@@ -44,6 +46,8 @@ public:
 	UriLib(UriLib&&) = default;
 	UriLib& operator=(UriLib&&) = default;
 	~UriLib() = default;
+
+	ResourceId translateReservedPredicate(ResourceId predicateId) const;
 
 	const LazyRsrc m_gisGMLLiteral;
 	const LazyRsrc m_gisWKTLiteral;
@@ -71,6 +75,10 @@ public:
 	const LazyRsrc m_owlSymmetricProp;
 	const LazyRsrc m_owlThing;
 	const LazyRsrc m_owlTransitiveProp;
+	const LazyRsrc m_parDirectSubClassOf;
+	const LazyRsrc m_parDirectType;
+	const LazyRsrc m_parHasStatementName;
+	const LazyRsrc m_parSwrlTrigger;
 	const LazyRsrc m_ptIntervalLiteral;
 	const LazyRsrc m_rdfHTML;
 	const LazyRsrc m_rdfLangString;
@@ -105,10 +113,8 @@ public:
 	const LazyRsrc m_ruleSelfSubprop;
 	const LazyRsrc m_ruleSubclass;
 	const LazyRsrc m_ruleSubproperty;
-	const LazyRsrc m_ruleSWRLTrigger;
 	const LazyRsrc m_ruleSymmetricProp;
 	const LazyRsrc m_ruleTransitiveProp;
-	const LazyRsrc m_statementHasName;
 	const LazyRsrc m_swrlArgument1;
 	const LazyRsrc m_swrlArgument2;
 	const LazyRsrc m_swrlArguments;

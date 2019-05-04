@@ -30,7 +30,7 @@ pmnt::ReificationIterator::ReificationIterator(const KbInstance* pKB,
 		const StmtIteratorFlags flags = StmtIteratorFlags::k_skipDeleted
 			| StmtIteratorFlags::k_skipVirtual | StmtIteratorFlags::k_showHidden;
 		m_nameIter = m_pKb->findPhysical(k_nullRsrcId,
-			m_pKb->uriLib().m_statementHasName.id(), m_stmtName, flags);
+			m_pKb->uriLib().m_parHasStatementName.id(), m_stmtName, flags);
 		advanceByStatementNameInternal();
 	}
 	else
@@ -111,10 +111,10 @@ void pmnt::ReificationIterator::createNameIteratorFromStatementIterator()
 	if (statementTag == k_nullRsrcId)
 	{
 		// This ensures that no names will be found
-		statementTag = m_pKb->uriLib().m_statementHasName.id();
+		statementTag = m_pKb->uriLib().m_parHasStatementName.id();
 	}
 	m_nameIter = m_pKb->findPhysical(statementTag,
-		m_pKb->uriLib().m_statementHasName.id(), k_nullRsrcId,
+		m_pKb->uriLib().m_parHasStatementName.id(), k_nullRsrcId,
 		StmtIteratorFlags::k_skipDeleted | StmtIteratorFlags::k_skipVirtual | StmtIteratorFlags::k_showHidden);
 }
 

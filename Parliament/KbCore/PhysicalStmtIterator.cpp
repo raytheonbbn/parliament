@@ -7,6 +7,7 @@
 #include "parliament/PhysicalStmtIterator.h"
 #include "parliament/Exceptions.h"
 #include "parliament/KbInstance.h"
+#include "parliament/UriLib.h"
 
 #include <algorithm>
 #include <limits>
@@ -21,25 +22,25 @@ pmnt::PhysicalStmtIterator::PhysicalStmtIterator(const KbInstance* pKB,
 		StmtIteratorFlags flags) :
 	m_pKb(pKB),
 	m_subjectId(subjectId),
-	m_predicateId(predicateId),
+	m_predicateId(m_pKb->uriLib().translateReservedPredicate(predicateId)),
 	m_objectId(objectId),
 	m_flags(flags),
 	m_stmtId(k_nullStmtId),
 	m_pStmtAdvanceFxn(0)
 {
-#if defined(PARLIAMENT_WINDOWS)
-#	pragma warning(push)
-#	pragma warning(disable : 4800) // forcing value to bool 'true' or 'false' (performance warning)
-#endif
-	if (static_cast<bool>(m_flags & StmtIteratorFlags::k_skipLiteral)
-		&& static_cast<bool>(m_flags & StmtIteratorFlags::k_skipNonLiteral))
+	if (!isZero(m_flags & StmtIteratorFlags::k_skipLiteral)
+		&& !isZero(m_flags & StmtIteratorFlags::k_skipNonLiteral))
 	{
 		throw Exception("Iterator flags must not include both k_skipLiteral "
 			"and k_skipNonLiteral");
 	}
-#if defined(PARLIAMENT_WINDOWS)
-#	pragma warning(pop)
-#endif
+
+	// If translateReservedPredicate returns something different, then we were
+	// passed a reserved predicate, and so we want to skip inferred statements.
+	if (m_predicateId != predicateId)
+	{
+		m_flags |= StmtIteratorFlags::k_skipInferred;
+	}
 
 	size_t subCount = (m_subjectId == k_nullRsrcId)
 		? numeric_limits<size_t>::max()

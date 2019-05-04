@@ -82,6 +82,10 @@ pmnt::UriLib::UriLib(KbInstance* pKB) :
 	m_owlSymmetricProp(pKB, "http://www.w3.org/2002/07/owl#SymmetricProperty"),
 	m_owlThing(pKB, "http://www.w3.org/2002/07/owl#Thing"),
 	m_owlTransitiveProp(pKB, "http://www.w3.org/2002/07/owl#TransitiveProperty"),
+	m_parDirectSubClassOf(pKB, "http://parliament.semwebcentral.org/parliament#directSubClassOf"),
+	m_parDirectType(pKB, "http://parliament.semwebcentral.org/parliament#directType"),
+	m_parHasStatementName(pKB, "http://parliament.semwebcentral.org/parliament#hasStatementName"),
+	m_parSwrlTrigger(pKB, "http://parliament.semwebcentral.org/parliament#swrlTrigger"),
 	m_ptIntervalLiteral(pKB, "http://bbn.com/ParliamentTime#intervalLiteral"),
 	m_rdfHTML(pKB, "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"),
 	m_rdfLangString(pKB, "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"),
@@ -116,10 +120,8 @@ pmnt::UriLib::UriLib(KbInstance* pKB) :
 	m_ruleSelfSubprop(pKB, "http://www.bbn.com/2005/09/rules/rdfs#selfSubprop"),
 	m_ruleSubclass(pKB, "http://www.bbn.com/2005/09/rules/rdfs#subclass"),
 	m_ruleSubproperty(pKB, "http://www.bbn.com/2005/09/rules/rdfs#subproperty"),
-	m_ruleSWRLTrigger(pKB, "http://parliament.semwebcentral.org/parliament#swrlTrigger"),
 	m_ruleSymmetricProp(pKB, "http://www.bbn.com/2005/09/rules/rdfs#symmetricProperty"),
 	m_ruleTransitiveProp(pKB, "http://www.bbn.com/2005/09/rules/owl#transitiveProperty"),
-	m_statementHasName(pKB, "http://parliament.semwebcentral.org/parliament#hasStatementName"),
 	m_swrlArgument1(pKB, "http://www.w3.org/2003/11/swrl#argument1"),
 	m_swrlArgument2(pKB, "http://www.w3.org/2003/11/swrl#argument2"),
 	m_swrlArguments(pKB, "http://www.w3.org/2003/11/swrl#arguments"),
@@ -257,4 +259,20 @@ pmnt::UriLib::UriLib(KbInstance* pKB) :
 	m_xsdUnsignedShort(pKB, "http://www.w3.org/2001/XMLSchema#unsignedShort"),
 	m_xsdYearMonthDuration(pKB, "http://www.w3.org/2001/XMLSchema#yearMonthDuration")
 {
+}
+
+pmnt::ResourceId pmnt::UriLib::translateReservedPredicate(ResourceId predicateId) const
+{
+	if (predicateId == m_parDirectSubClassOf.id())
+	{
+		return m_rdfsSubClassOf.id();
+	}
+	else if (predicateId == m_parDirectType.id())
+	{
+		return m_rdfType.id();
+	}
+	else
+	{
+		return predicateId;
+	}
 }
