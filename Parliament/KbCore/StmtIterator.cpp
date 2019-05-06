@@ -22,7 +22,7 @@ pmnt::StmtIterator::StmtIterator(const KbInstance* pKB,
 		ResourceId objectId, StmtIteratorFlags flags) :
 	m_pKb(pKB),
 	m_subjectId(subjectId),
-	m_predicateId(predicateId),
+	m_predicateId(m_pKb->uriLib().translateReservedPredicate(predicateId)),
 	m_objectId(objectId),
 	m_flags(flags),
 	m_stmtId(k_nullStmtId),
@@ -37,6 +37,13 @@ pmnt::StmtIterator::StmtIterator(const KbInstance* pKB,
 	{
 		throw Exception("Iterator flags must not include both k_skipLiteral "
 			"and k_skipNonLiteral");
+	}
+
+	// If translateReservedPredicate returns something different, then we were
+	// passed a reserved predicate, and so we want to skip inferred statements.
+	if (m_predicateId != predicateId)
+	{
+		m_flags |= StmtIteratorFlags::k_skipInferred;
 	}
 
 	size_t subCount = (m_subjectId == k_nullRsrcId)

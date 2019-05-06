@@ -88,19 +88,32 @@ static void checkSetsEqual(const ::std::set<T>& expectedSet, const ::std::set<T>
 	}
 }
 
+static RsrcList findMatchingSubjects(KbInstance& kb, ResourceId predicateId, ResourceId objectId)
+{
+	RsrcList results;
+	auto end = kb.end();
+	for (auto it = kb.find(k_nullRsrcId, predicateId, objectId); it != end; ++it)
+	{
+		results.insert(it.statement().getSubjectId());
+	}
+	return results;
+}
+
+static RsrcList findMatchingObjects(KbInstance& kb, ResourceId subjectId, ResourceId predicateId)
+{
+	RsrcList results;
+	auto end = kb.end();
+	for (auto it = kb.find(subjectId, predicateId, k_nullRsrcId); it != end; ++it)
+	{
+		results.insert(it.statement().getObjectId());
+	}
+	return results;
+}
+
 static void findInstances(KbInstance& kb, ResourceId classRsrcId,
 	const RsrcList& expectedResults)
 {
-	ResourceId rdfTypeRsrcId = kb.uriLib().m_rdfType.id();
-
-	RsrcList actualResults;
-	StmtIterator end = kb.end();
-	for (StmtIterator it = kb.find(k_nullRsrcId, rdfTypeRsrcId, classRsrcId);
-		it != end; ++it)
-	{
-		actualResults.insert(it.statement().getSubjectId());
-	}
-
+	auto actualResults = findMatchingSubjects(kb, kb.uriLib().m_rdfType.id(), classRsrcId);
 	checkSetsEqual(expectedResults, actualResults);
 }
 
@@ -398,6 +411,87 @@ BOOST_AUTO_TEST_CASE(testDumpKbAsNTriples)
 	}
 
 	checkSetsEqual(expectedLineSet, actualLineSet);
+}
+
+BOOST_AUTO_TEST_CASE(testReservedPredicates)
+{
+	KbConfig config = createTestConfig(true);
+	KbDeleter deleter(config, true);
+	KbInstance kb(config);
+
+	ResourceId rdfTypeRsrcId					= kb.uriLib().m_rdfType.id();
+	ResourceId owlClass							= kb.uriLib().m_owlClass.id();
+	ResourceId rdfsSubClassOfRsrcId			= kb.uriLib().m_rdfsSubClassOf.id();
+	ResourceId parDirectSubClassOfRsrcId	= kb.uriLib().m_parDirectSubClassOf.id();
+	ResourceId parDirectTypeRsrcId			= kb.uriLib().m_parDirectType.id();
+	ResourceId humanRsrcId						= kb.uriToRsrcId(k_humanUri, false, true);
+	ResourceId mammalRsrcId						= kb.uriToRsrcId(k_mammalUri, false, true);
+	ResourceId animalRsrcId						= kb.uriToRsrcId(k_animalUri, false, true);
+	ResourceId janeRsrcId						= kb.uriToRsrcId(k_janeUri, false, true);
+
+	// Check that the reserved predicates cannot be inserted:
+	BOOST_CHECK_THROW(
+		kb.addStmt(parDirectSubClassOfRsrcId, rdfTypeRsrcId, animalRsrcId, false),
+		Exception);
+	BOOST_CHECK_THROW(
+		kb.addStmt(mammalRsrcId, parDirectSubClassOfRsrcId, animalRsrcId, false),
+		Exception);
+	BOOST_CHECK_THROW(
+		kb.addStmt(janeRsrcId, rdfTypeRsrcId, parDirectSubClassOfRsrcId, false),
+		Exception);
+	BOOST_CHECK_THROW(
+		kb.addStmt(parDirectTypeRsrcId, rdfTypeRsrcId, animalRsrcId, false),
+		Exception);
+	BOOST_CHECK_THROW(
+		kb.addStmt(janeRsrcId, parDirectTypeRsrcId, animalRsrcId, false),
+		Exception);
+	BOOST_CHECK_THROW(
+		kb.addStmt(janeRsrcId, rdfTypeRsrcId, parDirectTypeRsrcId, false),
+		Exception);
+
+	// Set up some classes and an instance:
+	kb.addStmt(humanRsrcId, rdfTypeRsrcId, owlClass, false);
+	kb.addStmt(mammalRsrcId, rdfTypeRsrcId, owlClass, false);
+	kb.addStmt(animalRsrcId, rdfTypeRsrcId, owlClass, false);
+	kb.addStmt(mammalRsrcId, rdfsSubClassOfRsrcId, animalRsrcId, false);
+	kb.addStmt(humanRsrcId, rdfsSubClassOfRsrcId, mammalRsrcId, false);
+	kb.addStmt(janeRsrcId, rdfTypeRsrcId, humanRsrcId, false);
+
+	// Check reserved predicates:
+	auto actualJanesTypes = findMatchingObjects(kb, janeRsrcId, rdfTypeRsrcId);
+	auto actualJanesDirectTypes = findMatchingObjects(kb, janeRsrcId, parDirectTypeRsrcId);
+	auto actualHumanSuperClasses = findMatchingObjects(kb, humanRsrcId, rdfsSubClassOfRsrcId);
+	auto actualDirectHumanSuperClasses = findMatchingObjects(kb, humanRsrcId, parDirectSubClassOfRsrcId);
+
+	RsrcList expectedJanesTypes;
+	expectedJanesTypes.insert(humanRsrcId);
+	expectedJanesTypes.insert(mammalRsrcId);
+	expectedJanesTypes.insert(animalRsrcId);
+	checkSetsEqual(expectedJanesTypes, actualJanesTypes);
+
+	RsrcList expectedJanesDirectTypes;
+	expectedJanesDirectTypes.insert(humanRsrcId);
+	checkSetsEqual(expectedJanesDirectTypes, actualJanesDirectTypes);
+
+	RsrcList expectedHumanSuperClasses;
+	expectedHumanSuperClasses.insert(humanRsrcId);
+	expectedHumanSuperClasses.insert(mammalRsrcId);
+	expectedHumanSuperClasses.insert(animalRsrcId);
+	checkSetsEqual(expectedHumanSuperClasses, actualHumanSuperClasses);
+
+	RsrcList expectedDirectHumanSuperClasses;
+	expectedDirectHumanSuperClasses.insert(mammalRsrcId);
+	checkSetsEqual(expectedDirectHumanSuperClasses, actualDirectHumanSuperClasses);
+
+	// Check statement counts:
+	BOOST_CHECK_EQUAL(0u, kb.subjectCount(parDirectSubClassOfRsrcId));
+	BOOST_CHECK_EQUAL(kb.predicateCount(rdfsSubClassOfRsrcId),
+		kb.predicateCount(parDirectSubClassOfRsrcId));
+	BOOST_CHECK_EQUAL(0u, kb.objectCount(parDirectSubClassOfRsrcId));
+	BOOST_CHECK_EQUAL(0u, kb.subjectCount(parDirectTypeRsrcId));
+	BOOST_CHECK_EQUAL(kb.predicateCount(rdfTypeRsrcId),
+		kb.predicateCount(parDirectTypeRsrcId));
+	BOOST_CHECK_EQUAL(0u, kb.objectCount(parDirectTypeRsrcId));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

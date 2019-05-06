@@ -438,6 +438,7 @@ pmnt::StatementId pmnt::KbInstance::addStmt(ResourceId subjectId,
 	ResourceId predicateId, ResourceId objectId, bool isInferred)
 {
 	ensureNotReadOnly("KbInstance::addStmt");
+	excludeReservedIris(subjectId, predicateId, objectId);
 
 	if (m_pi->m_addStmtStack.empty())
 	{
@@ -481,6 +482,8 @@ pmnt::StatementId pmnt::KbInstance::addStmt(ResourceId subjectId,
 pmnt::StatementId pmnt::KbInstance::addStmtInternal(ResourceId subjectId,
 	ResourceId predicateId, ResourceId objectId, bool isInferred)
 {
+	excludeReservedIris(subjectId, predicateId, objectId);
+
 	// Test to see if this statement is part of a reification
 	if (predicateId == uriLib().m_rdfSubject.id()
 		|| predicateId == uriLib().m_rdfPredicate.id()
@@ -528,11 +531,13 @@ pmnt::StatementId pmnt::KbInstance::addStmtInternal(ResourceId subjectId,
 }
 
 // This is the core of the addStmt implementation, where that physical modifications
-// are made to the statment table itself.  Do not call this directly unless you are
+// are made to the statement table itself.  Do not call this directly unless you are
 // very clear about what you are doing!
 pmnt::StatementId pmnt::KbInstance::addStmtCore(ResourceId subjectId, ResourceId predicateId,
 	ResourceId objectId, bool isHidden, bool isDeleted, bool isInferred)
 {
+	excludeReservedIris(subjectId, predicateId, objectId);
+
 	// Hidden flag takes precedence over the other two:
 	if (isHidden)
 	{
@@ -577,6 +582,29 @@ pmnt::StatementId pmnt::KbInstance::addStmtCore(ResourceId subjectId, ResourceId
 	m_pi->m_stmtTbl.pushBack(stmt);
 
 	return nextStmtID;
+}
+
+void pmnt::KbInstance::excludeReservedIris(ResourceId subjectId, ResourceId predicateId,
+	ResourceId objectId)
+{
+	excludeReservedIris(subjectId);
+	excludeReservedIris(predicateId);
+	excludeReservedIris(objectId);
+}
+
+void pmnt::KbInstance::excludeReservedIris(ResourceId rsrcIdToTest)
+{
+	excludeReservedIris(rsrcIdToTest, uriLib().m_parDirectSubClassOf);
+	excludeReservedIris(rsrcIdToTest, uriLib().m_parDirectType);
+}
+
+void pmnt::KbInstance::excludeReservedIris(ResourceId rsrcIdToTest, const LazyRsrc& excludedRsrc)
+{
+	if (rsrcIdToTest == excludedRsrc.id())
+	{
+		throw Exception(format("The IRI <%1%> is reserved and may not be used in statements")
+			% excludedRsrc.strU8());
+	}
 }
 
 void pmnt::KbInstance::deleteStmt(ResourceId subjectId, ResourceId predicateId,
@@ -699,7 +727,7 @@ pair<pmnt::ResourceId, pmnt::StatementId> pmnt::KbInstance::addReification(
 	}
 
 	// Create the hidden link statement
-	ResourceId hasName = m_pi->m_uriLib.m_statementHasName.id();
+	ResourceId hasName = m_pi->m_uriLib.m_parHasStatementName.id();
 	if (findStatementId(stmtTag, hasName, stmtName) == k_nullStmtId)
 	{
 		addStmtCore(stmtTag, hasName, stmtName, true, false, false);
@@ -716,7 +744,7 @@ void pmnt::KbInstance::deleteReification(ResourceId stmtName, ResourceId subject
 	if (stmtId != k_nullStmtId){
 		KbStmt* pStmt = stmtIdToStmt(stmtId);
 		ResourceId stmtTag = pStmt->m_statementTag;
-		deleteStmt(stmtTag, m_pi->m_uriLib.m_statementHasName.id(),stmtName);
+		deleteStmt(stmtTag, m_pi->m_uriLib.m_parHasStatementName.id(),stmtName);
 	}
 }
 
@@ -834,6 +862,9 @@ size_t pmnt::KbInstance::subjectCount(ResourceId subjectId) const
 
 size_t pmnt::KbInstance::predicateCount(ResourceId predicateId) const
 {
+	// The reserved predicates will cause a traversal of a different (translated)
+	// predicate chain, so we return the count of the translated predicate:
+	predicateId = uriLib().translateReservedPredicate(predicateId);
 	return rsrcIdToRsrc(predicateId)->m_predicateCount;
 }
 

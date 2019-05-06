@@ -1,5 +1,11 @@
 Version 2.7.13 (?):
 
+* Added handling for par:directType and par:directSubClassOf predicates to speed queries
+  for most-derived types.  See the User Guide, Section 2.3.1, "Reserved Predicates", for
+  more information.
+
+* Implemented direct-type and direct-subclass-of, with unit tests
+
 * Enhanced the inference engine so that whenever the subproperty rule is on, statements
   of the form "?x a ?y" where ?y is one of the standard property classes will result in
   "?x rdfs:subPropertyOf ?x".  (The property classes are owl:AnnotationProperty,

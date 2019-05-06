@@ -18,6 +18,7 @@
 #include <boost/format.hpp>
 #include <cmath>
 #include <limits>
+#include <type_traits>
 
 PARLIAMENT_NAMESPACE_BEGIN
 
@@ -76,7 +77,10 @@ public:
 				size_t newRecCount = oldRecCount + numNewRecords;
 				if (m_growthFactor > 1.0)
 				{
-					newRecCount = ::std::llrint(m_growthFactor * newRecCount);
+					using ULongLong = ::std::make_unsigned<long long>::type;
+					newRecCount = static_cast<size_t>(
+						static_cast<ULongLong>(
+						::std::llrint(m_growthFactor * newRecCount)));
 				}
 				if (m_growthIncrement > 0)
 				{

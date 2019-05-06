@@ -10,7 +10,7 @@
 namespace pmnt = ::bbn::parliament;
 
 pmnt::SWRLTriggerRule::SWRLTriggerRule(KbInstance* pKB, RuleEngine* pRE) :
-	Rule(pKB, pRE, pRE->uriLib().m_ruleSWRLTrigger.id())
+	Rule(pKB, pRE, pRE->uriLib().m_parSwrlTrigger.id())
 {
 	// We trigger off statements declaring an entity as a SWRL implication.
 	// We assume here that an entire SWRL rule will be inserted in a single

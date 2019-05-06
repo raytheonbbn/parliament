@@ -67,7 +67,7 @@ public:
 	// In order for PhysicalStmtIterator to behave like a true STL iterator class,
 	// it needs the following two methods.  However, it is preferred
 	// that clients use statement ids rather than KbStmt pointers
-	// to refer to statemnts, so they are elided.  To restore these
+	// to refer to statements, so they are elided.  To restore these
 	// methods, remove the #if and add a friend declaration for
 	// PhysicalStmtIterator to the KbInstance class.
 	PARLIAMENT_EXPORT reference operator*() const

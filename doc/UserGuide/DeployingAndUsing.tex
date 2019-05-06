@@ -404,6 +404,57 @@ The file \path|ParliamentKB/conf/jetty.xml| configures the Jetty servlet contain
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{\ac{pmnt}-Specific Features}
+\label{section-parliament-specific-features}
+
+\ac{pmnt} has a number of features beyond those implied by the \ac{rdf}, \ac{owl}, and \ac{sparql} standards, detailed in the sub-sections below.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Reserved Predicates}
+\label{section-reserved-predicates}
+
+The \verb|par:directType| and \verb|par:directSubClassOf| predicates are treated specially by \ac{pmnt}.  They are reserved in the sense that they may not be used as the subject, predicate, or object of any  statements inserted in \ac{pmnt}.  However, when used in queries they have special meanings.
+
+In queries, \verb|par:directType| is interpreted like \verb|rdf:type| except that inferred statements are ignored.  Similarly, \verb|par:directSubClassOf| is the same as \verb|rdf:subClassOf| except that it ignores inferred statements.  These predicates provide high-performance shortcuts for queries that are looking for a ``most-derived type.''  For instance, to find the most-derived type of a resource \verb|?x|, we can use the following query:
+
+{\small\begin{verbatim}
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+select distinct ?x ?type where {
+   ?x a ?type .
+   filter not exists {
+      ?x a ?type2 .
+      ?type2 rdfs:subClassOf ?type .
+      filter ( ?type2 != ?type )
+   }
+}
+\end{verbatim}}
+
+This operates by first finding all of \verb|?x|'s types and then filtering those that have a distinct sub-type.  This is correct and \ac{sparql}-compliant, but the negation is expensive.  Alternately, in \ac{pmnt} we can write this:
+
+{\small\begin{verbatim}
+prefix par: <http://parliament.semwebcentral.org/parliament#>
+select distinct ?x ?type where {
+   ?x par:directType ?type .
+}
+\end{verbatim}}
+
+This is no longer standards-compliant, and it won't necessarily produce exactly the same results.  However, it is significantly less verbose and, in many cases, much faster.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Reification}
+\label{section-reification}
+
+\emph{[Yet to be written]}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Configuring and Using Indexes}
+\label{section-indexes}
+
+\emph{[Yet to be written]}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{\ac{pmnt} in Other Servlet Containers}
 \label{section-parliament-with-jena-and-tomcat}
 
@@ -559,13 +610,6 @@ Naturally, there is some setup required to make this work:
 If you do not wish to use the \ac{pmnt} configuration file to configure your application, you can replace the first line of the method in Figure~\ref{figure-creating-jena-model}, \verb|createParliamentModel|, with a line that creates a Config instance using the default constructor and then set the Config fields yourself.  This may be useful for centralizing your application's configuration in a single file.
 
 If \verb|createParliamentModel| throws an \verb|UnsatisfiedLinkError| exception, see Section~\ref{section-troubleshooting} for possible resolutions.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Configuring Indexes}
-\label{section-indexes}
-
-\emph{[Yet to be written]}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The ParliamentAdmin Utility}
