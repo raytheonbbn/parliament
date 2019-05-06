@@ -1,4 +1,17 @@
-Version 2.7.13 (?):
+Version 2.7.13 (5/6/2019):
+
+----------------------   Important -- Please Read !!!   -----------------------
+---                                                                         ---
+---  The file format of version 2.7.13 is not backwards compatible with     ---
+---  versions 2.7.11 and older.  To upgrade the data stored in a prior      ---
+---  release of Parliament, please follow the procedure in Section 2.1.2,   ---
+---  "Upgrading an Existing Installation", in the Parliament User Guide.    ---
+---  This can be found in your Parliament download, and it is also          ---
+---  available here:                                                        ---
+---                                                                         ---
+---  https://github.com/SemWebCentral/parliament/tree/master/doc/UserGuide  ---
+---                                                                         ---
+-------------------------------------------------------------------------------
 
 * Added handling for par:directType and par:directSubClassOf predicates to speed queries
   for most-derived types.  See the User Guide, Section 2.3.1, "Reserved Predicates", for
