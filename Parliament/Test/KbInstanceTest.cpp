@@ -113,7 +113,7 @@ static RsrcList findMatchingObjects(KbInstance& kb, ResourceId subjectId, Resour
 static void findInstances(KbInstance& kb, ResourceId classRsrcId,
 	const RsrcList& expectedResults)
 {
-	auto actualResults{findMatchingSubjects(kb, kb.uriLib().m_rdfType.id(), classRsrcId)};
+	auto actualResults = findMatchingSubjects(kb, kb.uriLib().m_rdfType.id(), classRsrcId);
 	checkSetsEqual(expectedResults, actualResults);
 }
 
