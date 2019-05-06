@@ -8,6 +8,7 @@ package com.bbn.parliament.jena.graph;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -212,9 +213,15 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 		return true;
 	}
 
-
 	/** Clear the store and remove all graphs. */
 	public void clear() {
+		clear(false);
+	}
+
+	/** Clear the store and remove all graphs. */
+	public void clear(boolean deleteContainingDirectory) {
+		File containingDir = new File(getDefaultGraph().getConfig().m_kbDirectoryPath);
+
 		// We create a clone of the graph names so that as the iteration below removes
 		// elements from the named graphs collection, the iteration is not affected.
 		List<Node> graphNames = StreamUtil.asStream(listGraphNodes())
@@ -236,6 +243,10 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 
 		// Finally, delete the master graph:
 		removeGraph(Node.createURI(MASTER_GRAPH));
+
+		if (deleteContainingDirectory) {
+			deleteDirectory(containingDir);
+		}
 	}
 
 	/**
@@ -252,7 +263,6 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 	@Override
 	public void removeGraph(Node graphName) {
 		Graph toReturn = null;
-		String graphDir = null;
 		boolean isKbGraph = true;
 
 		if (isDefaultGraphName(graphName)) {
@@ -266,13 +276,9 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 
 			toReturn = getGraph(graphName);
 			super.removeGraph(graphName);
-			graphDir = MASTER_GRAPH_DIR;
 		} else {
 			Graph graph = getGraph(graphName);
 			isKbGraph = (graph instanceof KbGraph);
-			if (isKbGraph) {
-				graphDir = ((KbGraph) graph).getRelativeDirectory();
-			}
 
 			// Make sure we don't delete a member of a union graph
 			for (Iterator<Node> iter = listGraphNodes(); iter.hasNext(); )
@@ -310,10 +316,16 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 			}
 		}
 
-		log.debug("Deleting {} graph: <{}> (graphDir = \"{}\")",
-			isKbGraph ? "named" : "union",
-			(null == graphName) ? "Default Graph" : graphName.getURI(),
-			isKbGraph ? graphDir : "N/A");
+		if (log.isDebugEnabled()) {
+			String graphDisplayName = (null == graphName) ? "default-graph" : graphName.getURI();
+			if (isKbGraph) {
+				KbConfig config = ((KbGraph)toReturn).getConfig();
+				File kbDir = new File(config.m_kbDirectoryPath);
+				log.debug("Deleting KbGraph <{}> (graphDir = \"{}\")", graphDisplayName, kbDir.getPath());
+			} else {
+				log.debug("Deleting union graph <{}>", graphDisplayName);
+			}
+		}
 
 		// Close the graph
 		toReturn.close();
@@ -324,23 +336,37 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 		// Delete the files
 		if (isKbGraph) {
 			KbConfig config = ((KbGraph)toReturn).getConfig();
-			File kbDir = new File(config.m_kbDirectoryPath); // apparently the relative directory is not relative to the kb directory path
-			//         File kbDir = (null == graphDir) ?
-			//            new File(config.m_kbDirectoryPath) :
-			//            new File(config.m_kbDirectoryPath, graphDir);
+			File kbDir = new File(config.m_kbDirectoryPath);
 			(new File(kbDir, config.m_rsrcFileName)).delete();
 			(new File(kbDir, config.m_stmtFileName)).delete();
 			(new File(kbDir, config.m_uriTableFileName)).delete();
 			(new File(kbDir, config.m_uriToIntFileName)).delete();
 
-
-			if (graphDir != null) {
-				// Delete the directory:
-				String[] dirContents = kbDir.list();
-				if (dirContents != null && dirContents.length == 0) {
-					kbDir.delete();
-				}
+			if (!isDefaultGraphName(graphName)) {
+				deleteDirectory(kbDir);
 			}
+		}
+	}
+
+	private static void deleteDirectory(File dir) {
+		try {
+			// Sometimes Linux takes a short time to fully execute file deletions from
+			// this directory, so give it a little breathing room:
+			Thread.sleep(250);
+		} catch (InterruptedException ex) {
+			log.error("InterruptedException:", ex);
+		}
+
+		// Delete the directory:
+		String[] dirContents = dir.list();
+		if (dirContents == null) {
+			log.debug("'{}' is not a directory, or an I/O error occurred", dir.getAbsolutePath());
+		} else if (dirContents.length != 0) {
+			log.debug("'{}' is not empty:  {}", dir.getAbsolutePath(),
+				Arrays.stream(dirContents).collect(Collectors.joining("', '", "'", "'")));
+		} else {
+			boolean success = dir.delete();
+			log.debug("Deleted graph dir '{}':  {}", dir.getAbsolutePath(), success);
 		}
 	}
 
