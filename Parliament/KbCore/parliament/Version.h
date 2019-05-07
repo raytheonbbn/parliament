@@ -9,7 +9,7 @@
 
 // Note that these two version numbers must match.
 // Also, the last segment must be zero.
-#define PARLIAMENT_VERSION_NUMERIC	2, 7, 13, 0
-#define PARLIAMENT_VERSION_STRING		"2.7.13.0"
+#define PARLIAMENT_VERSION_NUMERIC	2, 7, 14, 0
+#define PARLIAMENT_VERSION_STRING		"2.7.14.0"
 
 #endif // !PARLIAMENT_VERSION_H_INCLUDED

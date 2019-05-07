@@ -47,9 +47,25 @@ select distinct ?x1 ?y1 ?x2 ?y2 where {
 * shut down the server
 * run these commands:
 
-env DYLD_LIBRARY_PATH=../bin PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt ../bin/ParliamentAdmin -s
+On Mac:
 
+cd kb-data/
+env DYLD_LIBRARY_PATH=../bin PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt ../bin/ParliamentAdmin -s
 env DYLD_LIBRARY_PATH=../bin PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt ../bin/ParliamentAdmin -t -e foo.nt
+
+On Linux:
+
+cd kb-data/
+env LD_LIBRARY_PATH=../bin PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt ../bin/ParliamentAdmin -s
+env LD_LIBRARY_PATH=../bin PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt ../bin/ParliamentAdmin -t -e foo.nt
+
+On Windows:
+
+cd kb-data
+set PARLIAMENT_LOG_CONFIG_PATH=..\ParliamentLogConfig.txt
+set PARLIAMENT_KB_CONFIG_PATH=..\ParliamentKbConfig.txt
+..\bin\ParliamentAdmin /s
+..\bin\ParliamentAdmin /t /e foo.nt
 
 * Install as service (Windows and Linux)
 * Start as service (Windows and Linux) or Daemon (Mac)
