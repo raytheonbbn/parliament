@@ -17,14 +17,19 @@
 		<xsl:call-template name="lastPathComponent">
 			<xsl:with-param name="path" select="$fileDir"/>
 		</xsl:call-template>
-			<xsl:text> - </xsl:text>
-			<xsl:value-of select="@name"/><xsl:text>:&#x000a;</xsl:text>
-		<xsl:text>   Tests run: </xsl:text><xsl:value-of select="@tests"/>
-			<xsl:text>, Failures: </xsl:text><xsl:value-of select="@failures"/>
-			<xsl:text>, Errors: </xsl:text><xsl:value-of select="@errors"/>
-			<xsl:text>, Skipped: </xsl:text><xsl:value-of select="@skipped"/>
-			<xsl:text>, Time elapsed: </xsl:text><xsl:value-of select="@time"/>
-			<xsl:text> sec&#x000a;</xsl:text>
+		<xsl:text>,</xsl:text>
+		<xsl:value-of select="@name"/>
+		<xsl:text>,</xsl:text>
+		<xsl:value-of select="@tests"/>
+		<xsl:text>,</xsl:text>
+		<xsl:value-of select="@failures"/>
+		<xsl:text>,</xsl:text>
+		<xsl:value-of select="@errors"/>
+		<xsl:text>,</xsl:text>
+		<xsl:value-of select="@skipped"/>
+		<xsl:text>,</xsl:text>
+		<xsl:value-of select="@time"/>
+		<xsl:text>&#x000a;</xsl:text>
 	</xsl:template>
 
 	<xsl:template name="lastPathComponent">

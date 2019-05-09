@@ -174,14 +174,19 @@
 				</chainedmapper>
 			</mapper>
 		</xslt>
-		<concat destfile="${reportsDir}/junit-summary.txt">
+		<echo file="${reportsDir}/junit-summaries/column-headers.txt" append="false"
+			message="AAA Project,Class,Tests,Failures,Errors,Skipped,Time (sec)${line.separator}"/>
+		<concat destfile="${reportsDir}/junit-summary.csv">
 			<fileset dir="${reportsDir}/junit-summaries" includes="*.txt"/>
+			<filterchain>
+				<sortfilter/>
+			</filterchain>
 		</concat>
 		<delete dir="${reportsDir}/junit-summaries"/>
 	</target>
 	
 	<target name="testSummaryUpToDateCheck">
-		<uptodate property="isTestSummaryUpToDate" targetfile="${reportsDir}/junit-summary.txt">
+		<uptodate property="isTestSummaryUpToDate" targetfile="${reportsDir}/junit-summary.csv">
 			<srcfiles dir="${reportsDir}" includes="**/TEST-*.xml"/>
 		</uptodate>
 	</target>
