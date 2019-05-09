@@ -19,7 +19,7 @@ import com.vividsolutions.jts.geom.GeometryFilter;
 
 /** @author Robert Battle */
 public abstract class EphemeralGeometry extends Geometry {
-	private static final long serialVersionUID = -632510633341673294L;
+	private static final long serialVersionUID = 1L;
 
 	private Node _blankNode;
 

@@ -3,6 +3,7 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.joseki.bridge.util;
 
 import java.util.HashMap;
@@ -28,9 +29,7 @@ import com.hp.hpl.jena.util.iterator.Map1;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
-/**
- * @author sallen
- */
+/** @author sallen */
 public class ExplorerUtil {
 	private static Map<Resource, String> labelMap;
 
@@ -101,7 +100,7 @@ public class ExplorerUtil {
 	}
 
 	public static String getDisplayString(RDFNode value,
-			BlankNodeLabeler bnodeLabeler) {
+		BlankNodeLabeler bnodeLabeler) {
 		String toReturn = value.toString();
 
 		if (value.isResource()) {
@@ -137,7 +136,7 @@ public class ExplorerUtil {
 		if (label == null) {
 			// Get label from repository
 			StmtIterator labelIter = model.listStatements(resource, RDFS.label,
-					(RDFNode) null);
+				(RDFNode) null);
 
 			while (labelIter.hasNext()) {
 				// Value labelObj = labelIter.next().getObject();
@@ -157,11 +156,7 @@ public class ExplorerUtil {
 	public static String getQueryString(RDFNode value, boolean useLabels) {
 		Map<String, String> params = new HashMap<>(4);
 
-//		if (null != graph) {
-//			params.put("graph", graph);
-//		}
 		params.put("value", NTriplesUtil.toNTriplesString(value));
-		// params.put("value", value.toString());
 		if (useLabels) {
 			params.put("useLabels", "yes");
 		}
@@ -223,7 +218,7 @@ public class ExplorerUtil {
 	 * Builds a query string from the provided key-value-pairs. All spaces are
 	 * substituted by '+' characters, and all non US-ASCII characters are escaped
 	 * to hexadecimal notation (%xx).
-	 **/
+	 */
 	public static String buildQueryString(Map<String, String> keyValuePairs) {
 		StringBuffer result = new StringBuffer(20 * keyValuePairs.size());
 

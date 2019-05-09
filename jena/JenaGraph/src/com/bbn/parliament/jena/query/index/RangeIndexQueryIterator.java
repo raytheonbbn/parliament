@@ -44,9 +44,7 @@ import com.hp.hpl.jena.util.iterator.NiceIterator;
  * @see com.bbn.parliament.jena.query.SolverUtil#solve(com.hp.hpl.jena.sparql.expr.ExprList,
  *      com.hp.hpl.jena.sparql.core.BasicPattern, QueryIterator, ExecutionContext)
  */
-public class RangeIndexQueryIterator<T extends Comparable<T>> extends
-	QueryIterRepeatApply {
-
+public class RangeIndexQueryIterator<T extends Comparable<T>> extends QueryIterRepeatApply {
 	ExprFunction2 expr;
 	private RangeIndex<T> index;
 	boolean varFirst;

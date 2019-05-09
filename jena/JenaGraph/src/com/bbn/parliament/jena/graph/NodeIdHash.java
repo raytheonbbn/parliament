@@ -3,6 +3,7 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.graph;
 
 import com.hp.hpl.jena.graph.Node;

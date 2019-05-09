@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.bbn.parliament.jena.graph.index.spatial.geosparql.builtin;
 
 import org.slf4j.Logger;
@@ -17,59 +14,43 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 
-/**
- * @author rbattle
- *
- */
+/** @author rbattle */
 public class WKTBuiltin extends BaseBuiltin {
+	private static final Logger LOG = LoggerFactory.getLogger(WKTBuiltin.class);
 
-   private static final Logger LOG = LoggerFactory.getLogger(WKTBuiltin.class);
+	public WKTBuiltin() {
+		super();
+	}
 
-   public WKTBuiltin() {
-      super();
-   }
+	@Override
+	public String getName() {
+		return "wkt";
+	}
 
-   @Override
-   public String getName() {
-      return "wkt";
-   }
+	@Override
+	public int getArgLength() {
+		return 3;
+	}
 
+	@Override
+	public void headAction(Node[] args, int length, RuleContext context) {
+		if (length > 3) {
+			checkArgs(length, context);
+		}
 
-   @Override
-   public int getArgLength() {
-      return 3;
-   }
+		Geometry g;
+		try {
+			Node geom = getArg(1, args, context);
+			g = new WKTReader().read(geom.getLiteralValue().toString());
+		} catch (ParseException e) {
+			LOG.error("Parse error", e);
+			return;
+		}
+		g.setUserData("EPSG:4326");
+		WKTLiteral x = new WKTLiteral();
+		String lex = x.unparse(g);
 
-   @Override
-   public void headAction(Node[] args, int length, RuleContext context) {
-      if (length > 3) {
-         checkArgs(length, context);
-      }
-
-      Geometry g;
-      try {
-         Node geom = getArg(1, args, context);
-
-         g = new WKTReader().read(geom.getLiteralValue().toString());
-      } catch (ParseException e) {
-         LOG.error("Parse error", e);
-//         throw new BuiltinException(this, context, "ParseException: "
-//               + e.getMessage());
-         return;
-      }
-      if (length == 3) {
-//         String crs = getArg(2, args, context).getURI();
-
-      }
-      g.setUserData("EPSG:4326");
-      WKTLiteral x = new WKTLiteral();
-      String lex = x.unparse(g);
-
-      context
-            .add(Triple.create(getArg(0, args, context),
-                               Geo.Nodes.asWKT,
-                               ResourceFactory.createTypedLiteral(lex, x).asNode()));
-   }
-
-
+		context.add(Triple.create(getArg(0, args, context), Geo.Nodes.asWKT,
+			ResourceFactory.createTypedLiteral(lex, x).asNode()));
+	}
 }

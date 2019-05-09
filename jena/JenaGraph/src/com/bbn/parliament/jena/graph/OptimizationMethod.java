@@ -8,7 +8,6 @@ package com.bbn.parliament.jena.graph;
 
 /** @author dkolas */
 public enum OptimizationMethod {
-
 	DefaultOptimization,
 
 	TreeWidthEstimation,

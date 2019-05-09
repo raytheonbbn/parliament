@@ -6,7 +6,6 @@ import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import com.hp.hpl.jena.sparql.engine.iterator.QueryIter;
 
 public abstract class AbstractIteratorWithChildren extends QueryIter {
-
 	private QueryIterator[] children;
 	private QueryIterator lastIterator;
 	private QueryIterator input;
@@ -115,5 +114,4 @@ public abstract class AbstractIteratorWithChildren extends QueryIter {
 	protected void requestCancel() {
 		// TODO can we cancel?
 	}
-
 }

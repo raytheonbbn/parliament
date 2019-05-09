@@ -1,8 +1,10 @@
 package com.bbn.parliament.jena.query.index.pfunction;
 
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.bbn.parliament.jena.Constants;
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.graph.index.Index;
@@ -34,7 +36,6 @@ import com.hp.hpl.jena.sparql.pfunction.PropFuncArgType;
  * @author rbattle
  */
 public class EnableIndexing extends PFGraphsAsSubject {
-
 	public static final String URI = Constants.PFUNCTION_NAMESPACE + "enableIndexing";
 	private static final Logger LOG = LoggerFactory.getLogger(EnableIndexing.class);
 

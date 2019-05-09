@@ -25,84 +25,74 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 
 public class Distance extends DoubleGeometrySpatialFunction {
+	private final GeodeticCalculator calc;
 
+	public Distance() {
+		calc = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
+	}
 
-   private final GeodeticCalculator calc;
+	/** {@inheritDoc} */
+	@Override
+	protected NodeValue exec(Geometry g1, Geometry g2,
+		GeoSPARQLLiteral datatype, Binding binding, List<NodeValue> evalArgs,
+		String uri, FunctionEnv env) {
+		NodeValue units = evalArgs.get(2);
 
-   public Distance() {
-      super();
-      calc = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
-   }
+		checkUnits(units);
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   protected NodeValue exec(Geometry g1, Geometry g2,
-         GeoSPARQLLiteral datatype, Binding binding, List<NodeValue> evalArgs,
-         String uri, FunctionEnv env) {
-      NodeValue units = evalArgs.get(2);
+		Geometry m1 = g1;
+		Geometry m2 = g2;
+		CoordinateReferenceSystem destination;
+		MathTransform transform;
+		double distance = Double.MAX_VALUE;
+		Node unitsNode = units.getNode();
+		if (Units.Nodes.metre.equals(unitsNode)) {
+			// transform to UTM zones
+			int srid1 = SpatialGeometryFactory.UTMZoneSRID(m1.getEnvelope());
+			int srid2 = SpatialGeometryFactory.UTMZoneSRID(m2.getEnvelope());
+			try {
+				if (srid1 == srid2) {
+					destination = CRS.decode("EPSG:" + srid1);
 
-      checkUnits(units);
+					transform = CACHE.getTransform(DefaultGeographicCRS.WGS84,
+						destination);
 
-      Geometry m1 = g1;
-      Geometry m2 = g2;
-      CoordinateReferenceSystem destination;
-      MathTransform transform;
-      double distance = Double.MAX_VALUE;
-      Node unitsNode = units.getNode();
-      if (Units.Nodes.metre.equals(unitsNode)) {
-         // transform to UTM zones
-         int srid1 = SpatialGeometryFactory.UTMZoneSRID(m1.getEnvelope());
-         int srid2 = SpatialGeometryFactory.UTMZoneSRID(m2.getEnvelope());
-         try {
+					m1 = JTS.transform(m1, transform);
+					m2 = JTS.transform(m2, transform);
+					distance = m1.distance(m2);
+				} else {
+					// use spheroid distance
+					Coordinate[] points = DistanceOp.nearestPoints(m1, m2);
 
-            if (srid1 == srid2) {
-               destination = CRS.decode("EPSG:" + srid1);
+					calc.setStartingGeographicPoint(points[0].x, points[0].y);
+					calc.setDestinationGeographicPoint(points[1].x, points[1].y);
 
-               transform = CACHE.getTransform(DefaultGeographicCRS.WGS84,
-                                              destination);
+					distance = calc.getOrthodromicDistance();
+				}
+			} catch (TransformException e) {
+				throw new QueryExecException(
+					"Could not transform to or from CRS EPSG:" + srid1);
+			} catch (NoSuchAuthorityCodeException e) {
+				throw new QueryExecException("Could not find CRS for EPSG:" + srid1);
+			} catch (FactoryException e) {
+				throw new QueryExecException(
+					"Could not find transformation between WGS84 and EPSG:" + srid1);
+			}
+		} else if (Units.Nodes.degree.equals(unitsNode)) {
+			// WGS84 UoM is degrees so nothing needs to change
+			distance = m1.distance(m2);
+		} else if (Units.Nodes.radian.equals(unitsNode)) {
+			distance = Math.toRadians(m1.distance(m2));
+		} else {
+			throw new UnsupportedUnitsException(unitsNode);
+		}
 
-               m1 = JTS.transform(m1, transform);
-               m2 = JTS.transform(m2, transform);
-               distance = m1.distance(m2);
-            } else {
-               // use spheroid distance
-               Coordinate[] points = DistanceOp.nearestPoints(m1, m2);
+		return NodeValue.makeDouble(distance);
+	}
 
-               calc.setStartingGeographicPoint(points[0].x, points[0].y);
-               calc.setDestinationGeographicPoint(points[1].x, points[1].y);
-
-               distance = calc.getOrthodromicDistance();
-            }
-         } catch (TransformException e) {
-            throw new QueryExecException(
-                                         "Could not transform to or from CRS EPSG:"
-                                               + srid1);
-         } catch (NoSuchAuthorityCodeException e) {
-            throw new QueryExecException("Could not find CRS for EPSG:" + srid1);
-         } catch (FactoryException e) {
-            throw new QueryExecException(
-                                         "Could not find transformation between WGS84 and EPSG:"
-                                               + srid1);
-         }
-      } else if (Units.Nodes.degree.equals(unitsNode)) {
-         // WGS84 UoM is degrees so nothing needs to change
-         distance = m1.distance(m2);
-      } else if (Units.Nodes.radian.equals(unitsNode)) {
-         distance = Math.toRadians(m1.distance(m2));
-      } else {
-         throw new UnsupportedUnitsException(unitsNode);
-      }
-
-      return NodeValue.makeDouble(distance);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   protected String[] getRestOfArgumentTypes() {
-      return new String[] { "xsd:anyURI" };
-   }
+	/** {@inheritDoc} */
+	@Override
+	protected String[] getRestOfArgumentTypes() {
+		return new String[] { "xsd:anyURI" };
+	}
 }

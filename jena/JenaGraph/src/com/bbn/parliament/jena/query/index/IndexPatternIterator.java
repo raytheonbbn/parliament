@@ -13,27 +13,23 @@ import com.hp.hpl.jena.sparql.engine.QueryIterator;
  * aggregated and returned.
  *
  * @author rbattle
- *
  */
 public class IndexPatternIterator extends AbstractIteratorWithChildren {
+	private List<IndexSubPattern> subPatterns;
 
-   private List<IndexSubPattern> subPatterns;
+	public IndexPatternIterator(IndexPattern pattern, QueryIterator input, ExecutionContext context) {
+		super(input, context);
+		this.subPatterns = pattern.getSubPatterns();
+	}
 
-   public IndexPatternIterator(IndexPattern pattern, QueryIterator input,
-                               ExecutionContext context) {
-      super(input, context);
-      this.subPatterns = pattern.getSubPatterns();
-   }
+	@Override
+	protected int sizeOfChildren() {
+		return subPatterns.size();
+	}
 
-   @Override
-   protected int sizeOfChildren() {
-      return subPatterns.size();
-   }
-
-   @Override
-   protected QueryIterator createChildIterator(int index, QueryIterator input) {
-      IndexSubPattern pattern = subPatterns.get(index);
-      return pattern.evaluate(input, getExecContext());
-   }
-
+	@Override
+	protected QueryIterator createChildIterator(int index, QueryIterator input) {
+		IndexSubPattern pattern = subPatterns.get(index);
+		return pattern.evaluate(input, getExecContext());
+	}
 }

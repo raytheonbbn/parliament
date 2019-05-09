@@ -3,6 +3,7 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.graph.index.spatial.standard.data;
 
 import java.util.ArrayList;
@@ -10,7 +11,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.geotools.referencing.datum.DefaultEllipsoid;
+
 import com.bbn.parliament.jena.graph.index.spatial.standard.SpatialGeometryFactory;
 import com.vividsolutions.jts.algorithm.MinimumDiameter;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -22,8 +25,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 public class FloatingCircle extends EphemeralGeometry {
-
-	private static final long serialVersionUID = 8072375297610980825L;
+	private static final long serialVersionUID = 1L;
 
 	private double _radius;
 
@@ -63,7 +65,6 @@ public class FloatingCircle extends EphemeralGeometry {
 			Point p = factory.createPoint(points.get(0));
 			BufferedGeometry bg = SpatialGeometryFactory.createBufferedGeometry(p, _radius);
 			return bg.getBufferedGeometry();
-//			return p;
 		} else if (points.size() == 2) {
 			Coordinate p1 = points.get(0);
 			Coordinate p2 = points.get(1);
@@ -79,12 +80,6 @@ public class FloatingCircle extends EphemeralGeometry {
 
 		MultiPoint multiPoint = factory.createMultiPoint(points.toArray(new Coordinate[] { }));
 		MinimumDiameter md = new MinimumDiameter(multiPoint);
-//		double constant = 6378137.0d;
-//		double radius = md.getLength() / 2d * constant;
-//
-//		if (radius > _radius) {
-//			return null;
-//		}
 
 		LineString ls = md.getDiameter();
 		Point center = ls.getCentroid();
@@ -96,7 +91,6 @@ public class FloatingCircle extends EphemeralGeometry {
 		}
 		BufferedGeometry bg = SpatialGeometryFactory.createBufferedGeometry(center, _radius);
 		return bg.getBufferedGeometry();
-//		return center;
 	}
 
 	private static double distanceMeters(Coordinate c1, Coordinate c2) {
@@ -107,17 +101,13 @@ public class FloatingCircle extends EphemeralGeometry {
 		return 2 * _radius;
 	}
 
-	/**
-	* {@inheritDoc}
-	*/
+	/** {@inheritDoc} */
 	@Override
 	public String getGeometryType() {
 		return "Floating Circle";
 	}
 
-	/**
-	* {@inheritDoc}
-	*/
+	/** {@inheritDoc} */
 	@Override
 	public int getNumPoints() {
 		// TODO Auto-generated method stub

@@ -97,8 +97,10 @@ public abstract class AbstractCountTransformation extends AbstractKbGraphReorder
 			return false;
 		}
 		String pURI = tp.getPredicate().getURI();
-		if (pURI.equals(RDF.subject.getURI()) || pURI.equals(RDF.predicate.getURI()) || pURI.equals(RDF.object.getURI()) ||
-			(pURI.equals(RDF.type.getURI()) && tp.getObject().isConcrete() && tp.getObject().isURI() && tp.getObject().getURI().equals(RDF.Statement.getURI()))){
+		if (pURI.equals(RDF.subject.getURI()) || pURI.equals(RDF.predicate.getURI())
+			|| pURI.equals(RDF.object.getURI()) || (pURI.equals(RDF.type.getURI())
+				&& tp.getObject().isConcrete() && tp.getObject().isURI()
+				&& tp.getObject().getURI().equals(RDF.Statement.getURI()))) {
 			return true;
 		}
 		return false;
@@ -220,7 +222,6 @@ public abstract class AbstractCountTransformation extends AbstractKbGraphReorder
 		// }
 		// return (int)product;
 		List<TriplePatternCount> tpcs = calculateTriplePatternCounts(pattern.getList());
-		return orderExpressions(tpcs, new ArrayList<Node>(), 1, false, 3)
-			.getEstimate();
+		return orderExpressions(tpcs, new ArrayList<Node>(), 1, false, 3).getEstimate();
 	}
 }

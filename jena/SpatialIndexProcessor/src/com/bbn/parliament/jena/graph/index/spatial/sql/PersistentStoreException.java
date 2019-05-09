@@ -17,16 +17,13 @@ public class PersistentStoreException extends Exception {
 
 	public PersistentStoreException(String tableName, String message) {
 		super(String.format("Table: %s, %s", tableName, message));
-		// TODO Auto-generated constructor stub
 	}
 
 	public PersistentStoreException(String tableName, Throwable cause) {
 		super(String.format("Table: %s", tableName), cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	public PersistentStoreException(String tableName, String message, Throwable cause) {
 		super(String.format("Table: %s, %s", tableName, message), cause);
-		// TODO Auto-generated constructor stub
 	}
 }

@@ -127,7 +127,9 @@ public class Inserter {
 			//checkIfMaster(graphName);
 
 			boolean isDefaultGraph = "".equals(graphName);
-			Model model = isDefaultGraph ? ModelManager.inst().getDefaultModel() : ModelManager.inst().getModel(graphName);
+			Model model = isDefaultGraph
+				? ModelManager.inst().getDefaultModel()
+				: ModelManager.inst().getModel(graphName);
 			String graphLabel = isDefaultGraph ? "Default Graph" : graphName;
 
 			if (null == model) {
@@ -142,12 +144,6 @@ public class Inserter {
 		}
 	}
 
-	//private void checkIfMaster(String graphName) throws ServletErrorResponseException {
-	//	if (KbGraphStore.MASTER_GRAPH.equalsIgnoreCase(graphName)) {
-	//		throw new ServletErrorResponseException("The Master Graph is readonly and may not be modified externally.");
-	//	}
-	//}
-
 	protected long importRepository(IInputStreamProvider inStrmPrvdr, String baseUri)
 		throws IOException, ServletErrorResponseException {
 		long toReturn = 0;
@@ -158,7 +154,7 @@ public class Inserter {
 		try (
 			InputStream in = inStrmPrvdr.getInputStream();
 			final ZipInputStream zin = new ZipInputStream(in);
-		) {
+			) {
 			ZipEntry ze = null;
 			while ((ze = zin.getNextEntry()) != null) {
 				String zipEntryName = ze.getName();
@@ -256,7 +252,7 @@ public class Inserter {
 		try (
 			InputStream in = inStrmPrvdr.getInputStream();
 			final ZipInputStream zin = new ZipInputStream(in);
-		) {
+			) {
 			ZipEntry ze = null;
 			while ((ze = zin.getNextEntry()) != null) {
 				FileNameDecomposition decomp = new FileNameDecomposition(ze.getName());

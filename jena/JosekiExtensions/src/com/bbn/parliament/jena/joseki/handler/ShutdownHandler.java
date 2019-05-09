@@ -3,6 +3,7 @@
 //
 // Copyright (c) 2010, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.joseki.handler;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class ShutdownHandler extends AbstractHandler {
 
 	@Override
 	public void handleFormURLEncodedRequest(HttpServletRequest req,
-			HttpServletResponse resp) throws IOException, ServletErrorResponseException {
+		HttpServletResponse resp) throws IOException, ServletErrorResponseException {
 		// Request that the server shutdown
 		JettyServerCore.getInstance().stop();
 		sendSuccess("Server shutdown requested.  Check the Windows Service "
@@ -35,7 +36,7 @@ public class ShutdownHandler extends AbstractHandler {
 
 	@Override
 	public void handleMultipartFormRequest(HttpServletRequest req,
-			HttpServletResponse resp) throws IOException, ServletErrorResponseException {
+		HttpServletResponse resp) throws IOException, ServletErrorResponseException {
 		throw new ServletErrorResponseException("'multipart/form data' requests "
 			+ "are not supported by this handler.");
 	}

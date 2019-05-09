@@ -105,10 +105,8 @@ public class PostgresPropertyFunction extends SpatialPropertyFunction {
 					count = rs.getLong(1);
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error("SQLException", ex);
-		} catch (PersistentStoreException ex) {
-			LOG.error("PersistentStoreException", ex);
+		} catch (SQLException | PersistentStoreException ex) {
+			LOG.error("Exception while estimating selectivity:", ex);
 		}
 		return count;
 	}

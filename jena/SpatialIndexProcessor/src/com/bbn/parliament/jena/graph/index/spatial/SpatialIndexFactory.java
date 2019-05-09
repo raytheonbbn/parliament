@@ -67,7 +67,7 @@ public class SpatialIndexFactory extends IndexFactory<SpatialIndex, Geometry> {
 		Profile profile = ProfileFactory.createProfile(props, graph);
 
 		String indexType = props.getProperty(Constants.GEOMETRY_INDEX_TYPE);
-		//      boolean geoSPARQL = Boolean.parseBoolean(props.getProperty(Constants.GEOSPARQL_ENABLED, Boolean.FALSE.toString()));
+		//boolean geoSPARQL = Boolean.parseBoolean(props.getProperty(Constants.GEOSPARQL_ENABLED, Boolean.FALSE.toString()));
 		SpatialIndex index = null;
 
 		if (Constants.GEOMETRY_INDEX_POSTGRESQL.equals(indexType)) {

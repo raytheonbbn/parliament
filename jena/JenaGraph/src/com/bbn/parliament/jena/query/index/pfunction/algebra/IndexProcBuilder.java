@@ -36,7 +36,6 @@ public class IndexProcBuilder {
 			.getContext());
 		IndexPropertyFunctionFactory<?> factory = (IndexPropertyFunctionFactory<?>) registry
 			.get(procId.getURI());
-
 		return buildProcedure(factory, procId, subjArg, objArg, pattern, execCxt);
 	}
 

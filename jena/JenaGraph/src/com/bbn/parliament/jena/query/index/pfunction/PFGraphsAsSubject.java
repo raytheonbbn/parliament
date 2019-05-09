@@ -80,13 +80,13 @@ public abstract class PFGraphsAsSubject extends PropertyFunctionEval {
 		for (Node g : graphs) {
 			Graph graph = KbGraphStore.DEFAULT_GRAPH_NODE.equals(g)
 				? kbGraphStore.getDefaultGraph()
-				: kbGraphStore.getGraph(g);
-			for (Node o : objects) {
-				success = processGraphObject(binding, g, graph, o, execCxt);
-				if (!success) {
-					break;
+					: kbGraphStore.getGraph(g);
+				for (Node o : objects) {
+					success = processGraphObject(binding, g, graph, o, execCxt);
+					if (!success) {
+						break;
+					}
 				}
-			}
 		}
 		success = true;
 

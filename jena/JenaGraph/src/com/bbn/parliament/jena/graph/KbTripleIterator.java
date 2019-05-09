@@ -12,48 +12,41 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
 
-public class KbTripleIterator extends NiceIterator<Triple>
-{
+public class KbTripleIterator extends NiceIterator<Triple> {
 	private StmtIterator si;
-	private KbGraph      graph;
-	private Triple       lastTriple;
+	private KbGraph graph;
+	private Triple lastTriple;
 
-	public KbTripleIterator(KbGraph graph, StmtIterator si) throws Throwable
-	{
+	public KbTripleIterator(KbGraph graph, StmtIterator si) throws Throwable {
 		super();
 		this.graph = graph;
 		this.si = si;
 	}
 
 	@Override
-	public void close()
-	{
+	public void close() {
 		super.close();
 		si.finalize();
 	}
 
 	@Override
-	public void remove()
-	{
+	public void remove() {
 		graph.delete(lastTriple);
 	}
 
 	@Override
-	public Triple next()
-	{
-		Statement statement  = si.next();
+	public Triple next() {
+		Statement statement = si.next();
 		Node s = graph.getResourceNodeForId(statement.getSubject());
 		Node p = graph.getResourceNodeForId(statement.getPredicate());
-		Node o = statement.isLiteral()
-			? graph.getLiteralNodeForId(statement.getObject())
+		Node o = statement.isLiteral() ? graph.getLiteralNodeForId(statement.getObject())
 			: graph.getResourceNodeForId(statement.getObject());
 		lastTriple = Triple.create(s, p, o);
 		return lastTriple;
 	}
 
 	@Override
-	public boolean hasNext()
-	{
+	public boolean hasNext() {
 		return si.hasNext();
 	}
 }

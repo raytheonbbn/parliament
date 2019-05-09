@@ -1,4 +1,4 @@
-﻿// Parliament is licensed under the BSD License from the Open Source
+// Parliament is licensed under the BSD License from the Open Source
 // Initiative, http://www.opensource.org/licenses/bsd-license.php
 //
 // Copyright (c) 2017, BBN Technologies, Inc.

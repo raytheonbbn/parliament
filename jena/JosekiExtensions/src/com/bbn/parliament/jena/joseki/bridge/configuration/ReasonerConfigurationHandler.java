@@ -3,14 +3,12 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.joseki.bridge.configuration;
 
 import com.hp.hpl.jena.reasoner.Reasoner;
 
-/**
- * @author rbattle
- *
- */
+/** @author rbattle */
 public interface ReasonerConfigurationHandler extends ConfigurationHandler {
-   public void configure(Reasoner reasoner) throws ConfigurationException;
+	public void configure(Reasoner reasoner) throws ConfigurationException;
 }

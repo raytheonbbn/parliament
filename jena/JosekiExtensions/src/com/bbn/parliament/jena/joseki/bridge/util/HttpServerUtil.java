@@ -3,6 +3,7 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.joseki.bridge.util;
 
 import java.io.File;
@@ -24,12 +25,11 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 /**
- * Utility methods for HTTP servers/servlets.
- *
- * Taken from Sesame 1.2.6 with a few modifications.
+ * Utility methods for HTTP servers/servlets. Taken from Sesame 1.2.6 with a few
+ * modifications.
  *
  * @author sallen
- **/
+ */
 public class HttpServerUtil {
 
 	private static DiskFileItemFactory _fileItemFactory = null;
@@ -64,7 +64,7 @@ public class HttpServerUtil {
 	/**
 	 * Checks whether the supplied request is a <tt>multipart/form-data</tt>
 	 * POST request.
-	 **/
+	 */
 	public static boolean isMultipartContent(HttpServletRequest request) {
 		return ServletFileUpload.isMultipartContent(request);
 	}
@@ -78,7 +78,7 @@ public class HttpServerUtil {
 	 * @param paramName The name of the parameter.
 	 * @return The trimmed value, or <tt>null</tt> if the specified parameter
 	 * does not have a value.
-	 **/
+	 */
 	public static String getParameter(HttpServletRequest request, String paramName) {
 		return getParameter(request, paramName, null);
 	}
@@ -94,7 +94,7 @@ public class HttpServerUtil {
 	 * parameter did not have a value.
 	 * @return The trimmed value, or <tt>defaultValue</tt> if the specified
 	 * parameter does not have a value.
-	 **/
+	 */
 	public static String getParameter(HttpServletRequest request, String paramName, String defaultValue) {
 		String result = request.getParameter(paramName);
 
@@ -119,10 +119,10 @@ public class HttpServerUtil {
 	 * @param request The request.
 	 * @return a Map of FileItem objects, mapped using their field name (Strings).
 	 * @exception IOException If the request could not be read/parsed.
-	 **/
+	 */
 	public static Map<String,FileItem> parseMultipartFormRequest(HttpServletRequest request)
 		throws IOException
-		{
+	{
 		try {
 			List<FileItem> fileItems = _getServletFileUpload().parseRequest(request);
 			Map<String, FileItem> resultMap = new HashMap<>(fileItems.size() * 2);
@@ -136,7 +136,7 @@ public class HttpServerUtil {
 		catch (FileUploadException e) {
 			throw new IOException(e);
 		}
-		}
+	}
 
 	/**
 	 * Gets the trimmed value of a request parameter from a Map of FileItem
@@ -150,7 +150,7 @@ public class HttpServerUtil {
 	 * @param paramName The name of the parameter.
 	 * @return The trimmed value, or <tt>null</tt> if the specified parameter
 	 * does not have a value.
-	 **/
+	 */
 	public static String getParameter(Map<String, FileItem> fileItemMap, String paramName) {
 		return getParameter(fileItemMap, paramName, null);
 	}
@@ -169,7 +169,7 @@ public class HttpServerUtil {
 	 * parameter did not have a value.
 	 * @return The trimmed value, or <tt>null</tt> if the specified parameter
 	 * does not have a value.
-	 **/
+	 */
 	public static String getParameter(Map<String, FileItem> fileItemMap, String paramName, String defaultValue) {
 		String result = defaultValue;
 
@@ -201,7 +201,7 @@ public class HttpServerUtil {
 	 * @param paramName The name of the parameter.
 	 * @return The binary value, or <tt>null</tt> if the specified parameter
 	 * does not have a value.
-	 **/
+	 */
 	public static byte[] getBinaryParameter(Map<String, FileItem> fileItemMap, String paramName) {
 		byte[] result = null;
 
@@ -222,10 +222,10 @@ public class HttpServerUtil {
 	 * @param paramName The name of the parameter.
 	 * @return The value, or <tt>null</tt> if the specified parameter does not
 	 * have a value.
-	 **/
+	 */
 	public static InputStream getStreamParameter(Map<String, FileItem> fileItemMap, String paramName)
 		throws IOException
-		{
+	{
 		InputStream result = null;
 
 		FileItem fileItem = fileItemMap.get(paramName);
@@ -234,12 +234,12 @@ public class HttpServerUtil {
 		}
 
 		return result;
-		}
+	}
 
 	/**
 	 * Sets headers on the supplied response that prevent all kinds of
 	 * browsers to cache it.
-	 **/
+	 */
 	public static void setNoCacheHeaders(HttpServletResponse response) {
 		//
 		// according to http://vancouver-webpages.com/META/FAQ.html
@@ -258,7 +258,7 @@ public class HttpServerUtil {
 	 * @param request A HTTP request
 	 * @return <tt>true</tt> if the sender of the request can handle
 	 * gzip-encoded data, <tt>false</tt> otherwise.
-	 **/
+	 */
 	public static boolean acceptsGZIPEncoding(HttpServletRequest request) {
 		boolean result = false;
 
@@ -285,11 +285,11 @@ public class HttpServerUtil {
 	 * Opens an gzip-encoded output stream for the specified response. This
 	 * method also sets the required header(s) to indicate that the response
 	 * is gzip-encoded.
-	 **/
+	 */
 	public static OutputStream openGZIPOutputStream(HttpServletResponse response)
 		throws IOException
-		{
+	{
 		response.setHeader("Content-Encoding", "gzip");
 		return new GZIPOutputStream(response.getOutputStream(), 4096);
-		}
+	}
 }

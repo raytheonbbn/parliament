@@ -2,12 +2,12 @@ package com.bbn.parliament.jena.query.optimize;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.bbn.parliament.jena.query.ReifiedTriple;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 
 public class OptimizeUtil {
-
 	/**
 	 * Get a list of variable nodes from a triple
 	 * @param triple the triple

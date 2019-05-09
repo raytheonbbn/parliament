@@ -78,8 +78,7 @@ public class StdConstants {
 	public static final String GML_CIRCLE_H = GML_NS_H + "Circle";
 
 	public static final String[] VALID_TYPES = new String[] { GML_POINT,
-		GML_POINT_H, GML_POLYGON, GML_POLYGON_H, GML_LINE_STRING,
-		GML_LINE_STRING_H };
+		GML_POINT_H, GML_POLYGON, GML_POLYGON_H, GML_LINE_STRING, GML_LINE_STRING_H };
 
 	private static Node asNode(String uri) {
 		return ResourceFactory.createResource(uri).asNode();

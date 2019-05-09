@@ -3,12 +3,15 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.graph.index.spatial.sql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
+
 import javax.sql.DataSource;
+
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
@@ -31,17 +34,11 @@ public class PersistentStore {
 	}
 
 	private DataSource ds;
-
 	private ConnectionFactory connFactory;
-
 	private PoolableConnectionFactory poolableFactory;
-
 	private ObjectPool connectionPool;
-
 	private boolean closed;
-
 	private boolean initialized;
-
 	private Object lock = new Object();
 
 	private PersistentStore() {
@@ -52,7 +49,6 @@ public class PersistentStore {
 	public void initialize(String jdbcUrl, String userName, String password,
 		Properties p) {
 		synchronized (lock) {
-
 			if (initialized) {
 				return;
 			}

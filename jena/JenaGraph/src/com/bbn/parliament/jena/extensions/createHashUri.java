@@ -1,12 +1,13 @@
-
 package com.bbn.parliament.jena.extensions;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.QueryBuildException;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
@@ -168,8 +169,7 @@ public class createHashUri implements Function {
 	 * fragment, then you need to pass in three strings in this order: subject,
 	 * predicate, and object.
 	 *
-	 * @param strings A variable length list of strings to hash into the URI
-	 *        fragment
+	 * @param strings A variable length list of strings to hash into the URI fragment
 	 * @return A hashed URI fragment generated from the input strings
 	 */
 	private static String computeHash(String strToBeHashed) {

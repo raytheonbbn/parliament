@@ -11,33 +11,24 @@ import com.hp.hpl.jena.vocabulary.XSD;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class Transform extends SingleGeometrySpatialFunction {
+	/** {@inheritDoc} */
+	@Override
+	protected NodeValue exec(Geometry g, GeoSPARQLLiteral datatype,
+		Binding binding, List<NodeValue> evalArgs, String uri, FunctionEnv env) {
 
+		NodeValue destinationVal = evalArgs.get(1);
+		String authDestination = GeoSPARQLLiteral.getCoordinateReferenceSystemCode(
+			destinationVal.getNode().getURI());
 
+		// set coordinate reference system
+		g.setUserData(authDestination);
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   protected NodeValue exec(Geometry g, GeoSPARQLLiteral datatype,
-         Binding binding, List<NodeValue> evalArgs, String uri, FunctionEnv env) {
+		return makeNodeValue(g, datatype);
+	}
 
-      NodeValue destinationVal = evalArgs.get(1);
-      String authDestination = GeoSPARQLLiteral.getCoordinateReferenceSystemCode(destinationVal.getNode().getURI());
-
-      // set coordinate reference system
-      g.setUserData(authDestination);
-
-
-      return makeNodeValue(g, datatype);
-
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   protected String[] getRestOfArgumentTypes() {
-      return new String[] { XSD.anyURI.toString() };
-   }
-
+	/** {@inheritDoc} */
+	@Override
+	protected String[] getRestOfArgumentTypes() {
+		return new String[] { XSD.anyURI.toString() };
+	}
 }

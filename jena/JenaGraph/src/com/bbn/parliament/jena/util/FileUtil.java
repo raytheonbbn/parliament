@@ -20,12 +20,12 @@ public class FileUtil {
 	private static Logger log = LoggerFactory.getLogger(FileUtil.class);
 
 	private static final String[] DOS_DEVICE_NAMES = { "AUX", "CLOCK$", "COM1",
-			"COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "CON",
-			"LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8",
-			"LPT9", "NUL", "PRN" };
+		"COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "CON",
+		"LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8",
+		"LPT9", "NUL", "PRN" };
 
 	private static final char[] INVALID_URL_CHARS = { '*', ':', '<', '>', '?',
-			'\\', '/', '"', '|' };
+		'\\', '/', '"', '|' };
 
 	/**
 	 * Encodes a string into a valid file name. We replace any invalid characters

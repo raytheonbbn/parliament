@@ -178,8 +178,8 @@ public class IndexTransformation extends AbstractGraphReorderTransformation {
 					if (tmpSel == null) {
 						selectivity = (subPattern instanceof EstimablePattern)
 							? ((EstimablePattern) subPattern).estimate()
-							: Long.MAX_VALUE;
-						indexSelectivity.put(subPattern, selectivity);
+								: Long.MAX_VALUE;
+							indexSelectivity.put(subPattern, selectivity);
 					} else {
 						selectivity = tmpSel.longValue();
 					}
@@ -198,15 +198,15 @@ public class IndexTransformation extends AbstractGraphReorderTransformation {
 				for (IndexSubPattern toCheck : patterns) {
 					Set<Node> toCheckVars = toCheck.getVariables();
 					outerVarIteration:
-					for (Node n1 : minSelPatVars) {
-						for (Node n2 : toCheckVars) {
-							if (n1.equals(n2)) {
-								reordered.add(toCheck);
-								linkedToRemove.add(toCheck);
-								break outerVarIteration;
+						for (Node n1 : minSelPatVars) {
+							for (Node n2 : toCheckVars) {
+								if (n1.equals(n2)) {
+									reordered.add(toCheck);
+									linkedToRemove.add(toCheck);
+									break outerVarIteration;
+								}
 							}
 						}
-					}
 				}
 				if (log.isTraceEnabled()) {
 					log.trace("reorder:  linked IndexSubPattern list:");

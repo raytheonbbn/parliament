@@ -15,7 +15,6 @@ import org.geotools.referencing.GeodeticCalculator;
 import org.geotools.referencing.operation.projection.PointOutsideEnvelopeException;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -35,9 +34,8 @@ import com.vividsolutions.jts.operation.buffer.BufferParameters;
 
 /** @author Robert Battle */
 public class BufferedGeometry extends EphemeralGeometry {
-	private static final long serialVersionUID = -2610110325142994450L;
-	protected static final Logger LOG = LoggerFactory
-		.getLogger(BufferedGeometry.class);
+	private static final long serialVersionUID = 1L;
+	protected static final Logger LOG = LoggerFactory.getLogger(BufferedGeometry.class);
 	private Geometry extent;
 	private Double distance;
 	private Geometry buffer;
@@ -49,10 +47,8 @@ public class BufferedGeometry extends EphemeralGeometry {
 	static {
 		try {
 			WGS84_CRS = CRS.decode("EPSG:4326");
-		} catch (NoSuchAuthorityCodeException e) {
-			LOG.error("NoSuchAuthorityCodeException", e);
-		} catch (FactoryException e) {
-			LOG.error("FactoryException", e);
+		} catch (FactoryException ex) {
+			LOG.error("Exception while initializing WGS84 CRS:", ex);
 		}
 	}
 
@@ -193,20 +189,14 @@ public class BufferedGeometry extends EphemeralGeometry {
 				}
 			}
 			return buffer;
-		} catch (NoSuchAuthorityCodeException e) {
-			LOG.error("NoSuchAuthorityCodeException", e);
-		} catch (FactoryException e) {
-			LOG.error("FactoryException", e);
-		} catch (MismatchedDimensionException e) {
-			LOG.error("MismatchedDimensionException", e);
-		} catch (TransformException e) {
-			LOG.error("TransformException", e);
+		} catch (FactoryException | MismatchedDimensionException | TransformException ex) {
+			LOG.error("Exception while getting buffered geometry:", ex);
 		}
 		return null;
 	}
 
 	private static Geometry projectAndBuffer(Geometry extent, double distance,
-			CoordinateReferenceSystem destination)
+		CoordinateReferenceSystem destination)
 			throws FactoryException, MismatchedDimensionException, TransformException {
 		LOG.debug("Transforming: {} from {} to {}",
 			new Object[] { extent.getEnvelope(),

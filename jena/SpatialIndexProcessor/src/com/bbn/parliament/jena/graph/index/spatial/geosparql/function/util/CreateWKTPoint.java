@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.bbn.parliament.jena.graph.index.spatial.geosparql.function.util;
 
 import java.util.List;
@@ -14,42 +11,33 @@ import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.function.FunctionEnv;
 import com.hp.hpl.jena.vocabulary.XSD;
 
-/**
- * @author rbattle
- *
- */
+/** @author rbattle */
 public class CreateWKTPoint extends SpatialFunctionBase {
+	@Override
+	protected NodeValue exec(Binding binding, List<NodeValue> evalArgs,
+		String uri, FunctionEnv env) {
 
-   @Override
-   protected NodeValue exec(Binding binding, List<NodeValue> evalArgs,
-         String uri, FunctionEnv env) {
+		NodeValue v1 = evalArgs.get(0);
+		NodeValue v2 = evalArgs.get(1);
 
-      NodeValue v1 = evalArgs.get(0);
-      NodeValue v2 = evalArgs.get(1);
+		if (!v1.getNode().isLiteral() && v1.getNode().getLiteralValue() instanceof Number) {
+			throw new GeoSPARQLFunctionException(String.format("%s is not a number", v1.getNode().toString()));
+		}
+		if (!v2.getNode().isLiteral() && v2.getNode().getLiteralValue() instanceof Number) {
+			throw new GeoSPARQLFunctionException(String.format("%s is not a number", v2.getNode().toString()));
+		}
 
-      if (!v1.getNode().isLiteral() &&
-            v1.getNode().getLiteralValue() instanceof Number) {
-         throw new GeoSPARQLFunctionException(String.format("%s is not a number", v1.getNode().toString()));
-      }
-      if (!v2.getNode().isLiteral() &&
-            v2.getNode().getLiteralValue() instanceof Number) {
-         throw new GeoSPARQLFunctionException(String.format("%s is not a number", v2.getNode().toString()));
-      }
+		double lat = Double.parseDouble(v1.getNode().getLiteralValue().toString());
+		double lon = Double.parseDouble(v2.getNode().getLiteralValue().toString());
 
-      double lat = Double.parseDouble(v1.getNode().getLiteralValue().toString());
-      double lon = Double.parseDouble(v2.getNode().getLiteralValue().toString());
+		String wkt = "POINT(" + lon + " " + lat + ")";
 
+		WKTLiteral lit = new WKTLiteral();
+		return NodeValue.makeNode(ResourceFactory.createTypedLiteral(wkt, lit).asNode());
+	}
 
-      String wkt = "POINT(" + lon + " " + lat + ")";
-
-
-      WKTLiteral lit = new WKTLiteral();
-      return NodeValue.makeNode(ResourceFactory.createTypedLiteral(wkt, lit).asNode());
-   }
-
-   @Override
-   protected String[] getArgumentTypes() {
-      return new String[] { XSD.xdouble.getURI(), XSD.xdouble.getURI() };
-   }
-
+	@Override
+	protected String[] getArgumentTypes() {
+		return new String[] { XSD.xdouble.getURI(), XSD.xdouble.getURI() };
+	}
 }

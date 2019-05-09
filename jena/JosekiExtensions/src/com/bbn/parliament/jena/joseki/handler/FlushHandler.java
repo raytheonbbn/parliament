@@ -3,6 +3,7 @@
 //
 // Copyright (c) 2010, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.joseki.handler;
 
 import java.io.IOException;

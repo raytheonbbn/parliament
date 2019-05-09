@@ -8,27 +8,22 @@ import com.hp.hpl.jena.sparql.engine.QueryIterator;
 import com.hp.hpl.jena.sparql.engine.main.StageGenerator;
 
 public class KbStageGenerator implements StageGenerator {
-   // Using OpExecutor is preferred.
-   StageGenerator above = null;
+	// Using OpExecutor is preferred.
+	StageGenerator above = null;
 
-   public KbStageGenerator(StageGenerator original) {
-      above = original;
-   }
+	public KbStageGenerator(StageGenerator original) {
+		above = original;
+	}
 
-   @Override
-   public QueryIterator execute(BasicPattern pattern, QueryIterator input,
-         ExecutionContext execCxt) {
+	@Override
+	public QueryIterator execute(BasicPattern pattern, QueryIterator input, ExecutionContext execCxt) {
+		Graph graph = execCxt.getActiveGraph();
 
-      Graph graph = execCxt.getActiveGraph();
-
-      return SolverUtil.solve(pattern, input, execCxt, graph, new BasicGraphSolverExecutor() {
-
-         @Override
-         public QueryIterator handle(BasicPattern p, QueryIterator i,
-               ExecutionContext context) {
-            return above.execute(p, i, context);
-         }
-      });
-
-   }
+		return SolverUtil.solve(pattern, input, execCxt, graph, new BasicGraphSolverExecutor() {
+			@Override
+			public QueryIterator handle(BasicPattern p, QueryIterator i, ExecutionContext context) {
+				return above.execute(p, i, context);
+			}
+		});
+	}
 }

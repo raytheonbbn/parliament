@@ -3,6 +3,7 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.graph;
 
 import java.util.ArrayList;
@@ -17,25 +18,25 @@ import com.hp.hpl.jena.util.iterator.NiceIterator;
  * @author sallen
  * @author dkolas
  */
-public class KbBulkUpdateHandler extends SimpleBulkUpdateHandler
-{
+public class KbBulkUpdateHandler extends SimpleBulkUpdateHandler {
 	private static final int SLICE_SIZE = 1000;
 
-	public KbBulkUpdateHandler(KbGraph graph)
-	{
+	public KbBulkUpdateHandler(KbGraph graph) {
 		super(graph);
 	}
 
 	@Override
-	public void removeAll()
-	{
+	public void removeAll() {
 		((KbGraph) graph).clear();
 		notifyRemoveAll();
 	}
 
-	// Batch the iterator inserts/deletes so that the naive event logic in SimpleBulkUpdateHandler doesn't
-	// exhaust the memory when collapsing the iterator to a List to pass to listeners.
-	// (TODO: are we allowed to batch this? Or do listeners expect a single event per SPARQL/Update query?)
+	// Batch the iterator inserts/deletes so that the naive event logic in
+	// SimpleBulkUpdateHandler doesn't exhaust the memory when collapsing the iterator
+	// to a List to pass to listeners.
+	//
+	// TODO: are we allowed to batch this? Or do listeners expect a single event
+	// per SPARQL/Update query?)
 	@SuppressWarnings("null")
 	@Override
 	public void addIterator(Iterator<Triple> it, boolean notify) {
@@ -59,8 +60,7 @@ public class KbBulkUpdateHandler extends SimpleBulkUpdateHandler
 			if (notify) {
 				manager.notifyAddIterator(graph, triples);
 			}
-		}
-		finally {
+		} finally {
 			NiceIterator.close(it);
 		}
 	}
@@ -88,8 +88,7 @@ public class KbBulkUpdateHandler extends SimpleBulkUpdateHandler
 			if (notify) {
 				manager.notifyDeleteIterator(graph, triples);
 			}
-		}
-		finally {
+		} finally {
 			NiceIterator.close(it);
 		}
 	}

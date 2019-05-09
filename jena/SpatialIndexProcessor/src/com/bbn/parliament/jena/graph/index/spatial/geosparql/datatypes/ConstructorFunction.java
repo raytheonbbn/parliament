@@ -10,21 +10,20 @@ import com.hp.hpl.jena.vocabulary.XSD;
 import com.vividsolutions.jts.geom.Geometry;
 
 public abstract class ConstructorFunction<T extends GeoSPARQLLiteral> extends SpatialFunctionBase {
-   private T datatype;
+	private T datatype;
 
-   public ConstructorFunction(T datatype) {
-      this.datatype = datatype;
-   }
+	public ConstructorFunction(T datatype) {
+		this.datatype = datatype;
+	}
 
-   @Override
-   protected String[] getArgumentTypes() {
-      return new String[] { XSD.xstring.getURI() };
-   }
+	@Override
+	protected String[] getArgumentTypes() {
+		return new String[] { XSD.xstring.getURI() };
+	}
 
-   @Override
-   protected NodeValue exec(Binding binding, List<NodeValue> evalArgs,
-         String uri, FunctionEnv env) {
-      Geometry g = datatype.parse(evalArgs.get(0).asString());
-      return makeNodeValue(g, datatype);
-   }
+	@Override
+	protected NodeValue exec(Binding binding, List<NodeValue> evalArgs, String uri, FunctionEnv env) {
+		Geometry g = datatype.parse(evalArgs.get(0).asString());
+		return makeNodeValue(g, datatype);
+	}
 }

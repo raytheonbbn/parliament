@@ -229,7 +229,7 @@ public class PostgresIndex extends SQLGeometryIndex {
 		try (
 			Connection c = store.getConnection();
 			PreparedStatement ps = c.prepareStatement(sql);
-		) {
+			) {
 			ps.setBytes(1, GeometryConverter.convertGeometry(extent));
 			ps.setInt(2, Constants.WGS84_SRID);
 			ps.setString(3, GeometryConverter.getStringRepresentation(node));
@@ -251,7 +251,7 @@ public class PostgresIndex extends SQLGeometryIndex {
 		try (
 			Connection c = store.getConnection();
 			PreparedStatement ps = c.prepareStatement(sql);
-		) {
+			) {
 			ps.setBytes(1, GeometryConverter.convertGeometry(extent));
 			ps.setInt(2, Constants.WGS84_SRID);
 			ps.setString(3, GeometryConverter.getStringRepresentation(node));
@@ -270,7 +270,7 @@ public class PostgresIndex extends SQLGeometryIndex {
 		try (
 			Connection c = store.getConnection();
 			PreparedStatement ps = c.prepareStatement(String.format(Queries.DELETE, tableName));
-		) {
+			) {
 			ps.setString(1, GeometryConverter.getStringRepresentation(node));
 			ps.execute();
 			removed = true;

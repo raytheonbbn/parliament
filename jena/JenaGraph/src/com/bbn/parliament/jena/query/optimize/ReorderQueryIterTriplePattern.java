@@ -3,10 +3,12 @@
 //
 // Copyright (c) 2001-2011, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.query.optimize;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.query.ReifiedTriple;
 import com.bbn.parliament.jena.query.SolverUtil;
@@ -38,7 +40,6 @@ import com.hp.hpl.jena.sparql.util.IterLib;
  * @author rbattle
  */
 public class ReorderQueryIterTriplePattern extends QueryIterRepeatApply {
-
 	private BasicPattern pattern;
 
 	/**

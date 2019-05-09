@@ -8,9 +8,7 @@ package com.bbn.parliament.jena.joseki.bridge.servlet;
 
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * @author iemmons
- */
+/** @author iemmons */
 public class ServletErrorResponseException extends Exception {
 	private static final long serialVersionUID = 8601712748837148746L;
 

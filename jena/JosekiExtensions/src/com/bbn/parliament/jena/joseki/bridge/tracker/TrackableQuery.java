@@ -69,20 +69,20 @@ public class TrackableQuery extends Trackable {
 		_qExec = !_query.hasDatasetDescription()
 			? QueryExecutionFactory.create(_query, ModelManager.inst().getDataset())
 			: QueryExecutionFactory.create(_query);
-		KbConfig cfg = ModelManager.inst().getDefaultGraphConfig();
-		_qExec.setTimeout(cfg.m_timeoutDuration, cfg.m_timeoutUnit);
+			KbConfig cfg = ModelManager.inst().getDefaultGraphConfig();
+			_qExec.setTimeout(cfg.m_timeoutDuration, cfg.m_timeoutUnit);
 
-		// add a cancel flag to the query execution context. The context is a
-		// copy of the ARQ global context (The constructor for
-		// QueryExecutionBase calls ARQ.getContext().copy()) so this should be
-		// unique for each query execution
-		// _qExec.getContext().set(Constants.CANCEL_QUERY_FLAG_SYMBOL,
-		// _cancelled);
+			// add a cancel flag to the query execution context. The context is a
+			// copy of the ARQ global context (The constructor for
+			// QueryExecutionBase calls ARQ.getContext().copy()) so this should be
+			// unique for each query execution
+			// _qExec.getContext().set(Constants.CANCEL_QUERY_FLAG_SYMBOL,
+			// _cancelled);
 
-		if (_log.isDebugEnabled()) {
-			_log.debug("Created query execution # {} of type {}", getId(), _qExec
-				.getClass().getName());
-		}
+			if (_log.isDebugEnabled()) {
+				_log.debug("Created query execution # {} of type {}", getId(), _qExec
+					.getClass().getName());
+			}
 	}
 
 	@Override

@@ -18,7 +18,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
  * Adapted from Sesame's NTriplesUtil.java
  *
  * @author sallen
- **/
+ */
 public class NTriplesUtil {
 	/**
 	 * Parses an N-Triples value, creates an object for it using the
@@ -29,7 +29,7 @@ public class NTriplesUtil {
 	 * @return An RDFNode object representing the parsed value.
 	 * @exception IllegalArgumentException If the supplied value could not be
 	 * parsed correctly.
-	 **/
+	 */
 	public static RDFNode parseValue(String nTriplesValue, Model model)
 		throws IllegalArgumentException
 	{
@@ -53,7 +53,7 @@ public class NTriplesUtil {
 	 * @return A Resource object representing the parsed resource.
 	 * @exception IllegalArgumentException If the supplied resource could not be
 	 * parsed correctly.
-	 **/
+	 */
 	public static Resource parseResource(String nTriplesResource, Model model)
 		throws IllegalArgumentException
 	{
@@ -75,7 +75,7 @@ public class NTriplesUtil {
 	 * @return A Resource object representing the parsed URI.
 	 * @exception IllegalArgumentException If the supplied URI could not be
 	 * parsed correctly.
-	 **/
+	 */
 	public static Resource parseURI(String nTriplesURI, Model model)
 		throws IllegalArgumentException
 	{
@@ -97,7 +97,7 @@ public class NTriplesUtil {
 	 * @return A Resource object representing the parsed bNode.
 	 * @exception IllegalArgumentException If the supplied bNode could not be
 	 * parsed correctly.
-	 **/
+	 */
 	public static Resource parseBNode(String nTriplesBNode, Model model)
 		throws IllegalArgumentException
 	{
@@ -119,7 +119,7 @@ public class NTriplesUtil {
 	 * @return A Literal object representing the parsed literal.
 	 * @exception IllegalArgumentException If the supplied literal could not be
 	 * parsed correctly.
-	 **/
+	 */
 	public static Literal parseLiteral(String nTriplesLiteral, Model model)
 		throws IllegalArgumentException
 	{
@@ -164,7 +164,7 @@ public class NTriplesUtil {
 	 *
 	 * @return The index of the double quote ending the label, or
 	 * <tt>-1</tt> if it could not be found.
-	 **/
+	 */
 	private static int _findEndOfLabel(String nTriplesLiteral) {
 		// First character of literal is guaranteed to be a double
 		// quote, start search at second character.
@@ -188,9 +188,7 @@ public class NTriplesUtil {
 		return -1;
 	}
 
-	/**
-	 * Creates an N-Triples string for the supplied value.
-	 **/
+	/** Creates an N-Triples string for the supplied value. */
 	public static String toNTriplesString(RDFNode value) {
 		if (value.isLiteral()) {
 			return toNTriplesString((Literal)value);
@@ -199,9 +197,7 @@ public class NTriplesUtil {
 		}
 	}
 
-	/**
-	 * Creates an N-Triples string for the supplied resource.
-	 **/
+	/** Creates an N-Triples string for the supplied resource. */
 	public static String toNTriplesString(Resource resource) {
 		if (resource.isAnon()) {
 			return toNTriplesStringBlankNode(resource);
@@ -210,30 +206,22 @@ public class NTriplesUtil {
 		}
 	}
 
-	/**
-	 * Creates an N-Triples string for the supplied URI.
-	 **/
+	/** Creates an N-Triples string for the supplied URI. */
 	public static String toNTriplesStringResource(Resource uri) {
 		return toNTriplesStringUri(uri.getURI());
 	}
 
-	/**
-	 * Creates an N-Triples string for the supplied URI.
-	 **/
+	/** Creates an N-Triples string for the supplied URI. */
 	public static String toNTriplesStringUri(String uri) {
 		return "<" + escapeString(uri) + ">";
 	}
 
-	/**
-	 * Creates an N-Triples string for the supplied bNode.
-	 **/
+	/** Creates an N-Triples string for the supplied bNode. */
 	public static String toNTriplesStringBlankNode(Resource bNode) {
 		return "_:" + bNode.getId();
 	}
 
-	/**
-	 * Creates an N-Triples string for the supplied literal.
-	 **/
+	/** Creates an N-Triples string for the supplied literal. */
 	public static String toNTriplesString(Literal lit) {
 		// Do some character escaping on the label:
 		StringBuffer result = new StringBuffer(128);
@@ -259,7 +247,7 @@ public class NTriplesUtil {
 	 * according to the N-Triples specification.
 	 * @see #isLetter
 	 * @see #isNumber
-	 **/
+	 */
 	public static boolean isLetterOrNumber(int c) {
 		return isLetter(c) || isNumber(c);
 	}
@@ -267,7 +255,7 @@ public class NTriplesUtil {
 	/**
 	 * Checks whether the supplied character is a letter according to
 	 * the N-Triples specification. N-Triples letters are A - Z and a - z.
-	 **/
+	 */
 	public static boolean isLetter(int c) {
 		return (c >= 65 && c <= 90) || // A - Z
 			(c >= 97 && c <= 122);  // a - z
@@ -276,7 +264,7 @@ public class NTriplesUtil {
 	/**
 	 * Checks whether the supplied character is a number according to
 	 * the N-Triples specification. N-Triples numbers are 0 - 9.
-	 **/
+	 */
 	public static boolean isNumber(int c) {
 		return (c >= 48 && c <= 57); // 0 - 9
 	}
@@ -286,7 +274,7 @@ public class NTriplesUtil {
 	 * characters are escaped using backslashes (<tt>"</tt> becomes <tt>\"</tt>,
 	 * etc.), and non-ascii/non-printable characters are escaped using Unicode
 	 * escapes (<tt>&#x5C;uxxxx</tt> and <tt>&#x5C;Uxxxxxxxx</tt>).
-	 **/
+	 */
 	public static String escapeString(String label) {
 		int labelLength = label.length();
 		StringBuffer result = new StringBuffer(2 * labelLength);
@@ -340,7 +328,7 @@ public class NTriplesUtil {
 	 * @return The unescaped string.
 	 * @exception IllegalArgumentException If the supplied string is not a
 	 * correctly escaped N-Triples string.
-	 **/
+	 */
 	public static String unescapeString(String s) {
 		int backSlashIdx = s.indexOf('\\');
 
@@ -434,7 +422,7 @@ public class NTriplesUtil {
 	 *
 	 * @param decimal A decimal value.
 	 * @param stringLength The length of the resulting string.
-	 **/
+	 */
 	public static String toHexString(int decimal, int stringLength) {
 		StringBuffer result = new StringBuffer(stringLength);
 

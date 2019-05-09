@@ -44,6 +44,7 @@ public class PrefixRegistry {
 			}
 		}
 	}
+
 	public void removePrefix(String prefix) {
 		synchronized (lock) {
 			prefixes.delete(prefix);

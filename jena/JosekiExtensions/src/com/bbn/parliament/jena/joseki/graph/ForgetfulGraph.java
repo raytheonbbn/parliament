@@ -6,6 +6,7 @@
 /**
  *
  */
+
 package com.bbn.parliament.jena.joseki.graph;
 
 import com.hp.hpl.jena.graph.Triple;
@@ -21,29 +22,29 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
  * @author sallen
  */
 public class ForgetfulGraph extends GraphBase {
-   protected int _numStatements = 0;
+	protected int _numStatements = 0;
 
-   /* (non-Javadoc)
-    * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseFind(com.hp.hpl.jena.graph.TripleMatch)
-    */
-   @Override
-   protected ExtendedIterator<Triple> graphBaseFind(TripleMatch m) {
-      throw new com.hp.hpl.jena.shared.NotFoundException("ForgetfulGraph::graphBaseFind");
-   }
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseFind(com.hp.hpl.jena.graph.TripleMatch)
+	 */
+	@Override
+	protected ExtendedIterator<Triple> graphBaseFind(TripleMatch m) {
+		throw new com.hp.hpl.jena.shared.NotFoundException("ForgetfulGraph::graphBaseFind");
+	}
 
-   /* (non-Javadoc)
-    * @see com.hp.hpl.jena.graph.impl.GraphBase#performAdd(com.hp.hpl.jena.graph.Triple)
-    */
-   @Override
-   public void performAdd(Triple t) {
-      _numStatements++;
-   }
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.impl.GraphBase#performAdd(com.hp.hpl.jena.graph.Triple)
+	 */
+	@Override
+	public void performAdd(Triple t) {
+		_numStatements++;
+	}
 
-   /* (non-Javadoc)
-    * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseSize()
-    */
-   @Override
-   protected int graphBaseSize() {
-      return _numStatements;
-   }
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseSize()
+	 */
+	@Override
+	protected int graphBaseSize() {
+		return _numStatements;
+	}
 }

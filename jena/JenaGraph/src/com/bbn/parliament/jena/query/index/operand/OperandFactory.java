@@ -6,7 +6,7 @@ import com.hp.hpl.jena.sparql.core.BasicPattern;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
 
 public interface OperandFactory<T> {
-   public void setIndex(QueryableIndex<T> index);
-   public Operand<T> createOperand(Node rootNode, BasicPattern pattern, Binding binding);
-   public Operand<T> createOperand(Node rootNode, Binding binding);
+	public void setIndex(QueryableIndex<T> index);
+	public Operand<T> createOperand(Node rootNode, BasicPattern pattern, Binding binding);
+	public Operand<T> createOperand(Node rootNode, Binding binding);
 }

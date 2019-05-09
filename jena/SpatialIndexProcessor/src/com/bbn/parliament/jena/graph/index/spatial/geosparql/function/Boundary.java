@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.bbn.parliament.jena.graph.index.spatial.geosparql.function;
 
 import java.util.List;
@@ -11,29 +8,20 @@ import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.function.FunctionEnv;
 import com.vividsolutions.jts.geom.Geometry;
 
-/**
- * @author rbattle
- *
- */
+/** @author rbattle */
 public class Boundary extends SingleGeometrySpatialFunction {
+	/** {@inheritDoc} */
+	@Override
+	protected NodeValue exec(Geometry g, GeoSPARQLLiteral datatype, Binding binding,
+		List<NodeValue> evalArgs, String uri, FunctionEnv env) {
+		Geometry toReturn = g.getBoundary();
+		toReturn.setUserData(g.getUserData());
+		return makeNodeValue(toReturn, datatype);
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   protected NodeValue exec(Geometry g, GeoSPARQLLiteral datatype, Binding binding,
-         List<NodeValue> evalArgs, String uri, FunctionEnv env) {
-      Geometry toReturn = g.getBoundary();
-      toReturn.setUserData(g.getUserData());
-      return makeNodeValue(toReturn, datatype);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   protected String[] getRestOfArgumentTypes() {
-      return new String[] {};
-   }
-
+	/** {@inheritDoc} */
+	@Override
+	protected String[] getRestOfArgumentTypes() {
+		return new String[] {};
+	}
 }

@@ -17,43 +17,38 @@ import com.hp.hpl.jena.update.GraphStore;
 import com.hp.hpl.jena.update.Update;
 import com.hp.hpl.jena.update.UpdateRequest;
 
-/**
- * @author sallen
- */
+/** @author sallen */
 public class KbUpdateEngine extends UpdateEngineBase {
-
 	public KbUpdateEngine(KbGraphStore graphStore, UpdateRequest request, Binding inputBinding, Context context) {
 		super(graphStore, request, inputBinding, context);
 	}
 
 	@Override
 	public void execute() {
-		graphStore.startRequest(request) ;
-		KbUpdateEngineWorker worker = new KbUpdateEngineWorker((KbGraphStore)graphStore, startBinding, context);
-		for ( Update up : request.getOperations() )
-			up.visit(worker) ;
-		graphStore.finishRequest(request) ;
+		graphStore.startRequest(request);
+		KbUpdateEngineWorker worker = new KbUpdateEngineWorker((KbGraphStore) graphStore, startBinding, context);
+		for (Update up : request.getOperations())
+			up.visit(worker);
+		graphStore.finishRequest(request);
 	}
 
-	private static UpdateEngineFactory factory = new UpdateEngineFactory()
-	{
+	private static UpdateEngineFactory factory = new UpdateEngineFactory() {
 		@Override
-		public boolean accept(UpdateRequest request, GraphStore graphStore, Context context)
-		{
-			return (graphStore instanceof KbGraphStore) ;
+		public boolean accept(UpdateRequest request, GraphStore graphStore, Context context) {
+			return (graphStore instanceof KbGraphStore);
 		}
 
 		@Override
-		public UpdateEngine create(UpdateRequest request, GraphStore graphStore, Binding inputBinding, Context context)
-		{
-			return new KbUpdateEngine((KbGraphStore)graphStore, request, inputBinding, context) ;
+		public UpdateEngine create(UpdateRequest request, GraphStore graphStore, Binding inputBinding, Context context) {
+			return new KbUpdateEngine((KbGraphStore) graphStore, request, inputBinding, context);
 		}
-	} ;
+	};
 
-	public static UpdateEngineFactory getFactory() { return factory ; }
+	public static UpdateEngineFactory getFactory() {
+		return factory;
+	}
 
 	public static void register() {
 		UpdateEngineRegistry.get().add(getFactory());
 	}
-
 }

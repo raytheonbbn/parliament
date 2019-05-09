@@ -67,7 +67,6 @@ public class SolverUtil {
 	}
 
 	public static BasicGraphSolverExecutor DEFAULT_SOLVER_EXECUTOR = new BasicGraphSolverExecutor() {
-
 		@Override
 		public QueryIterator handle(BasicPattern pattern, QueryIterator input,
 			ExecutionContext context) {
@@ -144,7 +143,7 @@ public class SolverUtil {
 		List<Index<?>> indexes = IndexManager.getInstance().getIndexes(graph);
 		if (indexes.size() > 0) {
 			toProcess = new IndexTransformation(graph, indexes)
-			.reorder(toProcess);
+				.reorder(toProcess);
 
 		}
 		if (LOG.isDebugEnabled() && !toProcess.equals(pattern)) {

@@ -34,13 +34,6 @@ public class ParliamentRequest extends Request {
 	public static final String PARAM_QUERY				= "query";
 	public static final String PARAM_UPDATE			= "update";
 
-	/**
-	 * When set to false, Jetty will sometimes throw NPEs from its form-parsing code.
-	 * But when set to true, Jetty returns a null parameter map even when parameters
-	 * are present.  For now, this setting seems to be working, though.
-	 */
-	//public static final boolean USE_JETTY_SPECIFIC_REQUEST_PARAMETER_MAP	= false;
-
 	private static Logger log = LoggerFactory.getLogger(ParliamentRequest.class);
 
 	private HttpServletRequest _httpReq;
@@ -56,28 +49,12 @@ public class ParliamentRequest extends Request {
 
 		// params => request items
 		setParam(Joseki.OPERATION, opType);
-//		if (USE_JETTY_SPECIFIC_REQUEST_PARAMETER_MAP && _httpReq instanceof org.mortbay.jetty.Request) {
-//			MultiMap map = ((org.mortbay.jetty.Request) _httpReq).getParameters();
-//			if (map == null) {
-//				log.warn("org.mortbay.jetty.Request parameter map is null");
-//			} else {
-//				for (Object rawEntry : map.entrySet()) {
-//					Map.Entry<?, ?> entry = (Map.Entry<?, ?>) rawEntry;
-//					String key = (String) entry.getKey();
-//					String value = (String) entry.getValue();
-//					setParam(key, value);
-//					log.trace("Request jetty param:  \"{}\" = [{}]", key, value.length());
-//				}
-//			}
-//		} else {
-			for (Map.Entry<String, String[]> entry : _httpReq.getParameterMap().entrySet()) {
-				String key = entry.getKey();
-				for (String value : entry.getValue()) {
-					setParam(key, value);
-//					log.trace("Request non-jetty param:  \"{}\" = [{}]", key, value.length());
-				}
+		for (Map.Entry<String, String[]> entry : _httpReq.getParameterMap().entrySet()) {
+			String key = entry.getKey();
+			for (String value : entry.getValue()) {
+				setParam(key, value);
 			}
-//		}
+		}
 
 		String method = _httpReq.getMethod().toUpperCase();
 		log.trace("Request method = {}", method);

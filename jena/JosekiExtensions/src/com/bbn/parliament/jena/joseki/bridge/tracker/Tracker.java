@@ -23,7 +23,6 @@ import com.hp.hpl.jena.shared.QueryStageException;
  * also provides a method to cancel an individual tracked object.
  *
  * @author rbattle
- *
  */
 public class Tracker implements Observer {
 	private static final long SHUTDOWN_TIMEOUT = 8 * 1000; // in milliseconds

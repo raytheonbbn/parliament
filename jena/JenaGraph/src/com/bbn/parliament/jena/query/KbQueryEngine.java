@@ -16,44 +16,41 @@ import com.hp.hpl.jena.sparql.util.Context;
  * {@link KbOptimize} and {@link KbOpExecutor} classes.
  *
  * @author rbattle
- *
  */
 public class KbQueryEngine extends QueryEngineMain {
+	public static void register() {
+		QueryEngineRegistry.addFactory(factory);
+	}
 
-   public static void register() {
-      QueryEngineRegistry.addFactory(factory);
-   }
+	public static void unregister() {
+		QueryEngineRegistry.removeFactory(factory);
+	}
 
-   public static void unregister() {
-      QueryEngineRegistry.removeFactory(factory);
-   }
+	private static KbQueryEngineFactory factory = new KbQueryEngineFactory();
 
-   private static KbQueryEngineFactory factory = new KbQueryEngineFactory();
+	private Binding initialInput;
 
-   private Binding initialInput;
+	public KbQueryEngine(Op op, KbGraphStore dataset, Binding input,
+		Context context) {
+		super(op, dataset, input, context);
+		initialInput = input;
+	}
 
-   public KbQueryEngine(Op op, KbGraphStore dataset, Binding input,
-                        Context context) {
-      super(op, dataset, input, context);
-      initialInput = input;
-   }
+	public KbQueryEngine(Query query, KbGraphStore dataset, Binding input,
+		Context context) {
+		super(query, dataset, input, context);
+		initialInput = input;
+	}
 
-   public KbQueryEngine(Query query, KbGraphStore dataset, Binding input,
-                        Context context) {
-      super(query, dataset, input, context);
-      initialInput = input;
-   }
+	@Override
+	protected Op modifyOp(Op op) {
+		Op o = Substitute.substitute(op, initialInput);
+		// Optimize (high-level)
+		o = super.modifyOp(o);
 
-   @Override
-   protected Op modifyOp(Op op) {
-      Op o = Substitute.substitute(op, initialInput);
-      // Optimize (high-level)
-      o = super.modifyOp(o);
+		// Record it.
+		setOp(o);
 
-      // Record it.
-      setOp(o);
-
-      return o;
-   }
-
+		return o;
+	}
 }

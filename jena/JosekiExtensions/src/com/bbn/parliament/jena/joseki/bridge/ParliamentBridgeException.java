@@ -3,22 +3,21 @@
 //
 // Copyright (c) 2010, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.joseki.bridge;
 
 public class ParliamentBridgeException extends Exception {
+	private static final long serialVersionUID = 1L;
 
-   private static final long serialVersionUID = -3339409387146618019L;
+	public ParliamentBridgeException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-   public ParliamentBridgeException(String message, Throwable cause) {
-      super(message, cause);
-   }
+	public ParliamentBridgeException(String message) {
+		super(message);
+	}
 
-   public ParliamentBridgeException(String message) {
-      super(message);
-   }
-
-   public ParliamentBridgeException(Throwable cause) {
-      super(cause);
-   }
-
+	public ParliamentBridgeException(Throwable cause) {
+		super(cause);
+	}
 }

@@ -3,17 +3,15 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
- package com.bbn.parliament.jena.graph;
+
+package com.bbn.parliament.jena.graph;
 
 import com.hp.hpl.jena.graph.query.Domain;
 import com.hp.hpl.jena.graph.query.QueryNode;
 import com.hp.hpl.jena.graph.query.QueryTriple;
 
- /**
-  * @author dkolas
-  */
+/** @author dkolas */
 public final class VariableBindingInfo {
-
 	//Needs a map of triples to variables
 	private int[][] tripleVariables;
 

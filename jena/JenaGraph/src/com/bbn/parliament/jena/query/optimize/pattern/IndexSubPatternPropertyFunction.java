@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import com.bbn.parliament.jena.query.index.operand.Operand;
 import com.bbn.parliament.jena.query.index.operand.OperandFactoryHelper;
 import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunction;
@@ -43,8 +44,7 @@ public class IndexSubPatternPropertyFunction<T> extends IndexSubPattern {
 				Map<Node, Operand<T>> operands = OperandFactoryHelper.getOperands(
 					function.getOperandFactory(), subjects, objects, binding,
 					function.getPattern(), true);
-				return function.execBinding(binding, subjects, objects, operands,
-					getExecContext());
+				return function.execBinding(binding, subjects, objects, operands, getExecContext());
 			}
 		};
 	}

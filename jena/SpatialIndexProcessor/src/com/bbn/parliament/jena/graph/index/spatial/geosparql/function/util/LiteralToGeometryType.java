@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.bbn.parliament.jena.graph.index.spatial.geosparql.function.util;
 
 import java.util.List;

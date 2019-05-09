@@ -3,6 +3,7 @@ package com.bbn.parliament.jena.query.index.pfunction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import com.bbn.parliament.jena.graph.index.Index;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.graph.index.QueryableIndex;
@@ -52,9 +53,7 @@ import com.hp.hpl.jena.sparql.util.IterLib;
  * @see KbOptimize
  * @see TransformIndexPropertyFunction
  */
-public abstract class IndexPropertyFunction<T>
-extends PropertyFunctionEval {
-
+public abstract class IndexPropertyFunction<T> extends PropertyFunctionEval {
 	protected static List<Node> getNodes(PropFuncArg arg, Binding binding) {
 		List<Node> nodes = new ArrayList<>();
 		if (arg.isList()) {

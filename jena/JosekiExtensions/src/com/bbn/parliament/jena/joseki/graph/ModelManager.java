@@ -36,7 +36,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class ModelManager {
-	private static Logger log = LoggerFactory.getLogger(ModelManager.class);
+	private static final Logger log = LoggerFactory.getLogger(ModelManager.class);
 	private static ModelManager instance = null;
 
 	private List<ReasonerConfigurationHandler> reasonerHandlers;

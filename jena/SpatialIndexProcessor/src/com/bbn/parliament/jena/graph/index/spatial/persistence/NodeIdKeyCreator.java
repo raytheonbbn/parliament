@@ -8,16 +8,14 @@ import com.sleepycat.bind.serial.SerialSerialKeyCreator;
  * field in the <code>NodeData</code> class to the data.
  *
  * @author rbattle
- *
  */
-public class NodeIdKeyCreator extends
-      SerialSerialKeyCreator<NodeKey, NodeData, Integer> {
-   public NodeIdKeyCreator(ClassCatalog catalog) {
-      super(catalog, NodeKey.class, NodeData.class, Integer.class);
-   }
+public class NodeIdKeyCreator extends SerialSerialKeyCreator<NodeKey, NodeData, Integer> {
+	public NodeIdKeyCreator(ClassCatalog catalog) {
+		super(catalog, NodeKey.class, NodeData.class, Integer.class);
+	}
 
-   @Override
-   public Integer createSecondaryKey(NodeKey primaryKey, NodeData data) {
-      return data.getId();
-   }
+	@Override
+	public Integer createSecondaryKey(NodeKey primaryKey, NodeData data) {
+		return data.getId();
+	}
 }

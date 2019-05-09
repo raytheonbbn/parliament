@@ -10,37 +10,32 @@ import com.hp.hpl.jena.sparql.pfunction.PropertyFunctionRegistry;
 import com.hp.hpl.jena.sparql.util.Context;
 
 public class TransformIndexPropertyFunction extends TransformCopy {
+	private Context context;
 
-   private Context context;
+	public TransformIndexPropertyFunction(Context context) {
+		this.context = context;
+	}
 
-   public TransformIndexPropertyFunction(Context context) {
-      this.context = context;
-   }
+	/** {@inheritDoc} */
+	@Override
+	public Op transform(OpTriple opTriple) {
+		return transform(opTriple.asBGP());
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Op transform(OpTriple opTriple) {
-      return transform(opTriple.asBGP());
-   }
+	/** {@inheritDoc} */
+	@Override
+	public Op transform(OpBGP opBGP) {
+		// no indexes
+		if (IndexManager.getInstance().size() == 0) {
+			return opBGP;
+		}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Op transform(OpBGP opBGP) {
-      // no indexes
-      if (IndexManager.getInstance().size() == 0) {
-         return opBGP;
-      }
+		// no property functions registered
+		PropertyFunctionRegistry registry = PropertyFunctionRegistry.get(context);
+		if (null == registry) {
+			return opBGP;
+		}
 
-      // no property functions registered
-      PropertyFunctionRegistry registry = PropertyFunctionRegistry.get(context);
-      if (null == registry) {
-         return opBGP;
-      }
-
-      return IndexPropertyFunctionGenerator.buildIndexPropertyFunctions(opBGP, context);
-   }
+		return IndexPropertyFunctionGenerator.buildIndexPropertyFunctions(opBGP, context);
+	}
 }

@@ -149,7 +149,6 @@ public class IndexPropertyFunctionGenerator {
 		PropFuncArg getObjectArgList() {
 			return objArgs;
 		}
-
 	}
 
 	private static Op makeStages(BasicPattern triples,
@@ -181,9 +180,7 @@ public class IndexPropertyFunctionGenerator {
 				PropertyFunctionInstance pfi = orderedList.pop();// pfInvocations.get(t);
 				BasicPattern p = new BasicPattern(pfi.getDependentTriples());
 
-				//            OpPropFunc pf = new OpPropFunc(pfi.getPredicate(),
-				//                                           pfi.getSubjectArgList(),
-				//                                           pfi.getObjectArgList(), op);
+				//OpPropFunc pf = new OpPropFunc(pfi.getPredicate(), pfi.getSubjectArgList(), pfi.getObjectArgList(), op);
 
 				OpIndexPropFunc opPF = new OpIndexPropFunc(pfi.getPredicate(),
 					pfi.getSubjectArgList(),
@@ -206,9 +203,7 @@ public class IndexPropertyFunctionGenerator {
 			PropertyFunctionInstance pfi = orderedList.pop();// pfInvocations.get(t);
 			BasicPattern p = new BasicPattern(pfi.getDependentTriples());
 
-			//         OpPropFunc pf = new OpPropFunc(pfi.getPredicate(),
-			//                                        pfi.getSubjectArgList(),
-			//                                        pfi.getObjectArgList(), op);
+			//OpPropFunc pf = new OpPropFunc(pfi.getPredicate(), pfi.getSubjectArgList(), pfi.getObjectArgList(), op);
 
 			OpIndexPropFunc opPF = new OpIndexPropFunc(pfi.getPredicate(),
 				pfi.getSubjectArgList(),
@@ -256,8 +251,7 @@ public class IndexPropertyFunctionGenerator {
 	/**
 	 * Split a pattern into partitions such that no variable overlaps partitions.
 	 *
-	 * @param pattern
-	 *           the pattern to split.
+	 * @param pattern the pattern to split.
 	 * @return a list of partitions.
 	 */
 	private static List<Partition> partition(BasicPattern pattern) {
@@ -289,17 +283,14 @@ public class IndexPropertyFunctionGenerator {
 	}
 
 	/**
-	 * A pattern that keeps track of the variables/uris contained in it's
-	 * triples.
+	 * A pattern that keeps track of the variables/uris contained in it's triples.
 	 *
 	 * @author rbattle
 	 */
 	private static final class Partition extends BasicPattern {
 		private Set<String> vars;
 
-		/**
-		 * Create a new instance.
-		 */
+		/** Create a new instance. */
 		public Partition() {
 			vars = new HashSet<>();
 		}
@@ -307,8 +298,7 @@ public class IndexPropertyFunctionGenerator {
 		/**
 		 * Answer whether the variable/URI is contained in this instance.
 		 *
-		 * @param varOrURI
-		 *           a variable or URI to check.
+		 * @param varOrURI a variable or URI to check.
 		 * @return <code>true</code> if it is contained; otherwise
 		 *         <code>false</code>.
 		 */
@@ -319,8 +309,7 @@ public class IndexPropertyFunctionGenerator {
 		/**
 		 * Answer whether the triple should be handled by this instance.
 		 *
-		 * @param t
-		 *           the triple to check.
+		 * @param t the triple to check.
 		 * @return <code>true</code> if the triple contains variables already in
 		 *         the pattern; otherwise <code>false</code>.
 		 */
@@ -333,17 +322,13 @@ public class IndexPropertyFunctionGenerator {
 			return false;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		/** {@inheritDoc} */
 		@Override
 		public void add(Triple t) {
 			vars.addAll(getVariablesAndURIS(t));
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		/** {@inheritDoc} */
 		@Override
 		public void addAll(BasicPattern other) {
 			for (Triple t : other) {

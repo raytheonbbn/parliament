@@ -141,8 +141,8 @@ public class RTreeIndex extends SpatialIndex {
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @throws SpatialIndexException
-	 *            if an error occurs parsing the geometry from the index
+	 * @throws SpatialIndexException if an error occurs parsing the geometry from
+	 *         the index
 	 */
 	@Override
 	protected boolean indexRemove(Record<Geometry> r) throws SpatialIndexException {
@@ -171,8 +171,8 @@ public class RTreeIndex extends SpatialIndex {
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @throws SpatialIndexException
-	 *            if an error occurs querying the index or parsing a geometry.
+	 * @throws SpatialIndexException if an error occurs querying the index or
+	 *         parsing a geometry.
 	 */
 	@Override
 	public Iterator<Record<Geometry>> query(final Geometry value)
@@ -183,8 +183,8 @@ public class RTreeIndex extends SpatialIndex {
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @throws SpatialIndexException
-	 *            if an error occurs querying the index or parsing the geometry
+	 * @throws SpatialIndexException if an error occurs querying the index or
+	 *         parsing the geometry
 	 */
 	@Override
 	public Iterator<Record<Geometry>> iterator(final Geometry value,

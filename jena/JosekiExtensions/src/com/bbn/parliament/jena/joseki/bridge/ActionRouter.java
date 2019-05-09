@@ -117,8 +117,8 @@ public class ActionRouter implements Loadable, Processor {
 		if (!preq.isSparqlQuery() && !preq.isSparqlUpdate()) {
 			String msg = formatRequestParticulars(preq,
 				"Request is neither a SPARQL query nor a SPARQL update.  Ensure"
-				+ " that the request method, content type, and parameters are set"
-				+ " according to the SPARQL protocol.");
+					+ " that the request method, content type, and parameters are set"
+					+ " according to the SPARQL protocol.");
 			log.warn(msg);
 			throw new JosekiServerException(msg);
 		} else if (preq.isSparqlQuery() && preq.isSparqlUpdate()) {

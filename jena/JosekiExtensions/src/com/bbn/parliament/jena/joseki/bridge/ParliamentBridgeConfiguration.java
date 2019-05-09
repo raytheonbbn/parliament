@@ -32,13 +32,10 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 public class ParliamentBridgeConfiguration {
-
 	/** Default threshold above which DeferredFileOutputStream stores to disk. Set to 10 MB. */
 	public static final int DEFAULT_DEFERRED_FILE_THRESHOLD = 10 * 1024 * 1024;
-
 	private static final String CONFIG_ONT_FILE = "ontology/config-ont.ttl";
-
-	private static Logger log = LoggerFactory.getLogger(ParliamentBridgeConfiguration.class);
+	private static final Logger log = LoggerFactory.getLogger(ParliamentBridgeConfiguration.class);
 
 	private List<ConfigurationHandler> _configurationHandlers;
 	private boolean _clearDataOnStartup = false;
@@ -48,7 +45,6 @@ public class ParliamentBridgeConfiguration {
 	private PrefixMap _prefixes;
 
 	private ParliamentBridgeConfiguration() {
-
 	}
 
 	public List<ConfigurationHandler> getConfigurationHandlers() {
@@ -84,7 +80,7 @@ public class ParliamentBridgeConfiguration {
 		config._configurationHandlers = readConfigurationHandlers(m);
 		config._baselineDirs = readBaselineDirectories(m);
 		config._clearDataOnStartup = readClearDataOnStartup(m);
-		config._tmpDir  = (tmpDir == null)
+		config._tmpDir = (tmpDir == null)
 			? new File(System.getProperty("java.io.tmpdir", "."))
 			: tmpDir;
 		if (log.isTraceEnabled()) {
@@ -186,7 +182,7 @@ public class ParliamentBridgeConfiguration {
 					.isAssignableFrom(handlerClazz)) {
 					log.warn("Configuration handler {} with implementation {} must use the {} property.",
 						new Object[] { res.getURI(), handlerClazz.getName(),
-						ConfigOnt.indexHandler.getURI() });
+							ConfigOnt.indexHandler.getURI() });
 				} else {
 					handlers.add(res);
 				}
@@ -256,7 +252,7 @@ public class ParliamentBridgeConfiguration {
 	private static Model loadModelConfiguration(String fileName) {
 		Model configModel = ModelFactory.createRDFSModel(ModelFactory.createDefaultModel());
 		return (loadModelConfigurationResource(CONFIG_ONT_FILE, configModel)
-			&& loadModelConfigurationResource(fileName, configModel))
+				&& loadModelConfigurationResource(fileName, configModel))
 			? configModel
 			: ModelFactory.createDefaultModel();
 	}

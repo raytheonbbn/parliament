@@ -7,57 +7,53 @@ import com.bbn.parliament.jena.joseki.bridge.servlet.ServletErrorResponseExcepti
 import com.bbn.parliament.jena.joseki.handler.Inserter;
 
 public class TrackableInsert extends Trackable {
-   private Inserter _inserter;
-   private String _display;
+	private Inserter _inserter;
+	private String _display;
 
-   @ConstructorProperties({"id", "inserter"})
-   TrackableInsert(long id, Inserter inserter, String creator) {
-      super(id, creator);
-      _inserter = inserter;
-      if (_inserter.isImport()) {
-         _display = "Import repository";
-      } else {
-         _display = "Insert data from ";
-         if (null == _inserter.getFileName()) {
-            _display += "form";
-         } else {
-            _display += _inserter.getFileName();
-         }
-      }
-   }
+	@ConstructorProperties({"id", "inserter"})
+	TrackableInsert(long id, Inserter inserter, String creator) {
+		super(id, creator);
+		_inserter = inserter;
+		if (_inserter.isImport()) {
+			_display = "Import repository";
+		} else {
+			_display = "Insert data from ";
+			if (null == _inserter.getFileName()) {
+				_display += "form";
+			} else {
+				_display += _inserter.getFileName();
+			}
+		}
+	}
 
-   @Override
-   protected void doCancel() {
-   }
+	@Override
+	protected void doCancel() {
+	}
 
-   @Override
-   protected void doRun() throws TrackableException {
-      try {
-         _inserter.run();
-      }
-      catch(IOException e) {
-         throw new TrackableException(e);
-      }
-      catch(ServletErrorResponseException e) {
-         throw new TrackableException(e);
-      }
-   }
+	@Override
+	protected void doRun() throws TrackableException {
+		try {
+			_inserter.run();
+		} catch(IOException | ServletErrorResponseException ex) {
+			throw new TrackableException(ex);
+		}
+	}
 
-   @Override
+	@Override
 	public boolean isCancellable() {
-      return false;
-   }
+		return false;
+	}
 
-   @Override
+	@Override
 	public void release() {
-   }
+	}
 
-   @Override
+	@Override
 	public String getDisplay() {
-      return _display;
-   }
+		return _display;
+	}
 
-   public Inserter getInserter() {
-      return _inserter;
-   }
+	public Inserter getInserter() {
+		return _inserter;
+	}
 }

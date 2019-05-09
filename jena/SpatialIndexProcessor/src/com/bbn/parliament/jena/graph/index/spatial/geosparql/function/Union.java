@@ -9,24 +9,18 @@ import com.hp.hpl.jena.sparql.function.FunctionEnv;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class Union extends DoubleGeometrySpatialFunction {
+	/** {@inheritDoc} */
+	@Override
+	protected NodeValue exec(Geometry g1, Geometry g2, GeoSPARQLLiteral datatype,
+			Binding binding, List<NodeValue> evalArgs, String uri, FunctionEnv env) {
+		Geometry toReturn = g1.union(g2);
+		toReturn.setUserData(g1.getUserData());
+		return makeNodeValue(toReturn, datatype);
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   protected NodeValue exec(Geometry g1, Geometry g2, GeoSPARQLLiteral datatype, Binding binding,
-         List<NodeValue> evalArgs, String uri, FunctionEnv env) {
-      Geometry toReturn = g1.union(g2);
-      toReturn.setUserData(g1.getUserData());
-      return makeNodeValue(toReturn, datatype);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   protected String[] getRestOfArgumentTypes() {
-      return new String[] {};
-   }
-
+	/** {@inheritDoc} */
+	@Override
+	protected String[] getRestOfArgumentTypes() {
+		return new String[] {};
+	}
 }

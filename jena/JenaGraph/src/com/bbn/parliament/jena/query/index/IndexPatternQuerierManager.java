@@ -46,12 +46,9 @@ public class IndexPatternQuerierManager {
 	/**
 	 * Register a querier to an index.
 	 *
-	 * @param <T>
-	 *           the type of indexed data.
-	 * @param index
-	 *           the index to query.
-	 * @param querier
-	 *           a querier for the index.
+	 * @param <T> the type of indexed data.
+	 * @param index the index to query.
+	 * @param querier a querier for the index.
 	 */
 	public <T> void register(Index<T> index, IndexPatternQuerier querier) {
 		synchronized (lock) {
@@ -62,10 +59,8 @@ public class IndexPatternQuerierManager {
 	/**
 	 * Unregister an index and it's associated querier.
 	 *
-	 * @param <T>
-	 *           the type of indexed data.
-	 * @param index
-	 *           an index.
+	 * @param <T> the type of indexed data.
+	 * @param index an index.
 	 */
 	public <T> void unregister(Index<T> index) {
 		synchronized (lock) {
@@ -76,8 +71,7 @@ public class IndexPatternQuerierManager {
 	/**
 	 * Get the querier registered to the index
 	 *
-	 * @param index
-	 *           the index.
+	 * @param index the index.
 	 * @return a querier; or <code>null</code> if the index is not managed.
 	 */
 	public IndexPatternQuerier get(Index<?> index) {
