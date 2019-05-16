@@ -18,23 +18,18 @@ public class IntervalContains extends MemoryOperatorImplementation {
 		super(extentTester);
 	}
 
-	/**
-    * This method returns all of the TemporalExtent objects that 'contain' the
-    * given boundExtent
-    */
-   @Override
-   public Iterator<Record<TemporalExtent>> bindFirstVar(
-      TemporalExtent boundExtent) {
-      return new TemporalExtentIterator(wrapIterator(
-      	getIndex().beforeStart(boundExtent)),
-      	new FinishesAfterEndInclusionDecider(boundExtent));
-   }
+	/** Returns all TemporalExtent objects that 'contain' the given boundExtent */
+	@Override
+	public Iterator<Record<TemporalExtent>> bindFirstVar(TemporalExtent boundExtent) {
+		return new TemporalExtentIterator(wrapIterator(
+			getIndex().beforeStart(boundExtent)),
+			new FinishesAfterEndInclusionDecider(boundExtent));
+	}
 
-   @Override
-   public Iterator<Record<TemporalExtent>> bindSecondVar(
-      TemporalExtent boundExtent) {
-      return new TemporalExtentIterator(wrapIterator(
-      	getIndex().afterStart(boundExtent)),
-      	new FinishesBeforeEndInclusionDecider(boundExtent));
-   }
+	@Override
+	public Iterator<Record<TemporalExtent>> bindSecondVar(TemporalExtent boundExtent) {
+		return new TemporalExtentIterator(wrapIterator(
+			getIndex().afterStart(boundExtent)),
+			new FinishesBeforeEndInclusionDecider(boundExtent));
+	}
 }

@@ -3,20 +3,21 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
+
 package com.bbn.parliament.jena.graph.index.temporal;
 
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 
 
- /**
-  * @author dkolas
-  */
+/** @author dkolas */
 public interface ExtentTester {
 	/**
 	 * Test two extents.
+	 *
 	 * @param x The first extent.
 	 * @param y The second extent.
-	 * @return <code>true</code> if the relationship between extent1 and extent2 is <code>true</code>, otherwise <code>false</code>.
+	 * @return <code>true</code> if the relationship between extent1 and extent2
+	 *         is <code>true</code>, otherwise <code>false</code>.
 	 */
 	public boolean testExtents(TemporalExtent x, TemporalExtent y);
 
