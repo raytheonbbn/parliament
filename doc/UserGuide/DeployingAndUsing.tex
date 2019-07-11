@@ -355,9 +355,14 @@ where ``IFP'' stands for ``InverseFunctionalProperty''. \emph{Default: ``on''}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{\acp{pmnt} Logging Configuration}
 
-The file \path|ParliamentKB/conf/log4j.properties| configures logging for \acp{pmnt} Java code.  This is a standard Log4J configuration file.
+These files configure logging for \acp{pmnt} Java code:
+\begin{quote}
+	\path|ParliamentKB/conf/log4j.interactive.properties|\\
+	\path|ParliamentKB/conf/log4j.daemon.properties|
+\end{quote}
+They are standard Log4J configuration files.  The first applies when running \ac{pmnt} from the command line, and the second is used when running as a daemon or service.
 
-The file \path|ParliamentLogConfig.txt| controls \acp{pmnt} native code logging.  Its format is similar to \path|ParliamentKbConfig.txt|.  \ac{pmnt} also locates it in a similar way, using file name \path|ParliamentLogConfig.txt| and the environment variable \verb|PARLIAMENT_LOG_CONFIG_PATH|.  The recognized settings are:
+The file \path|ParliamentLogConfig.txt| controls native code logging.  Its format is similar to \path|ParliamentKbConfig.txt|, and it is located in a similar way, using file name \path|ParliamentLogConfig.txt| and the environment variable \verb|PARLIAMENT_LOG_CONFIG_PATH|.  The recognized settings are:
 \begin{description}
 	\item[logToConsole] Indicates whether to log to the console. \emph{Default: ``yes''}
 

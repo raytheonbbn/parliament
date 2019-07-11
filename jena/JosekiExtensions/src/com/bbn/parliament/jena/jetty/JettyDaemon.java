@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author iemmons
  */
 public class JettyDaemon {
-	private static Logger _log = LoggerFactory.getLogger(JettyDaemon.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JettyDaemon.class);
 
 	/**
 	 * Initialize the daemon, possibly running as super-user. E.g., open
@@ -26,10 +26,10 @@ public class JettyDaemon {
 	@SuppressWarnings("static-method")
 	public void init(String[] args) {
 		try {
-			_log.info("Initializing Jetty Daemon");
+			LOG.info("Initializing Jetty Daemon");
 			JettyServerCore.initialize();
-		} catch (JettyServerCore.InitException ex) {
-			_log.error("Parliament server encountered an exception", ex);
+		} catch (ServerInitException ex) {
+			LOG.error("Parliament server encountered an exception", ex);
 		}
 	}
 
@@ -37,24 +37,24 @@ public class JettyDaemon {
 	@SuppressWarnings("static-method")
 	public void start() {
 		try {
-			_log.info("Starting Jetty Daemon");
+			LOG.info("Starting Jetty Daemon");
 			JettyServerCore.getInstance().start();
 		} catch (Exception ex) {
-			_log.error("Parliament server encountered an exception", ex);
+			LOG.error("Parliament server encountered an exception", ex);
 		}
 	}
 
 	/** Tell the server to terminate */
 	@SuppressWarnings("static-method")
 	public void stop() {
-		_log.info("Stopping Jetty Daemon");
+		LOG.info("Stopping Jetty Daemon");
 		JettyServerCore.getInstance().stop();
 	}
 
 	/** Cleanup resources allocated in init() */
 	@SuppressWarnings("static-method")
 	public void destroy() {
-		_log.info("Destroying Jetty Daemon");
+		LOG.info("Destroying Jetty Daemon");
 		// Do nothing
 	}
 }
