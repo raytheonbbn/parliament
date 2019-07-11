@@ -53,7 +53,7 @@ set EXEC=%EXEC% --LibraryPath "%KBROOT%bin"
 set EXEC=%EXEC% --Jvm "%JVM_DLL%" --JvmMs "%MIN_MEM%" --JvmMx "%MAX_MEM%"
 set EXEC=%EXEC% --Classpath "%LCP%"
 set EXEC=%EXEC% --JvmOptions -Dcom.sun.management.jmxremote
-set EXEC=%EXEC% ++JvmOptions -Dlog4j.configuration=conf/log4j.properties
+set EXEC=%EXEC% ++JvmOptions -Dlog4j.configuration=conf/log4j.daemon.properties
 set EXEC=%EXEC% ++JvmOptions -Djetty.host=%JETTY_HOST%
 set EXEC=%EXEC% ++JvmOptions -Djetty.port=%JETTY_PORT%
 set EXEC=%EXEC% --Startup auto  --StartPath "%KBROOT%."

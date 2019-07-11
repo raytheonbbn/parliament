@@ -41,7 +41,7 @@ set EXEC=java -server -Xms%MIN_MEM% -Xmx%MAX_MEM% -cp "%LCP%"
 rem Uncomment this line to enable remote debugging:
 rem set EXEC=%EXEC% %DEBUG_ARG%
 set EXEC=%EXEC% -Dcom.sun.management.jmxremote
-set EXEC=%EXEC% -Dlog4j.configuration="conf/log4j.properties"
+set EXEC=%EXEC% -Dlog4j.configuration="conf/log4j.interactive.properties"
 set EXEC=%EXEC% -Djetty.host=%JETTY_HOST% -Djetty.port=%JETTY_PORT%
 set EXEC=%EXEC% -Djava.library.path="%KBROOT%bin"
 set EXEC=%EXEC% com.bbn.parliament.jena.jetty.CmdLineJettyServer

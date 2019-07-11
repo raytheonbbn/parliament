@@ -146,7 +146,7 @@
 			<fileset dir="${configDir}">
 				<include name="jetty.xml"/>
 				<include name="webdefault.xml"/>
-				<include name="log4j.properties"/>
+				<include name="log4j.*.properties"/>
 			</fileset>
 		</copy>
 

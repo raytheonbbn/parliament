@@ -96,7 +96,7 @@ else
 fi
 
 EXEC_MID="-Xms$MIN_MEM -Xmx$MAX_MEM -cp $CP -Djava.library.path=$PMNT_DIR/bin"
-EXEC_MID="$EXEC_MID -Dcom.sun.management.jmxremote -Dlog4j.configuration=conf/log4j.properties"
+EXEC_MID="$EXEC_MID -Dcom.sun.management.jmxremote -Dlog4j.configuration=conf/log4j.daemon.properties"
 EXEC_MID="$EXEC_MID -Djetty.host=$JETTY_HOST -Djetty.port=$JETTY_PORT"
 EXEC_MID="$EXEC_MID -DjettyConfig=$PMNT_DIR/conf/jetty.xml"
 if [ -n "$DEBUG_ARG" ]; then
