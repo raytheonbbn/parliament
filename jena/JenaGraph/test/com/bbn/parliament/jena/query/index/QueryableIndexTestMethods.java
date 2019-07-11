@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Iterator;
+import java.util.stream.IntStream;
 
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.QueryableIndex;
@@ -18,14 +19,11 @@ public abstract class QueryableIndexTestMethods<T extends QueryableIndex<I>, I> 
 	// Test method
 	public void testLookup(T index) {
 		try {
-			index.add(createRecord(0));
-			index.add(createRecord(1));
-			index.add(createRecord(2));
-			index.add(createRecord(3));
-			index.add(createRecord(4));
-		} catch (IndexException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
+			IntStream.range(0, 5)
+			.mapToObj(this::createRecord)
+			.forEach(index::add);
+		} catch (IndexException ex) {
+			fail(ex);
 		}
 
 		Record<I> result;

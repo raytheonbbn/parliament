@@ -8,11 +8,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.KbGraphFactory;
@@ -23,6 +24,7 @@ import com.bbn.parliament.jena.graph.index.IndexFactory;
 import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.graph.index.Record;
+import com.bbn.parliament.jena.joseki.client.StreamUtil;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Dataset;
@@ -32,6 +34,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoCloseable {
 	public enum IndexUnderTest { DEFAULT_GRAPH, NAMED_GRAPH }
 
+	private static final Logger LOG = LoggerFactory.getLogger(IndexTestMethods.class);
 	private static final Node NAMED_GRAPH_NAME = Node.createURI("http://example.org/testGraph");
 	private static final File KB_DIR = new File("test-kb-data");
 
@@ -192,28 +195,38 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 		}
 	}
 
-	// Test method
+	/*
+	 * Test method
+	 * 
+	 * This method could be more easily implemented by storing the
+	 * expected and actual results in sets and using set differences. However,
+	 * when T is Geometry (in the spatial index), Record cannot be stored in a
+	 * HashSet. See the javadoc for GeometryRecord for an explanation.
+	 */
 	public void testIterator(T index) {
 		assertFalse(index.iterator().hasNext());
 
-		Set<Record<I>> records = IntStream.range(0, 5)
+		List<Record<I>> expectedRecords = IntStream.range(0, 5)
 			.mapToObj(this::createRecord)
-			.collect(Collectors.toSet());
+			.collect(Collectors.toList());
 		try {
-			records.forEach(record -> index.add(record));
+			expectedRecords.forEach(index::add);
 		} catch (IndexException ex) {
-			fail(ex.getMessage());
+			fail(ex);
 		}
 
-		Iterator<Record<I>> it = index.iterator();
-		assertTrue(it.hasNext());
-		int i = 0;
-		while (i <= records.size() && it.hasNext()) {
-			Record<I> r = it.next();
-			assertTrue(records.contains(r));
-			++i;
+		List<Record<I>> actualRecords = StreamUtil.asStream(index.iterator())
+			.collect(Collectors.toList());
+
+		expectedRecords.forEach(
+			record -> LOG.info("Expected record:  {}", record));
+		actualRecords.forEach(
+			record -> LOG.info("Actual record:  {}", record));
+
+		assertEquals(expectedRecords.size(), actualRecords.size());
+		for (Record<I> actualRecord : actualRecords) {
+			assertTrue(expectedRecords.contains(actualRecord));
 		}
-		assertEquals(records.size(), i);
 	}
 
 	// Test method
