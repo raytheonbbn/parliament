@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CmdLineJettyServer {
-	private static Logger _log = LoggerFactory.getLogger(CmdLineJettyServer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CmdLineJettyServer.class);
 
 	/** Default entry point. */
 	public static void main(String[] args) {
@@ -23,7 +23,7 @@ public class CmdLineJettyServer {
 			monitor.start();
 			JettyServerCore.getInstance().start();
 		} catch (Exception ex) {
-			_log.error("Parliament server encountered an exception", ex);
+			LOG.error("Parliament server encountered an exception", ex);
 		}
 	}
 

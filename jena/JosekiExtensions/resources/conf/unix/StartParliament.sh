@@ -33,7 +33,7 @@ done
 export LD_LIBRARY_PATH=./bin:$LD_LIBRARY_PATH
 
 EXEC="java -server -Xms$MIN_MEM -Xmx$MAX_MEM -cp $CP -Djava.library.path=./bin"
-EXEC="$EXEC -Dcom.sun.management.jmxremote -Dlog4j.configuration=conf/log4j.properties"
+EXEC="$EXEC -Dcom.sun.management.jmxremote -Dlog4j.configuration=conf/log4j.interactive.properties"
 EXEC="$EXEC -Djetty.host=$JETTY_HOST -Djetty.port=$JETTY_PORT"
 # Uncomment this line to enable remote debugging:
 #EXEC="$EXEC $DEBUG_ARG"

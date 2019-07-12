@@ -781,7 +781,7 @@ public class RemoteModel implements Serializable {
 		return sendRequest(params, _bulkEndpointUrl + separator + service, multipart);
 	}
 
-	private InputStream sendRequest(Map<String, Object> params) throws IOException {
+	public InputStream sendRequest(Map<String, Object> params) throws IOException {
 		return sendRequest(params, _sparqlEndpointUrl, false);
 	}
 

@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author iemmons
  */
 public class JettyService {
-	private static Logger _log = LoggerFactory.getLogger(JettyService.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JettyService.class);
 
 	/** Entry point for running as a Windows service. */
 	public static void start(String[] args) {
@@ -24,7 +24,7 @@ public class JettyService {
 			JettyServerCore.initialize();
 			JettyServerCore.getInstance().start();
 		} catch (Exception ex) {
-			_log.error("Parliament server encountered an exception", ex);
+			LOG.error("Parliament server encountered an exception", ex);
 		}
 	}
 
