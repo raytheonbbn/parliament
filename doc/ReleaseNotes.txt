@@ -1,6 +1,10 @@
 Version 2.7.14 (?):
 
-* ?
+* Reduced the volume of logging when Parliament is running in daemon mode.  Log4j is
+  now configured without a console logger, which means that the contents of the
+  parliament.log file are not duplicated in the jsvc-log.txt file.  (When run at the
+  command line, the logging configuration is unchanged, so you will still be able to
+  see the log contents in real time in that case.)
 
 
 
