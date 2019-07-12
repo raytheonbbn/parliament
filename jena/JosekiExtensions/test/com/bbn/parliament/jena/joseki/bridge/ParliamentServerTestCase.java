@@ -5,9 +5,17 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,6 +32,7 @@ import com.bbn.parliament.jena.joseki.client.RemoteModel;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -49,6 +58,8 @@ public class ParliamentServerTestCase {
 	private static final String SPARQL_URL = String.format(RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL, HOST, PORT);
 	private static final String BULK_URL = String.format(RemoteModel.DEFAULT_BULK_ENDPOINT_URL, HOST, PORT);
 	private static final String[] RSRCS_TO_LOAD = { "univ-bench.owl", "University15_20.owl.zip" };
+	private static final String CSV_QUOTE_TEST_INPUT = "csv-quote-test-input.ttl";
+	private static final String CSV_QUOTE_TEST_EXPECTED_RESULT = "csv-quote-test-expected-result.csv";
 	private static final String TEST_SUBJECT = "http://example.org/#Test";
 	private static final String TEST_CLASS = "http://example.org/#TestClass";
 	private static final String TEST_LITERAL = "Test";
@@ -87,6 +98,12 @@ public class ParliamentServerTestCase {
 		+ "delete data {%n"
 		+ "	ex:Test a owl:Thing .%n"
 		+ "}";
+	private static final String CSV_QUOTING_TEST_QUERY = ""
+		+ "prefix ex: <http://example.org/#>%n"
+		+ "select ?s ?p ?o where {%n"
+		+ "	bind( ex:comment as ?p )%n"
+		+ "	?s ?p ?o .%n"
+		+ "} order by ?o";
 	private static final RemoteModel rm = new RemoteModel(SPARQL_URL, BULK_URL);
 	private static final Logger log = LoggerFactory.getLogger(ParliamentServerTestCase.class);
 
@@ -405,6 +422,58 @@ public class ParliamentServerTestCase {
 
 		Model resultModel = rm.constructQuery("construct { ?s ?p ?o } where { ?s ?p ?o }");
 		assertTrue(testModel.difference(resultModel).isEmpty());
+	}
+
+	@Test
+	public void csvQuotingTest() throws IOException {
+		try (InputStream is = getClass().getResourceAsStream(CSV_QUOTE_TEST_INPUT)) {
+			if (is == null) {
+				fail(String.format("Unable to find resource '%1$s'", CSV_QUOTE_TEST_INPUT));
+			}
+			rm.insertStatements(is, RDFFormat.parseFilename(CSV_QUOTE_TEST_INPUT), null, true);
+		}
+
+		log.info("CSV quote test results:");
+		try (CloseableQueryExec qe = new CloseableQueryExec(SPARQL_URL, String.format(CSV_QUOTING_TEST_QUERY))) {
+			ResultSet rs = qe.execSelect();
+			while (rs.hasNext()) {
+				QuerySolution qs = rs.next();
+				Resource s = qs.getResource("s");
+				Resource p = qs.getResource("p");
+				Literal o = qs.getLiteral("o");
+				String sStr = s.isAnon()
+					? s.getId().getLabelString()
+					: s.getURI();
+					log.info("   {} {} \"{}\"", sStr, p.getURI(), o.getLexicalForm());
+			}
+		}
+
+		String actualResponse;
+		Map<String, Object> params = new HashMap<>();
+		params.put("query", String.format(CSV_QUOTING_TEST_QUERY));
+		params.put("stylesheet", "/xml-to-csv.xsl");
+		try (
+			InputStream is = rm.sendRequest(params);
+			Reader rdr = new InputStreamReader(is, StandardCharsets.UTF_8);
+			BufferedReader brdr = new BufferedReader(rdr);
+		) {
+			actualResponse = brdr.lines().collect(Collectors.joining(System.lineSeparator()));
+		}
+		log.info("CSV quote result as CSV:{}{}", System.lineSeparator(), actualResponse);
+
+		String expectedResponse;
+		try (
+			InputStream is = getClass().getResourceAsStream(CSV_QUOTE_TEST_EXPECTED_RESULT);
+			Reader rdr = new InputStreamReader(is, StandardCharsets.UTF_8);
+			BufferedReader brdr = new BufferedReader(rdr);
+		) {
+			if (is == null) {
+				fail(String.format("Unable to find resource '%1$s'", CSV_QUOTE_TEST_EXPECTED_RESULT));
+			}
+			expectedResponse = brdr.lines().collect(Collectors.joining(System.lineSeparator()));
+		}
+
+		assertEquals(expectedResponse, actualResponse);
 	}
 
 	private static ResultSet doQuery(String queryFmt, Object... args) {
