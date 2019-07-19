@@ -118,7 +118,14 @@
 
 	<target name="war" depends="jarBridge">
 		<war destfile="${warFile}" webxml="${basedir}/resources/WEB-INF/web.xml">
-			<lib dir="${libDir}/bridge" includes="**/*.jar" excludes="**/javax.servlet-api-*.jar"/>
+			<lib dir="${libDir}/bridge">
+				<include name="**/*.jar"/>
+				<exclude name="**/javax.servlet-api-*.jar"/>
+				<exclude name="**/log4j-*.jar"/>
+				<exclude name="**/jcl-over-slf4j-*.jar"/>
+				<exclude name="**/slf4j-api-*.jar"/>
+				<exclude name="**/slf4j-log4j12-*.jar"/>
+			</lib>
 			<lib dir="${josekiLibDir}" includes="**/joseki-*.jar"/>
 			<lib dir="${openMapLibDir}" includes="**/*.jar"/>
 			<lib dir="${deegreeLibDir}" includes="**/*.jar"/>
