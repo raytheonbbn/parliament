@@ -55,7 +55,15 @@ Once you have downloaded a distribution, these steps will yield a functioning \a
 		\path|ParliamentKB/RedistributablePackages|
 	\end{quote}
 
-	\item From the \path|ParliamentKB| directory, invoke the startup script to start the \ac{pmnt} server.  This is called \path|StartParliament.bat| on Windows and \path|StartParliament.sh| on other platforms\footnote{On all platforms, these scripts locate your Java installation by simply invoking the command \path|java| and relying on the operating system's native facilities for locating the \ac{jvm} executable.  See Section~\ref{section-troubleshooting} for more information.}.
+	\item From the \path|ParliamentKB| directory, invoke the startup script to start the \ac{pmnt} server.  On Windows, run this command:
+	\begin{quote}
+		\path|StartParliament.bat|
+	\end{quote}
+	On other platforms, run this command instead:
+	\begin{quote}
+		\path|./StartParliament.sh interactive|
+	\end{quote}
+	In either case, these scripts locate your Java installation by simply invoking the command \path|java| and relying on the operating system's native facilities to locate the \ac{jvm} executable.  See Section~\ref{section-troubleshooting} for more information.
 \end{enumerate}
 
 The procedure above uses \acp{pmnt} standard startup script, which directly starts the server.  However, in many cases it is preferable to run \ac{pmnt} as a Windows service or as a UNIX daemon.
@@ -92,7 +100,7 @@ Then delete this file:
 	\path|/etc/systemd/system/parliament.service|
 \end{quote}
 
-For other Linux variants (and for UNIX), the \path|StartParliamentDaemon.sh| script will start \ac{pmnt} as a daemon.  The exact method for wiring this into the operating system's infrastructure for starting and stopping daemon processes varies from platform to platform.
+For other Linux variants (and for UNIX), the \path|StartParliament.sh| script will start \ac{pmnt} as a daemon.  The exact method for wiring this into the operating system's infrastructure for starting and stopping daemon processes varies from platform to platform.
 
 
 
@@ -131,7 +139,7 @@ Once you see the ``Insert operation successful'' message, your upgraded \ac{pmnt
 \subsection{Usage}
 \label{section-std-server-usage}
 
-\emph{Important note:}  When you shut down \ac{pmnt}, it is important to shut it down gracefully.  Otherwise, the \ac{pmnt} files may not be flushed to disk before they are closed, and they may be badly corrupted.  If you run \ac{pmnt} as a Windows service or UNIX Daemon (see Section~\ref{section-std-server-init-deploy}), this is generally not a problem, because the operating system sends a shut-down message at the appropriate times.  If, however, you run \ac{pmnt} explicitly via \path|StartParliament.sh| (or \path|StartParliament.bat| on Windows), you will need to shut it down yourself by typing the command ``exit'' followed by «return» or «enter».
+\emph{Important note:}  When you shut down \ac{pmnt}, it is important to shut it down gracefully.  Otherwise, the \ac{pmnt} files may not be flushed to disk before they are closed, and they may be badly corrupted.  If you run \ac{pmnt} as a Windows service or UNIX Daemon (see Section~\ref{section-std-server-init-deploy}), this is generally not a problem, because the operating system sends a shut-down message at the appropriate times.  If, however, you run \ac{pmnt} explicitly via \path|StartParliament.sh interactive| (or \path|StartParliament.bat| on Windows), you will need to shut it down yourself by typing the command ``exit'' followed by «return» or «enter».
 
 To use the \ac{pmnt} server, you will need the the connection \acp{url} listed in Table~\ref{table-pmnt-connect-urls}.  (See Section~\ref{section-configuring-pmnt} to configure your server to run on a host name and port other than ``localhost'' and ``8089''.)
 \begin{table}[htbp]
