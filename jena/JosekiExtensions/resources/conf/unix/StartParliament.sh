@@ -16,14 +16,13 @@ JETTY_HOST=localhost
 JETTY_PORT=8089
 
 #DAEMON_USER=jsmith
-LOG_FILE=$PMNT_DIR/log/jsvc-log.txt
-#CLASS_ARGS=
+LOG_FILE=$PMNT_DIR/log/jsvc.log
 
 # Uncomment this line to enable remote debugging:
 #DEBUG_ARG=-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n
 
 ######### Error checking: #########
-if [ "$1" = "interactive" -a ! -d "$JAVA_HOME" ]; then
+if [ "$1" != "interactive" -a ! -d "$JAVA_HOME" ]; then
 	echo The JAVA_HOME environment variable is not set.
 	exit 1
 fi
@@ -77,54 +76,44 @@ esac
 if [ "$1" = "interactive" ]; then
 	MAIN_CLASS=com.bbn.parliament.jena.jetty.CmdLineJettyServer
 	LOG4J_CONFIG=interactive
-	EXEC_HEAD="java -server"
+	EXEC="java -server"
 else
 	MAIN_CLASS=com.bbn.parliament.jena.jetty.JettyDaemon
 	LOG4J_CONFIG=daemon
-	EXEC_HEAD="$PMNT_DIR/bin/jsvc -jvm server -showversion -home ""$JAVA_HOME"" -cwd $PMNT_DIR"
+	EXEC="$PMNT_DIR/bin/jsvc -jvm server -showversion -home ""$JAVA_HOME"" -cwd $PMNT_DIR"
 	if [ -n "$DAEMON_USER" ]; then
-		EXEC_HEAD="$EXEC_HEAD -user ""$DAEMON_USER"""
+		EXEC="$EXEC -user ""$DAEMON_USER"""
 	fi
-	EXEC_HEAD="$EXEC_HEAD -outfile $LOG_FILE -errfile &1 -pidfile $PID_FILE -procname Parliament"
+	EXEC="$EXEC -outfile $LOG_FILE -errfile &1 -pidfile $PID_FILE -procname Parliament"
 	# Uncomment this line to enable verbose jsvc output:
-	#EXEC_HEAD="$EXEC_HEAD -debug"
+	#EXEC="$EXEC -debug"
 fi
 
-EXEC_MID="-Xms$MIN_MEM -Xmx$MAX_MEM -cp $CLASSPATH:$PMNT_DIR/lib/* -Djava.library.path=$PMNT_DIR/bin"
-EXEC_MID="$EXEC_MID -Dcom.sun.management.jmxremote -Dlog4j.configuration=file:$PMNT_DIR/conf/log4j.$LOG4J_CONFIG.properties"
-EXEC_MID="$EXEC_MID -Djetty.host=$JETTY_HOST -Djetty.port=$JETTY_PORT"
-EXEC_MID="$EXEC_MID -DjettyConfig=$PMNT_DIR/conf/jetty.xml"
+EXEC="$EXEC -Xms$MIN_MEM -Xmx$MAX_MEM -cp $CLASSPATH:$PMNT_DIR/lib/*"
+EXEC="$EXEC -Djava.library.path=$PMNT_DIR/bin -Dcom.sun.management.jmxremote"
+EXEC="$EXEC -Dlog4j.configuration=file:$PMNT_DIR/conf/log4j.$LOG4J_CONFIG.properties"
+EXEC="$EXEC -Djetty.host=$JETTY_HOST -Djetty.port=$JETTY_PORT"
+EXEC="$EXEC -DjettyConfig=$PMNT_DIR/conf/jetty.xml"
 if [ -n "$DEBUG_ARG" ]; then
-	EXEC_MID="$EXEC_MID ""$DEBUG_ARG"""
+	EXEC="$EXEC ""$DEBUG_ARG"""
 fi
 
-EXEC_TAIL="$MAIN_CLASS"
-if [ -n "$CLASS_ARGS" ]; then
-	EXEC_TAIL="$EXEC_TAIL ""$CLASS_ARGS"""
-fi
-
-# Debugging statements:
-# echo EXEC = $EXEC_HEAD $EXEC_MID [-stop] $EXEC_TAIL
+######### Debugging statements: #########
+# echo EXEC = $EXEC [-stop] $MAIN_CLASS
 # echo LD_LIBRARY_PATH = $LD_LIBRARY_PATH
 # echo PID_FILE = $PID_FILE
 
-do_exec()
-{
-	echo $EXEC_HEAD $EXEC_MID $1 $EXEC_TAIL
-	# echo $EXEC_HEAD $EXEC_MID $1 $EXEC_TAIL | tr ' ' '\n'
-	$EXEC_HEAD $EXEC_MID $1 $EXEC_TAIL
-}
-
+######### Execute: #########
 case "$1" in
 	interactive)
-		do_exec
+		$EXEC $MAIN_CLASS
 		;;
 	start)
-		do_exec
+		$EXEC $MAIN_CLASS
 		;;
 	stop)
 		if [ -f "$PID_FILE" ]; then
-			do_exec "-stop"
+			$EXEC -stop $MAIN_CLASS
 		else
 			echo "The Parliament daemon is not running."
 			exit 1
@@ -132,9 +121,9 @@ case "$1" in
 		;;
 	restart)
 		if [ -f "$PID_FILE" ]; then
-			do_exec "-stop"
+			$EXEC -stop $MAIN_CLASS
 		fi
-		do_exec
+		$EXEC $MAIN_CLASS
 		;;
 	*)
 		echo "Usage: StartParliament.sh {interactive|start|stop|restart}" >&2
