@@ -15,7 +15,7 @@ MAX_MEM=512m
 JETTY_HOST=localhost
 JETTY_PORT=8089
 
-#DAEMON_USER=jsmith
+DAEMON_USER=jsmith
 LOG_FILE=$PMNT_DIR/log/jsvc.log
 
 # Uncomment this line to enable remote debugging:
@@ -52,7 +52,7 @@ KB_DIR=`sed -n 's/kbDirectoryPath[ \t]*=\(.*\)$/\1/p' $PARLIAMENT_KB_CONFIG_PATH
 SAVED_DIR=`pwd`
 cd "$PMNT_DIR"
 if [ ! -d "$KB_DIR" ]; then
-	echo "Creating missing KB directory \"$KB_DIR\"."
+	echo "Creating missing KB directory ""$KB_DIR""."
 	mkdir -p $KB_DIR
 fi
 cd "$KB_DIR"
@@ -73,10 +73,10 @@ case "`uname -s`" in
 esac
 
 ######### Set up the command line: #########
-if [ "$1" = "interactive" ]; then
+if [ "$1" = 'interactive' ]; then
 	MAIN_CLASS=com.bbn.parliament.jena.jetty.CmdLineJettyServer
 	LOG4J_CONFIG=interactive
-	EXEC="java -server"
+	EXEC='java -server'
 else
 	MAIN_CLASS=com.bbn.parliament.jena.jetty.JettyDaemon
 	LOG4J_CONFIG=daemon
@@ -103,6 +103,79 @@ fi
 # echo LD_LIBRARY_PATH = $LD_LIBRARY_PATH
 # echo PID_FILE = $PID_FILE
 
+
+
+
+
+
+
+
+
+
+
+
+
+######### Usage of this script: #########
+function printUsage {
+	echo "Usage: $(basename $0) {interactive|start|stop|restart}"
+	exit 3
+}
+
+######### Create systemd service file: #########
+# Takes path of file as an argument
+function writeSystemDServiceFile {
+	if [ -f "$1" ]; then
+		rm $1
+	fi
+
+	echo '[Unit]' >> $1
+	echo 'Description=Parliament Service' >> $1
+	echo 'After=network.target' >> $1
+	echo 'StartLimitIntervalSec=0' >> $1
+	echo '' >> $1
+	echo '[Service]' >> $1
+	echo 'Type=simple' >> $1
+	echo 'Restart=always' >> $1
+	echo 'RestartSec=1' >> $1
+	echo "User=$DAEMON_USER" >> $1
+	echo '' >> $1
+	echo "Environment= \\" >> $1
+	echo "   JAVA_HOME=$JAVA_HOME \\" >> $1
+	echo "   LD_LIBRARY_PATH=$PMNT_DIR/bin:$LD_LIBRARY_PATH \\" >> $1
+	echo "   PARLIAMENT_KB_CONFIG_PATH=$PMNT_DIR/ParliamentKbConfig.txt \\" >> $1
+	echo "   PARLIAMENT_LOG_CONFIG_PATH=$PMNT_DIR/ParliamentLogConfig.txt" >> $1
+	echo '' >> $1
+	echo "ExecStart=$EXEC $MAIN_CLASS" >> $1
+	echo '' >> $1
+	echo "ExecStop=$EXEC -stop $MAIN_CLASS" >> $1
+	echo '' >> $1
+	echo '[Install]' >> $1
+	echo 'WantedBy=multi-user.target' >> $1
+}
+
+######### Create systemd service file: #########
+function installSystemDService {
+	if [ -z "$DAEMON_USER" ]; then
+		echo 'Please set the DAEMON_USER variable (near the top of the script).'
+		exit 1
+	fi
+
+	writeSystemDServiceFile './parliament.service.txt'
+	#writeSystemDServiceFile '/etc/systemd/system/parliament.service'
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 ######### Execute: #########
 case "$1" in
 	interactive)
@@ -115,7 +188,7 @@ case "$1" in
 		if [ -f "$PID_FILE" ]; then
 			$EXEC -stop $MAIN_CLASS
 		else
-			echo "The Parliament daemon is not running."
+			echo 'The Parliament daemon is not running.'
 			exit 1
 		fi
 		;;
@@ -125,8 +198,10 @@ case "$1" in
 		fi
 		$EXEC $MAIN_CLASS
 		;;
+	test)
+		installSystemDService
+		;;
 	*)
-		echo "Usage: StartParliament.sh {interactive|start|stop|restart}" >&2
-		exit 3
+		printUsage
 		;;
 esac
