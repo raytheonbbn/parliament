@@ -36,7 +36,7 @@ You will need to acquire and install one or more appropriate compilers for each 
 	\label{platforms-and-compilers}
 \end{table}
 
-Windows versions 7 and above are supported.  The 64-bit build has been tested on x64 hardware.  \acp{pmnt} capacity is much higher when running as a 64-bit process\footnote{On 32-bit Windows \ac{pmnt} runs out of virtual address space after storing 5 to 10 million statements.}, so one of those compilers is highly recommended.
+Windows versions 7 and above are supported.  The 64-bit build has been tested on x64 hardware.  \acp{pmnt} capacity is much higher when running as a 64-bit process\footnote{On 32-bit Windows \ac{pmnt} runs out of virtual address space after storing 5 to 10 million statements.}, so one of those compilers is recommended.
 
 On Macintosh, \ac{pmnt} builds as a universal binary using Apple's Xcode development tools.
 
@@ -57,7 +57,7 @@ Once you have these prerequisites installed, you can clone the \ac{pmnt} code ba
 \end{quote}
 Because GitHub limits repository size, \acp{pmnt} does not include larger binary files that are required by the build.  To supply these, download this archive:
 \begin{quote}\sloppy
-	\url{https://github.com/SemWebCentral/parliament/releases/download/dependencies-2019-03-08/parliament-dependencies-2019-03-08.zip}
+	\url{https://github.com/SemWebCentral/parliament/releases/download/dependencies-«latest-date»/parliament-dependencies-«latest-date».zip}
 \end{quote}
 and expand it in the \path|dependencies| subdirectory of your clone.
 
@@ -128,7 +128,7 @@ With the newest GCC compiler, the \texttt{make} command above may fail with an e
 \label{sec:BuildingBoost}
 
 Since the Boost project is unfamiliar to many, here is an introduction taken from the Boost web site:\urlcite{http://boost.org/}
-\begin{quote}\sloppy
+\begin{quote}\small
 Boost provides free peer-reviewed portable C++ source libraries.
 
 We emphasize libraries that work well with the C++ Standard Library. Boost libraries are intended to be widely useful, and usable across a broad spectrum of applications. The \href{http://www.boost.org/users/license.html}{Boost license} encourages both non-commercial and commercial use.
@@ -325,9 +325,9 @@ You are now ready to build \ac{pmnt}.  To do so, issue the command \path|ant| fr
 \begin{quote}
 	\texttt{targets/Parliament-v\textbf{\textit{X.Y.Z}}-\textbf{\textit{toolset}}}
 \end{quote}
-where \texttt{\textbf{\textit{X.Y.Z}}} is the \ac{pmnt} version number and \texttt{\textbf{\textit{toolset}}} indicates the platform on which the distribution runs, as shown in Table~\ref{tbl:ToolsetPlatformCorrespondence}.  The \path|ant clean| command builds as above and then run all of Parliament's unit and integration tests.  The \path|ant clean| command deletes all build products.
+where \texttt{\textbf{\textit{X.Y.Z}}} is the \ac{pmnt} version number and \texttt{\textbf{\textit{toolset}}} indicates the platform on which the distribution runs, as shown in Table~\ref{tbl:ToolsetPlatformCorrespondence}.  The \path|ant clean| command deletes all build products.
 
-The file \path|build.properties|, located in the root of your working copy, controls the \ac{pmnt} build.  This file does not exist by default.  If the build does not find it, it uses \path|build.properties.default| instead.  The latter contains the build options used to create an official release of \ac{pmnt}, which typically includes several different release builds.  To build a single debug variant, copy \path|build.properties.default| to \path|build.properties| and then customize the latter.  The file itself contains instructions.  Please change \path|build.properties.default| directly only if you intend to update the official release build options.
+The file \path|build.properties|, located in the root of your working copy, controls the \ac{pmnt} build.  This file does not exist by default.  If the build does not find it, it uses \path|build.properties.default| instead.  The latter contains the build options used to create an official release of \ac{pmnt}, which typically includes several different release builds.  To build a single variant, copy \path|build.properties.default| to \path|build.properties| and then customize the latter.  The file itself contains instructions.  Please change \path|build.properties.default| directly \emph{only if you intend to update the official release build options.}
 
 The \path|build.properties| file also contains an option that disables the native code unit tests, \verb|skipNativeUnitTest|.  This is important when cross-compiling, e.g., building 64-bit binaries on 32-bit Windows.  If you use this option, be sure to change it only in \path|build.properties|, not \path|build.properties.default|.
 
