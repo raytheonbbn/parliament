@@ -9,7 +9,7 @@ import com.bbn.parliament.jena.jetty.JettyServerCore;
 public class ParliamentTestServer {
 	private static boolean timeToExit = false;
 	private static final Object lock = new Object();
-	private static final AtomicBoolean errorOcurredDuringServerStart = new AtomicBoolean(false);
+	private static final AtomicBoolean serverHasStarted = new AtomicBoolean(false);
 
 	// Call from @BeforeClass
 	public static void createServer() {
@@ -22,9 +22,10 @@ public class ParliamentTestServer {
 			@Override
 			public void run() {
 				try {
-					JettyServerCore.getInstance().startCore();
+					JettyServerCore.getInstance().start();
+					serverHasStarted.set(true);
 					synchronized (lock) {
-						while (!timeToExit && JettyServerCore.getInstance().isCoreStarted()) {
+						while (!timeToExit) {
 							try {
 								lock.wait(5000);
 							} catch (InterruptedException ex) {
@@ -33,25 +34,22 @@ public class ParliamentTestServer {
 						}
 					}
 				} catch (Exception ex) {
-					errorOcurredDuringServerStart.set(true);
+					serverHasStarted.set(true);
 					fail(ex.getMessage());
 				} finally {
-					JettyServerCore.getInstance().stopCore();
+					JettyServerCore.getInstance().stop();
 				}
 			}
 		});
 		t.setDaemon(true);
 		t.start();
-		while (!JettyServerCore.getInstance().isCoreStarted()) {
-			if (errorOcurredDuringServerStart.get()) {
-				break;
-			}
+		do {
 			try {
 				Thread.sleep(250);
 			} catch(InterruptedException ex) {
 				fail(ex.getMessage());
 			}
-		}
+		} while (!serverHasStarted.get());
 	}
 
 	// Call from @AfterClass

@@ -18,16 +18,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.bbn.parliament.jena.joseki.bridge.ParliamentBridge;
 import com.bbn.parliament.jena.joseki.bridge.util.HttpServerUtil;
 import com.bbn.parliament.jena.joseki.handler.ClearHandler;
 import com.bbn.parliament.jena.joseki.handler.ExportHandler;
 import com.bbn.parliament.jena.joseki.handler.FlushHandler;
 import com.bbn.parliament.jena.joseki.handler.InsertHandler;
-import com.bbn.parliament.jena.joseki.handler.ShutdownHandler;
 
 /** @author sallen */
 public class BulkServlet extends HttpServlet {
@@ -120,10 +116,6 @@ public class BulkServlet extends HttpServlet {
 				} else if ("flush".equals(svcUri)) {
 					LOG.info("Flush operation from {}", req.getRemoteAddr());
 					FlushHandler handler = new FlushHandler();
-					handler.handleFormURLEncodedRequest(req, resp);
-				} else if ("shutdown".equals(svcUri)) {
-					LOG.info("Shutdown operation from {}", req.getRemoteAddr());
-					ShutdownHandler handler = new ShutdownHandler();
 					handler.handleFormURLEncodedRequest(req, resp);
 				} else if ("export".equals(svcUri)) {
 					LOG.info("Export operation from {}", req.getRemoteAddr());

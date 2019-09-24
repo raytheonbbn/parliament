@@ -15,10 +15,7 @@ import java.util.stream.Collectors;
 
 import org.eclipse.jetty.deploy.DeploymentManager;
 import org.eclipse.jetty.deploy.providers.WebAppProvider;
-import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.xml.XmlConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JettyServerCore {
 	private static final String JETTY_CONF_SYS_PROP_NAME = "jettyConfig";
@@ -58,16 +55,12 @@ public class JettyServerCore {
 	//
 	//================================================================
 
-	public boolean isCoreStarted() {
-		return server.isStarted();
-	}
-
-	public void startCore() throws Exception {
+	public void start() throws Exception {
 		server.start();
 		LOG.info("Starting Parliament server");
 	}
 
-	public void stopCore() {
+	public void stop() {
 		try {
 			LOG.info("Shutting down Parliament server");
 			server.stop();

@@ -6,9 +6,6 @@
 
 package com.bbn.parliament.jena.jetty;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Provides entry points to use with the Apache Commons Daemon package (procrun)
  * to render Parliament running inside Jetty as a Windows Service.
@@ -25,10 +22,10 @@ public class JettyService {
 	public static void start(String[] args) {
 		try {
 			JettyServerCore.initialize();
-			JettyServerCore.getInstance().startCore();
+			JettyServerCore.getInstance().start();
 			LOG.info("Starting Parliament server");
 			synchronized (lock) {
-				while (!timeToExit && JettyServerCore.getInstance().isCoreStarted()) {
+				while (!timeToExit) {
 					try {
 						lock.wait(5000);
 					} catch (InterruptedException ex) {
@@ -40,7 +37,7 @@ public class JettyService {
 		} catch (Exception ex) {
 			LOG.error("Parliament server encountered an exception", ex);
 		} finally {
-			JettyServerCore.getInstance().stopCore();
+			JettyServerCore.getInstance().stop();
 			LOG.info("Parliament server stopped");
 		}
 	}

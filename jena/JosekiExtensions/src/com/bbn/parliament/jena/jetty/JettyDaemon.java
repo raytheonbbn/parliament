@@ -6,9 +6,6 @@
 
 package com.bbn.parliament.jena.jetty;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Provides entry points to use with the Apache Commons Daemon package (jsvc)
  * to render Parliament running inside Jetty as a UNIX or Linux Daemon.
@@ -38,7 +35,7 @@ public class JettyDaemon {
 	public void start() {
 		try {
 			LOG.info("Starting Jetty Daemon");
-			JettyServerCore.getInstance().startCore();
+			JettyServerCore.getInstance().start();
 		} catch (Exception ex) {
 			LOG.error("Parliament server encountered an exception", ex);
 		}
@@ -48,7 +45,7 @@ public class JettyDaemon {
 	@SuppressWarnings("static-method")
 	public void stop() {
 		LOG.info("Stopping Jetty Daemon");
-		JettyServerCore.getInstance().stopCore();
+		JettyServerCore.getInstance().stop();
 	}
 
 	/** Cleanup resources allocated in init() */
