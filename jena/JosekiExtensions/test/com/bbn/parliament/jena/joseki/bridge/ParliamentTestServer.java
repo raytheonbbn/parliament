@@ -7,29 +7,42 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.bbn.parliament.jena.jetty.JettyServerCore;
 
 public class ParliamentTestServer {
-	private static AtomicBoolean errorOcurredDuringServerStart = new AtomicBoolean(false);
+	private static boolean timeToExit = false;
+	private static final Object lock = new Object();
+	private static final AtomicBoolean errorOcurredDuringServerStart = new AtomicBoolean(false);
 
 	// Call from @BeforeClass
 	public static void createServer() {
 		try {
 			JettyServerCore.initialize();
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			fail(ex.getMessage());
 		}
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					JettyServerCore.getInstance().start();
-				} catch(Exception ex) {
+					JettyServerCore.getInstance().startCore();
+					synchronized (lock) {
+						while (!timeToExit && JettyServerCore.getInstance().isCoreStarted()) {
+							try {
+								lock.wait(5000);
+							} catch (InterruptedException ex) {
+								// Do nothing
+							}
+						}
+					}
+				} catch (Exception ex) {
 					errorOcurredDuringServerStart.set(true);
 					fail(ex.getMessage());
+				} finally {
+					JettyServerCore.getInstance().stopCore();
 				}
 			}
 		});
 		t.setDaemon(true);
 		t.start();
-		while (!JettyServerCore.getInstance().isStarted()) {
+		while (!JettyServerCore.getInstance().isCoreStarted()) {
 			if (errorOcurredDuringServerStart.get()) {
 				break;
 			}
@@ -43,6 +56,9 @@ public class ParliamentTestServer {
 
 	// Call from @AfterClass
 	public static void stopServer() {
-		JettyServerCore.getInstance().stop();
+		synchronized (lock) {
+			timeToExit = true;
+			lock.notifyAll();
+		}
 	}
 }

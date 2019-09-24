@@ -29,7 +29,7 @@ public class ShutdownHandler extends AbstractHandler {
 	public void handleFormURLEncodedRequest(HttpServletRequest req,
 		HttpServletResponse resp) throws IOException, ServletErrorResponseException {
 		// Request that the server shutdown
-		JettyServerCore.getInstance().stop();
+		JettyServerCore.getInstance().stopCore();
 		sendSuccess("Server shutdown requested.  Check the Windows Service "
 			+ "Console to determine when the server has finished shutting down.", resp);
 	}

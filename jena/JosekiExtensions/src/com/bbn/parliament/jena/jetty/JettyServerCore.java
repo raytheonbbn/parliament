@@ -8,6 +8,7 @@ package com.bbn.parliament.jena.jetty;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,9 +27,7 @@ public class JettyServerCore {
 
 	private static JettyServerCore instance = null;
 
-	private boolean timeToExit;
-	private Object lock;
-	private Server server;
+	private final Server server;
 
 	//================================================================
 	//
@@ -36,7 +35,7 @@ public class JettyServerCore {
 	//
 	//================================================================
 
-	/** Initialize this instance using the given command-line arguments. */
+	/** Initialize this instance. */
 	public static void initialize() throws ServerInitException {
 		instance = new JettyServerCore();
 	}
@@ -59,36 +58,23 @@ public class JettyServerCore {
 	//
 	//================================================================
 
-	public boolean isStarted() {
+	public boolean isCoreStarted() {
 		return server.isStarted();
 	}
 
-	public void start() throws Exception {
-		try {
-			server.start();
-			LOG.info("Starting Parliament server");
-			synchronized (lock) {
-				while (!timeToExit) {
-					try {
-						lock.wait(5000);
-					} catch (InterruptedException ex) {
-						// Do nothing
-					}
-				}
-			}
-			LOG.info("Shutting down Parliament server");
-		} finally {
-			server.stop();
-			LOG.info("Parliament server stopped");
-		}
+	public void startCore() throws Exception {
+		server.start();
+		LOG.info("Starting Parliament server");
 	}
 
-	public void stop() {
-		synchronized (lock) {
-			timeToExit = true;
-			lock.notifyAll();
+	public void stopCore() {
+		try {
+			LOG.info("Shutting down Parliament server");
+			server.stop();
+			LOG.info("Parliament server stopped");
+		} catch (Exception ex) {
+			LOG.error("Error while stopping Parliament server", ex);
 		}
-		LOG.info("Parliament server shutdown requested");
 	}
 
 	//================================================================
@@ -99,8 +85,6 @@ public class JettyServerCore {
 
 	/** This is private because JettyServerCore is a singleton class. */
 	private JettyServerCore() throws ServerInitException {
-		timeToExit = false;
-		lock = new Object();
 		server = new Server();
 
 		String configPath = System.getProperty(JETTY_CONF_SYS_PROP_NAME, CONF_JETTY_XML);
@@ -108,18 +92,7 @@ public class JettyServerCore {
 		{
 			XmlConfiguration configuration = new XmlConfiguration(strm);
 			configuration.configure(server);
-
-			File tempDir = getTempDir();
-			if (tempDir == null) {
-				LOG.warn("No temp dir found in Jetty configuration.");
-			} else if (tempDir.exists() && !tempDir.isDirectory()) {
-				LOG.warn("Temp dir specified in Jetty configuration exists, but is not a directory:  {}", tempDir.getCanonicalPath());
-			} else if (tempDir.exists()) {
-				LOG.info("Using existing temp dir:  {}", tempDir.getCanonicalPath());
-			} else {
-				LOG.info("Creating temp dir as specified in Jetty configuration:  {}", tempDir.getCanonicalPath());
-				tempDir.mkdirs();
-			}
+			validateAndCreateTempDir(getTempDir());
 		} catch (Exception ex) {
 			throw new ServerInitException(ex, "Unable to apply server configuration \"%1$s\"", configPath);
 		}
@@ -141,6 +114,19 @@ public class JettyServerCore {
 				LOG.warn("Multiple temp dirs found in Jetty configuration:{}", tmpDirListing);
 			}
 			return tmpDirs.get(0);
+		}
+	}
+
+	private static void validateAndCreateTempDir(File tempDir) throws IOException {
+		if (tempDir == null) {
+			LOG.warn("No temp dir found in Jetty configuration.");
+		} else if (tempDir.exists() && !tempDir.isDirectory()) {
+			LOG.warn("Jetty configuration's temp dir exists, but is not a directory:  {}", tempDir.getCanonicalPath());
+		} else if (tempDir.exists()) {
+			LOG.info("Using existing temp dir:  {}", tempDir.getCanonicalPath());
+		} else {
+			LOG.info("Creating Jetty configuration's temp dir:  {}", tempDir.getCanonicalPath());
+			tempDir.mkdirs();
 		}
 	}
 }

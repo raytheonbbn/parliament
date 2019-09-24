@@ -38,7 +38,7 @@ public class JettyDaemon {
 	public void start() {
 		try {
 			LOG.info("Starting Jetty Daemon");
-			JettyServerCore.getInstance().start();
+			JettyServerCore.getInstance().startCore();
 		} catch (Exception ex) {
 			LOG.error("Parliament server encountered an exception", ex);
 		}
@@ -48,7 +48,7 @@ public class JettyDaemon {
 	@SuppressWarnings("static-method")
 	public void stop() {
 		LOG.info("Stopping Jetty Daemon");
-		JettyServerCore.getInstance().stop();
+		JettyServerCore.getInstance().stopCore();
 	}
 
 	/** Cleanup resources allocated in init() */
