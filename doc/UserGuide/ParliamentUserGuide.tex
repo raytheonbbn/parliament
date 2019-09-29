@@ -43,7 +43,7 @@
 %\usepackage[T1]{fontenc}		% Enables curly braces in emails within \institute
 \usepackage[style=numeric,backref,backend=biber]{biblatex}
 \usepackage{fontspec,xltxtra,xunicode}
-%\usepackage{iffont}
+\usepackage{iffont}
 \usepackage{unicode-math}
 \usepackage[final]{hyperref}	% Should be the last use-package command
 
@@ -69,17 +69,25 @@
 %\predate{\begin{center}\large}
 %\postdate{\par\end{center}}
 
+\settofirstfound{\mainfont}{Georgia,TeX Gyre Bonum,Constantia}
+\settofirstfound{\sansfont}{Verdana,TeX Gyre Heros,Gill Sans}
+\settofirstfound{\monofont}{Consolas,Menlo,Andale Mono}
+\settofirstfound{\mathfont}{Cambria Math,TeX Gyre Bonum Math,STIX Math}
 \defaultfontfeatures{Mapping=tex-text}
-\setmainfont{Georgia}
+\setmainfont{\mainfont}
+\setsansfont{\sansfont}[Scale=MatchLowercase]
+\setmonofont{\monofont}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
+\setmathfont{\mathfont}
+%\setmainfont{Georgia}
 %\setmainfont{TeX Gyre Pagella}[Numbers=Uppercase]
 %\setmainfont{Constantia}[Numbers=Uppercase]
-\setsansfont{Verdana}[Scale=MatchLowercase]
+%\setsansfont{Verdana}[Scale=MatchLowercase]
 %\setsansfont{TeX Gyre Heros}[Scale=MatchLowercase]
-\setmonofont{Consolas}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
+%\setmonofont{Consolas}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
 %\setmonofont{Menlo}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
 %\setmathfont{TeX Gyre Pagella Math}
 %\setmathfont{STIX Math}
-\setmathfont{Cambria Math}
+%\setmathfont{Cambria Math}
 
 \pagestyle{fancy}
 \renewcommand{\chaptermark}[1]
