@@ -268,16 +268,13 @@
 		<mkdir dir="${reportsDir}"/>
 	</target>
 
-	<target name="continuous-build" depends="svn-update, createDistro"
+	<target name="continuous-build" depends="git-pull, runTests"
 		description="Performs the continuous build"/>
 
-	<target name="nightly-build" depends="svn-update, runTests, publish-integration"
-		description="Performs the nightly build"/>
-
-	<target name="svn-update" depends="clean">
-		<echo message="Updating from Subversion..."/>
-		<exec executable="svn">
-			<arg line="update"/>
+	<target name="git-pull" depends="clean">
+		<echo message="Pulling from git ..."/>
+		<exec executable="git">
+			<arg line="pull"/>
 		</exec>
 	</target>
 </project>
