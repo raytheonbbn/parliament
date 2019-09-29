@@ -18,10 +18,10 @@ class LazyRsrc
 {
 public:
 	LazyRsrc(KbInstance* pKB, const char*const pUri);
-	LazyRsrc(const LazyRsrc&) = default;
-	LazyRsrc& operator=(const LazyRsrc&) = default;
-	LazyRsrc(LazyRsrc&&) = default;
-	LazyRsrc& operator=(LazyRsrc&&) = default;
+	LazyRsrc(const LazyRsrc&) = delete;
+	LazyRsrc& operator=(const LazyRsrc&) = delete;
+	LazyRsrc(LazyRsrc&&) = delete;
+	LazyRsrc& operator=(LazyRsrc&&) = delete;
 	~LazyRsrc() = default;
 
 	PARLIAMENT_EXPORT ResourceId id() const;
@@ -31,8 +31,8 @@ public:
 		{ return m_pUri; }
 
 private:
-	KbInstance*				m_pKB;
-	const char*const		m_pUri;
+	KbInstance*			m_pKB;
+	const char*const	m_pUri;
 	mutable RsrcString	m_uri;
 	mutable ResourceId	m_id;
 };
@@ -41,10 +41,10 @@ class UriLib
 {
 public:
 	explicit UriLib(KbInstance* pKB = nullptr);
-	UriLib(const UriLib&) = default;
-	UriLib& operator=(const UriLib&) = default;
-	UriLib(UriLib&&) = default;
-	UriLib& operator=(UriLib&&) = default;
+	UriLib(const UriLib&) = delete;
+	UriLib& operator=(const UriLib&) = delete;
+	UriLib(UriLib&&) = delete;
+	UriLib& operator=(UriLib&&) = delete;
 	~UriLib() = default;
 
 	ResourceId translateReservedPredicate(ResourceId predicateId) const;
