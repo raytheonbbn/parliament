@@ -45,11 +45,8 @@
 			conf="compile-ide->master;runtime-ide->default;test->default"/>
 		<dependency name="junit" org="junit" rev="4.12"
 			conf="test->default"/>
-		<dependency org="org.slf4j" name="slf4j-api" rev="${slf4j.version}" conf="compile-ide->master;runtime-ide->default">
-			<!-- Artifact element avoids bug https://jira.qos.ch/browse/SLF4J-285 -->
-			<artifact name="slf4j-api" type="jar"
-				url="https://repo1.maven.org/maven2/org/slf4j/slf4j-api/${slf4j.version}/slf4j-api-${slf4j.version}.jar"/>
-		</dependency>
+		<dependency org="org.slf4j" name="slf4j-api" rev="${slf4j.version}"
+			conf="compile-ide->master;runtime-ide->default"/>
 		<dependency org="org.slf4j" name="slf4j-log4j12" rev="${slf4j.version}"
 			conf="compile-ide->master;runtime-ide->default"/>
 		<dependency org="org.slf4j" name="jcl-over-slf4j" rev="${slf4j.version}"

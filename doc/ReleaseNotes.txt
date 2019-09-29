@@ -6,6 +6,11 @@ Version 2.7.14 (?):
   command line, the logging configuration is unchanged, so you will still be able to
   see the log contents in real time in that case.)
 
+* Updated for Apple's clang 11 compiler
+
+* Fixed an issue in the way Ivy dependencies on SLF4J were coded.
+
+* Removed the obsolete support for Ivy publishing to the BBN-internal tools server.
 
 
 =================================================
