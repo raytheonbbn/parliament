@@ -8,6 +8,9 @@ package com.bbn.parliament.jena.jetty;
 
 import java.nio.charset.StandardCharsets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CmdLineJettyServer {
 	private static final Logger LOG = LoggerFactory.getLogger(CmdLineJettyServer.class);
 
