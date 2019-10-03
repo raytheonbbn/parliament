@@ -10,7 +10,10 @@ Version 2.7.14 (?):
 
 * Fixed an issue in the way Ivy dependencies on SLF4J were coded.
 
-* Removed the obsolete support for Ivy publishing to the BBN-internal tools server.
+* Removed the obsolete support for Ivy publishing to a BBN-internal Ivy repository.
+
+* Fixed an issue on UNIX/Linux platforms that prevented the Parliament daemon from
+  receiving SIGTERM signals, making Parliament difficult to use in a Docker container.
 
 
 =================================================
