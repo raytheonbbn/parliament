@@ -18,18 +18,39 @@ import org.slf4j.LoggerFactory;
 public class JettyService {
 	private static final Logger LOG = LoggerFactory.getLogger(JettyService.class);
 
+	private static boolean timeToExit = false;
+	private static final Object lock = new Object();
+
 	/** Entry point for running as a Windows service. */
 	public static void start(String[] args) {
 		try {
 			JettyServerCore.initialize();
 			JettyServerCore.getInstance().start();
+			LOG.info("Starting Parliament server");
+			synchronized (lock) {
+				while (!timeToExit) {
+					try {
+						lock.wait(5000);
+					} catch (InterruptedException ex) {
+						// Do nothing
+					}
+				}
+			}
+			LOG.info("Shutting down Parliament server");
 		} catch (Exception ex) {
 			LOG.error("Parliament server encountered an exception", ex);
+		} finally {
+			JettyServerCore.getInstance().stop();
+			LOG.info("Parliament server stopped");
 		}
 	}
 
 	/** Called by the Windows service runner EXE to stop the service. */
 	public static void stop(String[] args) {
-		JettyServerCore.getInstance().stop();
+		synchronized (lock) {
+			timeToExit = true;
+			lock.notifyAll();
+		}
+		LOG.info("Parliament server shutdown requested");
 	}
 }

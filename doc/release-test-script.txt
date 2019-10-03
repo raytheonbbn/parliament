@@ -1,5 +1,5 @@
 * Set short query timeout
-* load deft data
+* load deft data from dependencies/data
 * explore a bit
 * run a query:
 

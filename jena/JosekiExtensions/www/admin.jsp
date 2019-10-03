@@ -19,27 +19,15 @@
     <div class="op-list"><h3><a href="index.jsp">Home</a></h3> <jsp:include page="index/000_operations.jsp"/></div>
 
 <br/>
-    <div class="moreindent infobox">
+   <div class="moreindent infobox">
       <h2>Flush Data</h2>
       <form action="bulk/flush" method="post">
-	     <p>
-	     Flush in-memory statements to disk: &nbsp;&nbsp; <input type="submit" value="Flush Data" />
-        </p>
+         <p>
+         Flush in-memory statements to disk: &nbsp;&nbsp; <input type="submit" value="Flush Data" />
+         </p>
       </form>
-    </div>
-    <br/>
-    <!--
-    <div class="moreindent">
-      <br />
-      <h2>Shutdown</h2>
-      <form action="bulk/shutdown" method="post">
-        <p>
-        Shutdown the server: &nbsp;&nbsp; <input type="submit" value="Shutdown" />
-        </p>
-      </form>
-      <br/>
-    </div>
-    -->
+   </div>
+   <br/>
    <div class="moreindent infobox">
    <h2 id="numQueries"><span>No</span> Queries</h2>
    <table border=0 width=100%>
@@ -51,8 +39,7 @@
    </td>
    </tr>
    </table>
-    <div id="queries">
-
+   <div id="queries">
    </div>
    </div>
 <script type="text/javascript"><!--

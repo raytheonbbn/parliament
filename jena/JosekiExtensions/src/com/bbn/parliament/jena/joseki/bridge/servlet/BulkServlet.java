@@ -27,7 +27,6 @@ import com.bbn.parliament.jena.joseki.handler.ClearHandler;
 import com.bbn.parliament.jena.joseki.handler.ExportHandler;
 import com.bbn.parliament.jena.joseki.handler.FlushHandler;
 import com.bbn.parliament.jena.joseki.handler.InsertHandler;
-import com.bbn.parliament.jena.joseki.handler.ShutdownHandler;
 
 /** @author sallen */
 public class BulkServlet extends HttpServlet {
@@ -120,10 +119,6 @@ public class BulkServlet extends HttpServlet {
 				} else if ("flush".equals(svcUri)) {
 					LOG.info("Flush operation from {}", req.getRemoteAddr());
 					FlushHandler handler = new FlushHandler();
-					handler.handleFormURLEncodedRequest(req, resp);
-				} else if ("shutdown".equals(svcUri)) {
-					LOG.info("Shutdown operation from {}", req.getRemoteAddr());
-					ShutdownHandler handler = new ShutdownHandler();
 					handler.handleFormURLEncodedRequest(req, resp);
 				} else if ("export".equals(svcUri)) {
 					LOG.info("Export operation from {}", req.getRemoteAddr());
