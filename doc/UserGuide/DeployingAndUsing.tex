@@ -261,7 +261,7 @@ The recognized settings are as follows:
 
 	\item[readOnly] When set to ``yes'', prevents \ac{pmnt} from changing the underlying storage files in any way. \emph{Default: ``no''}
 
-	\item[fileSyncTimerDelay] The number of milliseconds between flushings of the \ac{kb} files to disk.  The flush is performed asynchronously, and so has minimal impact on overall performance.  This decreases the chances of a file corruption, and it limits the amount of time required to shut down \ac{pmnt} gracefully. Set to zero to disable flushing the files to disk.  This setting applies only to \ac{pmnt} deployed as a server using Jena, Joseki, and Jetty.  Any other deployment will ignore this setting. \emph{Default: ``15000''}
+	\item[fileSyncTimerDelay] \ac{pmnt} periodically flushes its underlying data files to disk to decrease the chances of a file corruption and to limit the amount of time required to shut down \ac{pmnt} gracefully.  This parameter is the time interval in milliseconds between flushes.  Set it to zero to disable flushing the files to disk.  This setting applies only to \ac{pmnt} deployed as a server using Jena, Joseki, and Jetty.  Any other deployment will ignore this setting. \emph{Default: ``15000''}
 
 	\item[initialRsrcCapacity] The number of resources \ac{pmnt} should allocate space for when creating a new \ac{kb}. \emph{Default: ``300000''}
 
