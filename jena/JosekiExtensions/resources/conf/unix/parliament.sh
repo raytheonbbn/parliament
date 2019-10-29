@@ -13,6 +13,7 @@ MIN_MEM=128m
 MAX_MEM=512m
 # Set JETTY_HOST to 0.0.0.0 to make it accessible from other machines on the network:
 JETTY_HOST=localhost
+#JETTY_HOST=0.0.0.0
 JETTY_PORT=8089
 
 DAEMON_USER=jsmith
@@ -21,9 +22,18 @@ LOG_FILE=$PMNT_DIR/log/jsvc.log
 # Uncomment this line to enable remote debugging:
 #DEBUG_ARG=-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n
 
-######### Error checking: #########
+######### Error checking & environment detection: #########
+if [ -d "/etc/systemd/system" -a -f "`which systemctl`" ]; then
+	IS_SYSTEM_D="true"
+fi
+
 if [ "$1" != "interactive" -a ! -d "$JAVA_HOME" ]; then
 	echo The JAVA_HOME environment variable is not set.
+	exit 1
+fi
+
+if [ ! -f "$PMNT_DIR/lib/ParliamentServer.jar" -o ! -f "$PMNT_DIR/webapps/parliament.war" ]; then
+	echo "$PMNT_DIR does not appear to be a valid Parliament installation."
 	exit 1
 fi
 
@@ -34,16 +44,6 @@ fi
 
 if [ ! -f "$PARLIAMENT_LOG_CONFIG_PATH" ]; then
 	echo "Unable to find Parliament log configuration file."
-	exit 1
-fi
-
-# Check that PMNT_DIR really is a Parliament KB directory.
-if [ ! -f "$PMNT_DIR/lib/ParliamentServer.jar" ]; then
-	echo "Unable to find Parliament's lib directory."
-	exit 1
-fi
-if [ ! -f "$PMNT_DIR/webapps/parliament.war" ]; then
-	echo "Unable to find webapps/parliament.war."
 	exit 1
 fi
 
@@ -117,7 +117,29 @@ fi
 
 ######### Usage of this script: #########
 function printUsage {
-	echo "Usage: $(basename $0) {interactive|start|stop|restart}"
+	if [ "$IS_SYSTEM_D" = "true" ]; then
+		echo "Usage: $(basename $0) {install|uninstall|interactive}"
+		echo ""
+		echo "where:"
+		echo ""
+		echo "   install will create Parliament as a system-d service, after which Parliament can be controlled via the systemctl command"
+		echo ""
+		echo "   uninstall will remove the Parliament system-d service"
+		echo ""
+		echo "   interactive will start Parliament running as an interactive process in the current shell"
+	else
+		echo "Usage: $(basename $0) {start|stop|restart|interactive}"
+		echo ""
+		echo "where:"
+		echo ""
+		echo "   start will start Parliament running as a detached process"
+		echo ""
+		echo "   stop will stop a detached Parliament process"
+		echo ""
+		echo "   restart will stop and then immediately re-start a detached Parliament process"
+		echo ""
+		echo "   interactive will start Parliament running as an interactive process in the current shell"
+	fi
 	exit 3
 }
 
@@ -177,31 +199,31 @@ function installSystemDService {
 
 
 ######### Execute: #########
-case "$1" in
-	interactive)
-		$EXEC $MAIN_CLASS
-		;;
-	start)
-		$EXEC $MAIN_CLASS
-		;;
-	stop)
-		if [ -f "$PID_FILE" ]; then
-			$EXEC -stop $MAIN_CLASS
-		else
-			echo 'The Parliament daemon is not running.'
-			exit 1
-		fi
-		;;
-	restart)
-		if [ -f "$PID_FILE" ]; then
-			$EXEC -stop $MAIN_CLASS
-		fi
-		$EXEC $MAIN_CLASS
-		;;
-	test)
-		installSystemDService
-		;;
-	*)
-		printUsage
-		;;
-esac
+if [ "$IS_SYSTEM_D" = "true" ]; then
+	echo "Running on a System-D operating system"
+else
+	echo "This operating system is not System-D"
+fi
+if [ "$1" = "interactive" ]; then
+	$EXEC $MAIN_CLASS
+elif [ "$1" = "start" -a "$IS_SYSTEM_D" != "true" ]; then
+	$EXEC $MAIN_CLASS
+elif [ "$1" = "stop" -a "$IS_SYSTEM_D" != "true" ]; then
+	if [ -f "$PID_FILE" ]; then
+		$EXEC -stop $MAIN_CLASS
+	else
+		echo 'The Parliament daemon is not running.'
+		exit 1
+	fi
+elif [ "$1" = "restart" -a "$IS_SYSTEM_D" != "true" ]; then
+	if [ -f "$PID_FILE" ]; then
+		$EXEC -stop $MAIN_CLASS
+	fi
+	$EXEC $MAIN_CLASS
+elif [ "$1" = "install" -a "$IS_SYSTEM_D" = "true" ]; then
+elif [ "$1" = "uninstall" -a "$IS_SYSTEM_D" = "true" ]; then
+elif [ "$1" = "test" ]; then
+	installSystemDService
+else
+	printUsage
+fi
