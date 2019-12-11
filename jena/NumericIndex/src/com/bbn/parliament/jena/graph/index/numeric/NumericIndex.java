@@ -1,11 +1,6 @@
-/**
- *
- */
-
 package com.bbn.parliament.jena.graph.index.numeric;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.Iterator;
 
 import com.bbn.parliament.jena.graph.index.IndexBase;
@@ -39,7 +34,7 @@ import com.sleepycat.je.SecondaryKeyCreator;
  *
  * @author rbattle
  */
-public abstract class NumericIndex<T extends Number & Serializable & Comparable<T>>
+public abstract class NumericIndex<T extends Number & Comparable<T>>
 	extends IndexBase<T> implements RangeIndex<T> {
 
 	/** The secondary key creator that creates a key based on the bytes for the number */

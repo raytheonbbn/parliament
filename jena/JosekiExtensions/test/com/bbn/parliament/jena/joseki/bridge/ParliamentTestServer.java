@@ -2,12 +2,13 @@ package com.bbn.parliament.jena.joseki.bridge;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.bbn.parliament.jena.jetty.InterThreadSignal;
+import java.util.concurrent.CountDownLatch;
+
 import com.bbn.parliament.jena.jetty.JettyServerCore;
 
 public class ParliamentTestServer {
-	private static final InterThreadSignal serverHasStarted = new InterThreadSignal();
-	private static final InterThreadSignal serverShouldShutDown = new InterThreadSignal();
+	private static final CountDownLatch serverHasStarted = new CountDownLatch(1);
+	private static final CountDownLatch serverShouldShutDown = new CountDownLatch(1);
 
 	private static class TestServerThread extends Thread {
 		public TestServerThread() {
@@ -20,10 +21,10 @@ public class ParliamentTestServer {
 			try {
 				JettyServerCore.initialize();
 				JettyServerCore.getInstance().start();
-				serverHasStarted.sendSignal();
-				serverShouldShutDown.waitForSignal();
+				serverHasStarted.countDown();
+				serverShouldShutDown.await();
 			} catch (Exception ex) {
-				serverHasStarted.sendSignal();
+				serverHasStarted.countDown();
 				fail(ex.getMessage());
 			} finally {
 				JettyServerCore.getInstance().stop();
@@ -37,7 +38,7 @@ public class ParliamentTestServer {
 		testServerThread.start();
 
 		try {
-			serverHasStarted.waitForSignal();
+			serverHasStarted.await();
 		} catch (InterruptedException ex) {
 			fail(ex.getMessage());
 		}
@@ -45,6 +46,6 @@ public class ParliamentTestServer {
 
 	// Call from @AfterClass
 	public static void stopServer() {
-		serverShouldShutDown.sendSignal();
+		serverShouldShutDown.countDown();
 	}
 }

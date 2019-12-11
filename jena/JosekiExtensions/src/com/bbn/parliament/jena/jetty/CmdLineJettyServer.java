@@ -8,12 +8,13 @@ package com.bbn.parliament.jena.jetty;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CountDownLatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CmdLineJettyServer {
-	private static final InterThreadSignal serverShouldShutDown = new InterThreadSignal();
+	private static final CountDownLatch serverShouldShutDown = new CountDownLatch(1);
 	private static final Logger LOG = LoggerFactory.getLogger(CmdLineJettyServer.class);
 
 	private static class StdinMonitorThread extends Thread {
@@ -38,7 +39,7 @@ public class CmdLineJettyServer {
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("Sending shutdown signal from {}", Thread.currentThread().getName());
 				}
-				serverShouldShutDown.sendSignal();
+				serverShouldShutDown.countDown();
 			}
 		}
 
@@ -73,7 +74,7 @@ public class CmdLineJettyServer {
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Sending shutdown signal from {}", Thread.currentThread().getName());
 			}
-			serverShouldShutDown.sendSignal();
+			serverShouldShutDown.countDown();
 		}
 	}
 
@@ -90,7 +91,7 @@ public class CmdLineJettyServer {
 			Thread stdinMonitorThread = new StdinMonitorThread();
 			stdinMonitorThread.start();
 
-			serverShouldShutDown.waitForSignal();
+			serverShouldShutDown.await();
 
 			System.out.format("Shutting down server%n");
 		} catch (Exception ex) {

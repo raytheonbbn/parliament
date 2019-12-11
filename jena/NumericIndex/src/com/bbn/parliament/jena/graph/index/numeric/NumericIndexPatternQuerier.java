@@ -1,10 +1,5 @@
-/**
- *
- */
-
 package com.bbn.parliament.jena.graph.index.numeric;
 
-import java.io.Serializable;
 import java.util.Iterator;
 
 import com.bbn.parliament.jena.graph.index.Record;
@@ -30,7 +25,7 @@ import com.hp.hpl.jena.util.iterator.NiceIterator;
  *
  * @author rbattle
  */
-public class NumericIndexPatternQuerier<T extends Number & Serializable & Comparable<T>>
+public class NumericIndexPatternQuerier<T extends Number & Comparable<T>>
 implements IndexPatternQuerier {
 
 	private final String predicate;
@@ -153,7 +148,7 @@ implements IndexPatternQuerier {
 	}
 
 	/** Iterator for numeric records. */
-	private static class RecordIterator<T extends Number & Serializable & Comparable<T>>
+	private static class RecordIterator<T extends Number & Comparable<T>>
 	extends QueryIter {
 
 		private Var subject;
