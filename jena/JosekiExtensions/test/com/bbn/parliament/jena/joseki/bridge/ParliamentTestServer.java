@@ -19,7 +19,6 @@ public class ParliamentTestServer {
 		@Override
 		public void run() {
 			try {
-				JettyServerCore.initialize();
 				JettyServerCore.getInstance().start();
 				serverHasStarted.countDown();
 				serverShouldShutDown.await();

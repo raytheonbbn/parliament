@@ -81,7 +81,6 @@ public class CmdLineJettyServer {
 	/** Default entry point. */
 	public static void main(String[] args) {
 		try {
-			JettyServerCore.initialize();
 			JettyServerCore.getInstance().start();
 
 			Thread.sleep(4000);

@@ -21,11 +21,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JettyServerCore {
+	private static class JettyServerCoreHolder {
+		private static final JettyServerCore INSTANCE;
+
+		static {
+			try {
+				INSTANCE = new JettyServerCore();
+			} catch (Exception ex) {
+				LOG.error("Parliament server encountered an exception", ex);
+				throw new IllegalStateException("Parliament server encountered an exception", ex);
+			}
+		}
+	}
+
 	private static final String JETTY_CONF_SYS_PROP_NAME = "jettyConfig";
 	private static final String CONF_JETTY_XML = "conf/jetty.xml";
 	private static final Logger LOG = LoggerFactory.getLogger(JettyServerCore.class);
-
-	private static JettyServerCore instance = null;
 
 	private final Server server;
 
@@ -35,21 +46,15 @@ public class JettyServerCore {
 	//
 	//================================================================
 
-	/** Initialize this instance. */
-	public static void initialize() throws ServerInitException {
-		instance = new JettyServerCore();
-	}
-
 	/**
-	 * Returns the singleton instance of the JettyServerCore class.
+	 * Get the singleton instance of JettyServerCore. This follows the "lazy
+	 * initialization holder class" idiom for lazy initialization of a static field.
+	 * See Item 83 of Effective Java, Third Edition, by Joshua Bloch for details.
 	 *
-	 * @throws IllegalStateException if the initialize method has not been called yet.
+	 * @return the instance
 	 */
 	public static JettyServerCore getInstance() {
-		if (instance == null) {
-			throw new IllegalStateException("The JettyServerCore class has not been initialized yet");
-		}
-		return instance;
+		return JettyServerCoreHolder.INSTANCE;
 	}
 
 	//================================================================
@@ -80,7 +85,7 @@ public class JettyServerCore {
 	//================================================================
 
 	/** This is private because JettyServerCore is a singleton class. */
-	private JettyServerCore() throws ServerInitException {
+	private JettyServerCore() throws Exception {
 		server = new Server();
 
 		String configPath = System.getProperty(JETTY_CONF_SYS_PROP_NAME, CONF_JETTY_XML);
@@ -89,8 +94,6 @@ public class JettyServerCore {
 			XmlConfiguration configuration = new XmlConfiguration(strm);
 			configuration.configure(server);
 			validateAndCreateTempDir(getTempDir());
-		} catch (Exception ex) {
-			throw new ServerInitException(ex, "Unable to apply server configuration \"%1$s\"", configPath);
 		}
 	}
 
