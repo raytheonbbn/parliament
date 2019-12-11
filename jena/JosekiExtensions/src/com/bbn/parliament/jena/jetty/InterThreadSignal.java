@@ -1,5 +1,6 @@
 package com.bbn.parliament.jena.jetty;
 
+// TODO: Replace this class with Java's CountdownLatch
 public class InterThreadSignal {
 	private boolean signalSent;
 	private final Object lock;

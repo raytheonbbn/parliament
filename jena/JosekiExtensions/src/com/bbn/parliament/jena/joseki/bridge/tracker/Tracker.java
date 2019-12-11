@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import com.bbn.parliament.jena.joseki.bridge.tracker.management.TrackableMXBean.Status;
 import com.bbn.parliament.jena.joseki.bridge.tracker.management.TrackerManagement;
 import com.bbn.parliament.jena.joseki.handler.Inserter;
-import com.hp.hpl.jena.shared.QueryStageException;
 
 /**
  * Keep track of {@link Trackable} items. The singleton instance provides
@@ -91,8 +90,6 @@ public class Tracker implements Observer {
 			TrackerManagement.unregister(getName(t));
 			try {
 				t.release();
-			} catch (QueryStageException e) {
-				LOG.error("Error while releasing query # {}", t.getId(), e);
 			} catch (Throwable e) {
 				LOG.error("Error while releasing query # {}", t.getId(), e);
 			}

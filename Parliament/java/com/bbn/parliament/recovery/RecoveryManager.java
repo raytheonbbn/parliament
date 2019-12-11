@@ -9,8 +9,9 @@ package com.bbn.parliament.recovery;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
@@ -18,164 +19,125 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** @author dkolas */
-public class RecoveryManager
-{
-	public static final String JOURNAL_FILE_NAME   = "recovery.journal";
-	public static final long   AUTO_FLUSH_INTERVAL = 5000;
+public class RecoveryManager {
+	public static final String JOURNAL_FILE_NAME = "recovery.journal";
+	public static final long AUTO_FLUSH_INTERVAL = 5000;
+	private static final Logger LOG = LoggerFactory.getLogger(RecoveryManager.class);
 
-	private static Logger      _logger             = LoggerFactory.getLogger(RecoveryManager.class);
+	private final File _journalFile;
+	private volatile BufferedWriter _writer;
 
-	private String             _directoryPath;
-	private boolean            _needsRecovery;
-	BufferedWriter             _writer;
-	private File               _journalFile;
-	private AutoFlush          _autoFlush;
+	public RecoveryManager(String directoryPath, Recoverable recoverable) {
+		_journalFile = new File(directoryPath, JOURNAL_FILE_NAME);
 
-	public RecoveryManager(String directoryPath, Recoverable recoverable)
-	{
-		_directoryPath = directoryPath;
-		_journalFile = new File(_directoryPath, JOURNAL_FILE_NAME);
-
-		_needsRecovery = _journalFile.exists() && _journalFile.length() > 0;
-		if (_needsRecovery)
-		{
+		if (_journalFile.exists() && _journalFile.length() > 0) {
 			recover(recoverable);
 		}
-		_autoFlush = new AutoFlush();
-		new Thread(_autoFlush, "RecoveryManagerAutoFlusher").start();
+
+		Thread autoFlusher = new Thread(() -> {
+			while (true) {
+				try {
+					Thread.sleep(AUTO_FLUSH_INTERVAL);
+				} catch (InterruptedException e) {
+					// Who cares?
+				}
+				try {
+					getWriter().flush();
+				} catch (IOException ex) {
+					throw new RuntimeException("Can't flush journal!", ex);
+				}
+			}
+		});
+		autoFlusher.setName("RecoveryManagerAutoFlusher");
+		autoFlusher.setDaemon(true);
+		autoFlusher.start();
 	}
 
-	public synchronized void recordAdd(String subject, String predicate,
-		String object) throws IOException
-	{
-		StringBuffer buffer = new StringBuffer();
-		buffer.append('+');
-		buffer.append(triple(subject, predicate, object));
-		buffer.append('\n');
-		getWriter().write(buffer.toString());
-	}
-
-	public synchronized void recordDelete(String subject, String predicate,
-		String object) throws IOException
-	{
-		StringBuilder buffer = new StringBuilder();
-		buffer.append('-');
-		buffer.append(triple(subject, predicate, object));
-		buffer.append('\n');
-		getWriter().write(buffer.toString());
-	}
-
-	private static String triple(String subject, String predicate, String object)
-	{
-		StringBuilder result = new StringBuilder();
-		result.append(subject);
-		result.append(' ');
-		result.append(predicate);
-		result.append(' ');
-		result.append(object);
-		return result.toString();
-	}
-
-	public void startBlock() throws IOException
-	{
+	public void startBlock() throws IOException {
 		getWriter().write("~start~");
 	}
 
-	public void endBlock() throws IOException
-	{
+	public void endBlock() throws IOException {
 		getWriter().write("~end~");
 	}
 
-	private BufferedWriter getWriter() throws IOException
-	{
-		if (_writer == null)
-		{
-			_writer = new BufferedWriter(new FileWriter(_journalFile));
-		}
-		return _writer;
+	public void recordAdd(String subject, String predicate, String object) throws IOException {
+		getWriter().write(appendTriple('+', subject, predicate, object));
 	}
 
-	public void instanceFlushed() throws IOException
-	{
-		if (_writer != null)
-		{
+	public void recordDelete(String subject, String predicate, String object) throws IOException {
+		getWriter().write(appendTriple('-', subject, predicate, object));
+	}
+
+	private static String appendTriple(char operation, String subject, String predicate, String object) {
+		StringBuilder buffer = new StringBuilder();
+		buffer.append(operation);
+		buffer.append(subject);
+		buffer.append(' ');
+		buffer.append(predicate);
+		buffer.append(' ');
+		buffer.append(object);
+		buffer.append('\n');
+		return buffer.toString();
+	}
+
+	/**
+	 * Get the writer, with lazy initialization. This follows the double-check idiom
+	 * for lazy initialization of an instance field. See Item 83 of Effective Java,
+	 * Third Edition, by Joshua Bloch for details.
+	 *
+	 * @return the writer
+	 */
+	private BufferedWriter getWriter() throws IOException {
+		BufferedWriter result = _writer;
+		if (result == null) {
+			synchronized (this) {
+				if (_writer == null) {
+					_writer = result = new BufferedWriter(
+						new OutputStreamWriter(
+							new FileOutputStream(_journalFile), StandardCharsets.UTF_8));
+				}
+			}
+		}
+		return result;
+	}
+
+	public void instanceFlushed() throws IOException {
+		if (_writer != null) {
 			_writer.close();
 		}
 		_writer = null;
 		_journalFile.delete();
 	}
 
-	private void recover(Recoverable recoverable)
-	{
-		_logger.warn("Needed to recover unflushed changes!");
+	private void recover(Recoverable recoverable) {
+		LOG.warn("Needed to recover unflushed changes!");
 		boolean finishedRecovery = false;
 		try (BufferedReader rdr = Files.newBufferedReader(_journalFile.toPath(), StandardCharsets.UTF_8)) {
 			String line = null;
-			while ((line = rdr.readLine()) != null)
-			{
+			while ((line = rdr.readLine()) != null) {
 				int firstSpace = line.indexOf(' ');
 				int secondSpace = line.indexOf(' ', firstSpace + 1);
 				String subject = line.substring(1, firstSpace);
 				String predicate = line.substring(firstSpace + 1, secondSpace);
 				String object = line.substring(secondSpace + 1);
 
-				if (line.charAt(0) == '+')
-				{
-					_logger.debug("Recovery: adding statement: {} {} {}",
-						new Object[] { subject, predicate, object });
+				if (line.charAt(0) == '+') {
+					LOG.debug("Recovery: adding statement: {} {} {}", subject, predicate, object);
 					recoverable.recoverAdd(subject, predicate, object);
-				}
-				else if (line.charAt(0) == '-')
-				{
-					_logger.debug("Recovery: deleting statement: {} {} {}",
-						new Object[] { subject, predicate, object });
+				} else if (line.charAt(0) == '-') {
+					LOG.debug("Recovery: deleting statement: {} {} {}", subject, predicate, object);
 					recoverable.recoverDelete(subject, predicate, object);
 				}
 			}
 			recoverable.recoverFlush();
 			finishedRecovery = true;
-			_logger.warn("Recovered successfully!");
-		}
-		catch (IOException e)
-		{
+			LOG.warn("Recovered successfully!");
+		} catch (IOException e) {
 			throw new RuntimeException("Error during recovery!", e);
 		}
-		if (finishedRecovery)
-		{
+		if (finishedRecovery) {
 			_journalFile.delete();
-		}
-	}
-
-	private class AutoFlush implements Runnable
-	{
-		public AutoFlush() {
-		}
-
-		@Override
-		public void run()
-		{
-			while (true)
-			{
-				try
-				{
-					Thread.sleep(AUTO_FLUSH_INTERVAL);
-				}
-				catch (InterruptedException e)
-				{
-					// Who cares?
-				}
-				if (_writer != null)
-				{
-					try
-					{
-						_writer.flush();
-					}
-					catch (IOException e)
-					{
-						throw new RuntimeException("Can't flush journal!", e);
-					}
-				}
-			}
 		}
 	}
 }
