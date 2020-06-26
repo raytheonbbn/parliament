@@ -34,3 +34,4 @@ log/
 /Parliament/Test/ParliamentKbConfig.txt
 /Parliament/Test/ParliamentLogConfig.txt
 /target/
+/.gradle/
