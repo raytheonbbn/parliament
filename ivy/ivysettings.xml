@@ -27,8 +27,9 @@
 		<!-- Resolver for http://repo1.maven.org/maven2/ -->
 		<ibiblio name="default-public" m2compatible="true"/>
 
+		<!-- Old URL:  http://download.osgeo.org/webdav/geotools/ -->
 		<ibiblio name="geotools" m2compatible="true"
-			root="http://download.osgeo.org/webdav/geotools/"/>
+			root="https://repo.osgeo.org/repository/release/"/>
 
 		<chain name="public" returnFirst="true">
 			<resolver ref="default-public"/>
