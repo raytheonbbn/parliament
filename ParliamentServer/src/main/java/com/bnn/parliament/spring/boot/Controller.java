@@ -32,20 +32,49 @@ public class Controller {
 	
 	// Spring does not allow the use of @RequestBody when using URL_ENCODED, so we must use @RequestParam
 	@PostMapping(value = ENDPOINT, consumes = URL_ENCODED)
-	public String sparqlPOST(@RequestParam Map<String, String> requestBody) {
-		
+	public String sparqlURLEncodePOST(@RequestParam Map<String, String> requestBody) {
 		
 		return String.format("POST Success! Map: %s", requestBody.toString());
 	}
 	
 	@PostMapping(value = ENDPOINT, consumes = SPARQL_QUERY)
-	public String sparqlPOST(
+	public String sparqlDirectPOST(
 			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
 			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI,
 			@RequestBody String query) {
 		
-		
 		return String.format("POST Success! Query: %s", query);
+	}
+	
+	//HEAD mapping automatically supported by GET mapping
+	@GetMapping(ENDPOINT)
+	public String sparqlGraphGET() {
+		
+		return String.format("placeholder");
+	}
+	
+	@PutMapping(ENDPOINT)
+	public String sparqlGraphPUT() {
+		
+		return String.format("placeholder");
+	}
+	
+	@DeleteMapping(ENDPOINT)
+	public String sparqlGraphDELETE() {
+		
+		return String.format("placeholder");
+	}
+	
+	@PostMapping(ENDPOINT)
+	public String sparqlGraphPOST() {
+		
+		return String.format("placeholder");
+	}
+	
+	@PatchMapping(ENDPOINT)
+	public String sparqlGraphPATCH() {
+		
+		return String.format("placeholder");
 	}
 
 }
