@@ -21,7 +21,7 @@ public class Controller {
 	private static final String SPARQL_QUERY = "application/sparql-query";
 
 	
-	@GetMapping(ENDPOINT)
+	@GetMapping(value = ENDPOINT, params = "query")
 	public String sparqlGET(
 			@RequestParam(value = "query") String query, 
 			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
@@ -47,32 +47,62 @@ public class Controller {
 	}
 	
 	//HEAD mapping automatically supported by GET mapping
-	@GetMapping(ENDPOINT)
-	public String sparqlGraphGET() {
+	@GetMapping(value = ENDPOINT, params = "graph")
+	public String sparqlGraphGET(@RequestParam(value = "graph") String graphURI) {
 		
 		return String.format("placeholder");
 	}
 	
-	@PutMapping(ENDPOINT)
+	@GetMapping(value = ENDPOINT, params = "default")
+	public String sparqlGraphDefaultGET(@RequestParam(value = "default") String defaultGraph) {
+		
+		return String.format("placeholder");
+	}
+	
+	@PutMapping(value = ENDPOINT, params = "graph")
 	public String sparqlGraphPUT() {
 		
 		return String.format("placeholder");
 	}
 	
-	@DeleteMapping(ENDPOINT)
+	@PutMapping(value = ENDPOINT, params = "default")
+	public String sparqlGraphDefaultPUT() {
+		
+		return String.format("placeholder");
+	}
+	
+	@DeleteMapping(value = ENDPOINT, params = "graph")
 	public String sparqlGraphDELETE() {
 		
 		return String.format("placeholder");
 	}
 	
-	@PostMapping(ENDPOINT)
+	@DeleteMapping(value = ENDPOINT, params = "default")
+	public String sparqlGraphDefaultDELETE() {
+		
+		return String.format("placeholder");
+	}
+	
+	@PostMapping(value = ENDPOINT, params = "graph")
 	public String sparqlGraphPOST() {
 		
 		return String.format("placeholder");
 	}
 	
-	@PatchMapping(ENDPOINT)
+	@PostMapping(value = ENDPOINT, params = "graph")
+	public String sparqlGraphDefaultPOST() {
+		
+		return String.format("placeholder");
+	}
+	
+	@PatchMapping(value = ENDPOINT, params = "graph")
 	public String sparqlGraphPATCH() {
+		
+		return String.format("placeholder");
+	}
+	
+	@PatchMapping(value = ENDPOINT, params = "default")
+	public String sparqlGraphDefaultPATCH() {
 		
 		return String.format("placeholder");
 	}
