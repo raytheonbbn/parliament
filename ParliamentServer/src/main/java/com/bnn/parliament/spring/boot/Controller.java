@@ -19,6 +19,7 @@ public class Controller {
 	private static final String ENDPOINT = "/parliament/sparql";
 	private static final String URL_ENCODED = "application/x-www-form-urlencoded";
 	private static final String SPARQL_QUERY = "application/sparql-query";
+	private static final String SPARQL_UPDATE = "application/sparql-update";
 	private static final String DEFAULT_GRAPH = "Placeholder Graph URI";
 
 	
@@ -32,19 +33,44 @@ public class Controller {
 	}
 	
 	// Spring does not allow the use of @RequestBody when using URL_ENCODED, so we must use @RequestParam
-	@PostMapping(value = ENDPOINT, consumes = URL_ENCODED)
-	public String sparqlURLEncodePOST(@RequestParam Map<String, String> requestBody) {
+	@PostMapping(value = ENDPOINT, consumes = URL_ENCODED, params = "query")
+	public String sparqlURLEncodeQueryPOST(
+			@RequestParam(value = "query") String query,
+			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
+			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI
+			) {
 		
-		return String.format("POST Success! Map: %s", requestBody.toString());
+		return String.format("POST Success! Query: %s", query);
 	}
 	
 	@PostMapping(value = ENDPOINT, consumes = SPARQL_QUERY)
-	public String sparqlDirectPOST(
+	public String sparqlDirectQueryPOST(
 			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
 			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI,
 			@RequestBody String query) {
 		
 		return String.format("POST Success! Query: %s", query);
+	}
+	
+	//Update equivalents of above (next 2 requests)
+	
+	@PostMapping(value = ENDPOINT, consumes = URL_ENCODED, params = "update")
+	public String sparqlURLEncodeUpdatePOST(
+			@RequestParam(value = "update") String update,
+			@RequestParam(value = "using-graph-uri", defaultValue = "") List<String> defaultGraphURI,
+			@RequestParam(value = "using-named-graph-uri", defaultValue = "") List<String> namedGraphURI) {
+		
+		return String.format("POST Success! Update: %s", update);
+	}
+	
+	
+	@PostMapping(value = ENDPOINT, consumes = SPARQL_UPDATE)
+	public String sparqlDirectUpdatePOST(
+			@RequestParam(value = "using-graph-uri", defaultValue = "") List<String> defaultGraphURI,
+			@RequestParam(value = "using-named-graph-uri", defaultValue = "") List<String> namedGraphURI,
+			@RequestBody String update) {
+		
+		return String.format("POST Success! Update: %s", update);
 	}
 	
 	//HEAD mapping automatically supported by GET mapping
