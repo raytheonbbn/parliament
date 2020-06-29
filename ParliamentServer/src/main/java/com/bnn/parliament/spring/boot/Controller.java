@@ -19,6 +19,7 @@ public class Controller {
 	private static final String ENDPOINT = "/parliament/sparql";
 	private static final String URL_ENCODED = "application/x-www-form-urlencoded";
 	private static final String SPARQL_QUERY = "application/sparql-query";
+	private static final String DEFAULT_GRAPH = "Placeholder Graph URI";
 
 	
 	@GetMapping(value = ENDPOINT, params = "query")
@@ -55,20 +56,18 @@ public class Controller {
 	
 	@GetMapping(value = ENDPOINT, params = "default")
 	public String sparqlGraphDefaultGET(@RequestParam(value = "default") String defaultGraph) {
-		
-		return String.format("placeholder");
+		return sparqlGraphGET(DEFAULT_GRAPH);
 	}
 	
 	@PutMapping(value = ENDPOINT, params = "graph")
-	public String sparqlGraphPUT() {
+	public String sparqlGraphPUT(@RequestParam(value = "graph") String graphURI, @RequestBody String payload) {
 		
-		return String.format("placeholder");
+		return String.format("The payload is: %s", payload);
 	}
 	
 	@PutMapping(value = ENDPOINT, params = "default")
-	public String sparqlGraphDefaultPUT() {
-		
-		return String.format("placeholder");
+	public String sparqlGraphDefaultPUT(@RequestParam(value = "default") String defaultGraph, @RequestBody String payload) {
+		return sparqlGraphPUT(DEFAULT_GRAPH, payload);
 	}
 	
 	@DeleteMapping(value = ENDPOINT, params = "graph")
@@ -84,27 +83,25 @@ public class Controller {
 	}
 	
 	@PostMapping(value = ENDPOINT, params = "graph")
-	public String sparqlGraphPOST() {
+	public String sparqlGraphPOST(@RequestParam(value = "graph") String graphURI, @RequestBody String payload) {
 		
-		return String.format("placeholder");
+		return String.format("The payload is: %s", payload);
 	}
 	
-	@PostMapping(value = ENDPOINT, params = "graph")
-	public String sparqlGraphDefaultPOST() {
-		
-		return String.format("placeholder");
+	@PostMapping(value = ENDPOINT, params = "default")
+	public String sparqlGraphDefaultPOST(@RequestParam(value = "default") String defaultGraph, @RequestBody String payload) {
+		return sparqlGraphPOST(DEFAULT_GRAPH, payload);
 	}
 	
 	@PatchMapping(value = ENDPOINT, params = "graph")
-	public String sparqlGraphPATCH() {
+	public String sparqlGraphPATCH(@RequestParam(value = "graph") String graphURI, @RequestBody String payload) {
 		
-		return String.format("placeholder");
+		return String.format("The payload is: %s", payload);
 	}
 	
 	@PatchMapping(value = ENDPOINT, params = "default")
-	public String sparqlGraphDefaultPATCH() {
-		
-		return String.format("placeholder");
+	public String sparqlGraphDefaultPATCH(@RequestParam(value = "default") String defaultGraph, @RequestBody String payload) {
+		return sparqlGraphPATCH(DEFAULT_GRAPH, payload);
 	}
 
 }
