@@ -34,7 +34,13 @@ public class IndexManager {
 		private static final IndexManager INSTANCE = new IndexManager();
 	}
 
-	/** Get the singleton instance of the <code>IndexManager</code>. */
+	/**
+	 * Get the singleton instance of the index manager. This follows the "lazy
+	 * initialization holder class" idiom for lazy initialization of a static field.
+	 * See Item 83 of Effective Java, Third Edition, by Joshua Bloch for details.
+	 *
+	 * @return the instance
+	 */
 	public static IndexManager getInstance() {
 		return IndexRegistryHolder.INSTANCE;
 	}

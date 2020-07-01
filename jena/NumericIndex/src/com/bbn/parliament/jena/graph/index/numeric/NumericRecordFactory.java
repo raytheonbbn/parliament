@@ -1,7 +1,3 @@
-/**
- *
- */
-
 package com.bbn.parliament.jena.graph.index.numeric;
 
 import java.io.ByteArrayInputStream;
@@ -9,9 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.RecordFactory;
 import com.hp.hpl.jena.graph.Node;
@@ -25,7 +21,7 @@ import com.hp.hpl.jena.graph.Triple;
  *
  * @author rbattle
  */
-public abstract class NumericRecordFactory<T extends Number & Serializable & Comparable<T>>
+public abstract class NumericRecordFactory<T extends Number & Comparable<T>>
 implements RecordFactory<T> {
 
 	private final String predicate;

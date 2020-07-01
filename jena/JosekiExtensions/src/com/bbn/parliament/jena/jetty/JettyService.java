@@ -24,7 +24,6 @@ public class JettyService {
 	/** Entry point for running as a Windows service. */
 	public static void start(String[] args) {
 		try {
-			JettyServerCore.initialize();
 			JettyServerCore.getInstance().start();
 			LOG.info("Starting Parliament server");
 			synchronized (lock) {

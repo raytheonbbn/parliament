@@ -16,7 +16,11 @@ public class IndexFactoryRegistry {
 	}
 
 	/**
-	 * Get the instance of the registry.
+	 * Get the instance of the index factory registry.
+	 *
+	 * This follows the "lazy initialization holder class" idiom for lazy
+	 * initialization of a static field. See Item 83 of Effective Java, Third
+	 * Edition, by Joshua Bloch for details.
 	 *
 	 * @return the instance.
 	 */

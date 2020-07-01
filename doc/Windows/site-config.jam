@@ -182,24 +182,6 @@ alias BoostRegex
 		<dll-path>$(BoostLibDir)
 	;
 
-alias BoostSystem
-	:	# no sources
-	:	$(Boost64DyDbgLibPfx)system$(Boost64DyDbgLibSfx)
-		$(Boost64DyRlsLibPfx)system$(Boost64DyRlsLibSfx)
-		$(Boost64StDbgLibPfx)system$(Boost64StDbgLibSfx)
-		$(Boost64StRlsLibPfx)system$(Boost64StRlsLibSfx)
-		$(Boost32DyDbgLibPfx)system$(Boost32DyDbgLibSfx)
-		$(Boost32DyRlsLibPfx)system$(Boost32DyRlsLibSfx)
-		$(Boost32StDbgLibPfx)system$(Boost32StDbgLibSfx)
-		$(Boost32StRlsLibPfx)system$(Boost32StRlsLibSfx)
-	:	# no default build
-	:	<include>$(BoostDir)
-		<link>shared:<define>BOOST_SYSTEM_DYN_LINK
-		<define>_SCL_SECURE_NO_WARNINGS
-		<library-path>$(BoostLibDir)
-		<dll-path>$(BoostLibDir)
-	;
-
 alias BoostThread
 	:	# no sources
 	:	$(Boost64DyDbgLibPfx)thread$(Boost64DyDbgLibSfx)

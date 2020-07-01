@@ -8,6 +8,7 @@ import java.util.Observable;
 import com.bbn.parliament.jena.joseki.bridge.tracker.management.TrackableMXBean;
 
 public abstract class Trackable extends Observable implements TrackableMXBean, Comparable<Trackable>  {
+	private final Object _statusLock = new Object();
 	protected final long _id;
 	protected final String _creator;
 	protected final Date _createdTime;
@@ -49,7 +50,7 @@ public abstract class Trackable extends Observable implements TrackableMXBean, C
 	}
 
 	public void run() throws TrackableException {
-		synchronized (_status) {
+		synchronized (_statusLock) {
 			if (!Status.CREATED.equals(_status)) {
 				// cannot rerun something
 				return;
@@ -73,25 +74,25 @@ public abstract class Trackable extends Observable implements TrackableMXBean, C
 	}
 
 	public boolean isError() {
-		synchronized (_status) {
+		synchronized (_statusLock) {
 			return Status.ERROR.equals(_status);
 		}
 	}
 
 	public boolean isFinished() {
-		synchronized (_status) {
+		synchronized (_statusLock) {
 			return Status.FINISHED.equals(_status);
 		}
 	}
 
 	public boolean isRunning() {
-		synchronized (_status) {
+		synchronized (_statusLock) {
 			return Status.RUNNING.equals(_status);
 		}
 	}
 
 	public boolean isCancelled() {
-		synchronized (_status) {
+		synchronized (_statusLock) {
 			return Status.CANCELLED.equals(_status);
 		}
 	}
@@ -114,7 +115,7 @@ public abstract class Trackable extends Observable implements TrackableMXBean, C
 	}
 
 	protected void setStatus(Status status) {
-		synchronized(_status) {
+		synchronized (_statusLock) {
 			_status = status;
 			setChanged();
 		}
@@ -123,7 +124,7 @@ public abstract class Trackable extends Observable implements TrackableMXBean, C
 
 	@Override
 	public Status getStatus() {
-		synchronized(_status) {
+		synchronized (_statusLock) {
 			return _status;
 		}
 	}

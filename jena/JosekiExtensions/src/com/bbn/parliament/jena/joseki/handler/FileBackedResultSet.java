@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -29,7 +30,7 @@ public class FileBackedResultSet {
 	private static final String UID = new java.rmi.server.UID().toString().replace(':', '_').replace('-', '_');
 
 	/** Counter used in unique identifier generation. */
-	private static int _counter = 0;
+	private static final AtomicLong COUNTER = new AtomicLong(0);
 
 	private DeferredFileOutputStream _dfos = null;
 	private ResultSet _resultSet;
@@ -102,10 +103,6 @@ public class FileBackedResultSet {
 	 * @return A String with the non-random looking instance identifier.
 	 */
 	private static String getUniqueId() {
-		int current;
-		synchronized (FileBackedResultSet.class) {
-			current = ++_counter;
-		}
-		return String.format("%1$08d", current);
+		return String.format("%1$08d", COUNTER.getAndIncrement());
 	}
 }

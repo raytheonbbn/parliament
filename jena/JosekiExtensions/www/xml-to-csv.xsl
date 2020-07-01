@@ -21,7 +21,7 @@
 		<xsl:call-template name="QuoteColumnValue">
 			<xsl:with-param name="text" select="@name"/>
 		</xsl:call-template>
-		<xsl:text>&#xD;&#xA;</xsl:text>
+		<xsl:text>&#xA;</xsl:text>
 	</xsl:template>
 
 	<xsl:template match="sr:result">
@@ -46,10 +46,10 @@
 
 	<xsl:template match="sr:binding">
 		<xsl:param name="isLastColumn"/>
-		<xsl:apply-templates select="child::*"/>
+		<xsl:apply-templates select="sr:uri|sr:bnode|sr:literal"/>
 		<xsl:choose>
 			<xsl:when test="$isLastColumn">
-				<xsl:text>&#xD;&#xA;</xsl:text>
+				<xsl:text>&#xA;</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>,</xsl:text>

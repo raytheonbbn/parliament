@@ -444,7 +444,7 @@ public class ParliamentServerTestCase {
 				String sStr = s.isAnon()
 					? s.getId().getLabelString()
 					: s.getURI();
-					log.info("   {} {} \"{}\"", sStr, p.getURI(), o.getLexicalForm());
+				log.info("   {} {} \"{}\"", sStr, p.getURI(), o.getLexicalForm());
 			}
 		}
 
@@ -452,28 +452,29 @@ public class ParliamentServerTestCase {
 		Map<String, Object> params = new HashMap<>();
 		params.put("query", String.format(CSV_QUOTING_TEST_QUERY));
 		params.put("stylesheet", "/xml-to-csv.xsl");
-		try (
-			InputStream is = rm.sendRequest(params);
-			Reader rdr = new InputStreamReader(is, StandardCharsets.UTF_8);
-			BufferedReader brdr = new BufferedReader(rdr);
-		) {
-			actualResponse = brdr.lines().collect(Collectors.joining(System.lineSeparator()));
+		try (InputStream is = rm.sendRequest(params)) {
+			actualResponse = readStreamToEnd(is, "RemoteModel.sendRequest() returned null");
 		}
 		log.info("CSV quote result as CSV:{}{}", System.lineSeparator(), actualResponse);
 
 		String expectedResponse;
-		try (
-			InputStream is = getClass().getResourceAsStream(CSV_QUOTE_TEST_EXPECTED_RESULT);
-			Reader rdr = new InputStreamReader(is, StandardCharsets.UTF_8);
-			BufferedReader brdr = new BufferedReader(rdr);
-		) {
-			if (is == null) {
-				fail(String.format("Unable to find resource '%1$s'", CSV_QUOTE_TEST_EXPECTED_RESULT));
-			}
-			expectedResponse = brdr.lines().collect(Collectors.joining(System.lineSeparator()));
+		try (InputStream is = getClass().getResourceAsStream(CSV_QUOTE_TEST_EXPECTED_RESULT)) {
+			expectedResponse = readStreamToEnd(is, "Unable to find resource '%1$s'", CSV_QUOTE_TEST_EXPECTED_RESULT);
 		}
 
 		assertEquals(expectedResponse, actualResponse);
+	}
+
+	private static String readStreamToEnd(InputStream is, String errorMsg, Object... args) throws IOException {
+		if (is == null) {
+			fail(String.format(errorMsg, args));
+		}
+		try (
+			Reader rdr = new InputStreamReader(is, StandardCharsets.UTF_8);
+			BufferedReader brdr = new BufferedReader(rdr);
+		) {
+			return brdr.lines().collect(Collectors.joining(System.lineSeparator()));
+		}
 	}
 
 	private static ResultSet doQuery(String queryFmt, Object... args) {
