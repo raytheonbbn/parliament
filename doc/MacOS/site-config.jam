@@ -109,16 +109,6 @@ alias BoostRegex
 	:	<include>$(BoostDir)
 	;
 
-alias BoostSystem
-	:	# no sources
-	:	$(BoostDyDbgLibPfx)system$(BoostDyDbgLibSfx)
-		$(BoostDyRlsLibPfx)system$(BoostDyRlsLibSfx)
-		$(BoostStDbgLibPfx)system$(BoostStDbgLibSfx)
-		$(BoostStRlsLibPfx)system$(BoostStRlsLibSfx)
-	:	# no default build
-	:	<include>$(BoostDir)
-	;
-
 alias BoostThread
 	:	# no sources
 	:	$(BoostDyDbgLibPfx)thread$(BoostDyDbgLibSfx)
@@ -137,7 +127,7 @@ alias BoostUnitTest
 		$(BoostStRlsLibPfx)unit_test_framework$(BoostStRlsLibSfx)
 	:	# no default build
 	:	<include>$(BoostDir)
-		<define>BOOST_TEST_ALTERNATIVE_INIT_API
+		<link>static:<define>BOOST_TEST_ALTERNATIVE_INIT_API
 		<link>shared:<define>BOOST_TEST_DYN_LINK
 	;
 
