@@ -25,7 +25,6 @@ exe ParliamentAdmin
 	:	[ glob *.cpp ]
 		/KB/KbCore//Parliament
 		/site-config//BoostFileSystem
-		/site-config//BoostSystem
 	:	<include>.
 		<visibility>hidden
 		<threading>multi
