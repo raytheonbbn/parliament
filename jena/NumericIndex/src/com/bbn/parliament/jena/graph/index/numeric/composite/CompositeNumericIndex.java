@@ -1,7 +1,6 @@
 package com.bbn.parliament.jena.graph.index.numeric.composite;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -157,7 +156,7 @@ public class CompositeNumericIndex extends IndexBase<Number> implements Composit
 	 * @return a new NumericIndex or null if the number type is not <code>Integer</code>,
 	 *         <code>Long</code>, <code>Double</code>, or <code>Float</code>.
 	 */
-	private <T extends Number & Serializable & Comparable<T>> NumericIndex<T> createIndex(
+	private <T extends Number & Comparable<T>> NumericIndex<T> createIndex(
 		NumericIndexFactory<T> factory, String predicate) {
 		factory.setPredicate(predicate);
 		NumericIndex<T> index = factory.createIndex(graph, graphName, indexDir);
@@ -191,14 +190,14 @@ public class CompositeNumericIndex extends IndexBase<Number> implements Composit
 		return add(index, r);
 	}
 
-	private static <T extends Number & Serializable & Comparable<T>> boolean add(
+	private static <T extends Number & Comparable<T>> boolean add(
 		NumericIndex<T> index, Record<Number> r) throws IndexException {
 		T value = index.getRecordFactory().getNumericClass().cast(r.getValue());
 		Record<T> record = Record.create(r.getKey(), value);
 		return index.add(record);
 	}
 
-	private static <T extends Number & Serializable & Comparable<T>> boolean remove(
+	private static <T extends Number & Comparable<T>> boolean remove(
 		NumericIndex<T> index, Record<Number> r) throws IndexException {
 		T value = index.getRecordFactory().getNumericClass().cast(r.getValue());
 		Record<T> record = Record.create(r.getKey(), value);

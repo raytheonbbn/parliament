@@ -1,11 +1,7 @@
-/**
- *
- */
-
 package com.bbn.parliament.jena.graph.index.numeric;
 
-import java.io.Serializable;
 import java.util.Properties;
+
 import com.bbn.parliament.jena.graph.index.IndexFactory;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
@@ -15,7 +11,7 @@ import com.hp.hpl.jena.graph.Node;
  *
  * @author rbattle
  */
-public abstract class NumericIndexFactory<T extends Number & Serializable & Comparable<T>>
+public abstract class NumericIndexFactory<T extends Number & Comparable<T>>
 extends IndexFactory<NumericIndex<T>, T> {
 
 	/**

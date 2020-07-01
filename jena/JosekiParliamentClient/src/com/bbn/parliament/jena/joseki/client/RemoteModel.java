@@ -20,7 +20,6 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.Reader;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -43,9 +42,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
  * @author dkolas
  * @author sallen
  */
-public class RemoteModel implements Serializable {
-	private static final long serialVersionUID = 1L;
-
+public class RemoteModel {
 	/** %1 is the host name, %2 is the port */
 	public static final String DEFAULT_SPARQL_ENDPOINT_URL = "http://%1$s:%2$s/parliament/sparql";
 	/** %1 is the host name, %2 is the port */

@@ -1,11 +1,7 @@
-/**
- *
- */
-
 package com.bbn.parliament.jena.graph.index.numeric;
 
-import java.io.Serializable;
 import java.util.NoSuchElementException;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.util.NodeUtil;
 import com.hp.hpl.jena.graph.Node;
@@ -24,7 +20,7 @@ import com.sleepycat.je.SecondaryCursor;
  * @author rbattle
  * @param <T> the type of data that is indexed.
  */
-public class NumericIndexIterator<T extends Number & Serializable & Comparable<T>>
+public class NumericIndexIterator<T extends Number & Comparable<T>>
 implements ClosableIterator<Record<T>> {
 
 	private T start;

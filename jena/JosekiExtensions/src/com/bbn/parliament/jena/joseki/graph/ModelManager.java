@@ -36,34 +36,29 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class ModelManager {
-	private static final Logger log = LoggerFactory.getLogger(ModelManager.class);
-	private static ModelManager instance = null;
-
-	private List<ReasonerConfigurationHandler> reasonerHandlers;
-
-	private KbGraphStore _kbGraphStore;
-	private Dataset _dataSource;
-
-	// private Graph baseGraph;
-	// private Model defaultModel = null;
-	private FlushTimerTask flushTimerTask = null;
-
-	// -----------------------------------------------------------------
-	// Singleton Methods
-	// -----------------------------------------------------------------
-
-	protected ModelManager() {
+	private static class ModelManagerHolder {
+		private static final ModelManager INSTANCE = new ModelManager();
 	}
 
+	private static final Logger LOG = LoggerFactory.getLogger(ModelManager.class);
+
+	private List<ReasonerConfigurationHandler> reasonerHandlers;
+	private KbGraphStore _kbGraphStore;
+	private Dataset _dataSource;
+	private FlushTimerTask flushTimerTask = null;
+
+	/**
+	 * Get the singleton instance of the model manager. This follows the "lazy
+	 * initialization holder class" idiom for lazy initialization of a static field.
+	 * See Item 83 of Effective Java, Third Edition, by Joshua Bloch for details.
+	 *
+	 * @return the instance
+	 */
 	public static ModelManager inst() {
-		if (instance == null) {
-			synchronized (ModelManager.class) {
-				if (instance == null) {
-					instance = new ModelManager();
-				}
-			}
-		}
-		return instance;
+		return ModelManagerHolder.INSTANCE;
+	}
+
+	private ModelManager() {
 	}
 
 	// -----------------------------------------------------------------
@@ -170,7 +165,7 @@ public class ModelManager {
 			ActionRouter.releaseWriteLock();
 		}
 
-		log.info("Finished clearing and reinitializing the knowledge base");
+		LOG.info("Finished clearing and reinitializing the knowledge base");
 	}
 
 	public void closeKb() {
@@ -179,7 +174,7 @@ public class ModelManager {
 		_dataSource.close();
 		_dataSource = null;
 
-		log.info("Flushed and closed the knowledge base");
+		LOG.info("Flushed and closed the knowledge base");
 	}
 
 	public void flushKb() {
@@ -194,7 +189,7 @@ public class ModelManager {
 			ActionRouter.releaseReadLock();
 		}
 
-		log.debug("Flushed the KB models to disk");
+		LOG.debug("Flushed the KB models to disk");
 	}
 
 	/** Load all RDF files in the given directory and all its sub-directories. */
@@ -229,15 +224,15 @@ public class ModelManager {
 
 		RDFFormat type = RDFFormat.parseFilename(filename);
 		if (RDFFormat.UNKNOWN == type) {
-			log.warn("Ignoring {}", filename);
+			LOG.warn("Ignoring {}", filename);
 			return;
 		}
 
 		try (Reader reader = new FileReader(filename)) {
-			log.info("Importing model data from: {}", filename);
+			LOG.info("Importing model data from: {}", filename);
 			getDefaultModel().read(reader, null, type.toString());
 		} catch (Exception ex) {
-			log.error("Could not read file: " + filename, ex);
+			LOG.error("Could not read file: " + filename, ex);
 		}
 	}
 
@@ -251,14 +246,14 @@ public class ModelManager {
 
 	public synchronized void initialize() {
 		if (_dataSource != null) {
-			log.info("Ignoring loadModel call -- model already loaded.");
+			LOG.info("Ignoring loadModel call -- model already loaded.");
 		} else {
-			log.info("Loading Model");
+			LOG.info("Loading Model");
 
 			// Don't remove the following two lines. They cause Java to fix
 			// its working path, which is essential before the config file loads
 			File cwd = new File(".");
-			log.info("Loading Parliament configuration with working directory \"{}\"",
+			LOG.info("Loading Parliament configuration with working directory \"{}\"",
 				cwd.getAbsolutePath());
 
 			@SuppressWarnings("resource")

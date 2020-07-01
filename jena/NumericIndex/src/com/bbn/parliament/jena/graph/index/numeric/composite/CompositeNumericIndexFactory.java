@@ -1,10 +1,7 @@
-/**
- *
- */
-
 package com.bbn.parliament.jena.graph.index.numeric.composite;
 
 import java.util.Properties;
+
 import com.bbn.parliament.jena.graph.index.IndexFactory;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;

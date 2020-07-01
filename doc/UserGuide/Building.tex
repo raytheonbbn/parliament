@@ -163,7 +163,7 @@ Open a Command Prompt, change to the \verb|BOOST_ROOT| directory, and issue the 
 b2 -q -j3 --disable-icu --ignore-site-config --layout=versioned
 --build-dir=build-msvc --stagedir=stage-msvc --with-atomic
 --with-chrono --with-date_time --with-filesystem --with-log
---with-regex --with-system --with-test --with-thread toolset=msvc
+--with-regex --with-test --with-thread toolset=msvc
 define=BOOST_TEST_ALTERNATIVE_INIT_API address-model=32,64
 variant=debug,release link=shared,static runtime-link=shared stage
 \end{verbatim}}
@@ -184,9 +184,8 @@ tools\build\src\engine\bootstrap
 Open a Terminal window, change to the \verb|BOOST_ROOT| directory, and issue the following command:
 
 {\small\begin{verbatim}
-./bootstrap.sh --without-icu --with-toolset=clang
---with-libraries=atomic,chrono,date_time,filesystem,log,regex,
-system,test,thread
+./bootstrap.sh --without-icu --with-toolset=clang --with-libraries=
+atomic,chrono,date_time,filesystem,log,regex,test,thread
 \end{verbatim}}
 
 This will build the executable \verb|b2| in \verb|BOOST_ROOT|.  Move this binary to any location on your path.  Then issue the following command:
@@ -212,7 +211,7 @@ At a shell, change to the \verb|BOOST_ROOT| directory, and issue the following c
 
 {\small\begin{verbatim}
 ./bootstrap.sh --without-icu --with-toolset=gcc --with-libraries=
-atomic,chrono,date_time,filesystem,log,regex,system,test,thread
+atomic,chrono,date_time,filesystem,log,regex,test,thread
 \end{verbatim}}
 
 This will build the executable \verb|b2| in \verb|BOOST_ROOT|.  Move this binary to any location on your path.  Then issue the following command:

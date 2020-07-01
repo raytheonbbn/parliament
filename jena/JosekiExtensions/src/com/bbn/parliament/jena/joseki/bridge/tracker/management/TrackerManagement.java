@@ -1,6 +1,7 @@
 package com.bbn.parliament.jena.joseki.bridge.tracker.management;
 
 import java.lang.management.ManagementFactory;
+import java.util.Optional;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
@@ -16,119 +17,64 @@ import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.sparql.ARQException;
 
 public class TrackerManagement {
-	private static class MBeanServerHelper {
-		private MBeanServer _mbs;
-		private boolean _hasJMX = true;
-		public MBeanServerHelper() {
-			try {
-				_mbs = ManagementFactory.getPlatformMBeanServer();
-			} catch (Throwable ex) {
-				log.warn("Failed to initialize JMX", ex);
-				_hasJMX = false;
-				_mbs = null;
-			}
-		}
-
-		public boolean isJMXAvailable() {
-			return _hasJMX;
-		}
-
-		public MBeanServer getMBeanServer() {
-			return _mbs;
-		}
-	}
-
-	// In some environments, JMX does not exist.
-	static private Logger log = LoggerFactory.getLogger(TrackerManagement.class);
-
-	private static MBeanServerHelper _instance = null;
-	private static MBeanServerHelper getMBeanServerHelper() {
-		if (null == _instance) {
-			synchronized(MBeanServerHelper.class) {
-				if (null == _instance) {
-					_instance = new MBeanServerHelper();
-				}
-			}
-		}
-		return _instance;
-	}
+	static private Logger LOG = LoggerFactory.getLogger(TrackerManagement.class);
 
 	public static void unregister(String name) {
-		if (!getMBeanServerHelper().isJMXAvailable()) {
+		Optional<MBeanServer> mbs = getMBeanServer();
+		if (!mbs.isPresent()) {
 			return;
 		}
 
-		ObjectName objName = null;
-		try {
-			objName = new ObjectName(name);
-		}
-		catch(MalformedObjectNameException ex) {
-			throw new ARQException("Failed to create name '" + name + "': "
-				+ ex.getMessage(), ex);
-		}
-		MBeanServer mbs = getMBeanServerHelper().getMBeanServer();
-
-		if (mbs.isRegistered(objName)) {
+		ObjectName objName = createObjectName(name);
+		if (mbs.get().isRegistered(objName)) {
 			try {
-				mbs.unregisterMBean(objName);
-			}
-			catch(InstanceNotFoundException e) {
-
-			}
-			catch(MBeanRegistrationException e) {
-
+				mbs.get().unregisterMBean(objName);
+			} catch(InstanceNotFoundException | MBeanRegistrationException ex) {
+				// Do nothing
 			}
 		}
 	}
 
 	public static void register(String name, Object bean) {
-		if (!getMBeanServerHelper().isJMXAvailable()) {
+		Optional<MBeanServer> mbs = getMBeanServer();
+		if (!mbs.isPresent()) {
 			return;
 		}
-		MBeanServer mbs = getMBeanServerHelper().getMBeanServer();
 
-		ObjectName objName = null;
+		// Unregister to avoid classloader problems.
+		// A previous load of this class will have registered something
+		// with the object name. Remove it - copes with reloading.
+		// (Does not cope with multiple loads running in parallel.)
+		unregister(name);
+
+		ObjectName objName = createObjectName(name);
 		try {
-			objName = new ObjectName(name);
+			LOG.debug("Registering MBean: " + objName);
+			mbs.get().registerMBean(bean, objName);
+		} catch (NotCompliantMBeanException | InstanceAlreadyExistsException | MBeanRegistrationException ex) {
+			String msg = String.format("Failed to register '%1$s': %2$s",
+				objName.getCanonicalName(), ex.getMessage());
+			LOG.warn(msg);
+			throw new ARQException(msg, ex);
 		}
-		catch(MalformedObjectNameException ex) {
-			throw new ARQException("Failed to create name '" + name + "': "
-				+ ex.getMessage(), ex);
-		}
+	}
 
+	// In some environments, JMX does not exist.
+	private static Optional<MBeanServer> getMBeanServer() {
 		try {
-			// Unregister to avoid classloader problems.
-			// A previous load of this class will have registered something
-			// with the object name. Remove it - copes with reloading.
-			// (Does not cope with multiple loads running in parallel.)
-			if(mbs.isRegistered(objName)) {
-				try {
-					mbs.unregisterMBean(objName);
-				}
-				catch(InstanceNotFoundException ex) {}
-			}
-			log.debug("Register MBean: " + objName);
-			mbs.registerMBean(bean, objName);
-			//mgtObjects.put(objName, bean);
+			return Optional.of(ManagementFactory.getPlatformMBeanServer());
+		} catch (Throwable ex) {
+			LOG.warn("Failed to initialize JMX", ex);
+			return Optional.empty();
+		}
+	}
 
-		}
-		catch(NotCompliantMBeanException ex) {
-			log.warn("Failed to register '" + objName.getCanonicalName() + "': "
-				+ ex.getMessage());
-			throw new ARQException("Failed to register '"
-				+ objName.getCanonicalName() + "': " + ex.getMessage(), ex);
-		}
-		catch(InstanceAlreadyExistsException ex) {
-			log.warn("Failed to register '" + objName.getCanonicalName() + "': "
-				+ ex.getMessage());
-			throw new ARQException("Failed to register '"
-				+ objName.getCanonicalName() + "': " + ex.getMessage(), ex);
-		}
-		catch(MBeanRegistrationException ex) {
-			log.warn("Failed to register '" + objName.getCanonicalName() + "': "
-				+ ex.getMessage());
-			throw new ARQException("Failed to register '"
-				+ objName.getCanonicalName() + "': " + ex.getMessage(), ex);
+	private static ObjectName createObjectName(String name) {
+		try {
+			return new ObjectName(name);
+		} catch (MalformedObjectNameException ex) {
+			throw new ARQException(String.format("Failed to create name '%1$s': %2$s",
+				name, ex.getMessage()), ex);
 		}
 	}
 }

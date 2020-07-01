@@ -26,7 +26,6 @@ lib Parliament
 		/site-config//BoostLog
 		/site-config//BoostLogSetup
 		/site-config//BoostRegex
-		/site-config//BoostSystem
 		/site-config//BoostThread
 		/site-config//JavaJNI
 		Parliament.jar

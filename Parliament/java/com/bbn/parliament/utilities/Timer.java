@@ -25,18 +25,15 @@ public class Timer
 		init();
 	}
 
-	private void init()
+	private synchronized void init()
 	{
-		synchronized (this)
-		{
-			_running = false;
-			_start = 0L;
-			_end = 0L;
-			_total = 0L;
-		}
+		_running = false;
+		_start = 0L;
+		_end = 0L;
+		_total = 0L;
 	}
 
-	public void reset()
+	public synchronized void reset()
 	{
 		if (_running)
 		{
@@ -46,63 +43,44 @@ public class Timer
 		init();
 	}
 
-	public void start()
+	public synchronized void start()
 	{
-		synchronized (this)
+		if (_running)
 		{
-			if (_running)
-			{
-				throw new IllegalStateException("Timer is already started");
-			}
-
-			_running = true;
-			_start = Calendar.getInstance().getTimeInMillis();
+			throw new IllegalStateException("Timer is already started");
 		}
+
+		_running = true;
+		_start = Calendar.getInstance().getTimeInMillis();
 	}
 
-	public void stop()
+	public synchronized void stop()
 	{
-		synchronized (this)
+		if (!_running)
 		{
-			if (!_running)
-			{
-				throw new IllegalStateException("Timer has not been started");
-			}
-
-			_end = Calendar.getInstance().getTimeInMillis();
-			_total = _end - _start;
-			_running = false;
+			throw new IllegalStateException("Timer has not been started");
 		}
+
+		_end = Calendar.getInstance().getTimeInMillis();
+		_total = _end - _start;
+		_running = false;
 	}
 
-	public TimeValue getElapsedTime()
+	public synchronized TimeValue getElapsedTime()
 	{
-		TimeValue retval;
-
-		synchronized (this)
+		if (_running)
 		{
-			if (_running)
-			{
-				throw new IllegalStateException("Timer is still running");
-			}
-
-			retval = new TimeValue();
-			retval.setMsec(_total);
+			throw new IllegalStateException("Timer is still running");
 		}
 
+		TimeValue retval = new TimeValue();
+		retval.setMsec(_total);
 		return retval;
 	}
 
-	public boolean isRunning()
+	public synchronized boolean isRunning()
 	{
-		boolean retval;
-
-		synchronized (this)
-		{
-			retval = _running;
-		}
-
-		return retval;
+		return _running;
 	}
 
 	public static void main(String[] args)

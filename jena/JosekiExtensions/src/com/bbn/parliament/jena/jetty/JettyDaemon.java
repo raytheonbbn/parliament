@@ -23,14 +23,8 @@ public class JettyDaemon {
 	 * configuration files, create log files, create server sockets, create
 	 * threads, etc.
 	 */
-	@SuppressWarnings("static-method")
 	public void init(String[] args) {
-		try {
-			LOG.info("Initializing Jetty Daemon");
-			JettyServerCore.initialize();
-		} catch (ServerInitException ex) {
-			LOG.error("Parliament server encountered an exception", ex);
-		}
+		// Do nothing
 	}
 
 	/** Start the server running */
