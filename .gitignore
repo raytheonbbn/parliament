@@ -1,8 +1,12 @@
 bin/
+build/
 indexes/
 lib/
 log/
 
+/.gradle/
+/.project
+/.settings/
 /build.properties
 /dependencies/
 /doc/UserGuide/acronyms.tex
@@ -34,5 +38,3 @@ log/
 /Parliament/Test/ParliamentKbConfig.txt
 /Parliament/Test/ParliamentLogConfig.txt
 /target/
-/.gradle/
-build/
