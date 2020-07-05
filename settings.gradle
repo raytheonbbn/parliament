@@ -1,1 +1,3 @@
-rootProject.name = 'spring.boot'
+rootProject.name = 'Parliament'
+
+include 'ParliamentServer'

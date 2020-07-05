@@ -35,3 +35,4 @@ log/
 /Parliament/Test/ParliamentLogConfig.txt
 /target/
 /.gradle/
+build/
