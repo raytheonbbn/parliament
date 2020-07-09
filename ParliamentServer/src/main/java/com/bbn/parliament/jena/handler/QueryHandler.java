@@ -51,6 +51,42 @@ public class QueryHandler {
 		super.init(service, implementation);
 	}
 	*/
+	
+	public ResultSet execSelect(TrackableQuery trackable) {
+		try {
+			Query q = trackable.getQuery();
+
+			trackable.run();
+
+			if (trackable.getQueryResult() == null) {
+				log.debug("No result");
+				//throw new QueryExecutionException(ReturnCodes.rcServiceUnavailable, "No result"); //removed
+				throw new Exception("No result");
+			} else if (q.isSelectType()) {
+				ResultSet rs = trackable.getResultSet();
+				log.trace("Setting result set");
+
+				//ResultSetMem memoryRS = new ResultSetMem(rs);
+				//resp.setResultSet(memoryRS);
+
+				File tmpDir = ParliamentBridge.getInstance().getConfiguration().getTmpDir();
+				int threshold = ParliamentBridge.getInstance().getConfiguration().getDeferredFileOutputStreamThreshold();
+
+				final FileBackedResultSet fileBackedRS = new FileBackedResultSet(rs, tmpDir, threshold);
+				
+				ResultSet result = fileBackedRS.getResultSet();
+				fileBackedRS.delete();
+
+				log.debug("OK/select");
+				
+				return result;
+			}
+		} catch(Exception e) {
+			
+		}
+		
+		return null;
+	}
 
 	@SuppressWarnings("static-method")
 	public void execQuery(TrackableQuery trackable)
@@ -62,7 +98,8 @@ public class QueryHandler {
 
 			if (trackable.getQueryResult() == null) {
 				log.debug("No result");
-				throw new QueryExecutionException(ReturnCodes.rcServiceUnavailable, "No result");
+				//throw new QueryExecutionException(ReturnCodes.rcServiceUnavailable, "No result"); //removed
+				throw new Exception("No result");
 			} else if (q.isSelectType()) {
 				ResultSet rs = trackable.getResultSet();
 				log.trace("Setting result set");
@@ -81,7 +118,9 @@ public class QueryHandler {
 						fileBackedRS.delete();
 					}
 				});
-				resp.setResultSet(fileBackedRS.getResultSet());
+				
+				ResultSet result = fileBackedRS.getResultSet();
+
 
 				log.debug("OK/select");
 			} else if (q.isConstructType() || q.isDescribeType()) {

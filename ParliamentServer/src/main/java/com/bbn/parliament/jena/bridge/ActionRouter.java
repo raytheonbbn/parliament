@@ -34,6 +34,7 @@ import com.bbn.parliament.jena.bridge.util.LogUtil;
 import com.bbn.parliament.jena.handler.QueryHandler;
 import com.bbn.parliament.jena.handler.UpdateHandler;
 import com.hp.hpl.jena.query.QueryParseException;
+import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 /**
@@ -106,21 +107,24 @@ public class ActionRouter {
 	//resp.setHeader("Content-Type", "application/json");
 	/** Handles incoming connection and routes to the appropriate handler. */
 	
-	public void execQuery(String sparqlStmt, String requestor) throws Exception {
+	public ResultSet execQuery(String sparqlStmt, String requestor) throws Exception {
 		try {
 			QueryHandler handler = new QueryHandler();
 			//handler.init(initService, initImplementation); //removed
 	
 			TrackableQuery trackable = Tracker.getInstance().createQuery(sparqlStmt, requestor);
 			SparqlStmtLogger.logSparqlStmt(sparqlStmt);
+			
+			ResultSet result;
 	
 			getReadLock();
 			try {
-				handler.execQuery(trackable);
+				result = handler.execSelect(trackable);
 			} finally {
 				releaseReadLock();
 				log.debug("Released read lock");
 			}
+			return result;
 			
 		} catch (QueryParseException ex) {
 			String msg = String.format(
@@ -130,6 +134,8 @@ public class ActionRouter {
 				//throw new QueryExecutionException(ReturnCodes.rcQueryParseFailure, msg); //removed
 				throw new Exception(msg);
 		}
+		
+		return null;
 	}
 	
 	

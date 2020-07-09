@@ -2,13 +2,15 @@ package com.bbn.parliament.spring.boot.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bbn.parliament.jena.bridge.ActionRouter;
+import com.bbn.parliament.spring.boot.service.QueryService;
 
 
 
@@ -28,20 +30,10 @@ public class QueryController {
 	public String sparqlGET(
 			@RequestParam(value = "query") String query,
 			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
-			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI) {
+			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI, HttpServletRequest request) {
 		
-		String tempHost = "fake";
-		
-		ActionRouter router = new ActionRouter();
-		
-		try {
-			router.execQuery(query, tempHost);
-		}
-		catch(Exception e) {
-			
-		}
-
-		return String.format("GET Success! Testing changes Query: %1s, %2s", query, defaultGraphURI.toString());
+		return QueryService.doCommon(query, request);
+		//return String.format("GET Success! Testing changes Query: %1s, %2s", query, defaultGraphURI.toString());
 	}
 
 	// Spring does not allow the use of @RequestBody when using URL_ENCODED, so we must use @RequestParam

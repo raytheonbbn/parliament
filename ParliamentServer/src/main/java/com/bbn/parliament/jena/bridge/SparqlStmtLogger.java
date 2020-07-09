@@ -8,7 +8,7 @@ package com.bbn.parliament.jena.bridge;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.bbn.parliament.jena.joseki.bridge.util.LogUtil;
+import com.bbn.parliament.jena.bridge.util.LogUtil;
 
 /**
  * This class exists to allow control of log level for SPARQL statements (queries and

@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.graph.ModelManager;
-import com.bbn.parliament.jena.joseki.bridge.servlet.ServletErrorResponseException;
+import com.bbn.parliament.jena.bridge.servlet.ServletErrorResponseException;
 
 public class FlushHandler extends AbstractHandler {
 	private static final Logger LOG = LoggerFactory.getLogger(FlushHandler.class);
