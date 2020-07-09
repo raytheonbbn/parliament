@@ -2,14 +2,14 @@ package com.bbn.parliament.spring.boot.controller;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.bbn.parliament.jena.bridge.ActionRouter;
+
 
 
 /**
@@ -29,6 +29,17 @@ public class QueryController {
 			@RequestParam(value = "query") String query,
 			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
 			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI) {
+		
+		String tempHost = "fake";
+		
+		ActionRouter router = new ActionRouter();
+		
+		try {
+			router.execQuery(query, tempHost);
+		}
+		catch(Exception e) {
+			
+		}
 
 		return String.format("GET Success! Testing changes Query: %1s, %2s", query, defaultGraphURI.toString());
 	}
@@ -38,8 +49,7 @@ public class QueryController {
 	public String sparqlURLEncodeQueryPOST(
 			@RequestParam(value = "query") String query,
 			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
-			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI
-			) {
+			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI) {
 
 		return String.format("POST Success! Query: %s", query);
 	}
