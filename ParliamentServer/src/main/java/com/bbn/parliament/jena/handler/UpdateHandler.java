@@ -16,7 +16,7 @@ import org.joseki.module.Loadable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.joseki.bridge.servlet.ParliamentRequest;
+//import com.bbn.parliament.jena.joseki.bridge.servlet.ParliamentRequest;
 import com.bbn.parliament.jena.bridge.tracker.TrackableException;
 import com.bbn.parliament.jena.bridge.tracker.TrackableUpdate;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -25,9 +25,9 @@ import com.hp.hpl.jena.rdf.model.Resource;
  * @author dreid@bbn.com
  * @author ebenson@bbn.com
  */
-public class UpdateHandler implements Loadable {
+public class UpdateHandler {
 	private static Logger log = LoggerFactory.getLogger(UpdateHandler.class);
-
+	/*
 	@Override
 	public void init(Resource service, Resource implementation) {
 	}
@@ -72,4 +72,5 @@ public class UpdateHandler implements Loadable {
 
 		resp.setOK();
 	}
+	*/
 }

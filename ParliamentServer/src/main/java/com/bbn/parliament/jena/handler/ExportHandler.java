@@ -25,7 +25,7 @@ import com.bbn.parliament.jena.graph.ModelManager;
 import com.bbn.parliament.jena.bridge.ActionRouter;
 import com.bbn.parliament.jena.bridge.servlet.ServletErrorResponseException;
 import com.bbn.parliament.jena.bridge.util.HttpServerUtil;
-import com.bbn.parliament.jena.joseki.client.RDFFormat;
+import com.bbn.parliament.jena.client.RDFFormat;
 import com.hp.hpl.jena.rdf.model.Model;
 
 /** @author sallen */
@@ -135,6 +135,7 @@ public class ExportHandler extends AbstractHandler {
 		String filename = String.format("%1$s.%2$s", basename, extension);
 
 		String writerMimeType = "text/plain";
+		/*
 		switch (dataFormat) {
 		case N3:
 			writerMimeType = Joseki.contentTypeN3;
@@ -153,6 +154,7 @@ public class ExportHandler extends AbstractHandler {
 			// Do nothing
 			break;
 		}
+		*/
 
 		resp.setContentType(writerMimeType);
 		resp.setHeader("Content-Disposition",

@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.joseki.util.Convert;
+//import org.joseki.util.Convert;
 
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.hp.hpl.jena.rdf.model.Literal;
@@ -153,6 +153,7 @@ public class ExplorerUtil {
 		return label;
 	}
 
+	/*
 	public static String getQueryString(RDFNode value, boolean useLabels) {
 		Map<String, String> params = new HashMap<>(4);
 
@@ -163,6 +164,7 @@ public class ExplorerUtil {
 
 		return buildQueryString(params);
 	}
+	*/
 
 	/**
 	 * Escapes any special characters in the supplied text so that it can be
@@ -219,6 +221,9 @@ public class ExplorerUtil {
 	 * substituted by '+' characters, and all non US-ASCII characters are escaped
 	 * to hexadecimal notation (%xx).
 	 */
+	
+	
+	/*
 	public static String buildQueryString(Map<String, String> keyValuePairs) {
 		StringBuffer result = new StringBuffer(20 * keyValuePairs.size());
 
@@ -241,6 +246,7 @@ public class ExplorerUtil {
 
 		return result.toString();
 	}
+	*/
 
 	public static StmtIterator getEmptyStmtIterator() {
 		StmtIterator toReturn = new StmtIterator() {

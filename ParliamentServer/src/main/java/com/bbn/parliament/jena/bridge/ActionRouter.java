@@ -26,7 +26,7 @@ import org.joseki.module.Loadable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.joseki.bridge.servlet.ParliamentRequest;
+//import com.bbn.parliament.jena.joseki.bridge.servlet.ParliamentRequest;
 import com.bbn.parliament.jena.bridge.tracker.TrackableQuery;
 import com.bbn.parliament.jena.bridge.tracker.TrackableUpdate;
 import com.bbn.parliament.jena.bridge.tracker.Tracker;
@@ -78,6 +78,8 @@ public class ActionRouter {
 		initImplementation = implementation;
 	}
 	*/
+	
+	/*
 
 	private static String formatRequestParticulars(ParliamentRequest preq, String msg) {
 		HttpServletRequest hsr = preq.getHttpReq();
@@ -103,6 +105,7 @@ public class ActionRouter {
 			hsr.getContentType(),
 			params);
 	}
+	*/
 
 	//resp.setHeader("Content-Type", "application/json");
 	/** Handles incoming connection and routes to the appropriate handler. */
@@ -134,12 +137,11 @@ public class ActionRouter {
 				//throw new QueryExecutionException(ReturnCodes.rcQueryParseFailure, msg); //removed
 				throw new Exception(msg);
 		}
-		
-		return null;
+
 	}
 	
 	
-	
+	/*
 	@Override
 	public void exec(Request req, Response resp, DatasetDesc dsDesc)
 		throws QueryExecutionException {
@@ -206,6 +208,7 @@ public class ActionRouter {
 			throw new QueryExecutionException(ReturnCodes.rcQueryParseFailure, msg);
 		}
 	}
+	*/
 
 	public static void getWriteLock() {
 		lock.writeLock().lock();

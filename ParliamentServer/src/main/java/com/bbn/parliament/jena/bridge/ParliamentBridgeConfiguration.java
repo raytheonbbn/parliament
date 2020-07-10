@@ -20,7 +20,7 @@ import com.bbn.parliament.jena.bridge.configuration.ConfigurationException;
 import com.bbn.parliament.jena.bridge.configuration.ConfigurationHandler;
 import com.bbn.parliament.jena.bridge.configuration.IndexProcessorConfigurationHandler;
 import com.bbn.parliament.jena.bridge.configuration.vocab.ConfigOnt;
-import com.bbn.parliament.jena.joseki.client.RDFFormat;
+import com.bbn.parliament.jena.client.RDFFormat;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFList;

@@ -87,7 +87,7 @@ public class QueryHandler {
 		
 		return null;
 	}
-
+	/*
 	@SuppressWarnings("static-method")
 	public void execQuery(TrackableQuery trackable)
 		throws Exception { //changed from QueryExecutionException
@@ -172,4 +172,5 @@ public class QueryHandler {
 				ReturnCodes.rcInternalError, LogUtil.getExceptionInfo(e));
 		}
 	}
+	*/
 }
