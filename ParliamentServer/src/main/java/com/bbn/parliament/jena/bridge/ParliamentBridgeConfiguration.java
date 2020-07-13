@@ -34,7 +34,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 public class ParliamentBridgeConfiguration {
 	/** Default threshold above which DeferredFileOutputStream stores to disk. Set to 10 MB. */
 	public static final int DEFAULT_DEFERRED_FILE_THRESHOLD = 10 * 1024 * 1024;
-	private static final String CONFIG_ONT_FILE = "ontology/config-ont.ttl";
+	private static final String CONFIG_ONT_FILE = "config-ont.ttl";
 	private static final Logger log = LoggerFactory.getLogger(ParliamentBridgeConfiguration.class);
 
 	private List<ConfigurationHandler> _configurationHandlers;

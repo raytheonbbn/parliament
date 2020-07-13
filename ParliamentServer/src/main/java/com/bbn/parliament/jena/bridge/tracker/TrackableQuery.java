@@ -69,8 +69,11 @@ public class TrackableQuery extends Trackable {
 		_qExec = !_query.hasDatasetDescription()
 			? QueryExecutionFactory.create(_query, ModelManager.inst().getDataset())
 			: QueryExecutionFactory.create(_query);
+			_log.info("after _qExec");
 			KbConfig cfg = ModelManager.inst().getDefaultGraphConfig();
+			_log.info("after defaultGraphConfig");
 			_qExec.setTimeout(cfg.m_timeoutDuration, cfg.m_timeoutUnit);
+			_log.info("after setTimeout");
 
 			// add a cancel flag to the query execution context. The context is a
 			// copy of the ARQ global context (The constructor for
@@ -95,8 +98,11 @@ public class TrackableQuery extends Trackable {
 
 	@Override
 	protected void doRun() {
+		
+		_log.info("before create");
 		createQueryExecution();
-
+		_log.info("after create");
+		
 		if (_query.isAskType()) {
 			_queryResult = _qExec.execAsk();
 		} else if (_query.isConstructType()) {
@@ -109,6 +115,7 @@ public class TrackableQuery extends Trackable {
 			_setFinishedOnRun = false;
 
 			_queryResult = new TrackableResultSet(_qExec.execSelect());
+
 		} else if (_query.isDescribeType()) {
 			_queryResult = _qExec.execDescribe();
 		}

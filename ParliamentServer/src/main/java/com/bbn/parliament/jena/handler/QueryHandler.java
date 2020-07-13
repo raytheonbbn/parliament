@@ -29,6 +29,7 @@ import com.bbn.parliament.jena.util.JsonLdRdfWriter;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryException;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.shared.JenaException;
@@ -55,8 +56,10 @@ public class QueryHandler {
 	public ResultSet execSelect(TrackableQuery trackable) {
 		try {
 			Query q = trackable.getQuery();
+			log.info("1st step");
 
 			trackable.run();
+			log.info("2nd step");
 
 			if (trackable.getQueryResult() == null) {
 				log.debug("No result");
@@ -75,14 +78,17 @@ public class QueryHandler {
 				final FileBackedResultSet fileBackedRS = new FileBackedResultSet(rs, tmpDir, threshold);
 				
 				ResultSet result = fileBackedRS.getResultSet();
+				log.info(ResultSetFormatter.asText(result));
 				fileBackedRS.delete();
+				
+				log.info(ResultSetFormatter.asText(result));
 
 				log.debug("OK/select");
 				
 				return result;
 			}
 		} catch(Exception e) {
-			
+			log.info(e.toString());
 		}
 		
 		return null;
