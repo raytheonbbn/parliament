@@ -28,3 +28,6 @@ out/
 ### VS Code ###
 .vscode/
 /.gradle/
+
+/libs/
+/kb-data/

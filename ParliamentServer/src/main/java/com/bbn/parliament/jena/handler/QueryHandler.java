@@ -56,10 +56,8 @@ public class QueryHandler {
 	public ResultSet execSelect(TrackableQuery trackable) {
 		try {
 			Query q = trackable.getQuery();
-			log.info("1st step");
 
 			trackable.run();
-			log.info("2nd step");
 
 			if (trackable.getQueryResult() == null) {
 				log.debug("No result");
@@ -78,10 +76,7 @@ public class QueryHandler {
 				final FileBackedResultSet fileBackedRS = new FileBackedResultSet(rs, tmpDir, threshold);
 				
 				ResultSet result = fileBackedRS.getResultSet();
-				log.info(ResultSetFormatter.asText(result));
 				fileBackedRS.delete();
-				
-				log.info(ResultSetFormatter.asText(result));
 
 				log.debug("OK/select");
 				

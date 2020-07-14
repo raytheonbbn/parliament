@@ -113,7 +113,7 @@ public class ActionRouter {
 	public ResultSet execQuery(String sparqlStmt, String requestor) throws Exception {
 		try {
 			QueryHandler handler = new QueryHandler();
-			log.info("In the Action Router now.");
+
 			//handler.init(initService, initImplementation); //removed
 	
 			TrackableQuery trackable = Tracker.getInstance().createQuery(sparqlStmt, requestor);
