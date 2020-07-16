@@ -1,3 +1,4 @@
+
 package com.bbn.parliament.spring.boot.service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 
+import java.io.OutputStream;
+
 public class QueryService {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(QueryService.class);
@@ -19,13 +22,28 @@ public class QueryService {
 		String host = getRequestor(request);
 		ActionRouter router = new ActionRouter();
 		
-		
 		try {
 			ResultSet result = router.execQuery(query, host);
-			return ResultSetFormatter.asText(result); //caution, low performance
+			//LOG.info(ResultSetFormatter.asText(result)); //caution, low performance
+			return ResultSetFormatter.asXMLString(result);
 		}
 		catch(Exception e) {
-			return "Error! " + e.toString();
+			return null;
+		}
+	}
+	
+	public static void doStream (String query, HttpServletRequest request, OutputStream out) {
+		
+		String host = getRequestor(request);
+		ActionRouter router = new ActionRouter();
+
+		try {
+			router.execQuery(query, host, out);
+			//LOG.info(ResultSetFormatter.asText(result)); //caution, low performance
+			//return ResultSetFormatter.asXMLString(result);
+		}
+		catch(Exception e) {
+
 		}
 	}
 	

@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 //import com.bbn.parliament.jena.joseki.bridge.servlet.ParliamentRequest;
 import com.bbn.parliament.jena.bridge.tracker.TrackableException;
 import com.bbn.parliament.jena.bridge.tracker.TrackableUpdate;
-import com.hp.hpl.jena.rdf.model.Resource;
+//import com.hp.hpl.jena.rdf.model.Resource;
 
 /**
  * @author dreid@bbn.com
@@ -27,10 +27,41 @@ import com.hp.hpl.jena.rdf.model.Resource;
  */
 public class UpdateHandler {
 	private static Logger log = LoggerFactory.getLogger(UpdateHandler.class);
+	
+	
+	public void execUpdate(TrackableUpdate trackable) throws Exception {
+		String updateQueryString = trackable.getQuery();
+		// handle request parsing...
+
+		if(updateQueryString == null) {
+			if (log.isDebugEnabled()) {
+				log.debug("No query argument");
+			}
+			throw new Exception("No query string");
+		}
+
+		if(updateQueryString.equals("")) {
+			if (log.isDebugEnabled()) {
+				log.debug("Empty query string");
+			}
+			throw new Exception("Empty query string");
+		}
+
+		try {
+			trackable.run();
+		} catch(TrackableException e) {
+			log.error("TrackableException", e);
+			throw new Exception(e.getMessage());
+		}
+
+		//resp.setOK();
+	}
 	/*
 	@Override
 	public void init(Resource service, Resource implementation) {
 	}
+	
+	
 
 	@SuppressWarnings("static-method")
 	public void execQuery(TrackableUpdate trackable, ParliamentRequest req, Response resp) throws QueryExecutionException {

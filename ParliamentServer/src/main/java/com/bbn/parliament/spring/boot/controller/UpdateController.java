@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bbn.parliament.spring.boot.service.UpdateService;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Controller for Spring Boot Server. Routes HTTP requests from /parliament/sparql to appropriate request method.
@@ -21,21 +24,25 @@ public class UpdateController {
 	private static final String SPARQL_UPDATE = "application/sparql-update";
 	
 	@PostMapping(value = ENDPOINT, consumes = URL_ENCODED, params = "update")
-	public String sparqlURLEncodeUpdatePOST(
+	public void sparqlURLEncodeUpdatePOST(
 			@RequestParam(value = "update") String update,
 			@RequestParam(value = "using-graph-uri", defaultValue = "") List<String> defaultGraphURI,
-			@RequestParam(value = "using-named-graph-uri", defaultValue = "") List<String> namedGraphURI) {
+			@RequestParam(value = "using-named-graph-uri", defaultValue = "") List<String> namedGraphURI,
+			HttpServletRequest request) {
 
-		return String.format("POST Success! Update: %s", update);
+		//return String.format("POST Success! Update: %s", update);
+		UpdateService.doUpdate(update, request);
 	}
 
 
 	@PostMapping(value = ENDPOINT, consumes = SPARQL_UPDATE)
-	public String sparqlDirectUpdatePOST(
+	public void sparqlDirectUpdatePOST(
 			@RequestParam(value = "using-graph-uri", defaultValue = "") List<String> defaultGraphURI,
 			@RequestParam(value = "using-named-graph-uri", defaultValue = "") List<String> namedGraphURI,
-			@RequestBody String update) {
+			@RequestBody String update,
+			HttpServletRequest request) {
 
-		return String.format("POST Success! Update: %s", update);
+		//return String.format("POST Success! Update: %s", update);
+		UpdateService.doUpdate(update, request);
 	}
 }

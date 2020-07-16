@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import java.io.OutputStream;
+import java.io.IOException;
+
 import javax.annotation.PostConstruct;
 
 import com.bbn.parliament.jena.bridge.ParliamentBridge;
@@ -19,7 +23,6 @@ import com.bnn.parliament.spring.boot.Application;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 
 /**
@@ -51,19 +54,39 @@ public class QueryController {
 	public String sparqlURLEncodeQueryPOST(
 			@RequestParam(value = "query") String query,
 			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
-			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI) {
+			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI, HttpServletRequest request) {
 
-		return String.format("POST Success! Query: %s", query);
+		return QueryService.doCommon(query, request);
 	}
 
 	@PostMapping(value = ENDPOINT, consumes = SPARQL_QUERY)
 	public String sparqlDirectQueryPOST(
 			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
 			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI,
-			@RequestBody String query) {
+			@RequestBody String query, HttpServletRequest request) {
 
-		return String.format("POST Success! Query: %s", query);
+		return QueryService.doCommon(query, request);
 	}
+	
+	
+	@GetMapping(value = ENDPOINT + "/stream", params = "query")
+	public StreamingResponseBody sparqlStreamGET(
+			@RequestParam(value = "query") String query,
+			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
+			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI, HttpServletRequest request) {
+		
+		return new StreamingResponseBody() {
+			@Override
+			public void writeTo(OutputStream out) throws IOException {
+				
+				QueryService.doStream(query, request, out);
+			}
+		};
+		//return String.format("GET Success! Testing changes Query: %1s, %2s", query, defaultGraphURI.toString());
+	}
+	
+	
+	
 	
 	@PostConstruct
 	public void initBridge() {

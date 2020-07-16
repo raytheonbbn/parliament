@@ -37,6 +37,8 @@ import com.hp.hpl.jena.query.QueryParseException;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Resource;
 
+import java.io.OutputStream;
+
 /**
  * Outer Joseki processor to route the request to the right handler.
  *
@@ -139,6 +141,58 @@ public class ActionRouter {
 				throw new Exception(msg);
 		}
 
+	}
+	
+	public void execQuery(String sparqlStmt, String requestor, OutputStream out) throws Exception {
+		try {
+			QueryHandler handler = new QueryHandler();
+
+			//handler.init(initService, initImplementation); //removed
+	
+			TrackableQuery trackable = Tracker.getInstance().createQuery(sparqlStmt, requestor);
+			SparqlStmtLogger.logSparqlStmt(sparqlStmt);
+			
+			//ResultSet result;
+	
+			getReadLock();
+			try {
+				handler.execSelect(trackable, out);
+			} finally {
+				releaseReadLock();
+				log.debug("Released read lock");
+			}
+			//return result;
+			
+		} catch (QueryParseException ex) {
+			String msg = String.format(
+					"Encountered an error while parsing query:%n    %1$s%n%n%2$s",
+					ex.getMessage(), sparqlStmt);
+				log.info(LogUtil.fixEolsForLogging(msg));
+				//throw new QueryExecutionException(ReturnCodes.rcQueryParseFailure, msg); //removed
+				throw new Exception(msg);
+		}
+
+	}
+	
+	public void execUpdate(String sparqlStmt, String requestor) {
+		try {
+			UpdateHandler handler = new UpdateHandler();
+			//handler.init(initService, initImplementation);
+	
+			TrackableUpdate trackable = Tracker.getInstance().createUpdate(sparqlStmt, requestor);
+			SparqlStmtLogger.logSparqlStmt(sparqlStmt);
+	
+			getWriteLock();
+			try {
+				handler.execUpdate(trackable);
+			} finally {
+				releaseWriteLock();
+				log.debug("Released write lock");
+			}
+		} catch (Exception e) {
+			//throw new Exception(e.toString());
+			log.info(e.toString());
+		}
 	}
 	
 	

@@ -36,6 +36,9 @@ import com.hp.hpl.jena.shared.JenaException;
 import com.hp.hpl.jena.shared.NotFoundException;
 import com.hp.hpl.jena.shared.QueryStageException;
 
+import java.io.OutputStream;
+
+
 
 /** @author ebenson@bbn.com */
 public class QueryHandler {
@@ -56,7 +59,6 @@ public class QueryHandler {
 	public ResultSet execSelect(TrackableQuery trackable) {
 		try {
 			Query q = trackable.getQuery();
-
 			trackable.run();
 
 			if (trackable.getQueryResult() == null) {
@@ -66,9 +68,6 @@ public class QueryHandler {
 			} else if (q.isSelectType()) {
 				ResultSet rs = trackable.getResultSet();
 				log.trace("Setting result set");
-
-				//ResultSetMem memoryRS = new ResultSetMem(rs);
-				//resp.setResultSet(memoryRS);
 
 				File tmpDir = ParliamentBridge.getInstance().getConfiguration().getTmpDir();
 				int threshold = ParliamentBridge.getInstance().getConfiguration().getDeferredFileOutputStreamThreshold();
@@ -87,6 +86,43 @@ public class QueryHandler {
 		}
 		
 		return null;
+	}
+	
+	
+	public void execSelect(TrackableQuery trackable, OutputStream out) {
+		try {
+			Query q = trackable.getQuery();
+			trackable.run();
+
+			if (trackable.getQueryResult() == null) {
+				log.debug("No result");
+				//throw new QueryExecutionException(ReturnCodes.rcServiceUnavailable, "No result"); //removed
+				throw new Exception("No result");
+			} else if (q.isSelectType()) {
+				ResultSet rs = trackable.getResultSet();
+				log.trace("Setting result set");
+
+				File tmpDir = ParliamentBridge.getInstance().getConfiguration().getTmpDir();
+				int threshold = ParliamentBridge.getInstance().getConfiguration().getDeferredFileOutputStreamThreshold();
+
+				final FileBackedResultSet fileBackedRS = new FileBackedResultSet(rs, tmpDir, threshold);
+				
+				ResultSet result = fileBackedRS.getResultSet();
+				
+				
+				ResultSetFormatter.outputAsXML(out, result);
+				
+				fileBackedRS.delete();
+
+				log.debug("OK/select");
+				
+				//return result;
+			}
+		} catch(Exception e) {
+			log.info(e.toString());
+		}
+		
+		//return null;
 	}
 	/*
 	@SuppressWarnings("static-method")
