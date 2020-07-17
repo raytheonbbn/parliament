@@ -39,6 +39,7 @@ public class QueryController {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(QueryController.class);
 
+	/*
 	@GetMapping(value = ENDPOINT, params = "query")
 	public String sparqlGET(
 			@RequestParam(value = "query") String query,
@@ -48,6 +49,7 @@ public class QueryController {
 		return QueryService.doCommon(query, request);
 		//return String.format("GET Success! Testing changes Query: %1s, %2s", query, defaultGraphURI.toString());
 	}
+	
 
 	// Spring does not allow the use of @RequestBody when using URL_ENCODED, so we must use @RequestParam
 	@PostMapping(value = ENDPOINT, consumes = URL_ENCODED, params = "query")
@@ -67,10 +69,11 @@ public class QueryController {
 
 		return QueryService.doCommon(query, request);
 	}
+	*/
 	
 	
-	@GetMapping(value = ENDPOINT + "/stream", params = "query")
-	public StreamingResponseBody sparqlStreamGET(
+	@GetMapping(value = ENDPOINT, params = "query")
+	public StreamingResponseBody sparqlGET(
 			@RequestParam(value = "query") String query,
 			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
 			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI, HttpServletRequest request) {
@@ -78,16 +81,42 @@ public class QueryController {
 		return new StreamingResponseBody() {
 			@Override
 			public void writeTo(OutputStream out) throws IOException {
-				
 				QueryService.doStream(query, request, out);
 			}
 		};
 		//return String.format("GET Success! Testing changes Query: %1s, %2s", query, defaultGraphURI.toString());
 	}
 	
-	
-	
-	
+	@PostMapping(value = ENDPOINT, consumes = URL_ENCODED, params = "query")
+	public StreamingResponseBody sparqlURLEncodeQueryPOST(
+			@RequestParam(value = "query") String query,
+			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
+			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI, HttpServletRequest request) {
+
+		return new StreamingResponseBody() {
+			@Override
+			public void writeTo(OutputStream out) throws IOException {	
+				QueryService.doStream(query, request, out);
+			}
+		};
+	}
+
+	@PostMapping(value = ENDPOINT, consumes = SPARQL_QUERY)
+	public StreamingResponseBody sparqlDirectQueryPOST(
+			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
+			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI,
+			@RequestBody String query, HttpServletRequest request) {
+
+		return new StreamingResponseBody() {
+			@Override
+			public void writeTo(OutputStream out) throws IOException {
+				QueryService.doStream(query, request, out);
+			}
+		};
+	}
+
+
+
 	@PostConstruct
 	public void initBridge() {
 
@@ -100,6 +129,4 @@ public class QueryController {
 		}
 		LOG.info("Parliament Bridge is now initialized");
 	}
-
-
 }

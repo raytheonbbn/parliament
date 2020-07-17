@@ -17,6 +17,7 @@ public class QueryService {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(QueryService.class);
 
+	/*
 	public static String doCommon (String query, HttpServletRequest request) {
 		
 		String host = getRequestor(request);
@@ -31,6 +32,7 @@ public class QueryService {
 			return null;
 		}
 	}
+	*/
 	
 	public static void doStream (String query, HttpServletRequest request, OutputStream out) {
 		
@@ -39,11 +41,9 @@ public class QueryService {
 
 		try {
 			router.execQuery(query, host, out);
-			//LOG.info(ResultSetFormatter.asText(result)); //caution, low performance
-			//return ResultSetFormatter.asXMLString(result);
 		}
 		catch(Exception e) {
-
+			LOG.info(e.toString());
 		}
 	}
 	

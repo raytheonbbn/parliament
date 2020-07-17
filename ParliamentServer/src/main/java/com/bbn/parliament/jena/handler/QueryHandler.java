@@ -56,6 +56,7 @@ public class QueryHandler {
 	}
 	*/
 	
+	/*
 	public ResultSet execSelect(TrackableQuery trackable) {
 		try {
 			Query q = trackable.getQuery();
@@ -87,7 +88,7 @@ public class QueryHandler {
 		
 		return null;
 	}
-	
+	*/
 	
 	public void execSelect(TrackableQuery trackable, OutputStream out) {
 		try {
@@ -96,27 +97,23 @@ public class QueryHandler {
 
 			if (trackable.getQueryResult() == null) {
 				log.debug("No result");
-				//throw new QueryExecutionException(ReturnCodes.rcServiceUnavailable, "No result"); //removed
 				throw new Exception("No result");
 			} else if (q.isSelectType()) {
 				ResultSet rs = trackable.getResultSet();
 				log.trace("Setting result set");
 
-				File tmpDir = ParliamentBridge.getInstance().getConfiguration().getTmpDir();
-				int threshold = ParliamentBridge.getInstance().getConfiguration().getDeferredFileOutputStreamThreshold();
+				//File tmpDir = ParliamentBridge.getInstance().getConfiguration().getTmpDir();
+				//int threshold = ParliamentBridge.getInstance().getConfiguration().getDeferredFileOutputStreamThreshold();
 
-				final FileBackedResultSet fileBackedRS = new FileBackedResultSet(rs, tmpDir, threshold);
+				//final FileBackedResultSet fileBackedRS = new FileBackedResultSet(rs, tmpDir, threshold);
 				
-				ResultSet result = fileBackedRS.getResultSet();
+				//ResultSet result = fileBackedRS.getResultSet();
 				
+				ResultSetFormatter.outputAsXML(out, rs);
 				
-				ResultSetFormatter.outputAsXML(out, result);
-				
-				fileBackedRS.delete();
+				//fileBackedRS.delete();
 
 				log.debug("OK/select");
-				
-				//return result;
 			}
 		} catch(Exception e) {
 			log.info(e.toString());

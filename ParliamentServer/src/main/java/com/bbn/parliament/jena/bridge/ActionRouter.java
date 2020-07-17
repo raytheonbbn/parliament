@@ -82,7 +82,6 @@ public class ActionRouter {
 	*/
 	
 	/*
-
 	private static String formatRequestParticulars(ParliamentRequest preq, String msg) {
 		HttpServletRequest hsr = preq.getHttpReq();
 		StringBuilder params = new StringBuilder();
@@ -140,19 +139,15 @@ public class ActionRouter {
 				//throw new QueryExecutionException(ReturnCodes.rcQueryParseFailure, msg); //removed
 				throw new Exception(msg);
 		}
-
 	}
+	
 	
 	public void execQuery(String sparqlStmt, String requestor, OutputStream out) throws Exception {
 		try {
 			QueryHandler handler = new QueryHandler();
-
-			//handler.init(initService, initImplementation); //removed
 	
 			TrackableQuery trackable = Tracker.getInstance().createQuery(sparqlStmt, requestor);
 			SparqlStmtLogger.logSparqlStmt(sparqlStmt);
-			
-			//ResultSet result;
 	
 			getReadLock();
 			try {
@@ -161,7 +156,6 @@ public class ActionRouter {
 				releaseReadLock();
 				log.debug("Released read lock");
 			}
-			//return result;
 			
 		} catch (QueryParseException ex) {
 			String msg = String.format(
@@ -171,7 +165,6 @@ public class ActionRouter {
 				//throw new QueryExecutionException(ReturnCodes.rcQueryParseFailure, msg); //removed
 				throw new Exception(msg);
 		}
-
 	}
 	
 	public void execUpdate(String sparqlStmt, String requestor) {
