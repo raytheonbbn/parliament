@@ -20,13 +20,15 @@ dependencies {
 	implementation 'org.slf4j:jcl-over-slf4j:1.7.21'
 
 
-
-
-
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
+
+	implementation 'io.rest-assured:rest-assured:4.2.0'
+ 	implementation 'io.rest-assured:json-path:4.2.0'
+ 	implementation 'io.rest-assured:xml-path:4.2.0'
+	implementation 'org.hamcrest:hamcrest:2.2'
 
 
 }

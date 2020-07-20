@@ -111,6 +111,7 @@ public class ActionRouter {
 	//resp.setHeader("Content-Type", "application/json");
 	/** Handles incoming connection and routes to the appropriate handler. */
 	
+	/*
 	public ResultSet execQuery(String sparqlStmt, String requestor) throws Exception {
 		try {
 			QueryHandler handler = new QueryHandler();
@@ -140,6 +141,7 @@ public class ActionRouter {
 				throw new Exception(msg);
 		}
 	}
+	*/
 	
 	
 	public void execQuery(String sparqlStmt, String requestor, OutputStream out) throws Exception {
