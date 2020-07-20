@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public class UpdateController {
 
-	private static final String ENDPOINT = "/parliament/update";
+	private static final String ENDPOINT = "/parliament/sparql";
 	private static final String URL_ENCODED = "application/x-www-form-urlencoded";
 	private static final String SPARQL_UPDATE = "application/sparql-update";
 	
