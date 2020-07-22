@@ -42,3 +42,12 @@ configurations {
 test {
 	useJUnitPlatform()
 }
+
+task copyTestResources(type: Copy) {
+	from '${projectDir}/src/test/resources'
+	into '${buildDir}/classes/java/test'
+}
+
+subprojects {
+junitPlatformTest.dependsOn copyTestResources
+}

@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
 import java.io.OutputStream;
 import java.io.IOException;
 
@@ -23,6 +25,8 @@ import com.bnn.parliament.spring.boot.Application;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
 
 
 /**
@@ -38,6 +42,9 @@ public class QueryController {
 	private static final String DEFAULT_GRAPH = null;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(QueryController.class);
+	
+	@Autowired
+	private QueryService queryService;
 
 	/*
 	@GetMapping(value = ENDPOINT, params = "query")
@@ -81,7 +88,7 @@ public class QueryController {
 		return new StreamingResponseBody() {
 			@Override
 			public void writeTo(OutputStream out) throws IOException {
-				QueryService.doStream(query, request, out);
+				queryService.doStream(query, request, out);
 			}
 		};
 		//return String.format("GET Success! Testing changes Query: %1s, %2s", query, defaultGraphURI.toString());
@@ -96,7 +103,7 @@ public class QueryController {
 		return new StreamingResponseBody() {
 			@Override
 			public void writeTo(OutputStream out) throws IOException {	
-				QueryService.doStream(query, request, out);
+				queryService.doStream(query, request, out);
 			}
 		};
 	}
@@ -110,7 +117,7 @@ public class QueryController {
 		return new StreamingResponseBody() {
 			@Override
 			public void writeTo(OutputStream out) throws IOException {
-				QueryService.doStream(query, request, out);
+				queryService.doStream(query, request, out);
 			}
 		};
 	}

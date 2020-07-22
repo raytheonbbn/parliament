@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author pwilliams
  */
 @SpringBootApplication
-@ComponentScan("com.bbn.parliament.spring.boot.controller")
+@ComponentScan({"com.bbn.parliament.spring.boot.controller", "com.bbn.parliament.spring.boot.service", "com.bbn.parliament.jena.bridge"})
 
 public class Application {
 	

@@ -7,6 +7,7 @@
 package com.bbn.parliament.jena.bridge;
 
 import java.util.Map;
+
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -39,6 +40,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 
 import java.io.OutputStream;
 
+import org.springframework.stereotype.Component;
 /**
  * Outer Joseki processor to route the request to the right handler.
  *
@@ -64,6 +66,10 @@ import java.io.OutputStream;
  * sallen (4/23/2009) - Moved bulk operations to the BulkServlet.  This class
  * now only handles SPARQL and SPARQL/Update queries.
  */
+
+
+
+@Component("actionRouter")
 public class ActionRouter {
 	public static final boolean FAIR_READ_WRITE_LOCK = true;
 

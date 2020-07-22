@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bbn.parliament.spring.boot.service.UpdateService;
 
@@ -19,9 +20,12 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public class UpdateController {
 
-	private static final String ENDPOINT = "/parliament/sparql";
+	private static final String ENDPOINT = "/parliament/update";
 	private static final String URL_ENCODED = "application/x-www-form-urlencoded";
 	private static final String SPARQL_UPDATE = "application/sparql-update";
+	
+	@Autowired
+	private UpdateService updateService;
 	
 	@PostMapping(value = ENDPOINT, consumes = URL_ENCODED, params = "update")
 	public void sparqlURLEncodeUpdatePOST(
@@ -31,7 +35,7 @@ public class UpdateController {
 			HttpServletRequest request) {
 
 		//return String.format("POST Success! Update: %s", update);
-		UpdateService.doUpdate(update, request);
+		updateService.doUpdate(update, request);
 	}
 
 
@@ -43,6 +47,6 @@ public class UpdateController {
 			HttpServletRequest request) {
 
 		//return String.format("POST Success! Update: %s", update);
-		UpdateService.doUpdate(update, request);
+		updateService.doUpdate(update, request);
 	}
 }

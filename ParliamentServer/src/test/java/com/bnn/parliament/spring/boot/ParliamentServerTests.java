@@ -443,7 +443,7 @@ public class ParliamentServerTests {
 
 	@Test
 	public void csvQuotingTest() throws IOException {
-		try (InputStream is = getClass().getResourceAsStream(CSV_QUOTE_TEST_INPUT)) {
+		try (InputStream is = getClass().getClassLoader().getResourceAsStream(CSV_QUOTE_TEST_INPUT)) {
 			if (is == null) {
 				fail(String.format("Unable to find resource '%1$s'", CSV_QUOTE_TEST_INPUT));
 			}

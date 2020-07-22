@@ -13,9 +13,16 @@ import com.hp.hpl.jena.query.ResultSetFormatter;
 
 import java.io.OutputStream;
 
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@Component("queryService")
 public class QueryService {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(QueryService.class);
+	
+	@Autowired
+	private ActionRouter actionRouter;
 
 	/*
 	public static String doCommon (String query, HttpServletRequest request) {
@@ -34,13 +41,11 @@ public class QueryService {
 	}
 	*/
 	
-	public static void doStream (String query, HttpServletRequest request, OutputStream out) {
-		
+	public void doStream (String query, HttpServletRequest request, OutputStream out) {
 		String host = getRequestor(request);
-		ActionRouter router = new ActionRouter();
 
 		try {
-			router.execQuery(query, host, out);
+			actionRouter.execQuery(query, host, out);
 		}
 		catch(Exception e) {
 			LOG.info(e.toString());
@@ -49,7 +54,7 @@ public class QueryService {
 	
 	
 	//Taken from ParliamentRequest.java
-	private static String getRequestor(HttpServletRequest request) { 
+	private String getRequestor(HttpServletRequest request) { 
 		String host = request.getRemoteHost();
 		if (host == null || host.isEmpty()) {
 			host = request.getRemoteAddr();

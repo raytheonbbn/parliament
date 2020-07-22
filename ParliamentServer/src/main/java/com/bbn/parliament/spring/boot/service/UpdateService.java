@@ -7,23 +7,30 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+
+
+@Component("updateService")
 public class UpdateService {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(QueryService.class);
 	
-	public static void doUpdate(String update, HttpServletRequest request) {
+	@Autowired
+	private ActionRouter actionRouter;
+	
+	public void doUpdate(String update, HttpServletRequest request) {
 		String host = getRequestor(request);
-		ActionRouter router = new ActionRouter();
 		
 		try {
-			router.execUpdate(update, host);
+			actionRouter.execUpdate(update, host);
 		} catch (Exception e) {
 			LOG.info(e.toString());
 		}
 	}
 	
 	
-	private static String getRequestor(HttpServletRequest request) { 
+	private String getRequestor(HttpServletRequest request) { 
 		String host = request.getRemoteHost();
 		if (host == null || host.isEmpty()) {
 			host = request.getRemoteAddr();
