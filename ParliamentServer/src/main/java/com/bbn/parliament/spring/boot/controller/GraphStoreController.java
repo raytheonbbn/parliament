@@ -9,7 +9,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import com.bbn.parliament.spring.boot.service.GraphStoreService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Controller for Spring Boot Server. Routes HTTP requests from /parliament/sparql to appropriate request method.
  *
@@ -20,6 +25,9 @@ public class GraphStoreController {
 
 	private static final String ENDPOINT = "/parliament/graphstore";
 	private static final String DEFAULT_GRAPH = null;
+	
+	@Autowired
+	GraphStoreService graphStoreService;
 	
 	
 	//HEAD mapping automatically supported by GET mapping
@@ -34,13 +42,16 @@ public class GraphStoreController {
 	}
 
 	@PutMapping(value = ENDPOINT, params = "graph")
-	public String sparqlGraphPUT(@RequestParam(value = "graph") String graphURI, @RequestBody String payload) {
-		return String.format("The payload is: %s", payload);
+	public void sparqlGraphPUT(@RequestParam(value = "graph") String graphURI, @RequestBody String payload,
+			HttpServletRequest req, HttpServletResponse resp) {
+		
+		graphStoreService.doPut(req, resp);
 	}
 
 	@PutMapping(value = ENDPOINT, params = "default")
-	public String sparqlGraphDefaultPUT(@RequestParam(value = "default") String defaultGraph, @RequestBody String payload) {
-		return sparqlGraphPUT(DEFAULT_GRAPH, payload);
+	public void sparqlGraphDefaultPUT(@RequestParam(value = "default") String defaultGraph, @RequestBody String payload,
+			HttpServletRequest req, HttpServletResponse resp) {
+		sparqlGraphPUT(DEFAULT_GRAPH, payload, req, resp);
 	}
 
 	@DeleteMapping(value = ENDPOINT, params = "graph")

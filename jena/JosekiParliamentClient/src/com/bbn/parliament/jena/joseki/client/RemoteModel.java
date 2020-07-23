@@ -46,6 +46,8 @@ public class RemoteModel {
 	/** %1 is the host name, %2 is the port */
 	public static final String DEFAULT_SPARQL_ENDPOINT_URL = "http://%1$s:%2$s/parliament/sparql";
 	/** %1 is the host name, %2 is the port */
+	public static final String DEFAULT_UPDATE_ENDPOINT_URL = "http://%1$s:%2$s/parliament/update";
+	/** %1 is the host name, %2 is the port */
 	public static final String DEFAULT_BULK_ENDPOINT_URL = "http://%1$s:%2$s/parliament/bulk";
 
 	public static final String PARLIAMENT_NS = "http://parliament.semwebcentral.org/parliament#";
