@@ -11,17 +11,21 @@ import com.bbn.parliament.jena.handler.ClearHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("graphStoreService")
 public class GraphStoreService {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(QueryService.class);
 
-	public static void doGet(HttpServletRequest req, HttpServletResponse resp) {
+	public static void doGet(String graphURI, HttpServletRequest req, HttpServletResponse resp) {
 		
 		try {
 			//all encompassing construct on specified graph
 			
 			ExportHandler handler = new ExportHandler();
-			handler.handleRequest(req, resp);
+			handler.handleFormURLEncodedRequest(req, resp);
 			
 		} catch (Exception e) {
 			
@@ -42,15 +46,15 @@ public class GraphStoreService {
 		}
 	}
 	
-	public static void doDelete(HttpServletRequest req, HttpServletResponse resp) {
+	public static void doDelete(String graphURI, HttpServletRequest req, HttpServletResponse resp) {
 		
 		try {
 			//delete graph
-			ClearHandler handler = new InsertHandler();
-			handler.handleRequest(req, resp);
+			ClearHandler handler = new ClearHandler();
+			handler.handleFormURLEncodedRequest(graphURI, req, resp);
 			
 		} catch (Exception e) {
-			
+			LOG.info(e.toString());
 		}
 	}
 	

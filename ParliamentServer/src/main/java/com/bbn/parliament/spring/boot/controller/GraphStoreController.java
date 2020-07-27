@@ -32,36 +32,33 @@ public class GraphStoreController {
 	
 	//HEAD mapping automatically supported by GET mapping
 	@GetMapping(value = ENDPOINT, params = "graph")
-	public String sparqlGraphGET(@RequestParam(value = "graph") String graphURI) {
-		return String.format("placeholder");
+	public void sparqlGraphGET(@RequestParam(value = "graph") String graphURI, HttpServletRequest req, HttpServletResponse resp) {
+		graphStoreService.doGet(graphURI, req, resp);
 	}
 
 	@GetMapping(value = ENDPOINT, params = "default")
-	public String sparqlGraphDefaultGET(@RequestParam(value = "default") String defaultGraph) {
-		return sparqlGraphGET(DEFAULT_GRAPH);
+	public void sparqlGraphDefaultGET(@RequestParam(value = "default") String defaultGraph, HttpServletRequest req, HttpServletResponse resp) {
+		sparqlGraphGET(DEFAULT_GRAPH, req, resp);
 	}
 
 	@PutMapping(value = ENDPOINT, params = "graph")
-	public void sparqlGraphPUT(@RequestParam(value = "graph") String graphURI, @RequestBody String payload,
-			HttpServletRequest req, HttpServletResponse resp) {
-		
+	public void sparqlGraphPUT(@RequestParam(value = "graph") String graphURI, HttpServletRequest req, HttpServletResponse resp) {
 		graphStoreService.doPut(req, resp);
 	}
 
 	@PutMapping(value = ENDPOINT, params = "default")
-	public void sparqlGraphDefaultPUT(@RequestParam(value = "default") String defaultGraph, @RequestBody String payload,
-			HttpServletRequest req, HttpServletResponse resp) {
-		sparqlGraphPUT(DEFAULT_GRAPH, payload, req, resp);
+	public void sparqlGraphDefaultPUT(@RequestParam(value = "default") String defaultGraph, HttpServletRequest req, HttpServletResponse resp) {
+		sparqlGraphPUT(DEFAULT_GRAPH, req, resp);
 	}
 
 	@DeleteMapping(value = ENDPOINT, params = "graph")
-	public String sparqlGraphDELETE() {
-		return String.format("placeholder");
+	public void sparqlGraphDELETE(@RequestParam(value = "graph") String graphURI, HttpServletRequest req, HttpServletResponse resp) {
+		graphStoreService.doDelete(graphURI, req, resp);
 	}
 
 	@DeleteMapping(value = ENDPOINT, params = "default")
-	public String sparqlGraphDefaultDELETE() {
-		return String.format("placeholder");
+	public void sparqlGraphDefaultDELETE(HttpServletRequest req, HttpServletResponse resp) {
+		sparqlGraphDELETE(DEFAULT_GRAPH, req, resp);
 	}
 
 	@PostMapping(value = ENDPOINT, params = "graph")
