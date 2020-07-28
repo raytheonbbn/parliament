@@ -122,7 +122,6 @@ public class Inserter {
 						dataFormat);
 				}
 			}
-
 			// Disable this check for now.  Assume the user knows what he's doing if he wants to add stuff to the Master Graph.
 			//checkIfMaster(graphName);
 

@@ -43,7 +43,7 @@ public class GraphStoreController {
 
 	@PutMapping(value = ENDPOINT, params = "graph")
 	public void sparqlGraphPUT(@RequestParam(value = "graph") String graphURI, HttpServletRequest req, HttpServletResponse resp) {
-		graphStoreService.doPut(req, resp);
+		graphStoreService.doPut(graphURI, req, resp);
 	}
 
 	@PutMapping(value = ENDPOINT, params = "default")
@@ -62,22 +62,23 @@ public class GraphStoreController {
 	}
 
 	@PostMapping(value = ENDPOINT, params = "graph")
-	public String sparqlGraphPOST(@RequestParam(value = "graph") String graphURI, @RequestBody String payload) {
-		return String.format("The payload is: %s", payload);
+	public void sparqlGraphPOST(@RequestParam(value = "graph") String graphURI, HttpServletRequest req, HttpServletResponse resp) {
+		graphStoreService.doPost(req, resp);
 	}
 
 	@PostMapping(value = ENDPOINT, params = "default")
-	public String sparqlGraphDefaultPOST(@RequestParam(value = "default") String defaultGraph, @RequestBody String payload) {
-		return sparqlGraphPOST(DEFAULT_GRAPH, payload);
+	public void sparqlGraphDefaultPOST(@RequestParam(value = "default") String defaultGraph, HttpServletRequest req, HttpServletResponse resp) {
+		sparqlGraphPOST(DEFAULT_GRAPH, req, resp);
 	}
 
 	@PatchMapping(value = ENDPOINT, params = "graph")
-	public String sparqlGraphPATCH(@RequestParam(value = "graph") String graphURI, @RequestBody String payload) {
-		return String.format("The payload is: %s", payload);
+	public void sparqlGraphPATCH(@RequestParam(value = "graph") String graphURI, HttpServletRequest req, HttpServletResponse resp) {
+		graphStoreService.doPatch(req, resp);
 	}
 
 	@PatchMapping(value = ENDPOINT, params = "default")
-	public String sparqlGraphDefaultPATCH(@RequestParam(value = "default") String defaultGraph, @RequestBody String payload) {
-		return sparqlGraphPATCH(DEFAULT_GRAPH, payload);
+	public void sparqlGraphDefaultPATCH(@RequestParam(value = "default") String defaultGraph, HttpServletRequest req, HttpServletResponse resp) {
+		sparqlGraphPATCH(DEFAULT_GRAPH, req, resp);
 	}
+
 }

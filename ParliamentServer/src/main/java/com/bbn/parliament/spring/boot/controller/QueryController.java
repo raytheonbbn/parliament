@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.OutputStream;
+import java.io.File;
 import java.io.IOException;
 
 import javax.annotation.PostConstruct;
@@ -25,6 +26,8 @@ import com.bnn.parliament.spring.boot.Application;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.bbn.parliament.jena.bridge.util.HttpServerUtil;
 
 
 
@@ -135,5 +138,10 @@ public class QueryController {
 			LOG.info("Error occured while initializing Parliament: {}", e.toString());
 		}
 		LOG.info("Parliament Bridge is now initialized");
+		
+		ParliamentBridge bridge = ParliamentBridge.getInstance();
+		File tmpDir = bridge.getConfiguration().getTmpDir();
+		int threshold = bridge.getConfiguration().getDeferredFileOutputStreamThreshold();
+		HttpServerUtil.init(tmpDir, threshold);
 	}
 }
