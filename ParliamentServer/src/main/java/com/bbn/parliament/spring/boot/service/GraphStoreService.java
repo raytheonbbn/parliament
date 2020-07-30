@@ -1,6 +1,8 @@
 package com.bbn.parliament.spring.boot.service;
 
 
+import java.io.InputStream;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,6 +13,7 @@ import com.bbn.parliament.jena.bridge.ActionRouter;
 
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,23 +39,18 @@ public class GraphStoreService {
 		}
 	}
 	
-	public void doPut(String graphURI, HttpServletRequest req, HttpServletResponse resp) {
+	public void doPut(String contentType, String graphURI, HttpEntity<byte[]> requestEntity, HttpServletRequest req, HttpServletResponse resp) {
 		
 		try {
 			//delete graph
 			String sparqlStmt;
 			
-			if (graphURI == null) {
-				sparqlStmt = "DROP DEFAULT ;";
-			}
-			else {
-				sparqlStmt = String.format("DROP GRAPH <%1s> ;", graphURI);	
-			}
+			sparqlStmt = (graphURI == null) ? "DROP DEFAULT ;" : String.format("DROP GRAPH <%1s> ;", graphURI);
+			
 			actionRouter.execUpdate(sparqlStmt, "Parliament-GraphStoreService");
 			
 			//set graph
-			InsertHandler handler = new InsertHandler();
-			handler.handleRequest(req, resp);
+			 doPost(contentType, graphURI, requestEntity, req, resp);
 			
 		} catch (Exception e) {
 			LOG.info(e.toString());
@@ -71,12 +69,12 @@ public class GraphStoreService {
 		}
 	}
 	
-	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(String contentType, String graphURI, HttpEntity<byte[]> requestEntity, HttpServletRequest req, HttpServletResponse resp) {
 		
 		try {
 			//update graph
 			InsertHandler handler = new InsertHandler();
-			handler.handleRequest(req, resp);
+			handler.handleRequest(contentType, graphURI, req.getRemoteAddr(), requestEntity, resp);
 			
 		} catch (Exception e) {
 			LOG.info(e.toString());

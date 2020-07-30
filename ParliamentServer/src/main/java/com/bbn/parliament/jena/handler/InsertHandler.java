@@ -19,6 +19,8 @@ import org.apache.commons.fileupload.FileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.http.HttpEntity;
+
 import com.bbn.parliament.jena.bridge.ActionRouter;
 import com.bbn.parliament.jena.bridge.servlet.ServletErrorResponseException;
 import com.bbn.parliament.jena.bridge.tracker.TrackableException;
@@ -27,6 +29,7 @@ import com.bbn.parliament.jena.bridge.tracker.Tracker;
 import com.bbn.parliament.jena.bridge.util.HttpServerUtil;
 import com.bbn.parliament.jena.bridge.util.LogUtil;
 import com.bbn.parliament.jena.handler.Inserter.IInputStreamProvider;
+
 
 /** @author sallen */
 public class InsertHandler extends AbstractHandler {
@@ -60,6 +63,25 @@ public class InsertHandler extends AbstractHandler {
 			}
 			handleFormURLEncodedRequest(req, resp);
 		}
+	}
+	
+	public void handleRequest(String contentType, String graphURI, String remoteAddr, HttpEntity<byte[]> requestEntity, HttpServletResponse resp)
+		throws IOException, ServletErrorResponseException {
+		String verifyString = "yes";
+		String importString = "no";
+		if (graphURI == null) {
+			graphURI = "";
+		}
+		
+		IInputStreamProvider strmPrvdr = null;
+		strmPrvdr = new IInputStreamProvider() {
+			@Override
+			public InputStream getInputStream() throws IOException {
+				return new ByteArrayInputStream(requestEntity.getBody());
+			}
+		};
+		
+		handleRequest(resp, graphURI, strmPrvdr, contentType, null, verifyString, importString, null, remoteAddr);
 	}
 
 	/** Get request parameters (x-www-form-urlencoded) */
@@ -136,6 +158,50 @@ public class InsertHandler extends AbstractHandler {
 
 		Inserter inserter = new Inserter(graphName, strmPrvdr, dataFormat, base, verifyString, importString, filename);
 		TrackableInsert ti = Tracker.getInstance().createInsert(inserter, req.getRemoteAddr());
+
+		ActionRouter.getWriteLock();
+		try {
+			ti.run();
+			numStatements = ti.getInserter().getNumStatements();
+		}
+		catch(TrackableException e) {
+			if (e.getCause() instanceof ServletErrorResponseException) {
+				throw (ServletErrorResponseException)e.getCause();
+			} else {
+				throw new ServletErrorResponseException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e,
+					"Error while running insert\n\n" + LogUtil.getExceptionInfo(e));
+			}
+		} finally {
+			ActionRouter.releaseWriteLock();
+		}
+
+		String msg = "Insert operation successful.";
+		if (numStatements == 1) {
+			msg = "Insert operation successful.  1 statement added.";
+		}
+		else if (numStatements >= 0) {
+			msg = String.format(
+				"Insert operation successful.  %1$d statements added.",
+				numStatements);
+		}
+		sendSuccess(msg, resp);
+	}
+	
+	
+	@SuppressWarnings("static-method")
+	protected void handleRequest(HttpServletResponse resp,
+		String graphName, IInputStreamProvider strmPrvdr, String dataFormat,
+		String base, String verifyString, String importString, String filename, String remoteAddr)
+			throws IOException, ServletErrorResponseException {
+
+		if (strmPrvdr == null) {
+			throw new ServletErrorResponseException("RDF data is missing");
+		}
+
+		long numStatements = -1;
+
+		Inserter inserter = new Inserter(graphName, strmPrvdr, dataFormat, base, verifyString, importString, filename);
+		TrackableInsert ti = Tracker.getInstance().createInsert(inserter, remoteAddr);
 
 		ActionRouter.getWriteLock();
 		try {

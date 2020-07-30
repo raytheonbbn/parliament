@@ -24,8 +24,10 @@ import com.bbn.parliament.jena.graph.ForgetfulGraph;
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.graph.ModelManager;
 import com.bbn.parliament.jena.bridge.servlet.ServletErrorResponseException;
-import com.bbn.parliament.jena.client.RDFFormat;
 import com.bbn.parliament.jena.util.JsonLdRdfReader;
+
+import com.bbn.parliament.jena.joseki.client.RDFFormat;
+
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -116,7 +118,7 @@ public class Inserter {
 					}
 				}
 			} else {
-				format = RDFFormat.parse(dataFormat);
+				format = RDFFormat.parseMediaType(dataFormat);
 				if (RDFFormat.UNKNOWN == format) {
 					throw new ServletErrorResponseException("Unsupported data format \"%1$s\"",
 						dataFormat);

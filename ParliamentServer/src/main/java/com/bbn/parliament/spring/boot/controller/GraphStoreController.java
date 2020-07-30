@@ -8,13 +8,23 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestHeader;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.http.HttpEntity;
+
+import java.io.ByteArrayInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.bbn.parliament.spring.boot.service.GraphStoreService;
+import com.bbn.parliament.spring.boot.service.QueryService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Controller for Spring Boot Server. Routes HTTP requests from /parliament/sparql to appropriate request method.
  *
@@ -25,6 +35,8 @@ public class GraphStoreController {
 
 	private static final String ENDPOINT = "/parliament/graphstore";
 	private static final String DEFAULT_GRAPH = null;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(QueryService.class);
 	
 	@Autowired
 	GraphStoreService graphStoreService;
@@ -42,13 +54,21 @@ public class GraphStoreController {
 	}
 
 	@PutMapping(value = ENDPOINT, params = "graph")
-	public void sparqlGraphPUT(@RequestParam(value = "graph") String graphURI, HttpServletRequest req, HttpServletResponse resp) {
-		graphStoreService.doPut(graphURI, req, resp);
+	public void sparqlGraphPUT(
+			@RequestHeader(value = "Content-Type") String contentType, 
+			@RequestParam(value = "graph") String graphURI,
+			HttpEntity<byte[]> requestEntity, 
+			HttpServletRequest res, HttpServletResponse resp) {
+		graphStoreService.doPut(contentType, graphURI, requestEntity, res, resp);
 	}
 
 	@PutMapping(value = ENDPOINT, params = "default")
-	public void sparqlGraphDefaultPUT(@RequestParam(value = "default") String defaultGraph, HttpServletRequest req, HttpServletResponse resp) {
-		sparqlGraphPUT(DEFAULT_GRAPH, req, resp);
+	public void sparqlGraphDefaultPUT(
+			@RequestHeader(value = "Content-Type") String contentType, 
+			@RequestParam(value = "default") String defaultGraph, 
+			HttpEntity<byte[]> requestEntity, 
+			HttpServletRequest res, HttpServletResponse resp) {
+		sparqlGraphPUT(contentType, DEFAULT_GRAPH, requestEntity, res, resp);
 	}
 
 	@DeleteMapping(value = ENDPOINT, params = "graph")
@@ -62,13 +82,21 @@ public class GraphStoreController {
 	}
 
 	@PostMapping(value = ENDPOINT, params = "graph")
-	public void sparqlGraphPOST(@RequestParam(value = "graph") String graphURI, HttpServletRequest req, HttpServletResponse resp) {
-		graphStoreService.doPost(req, resp);
+	public void sparqlGraphPOST(
+			@RequestHeader(value = "Content-Type") String contentType, 
+			@RequestParam(value = "graph") String graphURI,
+			HttpEntity<byte[]> requestEntity, 
+			HttpServletRequest res, HttpServletResponse resp) {
+		graphStoreService.doPost(contentType, graphURI, requestEntity, res, resp);
 	}
 
 	@PostMapping(value = ENDPOINT, params = "default")
-	public void sparqlGraphDefaultPOST(@RequestParam(value = "default") String defaultGraph, HttpServletRequest req, HttpServletResponse resp) {
-		sparqlGraphPOST(DEFAULT_GRAPH, req, resp);
+	public void sparqlGraphDefaultPOST(
+			@RequestHeader(value = "Content-Type") String contentType, 
+			@RequestParam(value = "default") String defaultGraph, 
+			HttpEntity<byte[]> requestEntity, 
+			HttpServletRequest res, HttpServletResponse resp) {
+		sparqlGraphPOST(contentType, DEFAULT_GRAPH, requestEntity, res, resp);
 	}
 
 	@PatchMapping(value = ENDPOINT, params = "graph")
