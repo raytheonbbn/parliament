@@ -20,14 +20,12 @@ import java.util.zip.ZipInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bbn.parliament.jena.bridge.servlet.ServletErrorResponseException;
 import com.bbn.parliament.jena.graph.ForgetfulGraph;
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.graph.ModelManager;
-import com.bbn.parliament.jena.bridge.servlet.ServletErrorResponseException;
-import com.bbn.parliament.jena.util.JsonLdRdfReader;
-
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
-
+import com.bbn.parliament.jena.util.JsonLdRdfReader;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -95,6 +93,7 @@ public class Inserter {
 		} else {
 			if (LOG.isInfoEnabled()) {
 				LOG.info("FILE OR TEXT INSERT");
+				LOG.info("Filename: " + filename);
 			}
 
 			// Determine the RDF serialization format by looking at the file extension:
@@ -118,7 +117,12 @@ public class Inserter {
 					}
 				}
 			} else {
-				format = RDFFormat.parseMediaType(dataFormat);
+				if (filename == null) {
+					format = RDFFormat.parseMediaType(dataFormat);
+				} else {
+					format = RDFFormat.parseFilename(filename);
+				}
+
 				if (RDFFormat.UNKNOWN == format) {
 					throw new ServletErrorResponseException("Unsupported data format \"%1$s\"",
 						dataFormat);

@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.http.HttpEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bbn.parliament.jena.bridge.ActionRouter;
 import com.bbn.parliament.jena.bridge.servlet.ServletErrorResponseException;
@@ -64,7 +64,7 @@ public class InsertHandler extends AbstractHandler {
 			handleFormURLEncodedRequest(req, resp);
 		}
 	}
-	
+
 	public void handleRequest(String contentType, String graphURI, String remoteAddr, HttpEntity<byte[]> requestEntity, HttpServletResponse resp)
 		throws IOException, ServletErrorResponseException {
 		String verifyString = "yes";
@@ -72,7 +72,7 @@ public class InsertHandler extends AbstractHandler {
 		if (graphURI == null) {
 			graphURI = "";
 		}
-		
+
 		IInputStreamProvider strmPrvdr = null;
 		strmPrvdr = new IInputStreamProvider() {
 			@Override
@@ -80,9 +80,34 @@ public class InsertHandler extends AbstractHandler {
 				return new ByteArrayInputStream(requestEntity.getBody());
 			}
 		};
-		
+
 		handleRequest(resp, graphURI, strmPrvdr, contentType, null, verifyString, importString, null, remoteAddr);
 	}
+
+
+	public void handleFileRequest(String contentType, String graphURI, String remoteAddr, MultipartFile[] files, HttpServletResponse resp)
+			throws IOException, ServletErrorResponseException {
+			String verifyString = "yes";
+			String importString = "no";
+			if (graphURI == null) {
+				graphURI = "";
+			}
+
+			IInputStreamProvider[] strmPrvdr = new IInputStreamProvider[files.length];
+			String[] filenames = new String[files.length];
+
+			for (int i = 0; i < files.length; i++) {
+				MultipartFile file = files[i];
+				filenames[i] = file.getOriginalFilename();
+				strmPrvdr[i] = new IInputStreamProvider() {
+					@Override
+					public InputStream getInputStream() throws IOException {
+						return file.getInputStream();
+					}
+				};
+			}
+			handleFileRequest(resp, graphURI, strmPrvdr, contentType, null, verifyString, importString, filenames, remoteAddr);
+		}
 
 	/** Get request parameters (x-www-form-urlencoded) */
 	@Override
@@ -144,6 +169,7 @@ public class InsertHandler extends AbstractHandler {
 		}
 	}
 
+	//old one
 	@SuppressWarnings("static-method")
 	protected void handleRequest(HttpServletRequest req, HttpServletResponse resp,
 		String graphName, IInputStreamProvider strmPrvdr, String dataFormat,
@@ -186,8 +212,54 @@ public class InsertHandler extends AbstractHandler {
 		}
 		sendSuccess(msg, resp);
 	}
-	
-	
+
+	@SuppressWarnings("static-method")
+	protected void handleFileRequest(HttpServletResponse resp,
+			String graphName, IInputStreamProvider[] strmPrvdr, String dataFormat,
+			String base, String verifyString, String importString, String[] filenames, String remoteAddr)
+			throws IOException, ServletErrorResponseException {
+
+		if (strmPrvdr == null) {
+			throw new ServletErrorResponseException("RDF data is missing");
+		}
+
+		long numStatements = -1;
+
+		for (int i = 0; i < strmPrvdr.length; i++) {
+			Inserter inserter = new Inserter(graphName, strmPrvdr[i], dataFormat, base, verifyString, importString, filenames[i]);
+			TrackableInsert ti = Tracker.getInstance().createInsert(inserter, remoteAddr);
+
+			ActionRouter.getWriteLock();
+			try {
+				ti.run();
+				numStatements = ti.getInserter().getNumStatements();
+			}
+			catch(TrackableException e) {
+				if (e.getCause() instanceof ServletErrorResponseException) {
+					throw (ServletErrorResponseException)e.getCause();
+				} else {
+					throw new ServletErrorResponseException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e,
+						"Error while running insert\n\n" + LogUtil.getExceptionInfo(e));
+				}
+			} finally {
+				ActionRouter.releaseWriteLock();
+			}
+		}
+
+
+		String msg = "Insert operation successful.";
+		if (numStatements == 1) {
+			msg = "Insert operation successful.  1 statement added.";
+		}
+		else if (numStatements >= 0) {
+			msg = String.format(
+				"Insert operation successful.  %1$d statements added.",
+				numStatements);
+		}
+		sendSuccess(msg, resp);
+	}
+
+
 	@SuppressWarnings("static-method")
 	protected void handleRequest(HttpServletResponse resp,
 		String graphName, IInputStreamProvider strmPrvdr, String dataFormat,
