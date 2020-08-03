@@ -23,7 +23,7 @@ public class GraphStoreService {
 	@Autowired
 	ActionRouter actionRouter;
 
-	public void doGet(String graphURI, HttpServletRequest req, HttpServletResponse resp) {
+	public void doGet(String graphURI, HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
 		try {
 			//all encompassing construct on specified graph
@@ -33,10 +33,11 @@ public class GraphStoreService {
 
 		} catch (Exception e) {
 			LOG.info(e.toString());
+			throw new Exception();
 		}
 	}
 
-	public void doPut(String contentType, String graphURI, HttpEntity<byte[]> requestEntity, HttpServletRequest req, HttpServletResponse resp) {
+	public void doPut(String contentType, String graphURI, HttpEntity<byte[]> requestEntity, HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
 		try {
 			//delete graph
@@ -47,10 +48,11 @@ public class GraphStoreService {
 
 		} catch (Exception e) {
 			LOG.info(e.toString());
+			throw new Exception();
 		}
 	}
 
-	public void doDelete(String graphURI) {
+	public void doDelete(String graphURI) throws Exception {
 
 		try {
 			//delete graph
@@ -62,10 +64,11 @@ public class GraphStoreService {
 			//handler.handleFormURLEncodedRequest(graphURI, req, resp);
 		} catch (Exception e) {
 			LOG.info(e.toString());
+			throw new Exception();
 		}
 	}
 
-	public void doPost(String contentType, String graphURI, HttpEntity<byte[]> requestEntity, HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(String contentType, String graphURI, HttpEntity<byte[]> requestEntity, HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
 		try {
 			//update graph
@@ -74,10 +77,11 @@ public class GraphStoreService {
 
 		} catch (Exception e) {
 			LOG.info(e.toString());
+			throw new Exception();
 		}
 	}
 
-	public void doFilePost(String contentType, String graphURI, MultipartFile[] files, HttpServletRequest req, HttpServletResponse resp) {
+	public void doFilePost(String contentType, String graphURI, MultipartFile[] files, HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
 		try {
 			//update graph
@@ -86,6 +90,7 @@ public class GraphStoreService {
 
 		} catch (Exception e) {
 			LOG.info(e.toString());
+			throw new Exception();
 		}
 	}
 

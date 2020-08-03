@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,7 +43,11 @@ public class GraphStoreController {
 	//HEAD mapping automatically supported by GET mapping
 	@GetMapping(value = ENDPOINT, params = "graph")
 	public void sparqlGraphGET(@RequestParam(value = "graph") String graphURI, HttpServletRequest req, HttpServletResponse resp) {
-		graphStoreService.doGet(graphURI, req, resp);
+		try {
+			graphStoreService.doGet(graphURI, req, resp);
+		} catch (Exception e) {
+			throw new InternalServerException();
+		}
 	}
 
 	@GetMapping(value = ENDPOINT, params = "default")
@@ -57,7 +61,11 @@ public class GraphStoreController {
 			@RequestParam(value = "graph") String graphURI,
 			HttpEntity<byte[]> requestEntity,
 			HttpServletRequest res, HttpServletResponse resp) {
-		graphStoreService.doPut(contentType, graphURI, requestEntity, res, resp);
+		try {
+			graphStoreService.doPut(contentType, graphURI, requestEntity, res, resp);
+		} catch (Exception e) {
+			throw new InternalServerException();
+		}
 	}
 
 	@PutMapping(value = ENDPOINT, params = "default")
@@ -71,7 +79,11 @@ public class GraphStoreController {
 
 	@DeleteMapping(value = ENDPOINT, params = "graph")
 	public void sparqlGraphDELETE(@RequestParam(value = "graph") String graphURI) {
-		graphStoreService.doDelete(graphURI);
+		try {
+			graphStoreService.doDelete(graphURI);
+		} catch (Exception e) {
+			throw new InternalServerException();
+		}
 	}
 
 	@DeleteMapping(value = ENDPOINT, params = "default")
@@ -85,7 +97,11 @@ public class GraphStoreController {
 			@RequestParam(value = "graph") String graphURI,
 			HttpEntity<byte[]> requestEntity,
 			HttpServletRequest res, HttpServletResponse resp) {
-		graphStoreService.doPost(contentType, graphURI, requestEntity, res, resp);
+		try {
+			graphStoreService.doPost(contentType, graphURI, requestEntity, res, resp);
+		} catch (Exception e) {
+			throw new InternalServerException();
+		}
 	}
 
 	@PostMapping(value = ENDPOINT, params = "default")
@@ -104,7 +120,11 @@ public class GraphStoreController {
 			@RequestParam(value = "graph") String graphURI,
 			@RequestPart(value = "file") MultipartFile[] files,
 			HttpServletRequest res, HttpServletResponse resp) {
-		graphStoreService.doFilePost(contentType, graphURI, files, res, resp);
+		try {
+			graphStoreService.doFilePost(contentType, graphURI, files, res, resp);
+		} catch (Exception e) {
+			throw new InternalServerException();
+		}
 	}
 
 	//file
@@ -118,13 +138,19 @@ public class GraphStoreController {
 	}
 
 	@PatchMapping(value = ENDPOINT, params = "graph")
-	public ResponseEntity sparqlGraphPATCH(@RequestParam(value = "graph") String graphURI, HttpServletRequest req, HttpServletResponse resp) {
-		return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
+	public void sparqlGraphPATCH(@RequestParam(value = "graph") String graphURI, HttpServletRequest req, HttpServletResponse resp) {
+		throw new PatchException();
 	}
 
 	@PatchMapping(value = ENDPOINT, params = "default")
-	public ResponseEntity sparqlGraphDefaultPATCH(@RequestParam(value = "default") String defaultGraph, HttpServletRequest req, HttpServletResponse resp) {
-		return sparqlGraphPATCH(DEFAULT_GRAPH, req, resp);
+	public void sparqlGraphDefaultPATCH(@RequestParam(value = "default") String defaultGraph, HttpServletRequest req, HttpServletResponse resp) {
+		sparqlGraphPATCH(DEFAULT_GRAPH, req, resp);
 	}
+
+	@ResponseStatus(value=HttpStatus.NOT_IMPLEMENTED, reason="The PATCH protocol is not supported by Parliament")
+	public class PatchException extends RuntimeException {}
+
+	@ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR, reason="Error occured while processing")
+	public class InternalServerException extends RuntimeException {}
 
 }
