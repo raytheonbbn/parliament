@@ -55,7 +55,7 @@ public class QueryHandler {
 		super.init(service, implementation);
 	}
 	*/
-	
+
 	/*
 	public ResultSet execSelect(TrackableQuery trackable) {
 		try {
@@ -74,22 +74,22 @@ public class QueryHandler {
 				int threshold = ParliamentBridge.getInstance().getConfiguration().getDeferredFileOutputStreamThreshold();
 
 				final FileBackedResultSet fileBackedRS = new FileBackedResultSet(rs, tmpDir, threshold);
-				
+
 				ResultSet result = fileBackedRS.getResultSet();
 				fileBackedRS.delete();
 
 				log.debug("OK/select");
-				
+
 				return result;
 			}
 		} catch(Exception e) {
 			log.info(e.toString());
 		}
-		
+
 		return null;
 	}
 	*/
-	
+
 	public void execSelect(TrackableQuery trackable, OutputStream out) {
 		try {
 			Query q = trackable.getQuery();
@@ -106,11 +106,11 @@ public class QueryHandler {
 				//int threshold = ParliamentBridge.getInstance().getConfiguration().getDeferredFileOutputStreamThreshold();
 
 				//final FileBackedResultSet fileBackedRS = new FileBackedResultSet(rs, tmpDir, threshold);
-				
+
 				//ResultSet result = fileBackedRS.getResultSet();
-				
+
 				ResultSetFormatter.outputAsXML(out, rs);
-				
+
 				//fileBackedRS.delete();
 
 				log.debug("OK/select");
@@ -118,7 +118,7 @@ public class QueryHandler {
 		} catch(Exception e) {
 			log.info(e.toString());
 		}
-		
+
 		//return null;
 	}
 	/*
@@ -152,7 +152,7 @@ public class QueryHandler {
 						fileBackedRS.delete();
 					}
 				});
-				
+
 				ResultSet result = fileBackedRS.getResultSet();
 
 

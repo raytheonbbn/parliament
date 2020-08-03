@@ -44,7 +44,7 @@ public class GraphStoreService {
 			doDelete(graphURI);
 
 			//set graph
-			 doPost(contentType, graphURI, requestEntity, req, resp);
+			doPost(contentType, graphURI, requestEntity, req, resp);
 
 		} catch (Exception e) {
 			LOG.info(e.toString());

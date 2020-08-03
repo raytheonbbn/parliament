@@ -19,9 +19,9 @@ SPARQL protocol
 	sparqlDirectUpdatePOST
 
 SPARQL graph store protocol
- 
+
 	sparqlGraphGET
- 	sparqlGraphDefaultGET
+	sparqlGraphDefaultGET
 	sparqlGraphPUT
 	sparqlGraphDefaultPUT
 	sparqlGraphDELETE
@@ -30,50 +30,47 @@ SPARQL graph store protocol
 	sparqlGraphDefaultPOST
 	sparqlGraphPATCH
 	sparqlGraphDefaultPATCH
- 
- 
- 
+
+
+
 Testing Ideas:
 
- Header Content:
- - correct header passed
- - missing header parameters (Content-type, Content-Length, Host, etc...)
- 
- Request Content Type:
- - Correct content type passed
- - Incorrect content type passed
- - Invalid content type passed
- - No content type passed
- 
- Result Content Type:
- - Returns valid content type
- - Content type is correct with payload returned
- 
- Query string Parameter existence:
- - Required parameters passed
- - Required parameters not passed
- - Unused parameters passed
+Header Content:
+- correct header passed
+- missing header parameters (Content-type, Content-Length, Host, etc...)
 
- Query string Parameter optionals:
- - Optional parameters passed
- - Optional parameters not passed
- - Optional parameters contain content
- 
- Query string Parameter count (for parameters which can be a list):
- - Pass one value for one value parameter
- - Pass no value for one value parameter
- - Pass multiple values for one value parameter
- - Pass no value for multiple value parameter
- - Pass one value for multiple value parameter
- - Pass multiple value for multiple value parameter
- 
- (Following 3 are same as above 3)
- Query Message Body Parameter existence:
- Query Message Body Parameter optionals:
- Query Message Body Parameter count (for parameters which can be a list):
+Request Content Type:
+- Correct content type passed
+- Incorrect content type passed
+- Invalid content type passed
+- No content type passed
 
- General:
- - Test every endpoint given valid request (already covered?)
- - 
- 
- 
+Result Content Type:
+- Returns valid content type
+- Content type is correct with payload returned
+
+Query string Parameter existence:
+- Required parameters passed
+- Required parameters not passed
+- Unused parameters passed
+
+Query string Parameter optionals:
+- Optional parameters passed
+- Optional parameters not passed
+- Optional parameters contain content
+
+Query string Parameter count (for parameters which can be a list):
+- Pass one value for one value parameter
+- Pass no value for one value parameter
+- Pass multiple values for one value parameter
+- Pass no value for multiple value parameter
+- Pass one value for multiple value parameter
+- Pass multiple value for multiple value parameter
+
+(Following 3 are same as above 3)
+Query Message Body Parameter existence:
+Query Message Body Parameter optionals:
+Query Message Body Parameter count (for parameters which can be a list):
+
+General:
+- Test every endpoint given valid request (already covered?)

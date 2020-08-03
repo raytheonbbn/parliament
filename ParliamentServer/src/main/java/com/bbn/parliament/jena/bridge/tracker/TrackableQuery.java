@@ -95,9 +95,9 @@ public class TrackableQuery extends Trackable {
 
 	@Override
 	protected void doRun() {
-		
+
 		createQueryExecution();
-		
+
 		if (_query.isAskType()) {
 			_queryResult = _qExec.execAsk();
 		} else if (_query.isConstructType()) {

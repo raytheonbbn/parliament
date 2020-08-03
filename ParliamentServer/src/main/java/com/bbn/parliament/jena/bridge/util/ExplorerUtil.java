@@ -221,8 +221,8 @@ public class ExplorerUtil {
 	 * substituted by '+' characters, and all non US-ASCII characters are escaped
 	 * to hexadecimal notation (%xx).
 	 */
-	
-	
+
+
 	/*
 	public static String buildQueryString(Map<String, String> keyValuePairs) {
 		StringBuffer result = new StringBuffer(20 * keyValuePairs.size());

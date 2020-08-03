@@ -86,7 +86,7 @@ public class ActionRouter {
 		initImplementation = implementation;
 	}
 	*/
-	
+
 	/*
 	private static String formatRequestParticulars(ParliamentRequest preq, String msg) {
 		HttpServletRequest hsr = preq.getHttpReq();
@@ -116,19 +116,19 @@ public class ActionRouter {
 
 	//resp.setHeader("Content-Type", "application/json");
 	/** Handles incoming connection and routes to the appropriate handler. */
-	
+
 	/*
 	public ResultSet execQuery(String sparqlStmt, String requestor) throws Exception {
 		try {
 			QueryHandler handler = new QueryHandler();
 
 			//handler.init(initService, initImplementation); //removed
-	
+
 			TrackableQuery trackable = Tracker.getInstance().createQuery(sparqlStmt, requestor);
 			SparqlStmtLogger.logSparqlStmt(sparqlStmt);
-			
+
 			ResultSet result;
-	
+
 			getReadLock();
 			try {
 				result = handler.execSelect(trackable);
@@ -137,7 +137,7 @@ public class ActionRouter {
 				log.debug("Released read lock");
 			}
 			return result;
-			
+
 		} catch (QueryParseException ex) {
 			String msg = String.format(
 					"Encountered an error while parsing query:%n    %1$s%n%n%2$s",
@@ -148,15 +148,15 @@ public class ActionRouter {
 		}
 	}
 	*/
-	
-	
+
+
 	public void execQuery(String sparqlStmt, String requestor, OutputStream out) throws Exception {
 		try {
 			QueryHandler handler = new QueryHandler();
-	
+
 			TrackableQuery trackable = Tracker.getInstance().createQuery(sparqlStmt, requestor);
 			SparqlStmtLogger.logSparqlStmt(sparqlStmt);
-	
+
 			getReadLock();
 			try {
 				handler.execSelect(trackable, out);
@@ -164,7 +164,7 @@ public class ActionRouter {
 				releaseReadLock();
 				log.debug("Released read lock");
 			}
-			
+
 		} catch (QueryParseException ex) {
 			String msg = String.format(
 					"Encountered an error while parsing query:%n    %1$s%n%n%2$s",
@@ -174,15 +174,15 @@ public class ActionRouter {
 				throw new Exception(msg);
 		}
 	}
-	
+
 	public void execUpdate(String sparqlStmt, String requestor) {
 		try {
 			UpdateHandler handler = new UpdateHandler();
 			//handler.init(initService, initImplementation);
-	
+
 			TrackableUpdate trackable = Tracker.getInstance().createUpdate(sparqlStmt, requestor);
 			SparqlStmtLogger.logSparqlStmt(sparqlStmt);
-	
+
 			getWriteLock();
 			try {
 				handler.execUpdate(trackable);
@@ -195,8 +195,8 @@ public class ActionRouter {
 			log.info(e.toString());
 		}
 	}
-	
-	
+
+
 	/*
 	@Override
 	public void exec(Request req, Response resp, DatasetDesc dsDesc)

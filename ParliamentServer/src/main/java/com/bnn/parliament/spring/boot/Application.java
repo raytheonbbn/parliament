@@ -20,10 +20,10 @@ import org.slf4j.LoggerFactory;
 @ComponentScan({"com.bbn.parliament.spring.boot.controller", "com.bbn.parliament.spring.boot.service", "com.bbn.parliament.jena.bridge"})
 
 public class Application {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(Application.class);
 	protected ParliamentBridge _server;
-	
+
 	public static void main(String[] args) {
 		/*
 		try (ConfigurableApplicationContext context = SpringApplication.run(Application.class, args)) {
@@ -31,8 +31,8 @@ public class Application {
 			LOG.info("I am now shutting down!");
 		}
 		*/
-		
-		
+
+
 		SpringApplication.run(Application.class, args);
 	}
 }

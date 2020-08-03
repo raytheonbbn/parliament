@@ -1,6 +1,5 @@
 package com.bnn.parliament.spring.boot;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,10 +23,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
-//import org.junit.platform.runner.JUnitPlatform;
-//import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.bbn.parliament.jena.bridge.tracker.Tracker;
 import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
@@ -51,23 +51,18 @@ import com.hp.hpl.jena.update.UpdateFactory;
 import com.hp.hpl.jena.update.UpdateProcessor;
 import com.hp.hpl.jena.update.UpdateRequest;
 import com.hp.hpl.jena.vocabulary.RDF;
-
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 import test_util.RdfResourceLoader;
-
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
 public class ParliamentServerTests {
-	
+
 	@LocalServerPort
-    private int randomServerPort;
-	
+	private int randomServerPort;
+
 	private static final String HOST = "localhost";
 	private static final String PORT = System.getProperty("jetty.port", "8089");
 	private static final String SPARQL_URL = String.format(RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL, HOST, PORT);
@@ -121,8 +116,8 @@ public class ParliamentServerTests {
 		+ "} order by ?o";
 	private static final RemoteModel rm = new RemoteModel(SPARQL_URL, BULK_URL);
 	private static final Logger log = LoggerFactory.getLogger(ParliamentServerTests.class);
-	
-	
+
+
 
 	@BeforeAll
 	public static void beforeAll() {

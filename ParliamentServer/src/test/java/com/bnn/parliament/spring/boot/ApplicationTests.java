@@ -27,14 +27,14 @@ import org.slf4j.LoggerFactory;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
 class ApplicationTests {
-	
+
 	private static final String ENDPOINT = "/parliament/sparql";
 	private static final Logger LOG = LoggerFactory.getLogger(ApplicationTests.class);
-	
-	
+
+
 	@LocalServerPort
 	private int port;
-	
+
 	@BeforeAll
 	public void setup() {
 		RestAssured.baseURI = "http://localhost";
@@ -42,12 +42,12 @@ class ApplicationTests {
 
 		//Load Data
 	}
-			
+
 	@AfterAll
 	public void tearDown() {
 		//Remove Data
-		
-		
+
+
 	}
 
 	/*
@@ -63,12 +63,12 @@ class ApplicationTests {
 		.assertThat()
 		.statusCode(400);
 	}
-	
+
 	@Test
 	public void testValidSelectQuery() {
-		
+
 		String query = "?query=select ?x ?y ?z where { ?x ?y ?z }";
-		
+
 		given()
 		.queryParam("query", query)
 		.when()

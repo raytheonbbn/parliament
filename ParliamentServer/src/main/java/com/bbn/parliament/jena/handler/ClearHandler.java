@@ -31,7 +31,7 @@ public class ClearHandler extends AbstractHandler {
 	private static final String P_PERFORM_CLEAR = "performClear";
 
 	private static final Logger LOG = LoggerFactory.getLogger(ClearHandler.class);
-	
+
 	//@Autowired
 	//ActionRouter actionRouter;
 
@@ -57,7 +57,7 @@ public class ClearHandler extends AbstractHandler {
 
 		handleRequest(req, resp, clearAll, graphName, performClear);
 	}
-	
+
 	public void handleFormURLEncodedRequest(String graphURI, HttpServletRequest req,
 			HttpServletResponse resp) throws ServletErrorResponseException, IOException {
 			String clearAll = HttpServerUtil.getParameter(req, P_CLEAR_ALL, "no");
@@ -96,23 +96,23 @@ public class ClearHandler extends AbstractHandler {
 			ModelManager.inst().clearKb();
 		} else {
 			String sparqlStmt;
-			
+
 			if (origGraphURI == null) {
 				sparqlStmt = "DROP DEFAULT ;";
 			}
 			else {
-				sparqlStmt = String.format("DROP GRAPH <%1s> ;", graphName);	
+				sparqlStmt = String.format("DROP GRAPH <%1s> ;", graphName);
 			}
 			ActionRouter router = new ActionRouter();
 			router.execUpdate(sparqlStmt, "Parliament-ClearHandler");
-			
+
 			//throw new ServletErrorResponseException(
 			//	"To drop an individual named graph or remove all of its statements, use SPARQL/Update.");
 		}
 
 		sendSuccess("Clear operation successful.", resp);
 	}
-	
+
 	@SuppressWarnings("static-method")
 	protected void handleRequest(HttpServletRequest req, HttpServletResponse resp,
 		String clearAllStr, String graphName, String performClearStr)
@@ -132,16 +132,16 @@ public class ClearHandler extends AbstractHandler {
 			ModelManager.inst().clearKb();
 		} else {
 			String sparqlStmt;
-			
+
 			if (origGraphURI == null) {
 				sparqlStmt = "DROP DEFAULT ;";
 			}
 			else {
-				sparqlStmt = String.format("DROP GRAPH <%1s> ;", graphName);	
+				sparqlStmt = String.format("DROP GRAPH <%1s> ;", graphName);
 			}
 			ActionRouter router = new ActionRouter();
 			router.execUpdate(sparqlStmt, "Parliament-ClearHandler");
-			
+
 			//throw new ServletErrorResponseException(
 			//	"To drop an individual named graph or remove all of its statements, use SPARQL/Update.");
 		}

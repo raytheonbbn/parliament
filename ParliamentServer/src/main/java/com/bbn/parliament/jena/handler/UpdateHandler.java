@@ -27,8 +27,8 @@ import com.bbn.parliament.jena.bridge.tracker.TrackableUpdate;
  */
 public class UpdateHandler {
 	private static Logger log = LoggerFactory.getLogger(UpdateHandler.class);
-	
-	
+
+
 	public void execUpdate(TrackableUpdate trackable) throws Exception {
 		String updateQueryString = trackable.getQuery();
 		// handle request parsing...
@@ -60,8 +60,8 @@ public class UpdateHandler {
 	@Override
 	public void init(Resource service, Resource implementation) {
 	}
-	
-	
+
+
 
 	@SuppressWarnings("static-method")
 	public void execQuery(TrackableUpdate trackable, ParliamentRequest req, Response resp) throws QueryExecutionException {
