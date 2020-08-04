@@ -117,9 +117,8 @@ public class Inserter {
 					}
 				}
 			} else {
-				if (filename == null) {
-					format = RDFFormat.parseMediaType(dataFormat);
-				} else {
+				format = RDFFormat.parseMediaType(dataFormat);
+				if (filename != null && RDFFormat.UNKNOWN == format) {
 					format = RDFFormat.parseFilename(filename);
 				}
 

@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.ModelManager;
 import com.bbn.parliament.jena.bridge.servlet.ServletErrorResponseException;
+import com.bbn.parliament.jena.graph.ModelManager;
 
 public class FlushHandler extends AbstractHandler {
 	private static final Logger LOG = LoggerFactory.getLogger(FlushHandler.class);
@@ -25,14 +25,14 @@ public class FlushHandler extends AbstractHandler {
 		return LOG;
 	}
 
-	@Override
+
 	public void handleFormURLEncodedRequest(HttpServletRequest req,
 		HttpServletResponse resp) throws IOException, ServletErrorResponseException {
 		ModelManager.inst().flushKb();
 		sendSuccess("Flush operation successful.", resp);
 	}
 
-	@Override
+
 	public void handleMultipartFormRequest(HttpServletRequest req,
 		HttpServletResponse resp) throws IOException, ServletErrorResponseException {
 		throw new ServletErrorResponseException("'multipart/form data' requests are not "
