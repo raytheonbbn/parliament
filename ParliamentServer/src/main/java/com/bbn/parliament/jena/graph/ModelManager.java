@@ -19,15 +19,12 @@ import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.KbGraph;
-import com.bbn.parliament.jena.graph.KbGraphFactory;
-import com.bbn.parliament.jena.graph.KbGraphStore;
+import com.bbn.parliament.jena.bridge.ActionRouter;
+import com.bbn.parliament.jena.bridge.configuration.ReasonerConfigurationHandler;
 import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.graph.union.KbUnionableGraph;
-import com.bbn.parliament.jena.bridge.ActionRouter;
-import com.bbn.parliament.jena.bridge.configuration.ReasonerConfigurationHandler;
-import com.bbn.parliament.jena.client.RDFFormat;
+import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.modify.KbUpdateEngine;
 import com.bbn.parliament.jni.KbConfig;
 import com.hp.hpl.jena.graph.Node;

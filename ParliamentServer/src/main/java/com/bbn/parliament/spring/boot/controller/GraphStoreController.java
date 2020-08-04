@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,13 +15,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bbn.parliament.jena.graph.ModelManager;
 import com.bbn.parliament.spring.boot.service.GraphStoreService;
-import com.bbn.parliament.spring.boot.service.QueryService;
 
 /**
  * Controller for Spring Boot Server. Routes HTTP requests from /parliament/sparql to appropriate request method.
@@ -35,7 +32,7 @@ public class GraphStoreController {
 	private static final String ENDPOINT = "/parliament/graphstore";
 	private static final String DEFAULT_GRAPH = null;
 
-	private static final Logger LOG = LoggerFactory.getLogger(QueryService.class);
+	private static final Logger LOG = LoggerFactory.getLogger(GraphStoreController.class);
 
 	@Autowired
 	GraphStoreService graphStoreService;
@@ -150,21 +147,14 @@ public class GraphStoreController {
 
 	@PatchMapping(value = ENDPOINT, params = "graph")
 	public void sparqlGraphPATCH(@RequestParam(value = "graph") String graphURI, HttpServletRequest req, HttpServletResponse resp) {
-		throw new PatchException();
+		throw new UnsupportedEndpointException();
 	}
 
 	@PatchMapping(value = ENDPOINT, params = "default")
 	public void sparqlGraphDefaultPATCH(@RequestParam(value = "default") String defaultGraph, HttpServletRequest req, HttpServletResponse resp) {
 		sparqlGraphPATCH(DEFAULT_GRAPH, req, resp);
 	}
-
-	@ResponseStatus(value=HttpStatus.NOT_IMPLEMENTED, reason="The PATCH protocol is not supported by Parliament")
-	public class PatchException extends RuntimeException {}
-
-	@ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR, reason="Error occured while processing")
-	public class InternalServerException extends RuntimeException {}
-
+	
 	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="Specified graph not found")
 	public class NoGraphException extends RuntimeException {}
-
 }

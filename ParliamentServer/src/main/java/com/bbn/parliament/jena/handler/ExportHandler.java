@@ -23,9 +23,11 @@ import org.slf4j.LoggerFactory;
 import com.bbn.parliament.jena.bridge.ActionRouter;
 import com.bbn.parliament.jena.bridge.servlet.ServletErrorResponseException;
 import com.bbn.parliament.jena.bridge.util.HttpServerUtil;
-import com.bbn.parliament.jena.client.RDFFormat;
+
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.ModelManager;
+import com.bbn.parliament.jena.joseki.client.RDFFormat;
+
 import com.hp.hpl.jena.rdf.model.Model;
 
 /** @author sallen */
