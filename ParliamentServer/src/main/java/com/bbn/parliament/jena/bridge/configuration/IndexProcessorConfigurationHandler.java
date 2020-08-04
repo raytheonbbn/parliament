@@ -12,11 +12,11 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bbn.parliament.jena.bridge.ParliamentBridge;
 import com.bbn.parliament.jena.bridge.configuration.vocab.ConfigOnt;
+import com.bbn.parliament.jena.graph.ModelManager;
 import com.bbn.parliament.jena.graph.index.IndexFactory;
 import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
-import com.bbn.parliament.jena.bridge.ParliamentBridge;
-import com.bbn.parliament.jena.graph.ModelManager;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
