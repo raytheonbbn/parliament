@@ -9,13 +9,11 @@ package com.bbn.parliament.jena.handler;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 
 import com.bbn.parliament.jena.graph.KbGraphStore;
-import com.bbn.parliament.jena.bridge.servlet.ServletErrorResponseException;
 
 /**
  * AbstractHandler that provides some common methods for subclasses.
@@ -26,14 +24,6 @@ public abstract class AbstractHandler {
 	protected static final String MASTER_GRAPH_BASENAME = KbGraphStore.MASTER_GRAPH_DIR;
 	protected static final String OLD_MASTER_GRAPH_BASENAME = KbGraphStore.OLD_MASTER_GRAPH_DIR;
 	protected static final String DEFAULT_GRAPH_BASENAME = "Default Graph";
-
-	/** Get request parameters (x-www-form-urlencoded) */
-	public abstract void handleFormURLEncodedRequest(HttpServletRequest req,
-		HttpServletResponse resp) throws IOException, ServletErrorResponseException;
-
-	/** Get request parameters (multipart/form-data) */
-	public abstract void handleMultipartFormRequest(HttpServletRequest req,
-		HttpServletResponse resp) throws IOException, ServletErrorResponseException;
 
 	/** Gets the logger */
 	protected abstract Logger getLog();

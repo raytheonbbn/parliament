@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bbn.parliament.jena.graph.ModelManager;
 import com.bbn.parliament.spring.boot.service.GraphStoreService;
 
 /**
@@ -40,10 +41,15 @@ public class GraphStoreController {
 	//HEAD mapping automatically supported by GET mapping
 	@GetMapping(value = ENDPOINT, params = "graph")
 	public void sparqlGraphGET(@RequestParam(value = "graph") String graphURI, HttpServletRequest req, HttpServletResponse resp) {
-		try {
-			graphStoreService.doGet(graphURI, req, resp);
-		} catch (Exception e) {
-			throw new InternalServerException();
+		if (graphURI == null || ModelManager.inst().containsModel(graphURI)) {
+			try {
+				graphStoreService.doGet(graphURI, req, resp);
+			} catch (Exception e) {
+				throw new InternalServerException();
+			}
+		}
+		else {
+			throw new NoGraphException();
 		}
 	}
 
@@ -76,10 +82,15 @@ public class GraphStoreController {
 
 	@DeleteMapping(value = ENDPOINT, params = "graph")
 	public void sparqlGraphDELETE(@RequestParam(value = "graph") String graphURI) {
-		try {
-			graphStoreService.doDelete(graphURI);
-		} catch (Exception e) {
-			throw new InternalServerException();
+		if (graphURI == null || ModelManager.inst().containsModel(graphURI)) {
+			try {
+				graphStoreService.doDelete(graphURI);
+			} catch (Exception e) {
+				throw new InternalServerException();
+			}
+		}
+		else {
+			throw new NoGraphException();
 		}
 	}
 
@@ -143,4 +154,7 @@ public class GraphStoreController {
 	public void sparqlGraphDefaultPATCH(@RequestParam(value = "default") String defaultGraph, HttpServletRequest req, HttpServletResponse resp) {
 		sparqlGraphPATCH(DEFAULT_GRAPH, req, resp);
 	}
+	
+	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="Specified graph not found")
+	public class NoGraphException extends RuntimeException {}
 }
