@@ -64,6 +64,9 @@ compileJava.dependsOn runSchemagen
 
 test {
 	useJUnitPlatform()
+	systemProperty 'java.library.path', "${rootDir}/target/Parliament-v2.7.14-clang/bin"
+	environment 'LD_LIBRARY_PATH', "${rootDir}/target/Parliament-v2.7.14-gcc/bin"
+	environment 'Path', "${rootDir}/target/Parliament-v2.7.14-msvc/bin;${System.getenv("Path")}"
 }
 
 task copyTestResources(type: Copy) {
