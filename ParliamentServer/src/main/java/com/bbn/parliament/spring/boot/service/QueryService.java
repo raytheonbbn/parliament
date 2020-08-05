@@ -20,18 +20,10 @@ public class QueryService {
 	@Autowired
 	private ActionRouter actionRouter;
 
-
 	public void doStream (String query, HttpServletRequest request, OutputStream out) throws Exception {
 		String host = getRequestor(request);
-
-		try {
-			actionRouter.execQuery(query, host, out);
-		} catch (Exception e) {
-			LOG.info(e.toString());
-			throw new Exception();
-		}
+		actionRouter.execQuery(query, host, out);
 	}
-
 
 	//Taken from ParliamentRequest.java
 	private String getRequestor(HttpServletRequest request) {

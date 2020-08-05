@@ -114,8 +114,7 @@ public class InsertHandler extends AbstractHandler {
 			if (e.getCause() instanceof ServletErrorResponseException) {
 				throw (ServletErrorResponseException)e.getCause();
 			} else {
-				throw new ServletErrorResponseException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e,
-					"Error while running insert\n\n" + LogUtil.getExceptionInfo(e));
+				throw new IOException("Error while running insert\n\n" + LogUtil.getExceptionInfo(e), e);
 			}
 		} finally {
 			ActionRouter.releaseWriteLock();

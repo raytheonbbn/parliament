@@ -95,8 +95,8 @@ public class ActionRouter {
 		}
 	}
 
-	public void execUpdate(String sparqlStmt, String requestor) {
-		try {
+	public void execUpdate(String sparqlStmt, String requestor) throws Exception {
+
 			UpdateHandler handler = new UpdateHandler();
 			//handler.init(initService, initImplementation);
 
@@ -110,10 +110,7 @@ public class ActionRouter {
 				releaseWriteLock();
 				log.debug("Released write lock");
 			}
-		} catch (Exception e) {
-			//throw new Exception(e.toString());
-			log.info(e.toString());
-		}
+
 	}
 
 	public static void getWriteLock() {

@@ -61,8 +61,10 @@ public class QueryController {
 			public void writeTo(OutputStream out) throws IOException {
 				try {
 					queryService.doStream(query, request, out);
+
 				} catch(Exception e) {
-					throw new InternalServerException();
+					//throw new InternalServerException();
+					throw new IOException(e.toString());
 				}
 			}
 		};
@@ -86,7 +88,7 @@ public class QueryController {
 				try {
 					queryService.doStream(query, request, out);
 				} catch(Exception e) {
-					throw new InternalServerException();
+					//throw new InternalServerException();
 				}
 			}
 		};
@@ -108,7 +110,7 @@ public class QueryController {
 				try {
 					queryService.doStream(query, request, out);
 				} catch(Exception e) {
-					throw new InternalServerException();
+					//throw new InternalServerException();
 				}
 			}
 		};

@@ -20,16 +20,10 @@ public class UpdateService {
 
 	public void doUpdate(String update, HttpServletRequest request) throws Exception {
 		String host = getRequestor(request);
-
-		try {
-			actionRouter.execUpdate(update, host);
-		} catch (Exception e) {
-			LOG.info(e.toString());
-			throw new Exception();
-		}
+		actionRouter.execUpdate(update, host);
 	}
 
-
+	//Taken from ParliamentRequest.java
 	private String getRequestor(HttpServletRequest request) {
 		String host = request.getRemoteHost();
 		if (host == null || host.isEmpty()) {
