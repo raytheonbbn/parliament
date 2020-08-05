@@ -11,12 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -49,10 +47,9 @@ public class QueryController {
 	public StreamingResponseBody sparqlGET(
 			@RequestParam(value = "query") String query,
 			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
-			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI, HttpServletRequest request) {
+			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI, HttpServletRequest request) throws Exception {
 
 		if (defaultGraphURI.size() > 0 || namedGraphURI.size() > 0) {
-			//throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Specifying graph separately not supported. Specify graph within SPARQL query string");
 			throw new BadRequestException();
 		}
 
@@ -61,22 +58,18 @@ public class QueryController {
 			public void writeTo(OutputStream out) throws IOException {
 				try {
 					queryService.doStream(query, request, out);
-
 				} catch(Exception e) {
-					//throw new InternalServerException();
-					throw new IOException(e.toString());
+					throw new IOException(e);
 				}
 			}
 		};
-
-		//return String.format("GET Success! Testing changes Query: %1s, %2s", query, defaultGraphURI.toString());
 	}
 
 	@PostMapping(value = ENDPOINT, consumes = URL_ENCODED, params = "query")
 	public StreamingResponseBody sparqlURLEncodeQueryPOST(
 			@RequestParam(value = "query") String query,
 			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
-			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI, HttpServletRequest request) {
+			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI, HttpServletRequest request) throws Exception {
 
 		if (defaultGraphURI.size() > 0 || namedGraphURI.size() > 0) {
 			throw new BadRequestException();
@@ -88,7 +81,7 @@ public class QueryController {
 				try {
 					queryService.doStream(query, request, out);
 				} catch(Exception e) {
-					//throw new InternalServerException();
+					throw new IOException(e);
 				}
 			}
 		};
@@ -98,7 +91,7 @@ public class QueryController {
 	public StreamingResponseBody sparqlDirectQueryPOST(
 			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
 			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI,
-			@RequestBody String query, HttpServletRequest request) {
+			@RequestBody String query, HttpServletRequest request) throws Exception {
 
 		if (defaultGraphURI.size() > 0 || namedGraphURI.size() > 0) {
 			throw new BadRequestException();
@@ -110,17 +103,14 @@ public class QueryController {
 				try {
 					queryService.doStream(query, request, out);
 				} catch(Exception e) {
-					//throw new InternalServerException();
+					throw new IOException(e);
 				}
 			}
 		};
 	}
 
-
-
 	@PostConstruct
 	public void initBridge() {
-
 		String modelConfFile = "parliament-config.ttl";
 
 		try {
@@ -135,10 +125,4 @@ public class QueryController {
 		int threshold = bridge.getConfiguration().getDeferredFileOutputStreamThreshold();
 		HttpServerUtil.init(tmpDir, threshold);
 	}
-
-	@ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="Specifying graph separately not supported. Specify graph within SPARQL query string")
-	public class BadRequestException extends RuntimeException {}
-
-	@ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR, reason="Error occured while processing")
-	public class InternalServerException extends RuntimeException {}
 }

@@ -90,8 +90,7 @@ public class ActionRouter {
 					"Encountered an error while parsing query:%n    %1$s%n%n%2$s",
 					ex.getMessage(), sparqlStmt);
 				log.info(LogUtil.fixEolsForLogging(msg));
-				//throw new QueryExecutionException(ReturnCodes.rcQueryParseFailure, msg); //removed
-				throw new Exception(msg);
+				throw ex;
 		}
 	}
 
@@ -110,7 +109,6 @@ public class ActionRouter {
 				releaseWriteLock();
 				log.debug("Released write lock");
 			}
-
 	}
 
 	public static void getWriteLock() {

@@ -14,7 +14,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bbn.parliament.jena.bridge.ActionRouter;
-import com.bbn.parliament.jena.bridge.servlet.ServletErrorResponseException;
+import com.bbn.parliament.jena.exception.ArchiveException;
+import com.bbn.parliament.jena.exception.DataFormatException;
+import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.handler.ExportHandler;
 import com.bbn.parliament.jena.handler.InsertHandler;
 
@@ -27,13 +29,13 @@ public class GraphStoreService {
 	ActionRouter actionRouter;
 
 	public void doGet(String graphURI, HttpServletRequest req, HttpServletResponse resp)
-			throws ServletErrorResponseException, IOException {
+			throws IOException, MissingGraphException, DataFormatException {
 		ExportHandler handler = new ExportHandler();
 		handler.handleFormURLEncodedRequest(req, resp);
 	}
 
 	public void doPut(String contentType, String graphURI, HttpEntity<byte[]> requestEntity, HttpServletRequest req, HttpServletResponse resp)
-			throws ServletErrorResponseException, IOException, Exception {
+			throws IOException, Exception {
 		doDelete(graphURI);
 		doPost(contentType, graphURI, requestEntity, req, resp);
 	}
@@ -45,13 +47,13 @@ public class GraphStoreService {
 	}
 
 	public void doPost(String contentType, String graphURI, HttpEntity<byte[]> requestEntity, HttpServletRequest req, HttpServletResponse resp)
-			throws ServletErrorResponseException, IOException {
+			throws IOException, DataFormatException, MissingGraphException, ArchiveException {
 		InsertHandler handler = new InsertHandler();
 		handler.handleRequest(contentType, graphURI, req.getRemoteAddr(), requestEntity, resp);
 	}
 
 	public void doFilePost(String contentType, String graphURI, MultipartFile[] files, HttpServletRequest req, HttpServletResponse resp)
-			throws ServletErrorResponseException, IOException {
+			throws IOException, DataFormatException, MissingGraphException, ArchiveException {
 		InsertHandler handler = new InsertHandler();
 		handler.handleFileRequest("auto", graphURI, req.getRemoteAddr(), files, resp);
 	}

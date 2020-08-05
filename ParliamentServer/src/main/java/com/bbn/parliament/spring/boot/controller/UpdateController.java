@@ -5,11 +5,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bbn.parliament.spring.boot.service.UpdateService;
@@ -35,17 +33,12 @@ public class UpdateController {
 			@RequestParam(value = "update") String update,
 			@RequestParam(value = "using-graph-uri", defaultValue = "") List<String> defaultGraphURI,
 			@RequestParam(value = "using-named-graph-uri", defaultValue = "") List<String> namedGraphURI,
-			HttpServletRequest request) {
+			HttpServletRequest request) throws Exception {
 
 		if (defaultGraphURI.size() > 0 || namedGraphURI.size() > 0) {
 			throw new BadRequestException();
 		}
-		//return String.format("POST Success! Update: %s", update);
-		try {
-			updateService.doUpdate(update, request);
-		} catch (Exception e) {
-			throw new InternalServerException();
-		}
+		updateService.doUpdate(update, request);
 	}
 
 
@@ -54,22 +47,11 @@ public class UpdateController {
 			@RequestParam(value = "using-graph-uri", defaultValue = "") List<String> defaultGraphURI,
 			@RequestParam(value = "using-named-graph-uri", defaultValue = "") List<String> namedGraphURI,
 			@RequestBody String update,
-			HttpServletRequest request) {
+			HttpServletRequest request) throws Exception {
 
 		if (defaultGraphURI.size() > 0 || namedGraphURI.size() > 0) {
 			throw new BadRequestException();
 		}
-		//return String.format("POST Success! Update: %s", update);
-		try {
-			updateService.doUpdate(update, request);
-		} catch (Exception e) {
-			throw new InternalServerException();
-		}
+		updateService.doUpdate(update, request);
 	}
-
-	@ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="Specifying graph separately not supported. Specify graph within SPARQL query string")
-	public class BadRequestException extends RuntimeException {}
-
-	@ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR, reason="Error occured while processing")
-	public class InternalServerException extends RuntimeException {}
 }

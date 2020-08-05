@@ -20,7 +20,9 @@ import java.util.zip.ZipInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.bridge.servlet.ServletErrorResponseException;
+import com.bbn.parliament.jena.exception.ArchiveException;
+import com.bbn.parliament.jena.exception.DataFormatException;
+import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.graph.ForgetfulGraph;
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.graph.ModelManager;
@@ -83,7 +85,7 @@ public class Inserter {
 		return filename;
 	}
 
-	public void run() throws IOException, ServletErrorResponseException {
+	public void run() throws IOException, DataFormatException, MissingGraphException, ArchiveException {
 		numStatements = -1;
 		if (importRepo) {
 			if (LOG.isInfoEnabled()) {
@@ -100,14 +102,14 @@ public class Inserter {
 			RDFFormat format = null;
 			if ("auto".equalsIgnoreCase(dataFormat)) {
 				if (null == filename || filename.length() == 0) {
-					throw new ServletErrorResponseException("The serialization format of "
+					throw new DataFormatException("The serialization format of "
 						+ "the RDF was specified to be determined by the filename "
 						+ "extension, but the filename was not availible.  Please "
 						+ "resubmit with the proper data format specified.");
 				} else {
 					format = RDFFormat.parseFilename(filename);
 					if (RDFFormat.UNKNOWN == format) {
-						throw new ServletErrorResponseException("Unable to determine the "
+						throw new DataFormatException("Unable to determine the "
 							+ "serialization format of the RDF document from the "
 							+ "filename extension.  Please resubmit with the "
 							+ "proper data format specified.");
@@ -123,8 +125,8 @@ public class Inserter {
 				}
 
 				if (RDFFormat.UNKNOWN == format) {
-					throw new ServletErrorResponseException("Unsupported data format \"%1$s\"",
-						dataFormat);
+					throw new DataFormatException(String.format("Unsupported data format \"%1$s\"",
+						dataFormat));
 				}
 			}
 			// Disable this check for now.  Assume the user knows what he's doing if he wants to add stuff to the Master Graph.
@@ -137,8 +139,8 @@ public class Inserter {
 			String graphLabel = isDefaultGraph ? "Default Graph" : graphName;
 
 			if (null == model) {
-				throw new ServletErrorResponseException(
-					"There was no named graph with name \"%1$s\"", graphName);
+				throw new MissingGraphException(
+					String.format("There was no named graph with name \"%1$s\"", graphName));
 			} else {
 				if (verify) {
 					numStatements = verify(strmPrvdr, base, format);
@@ -149,7 +151,7 @@ public class Inserter {
 	}
 
 	protected long importRepository(IInputStreamProvider inStrmPrvdr, String baseUri)
-		throws IOException, ServletErrorResponseException {
+		throws IOException, DataFormatException, ArchiveException {
 		long toReturn = 0;
 
 		// First verify that we have a legitimate import
@@ -164,9 +166,9 @@ public class Inserter {
 				String zipEntryName = ze.getName();
 				FileNameDecomposition decomp = new FileNameDecomposition(zipEntryName);
 				if (RDFFormat.UNKNOWN == decomp.getFormat()) {
-					throw new ServletErrorResponseException("Unsupported file extension "
+					throw new DataFormatException(String.format("Unsupported file extension "
 						+ "on \"%1$s\" -- must be one of 'ttl', 'n3', 'nt', "
-						+ "'rdf', 'owl', or 'xml'", zipEntryName);
+						+ "'rdf', 'owl', or 'xml'", zipEntryName));
 				}
 
 				IInputStreamProvider entryStrmProvider = getZipStrmProvider(zin);
@@ -191,7 +193,7 @@ public class Inserter {
 		}
 
 		if (masterGraph == null) {
-			throw new ServletErrorResponseException("Archive has no Master Graph");
+			throw new ArchiveException("Archive has no Master Graph");
 		}
 
 		// Verify that all the filenames seen are in the Master Graph, and vice-versa
@@ -207,8 +209,8 @@ public class Inserter {
 				String dirName = stmt.getObject().toString();
 
 				if (!dirNamesSeen.contains(dirName)) {
-					throw new ServletErrorResponseException("Master Graph contains a "
-						+ "directory name (%1$s) not present in the zip file", dirName);
+					throw new ArchiveException(String.format("Master Graph contains a "
+						+ "directory name (%1$s) not present in the zip file", dirName));
 				}
 
 				dirToGraphNameMap.put(dirName, graphNm);
@@ -233,7 +235,7 @@ public class Inserter {
 				}
 			}
 
-			throw new ServletErrorResponseException("Mismatch between the number of files "
+			throw new ArchiveException("Mismatch between the number of files "
 				+ "in the zip file and the number in the Master Graph.  There are extra directories in the zip file: " + sb.toString());
 		}
 

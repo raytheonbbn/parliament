@@ -21,13 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.bridge.ActionRouter;
-import com.bbn.parliament.jena.bridge.servlet.ServletErrorResponseException;
 import com.bbn.parliament.jena.bridge.util.HttpServerUtil;
-
+import com.bbn.parliament.jena.exception.DataFormatException;
+import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.ModelManager;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
-
 import com.hp.hpl.jena.rdf.model.Model;
 
 /** @author sallen */
@@ -63,7 +62,7 @@ public class ExportHandler extends AbstractHandler {
 	 */
 
 	public void handleFormURLEncodedRequest(HttpServletRequest req,
-		HttpServletResponse resp) throws IOException, ServletErrorResponseException {
+		HttpServletResponse resp) throws IOException, MissingGraphException, DataFormatException {
 		String graphName = HttpServerUtil.getParameter(req, P_GRAPH, "");
 		String dataFormat = HttpServerUtil.getParameter(req, P_FORMAT, "RDF/XML");
 		String exportAll = HttpServerUtil.getParameter(req, P_EXPORT_ALL, "no");
@@ -76,21 +75,15 @@ public class ExportHandler extends AbstractHandler {
 	 * @see com.bbn.parliament.jena.joseki.josekibridge.AbstractHandler#handleMultipartFormRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 
-	public void handleMultipartFormRequest(HttpServletRequest req,
-		HttpServletResponse resp) throws ServletErrorResponseException {
-		throw new ServletErrorResponseException("'multipart/form data' requests are not "
-			+ "supported by this handler.");
-	}
-
 	protected void handleRequest(HttpServletRequest req, HttpServletResponse resp,
 		String graphName, String dataFormat, String exportAllStr)
-			throws IOException, ServletErrorResponseException {
+			throws IOException, MissingGraphException, DataFormatException {
 		// Default to false
 		boolean exportAll = "yes".equalsIgnoreCase(exportAllStr);
 
 		RDFFormat format = RDFFormat.parse(dataFormat);
 		if (format == RDFFormat.UNKNOWN) {
-			throw new ServletErrorResponseException("Unsupported data format \"%1$s\"", dataFormat);
+			throw new DataFormatException(String.format("Unsupported data format \"%1$s\"", dataFormat));
 		}
 
 		ActionRouter.getReadLock();
@@ -103,8 +96,8 @@ public class ExportHandler extends AbstractHandler {
 				Model model = isDefaultGraph ? ModelManager.inst().getDefaultModel() : ModelManager.inst().getModel(graphName);
 
 				if (null == model) {
-					throw new ServletErrorResponseException(
-						"There was no named graph with name \"%1$s\"", graphName);
+					throw new MissingGraphException(String.format(
+						"There was no named graph with name \"%1$s\"", graphName));
 				}
 				else {
 					writeResponse(req, resp, model, graphName, format);
@@ -158,7 +151,7 @@ public class ExportHandler extends AbstractHandler {
 		}
 		*/
 
-		resp.setContentType(writerMimeType);
+		resp.setContentType(dataFormat.getMediaType());
 		resp.setHeader("Content-Disposition",
 			String.format("inline; filename=\"%1$s\";", filename));
 

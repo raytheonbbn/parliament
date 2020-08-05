@@ -32,7 +32,7 @@ public class TrackerController {
 			trackerService.getTrackables(req, resp);
 		} catch (IOException ex) {
 			LOG.warn("Unable to get trackables:", ex);
-			throw new InternalServerException(ex);
+			throw new RuntimeException(ex);
 		}
 	}
 
@@ -43,7 +43,7 @@ public class TrackerController {
 			trackerService.cancelTrackable(id, res, resp);
 		} catch (TrackableException ex) {
 			LOG.warn("Unable to cancel trackable " + id, ex);
-			throw new InternalServerException(ex);
+			throw new RuntimeException(ex);
 		}
 	}
 }

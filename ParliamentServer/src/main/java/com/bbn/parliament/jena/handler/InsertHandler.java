@@ -18,11 +18,13 @@ import org.springframework.http.HttpEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bbn.parliament.jena.bridge.ActionRouter;
-import com.bbn.parliament.jena.bridge.servlet.ServletErrorResponseException;
 import com.bbn.parliament.jena.bridge.tracker.TrackableException;
 import com.bbn.parliament.jena.bridge.tracker.TrackableInsert;
 import com.bbn.parliament.jena.bridge.tracker.Tracker;
 import com.bbn.parliament.jena.bridge.util.LogUtil;
+import com.bbn.parliament.jena.exception.ArchiveException;
+import com.bbn.parliament.jena.exception.DataFormatException;
+import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.handler.Inserter.IInputStreamProvider;
 
 
@@ -44,7 +46,7 @@ public class InsertHandler extends AbstractHandler {
 	}
 
 	public void handleRequest(String contentType, String graphURI, String remoteAddr, HttpEntity<byte[]> requestEntity, HttpServletResponse resp)
-		throws IOException, ServletErrorResponseException {
+		throws IOException, DataFormatException, MissingGraphException, ArchiveException {
 		String verifyString = "yes";
 		String importString = "no";
 		if (graphURI == null) {
@@ -63,9 +65,8 @@ public class InsertHandler extends AbstractHandler {
 		sendSuccess(numStatements, resp);
 	}
 
-
 	public void handleFileRequest(String contentType, String graphURI, String remoteAddr, MultipartFile[] files, HttpServletResponse resp)
-			throws IOException, ServletErrorResponseException {
+			throws IOException, DataFormatException, MissingGraphException, ArchiveException {
 			String verifyString = "yes";
 			String importString = "no";
 			long numStatements = 0;
@@ -94,10 +95,10 @@ public class InsertHandler extends AbstractHandler {
 	protected long handleRequest(HttpServletResponse resp,
 		String graphName, IInputStreamProvider strmPrvdr, String dataFormat,
 		String base, String verifyString, String importString, String filename, String remoteAddr)
-			throws IOException, ServletErrorResponseException {
+			throws IOException, DataFormatException, MissingGraphException, ArchiveException {
 
 		if (strmPrvdr == null) {
-			throw new ServletErrorResponseException("RDF data is missing");
+			throw new NullPointerException("RDF data is missing");
 		}
 
 		long numStatements = -1;
@@ -111,11 +112,7 @@ public class InsertHandler extends AbstractHandler {
 			numStatements = ti.getInserter().getNumStatements();
 		}
 		catch(TrackableException e) {
-			if (e.getCause() instanceof ServletErrorResponseException) {
-				throw (ServletErrorResponseException)e.getCause();
-			} else {
-				throw new IOException("Error while running insert\n\n" + LogUtil.getExceptionInfo(e), e);
-			}
+			throw new IOException("Error while running insert\n\n" + LogUtil.getExceptionInfo(e), e);
 		} finally {
 			ActionRouter.releaseWriteLock();
 		}

@@ -1,7 +1,5 @@
 package com.bbn.parliament.spring.boot.controller;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bbn.parliament.jena.bridge.servlet.ServletErrorResponseException;
+import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.graph.ModelManager;
 import com.bbn.parliament.spring.boot.service.GraphStoreService;
 
@@ -43,16 +41,16 @@ public class GraphStoreController {
 
 	//HEAD mapping automatically supported by GET mapping
 	@GetMapping(value = ENDPOINT, params = "graph")
-	public void sparqlGraphGET(@RequestParam(value = "graph") String graphURI, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletErrorResponseException {
+	public void sparqlGraphGET(@RequestParam(value = "graph") String graphURI, HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		if (graphURI == null || ModelManager.inst().containsModel(graphURI)) {
 			graphStoreService.doGet(graphURI, req, resp);
 		} else {
-			throw new NoGraphException();
+			throw new MissingGraphException();
 		}
 	}
 
 	@GetMapping(value = ENDPOINT, params = "default")
-	public void sparqlGraphDefaultGET(@RequestParam(value = "default") String defaultGraph, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletErrorResponseException  {
+	public void sparqlGraphDefaultGET(@RequestParam(value = "default") String defaultGraph, HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		sparqlGraphGET(DEFAULT_GRAPH, req, resp);
 	}
 
@@ -61,7 +59,7 @@ public class GraphStoreController {
 			@RequestHeader(value = "Content-Type") String contentType,
 			@RequestParam(value = "graph") String graphURI,
 			HttpEntity<byte[]> requestEntity,
-			HttpServletRequest res, HttpServletResponse resp) throws IOException, ServletErrorResponseException, Exception {
+			HttpServletRequest res, HttpServletResponse resp) throws Exception {
 		graphStoreService.doPut(contentType, graphURI, requestEntity, res, resp);
 
 	}
@@ -71,7 +69,7 @@ public class GraphStoreController {
 			@RequestHeader(value = "Content-Type") String contentType,
 			@RequestParam(value = "default") String defaultGraph,
 			HttpEntity<byte[]> requestEntity,
-			HttpServletRequest res, HttpServletResponse resp) throws IOException, ServletErrorResponseException, Exception  {
+			HttpServletRequest res, HttpServletResponse resp) throws Exception  {
 		sparqlGraphPUT(contentType, DEFAULT_GRAPH, requestEntity, res, resp);
 	}
 
@@ -81,7 +79,7 @@ public class GraphStoreController {
 			graphStoreService.doDelete(graphURI);
 		}
 		else {
-			throw new NoGraphException();
+			throw new MissingGraphException();
 		}
 	}
 
@@ -95,7 +93,7 @@ public class GraphStoreController {
 			@RequestHeader(value = "Content-Type") String contentType,
 			@RequestParam(value = "graph") String graphURI,
 			HttpEntity<byte[]> requestEntity,
-			HttpServletRequest res, HttpServletResponse resp) throws IOException, ServletErrorResponseException {
+			HttpServletRequest res, HttpServletResponse resp) throws Exception {
 		graphStoreService.doPost(contentType, graphURI, requestEntity, res, resp);
 
 	}
@@ -105,28 +103,26 @@ public class GraphStoreController {
 			@RequestHeader(value = "Content-Type") String contentType,
 			@RequestParam(value = "default") String defaultGraph,
 			HttpEntity<byte[]> requestEntity,
-			HttpServletRequest res, HttpServletResponse resp) throws IOException, ServletErrorResponseException {
+			HttpServletRequest res, HttpServletResponse resp) throws Exception {
 		sparqlGraphPOST(contentType, DEFAULT_GRAPH, requestEntity, res, resp);
 	}
 
-	//file
 	@PostMapping(value = ENDPOINT, params = "graph", consumes = "multipart/form-data")
 	public void sparqlGraphFilePOST(
 			@RequestHeader(value = "Content-Type") String contentType,
 			@RequestParam(value = "graph") String graphURI,
 			@RequestPart(value = "file") MultipartFile[] files,
-			HttpServletRequest res, HttpServletResponse resp) throws IOException, ServletErrorResponseException {
+			HttpServletRequest res, HttpServletResponse resp) throws Exception {
 		graphStoreService.doFilePost(contentType, graphURI, files, res, resp);
 
 	}
 
-	//file
 	@PostMapping(value = ENDPOINT, params = "default", consumes = "multipart/form-data")
 	public void sparqlGraphDefaultFilePOST(
 			@RequestHeader(value = "Content-Type") String contentType,
 			@RequestParam(value = "default") String defaultGraph,
 			@RequestPart(value = "file") MultipartFile[] files,
-			HttpServletRequest res, HttpServletResponse resp) throws IOException, ServletErrorResponseException {
+			HttpServletRequest res, HttpServletResponse resp) throws Exception {
 		sparqlGraphFilePOST(contentType, DEFAULT_GRAPH, files, res, resp);
 	}
 
@@ -139,6 +135,4 @@ public class GraphStoreController {
 	public void sparqlGraphDefaultPATCH(@RequestParam(value = "default") String defaultGraph, HttpServletRequest req, HttpServletResponse resp) {
 		sparqlGraphPATCH(DEFAULT_GRAPH, req, resp);
 	}
-
-
 }
