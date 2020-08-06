@@ -76,7 +76,7 @@ public class ActionRouter {
 
 			getReadLock();
 			try {
-				execSelect(trackable, out);
+				runQuery(trackable, out);
 			} finally {
 				releaseReadLock();
 				log.debug("Released read lock");
@@ -89,7 +89,7 @@ public class ActionRouter {
 		}
 	}
 
-	private static void execSelect(TrackableQuery trackable, OutputStream out) throws QueryExecutionException {
+	private static void runQuery(TrackableQuery trackable, OutputStream out) throws QueryExecutionException {
 		try {
 			Query q = trackable.getQuery();
 			trackable.run();
