@@ -9,17 +9,9 @@ package com.bbn.parliament.jena.bridge;
 import java.io.File;
 import java.util.List;
 
-/*
-import org.joseki.Joseki;
-import org.joseki.http.ResponseHttpInitializer;
-*/
-
 import com.bbn.parliament.jena.bridge.configuration.ConfigurationHandler;
-import com.bbn.parliament.jena.graph.ModelManager;
 import com.bbn.parliament.jena.bridge.tracker.Tracker;
-import com.bbn.parliament.jena.query.PrefixRegistry;
-import com.bbn.parliament.jena.util.JsonLdRdfReader;
-import com.bbn.parliament.jena.util.JsonLdRdfWriter;
+import com.bbn.parliament.jena.graph.ModelManager;
 
 /**
  * A server for Parliament.

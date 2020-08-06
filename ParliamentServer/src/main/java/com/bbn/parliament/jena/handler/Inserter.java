@@ -14,13 +14,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.exception.ArchiveException;
 import com.bbn.parliament.jena.exception.DataFormatException;
 import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.graph.ForgetfulGraph;
@@ -38,15 +38,10 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 public class Inserter {
-	/** Interface that defines a method for getting an InputStream from some object. */
-	protected interface IInputStreamProvider {
-		public InputStream getInputStream() throws IOException;
-	}
-
 	private static final Logger LOG = LoggerFactory.getLogger(Inserter.class);
 
 	private String graphName;
-	private IInputStreamProvider strmPrvdr;
+	private Supplier<InputStream> strmPrvdr;
 	private String dataFormat;
 	private String base;
 	private String filename;
@@ -54,9 +49,8 @@ public class Inserter {
 	private boolean importRepo;
 	private long numStatements;
 
-	public Inserter(String graphName, IInputStreamProvider strmPrvdr,
-		String dataFormat, String base, String verifyString, String importString,
-		String filename) {
+	public Inserter(String graphName, Supplier<InputStream> strmPrvdr, String dataFormat,
+			String base, String verifyString, String importString, String filename) {
 		this.graphName = graphName;
 		this.strmPrvdr = strmPrvdr;
 		this.dataFormat = dataFormat;
@@ -85,18 +79,13 @@ public class Inserter {
 		return filename;
 	}
 
-	public void run() throws IOException, DataFormatException, MissingGraphException, ArchiveException {
+	public void run() throws IOException, DataFormatException, MissingGraphException {
 		numStatements = -1;
 		if (importRepo) {
-			if (LOG.isInfoEnabled()) {
-				LOG.info("REPOSITORY IMPORT");
-			}
+			LOG.info("REPOSITORY IMPORT");
 			numStatements = importRepository(strmPrvdr, base);
 		} else {
-			if (LOG.isInfoEnabled()) {
-				LOG.info("FILE OR TEXT INSERT");
-				LOG.info("Filename: " + filename);
-			}
+			LOG.info("FILE OR TEXT INSERT from file '{}'", filename);
 
 			// Determine the RDF serialization format by looking at the file extension:
 			RDFFormat format = null;
@@ -129,10 +118,8 @@ public class Inserter {
 						dataFormat));
 				}
 			}
-			// Disable this check for now.  Assume the user knows what he's doing if he wants to add stuff to the Master Graph.
-			//checkIfMaster(graphName);
 
-			boolean isDefaultGraph = "".equals(graphName);
+			boolean isDefaultGraph = graphName == null || graphName.isEmpty();
 			Model model = isDefaultGraph
 				? ModelManager.inst().getDefaultModel()
 				: ModelManager.inst().getModel(graphName);
@@ -150,15 +137,15 @@ public class Inserter {
 		}
 	}
 
-	protected long importRepository(IInputStreamProvider inStrmPrvdr, String baseUri)
-		throws IOException, DataFormatException, ArchiveException {
+	protected long importRepository(Supplier<InputStream> inStrmPrvdr, String baseUri)
+		throws IOException, DataFormatException {
 		long toReturn = 0;
 
 		// First verify that we have a legitimate import
 		Model masterGraph = null;
 		Set<String> dirNamesSeen = new HashSet<>();
 		try (
-			InputStream in = inStrmPrvdr.getInputStream();
+			InputStream in = inStrmPrvdr.get();
 			final ZipInputStream zin = new ZipInputStream(in);
 			) {
 			ZipEntry ze = null;
@@ -171,12 +158,14 @@ public class Inserter {
 						+ "'rdf', 'owl', or 'xml'", zipEntryName));
 				}
 
-				IInputStreamProvider entryStrmProvider = getZipStrmProvider(zin);
+				Supplier<InputStream> entryStrmProvider = getZipStrmProvider(zin);
 
 				// Get the Master Graph separately as a temporary in-memory model
 				if (decomp.isMasterGraph()) {
 					masterGraph = ModelFactory.createDefaultModel();
-					masterGraph.read(entryStrmProvider.getInputStream(), baseUri, decomp.getFormat().toString());
+					try (InputStream entryStream = entryStrmProvider.get()) {
+						masterGraph.read(entryStream, baseUri, decomp.getFormat().toString());
+					}
 				} else {
 					long num = verify(entryStrmProvider, baseUri, decomp.getFormat());
 					if (num > 0) {
@@ -193,7 +182,7 @@ public class Inserter {
 		}
 
 		if (masterGraph == null) {
-			throw new ArchiveException("Archive has no Master Graph");
+			throw new DataFormatException("Archive has no Master Graph");
 		}
 
 		// Verify that all the filenames seen are in the Master Graph, and vice-versa
@@ -209,7 +198,7 @@ public class Inserter {
 				String dirName = stmt.getObject().toString();
 
 				if (!dirNamesSeen.contains(dirName)) {
-					throw new ArchiveException(String.format("Master Graph contains a "
+					throw new DataFormatException(String.format("Master Graph contains a "
 						+ "directory name (%1$s) not present in the zip file", dirName));
 				}
 
@@ -235,7 +224,7 @@ public class Inserter {
 				}
 			}
 
-			throw new ArchiveException("Mismatch between the number of files "
+			throw new DataFormatException("Mismatch between the number of files "
 				+ "in the zip file and the number in the Master Graph.  There are extra directories in the zip file: " + sb.toString());
 		}
 
@@ -256,7 +245,7 @@ public class Inserter {
 		}
 		// Insert the new data
 		try (
-			InputStream in = inStrmPrvdr.getInputStream();
+			InputStream in = inStrmPrvdr.get();
 			final ZipInputStream zin = new ZipInputStream(in);
 			) {
 			ZipEntry ze = null;
@@ -265,7 +254,7 @@ public class Inserter {
 				// We can assume that decomp.getFormat() is not RDFFormat.UNKNOWN
 				// because that was checked in the verification loop above.
 
-				IInputStreamProvider entryStrmProvider = getZipStrmProvider(zin);
+				Supplier<InputStream> entryStrmProvider = getZipStrmProvider(zin);
 
 				if (decomp.isMasterGraph()) {
 					// Do nothing (ignore the Master Graph)
@@ -341,8 +330,8 @@ public class Inserter {
 		}
 
 		public boolean isMasterGraph() {
-			return _dirName.equalsIgnoreCase(AbstractHandler.MASTER_GRAPH_BASENAME)
-				|| _dirName.equalsIgnoreCase(AbstractHandler.OLD_MASTER_GRAPH_BASENAME);
+			return _dirName.equalsIgnoreCase(KbGraphStore.MASTER_GRAPH_DIR)
+				|| _dirName.equalsIgnoreCase(KbGraphStore.OLD_MASTER_GRAPH_DIR);
 		}
 
 		public boolean isDefaultGraph() {
@@ -354,33 +343,28 @@ public class Inserter {
 		}
 	}
 
-	private static IInputStreamProvider getZipStrmProvider(final ZipInputStream zin) {
-		return new IInputStreamProvider() {
+	private static Supplier<InputStream> getZipStrmProvider(final ZipInputStream zin) {
+		return () -> new FilterInputStream(zin) {
 			@Override
-			public InputStream getInputStream() throws IOException {
-				return new FilterInputStream(zin) {
-					@Override
-					public void close() throws IOException {
-						// Do nothing
-					}
-				};
+			public void close() throws IOException {
+				// Do nothing
 			}
 		};
 	}
 
 	/**
-	 * Verifies the statements contained in the IInputStreamProvider. If the statements are
+	 * Verifies the statements contained in the Supplier<InputStream>. If the statements are
 	 * not valid, we throw a RuntimeException.
 	 *
 	 * @return the number of statements in the stream
 	 */
 	@SuppressWarnings("static-method")
-	protected long verify(IInputStreamProvider inStrmPrvdr, String baseUri, RDFFormat format)
+	protected long verify(Supplier<InputStream> inStrmPrvdr, String baseUri, RDFFormat format)
 		throws IOException {
 		long numStmts = 0;
 		long start = Calendar.getInstance().getTimeInMillis();
 		Model syntaxVerifier = ModelFactory.createModelForGraph(new ForgetfulGraph());
-		try (InputStream in = inStrmPrvdr.getInputStream()) {
+		try (InputStream in = inStrmPrvdr.get()) {
 			if (format == RDFFormat.JSON_LD) {
 				syntaxVerifier.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
 			}
@@ -398,10 +382,10 @@ public class Inserter {
 
 	/** Inserts the statements from the InputStream into the given Model. */
 	@SuppressWarnings("static-method")
-	protected void insert(Model model, String graphLabel, IInputStreamProvider inStrmPrvdr,
+	protected void insert(Model model, String graphLabel, Supplier<InputStream> inStrmPrvdr,
 		RDFFormat format, String baseUri) throws IOException {
 		long start = Calendar.getInstance().getTimeInMillis();
-		try (InputStream in = inStrmPrvdr.getInputStream()) {
+		try (InputStream in = inStrmPrvdr.get()) {
 			if (format == RDFFormat.JSON_LD) {
 				model.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
 			}

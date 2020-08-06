@@ -1,15 +1,10 @@
 package com.bnn.parliament.spring.boot;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 import com.bbn.parliament.jena.bridge.ParliamentBridge;
-
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Spring Boot Server for Parliament
@@ -17,22 +12,15 @@ import org.slf4j.LoggerFactory;
  * @author pwilliams
  */
 @SpringBootApplication
-@ComponentScan({"com.bbn.parliament.spring.boot.controller", "com.bbn.parliament.spring.boot.service", "com.bbn.parliament.jena.bridge"})
-
+@ComponentScan({
+	"com.bbn.parliament.spring.boot.controller",
+	"com.bbn.parliament.spring.boot.service",
+	"com.bbn.parliament.jena.bridge"})
 public class Application {
+	protected ParliamentBridge server;
 
-	private static final Logger LOG = LoggerFactory.getLogger(Application.class);
-	protected ParliamentBridge _server;
-
+	@SuppressWarnings("resource")
 	public static void main(String[] args) {
-		/*
-		try (ConfigurableApplicationContext context = SpringApplication.run(Application.class, args)) {
-			// Do nothing
-			LOG.info("I am now shutting down!");
-		}
-		*/
-
-
 		SpringApplication.run(Application.class, args);
 	}
 }

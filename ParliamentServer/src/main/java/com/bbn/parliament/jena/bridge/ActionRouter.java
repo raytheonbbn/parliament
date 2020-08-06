@@ -6,33 +6,31 @@
 
 package com.bbn.parliament.jena.bridge;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-/*
-import org.joseki.DatasetDesc;
-import org.joseki.JosekiServerException;
-import org.joseki.Processor;
-import org.joseki.QueryExecutionException;
-import org.joseki.Request;
-import org.joseki.Response;
-import org.joseki.ReturnCodes;
-import org.joseki.module.Loadable;
-*/
-
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-//import com.bbn.parliament.jena.joseki.bridge.servlet.ParliamentRequest;
+import com.bbn.parliament.jena.bridge.tracker.TrackableException;
 import com.bbn.parliament.jena.bridge.tracker.TrackableQuery;
 import com.bbn.parliament.jena.bridge.tracker.TrackableUpdate;
 import com.bbn.parliament.jena.bridge.tracker.Tracker;
 import com.bbn.parliament.jena.bridge.util.LogUtil;
-import com.bbn.parliament.jena.handler.QueryHandler;
-import com.bbn.parliament.jena.handler.UpdateHandler;
+import com.bbn.parliament.jena.exception.DataFormatException;
+import com.bbn.parliament.jena.exception.MissingGraphException;
+import com.bbn.parliament.jena.exception.QueryExecutionException;
+import com.bbn.parliament.jena.util.JsonLdRdfWriter;
+import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryParseException;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.rdf.model.Model;
+
 /**
  * Outer Joseki processor to route the request to the right handler.
  *
@@ -58,9 +56,6 @@ import com.hp.hpl.jena.query.QueryParseException;
  * sallen (4/23/2009) - Moved bulk operations to the BulkServlet.  This class
  * now only handles SPARQL and SPARQL/Update queries.
  */
-
-
-
 @Component("actionRouter")
 public class ActionRouter {
 	public static final boolean FAIR_READ_WRITE_LOCK = true;
@@ -70,45 +65,89 @@ public class ActionRouter {
 
 	public ActionRouter() {}
 
-	public void execQuery(String sparqlStmt, String requestor, OutputStream out) throws Exception {
+	@SuppressWarnings("static-method")
+	public void execQuery(String sparqlStmt, String requestor, OutputStream out) throws QueryExecutionException {
+		if(sparqlStmt == null || sparqlStmt.isEmpty()) {
+			throw new IllegalArgumentException("Null or blank query string");
+		}
 		try {
-			QueryHandler handler = new QueryHandler();
-
 			TrackableQuery trackable = Tracker.getInstance().createQuery(sparqlStmt, requestor);
 			SparqlStmtLogger.logSparqlStmt(sparqlStmt);
 
 			getReadLock();
 			try {
-				handler.execSelect(trackable, out);
+				execSelect(trackable, out);
 			} finally {
 				releaseReadLock();
 				log.debug("Released read lock");
 			}
-
 		} catch (QueryParseException ex) {
-			String msg = String.format(
-					"Encountered an error while parsing query:%n    %1$s%n%n%2$s",
-					ex.getMessage(), sparqlStmt);
-				log.info(LogUtil.fixEolsForLogging(msg));
-				throw ex;
+			String msg = String.format("Query parsing error:%n    %1$s%n%n%2$s",
+				ex.getMessage(), sparqlStmt);
+			log.warn(LogUtil.fixEolsForLogging(msg));
+			throw ex;
 		}
 	}
 
-	public void execUpdate(String sparqlStmt, String requestor) throws Exception {
+	private static void execSelect(TrackableQuery trackable, OutputStream out) throws QueryExecutionException {
+		try {
+			Query q = trackable.getQuery();
+			trackable.run();
 
-			UpdateHandler handler = new UpdateHandler();
-			//handler.init(initService, initImplementation);
+			if (trackable.getQueryResult() == null) {
+				throw new QueryExecutionException("Query produced no result");
+			} else if (q.isSelectType()) {
+				ResultSet rs = trackable.getResultSet();
 
-			TrackableUpdate trackable = Tracker.getInstance().createUpdate(sparqlStmt, requestor);
-			SparqlStmtLogger.logSparqlStmt(sparqlStmt);
+				//File tmpDir = ParliamentBridge.getInstance().getConfiguration().getTmpDir();
+				//int threshold = ParliamentBridge.getInstance().getConfiguration().getDeferredFileOutputStreamThreshold();
 
-			getWriteLock();
-			try {
-				handler.execUpdate(trackable);
-			} finally {
-				releaseWriteLock();
-				log.debug("Released write lock");
+				//final FileBackedResultSet fileBackedRS = new FileBackedResultSet(rs, tmpDir, threshold);
+
+				//ResultSet result = fileBackedRS.getResultSet();
+
+				ResultSetFormatter.outputAsXML(out, rs);
+
+				//fileBackedRS.delete();
+
+				log.debug("OK/select");
+			} else if (q.isConstructType() || q.isDescribeType()) {
+				Model respModel = trackable.getModel();
+				respModel.setWriterClassName(JsonLdRdfWriter.formatName, JsonLdRdfWriter.class.getName());
+				//resp.setModel(respModel);
+				log.debug(q.isConstructType() ? "OK/construct" : "OK/describe");
+				throw new NotImplementedException("TODO: Need to port the commented line of code above from Joseki to Spring");
+			} else if (q.isAskType()) {
+				@SuppressWarnings("unused")
+				boolean b = trackable.getBoolean();
+				//resp.setBoolean(b);
+				log.debug("OK/ask");
+				throw new NotImplementedException("TODO: Need to port the commented line of code above from Joseki to Spring");
+			} else {
+				log.error(LogUtil.formatForLog("Unknown query type - ", trackable.getQuery().toString()));
 			}
+		} catch (TrackableException | DataFormatException | MissingGraphException | IOException ex) {
+			throw new QueryExecutionException("Error while executing query", ex);
+		}
+	}
+
+	@SuppressWarnings("static-method")
+	public void execUpdate(String sparqlStmt, String requestor) throws QueryExecutionException {
+		if(sparqlStmt == null || sparqlStmt.isEmpty()) {
+			throw new IllegalArgumentException("Null or blank query string");
+		}
+		SparqlStmtLogger.logSparqlStmt(sparqlStmt);
+		TrackableUpdate trackable = Tracker.getInstance().createUpdate(sparqlStmt, requestor);
+
+		getWriteLock();
+		try {
+			trackable.run();
+		} catch (TrackableException | DataFormatException | MissingGraphException | IOException ex) {
+			throw new QueryExecutionException("Error while executing query", ex);
+		} finally {
+			releaseWriteLock();
+			log.debug("Released write lock");
+		}
 	}
 
 	public static void getWriteLock() {

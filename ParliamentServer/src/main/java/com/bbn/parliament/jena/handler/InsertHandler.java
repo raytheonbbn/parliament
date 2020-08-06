@@ -9,6 +9,9 @@ package com.bbn.parliament.jena.handler;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,98 +24,68 @@ import com.bbn.parliament.jena.bridge.ActionRouter;
 import com.bbn.parliament.jena.bridge.tracker.TrackableException;
 import com.bbn.parliament.jena.bridge.tracker.TrackableInsert;
 import com.bbn.parliament.jena.bridge.tracker.Tracker;
-import com.bbn.parliament.jena.bridge.util.LogUtil;
-import com.bbn.parliament.jena.exception.ArchiveException;
 import com.bbn.parliament.jena.exception.DataFormatException;
 import com.bbn.parliament.jena.exception.MissingGraphException;
-import com.bbn.parliament.jena.handler.Inserter.IInputStreamProvider;
+import com.bbn.parliament.jena.exception.QueryExecutionException;
 
-
-/** @author sallen */
 public class InsertHandler extends AbstractHandler {
-	public static final String P_STATEMENTS = "statements";
-	public static final String P_BASE = "base";
-	public static final String P_FORMAT = "dataFormat";
-	public static final String P_GRAPH = "graph";
-	public static final String P_VERIFY = "verifyData";
-	public static final String P_IMPORT = "import";
-
 	// Use one logger.
-	private static Logger _log = LoggerFactory.getLogger(InsertHandler.class);
+	private static Logger LOG = LoggerFactory.getLogger(InsertHandler.class);
 
 	@Override
 	protected Logger getLog() {
-		return _log;
+		return LOG;
 	}
 
-	public void handleRequest(String contentType, String graphURI, String remoteAddr, HttpEntity<byte[]> requestEntity, HttpServletResponse resp)
-		throws IOException, DataFormatException, MissingGraphException, ArchiveException {
-		String verifyString = "yes";
-		String importString = "no";
-		if (graphURI == null) {
-			graphURI = "";
-		}
-
-		IInputStreamProvider strmPrvdr = null;
-		strmPrvdr = new IInputStreamProvider() {
-			@Override
-			public InputStream getInputStream() throws IOException {
-				return new ByteArrayInputStream(requestEntity.getBody());
-			}
-		};
-
-		long numStatements = handleRequest(resp, graphURI, strmPrvdr, contentType, null, verifyString, importString, null, remoteAddr);
+	@SuppressWarnings("static-method")
+	public void handleRequest(String contentType, String graphURI, String remoteAddr,
+			HttpEntity<byte[]> requestEntity, HttpServletResponse resp)
+			throws IOException, QueryExecutionException {
+		long numStatements = handleRequest(resp, graphURI, contentType, null, remoteAddr,
+			() -> new ByteArrayInputStream(requestEntity.getBody()));
 		sendSuccess(numStatements, resp);
 	}
 
-	public void handleFileRequest(String contentType, String graphURI, String remoteAddr, MultipartFile[] files, HttpServletResponse resp)
-			throws IOException, DataFormatException, MissingGraphException, ArchiveException {
-			String verifyString = "yes";
-			String importString = "no";
-			long numStatements = 0;
-
-			if (graphURI == null) {
-				graphURI = "";
-			}
-
-			for (int i = 0; i < files.length; i++) {
-				MultipartFile file = files[i];
-				String filename = file.getOriginalFilename();
-				String dataFormat = file.getContentType();
-
-				IInputStreamProvider strmPrvdr = new IInputStreamProvider() {
-					@Override
-					public InputStream getInputStream() throws IOException {
-						return file.getInputStream();
-					}
-				};
-				numStatements += handleRequest(resp, graphURI, strmPrvdr, dataFormat, null, verifyString, importString, filename, remoteAddr);
-			}
-			sendSuccess(numStatements, resp);
-		}
-
 	@SuppressWarnings("static-method")
-	protected long handleRequest(HttpServletResponse resp,
-		String graphName, IInputStreamProvider strmPrvdr, String dataFormat,
-		String base, String verifyString, String importString, String filename, String remoteAddr)
-			throws IOException, DataFormatException, MissingGraphException, ArchiveException {
-
-		if (strmPrvdr == null) {
-			throw new NullPointerException("RDF data is missing");
+	public void handleFileRequest(String contentType, String graphURI, String remoteAddr,
+			MultipartFile[] files, HttpServletResponse resp)
+			throws IOException, QueryExecutionException {
+		long numStatements = 0;
+		for (MultipartFile file : files) {
+			numStatements += handleRequest(resp, graphURI, file.getContentType(),
+				file.getOriginalFilename(), remoteAddr, () -> getMultipartInputStream(file));
 		}
+		sendSuccess(numStatements, resp);
+	}
 
+	private static InputStream getMultipartInputStream(MultipartFile file) {
+		try {
+			return file.getInputStream();
+		} catch (IOException ex) {
+			throw new UncheckedIOException(ex);
+		}
+	}
+
+	private static long handleRequest(HttpServletResponse resp, String graphName,
+			String dataFormat, String filename, String remoteAddr,
+			Supplier<InputStream> strmSupplier) throws QueryExecutionException {
+		Objects.requireNonNull(strmSupplier, "strmSupplier");
+
+		final String verifyString = "yes";
+		final String importString = "no";
 		long numStatements = -1;
 
-		Inserter inserter = new Inserter(graphName, strmPrvdr, dataFormat, base, verifyString, importString, filename);
+		Inserter inserter = new Inserter(graphName, strmSupplier, dataFormat, null,
+			verifyString, importString, filename);
 		TrackableInsert ti = Tracker.getInstance().createInsert(inserter, remoteAddr);
 
 		ActionRouter.getWriteLock();
 		try {
 			ti.run();
 			numStatements = ti.getInserter().getNumStatements();
-		}
-		catch(TrackableException e) {
-			throw new IOException("Error while running insert\n\n" + LogUtil.getExceptionInfo(e), e);
+		} catch (TrackableException | DataFormatException | MissingGraphException
+				| IOException ex) {
+			throw new QueryExecutionException("Error while executing insert", ex);
 		} finally {
 			ActionRouter.releaseWriteLock();
 		}
@@ -120,16 +93,8 @@ public class InsertHandler extends AbstractHandler {
 		return numStatements;
 	}
 
-	protected void sendSuccess(long numStatements, HttpServletResponse resp) throws IOException {
-		String msg = "Insert operation successful.";
-		if (numStatements == 1) {
-			msg = "Insert operation successful.  1 statement added.";
-		}
-		else if (numStatements >= 0) {
-			msg = String.format(
-				"Insert operation successful.  %1$d statements added.",
-				numStatements);
-		}
-		sendSuccess(msg, resp);
+	private static void sendSuccess(long numStatements, HttpServletResponse resp)
+			throws IOException {
+		sendSuccess(resp, "Inserted %1$d statements.", numStatements);
 	}
 }

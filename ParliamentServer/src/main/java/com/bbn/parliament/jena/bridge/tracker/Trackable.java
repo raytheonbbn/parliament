@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.Observable;
 
 import com.bbn.parliament.jena.bridge.tracker.management.TrackableMXBean;
-import com.bbn.parliament.jena.exception.ArchiveException;
 import com.bbn.parliament.jena.exception.DataFormatException;
 import com.bbn.parliament.jena.exception.MissingGraphException;
 
@@ -41,7 +40,7 @@ public abstract class Trackable extends Observable implements TrackableMXBean, C
 	}
 
 	protected abstract void doCancel() throws TrackableException;
-	protected abstract void doRun() throws TrackableException, IOException, DataFormatException, MissingGraphException, ArchiveException;
+	protected abstract void doRun() throws TrackableException, IOException, DataFormatException, MissingGraphException;
 	protected abstract void release();
 
 	@Override
@@ -53,7 +52,7 @@ public abstract class Trackable extends Observable implements TrackableMXBean, C
 		}
 	}
 
-	public void run() throws TrackableException, DataFormatException, MissingGraphException, ArchiveException, IOException {
+	public void run() throws TrackableException, DataFormatException, MissingGraphException, IOException {
 		synchronized (_statusLock) {
 			if (!Status.CREATED.equals(_status)) {
 				// cannot rerun something
@@ -64,10 +63,7 @@ public abstract class Trackable extends Observable implements TrackableMXBean, C
 		if (!Tracker.getInstance().isShuttingDown()) {
 			try {
 				doRun();
-			} catch (TrackableException e) {
-				setError();
-				throw e;
-			} catch (DataFormatException | MissingGraphException | ArchiveException | IOException e) {
+			} catch (TrackableException | DataFormatException | MissingGraphException | IOException e) {
 				setError();
 				throw e;
 			}

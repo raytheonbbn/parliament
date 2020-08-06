@@ -1,4 +1,4 @@
-package com.bbn.parliament.spring.boot.controller;
+package com.bbn.parliament.jena.exception;
 
 public class UnsupportedEndpointException extends UnsupportedOperationException {
 	private static final long serialVersionUID = 1L;

@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.bridge.ActionRouter;
-import com.bbn.parliament.jena.bridge.util.HttpServerUtil;
 import com.bbn.parliament.jena.exception.DataFormatException;
 import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.graph.KbGraph;
@@ -31,9 +30,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 /** @author sallen */
 public class ExportHandler extends AbstractHandler {
-	private static final String P_FORMAT = "dataFormat";
-	private static final String P_GRAPH = "graph";
-	private static final String P_EXPORT_ALL = "exportAll";
 	private static final String[] DOS_DEVICE_NAMES = { "AUX", "CLOCK$", "COM1",
 		"COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "CON",
 		"LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
@@ -58,29 +54,12 @@ public class ExportHandler extends AbstractHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.bbn.parliament.jena.joseki.josekibridge.AbstractHandler#handleFormURLEncodedRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-
-	public void handleFormURLEncodedRequest(HttpServletRequest req,
-		HttpServletResponse resp) throws IOException, MissingGraphException, DataFormatException {
-		String graphName = HttpServerUtil.getParameter(req, P_GRAPH, "");
-		String dataFormat = HttpServerUtil.getParameter(req, P_FORMAT, "RDF/XML");
-		String exportAll = HttpServerUtil.getParameter(req, P_EXPORT_ALL, "no");
-
-		handleRequest(req, resp, graphName, dataFormat, exportAll);
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see com.bbn.parliament.jena.joseki.josekibridge.AbstractHandler#handleMultipartFormRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
-
-	protected void handleRequest(HttpServletRequest req, HttpServletResponse resp,
-		String graphName, String dataFormat, String exportAllStr)
+	@SuppressWarnings("static-method")
+	public void handleRequest(HttpServletRequest req, HttpServletResponse resp,
+			String graphName, String dataFormat, boolean exportAll)
 			throws IOException, MissingGraphException, DataFormatException {
-		// Default to false
-		boolean exportAll = "yes".equalsIgnoreCase(exportAllStr);
-
 		RDFFormat format = RDFFormat.parse(dataFormat);
 		if (format == RDFFormat.UNKNOWN) {
 			throw new DataFormatException(String.format("Unsupported data format \"%1$s\"", dataFormat));
@@ -118,7 +97,7 @@ public class ExportHandler extends AbstractHandler {
 	 * @param graphName The name of the graph to export.
 	 * @param dataFormat The RDF serialization format.
 	 */
-	protected void writeResponse(HttpServletRequest req, HttpServletResponse resp,
+	private static void writeResponse(HttpServletRequest req, HttpServletResponse resp,
 		Model model, String graphName, RDFFormat dataFormat) throws IOException {
 
 		String graphLabel = (graphName.length() == 0) ? DEFAULT_GRAPH_BASENAME : graphName;
@@ -128,28 +107,6 @@ public class ExportHandler extends AbstractHandler {
 		String basename = encodeUriForFilename(graphLabel);
 		String extension = dataFormat.getExtension();
 		String filename = String.format("%1$s.%2$s", basename, extension);
-
-		String writerMimeType = "text/plain";
-		/*
-		switch (dataFormat) {
-		case N3:
-			writerMimeType = Joseki.contentTypeN3;
-			break;
-		case TURTLE:
-			writerMimeType = Joseki.contentTypeTurtle;
-			break;
-		case NTRIPLES:
-			writerMimeType = Joseki.contentTypeNTriples;
-			break;
-		case RDFXML:
-			writerMimeType = Joseki.contentTypeRDFXML;
-			break;
-		case UNKNOWN:
-		default:
-			// Do nothing
-			break;
-		}
-		*/
 
 		resp.setContentType(dataFormat.getMediaType());
 		resp.setHeader("Content-Disposition",
@@ -167,8 +124,8 @@ public class ExportHandler extends AbstractHandler {
 	 * @param resp The HttpServletResponse to respond on.
 	 * @param dataFormat The RDF serialization format.
 	 */
-	protected void writeResponse(HttpServletRequest req, HttpServletResponse resp,
-		RDFFormat dataFormat) throws IOException {
+	private static void writeResponse(HttpServletRequest req, HttpServletResponse resp,
+			RDFFormat dataFormat) throws IOException {
 		LOG.info("Exporting entire repository to ZIP file in \"{}\" format.", dataFormat);
 
 		String hostname = req.getServerName();
@@ -207,8 +164,7 @@ public class ExportHandler extends AbstractHandler {
 		}
 	}
 
-	@SuppressWarnings("static-method")
-	protected void writeModel(OutputStream out, Model model, RDFFormat dataFormat) {
+	private static void writeModel(OutputStream out, Model model, RDFFormat dataFormat) {
 		model.write(out, dataFormat.toString());
 	}
 

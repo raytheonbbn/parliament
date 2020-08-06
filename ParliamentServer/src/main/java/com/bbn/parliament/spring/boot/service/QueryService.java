@@ -1,32 +1,27 @@
-
 package com.bbn.parliament.spring.boot.service;
 
 import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.bbn.parliament.jena.bridge.ActionRouter;
+import com.bbn.parliament.jena.exception.QueryExecutionException;
 
 @Component("queryService")
 public class QueryService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(QueryService.class);
-
 	@Autowired
 	private ActionRouter actionRouter;
 
-	public void doStream (String query, HttpServletRequest request, OutputStream out) throws Exception {
-		String host = getRequestor(request);
-		actionRouter.execQuery(query, host, out);
+	public void doQuery(String query, HttpServletRequest request, OutputStream out)
+			throws QueryExecutionException {
+		String requestor = getRequestor(request);
+		actionRouter.execQuery(query, requestor, out);
 	}
 
-	//Taken from ParliamentRequest.java
-	private String getRequestor(HttpServletRequest request) {
+	static String getRequestor(HttpServletRequest request) {
 		String host = request.getRemoteHost();
 		if (host == null || host.isEmpty()) {
 			host = request.getRemoteAddr();

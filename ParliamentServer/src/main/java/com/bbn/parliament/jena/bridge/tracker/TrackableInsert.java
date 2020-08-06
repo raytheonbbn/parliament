@@ -3,7 +3,6 @@ package com.bbn.parliament.jena.bridge.tracker;
 import java.beans.ConstructorProperties;
 import java.io.IOException;
 
-import com.bbn.parliament.jena.exception.ArchiveException;
 import com.bbn.parliament.jena.exception.DataFormatException;
 import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.handler.Inserter;
@@ -33,7 +32,7 @@ public class TrackableInsert extends Trackable {
 	}
 
 	@Override
-	protected void doRun() throws IOException, DataFormatException, MissingGraphException, ArchiveException {
+	protected void doRun() throws IOException, DataFormatException, MissingGraphException {
 		_inserter.run();
 	}
 

@@ -20,10 +20,9 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import com.bbn.parliament.jena.bridge.ParliamentBridge;
 import com.bbn.parliament.jena.bridge.util.HttpServerUtil;
+import com.bbn.parliament.jena.exception.BadRequestException;
+import com.bbn.parliament.jena.exception.QueryExecutionException;
 import com.bbn.parliament.spring.boot.service.QueryService;
-
-
-
 
 /**
  * Controller for Spring Boot Server. Routes HTTP requests from /parliament/sparql to appropriate request method.
@@ -35,19 +34,18 @@ public class QueryController {
 	private static final String ENDPOINT = "/parliament/sparql";
 	private static final String URL_ENCODED = "application/x-www-form-urlencoded";
 	private static final String SPARQL_QUERY = "application/sparql-query";
-	private static final String DEFAULT_GRAPH = null;
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryController.class);
 
 	@Autowired
 	private QueryService queryService;
 
-
 	@GetMapping(value = ENDPOINT, params = "query")
 	public StreamingResponseBody sparqlGET(
 			@RequestParam(value = "query") String query,
 			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
-			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI, HttpServletRequest request) throws Exception {
+			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI,
+			HttpServletRequest request) throws BadRequestException {
 
 		if (defaultGraphURI.size() > 0 || namedGraphURI.size() > 0) {
 			throw new BadRequestException();
@@ -57,8 +55,8 @@ public class QueryController {
 			@Override
 			public void writeTo(OutputStream out) throws IOException {
 				try {
-					queryService.doStream(query, request, out);
-				} catch(Exception e) {
+					queryService.doQuery(query, request, out);
+				} catch(QueryExecutionException e) {
 					throw new IOException(e);
 				}
 			}
@@ -69,7 +67,8 @@ public class QueryController {
 	public StreamingResponseBody sparqlURLEncodeQueryPOST(
 			@RequestParam(value = "query") String query,
 			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
-			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI, HttpServletRequest request) throws Exception {
+			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI,
+			HttpServletRequest request) throws BadRequestException {
 
 		if (defaultGraphURI.size() > 0 || namedGraphURI.size() > 0) {
 			throw new BadRequestException();
@@ -79,8 +78,8 @@ public class QueryController {
 			@Override
 			public void writeTo(OutputStream out) throws IOException {
 				try {
-					queryService.doStream(query, request, out);
-				} catch(Exception e) {
+					queryService.doQuery(query, request, out);
+				} catch (QueryExecutionException e) {
 					throw new IOException(e);
 				}
 			}
@@ -91,9 +90,9 @@ public class QueryController {
 	public StreamingResponseBody sparqlDirectQueryPOST(
 			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
 			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI,
-			@RequestBody String query, HttpServletRequest request) throws Exception {
+			@RequestBody String query, HttpServletRequest request) throws BadRequestException {
 
-		if (defaultGraphURI.size() > 0 || namedGraphURI.size() > 0) {
+		if (!defaultGraphURI.isEmpty() || !namedGraphURI.isEmpty()) {
 			throw new BadRequestException();
 		}
 
@@ -101,14 +100,15 @@ public class QueryController {
 			@Override
 			public void writeTo(OutputStream out) throws IOException {
 				try {
-					queryService.doStream(query, request, out);
-				} catch(Exception e) {
+					queryService.doQuery(query, request, out);
+				} catch (QueryExecutionException e) {
 					throw new IOException(e);
 				}
 			}
 		};
 	}
 
+	@SuppressWarnings("static-method")
 	@PostConstruct
 	public void initBridge() {
 		String modelConfFile = "parliament-config.ttl";

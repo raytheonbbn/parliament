@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bbn.parliament.jena.exception.BadRequestException;
 import com.bbn.parliament.spring.boot.service.UpdateService;
 
 
