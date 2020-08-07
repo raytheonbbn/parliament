@@ -106,7 +106,7 @@ public class ActionRouter {
 
 				//ResultSet result = fileBackedRS.getResultSet();
 
-				ResultSetFormatter.outputAsXML(out, rs);
+				ResultSetFormatter.outputAsJSON(out, rs);
 
 				//fileBackedRS.delete();
 

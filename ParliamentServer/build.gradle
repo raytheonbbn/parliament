@@ -2,7 +2,10 @@ plugins {
 	id 'org.springframework.boot' version '2.3.1.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
+	id 'com.moowork.node' version '1.3.1'
 }
+
+apply plugin: 'com.moowork.node'
 
 sourceCompatibility = '1.8'
 
@@ -47,6 +50,22 @@ sourceSets {
 	}
 }
 
+node {
+  //version = ''
+  //npmVersion = ''
+  //download = true
+}
+
+task buildReactApp(type: NodeTask, dependsOn: 'npmInstall') {
+    script = project.file('node_modules/.bin/webpack')
+    args = [
+            '--mode', 'development',
+            '--entry', './src/main/webapp/javascript/Main.jsx',
+            '-o', './src/main/resources/static/dist/react-app.js'
+    ]
+}
+
+
 // See https://jena.apache.org/documentation/tools/schemagen.html
 task runSchemagen(type: JavaExec) {
 	classpath = sourceSets.main.compileClasspath
@@ -77,3 +96,7 @@ task copyTestResources(type: Copy) {
 subprojects {
 	junitPlatformTest.dependsOn copyTestResources
 }
+
+processResources.dependsOn 'buildReactApp'
+clean.delete << file('node_modules')
+clean.delete << file('src/main/resources/static/dist')

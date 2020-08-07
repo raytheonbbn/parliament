@@ -1,0 +1,16 @@
+{
+    "name": "parliament-frontend",
+    "description": "Frontend application for accessing parliament",
+    "dependencies": {
+        "@babel/core": "^7.9.0",
+        "@babel/preset-env": "^7.9.0",
+        "@babel/preset-react": "^7.9.0",
+        "babel-loader": "^8.1.0",
+        "css-loader": "^3.5.2",
+        "style-loader": "^1.1.4",
+        "react": "~16.13.1",
+        "react-dom": "~16.13.1",
+        "webpack": "^4.42.1",
+        "webpack-cli": "^3.3.11"
+    }
+}
