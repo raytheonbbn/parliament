@@ -6,13 +6,24 @@ class QueryResult extends Component {
             return (<div>No Results yet...</div>)
         }
         var colNames = this.props.result.head.vars;
-        return (<ul id="col1-list">
-            {this.props.result.results.bindings.map(result => (
-                <li>
-                    {result[colNames[0]].value}
-                </li>
+        return (<table id="query_table">
+            <tr>
+                {colNames.map(name => (
+                    <th>{name}</th>
+                ))}
+            </tr>
+
+            {this.props.result.results.bindings.map(row => (
+                <tr>
+                {Object.keys(row).map(entry => (
+                    <td>{row[entry].value}</td>
+                ))}
+                </tr>
+                //<td>{rows[colNames[0]].value}</td>
+                //<td>{rows[colNames[1]].value}</td>
+                //<td>{rows[colNames[2]].value}</td>
             ))}
-        </ul>);
+        </table>);
     }
 }
 

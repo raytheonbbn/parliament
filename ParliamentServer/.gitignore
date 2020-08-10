@@ -31,4 +31,7 @@ out/
 
 /libs/
 /kb-data/
+
+### Node & React ###
 /node_modules/
+/src/main/resources/static/dist/

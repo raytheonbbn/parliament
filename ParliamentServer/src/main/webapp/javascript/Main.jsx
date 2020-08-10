@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom' ;
 import '../css/main.css';
 import QueryResult from './QueryResult'
+import QueryForm from './QueryForm'
 
 class Main extends Component {
     constructor(props) {
@@ -12,25 +13,18 @@ class Main extends Component {
     }
 
     componentDidMount() {
-        fetch(encodeURI("/parliament/sparql?query=select ?x ?y ?z where { ?x ?y ?z }"))
-            .then(res => res.json())
-            .then((response) => {
-                this.setState({
-                    result: response
-                });
-            },
-            (error) => {
-                alert(error);
-            }
-            )
+    }
+
+    parentFunction(data) {
+        this.setState({result:data})
     }
 
     render() {
         return (
             <div>
-                <h1>Demo Component</h1>
+                <h1>Parliament</h1>
+                <QueryForm getStateFromParent={this.parentFunction.bind(this)}/>
                 <QueryResult result={this.state.result}/>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg"/>
             </div>
         );
     }
