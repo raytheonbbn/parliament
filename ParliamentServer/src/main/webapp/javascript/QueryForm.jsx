@@ -12,8 +12,7 @@ class QueryForm extends Component {
         this.handleChange = this.handleChange.bind(this);
     }
 
-    childFunction(event) {
-        event.preventDefault();
+    childFunction() {
         this.props.getStateFromParent(this.state.result);
     }
 
@@ -21,20 +20,14 @@ class QueryForm extends Component {
         this.setState({value: event.target.value})
     }
 
-    handleSubmit(event) {
-        fetch(encodeURI("/parliament/sparql?query=" + this.state.value))
-            .then(res => res.json())
-            .then((response) => {
-                this.setState({
-                    result: response
-                });
-            },
-            (error) => {
-                alert(error);
-            }
-        )
+    async handleSubmit(event) {
         event.preventDefault();
-        this.childFunction(event);
+
+        const response = await fetch(encodeURI("/parliament/sparql?query=" + this.state.value));
+        const res = await response.json();    
+        this.setState({result: res})
+        
+        this.childFunction();
     }
 
     render() {
@@ -43,7 +36,7 @@ class QueryForm extends Component {
                 <label>
                     Query:
                     <br></br>
-                    <textarea id ="queryBox" rows="10" cols="200" value={this.state.value} onChange={this.handleChange} />
+                    <textarea id ="queryBox" rows="10" cols="100" value={this.state.value} onChange={this.handleChange} />
                 </label>
                 <br></br>
                 <input type="submit" value="submit" />
