@@ -1,5 +1,15 @@
 #main {
-    background: #eff;
+    background: #ffffff;
     margin: 0 auto;
-    width: 800px;
 }
+
+body {
+    line-height: 18pt;
+    margin: 3em;
+}
+
+h1 {
+    text-align: center;
+    font-weight: bold;
+}
+

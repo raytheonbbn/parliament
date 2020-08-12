@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom' ;
-import '../css/main.css';
-import QueryResult from './QueryResult'
-import QueryForm from './QueryForm'
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+
+
+import QueryPage from './QueryPage';
+import UpdatePage from './UpdatePage';
+import Home from './Home';
+import Error from './Error';
 
 class Main extends Component {
     constructor(props) {
@@ -15,22 +19,24 @@ class Main extends Component {
     componentDidMount() {
     }
 
-    parentFunction(data) {
-        this.setState({result:data})
-    }
 
     render() {
         return (
-            <div>
-                <h1>Parliament</h1>
-                <QueryForm getStateFromParent={this.parentFunction.bind(this)}/>
-                <QueryResult result={this.state.result}/>
-            </div>
+            <Switch>
+                <Route exact path="/" component={Home}/>
+                <Route path="/query" component={QueryPage}/>
+                <Route path="/update" component={UpdatePage}/>
+                <Route component={Error}/>
+            </Switch>
         );
     }
 }
 
+//
+
 ReactDOM.render(
-    <Main />,
+    <BrowserRouter>
+        <Main />
+    </BrowserRouter>,
     document.getElementById('react-mountpoint')
 );

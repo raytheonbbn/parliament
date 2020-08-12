@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import '../css/QueryForm.css';
 
-class QueryForm extends Component {
+class UpdateForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            value:`
+            value: `
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX dc: <http://purl.org/dc/elements/1.1/>
 PREFIX dul: <http://www.loa-cnr.it/ontologies/DUL.owl#>
@@ -31,12 +31,15 @@ PREFIX xml: <http://www.w3.org/XML/1998/namespace>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 
-SELECT DISTINCT
-?class
-WHERE {
-    ?class a owl:Class .
-    FILTER (!isblank(?class))
-}`
+INSERT DATA
+{
+#triples
+}
+
+DELETE DATA
+{
+#triples
+}`       
         }
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -54,7 +57,7 @@ WHERE {
     async handleSubmit(event) {
         event.preventDefault();
 
-        const response = await fetch(encodeURI("/parliament/sparql?query=" + this.state.value));
+        const response = await fetch(encodeURI("/parliament/update?update=" + this.state.value));
         const res = await response.json();    
         this.setState({result: res})
         
@@ -67,7 +70,7 @@ WHERE {
                 <label>
                     Query:
                     <br></br>
-                    <textarea id ="queryBox" rows="30" cols="90" spellcheck="false" value={this.state.value} onChange={this.handleChange} />
+                    <textarea id ="queryBox" rows="30 " cols="90" spellcheck="false" value={this.state.value} onChange={this.handleChange} />
                 </label>
                 <br></br>
                 <input type="submit" value="submit" />
@@ -76,4 +79,4 @@ WHERE {
     }
 }
 
-export default QueryForm;
+export default UpdateForm;
