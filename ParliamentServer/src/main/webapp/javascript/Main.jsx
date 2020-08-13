@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import QueryPage from './QueryPage';
 import UpdatePage from './UpdatePage';
+import GraphStorePage from './GraphStorePage';
 import Home from './Home';
 import Error from './Error';
 
@@ -26,6 +27,7 @@ class Main extends Component {
                 <Route exact path="/" component={Home}/>
                 <Route path="/query" component={QueryPage}/>
                 <Route path="/update" component={UpdatePage}/>
+                <Route path="/graphstore" component={GraphStorePage}/>
                 <Route component={Error}/>
             </Switch>
         );

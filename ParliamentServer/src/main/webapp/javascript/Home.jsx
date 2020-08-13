@@ -12,7 +12,7 @@ class Home extends Component {
                 <ul>
                     <li><a href="/query">Query</a></li>
                     <li><a href="/update">Update</a></li>
-                    <li><a href="/query">Graph Store Protocol</a></li>
+                    <li><a href="/graphstore">Graph Store Protocol</a></li>
                 </ul>
                 
             </div>

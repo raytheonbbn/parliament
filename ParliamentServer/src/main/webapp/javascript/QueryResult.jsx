@@ -5,9 +5,9 @@ class QueryResult extends Component {
         if (!this.props.result) {
             return (<div>No Results yet...</div>)
         }
-        if (this.props.result.status == 200) {
+        if (this.props.result.results) {
             var colNames = this.props.result.head.vars;
-            return (<table id="query_table">
+            return (<div><table id="query_table">
                 <tr>
                     {colNames.map(name => (
                         <th>{name}</th>
@@ -24,7 +24,7 @@ class QueryResult extends Component {
                     //<td>{rows[colNames[1]].value}</td>
                     //<td>{rows[colNames[2]].value}</td>
                 ))}
-            </table>);
+            </table></div>);
         }
         else {
             return (<div>An error occurred, status code: {this.props.result.status}</div>)

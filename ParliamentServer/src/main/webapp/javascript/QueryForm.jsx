@@ -54,7 +54,13 @@ WHERE {
     async handleSubmit(event) {
         event.preventDefault();
 
-        const response = await fetch(encodeURI("/parliament/sparql?query=" + this.state.value));
+        const response = await fetch(encodeURI("/parliament/sparql"), {
+            method: "POST",
+            body: this.state.value,
+            headers: {
+                "Content-Type": "application/sparql-query"
+            }
+            });
         const res = await response.json();    
         this.setState({result: res})
         
@@ -67,7 +73,7 @@ WHERE {
                 <label>
                     Query:
                     <br></br>
-                    <textarea id ="queryBox" rows="30" cols="90" spellcheck="false" value={this.state.value} onChange={this.handleChange} />
+                    <textarea id ="queryBox" rows="30" cols="90" spellCheck="false" value={this.state.value} onChange={this.handleChange} />
                 </label>
                 <br></br>
                 <input type="submit" value="submit" />

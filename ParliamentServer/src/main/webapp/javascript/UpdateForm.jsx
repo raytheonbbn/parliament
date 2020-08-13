@@ -57,7 +57,13 @@ DELETE DATA
     async handleSubmit(event) {
         event.preventDefault();
 
-        const response = await fetch(encodeURI("/parliament/update?update=" + this.state.value));
+        const response = await fetch(encodeURI("/parliament/update"), {
+            method: "POST",
+            body: this.state.value,
+            headers: {
+                "Content-Type": "application/sparql-update"
+            }
+            });
         const res = await response.json();    
         this.setState({result: res})
         
