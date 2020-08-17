@@ -19,7 +19,8 @@ import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.bridge.ActionRouter;
+import com.bbn.parliament.jena.bridge.ConcurrentRequestController;
+import com.bbn.parliament.jena.bridge.ConcurrentRequestLock;
 import com.bbn.parliament.jena.bridge.configuration.ReasonerConfigurationHandler;
 import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.jena.graph.index.IndexManager;
@@ -150,16 +151,13 @@ public class ModelManager {
 	}
 
 	public void clearKb() {
-		ActionRouter.getWriteLock();
-		try {
+		try (ConcurrentRequestLock lock = ConcurrentRequestController.getWriteLock()) {
 			stopFlushTimer();
 
 			_kbGraphStore.clear();
 			_dataSource = null;
 
 			initialize();
-		} finally {
-			ActionRouter.releaseWriteLock();
 		}
 
 		LOG.info("Finished clearing and reinitializing the knowledge base");
@@ -179,11 +177,8 @@ public class ModelManager {
 		// flushing that might cause a reallocation of a memory-mapped file.
 		// However, other readers may continue during the flush, so we don't
 		// need a write lock.
-		ActionRouter.getReadLock();
-		try {
+		try (ConcurrentRequestLock lock = ConcurrentRequestController.getReadLock()) {
 			_kbGraphStore.flush();
-		} finally {
-			ActionRouter.releaseReadLock();
 		}
 
 		LOG.debug("Flushed the KB models to disk");

@@ -20,16 +20,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.bridge.ActionRouter;
+import com.bbn.parliament.jena.bridge.ConcurrentRequestController;
+import com.bbn.parliament.jena.bridge.ConcurrentRequestLock;
 import com.bbn.parliament.jena.exception.DataFormatException;
 import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.graph.KbGraph;
+import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.graph.ModelManager;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.hp.hpl.jena.rdf.model.Model;
 
 /** @author sallen */
-public class ExportHandler extends AbstractHandler {
+public class ExportHandler {
 	private static final String[] DOS_DEVICE_NAMES = { "AUX", "CLOCK$", "COM1",
 		"COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "CON",
 		"LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
@@ -45,15 +47,6 @@ public class ExportHandler extends AbstractHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.bbn.parliament.jena.joseki.josekibridge.AbstractHandler#getLog()
-	 */
-	@Override
-	protected Logger getLog() {
-		return LOG;
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see com.bbn.parliament.jena.joseki.josekibridge.AbstractHandler#handleMultipartFormRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@SuppressWarnings("static-method")
@@ -65,8 +58,7 @@ public class ExportHandler extends AbstractHandler {
 			throw new DataFormatException(String.format("Unsupported data format \"%1$s\"", dataFormat));
 		}
 
-		ActionRouter.getReadLock();
-		try {
+		try (ConcurrentRequestLock lock = ConcurrentRequestController.getReadLock()) {
 			if (exportAll) {
 				writeResponse(req, resp, format);
 			}
@@ -84,8 +76,6 @@ public class ExportHandler extends AbstractHandler {
 
 				LOG.info("Export finished!");
 			}
-		} finally {
-			ActionRouter.releaseReadLock();
 		}
 	}
 
@@ -100,7 +90,7 @@ public class ExportHandler extends AbstractHandler {
 	private static void writeResponse(HttpServletRequest req, HttpServletResponse resp,
 		Model model, String graphName, RDFFormat dataFormat) throws IOException {
 
-		String graphLabel = (graphName.length() == 0) ? DEFAULT_GRAPH_BASENAME : graphName;
+		String graphLabel = (graphName.length() == 0) ? KbGraphStore.DEFAULT_GRAPH_BASENAME : graphName;
 
 		LOG.info("Exporting <{}> in \"{}\" format.", graphLabel, dataFormat);
 
@@ -141,7 +131,7 @@ public class ExportHandler extends AbstractHandler {
 			// Write the default graph first
 			{
 				Model model = ModelManager.inst().getDefaultModel();
-				String basename = DEFAULT_GRAPH_BASENAME;
+				String basename = KbGraphStore.DEFAULT_GRAPH_BASENAME;
 				String filename = String.format("%1$s.%2$s", basename, extension);
 				zout.putNextEntry(new ZipEntry(filename));
 				writeModel(zout, model, dataFormat);

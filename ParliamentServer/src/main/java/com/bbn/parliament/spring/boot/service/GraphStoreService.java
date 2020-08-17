@@ -5,23 +5,19 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bbn.parliament.jena.bridge.ActionRouter;
 import com.bbn.parliament.jena.exception.DataFormatException;
 import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.exception.QueryExecutionException;
 import com.bbn.parliament.jena.handler.ExportHandler;
 import com.bbn.parliament.jena.handler.InsertHandler;
+import com.bbn.parliament.jena.handler.UpdateHandler;
 
 @Component("graphStoreService")
 public class GraphStoreService {
-	@Autowired
-	ActionRouter actionRouter;
-
 	@SuppressWarnings("static-method")
 	public void doGet(String graphURI, String contentType, HttpServletRequest req, HttpServletResponse resp)
 			throws IOException, MissingGraphException, DataFormatException {
@@ -36,11 +32,13 @@ public class GraphStoreService {
 		doPost(contentType, graphURI, requestEntity, req, resp);
 	}
 
+	@SuppressWarnings("static-method")
 	public void doDelete(String graphURI) throws QueryExecutionException {
 		String sparqlStmt = (graphURI == null)
 			? "DROP DEFAULT ;"
 			: String.format("DROP GRAPH <%1s> ;", graphURI);
-		actionRouter.execUpdate(sparqlStmt, "Parliament-GraphStoreService");
+		UpdateHandler handler = new UpdateHandler();
+		handler.handleRequest(sparqlStmt, "Parliament-GraphStoreService");
 	}
 
 	@SuppressWarnings("static-method")

@@ -8,10 +8,16 @@ sourceCompatibility = '1.8'
 
 ext {
 	genJavaDir = file("$buildDir/generated/java")
+	artifactsDir = file("$rootDir/target/artifacts")
 }
 
 dependencies {
-	implementation fileTree(include: ['*.jar'], dir: 'libs')
+	implementation fileTree(dir: artifactsDir, include: ['JenaParliament.jar'])
+	implementation fileTree(dir: artifactsDir, include: ['JosekiParliamentClient.jar'])
+	implementation fileTree(dir: artifactsDir, include: ['NumericIndex.jar'])
+	implementation fileTree(dir: artifactsDir, include: ['Parliament.jar'])
+	implementation fileTree(dir: artifactsDir, include: ['SpatialIndexProcessor.jar'])
+	implementation fileTree(dir: artifactsDir, include: ['TemporalIndexProcessor.jar'])
 
 	//implementation 'org.apache.commons:commons-io:1.3.2'
 	implementation 'commons-fileupload:commons-fileupload:1.3.3'
@@ -29,7 +35,7 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 
-	//implementation 'io.rest-assured:rest-assured:4.2.0'
+	implementation 'io.rest-assured:rest-assured:4.2.0'
 	//implementation 'io.rest-assured:json-path:4.2.0'
 	//implementation 'io.rest-assured:xml-path:4.2.0'
 	//implementation 'org.hamcrest:hamcrest:2.2'

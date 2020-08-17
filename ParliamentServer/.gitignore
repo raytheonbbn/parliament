@@ -29,5 +29,4 @@ out/
 .vscode/
 /.gradle/
 
-/libs/
 /kb-data/

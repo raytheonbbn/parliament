@@ -38,20 +38,21 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 /** @author sallen */
 public class KbGraphStore extends DatasetGraphMap implements GraphStore {
-	public static final String PARLIAMENT_NS        = "http://parliament.semwebcentral.org/parliament#";
-	public static final String MASTER_GRAPH         = PARLIAMENT_NS + "MasterGraph";
-	public static final String GRAPH_CLASS          = PARLIAMENT_NS + "NamedGraph";
-	public static final String GRAPH_DIR_PROPERTY   = PARLIAMENT_NS + "graphDirectory";
-	public static final String UNION_GRAPH_CLASS    = PARLIAMENT_NS + "UnionGraph";
-	public static final String LEFT_GRAPH_PROPERTY  = PARLIAMENT_NS + "leftGraph";
-	public static final String RIGHT_GRAPH_PROPERTY = PARLIAMENT_NS + "rightGraph";
-	public static final String INDEXED_GRAPH        = PARLIAMENT_NS + "IndexedGraph";
+	public static final String PARLIAMENT_NS          = "http://parliament.semwebcentral.org/parliament#";
+	public static final String MASTER_GRAPH           = PARLIAMENT_NS + "MasterGraph";
+	public static final String GRAPH_CLASS            = PARLIAMENT_NS + "NamedGraph";
+	public static final String GRAPH_DIR_PROPERTY     = PARLIAMENT_NS + "graphDirectory";
+	public static final String UNION_GRAPH_CLASS      = PARLIAMENT_NS + "UnionGraph";
+	public static final String LEFT_GRAPH_PROPERTY    = PARLIAMENT_NS + "leftGraph";
+	public static final String RIGHT_GRAPH_PROPERTY   = PARLIAMENT_NS + "rightGraph";
+	public static final String INDEXED_GRAPH          = PARLIAMENT_NS + "IndexedGraph";
 
-	public static final String MASTER_GRAPH_DIR     = "master";
-	public static final String OLD_MASTER_GRAPH_DIR = "graphs";
+	public static final String MASTER_GRAPH_DIR       = "master";
+	public static final String OLD_MASTER_GRAPH_DIR   = "graphs";
 
-	public static final Node   DEFAULT_GRAPH_NODE   = Quad.defaultGraphIRI;
-	public static final String DEFAULT_GRAPH_URI    = DEFAULT_GRAPH_NODE.getURI();
+	public static final Node   DEFAULT_GRAPH_NODE     = Quad.defaultGraphIRI;
+	public static final String DEFAULT_GRAPH_URI      = DEFAULT_GRAPH_NODE.getURI();
+	public static final String DEFAULT_GRAPH_BASENAME = "Default Graph";
 
 	private static Logger log = LoggerFactory.getLogger(KbGraphStore.class);
 

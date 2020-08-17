@@ -335,7 +335,7 @@ public class Inserter {
 		}
 
 		public boolean isDefaultGraph() {
-			return _dirName.equalsIgnoreCase(AbstractHandler.DEFAULT_GRAPH_BASENAME);
+			return _dirName.equalsIgnoreCase(KbGraphStore.DEFAULT_GRAPH_BASENAME);
 		}
 
 		public RDFFormat getFormat() {
