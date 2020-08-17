@@ -1,0 +1,35 @@
+* three endpoints:  parliament/sparql, parliament/update, parliament/soh
+* default graph has no URI, so use null instead of DEFAULT_GRAPH
+* in the mapping annotations, what does the params entry do?
+
+Bulk, trackable, UI
+
+
+
+
+Logger class mismatches
+When you translate exception types, embed the root exception in the new one.
+
+
+
+
+
+
+
+../gradlew bootRun -x test --info
+
+
+
+
+prefix par: <http://parliament.semwebcentral.org/parliament#>
+select distinct ?g where {
+	graph par:MasterGraph {
+		?g a par:NamedGraph .
+	}
+}
+
+insert data {
+	graph <graph-uri> {
+		<subject-uri> <predicate-uri> <object-uri> .
+	}
+}

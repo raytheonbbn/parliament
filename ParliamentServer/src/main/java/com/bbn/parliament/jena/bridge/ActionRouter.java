@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -116,13 +115,13 @@ public class ActionRouter {
 				respModel.setWriterClassName(JsonLdRdfWriter.formatName, JsonLdRdfWriter.class.getName());
 				//resp.setModel(respModel);
 				log.debug(q.isConstructType() ? "OK/construct" : "OK/describe");
-				throw new NotImplementedException("TODO: Need to port the commented line of code above from Joseki to Spring");
+				throw new UnsupportedOperationException("TODO: Need to port the commented line of code above from Joseki to Spring");
 			} else if (q.isAskType()) {
 				@SuppressWarnings("unused")
 				boolean b = trackable.getBoolean();
 				//resp.setBoolean(b);
 				log.debug("OK/ask");
-				throw new NotImplementedException("TODO: Need to port the commented line of code above from Joseki to Spring");
+				throw new UnsupportedOperationException("TODO: Need to port the commented line of code above from Joseki to Spring");
 			} else {
 				log.error(LogUtil.formatForLog("Unknown query type - ", trackable.getQuery().toString()));
 			}

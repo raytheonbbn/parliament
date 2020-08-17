@@ -29,10 +29,10 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 
-	implementation 'io.rest-assured:rest-assured:4.2.0'
-	implementation 'io.rest-assured:json-path:4.2.0'
-	implementation 'io.rest-assured:xml-path:4.2.0'
-	implementation 'org.hamcrest:hamcrest:2.2'
+	//implementation 'io.rest-assured:rest-assured:4.2.0'
+	//implementation 'io.rest-assured:json-path:4.2.0'
+	//implementation 'io.rest-assured:xml-path:4.2.0'
+	//implementation 'org.hamcrest:hamcrest:2.2'
 }
 
 configurations {
@@ -72,6 +72,13 @@ test {
 task copyTestResources(type: Copy) {
 	from '${projectDir}/src/test/resources'
 	into '${buildDir}/classes/java/test'
+}
+
+bootRun {
+	//environment = ["GOOGLE_APPLICATION_CREDENTIALS": "[PATH TO JSON]" ]
+	systemProperty 'java.library.path', "${rootDir}/target/Parliament-v2.7.14-clang/bin"
+	environment 'LD_LIBRARY_PATH', "${rootDir}/target/Parliament-v2.7.14-gcc/bin"
+	environment 'Path', "${rootDir}/target/Parliament-v2.7.14-msvc/bin;${System.getenv("Path")}"
 }
 
 subprojects {
