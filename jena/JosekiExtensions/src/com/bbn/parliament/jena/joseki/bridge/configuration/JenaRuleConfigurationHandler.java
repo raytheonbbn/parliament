@@ -65,7 +65,7 @@ public class JenaRuleConfigurationHandler implements ReasonerConfigurationHandle
 			StmtIterator si = handle.listProperties(ruleFile);
 			while (si.hasNext()) {
 				String uri = si.nextStatement().getResource().getURI();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				try (InputStream is = URI.create(uri).toURL().openStream()) {
 					for (int i = -1; -1 != (i = is.read());) {
 						sb.append((char) i);

@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Iterator;
 import java.util.Properties;
 
@@ -107,10 +108,10 @@ public class PostgresIndex extends SQLGeometryIndex {
 		if (isClosed()) {
 			open();
 		}
-		try (Connection c = store.getConnection()) {
-			c.createStatement().execute(String.format(
+		try {
+			execute(
 				"DROP INDEX %1$s%2$s;DROP INDEX %1$s%3$s;DROP TABLE %1$s;",
-				tableName, GEOMETRY_INDEX_SUFFIX, NODE_INDEX_SUFFIX));
+				tableName, GEOMETRY_INDEX_SUFFIX, NODE_INDEX_SUFFIX);
 		} catch (PersistentStoreException | SQLException ex) {
 			throw new SpatialIndexException(this, ex);
 		}
@@ -118,16 +119,19 @@ public class PostgresIndex extends SQLGeometryIndex {
 	}
 
 	private void createPersistanceTable() throws SpatialIndexException {
-		try (Connection c = store.getConnection()) {
+		try (
+			Connection c = store.getConnection();
+			Statement stmt = c.createStatement();
+		) {
 			// check if spatial table exists
 			String sql1 = String.format(
 				"SELECT relname FROM pg_class WHERE relname = '%1$s'",
 				tableName);
-			try (ResultSet rs = c.createStatement().executeQuery(sql1)) {
+			try (ResultSet rs = stmt.executeQuery(sql1)) {
 				if (!rs.next()) {
-					c.createStatement().execute(String.format(
+					execute(
 						"CREATE TABLE %1$s ( id SERIAL PRIMARY KEY, node VARCHAR(256) )",
-						tableName));
+						tableName);
 				}
 			}
 
@@ -138,18 +142,18 @@ public class PostgresIndex extends SQLGeometryIndex {
 				+ "('cmin', 'cmax', 'ctid', 'oid', 'tableoid', 'xmin', 'xmax');",
 				tableName);
 			int count = 0;
-			try (ResultSet rs = c.createStatement().executeQuery(sql2)) {
+			try (ResultSet rs = stmt.executeQuery(sql2)) {
 				while (rs.next()) {
 					++count;
 				}
 			}
 			if (count == 2) {
-				c.createStatement().execute(String.format(
+				execute(
 					"SELECT AddGeometryColumn('%1$s','%2$s',%3$d,'GEOMETRY',2)",
-					tableName, GEOMETRY_COLUMN, Constants.WGS84_SRID));
-				c.createStatement().execute(String.format(
+					tableName, GEOMETRY_COLUMN, Constants.WGS84_SRID);
+				execute(
 					"CREATE INDEX %1$s%2$s ON %1$s USING GIST ( %3$s)",
-					tableName, GEOMETRY_INDEX_SUFFIX, GEOMETRY_COLUMN));
+					tableName, GEOMETRY_INDEX_SUFFIX, GEOMETRY_COLUMN);
 			}
 
 			// check if node index exists
@@ -157,7 +161,7 @@ public class PostgresIndex extends SQLGeometryIndex {
 				"SELECT indexname from pg_indexes where tablename = '%1$s' AND indexname NOT IN ('%1$s', '%1$s_pkey')",
 				tableName);
 			boolean hasNodeIndex = false;
-			try (ResultSet rs = c.createStatement().executeQuery(sql3)) {
+			try (ResultSet rs = stmt.executeQuery(sql3)) {
 				while (rs.next()) {
 					String index = rs.getString("indexname");
 					if (index.equals(tableName + NODE_INDEX_SUFFIX)) {
@@ -166,9 +170,9 @@ public class PostgresIndex extends SQLGeometryIndex {
 				}
 			}
 			if (!hasNodeIndex) {
-				c.createStatement().execute(String.format(
+				execute(
 					"CREATE UNIQUE INDEX %1$s%2$s ON %1$s USING btree(node)",
-					tableName, NODE_INDEX_SUFFIX));
+					tableName, NODE_INDEX_SUFFIX);
 			}
 		} catch (PersistentStoreException | SQLException ex) {
 			throw new SpatialIndexException(this, ex);
@@ -179,7 +183,7 @@ public class PostgresIndex extends SQLGeometryIndex {
 	@Override
 	protected void indexClear() throws SpatialIndexException {
 		try (Connection c = store.getConnection()) {
-			c.createStatement().execute(String.format("DELETE FROM %1$s", tableName));
+			execute("DELETE FROM %1$s", tableName);
 		} catch (SQLException | PersistentStoreException ex) {
 			throw new SpatialIndexException(this, ex);
 		}
@@ -304,5 +308,15 @@ public class PostgresIndex extends SQLGeometryIndex {
 	protected long estimate(Geometry geometry, Operation operation) throws SpatialIndexException {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	private void execute(String statementFormat, Object... args)
+		throws PersistentStoreException, SQLException {
+		try (
+			Connection c = store.getConnection();
+			Statement stmt = c.createStatement();
+		) {
+			stmt.execute(String.format(statementFormat, args));
+		}
 	}
 }

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -70,9 +71,15 @@ public class QueryTestUtil {
 	}
 
 	public static ResultSet loadResultSet(String resultSet) {
-		return resultSet.toLowerCase().endsWith("srx")
-			? ResultSetFactory.fromXML(getResource(resultSet))
-			: ResultSetFactory.fromRDF(loadModel(resultSet));
+		if (resultSet.toLowerCase().endsWith("srx")) {
+			try (InputStream in = getResource(resultSet)) {
+				return ResultSetFactory.fromXML(in);
+			} catch (IOException ex) {
+				throw new UncheckedIOException(ex);
+			}
+		} else {
+			return ResultSetFactory.fromRDF(loadModel(resultSet));
+		}
 	}
 
 	public static Model loadModel(String model) {

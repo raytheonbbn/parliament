@@ -112,7 +112,7 @@ public class ExplorerUtil {
 		} else if (value.isLiteral()) {
 			Literal lit = (Literal) value;
 
-			StringBuffer buf = new StringBuffer(32);
+			StringBuilder buf = new StringBuilder(32);
 			buf.append("\"");
 			buf.append(lit.getString());
 			buf.append("\"");
@@ -225,7 +225,7 @@ public class ExplorerUtil {
 
 	/*
 	public static String buildQueryString(Map<String, String> keyValuePairs) {
-		StringBuffer result = new StringBuffer(20 * keyValuePairs.size());
+		StringBuilder result = new StringBuilder(20 * keyValuePairs.size());
 
 		boolean isFirstIteration = true;
 		for (Map.Entry<String, String> keyValuePair : keyValuePairs.entrySet()) {

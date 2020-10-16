@@ -8,6 +8,8 @@ package com.bbn.parliament.jena.handler;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,77 +23,93 @@ import com.bbn.parliament.jena.bridge.tracker.Tracker;
 import com.bbn.parliament.jena.bridge.util.LogUtil;
 import com.bbn.parliament.jena.exception.DataFormatException;
 import com.bbn.parliament.jena.exception.MissingGraphException;
+import com.bbn.parliament.jena.exception.NoAcceptableException;
 import com.bbn.parliament.jena.exception.QueryExecutionException;
 import com.bbn.parliament.jena.util.JsonLdRdfWriter;
-import com.hp.hpl.jena.query.Query;
+import com.bbn.parliament.spring.boot.service.AcceptableMediaType;
+import com.bbn.parliament.spring.boot.service.QueryResultCategory;
 import com.hp.hpl.jena.query.QueryParseException;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
 
 public class QueryHandler {
 	private static Logger LOG = LoggerFactory.getLogger(QueryHandler.class);
 
-	@SuppressWarnings("static-method")
-	public void handleRequest(String sparqlStmt, String requestor, OutputStream out) throws QueryExecutionException {
-		if(sparqlStmt == null || sparqlStmt.isEmpty()) {
+	private final String query;
+	private final TrackableQuery trackable;
+	private final QueryResultCategory queryCategory;
+	private final AcceptableMediaType contentType;
+
+	public QueryHandler(String query, List<AcceptableMediaType> acceptList, String requestor) {
+		if(query == null || query.isEmpty()) {
 			throw new IllegalArgumentException("Null or blank query string");
 		}
-		try {
-			TrackableQuery trackable = Tracker.getInstance().createQuery(sparqlStmt, requestor);
-			SparqlStmtLogger.logSparqlStmt(sparqlStmt);
+		Objects.requireNonNull(acceptList, "acceptList");
+		Objects.requireNonNull(requestor, "requestor");
 
+		this.query = query;
+		trackable = Tracker.getInstance().createQuery(query, requestor);
+		queryCategory = (trackable.getQuery().isConstructType() || trackable.getQuery().isDescribeType())
+			? QueryResultCategory.RDF
+			: QueryResultCategory.RESULT_SET;
+		contentType = chooseMediaType(acceptList, queryCategory);
+	}
+
+	public AcceptableMediaType getContentType() {
+		return contentType;
+	}
+
+	public void handleRequest(OutputStream out) throws IOException {
+		try {
+			SparqlStmtLogger.logSparqlStmt(query);
 			try (ConcurrentRequestLock lock = ConcurrentRequestController.getReadLock()) {
-				execQuery(trackable, out);
+				execQuery(out);
 			}
-		} catch (TrackableException | DataFormatException | MissingGraphException | IOException ex) {
-			throw new QueryExecutionException("Error while executing query", ex);
+		} catch (TrackableException | DataFormatException | MissingGraphException | QueryExecutionException ex) {
+			throw new IOException("Error while executing query", ex);
 		} catch (QueryParseException ex) {
-			String msg = String.format("Query parsing error:%n    %1$s%n%n%2$s",
-				ex.getMessage(), sparqlStmt);
-			LOG.warn(LogUtil.fixEolsForLogging(msg));
+			LOG.warn(LogUtil.fixEolsForLogging(String.format(
+				"Query parsing error:%n    %1$s%n%n%2$s",
+				ex.getMessage(), query)));
 			throw ex;
 		}
 	}
 
-	private static void execQuery(TrackableQuery trackable, OutputStream out)
-		throws TrackableException, DataFormatException, MissingGraphException, IOException,
-		QueryExecutionException {
+	private void execQuery(OutputStream out) throws TrackableException, DataFormatException,
+		MissingGraphException, IOException, QueryExecutionException {
 
-		Query q = trackable.getQuery();
 		trackable.run();
 
 		if (trackable.getQueryResult() == null) {
 			throw new QueryExecutionException("Query produced no result");
-		} else if (q.isSelectType()) {
-			ResultSet rs = trackable.getResultSet();
-
+		} else if (queryCategory == QueryResultCategory.RDF) {
+			Model respModel = trackable.getModel();
+			respModel.setWriterClassName(JsonLdRdfWriter.formatName, JsonLdRdfWriter.class.getName());
+			respModel.write(out, contentType.getRdfFormat().toString(), null);
+			LOG.debug(trackable.getQuery().isConstructType() ? "OK/construct" : "OK/describe");
+		} else if (trackable.getQuery().isSelectType()) {
 			//File tmpDir = ParliamentBridge.getInstance().getConfiguration().getTmpDir();
 			//int threshold = ParliamentBridge.getInstance().getConfiguration().getDeferredFileOutputStreamThreshold();
-
-			//final FileBackedResultSet fileBackedRS = new FileBackedResultSet(rs, tmpDir, threshold);
-
+			//FileBackedResultSet fileBackedRS = new FileBackedResultSet(trackable.getResultSet(), tmpDir, threshold);
 			//ResultSet result = fileBackedRS.getResultSet();
 
-			ResultSetFormatter.outputAsXML(out, rs);
+			contentType.serializeResultSet(out, trackable.getResultSet());
 
 			//fileBackedRS.delete();
 
 			LOG.debug("OK/select");
-		} else if (q.isConstructType() || q.isDescribeType()) {
-			Model respModel = trackable.getModel();
-			respModel.setWriterClassName(JsonLdRdfWriter.formatName, JsonLdRdfWriter.class.getName());
-			//resp.setModel(respModel);
-			LOG.debug(q.isConstructType() ? "OK/construct" : "OK/describe");
-			throw new UnsupportedOperationException("TODO: Need to port the commented line of code above from Joseki to Spring");
-		} else if (q.isAskType()) {
-			@SuppressWarnings("unused")
-			boolean b = trackable.getBoolean();
-			//resp.setBoolean(b);
+		} else if (trackable.getQuery().isAskType()) {
+			contentType.serializeResultSet(out, trackable.getBoolean());
 			LOG.debug("OK/ask");
-			throw new UnsupportedOperationException("TODO: Need to port the commented line of code above from Joseki to Spring");
 		} else {
 			LOG.error(LogUtil.formatForLog("Unknown query type - ", trackable.getQuery().toString()));
 		}
+	}
+
+	private static AcceptableMediaType chooseMediaType(
+		List<AcceptableMediaType> acceptList, QueryResultCategory category) {
+		return acceptList.stream()
+			.filter(mt -> mt.getCategory() == category)
+			.findFirst()
+			.orElseThrow(() -> new NoAcceptableException(QueryResultCategory.RESULT_SET));
 	}
 }

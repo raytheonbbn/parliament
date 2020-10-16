@@ -1,10 +1,12 @@
 plugins {
-	id 'org.springframework.boot' version '2.3.1.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'org.springframework.boot' version '2.3.4.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'java'
 }
 
 sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+defaultTasks 'bootRun'
 
 ext {
 	genJavaDir = file("$buildDir/generated/java")
@@ -26,25 +28,28 @@ dependencies {
 		exclude group: 'commons-logging', module: 'commons-logging'
 	}
 	implementation 'org.slf4j:slf4j-api:1.7.21'
-	implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.13.3'
+	//implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.13.3'
 	implementation 'org.slf4j:jcl-over-slf4j:1.7.21'
-
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 
-	implementation 'io.rest-assured:rest-assured:4.2.0'
+	//implementation 'io.rest-assured:rest-assured:4.2.0'
 	//implementation 'io.rest-assured:json-path:4.2.0'
 	//implementation 'io.rest-assured:xml-path:4.2.0'
 	//implementation 'org.hamcrest:hamcrest:2.2'
 }
 
+
+// By default, Spring wants to use logback, which then gets upset because
+// SLF4J is present.  This allows SLF4J to take over:
 configurations {
-	all {
-		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-	}
+	all*.exclude module : 'spring-boot-starter-logging'
+//	all {
+//		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+//	}
 }
 
 sourceSets {

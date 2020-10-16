@@ -233,7 +233,7 @@ public class ExportHandler extends AbstractHandler {
 			}
 		}
 
-		StringBuffer sb = new StringBuffer(uri.length());
+		StringBuilder sb = new StringBuilder(uri.length());
 		for (int i = 0; i < uri.length(); ++i) {
 			char c = uri.charAt(i);
 

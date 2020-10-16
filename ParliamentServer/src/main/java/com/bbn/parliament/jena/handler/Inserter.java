@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.zip.ZipEntry;
@@ -37,30 +38,50 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 
-public class Inserter {
+public final class Inserter {
 	private static final Logger LOG = LoggerFactory.getLogger(Inserter.class);
 
-	private String graphName;
-	private Supplier<InputStream> strmPrvdr;
-	private String dataFormat;
-	private String base;
-	private String filename;
-	private boolean verify;
-	private boolean importRepo;
+	private final boolean importRepository;
+	private final String graphName;
+	private final String dataFormat;
+	private final String fileName;
+	private final VerifyOption verifyOption;
+	private final String baseUri;
+	private final Supplier<InputStream> streamSupplier;
 	private long numStatements;
 
-	public Inserter(String graphName, Supplier<InputStream> strmPrvdr, String dataFormat,
-			String base, String verifyString, String importString, String filename) {
-		this.graphName = graphName;
-		this.strmPrvdr = strmPrvdr;
-		this.dataFormat = dataFormat;
-		this.base = base;
-		this.filename = filename;
+	public static Inserter newGraphInserter(String graphName, String dataFormat,
+		String fileName, VerifyOption verifyOption, String baseUri,
+		Supplier<InputStream> streamSupplier) {
+		return new Inserter(false, graphName, dataFormat, fileName, verifyOption, baseUri,
+			streamSupplier);
+	}
 
-		verify = !"no".equalsIgnoreCase(verifyString);
+	public static Inserter newRepositoryInserter(String baseUri,
+		Supplier<InputStream> streamSupplier) {
+		return new Inserter(true, null, null, null, null, baseUri, streamSupplier);
+	}
 
-		// Default to false, and only set to true if "yes" is passed
-		importRepo = "yes".equalsIgnoreCase(importString);
+	private Inserter(boolean importRepository, String graphName, String dataFormat,
+		String fileName, VerifyOption verifyOption, String baseUri,
+		Supplier<InputStream> streamSupplier) {
+
+		this.importRepository = importRepository;
+		if (importRepository) {
+			this.graphName = null;
+			this.dataFormat = null;
+			this.fileName = null;
+			this.verifyOption = null;
+		} else {
+			this.graphName = graphName;
+			this.dataFormat = dataFormat;
+			this.fileName = fileName;
+			this.verifyOption = Objects.requireNonNull(verifyOption, "verifyOption");
+		}
+		this.baseUri = baseUri;
+		this.streamSupplier = Objects.requireNonNull(streamSupplier, "streamSupplier");
+
+		numStatements = 0;
 	}
 
 	public long getNumStatements() {
@@ -68,86 +89,33 @@ public class Inserter {
 	}
 
 	public boolean isImport() {
-		return importRepo;
-	}
-
-	public String getGraphName() {
-		return graphName;
+		return importRepository;
 	}
 
 	public String getFileName() {
-		return filename;
+		return fileName;
 	}
 
 	public void run() throws IOException, DataFormatException, MissingGraphException {
-		numStatements = -1;
-		if (importRepo) {
-			LOG.info("REPOSITORY IMPORT");
-			numStatements = importRepository(strmPrvdr, base);
+		numStatements = 0;
+		if (importRepository) {
+			importRepository();
 		} else {
-			LOG.info("FILE OR TEXT INSERT from file '{}'", filename);
-
-			// Determine the RDF serialization format by looking at the file extension:
-			RDFFormat format = null;
-			if ("auto".equalsIgnoreCase(dataFormat)) {
-				if (null == filename || filename.length() == 0) {
-					throw new DataFormatException("The serialization format of "
-						+ "the RDF was specified to be determined by the filename "
-						+ "extension, but the filename was not availible.  Please "
-						+ "resubmit with the proper data format specified.");
-				} else {
-					format = RDFFormat.parseFilename(filename);
-					if (RDFFormat.UNKNOWN == format) {
-						throw new DataFormatException("Unable to determine the "
-							+ "serialization format of the RDF document from the "
-							+ "filename extension.  Please resubmit with the "
-							+ "proper data format specified.");
-					} else {
-						LOG.debug("Mapping input filename '{}' to {} format",
-							filename, format);
-					}
-				}
-			} else {
-				format = RDFFormat.parseMediaType(dataFormat);
-				if (filename != null && RDFFormat.UNKNOWN == format) {
-					format = RDFFormat.parseFilename(filename);
-				}
-
-				if (RDFFormat.UNKNOWN == format) {
-					throw new DataFormatException(String.format("Unsupported data format \"%1$s\"",
-						dataFormat));
-				}
-			}
-
-			boolean isDefaultGraph = graphName == null || graphName.isEmpty();
-			Model model = isDefaultGraph
-				? ModelManager.inst().getDefaultModel()
-				: ModelManager.inst().getModel(graphName);
-			String graphLabel = isDefaultGraph ? "Default Graph" : graphName;
-
-			if (null == model) {
-				throw new MissingGraphException(
-					String.format("There was no named graph with name \"%1$s\"", graphName));
-			} else {
-				if (verify) {
-					numStatements = verify(strmPrvdr, base, format);
-				}
-				insert(model, graphLabel, strmPrvdr, format, base);
-			}
+			importGraph();
 		}
 	}
 
-	protected long importRepository(Supplier<InputStream> inStrmPrvdr, String baseUri)
-		throws IOException, DataFormatException {
-		long toReturn = 0;
+	//TODO: refactor this method into smaller units
+	private void importRepository() throws IOException, DataFormatException {
+		LOG.info("Repository import");
 
 		// First verify that we have a legitimate import
 		Model masterGraph = null;
 		Set<String> dirNamesSeen = new HashSet<>();
 		try (
-			InputStream in = inStrmPrvdr.get();
-			final ZipInputStream zin = new ZipInputStream(in);
-			) {
+			InputStream in = streamSupplier.get();
+			ZipInputStream zin = new ZipInputStream(in);
+		) {
 			ZipEntry ze = null;
 			while ((ze = zin.getNextEntry()) != null) {
 				String zipEntryName = ze.getName();
@@ -167,9 +135,9 @@ public class Inserter {
 						masterGraph.read(entryStream, baseUri, decomp.getFormat().toString());
 					}
 				} else {
-					long num = verify(entryStrmProvider, baseUri, decomp.getFormat());
+					long num = verify(entryStrmProvider, decomp.getFormat());
 					if (num > 0) {
-						toReturn += num;
+						numStatements += num;
 					}
 
 					if (!decomp.isDefaultGraph()) {
@@ -245,9 +213,9 @@ public class Inserter {
 		}
 		// Insert the new data
 		try (
-			InputStream in = inStrmPrvdr.get();
-			final ZipInputStream zin = new ZipInputStream(in);
-			) {
+			InputStream in = streamSupplier.get();
+			ZipInputStream zin = new ZipInputStream(in);
+		) {
 			ZipEntry ze = null;
 			while ((ze = zin.getNextEntry()) != null) {
 				FileNameDecomposition decomp = new FileNameDecomposition(ze.getName());
@@ -260,12 +228,12 @@ public class Inserter {
 					// Do nothing (ignore the Master Graph)
 				} else if (decomp.isDefaultGraph()) {
 					Model model = ModelManager.inst().getDefaultModel();
-					insert(model, "Default Graph", entryStrmProvider, decomp.getFormat(), baseUri);
+					insert(model, "Default Graph", entryStrmProvider, decomp.getFormat());
 				} else {
 					String graphDir = decomp.getDirName();
 					String graphNm = dirToGraphNameMap.get(graphDir);
 					Model model = ModelManager.inst().createAndAddNamedModel(graphNm, graphDir, indexGraphs.contains(graphNm));
-					insert(model, graphNm, entryStrmProvider, decomp.getFormat(), baseUri);
+					insert(model, graphNm, entryStrmProvider, decomp.getFormat());
 				}
 
 				zin.closeEntry();
@@ -305,8 +273,6 @@ public class Inserter {
 				it.close();
 			}
 		}
-
-		return toReturn;
 	}
 
 	private static class FileNameDecomposition {
@@ -343,7 +309,7 @@ public class Inserter {
 		}
 	}
 
-	private static Supplier<InputStream> getZipStrmProvider(final ZipInputStream zin) {
+	private static Supplier<InputStream> getZipStrmProvider(ZipInputStream zin) {
 		return () -> new FilterInputStream(zin) {
 			@Override
 			public void close() throws IOException {
@@ -352,22 +318,40 @@ public class Inserter {
 		};
 	}
 
+	public void importGraph() throws IOException, DataFormatException, MissingGraphException {
+		LOG.info("File or text insert from file '{}'", fileName);
+
+		RDFFormat format = getRdfFormat();
+		boolean isDefaultGraph = (graphName == null || graphName.isEmpty());
+		Model model = isDefaultGraph
+			? ModelManager.inst().getDefaultModel()
+			: ModelManager.inst().getModel(graphName);
+		String graphLabel = isDefaultGraph ? "Default Graph" : graphName;
+
+		if (null == model) {
+			throw new MissingGraphException(
+				String.format("There is no graph named \"%1$s\"", graphName));
+		}
+
+		if (verifyOption == VerifyOption.VERIFY) {
+			numStatements = verify(streamSupplier, format);
+		}
+
+		insert(model, graphLabel, streamSupplier, format);
+	}
+
 	/**
 	 * Verifies the statements contained in the Supplier<InputStream>. If the statements are
 	 * not valid, we throw a RuntimeException.
 	 *
 	 * @return the number of statements in the stream
 	 */
-	@SuppressWarnings("static-method")
-	protected long verify(Supplier<InputStream> inStrmPrvdr, String baseUri, RDFFormat format)
-		throws IOException {
+	private long verify(Supplier<InputStream> inputStreamSupplier, RDFFormat format) throws IOException {
 		long numStmts = 0;
 		long start = Calendar.getInstance().getTimeInMillis();
 		Model syntaxVerifier = ModelFactory.createModelForGraph(new ForgetfulGraph());
-		try (InputStream in = inStrmPrvdr.get()) {
-			if (format == RDFFormat.JSON_LD) {
-				syntaxVerifier.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
-			}
+		try (InputStream in = inputStreamSupplier.get()) {
+			syntaxVerifier.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
 			syntaxVerifier.read(in, baseUri, format.toString());
 			numStmts = syntaxVerifier.size();
 
@@ -381,14 +365,11 @@ public class Inserter {
 	}
 
 	/** Inserts the statements from the InputStream into the given Model. */
-	@SuppressWarnings("static-method")
-	protected void insert(Model model, String graphLabel, Supplier<InputStream> inStrmPrvdr,
-		RDFFormat format, String baseUri) throws IOException {
+	private void insert(Model model, String graphLabel, Supplier<InputStream> inputStreamSupplier,
+		RDFFormat format) throws IOException {
 		long start = Calendar.getInstance().getTimeInMillis();
-		try (InputStream in = inStrmPrvdr.get()) {
-			if (format == RDFFormat.JSON_LD) {
-				model.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
-			}
+		try (InputStream in = inputStreamSupplier.get()) {
+			model.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
 			model.read(in, baseUri, format.toString());
 
 			if (LOG.isInfoEnabled()) {
@@ -396,6 +377,38 @@ public class Inserter {
 				LOG.info(String.format("Added statements to \"%1$s\" in %2$.3f seconds",
 					graphLabel, (end - start) / 1000.0));
 			}
+		}
+	}
+
+	/** Use the dataFormat and file extension to determine the RDF serialization format */
+	private RDFFormat getRdfFormat() throws DataFormatException {
+		if (dataFormat == null || dataFormat.isEmpty() || "auto".equalsIgnoreCase(dataFormat)) {
+			if (null == fileName || fileName.isEmpty()) {
+				throw new DataFormatException("The serialization format of "
+					+ "the RDF was specified to be determined by the fileName "
+					+ "extension, but the fileName was not availible.  Please "
+					+ "resubmit with the proper data format specified.");
+			}
+
+			RDFFormat format = RDFFormat.parseFilename(fileName);
+			if (RDFFormat.UNKNOWN == format) {
+				throw new DataFormatException("Unable to determine the "
+					+ "serialization format of the RDF document from the "
+					+ "fileName extension.  Please resubmit with the "
+					+ "proper data format specified.");
+			}
+			LOG.debug("Mapping input fileName '{}' to {} format", fileName, format);
+			return format;
+		} else {
+			RDFFormat format = RDFFormat.parseMediaType(dataFormat);
+			if (RDFFormat.UNKNOWN == format && null != fileName && !fileName.isEmpty()) {
+				format = RDFFormat.parseFilename(fileName);
+			}
+			if (RDFFormat.UNKNOWN == format) {
+				throw new DataFormatException(String.format(
+					"Unsupported data format \"%1$s\"", dataFormat));
+			}
+			return format;
 		}
 	}
 }

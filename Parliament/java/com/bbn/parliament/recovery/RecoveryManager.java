@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
@@ -42,7 +43,9 @@ public class RecoveryManager {
 					// Who cares?
 				}
 				try {
-					getWriter().flush();
+					@SuppressWarnings("resource")
+					Writer wtr = getWriter();
+					wtr.flush();
 				} catch (IOException ex) {
 					throw new RuntimeException("Can't flush journal!", ex);
 				}
@@ -53,18 +56,22 @@ public class RecoveryManager {
 		autoFlusher.start();
 	}
 
+	@SuppressWarnings("resource")
 	public void startBlock() throws IOException {
 		getWriter().write("~start~");
 	}
 
+	@SuppressWarnings("resource")
 	public void endBlock() throws IOException {
 		getWriter().write("~end~");
 	}
 
+	@SuppressWarnings("resource")
 	public void recordAdd(String subject, String predicate, String object) throws IOException {
 		getWriter().write(appendTriple('+', subject, predicate, object));
 	}
 
+	@SuppressWarnings("resource")
 	public void recordDelete(String subject, String predicate, String object) throws IOException {
 		getWriter().write(appendTriple('-', subject, predicate, object));
 	}

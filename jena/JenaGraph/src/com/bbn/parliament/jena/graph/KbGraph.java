@@ -136,7 +136,7 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 				if (!createIfNotExists && id == KbInstance.NULL_RSRC_ID) {
 					id = -2;
 				} else {
-					nodeIdHash.put(n, new Long(id));
+					nodeIdHash.put(n, id);
 				}
 			}
 		}
@@ -258,7 +258,7 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		ExtendedIterator<Triple> iterator = this.find(Node.ANY, Node.ANY,
 			Node.ANY);
 		while (iterator.hasNext()) {

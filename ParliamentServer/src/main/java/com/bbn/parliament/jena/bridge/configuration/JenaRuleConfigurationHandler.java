@@ -15,8 +15,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.bridge.configuration.vocab.ConfigOnt;
 import com.bbn.parliament.jena.bridge.ParliamentBridge;
+import com.bbn.parliament.jena.bridge.configuration.vocab.ConfigOnt;
 import com.bbn.parliament.jena.graph.ModelManager;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -65,7 +65,7 @@ public class JenaRuleConfigurationHandler implements ReasonerConfigurationHandle
 			StmtIterator si = handle.listProperties(ruleFile);
 			while (si.hasNext()) {
 				String uri = si.nextStatement().getResource().getURI();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				try (InputStream is = URI.create(uri).toURL().openStream()) {
 					for (int i = -1; -1 != (i = is.read());) {
 						sb.append((char) i);

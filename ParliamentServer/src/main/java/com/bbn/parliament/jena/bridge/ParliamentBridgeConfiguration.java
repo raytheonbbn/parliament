@@ -9,6 +9,7 @@ package com.bbn.parliament.jena.bridge;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -211,26 +212,21 @@ public class ParliamentBridgeConfiguration {
 
 			// Create and initialize configuration handler:
 			try {
-				ConfigurationHandler cHndlr = ConfigurationHandler.class.cast(cls
-					.newInstance());
+				ConfigurationHandler cHndlr = ConfigurationHandler.class.cast(
+					cls.getDeclaredConstructor().newInstance());
 				log.info("Initializing {}", cls.getName());
 				cHndlr.initialize(handler);
 				configurationHandlers.add(cHndlr);
-			} catch (InstantiationException ex) {
+			} catch (InstantiationException | IllegalAccessException
+				| ConfigurationException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException
+				| SecurityException ex) {
 				log.error("Could not instantiate " + cls.getName(), ex);
-				continue;
-			} catch (IllegalAccessException ex) {
-				log.error("Could not access " + cls.getName(), ex);
-				continue;
-			} catch (ConfigurationException ex) {
-				log.error("Error while loading configuration handler "
-					+ cls.getName(), ex);
 				continue;
 			}
 		}
 
 		return configurationHandlers;
-
 	}
 
 	private static Resource getConfigResource(Model m) throws ParliamentBridgeException {

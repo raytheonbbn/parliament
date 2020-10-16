@@ -39,10 +39,10 @@ public class CompositeNumericIndexTestMethods extends IndexTestMethods<Composite
 		Number value = null;
 		String predicate = null;
 		if (seed % 2 == 0) {
-			value = new Double(DOUBLE_VALUES[seed / 2]);
+			value = DOUBLE_VALUES[seed / 2];
 			predicate = DOUBLE_URI;
 		} else {
-			value = new Integer(INT_VALUES[(seed - 1) / 2]);
+			value = INT_VALUES[(seed - 1) / 2];
 			predicate = INT_URI;
 		}
 		Triple triple = Triple.create(key, Node.createURI(predicate),

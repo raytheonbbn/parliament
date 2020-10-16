@@ -1,6 +1,7 @@
 package com.bbn.parliament.spring.boot.controller;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -18,6 +19,7 @@ import com.bbn.parliament.jena.bridge.tracker.TrackableException;
 import com.bbn.parliament.jena.exception.BadRequestException;
 import com.bbn.parliament.jena.exception.DataFormatException;
 import com.bbn.parliament.jena.exception.MissingGraphException;
+import com.bbn.parliament.jena.exception.NoAcceptableException;
 import com.bbn.parliament.jena.exception.UnsupportedEndpointException;
 import com.hp.hpl.jena.query.QueryParseException;
 import com.hp.hpl.jena.shared.JenaException;
@@ -30,7 +32,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(JenaException.class)
 	public ResponseEntity<Object> handle(JenaException ex, WebRequest req) {
 		return buildResponse(ex, req, HttpStatus.BAD_REQUEST,
-			"Error while parsing the query/data");
+			"Parliament encountered an error while during query processing");
 	}
 
 	@SuppressWarnings("static-method")
@@ -83,10 +85,23 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 	}
 
 	@SuppressWarnings("static-method")
+	@ExceptionHandler(UncheckedIOException.class)
+	public ResponseEntity<Object> handle(UncheckedIOException ex, WebRequest req) {
+		return buildResponse(ex, req, HttpStatus.INTERNAL_SERVER_ERROR,
+			"Parliament encountered an error during IO operations");
+	}
+
+	@SuppressWarnings("static-method")
 	@ExceptionHandler(QueryParseException.class)
 	public ResponseEntity<Object> handle(QueryParseException ex, WebRequest req) {
 		return buildResponse(ex, req, HttpStatus.INTERNAL_SERVER_ERROR,
-			"Parliament encountered an error during IO operations");
+			"Parliament is unable to parse the query");
+	}
+
+	@SuppressWarnings("static-method")
+	@ExceptionHandler(NoAcceptableException.class)
+	public ResponseEntity<Object> handle(NoAcceptableException ex, WebRequest req) {
+		return buildResponse(ex, req, HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
 	}
 
 	private static ResponseEntity<Object> buildResponse(Throwable t, WebRequest req,

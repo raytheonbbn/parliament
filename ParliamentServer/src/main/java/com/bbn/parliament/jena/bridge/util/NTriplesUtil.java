@@ -224,7 +224,7 @@ public class NTriplesUtil {
 	/** Creates an N-Triples string for the supplied literal. */
 	public static String toNTriplesString(Literal lit) {
 		// Do some character escaping on the label:
-		StringBuffer result = new StringBuffer(128);
+		StringBuilder result = new StringBuilder(128);
 		result.append("\"");
 		result.append(escapeString(lit.getString()));
 		result.append("\"");
@@ -277,7 +277,7 @@ public class NTriplesUtil {
 	 */
 	public static String escapeString(String label) {
 		int labelLength = label.length();
-		StringBuffer result = new StringBuffer(2 * labelLength);
+		StringBuilder result = new StringBuilder(2 * labelLength);
 
 		for (int i = 0; i < labelLength; i++) {
 			char c = label.charAt(i);
@@ -339,7 +339,7 @@ public class NTriplesUtil {
 
 		int startIdx = 0;
 		int sLength = s.length();
-		StringBuffer buf = new StringBuffer(sLength);
+		StringBuilder buf = new StringBuilder(sLength);
 
 		while (backSlashIdx != -1) {
 			buf.append(s.substring(startIdx, backSlashIdx));
@@ -424,7 +424,7 @@ public class NTriplesUtil {
 	 * @param stringLength The length of the resulting string.
 	 */
 	public static String toHexString(int decimal, int stringLength) {
-		StringBuffer result = new StringBuffer(stringLength);
+		StringBuilder result = new StringBuilder(stringLength);
 
 		String hexVal = Integer.toHexString(decimal).toUpperCase();
 

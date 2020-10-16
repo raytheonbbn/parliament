@@ -15,6 +15,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.TestingDataset;
+import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.index.Index;
 import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.jena.graph.index.IndexManager;
@@ -60,46 +61,64 @@ public class IndexTest {
 
 	@BeforeEach
 	public void beforeEach() {
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
 		List<Index<?>> indexes;
-		indexes = IndexManager.getInstance().createAndRegisterAll(dataset.getDefaultGraph(), null);
+		indexes = IndexManager.getInstance().createAndRegisterAll(defaultGraph, null);
 		defaultIndex = (MockIndex)indexes.get(0);
 
-		indexes = IndexManager.getInstance().createAndRegisterAll(dataset.getNamedGraph(), TestingDataset.NAMED_GRAPH_URI);
+		@SuppressWarnings("resource")
+		KbGraph namedGraph = dataset.getNamedGraph();
+		indexes = IndexManager.getInstance().createAndRegisterAll(namedGraph, TestingDataset.NAMED_GRAPH_URI);
 		namedGraphIndex = (MockIndex)indexes.get(0);
 	}
 
 	@AfterEach
 	public void afterEach() {
 		dataset.reset();
-		IndexManager.getInstance().unregister(dataset.getDefaultGraph(), null, defaultIndex);
-		IndexManager.getInstance().unregister(dataset.getNamedGraph(), TestingDataset.NAMED_GRAPH_URI, namedGraphIndex);
+
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		IndexManager.getInstance().unregister(defaultGraph, null, defaultIndex);
+
+		@SuppressWarnings("resource")
+		KbGraph namedGraph = dataset.getNamedGraph();
+		IndexManager.getInstance().unregister(namedGraph, TestingDataset.NAMED_GRAPH_URI, namedGraphIndex);
 	}
 
 	@Test
 	public void testAdd() {
 		assertFalse(defaultIndex.isAdded());
-		dataset.getDefaultGraph().add(t);
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		defaultGraph.add(t);
 		assertTrue(defaultIndex.isAdded());
 	}
 
 	@Test
 	public void testAddNonIndexed() {
 		assertFalse(defaultIndex.isAdded());
-		dataset.getDefaultGraph().add(nonIndexed);
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		defaultGraph.add(nonIndexed);
 		assertFalse(defaultIndex.isAdded());
 	}
 
 	@Test
 	public void testRemove() {
 		assertFalse(defaultIndex.isRemoved());
-		dataset.getDefaultGraph().delete(t);
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		defaultGraph.delete(t);
 		assertTrue(defaultIndex.isRemoved());
 	}
 
 	@Test
 	public void testClear() {
 		assertFalse(defaultIndex.isCleared());
-		dataset.getDefaultGraph().clear();
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		defaultGraph.clear();
 		assertTrue(defaultIndex.isCleared());
 	}
 
@@ -114,8 +133,10 @@ public class IndexTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testSimpleQuery() {
-		dataset.getDefaultGraph().add(t);
-		dataset.getDefaultGraph().add(nonIndexed);
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		defaultGraph.add(t);
+		defaultGraph.add(nonIndexed);
 		Query q = QueryFactory.create("SELECT * WHERE { ?s <" + MockPropertyFunction.URI + "> ?o }");
 		QueryExecution exec = QueryExecutionFactory.create(q, dataset.getGraphStore().toDataset());
 		ResultSet rs = exec.execSelect();
@@ -128,8 +149,10 @@ public class IndexTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testQuery() {
-		dataset.getDefaultGraph().add(t);
-		dataset.getDefaultGraph().add(nonIndexed);
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		defaultGraph.add(t);
+		defaultGraph.add(nonIndexed);
 		Query q = QueryFactory.create("SELECT * WHERE { ?s <" + MockPropertyFunction.URI + "> ?o . ?s <http://example.org/foo> ?y . }");
 		QueryExecution exec = QueryExecutionFactory.create(q, dataset.getGraphStore().toDataset());
 		ResultSet rs = exec.execSelect();

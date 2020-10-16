@@ -22,6 +22,7 @@ public abstract class AbstractCountTransformation extends AbstractKbGraphReorder
 
 	protected long checkVar(long min, Node node, int position) {
 		if (node.isConcrete()) {
+			@SuppressWarnings("resource")
 			long count = getGraph().getNodeCountInPosition(node, position);
 			if (count < min) {
 				return count;

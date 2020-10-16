@@ -1,8 +1,6 @@
 package com.bbn.parliament.spring.boot.controller;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -11,9 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -21,11 +22,11 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import com.bbn.parliament.jena.bridge.ParliamentBridge;
 import com.bbn.parliament.jena.bridge.util.HttpServerUtil;
 import com.bbn.parliament.jena.exception.BadRequestException;
-import com.bbn.parliament.jena.exception.QueryExecutionException;
 import com.bbn.parliament.spring.boot.service.QueryService;
 
 /**
- * Controller for Spring Boot Server. Routes HTTP requests from /parliament/sparql to appropriate request method.
+ * Controller for Spring Boot Server. Routes HTTP requests from
+ * /parliament/sparql to appropriate request method.
  *
  * @author pwilliams
  */
@@ -39,74 +40,6 @@ public class QueryController {
 
 	@Autowired
 	private QueryService queryService;
-
-	@GetMapping(value = ENDPOINT, params = "query")
-	public StreamingResponseBody sparqlGET(
-			@RequestParam(value = "query") String query,
-			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
-			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI,
-			HttpServletRequest request) throws BadRequestException {
-
-		if (defaultGraphURI.size() > 0 || namedGraphURI.size() > 0) {
-			throw new BadRequestException();
-		}
-
-		return new StreamingResponseBody() {
-			@Override
-			public void writeTo(OutputStream out) throws IOException {
-				try {
-					queryService.doQuery(query, request, out);
-				} catch(QueryExecutionException e) {
-					throw new IOException(e);
-				}
-			}
-		};
-	}
-
-	@PostMapping(value = ENDPOINT, consumes = URL_ENCODED, params = "query")
-	public StreamingResponseBody sparqlURLEncodeQueryPOST(
-			@RequestParam(value = "query") String query,
-			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
-			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI,
-			HttpServletRequest request) throws BadRequestException {
-
-		if (defaultGraphURI.size() > 0 || namedGraphURI.size() > 0) {
-			throw new BadRequestException();
-		}
-
-		return new StreamingResponseBody() {
-			@Override
-			public void writeTo(OutputStream out) throws IOException {
-				try {
-					queryService.doQuery(query, request, out);
-				} catch (QueryExecutionException e) {
-					throw new IOException(e);
-				}
-			}
-		};
-	}
-
-	@PostMapping(value = ENDPOINT, consumes = SPARQL_QUERY)
-	public StreamingResponseBody sparqlDirectQueryPOST(
-			@RequestParam(value = "default-graph-uri", defaultValue = "") List<String> defaultGraphURI,
-			@RequestParam(value = "named-graph-uri", defaultValue = "") List<String> namedGraphURI,
-			@RequestBody String query, HttpServletRequest request) throws BadRequestException {
-
-		if (!defaultGraphURI.isEmpty() || !namedGraphURI.isEmpty()) {
-			throw new BadRequestException();
-		}
-
-		return new StreamingResponseBody() {
-			@Override
-			public void writeTo(OutputStream out) throws IOException {
-				try {
-					queryService.doQuery(query, request, out);
-				} catch (QueryExecutionException e) {
-					throw new IOException(e);
-				}
-			}
-		};
-	}
 
 	@SuppressWarnings("static-method")
 	@PostConstruct
@@ -124,5 +57,41 @@ public class QueryController {
 		File tmpDir = bridge.getConfiguration().getTmpDir();
 		int threshold = bridge.getConfiguration().getDeferredFileOutputStreamThreshold();
 		HttpServerUtil.init(tmpDir, threshold);
+	}
+
+	@GetMapping(value = ENDPOINT, params = "query")
+	public ResponseEntity<StreamingResponseBody> sparqlGET(
+		@RequestParam(value = "query") String query,
+		@RequestParam(value = "default-graph-uri", required = false) List<String> defaultGraphUris,
+		@RequestParam(value = "named-graph-uri", required = false) List<String> namedGraphUris,
+		@RequestParam(value = "format", required = false) String format,
+		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request) throws BadRequestException {
+
+		return queryService.doQuery(query, defaultGraphUris, namedGraphUris, format, headers, request);
+	}
+
+	@PostMapping(value = ENDPOINT, consumes = URL_ENCODED, params = "query")
+	public ResponseEntity<StreamingResponseBody> sparqlURLEncodeQueryPOST(
+		@RequestParam(value = "query") String query,
+		@RequestParam(value = "default-graph-uri", required = false) List<String> defaultGraphUris,
+		@RequestParam(value = "named-graph-uri", required = false) List<String> namedGraphUris,
+		@RequestParam(value = "format", required = false) String format,
+		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request) throws BadRequestException {
+
+		return queryService.doQuery(query, defaultGraphUris, namedGraphUris, format, headers, request);
+	}
+
+	@PostMapping(value = ENDPOINT, consumes = SPARQL_QUERY)
+	public ResponseEntity<StreamingResponseBody> sparqlDirectQueryPOST(
+		@RequestBody String query,
+		@RequestParam(value = "default-graph-uri", required = false) List<String> defaultGraphUris,
+		@RequestParam(value = "named-graph-uri", required = false) List<String> namedGraphUris,
+		@RequestParam(value = "format", required = false) String format,
+		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request) throws BadRequestException {
+
+		return queryService.doQuery(query, defaultGraphUris, namedGraphUris, format, headers, request);
 	}
 }

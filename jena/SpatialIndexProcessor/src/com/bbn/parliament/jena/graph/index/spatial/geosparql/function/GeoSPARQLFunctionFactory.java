@@ -1,5 +1,6 @@
 package com.bbn.parliament.jena.graph.index.spatial.geosparql.function;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -106,8 +107,9 @@ public class GeoSPARQLFunctionFactory implements IterableFunctionFactory {
 			throw new QueryExecException(String.format("%s is not a valid function", uri));
 		}
 		try {
-			return imp.newInstance();
-		} catch (InstantiationException | IllegalAccessException ex) {
+			return imp.getDeclaredConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+			| InvocationTargetException | NoSuchMethodException | SecurityException ex) {
 			throw new QueryExecException(String.format(
 				"Could not instantiate function for %1$s", uri), ex);
 		}

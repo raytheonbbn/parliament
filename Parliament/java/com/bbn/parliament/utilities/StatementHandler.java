@@ -78,7 +78,7 @@ public class StatementHandler implements com.hp.hpl.jena.rdf.arp.StatementHandle
 		if (value == null)
 		{
 			retval = _kb.uriToRsrcId(pred.toString(), false, true);
-			_predCache.put(pred.toString(), new Long(retval));
+			_predCache.put(pred.toString(), retval);
 		}
 		else
 		{
@@ -100,7 +100,7 @@ public class StatementHandler implements com.hp.hpl.jena.rdf.arp.StatementHandle
 			if (userData == null)
 			{
 				retval = _kb.createAnonymousRsrc();
-				res.setUserData(new Long(retval));
+				res.setUserData(retval);
 			}
 			else
 			{

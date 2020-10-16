@@ -15,6 +15,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.TestingDataset;
+import com.bbn.parliament.jena.graph.KbGraph;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.query.ARQ;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -47,7 +48,9 @@ public class KbOpExecutorTest {
 	@BeforeEach
 	public void beforeEach() {
 		Context params = ARQ.getContext();
-		execCxt = new ExecutionContext(params, dataset.getDefaultGraph(), dataset.getGraphStore(),
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		execCxt = new ExecutionContext(params, defaultGraph, dataset.getGraphStore(),
 			KbOpExecutor.KbOpExecutorFactory);
 		opExecutor = new KbOpExecutor(execCxt);
 	}
@@ -75,7 +78,9 @@ public class KbOpExecutorTest {
 
 	@Test
 	public void testExecuteOpBGPSimple() throws IOException {
-		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", dataset.getDefaultGraph());
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", defaultGraph);
 
 		QueryIterator it = createIterator(Triple.create(ResourceFactory
 			.createResource("http://example.org/data/x").asNode(), Var
@@ -96,7 +101,9 @@ public class KbOpExecutorTest {
 		QueryIterator it;
 		int count = 0;
 
-		QueryTestUtil.loadResource("data/data-r2/triple-match/dawg-data-01.ttl", dataset.getNamedGraph());
+		@SuppressWarnings("resource")
+		KbGraph namedGraph = dataset.getNamedGraph();
+		QueryTestUtil.loadResource("data/data-r2/triple-match/dawg-data-01.ttl", namedGraph);
 
 		// no filter
 		algebra = ""
@@ -139,7 +146,9 @@ public class KbOpExecutorTest {
 
 	@Test
 	public void testFilter() throws IOException {
-		QueryTestUtil.loadResource("data/data-r2/sort/data-sort-numbers.ttl", dataset.getDefaultGraph());
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		QueryTestUtil.loadResource("data/data-r2/sort/data-sort-numbers.ttl", defaultGraph);
 
 		String algebra = "";
 		algebra = ""
@@ -164,7 +173,9 @@ public class KbOpExecutorTest {
 		QueryIterator it;
 		int count = 0;
 
-		QueryTestUtil.loadResource("data/data-r2/triple-match/dawg-data-01.ttl", dataset.getDefaultGraph());
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		QueryTestUtil.loadResource("data/data-r2/triple-match/dawg-data-01.ttl", defaultGraph);
 
 		// filter name
 		algebra = ""

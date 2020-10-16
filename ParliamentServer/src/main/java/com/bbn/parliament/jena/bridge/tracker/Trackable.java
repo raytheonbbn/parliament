@@ -10,7 +10,7 @@ import com.bbn.parliament.jena.bridge.tracker.management.TrackableMXBean;
 import com.bbn.parliament.jena.exception.DataFormatException;
 import com.bbn.parliament.jena.exception.MissingGraphException;
 
-public abstract class Trackable extends Observable implements TrackableMXBean, Comparable<Trackable>  {
+public abstract class Trackable extends Observable implements TrackableMXBean, Comparable<Trackable> {
 	private final Object _statusLock = new Object();
 	protected final long _id;
 	protected final String _creator;

@@ -106,7 +106,9 @@ public class RemoteModel {
 		Map<String, Object> params = new HashMap<>();
 		params.putAll(_defaultParams);
 		params.put("update", updateQuery);
-		sendRequest(params);
+		try (InputStream respStrm = sendRequest(params)) {
+			// Do nothing -- there is no response
+		}
 	}
 
 	/**
@@ -192,7 +194,9 @@ public class RemoteModel {
 		params.putAll(_defaultParams);
 		params.put("query", constructQuery);
 		Model model = ModelFactory.createDefaultModel();
-		model.read(sendRequest(params), "");
+		try (InputStream respStrm = sendRequest(params)) {
+			model.read(respStrm, "");
+		}
 		return model;
 	}
 
@@ -562,9 +566,9 @@ public class RemoteModel {
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("update", wtr.toString());
-		sendRequest(params);
-		//InputStream results = sendRequest(params);
-		//ResultSet rs = ResultSetFactory.fromXML(results);
+		try (InputStream respStrm = sendRequest(params)) {
+			// Do nothing -- there is no response
+		}
 	}
 
 	/**
@@ -657,7 +661,9 @@ public class RemoteModel {
 		params.put(P_GRAPH, namedGraphURI);
 		params.put(P_PERFORM_CLEAR, "yes");
 
-		sendBulkRequest(params, "clear", false);
+		try (InputStream respStrm = sendBulkRequest(params, "clear", false)) {
+			// Do nothing -- there is no response
+		}
 	}
 
 	/** Clears the entire repository. */
@@ -666,7 +672,9 @@ public class RemoteModel {
 		params.put(P_CLEAR_ALL, "yes");
 		params.put(P_PERFORM_CLEAR, "yes");
 
-		sendBulkRequest(params, "clear", false);
+		try (InputStream respStrm = sendBulkRequest(params, "clear", false)) {
+			// Do nothing -- there is no response
+		}
 	}
 
 	/**

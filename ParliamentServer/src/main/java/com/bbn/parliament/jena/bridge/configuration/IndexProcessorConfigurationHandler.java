@@ -6,6 +6,7 @@
 
 package com.bbn.parliament.jena.bridge.configuration;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Properties;
 
@@ -29,11 +30,11 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
  * @author rbattle
  */
 public class IndexProcessorConfigurationHandler implements ConfigurationHandler {
-	private static Logger log = LoggerFactory.getLogger(IndexProcessorConfigurationHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(IndexProcessorConfigurationHandler.class);
 
 	/** {@inheritDoc} */
 	@Override
-	public void initialize(Resource handle) throws ConfigurationException {
+	public void initialize(Resource handle) {
 		StmtIterator si = handle.listProperties(ConfigOnt.index);
 		while (si.hasNext()) {
 			Statement s = si.nextStatement();
@@ -44,28 +45,24 @@ public class IndexProcessorConfigurationHandler implements ConfigurationHandler 
 			@SuppressWarnings("rawtypes")
 			Class<? extends IndexFactory> factoryClass;
 			IndexFactory<?, ?> factory = null;
-			log.info("Loading {}", className);
+			LOG.info("Loading {}", className);
 			try {
 				uclass = Class.forName(className);
-			} catch (ClassNotFoundException e) {
-				log.warn("Could not find class {}", className);
-				continue;
-			} catch (RuntimeException e) {
-				log.error("Error while loading " + className, e);
+			} catch (ClassNotFoundException | RuntimeException ex) {
+				LOG.error("Error while loading " + className, ex);
 				continue;
 			}
 			if (!IndexFactory.class.isAssignableFrom(uclass)) {
-				log.warn("{} is not a valid IndexProcessor", className);
+				LOG.warn("{} is not a valid IndexProcessor", className);
 				continue;
 			}
 			factoryClass = uclass.asSubclass(IndexFactory.class);
 			try {
-				factory = factoryClass.newInstance();
-			} catch (InstantiationException e) {
-				log.error("Error while instantiating " + className, e);
-				continue;
-			} catch (IllegalAccessException e) {
-				log.error("Error while accessing " + className, e);
+				factory = factoryClass.getDeclaredConstructor().newInstance();
+			} catch (InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException ex) {
+				LOG.error("Could not instantiate " + className, ex);
 				continue;
 			}
 			Properties properties = createProperties(index);

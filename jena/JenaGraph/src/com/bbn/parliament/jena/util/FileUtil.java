@@ -8,9 +8,7 @@ package com.bbn.parliament.jena.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,41 +22,33 @@ public class FileUtil {
 		"LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8",
 		"LPT9", "NUL", "PRN" };
 
-	private static final char[] INVALID_URL_CHARS = { '*', ':', '<', '>', '?',
-		'\\', '/', '"', '|' };
+	private static final String INVALID_URL_CHARS = "*:<>?\\/\"|";
 
 	/**
 	 * Encodes a string into a valid file name. We replace any invalid characters
 	 * with an underscore.
 	 *
-	 * @param s a string to encode.
+	 * @param str a string to encode.
 	 * @return A string that can be used as a valid filename.
 	 */
-	public static String encodeStringForFilename(String s) {
+	public static String encodeStringForFilename(String str) {
 		// Some helpful comments here:
 		// http://stackoverflow.com/questions/62771/how-check-if-given-string-is-legal-allowed-file-name-under-windows
 
+		String trimmedStr = str.trim();
+
 		// These DOS device names are not allowed
 		for (String dos : DOS_DEVICE_NAMES) {
-			if (s.trim().equalsIgnoreCase(dos)) {
-				return "_" + s.trim();
+			if (trimmedStr.equalsIgnoreCase(dos)) {
+				return "_" + trimmedStr;
 			}
 		}
 
-		StringBuffer sb = new StringBuffer(s.length());
-		for (int i = 0; i < s.length(); ++i) {
-			char c = s.charAt(i);
+		StringBuilder sb = new StringBuilder(trimmedStr.length());
+		for (int i = 0; i < trimmedStr.length(); ++i) {
+			char c = trimmedStr.charAt(i);
 			int cInt = c;
-
-			boolean isInvalidChar = false;
-			for (char invalidChar : INVALID_URL_CHARS) {
-				if (c == invalidChar) {
-					isInvalidChar = true;
-					break;
-				}
-			}
-
-			if ((cInt >= 0x0 && cInt <= 0x1F) || isInvalidChar) {
+			if ((cInt >= 0x0 && cInt <= 0x1F) || INVALID_URL_CHARS.indexOf(cInt) >= 0) {
 				sb.append('_');
 			} else {
 				sb.append(c);
@@ -82,16 +72,14 @@ public class FileUtil {
 			}
 		}
 
-		if (success)	{
-			if (f.exists())	{
+		if (success) {
+			if (f.exists()) {
 				try {
-					Path path = FileSystems.getDefault().getPath(f.getPath());
-					Files.delete(path);
-				} catch (IOException e) {
-					log.warn("Error deleting '{}': {}", f, e.getMessage());
+					Files.delete(f.toPath());
+				} catch (IOException ex) {
+					log.warn("Error deleting '{}': {}", f, ex.getMessage());
 				}
-			}
-			else	{
+			} else {
 				log.trace("Attempted to delete nonexistent file/directory '{}'", f);
 			}
 		}

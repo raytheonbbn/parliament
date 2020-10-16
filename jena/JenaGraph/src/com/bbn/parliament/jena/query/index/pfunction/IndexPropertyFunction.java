@@ -1,5 +1,6 @@
 package com.bbn.parliament.jena.query.index.pfunction;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -121,11 +122,10 @@ public abstract class IndexPropertyFunction<T> extends PropertyFunctionEval {
 		this.indexClass = indexClass;
 		//this.operandFactoryClass = operandFactoryClass;
 		try {
-			operandFactory = operandFactoryClass.newInstance();
-		} catch (InstantiationException e) {
-			throw new QueryBuildException("Could not instantiate operand factory", e) ;
-		} catch (IllegalAccessException e) {
-			throw new QueryBuildException("Could not access operand factory", e) ;
+			operandFactory = operandFactoryClass.getDeclaredConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+			| InvocationTargetException | NoSuchMethodException | SecurityException ex) {
+			throw new QueryBuildException("Could not instantiate operand factory", ex) ;
 		}
 	}
 

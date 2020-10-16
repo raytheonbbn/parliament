@@ -15,12 +15,13 @@ package com.bbn.parliament.utilities;
 public class TimeValue
 {
 	public final static long PARLIAMENT_ONE_SECOND_IN_USECS = 1000000L;
-	private Long             _sec;
-	private Long             _usec;
+
+	private long _sec;
+	private long _usec;
 
 	public TimeValue()
 	{
-		set(0, 0);  // Normalization not necessary for (0,0)
+		set(0, 0); // Normalization not necessary for (0,0)
 	}
 
 	public TimeValue(long sec, long usec)
@@ -31,22 +32,22 @@ public class TimeValue
 
 	public void set(long sec, long usec)
 	{
-		_sec = new Long(sec);
-		_usec = new Long(usec);
+		_sec = sec;
+		_usec = usec;
 	}
 
 	public void set(double d)
 	{
 		long l = Double.doubleToLongBits(d);
-		_sec = new Long(l);
-		_usec = new Long((long) (d - l) * PARLIAMENT_ONE_SECOND_IN_USECS);
+		_sec = l;
+		_usec = (long) (d - l) * PARLIAMENT_ONE_SECOND_IN_USECS;
 		normalize();
 	}
 
 	private void normalize()
 	{
-		long seconds = _sec.longValue();
-		long useconds = _usec.longValue();
+		long seconds = _sec;
+		long useconds = _usec;
 
 		// Based on Doug Schmidt's ACE code from Hans Rohnert (P.N.)
 		if (useconds >= PARLIAMENT_ONE_SECOND_IN_USECS)
@@ -77,47 +78,46 @@ public class TimeValue
 			useconds -= PARLIAMENT_ONE_SECOND_IN_USECS;
 		}
 
-		_sec = new Long(seconds);
-		_usec = new Long(useconds);
+		_sec = seconds;
+		_usec = useconds;
 	}
 
 	/** Returns the msec. */
 	public long getMsec()
 	{
-		return (_sec.longValue() * 1000) + (_usec.longValue() / 1000);
+		return (_sec * 1000) + (_usec / 1000);
 	}
 
 	/** Returns the sec. */
 	public long getSec()
 	{
-		return _sec.longValue();
+		return _sec;
 	}
 
 	/** Returns the usec. */
 	public long getUsec()
 	{
-		return _usec.longValue();
+		return _usec;
 	}
 
 	/** Sets the sec. */
 	public void setSec(long sec)
 	{
-		_sec = new Long(sec);
+		_sec = sec;
 	}
 
 	/** Sets the usec. */
 	public void setUsec(long usec)
 	{
-		_usec = new Long(usec);
+		_usec = usec;
 		normalize();
 	}
 
 	/** Sets the msec. */
 	public void setMsec(long milliseconds)
 	{
-		_sec = new Long(milliseconds / 1000);
-		_usec = new Long(
-			(milliseconds - (_sec.longValue() * 1000)) * 1000);
+		_sec = milliseconds / 1000;
+		_usec = (milliseconds - (_sec * 1000)) * 1000;
 		normalize();
 	}
 
@@ -181,16 +181,14 @@ public class TimeValue
 	@Override
 	public int hashCode()
 	{
-		return _sec.hashCode() ^ _usec.hashCode();
+		return Long.hashCode(_sec) ^ Long.hashCode(_usec);
 	}
 
 	/** @see java.lang.Object#toString() */
 	@Override
 	public String toString()
 	{
-		StringBuffer buf = new StringBuffer();
-		buf.append("[ sec: " + _sec + " usec: " + _usec + " ]");
-		return buf.toString();
+		return "[ sec: " + _sec + " usec: " + _usec + " ]";
 	}
 
 	public static void main(String[] args)

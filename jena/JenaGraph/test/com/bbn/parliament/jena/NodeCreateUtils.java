@@ -106,7 +106,7 @@ public class NodeCreateUtils {
 		if (spelling.indexOf('\\') < 0) {
 			return spelling;
 		}
-		StringBuffer result = new StringBuffer(spelling.length());
+		StringBuilder result = new StringBuilder(spelling.length());
 		int start = 0;
 		while (true) {
 			int b = spelling.indexOf('\\', start);

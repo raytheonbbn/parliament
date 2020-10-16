@@ -18,6 +18,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.TestingDataset;
+import com.bbn.parliament.jena.graph.KbGraph;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -106,7 +107,9 @@ public class ReificationTest {
 
 	@BeforeEach
 	public void beforeEach(){
-		defaultGraphModel = ModelFactory.createModelForGraph(dataset.getDefaultGraph());
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		defaultGraphModel = ModelFactory.createModelForGraph(defaultGraph);
 		jenaDefaultModel = ModelFactory.createDefaultModel();
 	}
 

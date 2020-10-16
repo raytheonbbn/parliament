@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.TestingDataset;
+import com.bbn.parliament.jena.graph.KbGraph;
 import com.hp.hpl.jena.query.ARQ;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -157,7 +158,9 @@ public class KbOpExecutorDAWGTest {
 		log.debug("AbstractDAWGTestCase.setUp:  Set CheckerLiterals.WarnOnBadLiterals to false.");
 
 		Context params = ARQ.getContext();
-		execCxt = new ExecutionContext(params, dataset.getDefaultGraph(), dataset.getGraphStore(),
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		execCxt = new ExecutionContext(params, defaultGraph, dataset.getGraphStore(),
 			KbOpExecutor.KbOpExecutorFactory);
 		opExecutor = new KbOpExecutor(execCxt);
 	}
@@ -225,7 +228,9 @@ public class KbOpExecutorDAWGTest {
 			}
 		}
 		for (File dataFile : me.getData()) {
-			QueryTestUtil.loadResource(dataFile.getPath(), dataset.getDefaultGraph());
+			@SuppressWarnings("resource")
+			KbGraph defaultGraph = dataset.getDefaultGraph();
+			QueryTestUtil.loadResource(dataFile.getPath(), defaultGraph);
 		}
 		for (File graphDataFile : me.getGraphData()) {
 			//String uri = graphDataFile.toURI().toString();
@@ -240,7 +245,9 @@ public class KbOpExecutorDAWGTest {
 				uri = m2.replaceAll("$1%3A$2");
 			}
 			log.debug("Graph URI for test '{}' is '{}'", me.getName(), uri);
-			QueryTestUtil.loadResource(graphDataFile.getPath(), dataset.getNamedGraph(uri));
+			@SuppressWarnings("resource")
+			KbGraph namedGraph = dataset.getNamedGraph(uri);
+			QueryTestUtil.loadResource(graphDataFile.getPath(), namedGraph);
 		}
 		try {
 			Query q = QueryFactory.read(me.getQuery().getPath());

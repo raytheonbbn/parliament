@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.Kb;
 import com.bbn.parliament.jena.TestingDataset;
+import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.query.KbOpExecutor;
@@ -78,18 +79,22 @@ public class IndexExecutionTest {
 	@BeforeEach
 	public void beforeEach() {
 		Context params = ARQ.getContext();
-		execCxt = new ExecutionContext(params, dataset.getDefaultGraph(), dataset.getGraphStore(),
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		execCxt = new ExecutionContext(params, defaultGraph, dataset.getGraphStore(),
 			KbOpExecutor.KbOpExecutorFactory);
 		opExecutor = KbOpExecutor.KbOpExecutorFactory.create(execCxt);
 
-		index = IndexManager.getInstance().createAndRegister(dataset.getDefaultGraph(), null, factory);
+		index = IndexManager.getInstance().createAndRegister(defaultGraph, null, factory);
 		querier = new MockPatternQuerier(NUM_MOCKED_ITEMS);
 	}
 
 	@AfterEach
 	public void afterEach() {
 		dataset.reset();
-		IndexManager.getInstance().unregister(dataset.getDefaultGraph(), null, index);
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		IndexManager.getInstance().unregister(defaultGraph, null, index);
 		IndexPatternQuerierManager.getInstance().unregister(index);
 	}
 
@@ -147,7 +152,9 @@ public class IndexExecutionTest {
 
 	@Test
 	public void testIndexPatternQuerier2() throws IOException {
-		QueryTestUtil.loadResource("data/data-r2/triple-match/data-01.ttl", dataset.getDefaultGraph());
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		QueryTestUtil.loadResource("data/data-r2/triple-match/data-01.ttl", defaultGraph);
 
 		String algebra = ""
 			+ "(project (?x ?y)\n"
@@ -179,7 +186,9 @@ public class IndexExecutionTest {
 
 	@Test
 	public void testIndexPatternQuerier3() throws IOException {
-		QueryTestUtil.loadResource("data/data-r2/triple-match/data-01.ttl", dataset.getDefaultGraph());
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		QueryTestUtil.loadResource("data/data-r2/triple-match/data-01.ttl", defaultGraph);
 
 		String algebra = ""
 			+ "(project (?x ?y)\n"
@@ -206,7 +215,9 @@ public class IndexExecutionTest {
 
 	@Test
 	public void testFilterableIndex() throws IOException {
-		QueryTestUtil.loadResource("com/bbn/parliament/jena/query/index/mock/mockdata.ttl", dataset.getDefaultGraph());
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		QueryTestUtil.loadResource("com/bbn/parliament/jena/query/index/mock/mockdata.ttl", defaultGraph);
 
 		String algebra = ""
 			+ "(project (?x ?y)\n"

@@ -16,6 +16,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.TestingDataset;
+import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.query.QueryTestUtil;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -31,9 +32,11 @@ public class TransformationTest {
 	@BeforeAll
 	public static void beforeAll() {
 		dataset = new TestingDataset();
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
 		transformations = Arrays.asList(
-			new DefaultCountTransformation(dataset.getDefaultGraph()),
-			new UpdatedStaticCountTransformation(dataset.getDefaultGraph())
+			new DefaultCountTransformation(defaultGraph),
+			new UpdatedStaticCountTransformation(defaultGraph)
 		);
 	}
 
@@ -56,7 +59,9 @@ public class TransformationTest {
 	@ParameterizedTest
 	@MethodSource("generateReorderTransformations")
 	public void testNoTransformation(ReorderTransformation transformation) throws IOException {
-		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", dataset.getDefaultGraph());
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", defaultGraph);
 		BasicPattern pattern = new BasicPattern();
 		pattern.add(Triple.create(ResourceFactory
 			.createResource("http://example.org/data/x")
@@ -72,7 +77,9 @@ public class TransformationTest {
 	@ParameterizedTest
 	@MethodSource("generateReorderTransformations")
 	public void testSimpleTransformation(ReorderTransformation transformation) throws IOException {
-		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", dataset.getDefaultGraph());
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", defaultGraph);
 		BasicPattern pattern = new BasicPattern();
 		pattern.add(Triple.create(Var.alloc("s"), Var.alloc("p"),
 			Var.alloc("o")));
