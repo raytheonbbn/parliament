@@ -21,7 +21,6 @@ lib Parliament
 		/site-config//BoostHeaderOnlyLibraries
 		/site-config//BoostAtomic
 		/site-config//BoostChrono
-		/site-config//BoostDateTime
 		/site-config//BoostFileSystem
 		/site-config//BoostLog
 		/site-config//BoostLogSetup

@@ -257,11 +257,6 @@
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
 			<param name="callingBinary" value="libParliament.dylib"/>
-			<param name="calledBinary" value="libboost_date_time${boostLibSuffix}"/>
-		</antcall>
-		<antcall target="changeInstallName">
-			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libParliament.dylib"/>
 			<param name="calledBinary" value="libboost_filesystem${boostLibSuffix}"/>
 		</antcall>
 		<antcall target="changeInstallName">
@@ -298,11 +293,6 @@
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
 			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
-			<param name="calledBinary" value="libboost_date_time${boostLibSuffix}"/>
-		</antcall>
-		<antcall target="changeInstallName">
-			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
 			<param name="calledBinary" value="libboost_filesystem${boostLibSuffix}"/>
 		</antcall>
 		<antcall target="changeInstallName">
@@ -330,11 +320,6 @@
 			<param name="dylibDir" value="${dylibDir}"/>
 			<param name="callingBinary" value="libboost_log${boostLibSuffix}"/>
 			<param name="calledBinary" value="libboost_chrono${boostLibSuffix}"/>
-		</antcall>
-		<antcall target="changeInstallName">
-			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libboost_log${boostLibSuffix}"/>
-			<param name="calledBinary" value="libboost_date_time${boostLibSuffix}"/>
 		</antcall>
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
@@ -466,7 +451,7 @@
 			<arg value="&amp;"/>
 			<arg value="cd"/>
 			<arg value="/d"/>
-			<arg file="${untarPath}/src/native/windows/apps/prunsrv" prefix='"' suffix='"'/>
+			<arg file="${untarPath}/windows/apps/prunsrv" prefix='"' suffix='"'/>
 			<arg value="&amp;"/>
 			<arg value="nmake"/>
 			<arg value="${nmakeArg}"/>
@@ -474,7 +459,7 @@
 		</exec>
 
 		<copy todir="${targetDir}/${deployableSvrDir}/bin" overwrite="true" flatten="true">
-			<fileset dir="${untarPath}/src/native/windows/apps/prunsrv" includes="**/prunsrv.exe"/>
+			<fileset dir="${untarPath}/windows/apps/prunsrv" includes="**/prunsrv.exe"/>
 		</copy>
 		<move file="${targetDir}/${deployableSvrDir}/bin/prunsrv.exe"
 			tofile="${targetDir}/${deployableSvrDir}/bin/ParliamentService.exe"
@@ -496,22 +481,22 @@
 			<os family="mac"/>
 		</condition>
 
-		<chmod file="${untarPath}/src/native/unix/configure" perm="ugo+rx"
+		<chmod file="${untarPath}/unix/configure" perm="ugo+rx"
 			osfamily="unix" verbose="true"/>
-		<exec executable="./configure" dir="${untarPath}/src/native/unix">
+		<exec executable="./configure" dir="${untarPath}/unix">
 			<env key="CFLAGS" value="${flags}"/>
 			<env key="LDFLAGS" value="${flags}"/>
 			<env key="CC" value="${ccValue}"/>
 		</exec>
-		<exec executable="make" dir="${untarPath}/src/native/unix"/>
-		<move file="${untarPath}/src/native/unix/jsvc"
+		<exec executable="make" dir="${untarPath}/unix"/>
+		<move file="${untarPath}/unix/jsvc"
 			todir="${targetDir}/${deployableSvrDir}/bin"/>
 		<chmod file="${targetDir}/${deployableSvrDir}/bin/jsvc" perm="ugo+rx" verbose="true"/>
 
-		<ant dir="${untarPath}" target="jar" inheritAll="false"/>
+		<!-- ant dir="${untarPath}" target="jar" inheritAll="false"/>
 		<move todir="${targetDir}/${deployableSvrDir}/lib">
 			<fileset dir="${untarPath}/dist" includes="commons-daemon-*.jar"/>
-		</move>
+		</move -->
 
 		<delete dir="${daemonBinDir}"/>
 	</target>
@@ -525,7 +510,7 @@
 		</delete>
 
 		<for param="tarFile">
-			<fileset dir="${basedir}/lib/native" includes="**/commons-daemon-*.tar.gz"/>
+			<fileset dir="${basedir}/lib/default" includes="**/commons-daemon-*.tar.gz"/>
 			<sequential>
 				<untar src="@{tarFile}" dest="${daemonBinDir}" compression="gzip"/>
 			</sequential>
@@ -545,13 +530,13 @@
 				<and>
 					<os family="windows"/>
 					<uptodate targetfile="${targetDir}/${deployableSvrDir}/bin/ParliamentService.exe">
-						<srcfiles dir="${basedir}/lib/native" includes="commons-daemon-*.tar.gz"/>
+						<srcfiles dir="${basedir}/lib/default" includes="commons-daemon-*.tar.gz"/>
 					</uptodate>
 				</and>
 				<and>
 					<not><os family="windows"/></not>
 					<uptodate targetfile="${targetDir}/${deployableSvrDir}/bin/jsvc">
-						<srcfiles dir="${basedir}/lib/native" includes="commons-daemon-*.tar.gz"/>
+						<srcfiles dir="${basedir}/lib/default" includes="commons-daemon-*.tar.gz"/>
 					</uptodate>
 				</and>
 			</or>
