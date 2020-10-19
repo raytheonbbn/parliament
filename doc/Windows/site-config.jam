@@ -14,7 +14,8 @@ constant BoostVersionAbbrvAlternatives : [ MATCH "([0-9]+_[0-9]+)_0" "([0-9]+_[0
 constant BoostVersionAbbrv : $(BoostVersionAbbrvAlternatives[1]) ;
 constant BdbVersion : [ os.environ BDB_VERSION ] ;
 
-constant COMPILER : vc141 ;
+constant COMPILER : vc142 ;
+#constant COMPILER : vc141 ;
 #constant COMPILER : vc140 ;
 #constant COMPILER : vc120 ;
 #constant COMPILER : vc110 ;

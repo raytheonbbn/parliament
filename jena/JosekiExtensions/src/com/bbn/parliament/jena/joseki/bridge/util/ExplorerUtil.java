@@ -167,8 +167,8 @@ public class ExplorerUtil {
 	/**
 	 * Escapes any special characters in the supplied text so that it can be
 	 * included as character data in an XML document. The characters that are
-	 * escaped are <tt>&amp;</tt>, <tt>&lt;</tt>, <tt>&gt;</tt> and <tt>carriage
-	 * return (\r)</tt>.
+	 * escaped are {@code &amp;}, {@code &lt;}, {@code &gt;} and
+	 * {@code carriage return (\r)}.
 	 */
 	public static String escapeCharacterData(String text) {
 		text = text.replaceAll("&", "&amp;");
@@ -181,9 +181,9 @@ public class ExplorerUtil {
 	/**
 	 * Escapes any special characters in the supplied value so that it can be
 	 * used as an double-quoted attribute value in an XML document. The
-	 * characters that are escaped are <tt>&amp;</tt>, <tt>&lt;</tt>,
-	 * <tt>&gt;</tt>, <tt>tab (\t)</tt>, <tt>carriage return (\r)</tt>,
-	 * <tt>line feed (\n)</tt> and <tt>"</tt>.
+	 * characters that are escaped are {@code &amp;}, {@code &lt;},
+	 * {@code &gt;}, {@code tab (\t)}, {@code carriage return (\r)},
+	 * {@code line feed (\n)} and {@code "}.
 	 */
 	public static String escapeDoubleQuotedAttValue(String value) {
 		value = _escapeAttValue(value);
@@ -194,9 +194,9 @@ public class ExplorerUtil {
 	/**
 	 * Escapes any special characters in the supplied value so that it can be
 	 * used as an single-quoted attribute value in an XML document. The
-	 * characters that are escaped are <tt>&amp;</tt>, <tt>&lt;</tt>,
-	 * <tt>&gt;</tt>, <tt>tab (\t)</tt>, <tt>carriage return (\r)</tt>,
-	 * <tt>line feed (\n)</tt> and <tt>'</tt>.
+	 * characters that are escaped are {@code &amp;}, {@code &lt;},
+	 * {@code &gt;}, {@code tab (\t)}, {@code carriage return (\r)},
+	 * {@code line feed (\n)} and {@code '}.
 	 */
 	public static String escapeSingleQuotedAttValue(String value) {
 		value = _escapeAttValue(value);

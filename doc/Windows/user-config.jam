@@ -2,4 +2,13 @@
 # This file is used to configure the Boost.Build installation.
 
 # Toolset declarations (the first one is the default):
-using msvc : 14.1 ;	# for Visual Studio 2017
+using msvc				# for Visual Studio 2019
+	: 14.2
+	: # c++-compile-command
+	:	<cxxflags>"/std:c++17 /DBOOST_DATE_TIME_NO_LIB=1"
+		#<linkflags>"none needed at present"
+	;
+
+#using msvc : 14.1 ;	# for Visual Studio 2017
+#using msvc : 14.0 ;	# for Visual Studio 2015
+#using msvc : 12.0 ;	# for Visual Studio 2013
