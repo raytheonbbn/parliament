@@ -38,7 +38,7 @@ public abstract class AbstractHandler {
 	/** Gets the logger */
 	protected abstract Logger getLog();
 
-	/** Sends an <tt>OK</tt> response with the supplied message. */
+	/** Sends an {@code OK} response with the supplied message. */
 	protected static void sendSuccess(String msg, HttpServletResponse resp) throws IOException {
 		final int status = HttpServletResponse.SC_OK;
 		resp.setStatus(status);
