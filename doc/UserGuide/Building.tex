@@ -23,20 +23,22 @@ You will need to acquire and install one or more appropriate compilers for each 
 		\toprule
 		\textbf{Operating System} & \textbf{Compiler} & \textbf{Toolset} \\
 		\headingrule
-		Windows (32- and 64-bit) & Visual Studio 2017 & msvc-14.1 \\
+		Windows 10 (32- and 64-bit) & Visual Studio 2019 & msvc-14.2 \\
 		\midrule
-		Mac OS X 10.14 (Mojave) & Xcode 10.1 & clang \\
+		Mac OS X 10.14 (Mojave) & Xcode 11.3.1 & clang \\
 		\midrule
-		Ubuntu 18 (64-bit) & GCC 7.3.0 & gcc \\
+		Ubuntu 20 (64-bit) & GCC 9.3.0 & gcc \\
 		\midrule
 		Centos 7 (64-bit) & GCC 4.8.5 & gcc \\
+		\midrule
+		Centos 8 (64-bit) & GCC 8.3.1 & gcc \\
 		\bottomrule
 	\end{tabular}
 	\caption{Supported Platforms and Compilers}
 	\label{platforms-and-compilers}
 \end{table}
 
-Windows versions 7 and above are supported.  The 64-bit build has been tested on x64 hardware.  \acp{pmnt} capacity is much higher when running as a 64-bit process\footnote{On 32-bit Windows \ac{pmnt} runs out of virtual address space after storing 5 to 10 million statements.}, so one of those compilers is recommended.
+\acp{pmnt} capacity is much higher when running as a 64-bit process\footnote{On 32-bit Windows \ac{pmnt} runs out of virtual address space after storing 5 to 10 million statements.}, so 64-bit builds are recommended.
 
 On Macintosh, \ac{pmnt} builds as a universal binary using Apple's Xcode development tools.
 
@@ -273,15 +275,15 @@ Next we need to configure Boost.Build so that it can build \ac{pmnt}.  Start by 
 		\label{boost-test-log-level-values}
 	\end{table}
 
-	\item\verb|VS_ROOT|: \emph{(Windows only)} The root of your Visual C++ installation.  Usually \path|C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\|.
+	\item\verb|VS_ROOT|: \emph{(Windows only)} The root of your Visual Studio installation.  Usually \path|C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\|.
 
 	\item\verb|VS_BAT_PATH_32|: \emph{(Windows only)} The path to the batch file that sets up the environment for 32-bit builds.  Typically this is \path|%VS_ROOT%Auxiliary\Build\vcvarsamd64_x86.bat|.
 
 	\item\verb|VS_BAT_PATH_64|: \emph{(Windows only)} The path to the batch file that sets up the environment for 64-bit builds.  Typically this is \path|%VS_ROOT%Auxiliary\Build\vcvars64.bat|.
 
-	\item\verb|VS_REDIST_PATH_32|: \emph{(Windows only)} The path to the 32-bit redistributables installer.  Typically this is \path|%VS_ROOT%Redist\MSVC\14.16.27012\vc_redist.x86.exe|.
+	\item\verb|VS_REDIST_PATH_32|: \emph{(Windows only)} The path to the 32-bit redistributables installer.  Typically this is \path|%VS_ROOT%Redist\MSVC\14.27.29016\vc_redist.x86.exe|.
 
-	\item\verb|VS_REDIST_PATH_64|: \emph{(Windows only)} The path to the 64-bit redistributables installer.  Typically this is \path|%VS_ROOT%Redist\MSVC\14.16.27012\vc_redist.x64.exe|.
+	\item\verb|VS_REDIST_PATH_64|: \emph{(Windows only)} The path to the 64-bit redistributables installer.  Typically this is \path|%VS_ROOT%Redist\MSVC\14.27.29016\vc_redist.x64.exe|.
 \end{itemize}
 
 Next we create two Boost.Build configuration files, \path|site-config.jam| and \path|user-config.jam|.  Boost.Build reads these files on startup.  The two are separate so that the first one can be installed and maintained by a system administrator, and the second by the individual user.  These files can be placed in a number of locations. Table~\ref{boost-build-config-search} explains where Boost.Build searches to find these files.
