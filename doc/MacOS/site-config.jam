@@ -55,16 +55,6 @@ alias BoostChrono
 	:	<include>$(BoostDir)
 	;
 
-alias BoostDateTime
-	:	# no sources
-	:	$(BoostDyDbgLibPfx)date_time$(BoostDyDbgLibSfx)
-		$(BoostDyRlsLibPfx)date_time$(BoostDyRlsLibSfx)
-		$(BoostStDbgLibPfx)date_time$(BoostStDbgLibSfx)
-		$(BoostStRlsLibPfx)date_time$(BoostStRlsLibSfx)
-	:	# no default build
-	:	<include>$(BoostDir)
-	;
-
 alias BoostFileSystem
 	:	# no sources
 	:	$(BoostDyDbgLibPfx)filesystem$(BoostDyDbgLibSfx)

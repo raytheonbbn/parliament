@@ -12,7 +12,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Background}
 
-The Semantic Web employs a different data model than a relational database.  A relational database stores data in tables (rows and columns) while \ac{rdf}\urlcite{http://www.w3.org/RDF/} represents data as a directed graph of ordered triples of the form (subject, predicate, object).  Accordingly, a Semantic Web data store is often called a semantic graph, graph store, knowledge base, or triple store.
+The Semantic Web employs a different data model than a relational database.  A relational database stores data in tables (rows and columns) while \ac{rdf}\urlcite{http://www.w3.org/RDF/} represents data as a directed graph of ordered triples of the form (subject, predicate, object).  Accordingly, a Semantic Web data store is often called a semantic graph, triple store, knowledge base, or graph store.
 
 A relational database can store a directed graph, and some graph stores are in fact implemented as a thin interface layer wrapping a relational database.  However, the query performance of such implementations is usually poor.  This is because the only straightforward way to store the graph with the required level of generality is to use a single table to store all the triples, and this schema tends to defeat relational query optimizers.
 

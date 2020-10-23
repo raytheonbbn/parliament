@@ -33,7 +33,6 @@ run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 		/site-config//BoostHeaderOnlyLibraries
 		/site-config//BoostAtomic/<link>static
 		/site-config//BoostChrono/<link>static
-		/site-config//BoostDateTime/<link>static
 		/site-config//BoostFileSystem/<link>static
 		/site-config//BoostLog/<link>static
 		/site-config//BoostLogSetup/<link>static

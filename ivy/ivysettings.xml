@@ -27,8 +27,10 @@
 		<!-- Resolver for http://repo1.maven.org/maven2/ -->
 		<ibiblio name="default-public" m2compatible="true"/>
 
+		<!-- ibiblio name="geotools" m2compatible="true"
+			root="http://download.osgeo.org/webdav/geotools/"/ -->
 		<ibiblio name="geotools" m2compatible="true"
-			root="http://download.osgeo.org/webdav/geotools/"/>
+			root="http://maven.geomajas.org/nexus/content/groups/public/"/>
 
 		<chain name="public" returnFirst="true">
 			<resolver ref="default-public"/>
