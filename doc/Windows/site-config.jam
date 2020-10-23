@@ -22,7 +22,7 @@ constant COMPILER : vc142 ;
 #constant COMPILER : vc100 ;
 #constant COMPILER : vc90 ;
 
-constant BdbLibDir : $(BdbDir)/msvc-14.1 ;
+constant BdbLibDir : $(BdbDir)/msvc-14.2 ;
 
 constant BoostLibDir : $(BoostDir)/stage-msvc/lib ;
 
