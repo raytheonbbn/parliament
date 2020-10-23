@@ -163,7 +163,7 @@ public class NTriplesUtil {
 	 * backslashes.
 	 *
 	 * @return The index of the double quote ending the label, or
-	 * <tt>-1</tt> if it could not be found.
+	 * {@code -1} if it could not be found.
 	 */
 	private static int _findEndOfLabel(String nTriplesLiteral) {
 		// First character of literal is guaranteed to be a double
@@ -271,9 +271,9 @@ public class NTriplesUtil {
 
 	/**
 	 * Escapes a Unicode string to an all-ASCII character sequence. Any special
-	 * characters are escaped using backslashes (<tt>"</tt> becomes <tt>\"</tt>,
+	 * characters are escaped using backslashes ({@code "} becomes {@code \"},
 	 * etc.), and non-ascii/non-printable characters are escaped using Unicode
-	 * escapes (<tt>&#x5C;uxxxx</tt> and <tt>&#x5C;Uxxxxxxxx</tt>).
+	 * escapes ({@code &#x5C;uxxxx} and {@code &#x5C;Uxxxxxxxx}).
 	 */
 	public static String escapeString(String label) {
 		int labelLength = label.length();
@@ -320,9 +320,9 @@ public class NTriplesUtil {
 
 	/**
 	 * Unescapes an escaped Unicode string. Any Unicode sequences
-	 * (<tt>&#x5C;uxxxx</tt> and <tt>&#x5C;Uxxxxxxxx</tt>) are restored to the
+	 * ({@code &#x5C;uxxxx} and {@code &#x5C;Uxxxxxxxx}) are restored to the
 	 * value indicated by the hexadecimal argument and any backslash-escapes
-	 * (<tt>\"</tt>, <tt>\\</tt>, etc.) are decoded to their original form.
+	 * ({@code \"}, {@code \\}, etc.) are decoded to their original form.
 	 *
 	 * @param s An escaped Unicode string.
 	 * @return The unescaped string.

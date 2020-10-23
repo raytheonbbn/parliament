@@ -153,7 +153,7 @@ public class HttpClientUtil {
 	}
 
 	/**
-	 * Transfers all bytes that can be read from <tt>in</tt> to <tt>out</tt>.
+	 * Transfers all bytes that can be read from {@code in} to {@code out}.
 	 *
 	 * @param in The InputStream to read data from.
 	 * @param out The OutputStream to write data to.
@@ -190,16 +190,19 @@ public class HttpClientUtil {
 	 * Builds a multipart/form-data encoded byte array of the specified parameters,
 	 * that complies to <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>.
 	 * Note that the request sent to the server should have a header of the following
-	 * form set: <tt>Content-type: multipart/form-data, boundary=boundary-parameter</tt>.
+	 * form:
+	 * <pre>{@code
+	 * Content-type: multipart/form-data, boundary=boundary-parameter}.
+	 * }</pre>
 	 * E.g.:
-	 * <pre>
+	 * <pre>{@code}
 	 * HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 	 * connection.setRequestProperty("Content-type", "multipart/form-data, boundary=AaB03x");
-	 * </pre>
+	 * }</pre>
 	 *
-	 * @param parameters A map of String keys to values that are either <tt>FilePart</tt>s, in
+	 * @param parameters A map of String keys to values that are either {@code FilePart}s, in
 	 * which case its contents will be uploaded; byte arrays, which will be uploaded as-is; or
-	 * any other Object, in which case the value of the object's <tt>toString()</tt> method
+	 * any other Object, in which case the value of the object's {@code toString()} method
 	 * will be used.
 	 * @param boundary A boundary to use as separator between the encoded parts of the data.
 	 * @param encoding The character encoding for the data, e.g. "UTF-8".
@@ -307,7 +310,7 @@ public class HttpClientUtil {
 	 * be escaped because they are not printable characters. Within the range
 	 * a number of characters are deemed unsafe or are marked as reserved. In
 	 * short: According to the spec only the alphanumerics and the special
-	 * characters from <tt>$-_.+!*'(),</tt> can be left unencoded. To be save
+	 * characters from {@code $-_.+!*'(),} can be left unencoded. To be save
 	 * this method will encode all characters that are not alphanumerics.
 	 */
 	private static void _formUrlEncode(String s, StringBuffer buf) {

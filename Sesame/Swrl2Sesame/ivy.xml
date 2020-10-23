@@ -12,5 +12,6 @@
 
 	<dependencies>
 		<dependency org="org.openrdf" name="sesame" rev="1.2.7" conf="default->default"/>
+		<dependency org="jakarta.xml.bind" name="jakarta.xml.bind-api" rev="2.3.3" conf="default->default"/>
 	</dependencies>
 </ivy-module>
