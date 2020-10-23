@@ -14,8 +14,6 @@ import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.hp.hpl.jena.util.iterator.ClosableIterator;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 /** @author dkolas */
 public class TemporalExtentIterator implements ClosableIterator<Record<TemporalExtent>> {
 	private InclusionDecider inclusionDecider;
@@ -56,7 +54,7 @@ public class TemporalExtentIterator implements ClosableIterator<Record<TemporalE
 
 	@Override
 	public void remove() {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

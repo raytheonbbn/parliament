@@ -62,7 +62,7 @@ public class HttpServerUtil {
 	}
 
 	/**
-	 * Checks whether the supplied request is a <tt>multipart/form-data</tt>
+	 * Checks whether the supplied request is a {@code multipart/form-data}
 	 * POST request.
 	 */
 	public static boolean isMultipartContent(HttpServletRequest request) {
@@ -72,11 +72,11 @@ public class HttpServerUtil {
 	/**
 	 * Gets the trimmed value of a request parameter as a String. If the
 	 * specified parameter does not exist or if it has a white-space-only value,
-	 * <tt>null</tt> will be returned.
+	 * {@code null} will be returned.
 	 *
 	 * @param request The request object to get the parameter from.
 	 * @param paramName The name of the parameter.
-	 * @return The trimmed value, or <tt>null</tt> if the specified parameter
+	 * @return The trimmed value, or {@code null} if the specified parameter
 	 * does not have a value.
 	 */
 	public static String getParameter(HttpServletRequest request, String paramName) {
@@ -86,13 +86,13 @@ public class HttpServerUtil {
 	/**
 	 * Gets the trimmed value of a request parameter as a String. If the
 	 * specified parameter does not exist or if it has a white-space-only value,
-	 * the supplied <tt>defaultValue</tt> will be returned.
+	 * the supplied {@code defaultValue} will be returned.
 	 *
 	 * @param request The request object to get the parameter from.
 	 * @param paramName The name of the parameter.
 	 * @param defaultValue The value that should be returned when the specified
 	 * parameter did not have a value.
-	 * @return The trimmed value, or <tt>defaultValue</tt> if the specified
+	 * @return The trimmed value, or {@code defaultValue} if the specified
 	 * parameter does not have a value.
 	 */
 	public static String getParameter(HttpServletRequest request, String paramName, String defaultValue) {
@@ -113,7 +113,7 @@ public class HttpServerUtil {
 	}
 
 	/**
-	 * Parses a <tt>multipart/form-data</tt> POST request and returns its
+	 * Parses a {@code multipart/form-data} POST request and returns its
 	 * parameters as set of FileItems, mapped using their field name.
 	 *
 	 * @param request The request.
@@ -140,15 +140,15 @@ public class HttpServerUtil {
 
 	/**
 	 * Gets the trimmed value of a request parameter from a Map of FileItem
-	 * objects, as returned by <tt>parseMultipartFormRequest()</tt>. If the
+	 * objects, as returned by {@code parseMultipartFormRequest()}. If the
 	 * specified parameter does not exist or if it has a white-space-only value,
-	 * <tt>null</tt> will be returned. The values are assumed to be using the
+	 * {@code null} will be returned. The values are assumed to be using the
 	 * UTF-8 encoding.
 	 *
 	 * @param fileItemMap A Map of FileItem objects, mapped using their field
 	 * name (Strings).
 	 * @param paramName The name of the parameter.
-	 * @return The trimmed value, or <tt>null</tt> if the specified parameter
+	 * @return The trimmed value, or {@code null} if the specified parameter
 	 * does not have a value.
 	 */
 	public static String getParameter(Map<String, FileItem> fileItemMap, String paramName) {
@@ -157,9 +157,9 @@ public class HttpServerUtil {
 
 	/**
 	 * Gets the trimmed value of a request parameter from a Map of FileItem
-	 * objects, as returned by <tt>parseMultipartFormRequest()</tt>. If the
+	 * objects, as returned by {@code parseMultipartFormRequest()}. If the
 	 * specified parameter does not exist or if it has a white-space-only value,
-	 * the supplied <tt>defaultValue</tt> will be returned. The values are
+	 * the supplied {@code defaultValue} will be returned. The values are
 	 * assumed to be using the UTF-8 encoding.
 	 *
 	 * @param fileItemMap A Map of FileItem objects, mapped using their field
@@ -167,7 +167,7 @@ public class HttpServerUtil {
 	 * @param paramName The name of the parameter.
 	 * @param defaultValue The value that should be returned when the specified
 	 * parameter did not have a value.
-	 * @return The trimmed value, or <tt>null</tt> if the specified parameter
+	 * @return The trimmed value, or {@code null} if the specified parameter
 	 * does not have a value.
 	 */
 	public static String getParameter(Map<String, FileItem> fileItemMap, String paramName, String defaultValue) {
@@ -194,12 +194,12 @@ public class HttpServerUtil {
 
 	/**
 	 * Gets the binary value of a request parameter from a Map of FileItem
-	 * objects, as returned by <tt>parseMultipartFormRequest()</tt>.
+	 * objects, as returned by {@code parseMultipartFormRequest()}.
 	 *
 	 * @param fileItemMap A Map of FileItem objects, mapped using their field
 	 * name (Strings).
 	 * @param paramName The name of the parameter.
-	 * @return The binary value, or <tt>null</tt> if the specified parameter
+	 * @return The binary value, or {@code null} if the specified parameter
 	 * does not have a value.
 	 */
 	public static byte[] getBinaryParameter(Map<String, FileItem> fileItemMap, String paramName) {
@@ -215,12 +215,12 @@ public class HttpServerUtil {
 
 	/**
 	 * Gets the value of a request parameter as an InputStream from a Map of
-	 * FileItem objects, as returned by <tt>parseMultipartFormRequest()</tt>.
+	 * FileItem objects, as returned by {@code parseMultipartFormRequest()}.
 	 *
 	 * @param fileItemMap A Map of FileItem objects, mapped using their field
 	 * name (Strings).
 	 * @param paramName The name of the parameter.
-	 * @return The value, or <tt>null</tt> if the specified parameter does not
+	 * @return The value, or {@code null} if the specified parameter does not
 	 * have a value.
 	 */
 	public static InputStream getStreamParameter(Map<String, FileItem> fileItemMap, String paramName)
@@ -256,8 +256,8 @@ public class HttpServerUtil {
 	 * gzip-encoded data.
 	 *
 	 * @param request A HTTP request
-	 * @return <tt>true</tt> if the sender of the request can handle
-	 * gzip-encoded data, <tt>false</tt> otherwise.
+	 * @return {@code true} if the sender of the request can handle
+	 * gzip-encoded data, {@code false} otherwise.
 	 */
 	public static boolean acceptsGZIPEncoding(HttpServletRequest request) {
 		boolean result = false;

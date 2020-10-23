@@ -12,11 +12,11 @@
 		<conf name="default"/>
 		<conf name="test" extends="default" visibility="private"
 			description="for unit testing"/>
-		<conf name="native" visibility="private"
-			description="for Apache commons-daemon"/>
 	</configurations>
 
 	<dependencies>
+		<!-- dependency org="commons-daemon" name="commons-daemon" rev="1.2.3"
+			conf="default->default"/ -->
 		<dependency org="org.apache.jena" name="jena-arq" rev="2.9.4"
 			conf="default->default"/>
 		<dependency org="org.slf4j" name="slf4j-api" rev="${slf4j.version}"
@@ -26,9 +26,11 @@
 		<dependency org="org.slf4j" name="jcl-over-slf4j" rev="${slf4j.version}"
 			conf="default->default"/>
 
-		<dependency org="commons-daemon" name="commons-daemon" rev="1.1.0" conf="native->default">
+		<dependency org="commons-daemon" name="commons-daemon" rev="1.2.3" conf="default->default">
+			<artifact name="commons-daemon" type="jar"
+				url="https://repo1.maven.org/maven2/commons-daemon/commons-daemon/1.2.3/commons-daemon-1.2.3.jar"/>
 			<artifact name="commons-daemon" type="native-src" ext="tar.gz"
-				url="https://repo1.maven.org/maven2/commons-daemon/commons-daemon/1.1.0/commons-daemon-1.1.0-src.tar.gz"/>
+				url="https://repo1.maven.org/maven2/commons-daemon/commons-daemon/1.2.3/commons-daemon-1.2.3-native-src.tar.gz"/>
 		</dependency>
 
 		<!-- dependency org="junit" name="junit" rev="4.12" conf="test->default"/ -->

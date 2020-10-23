@@ -28,6 +28,7 @@
 		<ibiblio name="default-public" m2compatible="true"/>
 
 		<!-- Old URL:  http://download.osgeo.org/webdav/geotools/ -->
+		<!-- Doesn't quite work: http://maven.geomajas.org/nexus/content/groups/public/ -->
 		<ibiblio name="geotools" m2compatible="true"
 			root="https://repo.osgeo.org/repository/release/"/>
 
