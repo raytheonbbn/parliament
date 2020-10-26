@@ -94,10 +94,10 @@ where \path|«dir»| is the absolute path of your \ac{pmnt} working copy.
 
 \subsection{Building BDB for Macintosh}
 
-On Macintosh, Berkeley DB follows the usual pattern of software based on the autoconf/automake/libtool suite.  Specifically, expand the BDB distribution archive file and change to the \path|build_unix| subdirectory.  Then issue the following commands:
+On Macintosh, Berkeley DB follows the usual pattern of software based on the autoconf/automake/libtool suite.  Specifically, expand the BDB distribution archive file.  In the file \path|src/dbinc/atomic.h|, replace all instances of \verb|__atomic_compare_exchange| with \verb|__atomic_compare_exchange_db|, \texttt{cd} to the \path|build_unix| subdirectory, and issue the following commands:
 \begin{verbatim}
 env CC=clang CFLAGS="-fvisibility=default -arch x86_64"
-     ../dist/configure
+     ../dist/configure --enable-posixmutexes
 make
 sudo make install
 \end{verbatim}
@@ -107,11 +107,9 @@ BDB_VERSION=5.3
 BDB_HOME=/usr/local/BerkeleyDB.5.3
 \end{verbatim}
 
-With recent Apple compiler versions, the \texttt{make} command above may fail with an error message about \verb|__atomic_compare_exchange|.  If so, replace all instances of that identifier with \verb|__atomic_compare_exchange_db| in the file \path|src/dbinc/atomic.h|.  Then run the \texttt{make} command again.
-
 \subsection{Building BDB for Linux}
 
-On Linux, Berkeley DB follows the usual pattern of software based on the autoconf/automake/libtool suite.  Decompress and un-archive the BDB distribution, change to the \path|build_unix| subdirectory, and issue the following commands:
+On Linux, Berkeley DB follows the usual pattern of software based on the autoconf/automake/libtool suite.  Specifically, expand the BDB distribution archive file.  In the file \path|src/dbinc/atomic.h|, replace all instances of \verb|__atomic_compare_exchange| with \verb|__atomic_compare_exchange_db|, \texttt{cd} to the \path|build_unix| subdirectory, and issue the following commands:
 \begin{verbatim}
 env CFLAGS="-m64" ../dist/configure
 make
@@ -122,8 +120,6 @@ You can tidy up after the build with the command \verb|make realclean|.  Once yo
 BDB_VERSION=5.3
 BDB_HOME=/usr/local/BerkeleyDB.5.3
 \end{verbatim}
-
-With the newest GCC compiler, the \texttt{make} command above may fail with an error message about \verb|__atomic_compare_exchange|.  If so, replace all instances of that identifier with \verb|__atomic_compare_exchange_db| in the file \path|src/dbinc/atomic.h|.  Then run the \texttt{make} command again.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Building the Boost Libraries}
