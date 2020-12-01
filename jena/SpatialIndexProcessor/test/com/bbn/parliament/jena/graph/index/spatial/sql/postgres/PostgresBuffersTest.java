@@ -77,7 +77,19 @@ public class PostgresBuffersTest {
 
 	@SuppressWarnings("static-method")
 	@Test
-	public void testBufferThousandDistance() {
-		testMethods.testBufferThousandDistance();
+	public void testBufferThousandDistance1() {
+		testMethods.testBufferThousandDistance1();
+	}
+
+	@SuppressWarnings("static-method")
+	@Test
+	public void testBufferThousandDistance2() {
+		testMethods.testBufferThousandDistance2();
+	}
+
+	@SuppressWarnings("static-method")
+	@Test
+	public void testBufferThousandDistance3() {
+		testMethods.testBufferThousandDistance3();
 	}
 }
