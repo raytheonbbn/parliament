@@ -12,6 +12,12 @@ import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.hp.hpl.jena.rdf.model.Model;
 
 public class RdfResourceLoader {
+
+	@FunctionalInterface
+	public static interface SampleDataConsumer {
+		void accept(String rsrcName, RDFFormat rdfFormat, InputStream input) throws Exception;
+	}
+
 	// This class is used to circumvent Jena closing the zip input stream prematurely:
 	private static class NonClosingInputStream extends FilterInputStream {
 		public NonClosingInputStream(InputStream in) {
@@ -66,15 +72,16 @@ public class RdfResourceLoader {
 
 	private RdfResourceLoader() {}	//prevents instantiation
 
-	public static void load(String rsrcName, Model model) throws IOException {
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		try (InputStream is = cl.getResourceAsStream(rsrcName)) {
-			if (is == null) {
-				throw new FileNotFoundException(String.format("Unable to find resource '%1$s'", rsrcName));
-			}
+	public static void load(String rsrcName, Model model) throws Exception {
+		load(rsrcName,
+			(name, rdfFormat, input) -> model.read(input, null, rdfFormat.toString()));
+	}
+
+	public static void load(String rsrcName, SampleDataConsumer consumer) throws Exception {
+		try (InputStream is = getResourceAsStream(rsrcName)) {
 			RDFFormat rdfFmt = RDFFormat.parseFilename(rsrcName);
 			if (rdfFmt.isJenaReadable()) {
-				model.read(is, null, rdfFmt.toString());
+				consumer.accept(rsrcName, rdfFmt, is);
 			} else if (rdfFmt == RDFFormat.ZIP) {
 				try (
 					ZipInputStream zis = new ZipInputStream(is, StandardCharsets.UTF_8);
@@ -83,11 +90,20 @@ public class RdfResourceLoader {
 					for (ZipEntry ze = null; (ze = zis.getNextEntry()) != null;) {
 						RDFFormat rdfZeFmt = RDFFormat.parseFilename(ze.getName());
 						if (!ze.isDirectory() && rdfZeFmt.isJenaReadable()) {
-							model.read(ncis, null, rdfZeFmt.toString());
+							consumer.accept(ze.getName(), rdfZeFmt, ncis);
 						}
 					}
 				}
 			}
 		}
+	}
+
+	private static InputStream getResourceAsStream(String rsrcName) throws FileNotFoundException {
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		InputStream is = cl.getResourceAsStream(rsrcName);
+		if (is == null) {
+			throw new FileNotFoundException(String.format("Unable to find resource '%1$s'", rsrcName));
+		}
+		return is;
 	}
 }

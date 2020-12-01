@@ -4,8 +4,8 @@ plugins {
 	id 'java'
 }
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+//sourceCompatibility = '1.8'
+//targetCompatibility = '1.8'
 defaultTasks 'bootRun'
 
 ext {
@@ -21,27 +21,21 @@ dependencies {
 	implementation fileTree(dir: artifactsDir, include: ['SpatialIndexProcessor.jar'])
 	implementation fileTree(dir: artifactsDir, include: ['TemporalIndexProcessor.jar'])
 
-	//implementation 'org.apache.commons:commons-io:1.3.2'
-	implementation 'commons-fileupload:commons-fileupload:1.3.3'
+	implementation "$commonsFileUpload"
+	implementation "$commonsLangDependency"
 
-	implementation('org.apache.jena:jena-arq:2.9.4') {
+	implementation("$jenaArqDependency") {
 		exclude group: 'commons-logging', module: 'commons-logging'
 	}
-	implementation 'org.slf4j:slf4j-api:1.7.21'
+	implementation "$slf4jApiDependency"
 	//implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.13.3'
-	implementation 'org.slf4j:jcl-over-slf4j:1.7.21'
+	implementation "$jclOverSlf4j"
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
-
-	//implementation 'io.rest-assured:rest-assured:4.2.0'
-	//implementation 'io.rest-assured:json-path:4.2.0'
-	//implementation 'io.rest-assured:xml-path:4.2.0'
-	//implementation 'org.hamcrest:hamcrest:2.2'
 }
-
 
 // By default, Spring wants to use logback, which then gets upset because
 // SLF4J is present.  This allows SLF4J to take over:
@@ -75,9 +69,16 @@ compileJava.dependsOn runSchemagen
 
 test {
 	useJUnitPlatform()
-	systemProperty 'java.library.path', "${rootDir}/target/Parliament-v2.7.14-clang/bin"
-	environment 'LD_LIBRARY_PATH', "${rootDir}/target/Parliament-v2.7.14-gcc/bin"
-	environment 'Path', "${rootDir}/target/Parliament-v2.7.14-msvc/bin;${System.getenv("Path")}"
+	systemProperties = [
+		'java.library.path' : "${rootDir}/target/Parliament-v2.7.14-clang/bin",
+		'log4j.configuration' : "file:///${rootDir}/log4j.junit.properties",
+	]
+	environment = [
+		'LD_LIBRARY_PATH' : "${rootDir}/target/Parliament-v2.7.14-gcc/bin",
+		'Path' : "${rootDir}/target/Parliament-v2.7.14-msvc/bin;${System.getenv('Path')}",
+		'PARLIAMENT_KB_CONFIG_PATH' : "${rootDir}/target/test-bin/ParliamentKbConfig.txt",
+		'PARLIAMENT_LOG_CONFIG_PATH' : "${rootDir}/target/test-bin/ParliamentLogConfig.txt",
+	]
 }
 
 task copyTestResources(type: Copy) {
@@ -86,10 +87,13 @@ task copyTestResources(type: Copy) {
 }
 
 bootRun {
-	//environment = ["GOOGLE_APPLICATION_CREDENTIALS": "[PATH TO JSON]" ]
 	systemProperty 'java.library.path', "${rootDir}/target/Parliament-v2.7.14-clang/bin"
-	environment 'LD_LIBRARY_PATH', "${rootDir}/target/Parliament-v2.7.14-gcc/bin"
-	environment 'Path', "${rootDir}/target/Parliament-v2.7.14-msvc/bin;${System.getenv("Path")}"
+	environment = [
+		'LD_LIBRARY_PATH' : "${rootDir}/target/Parliament-v2.7.14-gcc/bin",
+		'Path' : "${rootDir}/target/Parliament-v2.7.14-msvc/bin;${System.getenv('Path')}",
+		'PARLIAMENT_KB_CONFIG_PATH' : "${rootDir}/Parliament/KbCore/ParliamentKbConfig.txt",
+		'PARLIAMENT_LOG_CONFIG_PATH' : "${rootDir}/Parliament/KbCore/ParliamentLogConfig.txt",
+	]
 }
 
 subprojects {

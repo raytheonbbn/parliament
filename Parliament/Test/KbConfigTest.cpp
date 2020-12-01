@@ -39,49 +39,49 @@ BOOST_AUTO_TEST_SUITE(KbConfigTestSuite)
 
 BOOST_AUTO_TEST_CASE(testConfigDefaultCtor)
 {
-	KbConfig c;
+	KbConfig defaults;
 
-	BOOST_CHECK_EQUAL(bfs::path(_T("kb-data")), c.kbDirectoryPath());
-	BOOST_CHECK_EQUAL(string("statements.mem"), c.stmtFileName());
-	BOOST_CHECK_EQUAL(string("resources.mem"), c.rsrcFileName());
-	BOOST_CHECK_EQUAL(string("uris.mem"), c.uriTableFileName());
-	BOOST_CHECK_EQUAL(string("u2i.db"), c.uriToIntFileName());
+	BOOST_CHECK_EQUAL(bfs::path(_T("kb-data")), defaults.kbDirectoryPath());
+	BOOST_CHECK_EQUAL(string("statements.mem"), defaults.stmtFileName());
+	BOOST_CHECK_EQUAL(string("resources.mem"), defaults.rsrcFileName());
+	BOOST_CHECK_EQUAL(string("uris.mem"), defaults.uriTableFileName());
+	BOOST_CHECK_EQUAL(string("u2i.db"), defaults.uriToIntFileName());
 
-	BOOST_CHECK_EQUAL(false, c.readOnly());
-	BOOST_CHECK_EQUAL(15000u, c.fileSyncTimerDelay());
-	BOOST_CHECK_EQUAL(300000u, c.initialRsrcCapacity());
-	BOOST_CHECK_EQUAL(100u, c.avgRsrcLen());
-	BOOST_CHECK_EQUAL(600000u, c.rsrcGrowthIncrement());
-	BOOST_CHECK_EQUAL(0.0, c.rsrcGrowthFactor());
-	BOOST_CHECK_EQUAL(500000u, c.initialStmtCapacity());
-	BOOST_CHECK_EQUAL(1000000u, c.stmtGrowthIncrement());
-	BOOST_CHECK_EQUAL(0.0, c.stmtGrowthFactor());
-	BOOST_CHECK_EQUAL(string("32m,1"), c.bdbCacheSize());
+	BOOST_CHECK_EQUAL(false, defaults.readOnly());
+	BOOST_CHECK_EQUAL(15000u, defaults.fileSyncTimerDelay());
+	BOOST_CHECK_EQUAL(300000u, defaults.initialRsrcCapacity());
+	BOOST_CHECK_EQUAL(100u, defaults.avgRsrcLen());
+	BOOST_CHECK_EQUAL(600000u, defaults.rsrcGrowthIncrement());
+	BOOST_CHECK_EQUAL(0.0, defaults.rsrcGrowthFactor());
+	BOOST_CHECK_EQUAL(500000u, defaults.initialStmtCapacity());
+	BOOST_CHECK_EQUAL(1000000u, defaults.stmtGrowthIncrement());
+	BOOST_CHECK_EQUAL(0.0, defaults.stmtGrowthFactor());
+	BOOST_CHECK_EQUAL(string("32m,1"), defaults.bdbCacheSize());
 
-	BOOST_CHECK_EQUAL(true, c.normalizeTypedStringLiterals());
+	BOOST_CHECK_EQUAL(true, defaults.normalizeTypedStringLiterals());
 
-	BOOST_CHECK_EQUAL(5u, c.timeoutDuration());
-	BOOST_CHECK(TimeUnit::k_min == c.timeoutUnit());
+	BOOST_CHECK_EQUAL(5u, defaults.timeoutDuration());
+	BOOST_CHECK(TimeUnit::k_min == defaults.timeoutUnit());
 
-	BOOST_CHECK_EQUAL(false, c.runAllRulesAtStartup());
-	BOOST_CHECK_EQUAL(false, c.enableSWRLRuleEngine());
+	BOOST_CHECK_EQUAL(false, defaults.runAllRulesAtStartup());
+	BOOST_CHECK_EQUAL(false, defaults.enableSWRLRuleEngine());
 
-	BOOST_CHECK_EQUAL(true, c.isSubclassRuleOn());
-	BOOST_CHECK_EQUAL(true, c.isSubpropertyRuleOn());
-	BOOST_CHECK_EQUAL(true, c.isDomainRuleOn());
-	BOOST_CHECK_EQUAL(true, c.isRangeRuleOn());
-	BOOST_CHECK_EQUAL(true, c.isEquivalentClassRuleOn());
-	BOOST_CHECK_EQUAL(true, c.isEquivalentPropRuleOn());
-	BOOST_CHECK_EQUAL(true, c.isInverseOfRuleOn());
-	BOOST_CHECK_EQUAL(true, c.isSymmetricPropRuleOn());
-	BOOST_CHECK_EQUAL(false, c.isFunctionalPropRuleOn());
-	BOOST_CHECK_EQUAL(false, c.isInvFunctionalPropRuleOn());
-	BOOST_CHECK_EQUAL(true, c.isTransitivePropRuleOn());
+	BOOST_CHECK_EQUAL(true, defaults.isSubclassRuleOn());
+	BOOST_CHECK_EQUAL(true, defaults.isSubpropertyRuleOn());
+	BOOST_CHECK_EQUAL(true, defaults.isDomainRuleOn());
+	BOOST_CHECK_EQUAL(true, defaults.isRangeRuleOn());
+	BOOST_CHECK_EQUAL(true, defaults.isEquivalentClassRuleOn());
+	BOOST_CHECK_EQUAL(true, defaults.isEquivalentPropRuleOn());
+	BOOST_CHECK_EQUAL(true, defaults.isInverseOfRuleOn());
+	BOOST_CHECK_EQUAL(true, defaults.isSymmetricPropRuleOn());
+	BOOST_CHECK_EQUAL(false, defaults.isFunctionalPropRuleOn());
+	BOOST_CHECK_EQUAL(false, defaults.isInvFunctionalPropRuleOn());
+	BOOST_CHECK_EQUAL(true, defaults.isTransitivePropRuleOn());
 
-	BOOST_CHECK_EQUAL(false, c.inferRdfsClass());
-	BOOST_CHECK_EQUAL(false, c.inferOwlClass());
-	BOOST_CHECK_EQUAL(false, c.inferRdfsResource());
-	BOOST_CHECK_EQUAL(false, c.inferOwlThing());
+	BOOST_CHECK_EQUAL(false, defaults.inferRdfsClass());
+	BOOST_CHECK_EQUAL(false, defaults.inferOwlClass());
+	BOOST_CHECK_EQUAL(false, defaults.inferRdfsResource());
+	BOOST_CHECK_EQUAL(false, defaults.inferOwlThing());
 }
 
 BOOST_AUTO_TEST_CASE(testConfigDefaultFileContainsDefaults)
@@ -132,6 +132,52 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultFileContainsDefaults)
 	BOOST_CHECK_EQUAL(defaults.inferOwlThing(), c.inferOwlThing());
 }
 
+static auto k_validTestConfig = u8R"~~~(
+# Parameters file for the Parliament core DLL
+ 	 # Parameters file for the Parliament core DLL
+
+kbDirectoryPath=./subdir
+stmtFileName         =statements
+rsrcFileName      	 = resources
+uriTableFileName     = foo
+uriToIntFileName     = bar
+
+  readOnly           = yes
+  fileSyncTimerDelay = 10000
+initialRsrcCapacity  = 100
+ 	 avgRsrcLen       = 128
+rsrcGrowthIncrement  = 200 
+rsrcGrowthFactor     = 2      
+initialStmtCapacity  = 500 	 
+stmtGrowthIncrement  = 1000
+stmtGrowthFactor     = 2
+bdbCacheSize         = 512m,2
+normalizeTypedStringLiterals = no
+
+TimeoutDuration = 200
+TimeoutUnit = milliseconds
+
+runAllRulesAtStartup = yes
+enableSWRLRuleEngine = off
+
+SubclassRule           = on
+SubpropertyRule        = on
+DomainRule             = on
+RangeRule              = on
+EquivalentClassRule    = on
+EquivalentPropRule     = on
+InverseOfRule          = on
+SymmetricPropRule      = on
+FunctionalPropRule     = off
+InvFunctionalPropRule  = on
+TransitivePropRule     = on
+
+inferRdfsClass       = yes
+inferOwlClass        = no
+inferRdfsResource    = yes
+inferOwlThing        = no
+)~~~";
+
 BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 {
 	KbConfig c;
@@ -139,51 +185,10 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 	EnvVarReset envVarReset(k_envVar, k_fName);
 	FileDeleter filedeleter(k_fName);
 
-	ofstream s(k_fName);
-	s << "# Parameters file for the Parliament core DLL" << endl;
-	s << " \t # Parameters file for the Parliament core DLL" << endl;
-	s << endl;
-	s << "kbDirectoryPath=./subdir" << endl;
-	s << "stmtFileName         =statements" << endl;
-	s << "rsrcFileName      \t = resources" << endl;
-	s << "uriTableFileName     = foo" << endl;
-	s << "uriToIntFileName     = bar" << endl;
-	s << endl;
-	s << "  readOnly           = yes" << endl;
-	s << "  fileSyncTimerDelay = 10000" << endl;
-	s << "initialRsrcCapacity  = 100" << endl;
-	s << " \t avgRsrcLen       = 128" << endl;
-	s << "rsrcGrowthIncrement  = 200 " << endl;
-	s << "rsrcGrowthFactor     = 2 " << endl;
-	s << "initialStmtCapacity  = 500 \t " << endl;
-	s << "stmtGrowthIncrement  = 1000" << endl;
-	s << "stmtGrowthFactor     = 2" << endl;
-	s << "bdbCacheSize         = 512m,2" << endl;
-	s << "normalizeTypedStringLiterals = no" << endl;
-	s << endl;
-	s << "TimeoutDuration = 200" << endl;
-	s << "TimeoutUnit = milliseconds" << endl;
-	s << endl;
-	s << "runAllRulesAtStartup = yes" << endl;
-	s << "enableSWRLRuleEngine = off" << endl;
-	s << endl;
-	s << "SubclassRule           = on" << endl;
-	s << "SubpropertyRule        = on" << endl;
-	s << "DomainRule             = on" << endl;
-	s << "RangeRule              = on" << endl;
-	s << "EquivalentClassRule    = on" << endl;
-	s << "EquivalentPropRule     = on" << endl;
-	s << "InverseOfRule          = on" << endl;
-	s << "SymmetricPropRule      = on" << endl;
-	s << "FunctionalPropRule     = off" << endl;
-	s << "InvFunctionalPropRule  = on" << endl;
-	s << "TransitivePropRule     = on" << endl;
-	s << endl;
-	s << "inferRdfsClass       = yes" << endl;
-	s << "inferOwlClass        = no" << endl;
-	s << "inferRdfsResource    = yes" << endl;
-	s << "inferOwlThing        = no" << endl;
-	s.close();
+	{
+		ofstream s(k_fName);
+		s << k_validTestConfig;
+	}
 
 	BOOST_REQUIRE_NO_THROW(c.readFromFile());
 
@@ -229,6 +234,52 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 	BOOST_CHECK_EQUAL(false, c.inferOwlThing());
 }
 
+// Note that the key 'stmtFileNameMessedUp' is bad:
+static auto k_invalidTestConfig = u8R"~~~(
+# Parameters file for the Parliament core DLL
+
+kbDirectoryPath      = ./subdir
+stmtFileNameMessedUp = statements
+rsrcFileName         = resources
+uriTableFileName     = foo
+uriToIntFileName     = bar
+
+readOnly             = yes
+fileSyncTimerDelay   = 10000
+initialRsrcCapacity  = 100
+avgRsrcLen           = 128
+rsrcGrowthIncrement  = 200
+rsrcGrowthFactor     = 2
+initialStmtCapacity  = 500
+stmtGrowthIncrement  = 1000
+stmtGrowthFactor     = 2
+bdbCacheSize         = 512m,2
+normalizeTypedStringLiterals = no
+
+TimeoutDuration = 200
+TimeoutUnit = milliseconds
+
+runAllRulesAtStartup = no
+enableSWRLRuleEngine = no
+
+SubclassRule           = on
+SubpropertyRule        = on
+DomainRule             = on
+RangeRule              = on
+EquivalentClassRule    = on
+EquivalentPropRule     = on
+InverseOfRule          = on
+SymmetricPropRule      = on
+FunctionalPropRule     = on
+InvFunctionalPropRule  = on
+TransitivePropRule     = on
+
+inferRdfsClass       = yes
+inferOwlClass        = yes
+inferRdfsResource    = yes
+inferOwlThing        = yes
+)~~~";
+
 BOOST_AUTO_TEST_CASE(testConfigReadFromBadFile)
 {
 	KbConfig c;
@@ -236,50 +287,10 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromBadFile)
 	EnvVarReset envVarReset(k_envVar, k_fName);
 	FileDeleter filedeleter(k_fName);
 
-	ofstream s(k_fName);
-	s << "# Parameters file for the Parliament core DLL" << endl;
-	s << endl;
-	s << "kbDirectoryPath      = ./subdir" << endl;
-	s << "stmtFileNameMessedUp = statements" << endl;	// this key is bad
-	s << "rsrcFileName         = resources" << endl;
-	s << "uriTableFileName     = foo" << endl;
-	s << "uriToIntFileName     = bar" << endl;
-	s << endl;
-	s << "readOnly             = yes" << endl;
-	s << "fileSyncTimerDelay   = 10000" << endl;
-	s << "initialRsrcCapacity  = 100" << endl;
-	s << "avgRsrcLen           = 128" << endl;
-	s << "rsrcGrowthIncrement  = 200" << endl;
-	s << "rsrcGrowthFactor     = 2" << endl;
-	s << "initialStmtCapacity  = 500" << endl;
-	s << "stmtGrowthIncrement  = 1000" << endl;
-	s << "stmtGrowthFactor     = 2" << endl;
-	s << "bdbCacheSize         = 512m,2" << endl;
-	s << "normalizeTypedStringLiterals = no" << endl;
-	s << endl;
-	s << "TimeoutDuration = 200" << endl;
-	s << "TimeoutUnit = milliseconds" << endl;
-	s << endl;
-	s << "runAllRulesAtStartup = no" << endl;
-	s << "enableSWRLRuleEngine = no" << endl;
-	s << endl;
-	s << "SubclassRule           = on" << endl;
-	s << "SubpropertyRule        = on" << endl;
-	s << "DomainRule             = on" << endl;
-	s << "RangeRule              = on" << endl;
-	s << "EquivalentClassRule    = on" << endl;
-	s << "EquivalentPropRule     = on" << endl;
-	s << "InverseOfRule          = on" << endl;
-	s << "SymmetricPropRule      = on" << endl;
-	s << "FunctionalPropRule     = on" << endl;
-	s << "InvFunctionalPropRule  = on" << endl;
-	s << "TransitivePropRule     = on" << endl;
-	s << endl;
-	s << "inferRdfsClass       = yes" << endl;
-	s << "inferOwlClass        = yes" << endl;
-	s << "inferRdfsResource    = yes" << endl;
-	s << "inferOwlThing        = yes" << endl;
-	s.close();
+	{
+		ofstream s(k_fName);
+		s << k_invalidTestConfig;
+	}
 
 	BOOST_CHECK_THROW(c.readFromFile(), Exception);
 }

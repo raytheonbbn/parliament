@@ -107,9 +107,17 @@ public class QueryHandler {
 
 	private static AcceptableMediaType chooseMediaType(
 		List<AcceptableMediaType> acceptList, QueryResultCategory category) {
-		return acceptList.stream()
-			.filter(mt -> mt.getCategory() == category)
-			.findFirst()
-			.orElseThrow(() -> new NoAcceptableException(QueryResultCategory.RESULT_SET));
+
+		LOG.info(
+			"chooseMediaType: accept list = {}, category = {}, default media type = {}",
+			acceptList, category, category.getDefaultMediaType());
+		if (acceptList.isEmpty()) {
+			return category.getDefaultMediaType();
+		} else {
+			return acceptList.stream()
+				.filter(mt -> mt.getCategory() == category)
+				.findFirst()
+				.orElseThrow(() -> new NoAcceptableException(QueryResultCategory.RESULT_SET));
+		}
 	}
 }

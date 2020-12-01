@@ -1,8 +1,10 @@
 package com.bbn.parliament.spring.boot.controller;
 
 import java.io.IOException;
+import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -37,17 +39,21 @@ public class GraphStoreController {
 	private static final String ENDPOINT = "/parliament/graphstore";
 	public static final String DEFAULT_GRAPH = null;
 
-	@Autowired
-	GraphStoreService graphStoreService;
+	private final GraphStoreService graphStoreService;
+
+	public GraphStoreController(GraphStoreService service) {
+		graphStoreService = Objects.requireNonNull(service, "service");
+	}
 
 	//HEAD mapping automatically supported by GET mapping
 	@GetMapping(value = ENDPOINT, params = "default")
 	public ResponseEntity<StreamingResponseBody> getDefaultGraph(
 		@RequestParam(value = "default") String defaultGraph,
 		@RequestParam(value = "format", required = false) String format,
-		@RequestHeader HttpHeaders headers) {
+		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request) {
 
-		return graphStoreService.doGetGraph(DEFAULT_GRAPH, format, headers);
+		return graphStoreService.doGetGraph(DEFAULT_GRAPH, format, headers, request);
 	}
 
 	//HEAD mapping automatically supported by GET mapping
@@ -55,27 +61,30 @@ public class GraphStoreController {
 	public ResponseEntity<StreamingResponseBody> getNamedGraph(
 		@RequestParam(value = "graph") String graphUri,
 		@RequestParam(value = "format", required = false) String format,
-		@RequestHeader HttpHeaders headers) {
+		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request) {
 
-		return graphStoreService.doGetGraph(graphUri, format, headers);
+		return graphStoreService.doGetGraph(graphUri, format, headers, request);
 	}
 
 	@DeleteMapping(value = ENDPOINT, params = "default")
 	public void deleteDefaultGraph(
 		@RequestParam(value = "default") String defaultGraph,
-		@RequestHeader HttpHeaders headers)
+		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request)
 		throws QueryExecutionException, MissingGraphException {
 
-		graphStoreService.doDeleteGraph(DEFAULT_GRAPH, headers, DropGraphOption.NOISY);
+		graphStoreService.doDeleteGraph(DEFAULT_GRAPH, headers, request, DropGraphOption.NOISY);
 	}
 
 	@DeleteMapping(value = ENDPOINT, params = "graph")
 	public void deleteNamedGraph(
 		@RequestParam(value = "graph") String graphUri,
-		@RequestHeader HttpHeaders headers)
+		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request)
 		throws QueryExecutionException, MissingGraphException {
 
-		graphStoreService.doDeleteGraph(graphUri, headers, DropGraphOption.NOISY);
+		graphStoreService.doDeleteGraph(graphUri, headers, request, DropGraphOption.NOISY);
 	}
 
 	@PostMapping(value = ENDPOINT, params = "default")
@@ -83,10 +92,11 @@ public class GraphStoreController {
 		@RequestHeader(value = "Content-Type") String contentType,
 		@RequestParam(value = "default") String defaultGraph,
 		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request,
 		HttpEntity<byte[]> requestEntity)
 		throws TrackableException, DataFormatException, MissingGraphException, IOException {
 
-		return graphStoreService.doInsertIntoGraph(contentType, DEFAULT_GRAPH, headers, requestEntity);
+		return graphStoreService.doInsertIntoGraph(contentType, DEFAULT_GRAPH, headers, request, requestEntity);
 	}
 
 	@PostMapping(value = ENDPOINT, params = "graph")
@@ -94,32 +104,33 @@ public class GraphStoreController {
 		@RequestHeader(value = "Content-Type") String contentType,
 		@RequestParam(value = "graph") String graphUri,
 		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request,
 		HttpEntity<byte[]> requestEntity)
 		throws TrackableException, DataFormatException, MissingGraphException, IOException {
 
-		return graphStoreService.doInsertIntoGraph(contentType, graphUri, headers, requestEntity);
+		return graphStoreService.doInsertIntoGraph(contentType, graphUri, headers, request, requestEntity);
 	}
 
 	@PostMapping(value = ENDPOINT, params = "default", consumes = "multipart/form-data")
 	public ResponseEntity<String> insertIntoDefaultGraph(
-		@RequestHeader(value = "Content-Type") String contentType,
 		@RequestParam(value = "default") String defaultGraph,
 		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request,
 		@RequestPart(value = "file") MultipartFile[] files)
 		throws TrackableException, DataFormatException, MissingGraphException, IOException {
 
-		return graphStoreService.doInsertIntoGraph(contentType, DEFAULT_GRAPH, headers, files);
+		return graphStoreService.doInsertIntoGraph(DEFAULT_GRAPH, headers, request, files);
 	}
 
 	@PostMapping(value = ENDPOINT, params = "graph", consumes = "multipart/form-data")
 	public ResponseEntity<String> insertIntoNamedGraph(
-		@RequestHeader(value = "Content-Type") String contentType,
 		@RequestParam(value = "graph") String graphUri,
 		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request,
 		@RequestPart(value = "file") MultipartFile[] files)
 		throws TrackableException, DataFormatException, MissingGraphException, IOException {
 
-		return graphStoreService.doInsertIntoGraph(contentType, graphUri, headers, files);
+		return graphStoreService.doInsertIntoGraph(graphUri, headers, request, files);
 	}
 
 	@PutMapping(value = ENDPOINT, params = "default")
@@ -127,10 +138,11 @@ public class GraphStoreController {
 		@RequestHeader(value = "Content-Type") String contentType,
 		@RequestParam(value = "default") String defaultGraph,
 		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request,
 		HttpEntity<byte[]> requestEntity) throws QueryExecutionException,
 		TrackableException, DataFormatException, MissingGraphException, IOException {
 
-		return graphStoreService.doReplaceGraph(contentType, DEFAULT_GRAPH, headers, requestEntity);
+		return graphStoreService.doReplaceGraph(contentType, DEFAULT_GRAPH, headers, request, requestEntity);
 	}
 
 	@PutMapping(value = ENDPOINT, params = "graph")
@@ -138,10 +150,11 @@ public class GraphStoreController {
 		@RequestHeader(value = "Content-Type") String contentType,
 		@RequestParam(value = "graph") String graphUri,
 		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request,
 		HttpEntity<byte[]> requestEntity) throws QueryExecutionException,
 		TrackableException, DataFormatException, MissingGraphException, IOException {
 
-		return graphStoreService.doReplaceGraph(contentType, graphUri, headers, requestEntity);
+		return graphStoreService.doReplaceGraph(contentType, graphUri, headers, request, requestEntity);
 	}
 
 	@PutMapping(value = ENDPOINT, params = "default", consumes = "multipart/form-data")
@@ -149,10 +162,11 @@ public class GraphStoreController {
 		@RequestHeader(value = "Content-Type") String contentType,
 		@RequestParam(value = "default") String defaultGraph,
 		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request,
 		@RequestPart(value = "file") MultipartFile[] files) throws QueryExecutionException,
 		TrackableException, DataFormatException, MissingGraphException, IOException {
 
-		return graphStoreService.doReplaceGraph(contentType, DEFAULT_GRAPH, headers, files);
+		return graphStoreService.doReplaceGraph(contentType, DEFAULT_GRAPH, headers, request, files);
 	}
 
 	@PutMapping(value = ENDPOINT, params = "graph", consumes = "multipart/form-data")
@@ -160,10 +174,11 @@ public class GraphStoreController {
 		@RequestHeader(value = "Content-Type") String contentType,
 		@RequestParam(value = "graph") String graphUri,
 		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request,
 		@RequestPart(value = "file") MultipartFile[] files) throws QueryExecutionException,
 		TrackableException, DataFormatException, MissingGraphException, IOException {
 
-		return graphStoreService.doReplaceGraph(contentType, graphUri, headers, files);
+		return graphStoreService.doReplaceGraph(contentType, graphUri, headers, request, files);
 	}
 
 	@SuppressWarnings("static-method")

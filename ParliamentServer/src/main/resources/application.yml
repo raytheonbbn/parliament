@@ -1,0 +1,26 @@
+# https://docs.spring.io/spring-boot/docs/1.2.0.M2/reference/html/common-application-properties.html
+
+spring:
+   application:
+      name: Parliament
+
+server:
+   error:
+      include-binding-errors: always
+      include-messsage: always
+   port: 8089
+
+http:
+   mappers:
+      json-pretty-print: false
+      json-sort-keys: false
+
+multipart:
+   location: ''
+   maxFileSize: 10Mb
+   maxRequestSize: 50Mb
+   fileSizeThreshold: 64Kb
+
+parliament:
+   bridge:
+      config: parliament-config.ttl

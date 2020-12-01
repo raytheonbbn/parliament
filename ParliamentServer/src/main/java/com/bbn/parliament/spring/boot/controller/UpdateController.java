@@ -1,10 +1,10 @@
 package com.bbn.parliament.spring.boot.controller;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,8 +28,11 @@ public class UpdateController {
 	private static final String URL_ENCODED = "application/x-www-form-urlencoded";
 	private static final String SPARQL_UPDATE = "application/sparql-update";
 
-	@Autowired
-	private UpdateService updateService;
+	private final UpdateService updateService;
+
+	public UpdateController(UpdateService service) {
+		updateService = Objects.requireNonNull(service, "service");
+	}
 
 	@PostMapping(value = ENDPOINT, consumes = URL_ENCODED, params = "update")
 	public void sparqlURLEncodeUpdatePOST(

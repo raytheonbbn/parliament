@@ -1286,8 +1286,8 @@ void pmnt::KbInstance::printRsrc(const KbRsrc& rsrc, ResourceId rsrcId,
 {
 	size_t totalUses = rsrc.m_subjectCount + rsrc.m_predicateCount + rsrc.m_objectCount;
 
-	s << endl << "resource[" << rsrcId << "]:  "
-		<< formatRsrcUri(rsrcId, false) << endl;
+	s << endl << "resource[" << rsrcId << "]: <"
+		<< formatRsrcUri(rsrcId, false) << ">" << endl;
 	s << "  flags: 0x" << hex << setfill('0') << setw(8) << rsrc.m_flags
 		<< setfill(' ') << dec << ", # uses: " << totalUses;
 	if (totalUses > 0)
@@ -1357,7 +1357,7 @@ string pmnt::KbInstance::formatRsrcUri(ResourceId rsrcId, bool includeRsrcId) co
 	if (includeRsrcId)
 	{
 		ostringstream ss;
-		ss << result << " [" << rsrcId << "]";
+		ss << "<" << result << "> [" << rsrcId << "]";
 		return ss.str();
 	}
 	else

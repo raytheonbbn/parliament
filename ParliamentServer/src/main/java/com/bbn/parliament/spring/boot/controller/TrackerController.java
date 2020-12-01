@@ -1,6 +1,7 @@
 package com.bbn.parliament.spring.boot.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Objects;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,8 +15,11 @@ import com.bbn.parliament.spring.boot.service.TrackerService;
 public class TrackerController {
 	private static final String ENDPOINT = "/parliament/tracker";
 
-	@Autowired
-	TrackerService trackerService;
+	private final TrackerService trackerService;
+
+	public TrackerController(TrackerService service) {
+		trackerService = Objects.requireNonNull(service, "service");
+	}
 
 	@GetMapping(value = ENDPOINT, produces = "application/json")
 	public StreamingResponseBody getTrackables() {

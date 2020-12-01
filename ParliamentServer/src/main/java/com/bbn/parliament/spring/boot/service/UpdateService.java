@@ -5,13 +5,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.bbn.parliament.jena.exception.BadRequestException;
 import com.bbn.parliament.jena.exception.QueryExecutionException;
 import com.bbn.parliament.jena.handler.UpdateHandler;
 
-@Component("updateService")
+@Service
 public class UpdateService {
 	@SuppressWarnings("static-method")
 	public void doUpdate(String update, List<String> defaultGraphUris,

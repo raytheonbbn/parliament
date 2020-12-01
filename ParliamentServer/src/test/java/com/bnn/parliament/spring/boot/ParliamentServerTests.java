@@ -11,14 +11,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -31,20 +35,24 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.bbn.parliament.jena.bridge.tracker.Tracker;
 import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
+import com.bbn.parliament.jena.joseki.client.QuerySolutionStream;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.joseki.client.RemoteModel;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.modify.request.QuadDataAcc;
+import com.hp.hpl.jena.sparql.modify.request.UpdateDataDelete;
 import com.hp.hpl.jena.sparql.modify.request.UpdateDataInsert;
 import com.hp.hpl.jena.update.UpdateExecutionFactory;
 import com.hp.hpl.jena.update.UpdateFactory;
@@ -56,68 +64,74 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 import test_util.RdfResourceLoader;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
+@Disabled
 public class ParliamentServerTests {
-
-	@LocalServerPort
-	private int randomServerPort;
-
 	private static final String HOST = "localhost";
-	private static final String PORT = System.getProperty("jetty.port", "8089");
-	private static final String SPARQL_URL = String.format(RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL, HOST, PORT);
-	private static final String BULK_URL = String.format(RemoteModel.DEFAULT_BULK_ENDPOINT_URL, HOST, PORT);
 	private static final String[] RSRCS_TO_LOAD = { "univ-bench.owl", "University15_20.owl.zip" };
 	private static final String CSV_QUOTE_TEST_INPUT = "csv-quote-test-input.ttl";
 	private static final String CSV_QUOTE_TEST_EXPECTED_RESULT = "csv-quote-test-expected-result.csv";
 	private static final String TEST_SUBJECT = "http://example.org/#Test";
 	private static final String TEST_CLASS = "http://example.org/#TestClass";
 	private static final String TEST_LITERAL = "Test";
-	private static final String EVERYTHING_QUERY = ""
-		+ "select ?s ?o ?p ?g where {%n"
-		+ "	{ ?s ?p ?o }%n"
-		+ "	union%n"
-		+ "	{ graph ?g { ?s ?p ?o } }%n"
-		+ "}";
-	private static final String CLASS_QUERY = ""
-		+ "prefix owl: <http://www.w3.org/2002/07/owl#>%n"
-		+ "%n"
-		+ "select distinct ?class where {%n"
-		+ "	?class a owl:Class .%n"
-		+ "	filter (!isblank(?class))%n"
-		+ "}";
-	private static final String THING_QUERY = ""
-		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>%n"
-		+ "prefix ex:   <http://www.example.org/>%n"
-		+ "%n"
-		+ "select ?a where {%n"
-		+ "	bind ( ex:Test as ?a )%n"
-		+ "	?a a owl:Thing .%n"
-		+ "}";
-	private static final String THING_INSERT = ""
-		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>%n"
-		+ "prefix ex:   <http://www.example.org/>%n"
-		+ "%n"
-		+ "insert data {%n"
-		+ "	ex:Test a owl:Thing .%n"
-		+ "}";
-	private static final String THING_DELETE = ""
-		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>%n"
-		+ "prefix ex:   <http://www.example.org/>%n"
-		+ "%n"
-		+ "delete data {%n"
-		+ "	ex:Test a owl:Thing .%n"
-		+ "}";
-	private static final String CSV_QUOTING_TEST_QUERY = ""
-		+ "prefix ex: <http://example.org/#>%n"
-		+ "select ?s ?p ?o where {%n"
-		+ "	bind( ex:comment as ?p )%n"
-		+ "	?s ?p ?o .%n"
-		+ "} order by ?o";
-	private static final RemoteModel rm = new RemoteModel(SPARQL_URL, BULK_URL);
-	private static final Logger log = LoggerFactory.getLogger(ParliamentServerTests.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ParliamentServerTests.class);
 
+	private static final String EVERYTHING_QUERY = """
+		select distinct ?s ?o ?p ?g where {
+			{ ?s ?p ?o }
+			union
+			{ graph ?g { ?s ?p ?o } }
+		}
+		""";
+	private static final String CLASS_QUERY = """
+		prefix owl: <http://www.w3.org/2002/07/owl#>
+		select distinct ?class where {
+			?class a owl:Class .
+			filter (!isblank(?class))
+		}
+		""";
+	private static final String THING_QUERY = """
+		prefix owl:  <http://www.w3.org/2002/07/owl#>
+		prefix ex:   <http://www.example.org/>
+		select distinct ?a where {
+			bind ( ex:Test as ?a )
+			?a a owl:Thing .
+		}
+		""";
+	private static final String THING_INSERT = """
+		prefix owl:  <http://www.w3.org/2002/07/owl#>
+		prefix ex:   <http://www.example.org/>
+		insert data {
+			ex:Test a owl:Thing .
+		}
+		""";
+	private static final String THING_DELETE = """
+		prefix owl:  <http://www.w3.org/2002/07/owl#>
+		prefix ex:   <http://www.example.org/>
+		delete data {
+			ex:Test a owl:Thing .
+		}
+		""";
+	private static final String CSV_QUOTING_TEST_QUERY = """
+		prefix ex: <http://example.org/#>
+		select distinct ?s ?p ?o where {
+			bind( ex:comment as ?p )
+			?s ?p ?o .
+		} order by ?o
+		""";
+	private static final String NG_QUERY = """
+		select distinct ?g where {
+			graph ?g { }
+		}
+		""";
 
+	@LocalServerPort
+	private int serverPort;
+
+	private String sparqlUrl;
+	private String bulkUrl;
+	private RemoteModel rm;
 
 	@BeforeAll
 	public static void beforeAll() {
@@ -129,101 +143,97 @@ public class ParliamentServerTests {
 		//ParliamentTestServer.stopServer();
 	}
 
-	@SuppressWarnings("static-method")
+	@BeforeEach
+	public void beforeEach() {
+		sparqlUrl = RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL.formatted(HOST, serverPort);
+		bulkUrl = RemoteModel.DEFAULT_BULK_ENDPOINT_URL.formatted(HOST, serverPort);
+		rm = new RemoteModel(sparqlUrl, bulkUrl);
+	}
+
+	@AfterEach
+	public void afterEach() {
+	}
+
 	@Test
 	public void generalKBFunctionalityTest() throws IOException {
 		rm.clearAll();
-		ResultSet rs = doQuery(EVERYTHING_QUERY);
-		int count = countResults(rs);
-		assertEquals(0, count, "Invalid precondition -- triple store is not empty.");
+
+		try (QuerySolutionStream stream = doSelectQuery(EVERYTHING_QUERY)) {
+			long count = stream.count();
+			assertEquals(0, count, "Invalid precondition -- triple store is not empty.");
+		}
 
 		loadSampleData();
 
-		rs = doQuery(CLASS_QUERY);
-		count = countResults(rs);
-		assertEquals(43, count);
-		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+		try (QuerySolutionStream stream = doSelectQuery(CLASS_QUERY)) {
+			long count = stream.count();
+			assertEquals(43, count);
+			assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+		}
 
-		rs = doQuery(THING_QUERY);
-		count = countResults(rs);
-		assertEquals(0, count, "Invalid precondition -- triple store already contains data.");
+		try (QuerySolutionStream stream = doSelectQuery(THING_QUERY)) {
+			long count = stream.count();
+			assertEquals(0, count, "Invalid precondition -- triple store already contains data.");
+		}
 
 		doUpdate(THING_INSERT);
 
-		rs = doQuery(THING_QUERY);
-		count = countResults(rs);
-		assertEquals(1, count, "Data insert failed.");
+		try (QuerySolutionStream stream = doSelectQuery(THING_QUERY)) {
+			long count = stream.count();
+			assertEquals(1, count, "Data insert failed.");
+		}
 
 		doUpdate(THING_DELETE);
 
-		rs = doQuery(THING_QUERY);
-		count = countResults(rs);
-		assertEquals(0, count, "Data delete failed.");
-		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+		try (QuerySolutionStream stream = doSelectQuery(THING_QUERY)) {
+			long count = stream.count();
+			assertEquals(0, count, "Data delete failed.");
+			assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+		}
 
 		rm.clearAll();
-		rs = doQuery(CLASS_QUERY);
-		count = countResults(rs);
-		assertEquals(0, count);
+
+		try (QuerySolutionStream stream = doSelectQuery(CLASS_QUERY)) {
+			long count = stream.count();
+			assertEquals(0, count, "Invalid postcondition -- triple store is not empty.");
+		}
 	}
 
-	@SuppressWarnings("static-method")
 	@Test
 	public void remoteModelGetNamedGraphsTest() throws IOException {
 		String graphUri = "http://example.org/foo/bar/#Graph1";
 
 		rm.createNamedGraph(graphUri);
-		assertTrue(getAvailableNamedGraphs().contains(graphUri));
+		assertTrue(getAvailableNamedGraphs().equals(Collections.singleton(graphUri)));
 
 		rm.dropNamedGraph(graphUri);
-		assertFalse(getAvailableNamedGraphs().contains(graphUri));
+		assertTrue(getAvailableNamedGraphs().isEmpty());
 	}
 
-	private static Set<String> getAvailableNamedGraphs() {
-		Set<String> result = new HashSet<>();
-		String q = "select distinct ?g where { graph ?g { } }";
-		try (CloseableQueryExec qe = new CloseableQueryExec(SPARQL_URL, q)) {
-			ResultSet rs = qe.execSelect();
-			while (rs.hasNext()) {
-				QuerySolution qs = rs.next();
-				RDFNode node = qs.get("g");
-				if (node != null && node.isURIResource()) {
-					result.add(node.asResource().getURI());
-				}
-			}
+	private Set<String> getAvailableNamedGraphs() {
+		try (QuerySolutionStream stream = doSelectQuery(NG_QUERY)) {
+			return stream
+				.map(qs -> qs.getResource("g"))
+				.map(Resource::getURI)
+				.collect(Collectors.toUnmodifiableSet());
 		}
-		return result;
 	}
 
-	@SuppressWarnings("static-method")
 	@Test
-	public void remoteModelInsertAndQueryTest() throws IOException {
-		Resource testSubject = ResourceFactory.createResource(TEST_SUBJECT);
-		Resource testClass = ResourceFactory.createResource(TEST_CLASS);
-		Model testModel = ModelFactory.createDefaultModel();
-		testModel.add(testSubject, RDF.type, testClass);
-		rm.insertStatements(testModel);
+	public void insertAndQueryTest() {
+		insert(TEST_SUBJECT, RDF.type.getURI(), Node.createURI(TEST_CLASS), null);
+		insert(TEST_SUBJECT, RDFS.label.getURI(), Node.createLiteral(TEST_LITERAL), null);
 
-		String triples = String.format("<%1$s> <%2$s> \"%3$s\" .",
-			TEST_SUBJECT, RDFS.label, TEST_LITERAL);
-		rm.insertStatements(triples, RDFFormat.NTRIPLES, null, true);
-
-		String query = String.format("select * where { ?thing a <%1$s> ; <%2$s> ?label . }",
-			TEST_CLASS, RDFS.label);
-		ResultSet rs = rm.selectQuery(query);
-		boolean foundIt = false;
-		while (rs.hasNext()) {
-			QuerySolution qs = rs.nextSolution();
-			RDFNode t = qs.get("thing");
-			RDFNode l = qs.get("label");
-			if (t != null && l != null
-				&& t.isURIResource() && TEST_SUBJECT.equals(t.asResource().getURI())
-				&& l.isLiteral() && TEST_LITERAL.equals(l.asLiteral().getLexicalForm())
-				&& isStringLiteral(l.asLiteral().getDatatypeURI())) {
-				foundIt = true;
-			}
+		String query = "select * where { ?thing a <%1$s> ; <%2$s> ?label . }";
+		try (QuerySolutionStream stream = doSelectQuery(query, TEST_CLASS, RDFS.label)) {
+			long count = stream
+				.map(qs -> Pair.of(qs.getResource("thing"), qs.getLiteral("label")))
+				.filter(pair -> TEST_SUBJECT.equals(pair.getLeft().getURI())
+					&& TEST_LITERAL.equals(pair.getRight().getLexicalForm())
+					&& isStringLiteral(pair.getRight().getDatatypeURI()))
+				.count();
+			assertTrue(count > 0);
 		}
-		assertTrue(foundIt);
 	}
 
 	private static boolean isStringLiteral(String datatypeUri) {
@@ -232,54 +242,30 @@ public class ParliamentServerTests {
 			|| datatypeUri.equals(XSDDatatype.XSDstring.getURI());
 	}
 
-	@SuppressWarnings("static-method")
 	@Test
-	public void remoteModelDeleteAndQueryTest() throws IOException {
-		String stmt = String.format("<http://example.org/foo> <%1$s> \"foo\" .", RDFS.label);
-		String query = String.format("ask where { %1$s }", stmt);
+	public void deleteAndQueryTest() {
+		String queryFmt = "ask where { <%1$s> <%2$s> \"%3$s\" . }";
 
-		assertFalse(rm.askQuery(query));
-		rm.insertStatements(stmt, RDFFormat.NTRIPLES, null, true);
-		assertTrue(rm.askQuery(query));
-		rm.deleteStatements(stmt, RDFFormat.NTRIPLES);
-		assertFalse(rm.askQuery(query));
+		assertFalse(doAskQuery(queryFmt, TEST_SUBJECT, RDFS.label, TEST_LITERAL));
+		insert(TEST_SUBJECT, RDFS.label.getURI(), Node.createLiteral(TEST_LITERAL), null);
+		assertTrue(doAskQuery(queryFmt, TEST_SUBJECT, RDFS.label, TEST_LITERAL));
+		delete(TEST_SUBJECT, RDFS.label.getURI(), Node.createLiteral(TEST_LITERAL), null);
+		assertFalse(doAskQuery(queryFmt, TEST_SUBJECT, RDFS.label, TEST_LITERAL));
 	}
 
-	@SuppressWarnings("static-method")
 	@Test
-	public void remoteModelSimpleSPARQLUpdateTest() throws IOException
-	{
+	public void remoteModelSimpleSPARQLUpdateTest() {
 		String d = "http://example.org/doughnut";
 		String y = "http://example.org/yummy";
-		String update = String.format("%%1$s data { <%1$s> a <%2$s> . }", d, y);
-		String query = String.format("select * where { ?thing a <%1$s> }", y);
+		String queryFmt = "ask where { <%1$s> a <%2$s> }";
 
-		rm.updateQuery(String.format(update, "insert"));
+		insert(d, RDF.type.getURI(), Node.createURI(y), null);
+		assertTrue(doAskQuery(queryFmt, d, y));
 
-		ResultSet rs = rm.selectQuery(query);
-		boolean foundIt = false;
-		while (rs.hasNext()) {
-			QuerySolution qs = rs.nextSolution();
-			if (d.equals(qs.getResource("thing").getURI())) {
-				foundIt = true;
-			}
-		}
-		assertTrue(foundIt);
-
-		rm.updateQuery(String.format(update, "delete"));
-
-		rs = rm.selectQuery(query);
-		foundIt = false;
-		while (rs.hasNext()) {
-			QuerySolution qs = rs.nextSolution();
-			if (d.equals(qs.getResource("thing").getURI())) {
-				foundIt = true;
-			}
-		}
-		assertTrue(!foundIt);
+		delete(d, RDF.type.getURI(), Node.createURI(y), null);
+		assertFalse(doAskQuery(queryFmt, d, y));
 	}
 
-	@SuppressWarnings("static-method")
 	@Test
 	public void remoteModelNGSPARQLUpdateTest() throws IOException
 	{
@@ -320,21 +306,19 @@ public class ParliamentServerTests {
 		rm.dropNamedGraph(graphUri);
 	}
 
-	@SuppressWarnings("static-method")
 	@Test
 	public void remoteModelQueryErrorTest() {
-		String query = "select * where { ?thing oogetyboogetyboo! }";	// invalid query
+		String invalidQuery = "select * where { ?thing oogetyboogetyboo! }";
 		boolean caughtException = false;
 		try {
-			rm.selectQuery(query);
+			rm.selectQuery(invalidQuery);
 		} catch (Exception ex) {
 			caughtException = true;
-			log.info("Exception type for query parse error:  {}", ex.getClass().getName());
+			LOG.info("Query parse error", ex);
 		}
 		assertTrue(caughtException);
 	}
 
-	@SuppressWarnings("static-method")
 	@Test
 	public void remoteModelInsertErrorTest() {
 		boolean caughtException = false;
@@ -343,12 +327,11 @@ public class ParliamentServerTests {
 			rm.insertStatements("oogetyboogetyboo!", RDFFormat.NTRIPLES, null, true);
 		} catch (Exception ex) {
 			caughtException = true;
-			log.info("Exception type for n-triples parse error (insert):  {}", ex.getClass().getName());
+			LOG.info("N-triples parse error (insert)", ex);
 		}
 		assertTrue(caughtException);
 	}
 
-	@SuppressWarnings("static-method")
 	@Test
 	public void remoteModelDeleteErrorTest() {
 		boolean caughtException = false;
@@ -357,25 +340,22 @@ public class ParliamentServerTests {
 			rm.deleteStatements("oogetyboogetyboo!", RDFFormat.NTRIPLES);
 		} catch (Exception ex) {
 			caughtException = true;
-			log.info("Exception type for n-triples parse error (delete):  {}", ex.getClass().getName());
+			LOG.info("N-triples parse error (delete)", ex);
 		}
 		assertTrue(caughtException);
 	}
 
-	@SuppressWarnings("static-method")
 	@Test
 	public void remoteModelInsertQueryNamedGraphTest() throws IOException {
 		String graphUri = "http://example.org/foo/bar/#Graph3";
-		String triples = String.format("<%1$s> <%2$s> <%3$s> .",
-			TEST_SUBJECT, RDF.type, TEST_CLASS);
 		String query = String.format(
 			"select * where { ?x a <%1$s> . graph <%2$s> { ?x a <%1$s> } }",
 			TEST_CLASS, graphUri);
 
 		rm.createNamedGraph(graphUri);
 
-		rm.insertStatements(triples, RDFFormat.NTRIPLES, null, true);
-		rm.insertStatements(triples, RDFFormat.NTRIPLES, null, graphUri, true);
+		insert(TEST_SUBJECT, RDF.type.getURI(), Node.createURI(TEST_CLASS), null);
+		insert(TEST_SUBJECT, RDF.type.getURI(), Node.createURI(TEST_CLASS), graphUri);
 
 		ResultSet rs = rm.selectQuery(query);
 		boolean foundIt = false;
@@ -389,7 +369,6 @@ public class ParliamentServerTests {
 		assertTrue(foundIt);
 	}
 
-	@SuppressWarnings("static-method")
 	@Test
 	public void remoteModelNamedGraphUnionTest() throws IOException {
 		String graph1Uri = "http://example.org/foo/bar/#Graph4";
@@ -423,7 +402,6 @@ public class ParliamentServerTests {
 		assertTrue(foundIt);
 	}
 
-	@SuppressWarnings("static-method")
 	@Test
 	public void remoteModelConstructQueryTest() throws IOException {
 		Resource testSubject = ResourceFactory.createResource(TEST_SUBJECT);
@@ -445,8 +423,8 @@ public class ParliamentServerTests {
 			rm.insertStatements(is, RDFFormat.parseFilename(CSV_QUOTE_TEST_INPUT), null, true);
 		}
 
-		log.info("CSV quote test results:");
-		try (CloseableQueryExec qe = new CloseableQueryExec(SPARQL_URL, String.format(CSV_QUOTING_TEST_QUERY))) {
+		LOG.info("CSV quote test results:");
+		try (CloseableQueryExec qe = new CloseableQueryExec(sparqlUrl, String.format(CSV_QUOTING_TEST_QUERY))) {
 			ResultSet rs = qe.execSelect();
 			while (rs.hasNext()) {
 				QuerySolution qs = rs.next();
@@ -456,7 +434,7 @@ public class ParliamentServerTests {
 				String sStr = s.isAnon()
 					? s.getId().getLabelString()
 					: s.getURI();
-				log.info("   {} {} \"{}\"", sStr, p.getURI(), o.getLexicalForm());
+				LOG.info("   {} {} \"{}\"", sStr, p.getURI(), o.getLexicalForm());
 			}
 		}
 
@@ -467,7 +445,7 @@ public class ParliamentServerTests {
 		try (InputStream is = rm.sendRequest(params)) {
 			actualResponse = readStreamToEnd(is, "RemoteModel.sendRequest() returned null");
 		}
-		log.info("CSV quote result as CSV:{}{}", System.lineSeparator(), actualResponse);
+		LOG.info("CSV quote result as CSV:{}{}", System.lineSeparator(), actualResponse);
 
 		String expectedResponse;
 		try (InputStream is = getClass().getResourceAsStream(CSV_QUOTE_TEST_EXPECTED_RESULT)) {
@@ -489,22 +467,42 @@ public class ParliamentServerTests {
 		}
 	}
 
-	private static ResultSet doQuery(String queryFmt, Object... args) {
-		try (CloseableQueryExec qe = new CloseableQueryExec(SPARQL_URL, String.format(queryFmt, args))) {
-			return qe.execSelect();
+	private QuerySolutionStream doSelectQuery(String queryFmt, Object... args) {
+		return new QuerySolutionStream(String.format(queryFmt, args), sparqlUrl);
+	}
+
+	private boolean doAskQuery(String queryFmt, Object... args) {
+		String query = String.format(queryFmt, args);
+		try (CloseableQueryExec qe = new CloseableQueryExec(sparqlUrl, query)) {
+			return qe.execAsk();
 		}
 	}
 
-	private static int countResults(ResultSet rs) {
-		int count = 0;
-		while (rs.hasNext()) {
-			++count;
-			rs.next();
-		}
-		return count;
+	private void insert(String sub, String pred, Node obj, String graphName) {
+		QuadDataAcc qd = createQuadData(sub, pred, obj, graphName);
+		UpdateDataInsert update = new UpdateDataInsert(qd);
+		UpdateExecutionFactory.createRemote(update, sparqlUrl).execute();
 	}
 
-	private static void loadSampleData() {
+	private void delete(String sub, String pred, Node obj, String graphName) {
+		QuadDataAcc qd = createQuadData(sub, pred, obj, graphName);
+		UpdateDataDelete update = new UpdateDataDelete(qd);
+		UpdateExecutionFactory.createRemote(update, sparqlUrl).execute();
+	}
+
+	private static QuadDataAcc createQuadData(String sub, String pred, Node obj, String graphName) {
+		Node s = Node.createURI(sub);
+		Node p = Node.createURI(pred);
+		QuadDataAcc qd = new QuadDataAcc();
+		if (graphName == null || graphName.isBlank()) {
+			qd.addTriple(new Triple(s, p, obj));
+		} else {
+			qd.addQuad(new Quad(Node.createURI(graphName), s, p, obj));
+		}
+		return qd;
+	}
+
+	private void loadSampleData() {
 		try {
 			for (String rsrcName : RSRCS_TO_LOAD) {
 				Model clientSideModel = ModelFactory.createDefaultModel();
@@ -517,17 +515,17 @@ public class ParliamentServerTests {
 					qd.addTriple(stmt.asTriple());
 				}
 				UpdateDataInsert update = new UpdateDataInsert(qd);
-				UpdateProcessor exec = UpdateExecutionFactory.createRemote(update, SPARQL_URL);
+				UpdateProcessor exec = UpdateExecutionFactory.createRemote(update, sparqlUrl);
 				executeUpdate(exec);
 			}
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			fail(ex.getMessage());
 		}
 	}
 
-	private static void doUpdate(String queryFmt, Object... args) {
+	private void doUpdate(String queryFmt, Object... args) {
 		UpdateRequest ur = UpdateFactory.create(String.format(queryFmt, args));
-		UpdateProcessor exec = UpdateExecutionFactory.createRemote(ur, SPARQL_URL);
+		UpdateProcessor exec = UpdateExecutionFactory.createRemote(ur, sparqlUrl);
 		executeUpdate(exec);
 	}
 
@@ -540,7 +538,7 @@ public class ParliamentServerTests {
 				&& "httpResponse".equals(ste.getMethodName())
 				&& "HttpOp.java".equals(ste.getFileName())
 				&& 345 == ste.getLineNumber()) {
-				log.info("Encountered known bug in Jena 2.7.4/ARQ 2.9.4.  Ignoring NPE.");
+				LOG.info("Encountered known bug in Jena 2.7.4/ARQ 2.9.4.  Ignoring NPE.");
 			} else {
 				throw new RuntimeException("Encountered NPE", ex);
 			}

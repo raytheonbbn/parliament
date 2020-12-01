@@ -1,5 +1,6 @@
 package com.bbn.parliament.spring.boot.service;
 
+import java.net.InetSocketAddress;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -27,19 +28,23 @@ final class ServiceUtil {
 	}
 
 	public static String getRequestor(HttpHeaders headers, HttpServletRequest request) {
-		String host = headers.getHost().getHostString();
+		InetSocketAddress hostAddr = headers.getHost();
+		String host = (hostAddr == null)
+			? request.getRemoteHost()
+			: hostAddr.getHostString();
+		int port = request.getRemotePort();
 		String user = request.getRemoteUser();
-		return (user == null || user.isEmpty())
-			? host
-			: String.format("%1$s (%2$s)", host, user);
+		return (user == null || user.isBlank())
+			? "%1$s:%2$d".formatted(host, port)
+			: "%1$s:%2$d (%3$s)".formatted(host, port, user);
 	}
 
 	public static MediaType mediaTypeFromString(String mediaType) {
 		String[] pieces = Objects.requireNonNull(mediaType, "mediaType")
 			.split("/", 2);
 		if (pieces.length == 0) {
-			throw new IllegalArgumentException(String.format(
-				"'%1$s' is not a legal media type", mediaType));
+			throw new IllegalArgumentException(
+				"'%1$s' is not a legal media type".formatted(mediaType));
 		} else if (pieces.length == 1) {
 			return new MediaType(pieces[0]);
 		} else {

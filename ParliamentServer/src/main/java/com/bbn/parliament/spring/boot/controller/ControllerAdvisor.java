@@ -20,9 +20,12 @@ import com.bbn.parliament.jena.exception.BadRequestException;
 import com.bbn.parliament.jena.exception.DataFormatException;
 import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.exception.NoAcceptableException;
+import com.bbn.parliament.jena.exception.QueryExecutionException;
 import com.bbn.parliament.jena.exception.UnsupportedEndpointException;
 import com.hp.hpl.jena.query.QueryParseException;
 import com.hp.hpl.jena.shared.JenaException;
+
+//TODO: HttpStatus.REQUEST_TIMEOUT
 
 @ControllerAdvice
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
@@ -64,6 +67,13 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 	}
 
 	@SuppressWarnings("static-method")
+	@ExceptionHandler(QueryExecutionException.class)
+	public ResponseEntity<Object> handle(QueryExecutionException ex, WebRequest req) {
+		return buildResponse(ex, req, HttpStatus.INSUFFICIENT_STORAGE,
+			"Specified graph was not found");
+	}
+
+	@SuppressWarnings("static-method")
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<Object> handle(RuntimeException ex, WebRequest req) {
 		return buildResponse(ex, req, HttpStatus.INTERNAL_SERVER_ERROR,
@@ -94,7 +104,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 	@SuppressWarnings("static-method")
 	@ExceptionHandler(QueryParseException.class)
 	public ResponseEntity<Object> handle(QueryParseException ex, WebRequest req) {
-		return buildResponse(ex, req, HttpStatus.INTERNAL_SERVER_ERROR,
+		return buildResponse(ex, req, HttpStatus.BAD_REQUEST,
 			"Parliament is unable to parse the query");
 	}
 

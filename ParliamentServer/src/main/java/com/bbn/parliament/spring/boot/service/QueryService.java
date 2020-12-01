@@ -7,13 +7,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.bbn.parliament.jena.exception.BadRequestException;
 import com.bbn.parliament.jena.handler.QueryHandler;
 
-@Component("queryService")
+@Service
 public class QueryService {
 	@SuppressWarnings("static-method")
 	public ResponseEntity<StreamingResponseBody> doQuery(String query, List<String> defaultGraphUris,

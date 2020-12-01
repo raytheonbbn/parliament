@@ -1,25 +1,28 @@
 Version 2.7.14 (?):
 
-* Reduced the volume of logging when Parliament is running in daemon mode.  Log4j is
-  now configured without a console logger, which means that the contents of the
-  parliament.log file are not duplicated in the jsvc-log.txt file.  (When run at the
-  command line, the logging configuration is unchanged, so you will still be able to
-  see the log contents in real time in that case.)
+* Reduced the volume of logging when Parliament is running in daemon
+  mode.  Log4j is now configured without a console logger, which means
+  that the contents of the parliament.log file are not duplicated in
+  the jsvc-log.txt file.  (When run at the command line, the logging
+  configuration is unchanged, so you will still be able to see the
+  log contents in real time in that case.)
 
 * Updated for Apple's clang 11 compiler
 
 * Fixed an issue in the way Ivy dependencies on SLF4J were coded.
 
-* Removed the obsolete support for Ivy publishing to a BBN-internal Ivy repository.
+* Removed the obsolete support for Ivy publishing to a BBN-internal
+  Ivy repository.
 
-* Fixed an issue on UNIX/Linux platforms that prevented the Parliament daemon from
-  receiving SIGTERM signals, making Parliament difficult to use in a Docker container.
+* Fixed an issue on UNIX/Linux platforms that prevented the Parliament
+  daemon from receiving SIGTERM signals, making Parliament difficult
+  to use in a Docker container.
 
 * Updated to Visual Studio 2019 (14.2)
 
 * Update to Apache Commons Daemon 1.2.3
 
-* Numerous updates to bring in line with Java 15
+* Numerous updates to bring in line with Java 11 and 15
 
 
 =================================================

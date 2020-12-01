@@ -31,15 +31,13 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  * @author sallen
  */
 public class HttpServerUtil {
-
 	private static DiskFileItemFactory _fileItemFactory = null;
 	private static ServletFileUpload _fileUpload = null;
 
 	private static File _tmpDir = null;
 	private static int _threshold = -1;
 
-	private static ServletFileUpload _getServletFileUpload() {
-
+	private static ServletFileUpload getServletFileUpload() {
 		if (null == _tmpDir) {
 			throw new RuntimeException("HttpServerUtil must be initialized before attempting to create a ServletFileUpload class");
 		}
@@ -124,7 +122,7 @@ public class HttpServerUtil {
 		throws IOException
 	{
 		try {
-			List<FileItem> fileItems = _getServletFileUpload().parseRequest(request);
+			List<FileItem> fileItems = getServletFileUpload().parseRequest(request);
 			Map<String, FileItem> resultMap = new HashMap<>(fileItems.size() * 2);
 
 			for (FileItem fileItem : fileItems) {

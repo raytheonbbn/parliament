@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.OptionalLong;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.bbn.parliament.jena.bridge.tracker.TrackableDTO;
@@ -13,7 +13,7 @@ import com.bbn.parliament.jena.bridge.tracker.TrackableException;
 import com.bbn.parliament.jena.bridge.tracker.Tracker;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Component("trackerService")
+@Service
 public class TrackerService {
 	private static final ObjectMapper OBJ_MAPPER = new ObjectMapper();
 
