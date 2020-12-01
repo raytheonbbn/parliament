@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
@@ -36,6 +37,9 @@ import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.shared.PrefixMapping;
 import com.hp.hpl.jena.util.FileManager;
 import com.hp.hpl.jena.vocabulary.OWL;
@@ -156,35 +160,52 @@ public class SpatialTestDataset {
 	}
 
 	public CloseableQueryExec performQuery(String queryWithoutPrefixes) {
+		return performQuery(getDataset(), queryWithoutPrefixes);
+	}
+
+	public static CloseableQueryExec performQuery(Dataset dataset, String queryWithoutPrefixes) {
 		ParameterizedSparqlString pss = new ParameterizedSparqlString(queryWithoutPrefixes, PFX_MAP);
-		return new CloseableQueryExec(graphStore.toDataset(), pss.asQuery());
+		return new CloseableQueryExec(dataset, pss.asQuery());
 	}
 
 	public static void checkResults(CloseableQueryExec qexec, String... expectedResultQNames) {
 		Set<String> expectedResultSet = Arrays.stream(expectedResultQNames)
-			.map(qname -> PFX_MAP.expandPrefix(qname))
-			.collect(Collectors.toSet());
+			.map(PFX_MAP::expandPrefix)
+			.collect(Collectors.toCollection(TreeSet::new));
 		Set<String> actualResultSet = StreamUtil.asStream(qexec.execSelect())
 			.map(qs -> qs.get("a"))
-			.filter(node -> node != null && node.isURIResource())
-			.map(node -> node.asResource().getURI())
-			.collect(Collectors.toSet());
+			.filter(Objects::nonNull)
+			.filter(RDFNode::isURIResource)
+			.map(RDFNode::asResource)
+			.map(Resource::getURI)
+			.collect(Collectors.toCollection(TreeSet::new));
 
-		SortedSet<String> expectedMinusActual = new TreeSet<>(expectedResultSet);
-		expectedMinusActual.removeAll(actualResultSet);
-		if (expectedMinusActual.size() > 0) {
-			LOG.warn("Expected results that were not found:  {}", expectedMinusActual);
-		}
+		LOG.info("SpatialTestDataset.checkResults expectedResultSet:  {}", formatUriSet(expectedResultSet));
+		LOG.info("SpatialTestDataset.checkResults actualResultSet:    {}", formatUriSet(actualResultSet));
 
-		SortedSet<String> actualMinusExpected = new TreeSet<>(actualResultSet);
-		actualMinusExpected.removeAll(expectedResultSet);
-		if (actualMinusExpected.size() > 0) {
-			LOG.warn("Actual results that were not expected:  {}", actualMinusExpected);
-		}
+		Set<String> expectedMinusActual = uriSetDiff(expectedResultSet, actualResultSet,
+			"Expected results that were not found");
+		Set<String> actualMinusExpected = uriSetDiff(actualResultSet, expectedResultSet,
+			"Actual results that were not expected");
 
 		assertEquals(expectedResultSet.size(), actualResultSet.size());
 		assertEquals(0, expectedMinusActual.size());
 		assertEquals(0, actualMinusExpected.size());
+	}
+
+	private static Set<String> uriSetDiff(Set<String> lhs, Set<String> rhs, String msg) {
+		SortedSet<String> diff = new TreeSet<>(lhs);
+		diff.removeAll(rhs);
+		if (diff.size() > 0) {
+			LOG.error("{}:  {}", msg, formatUriSet(diff));
+		}
+		return diff;
+	}
+
+	private static String formatUriSet(Set<String> set) {
+		return set.stream()
+			.map(PFX_MAP::qnameFor)
+			.collect(Collectors.joining(", "));
 	}
 
 	public void runTest(String queryFile, String resultFile) {
@@ -192,7 +213,7 @@ public class SpatialTestDataset {
 		Query query = QueryFactory.read(queryFile, Syntax.syntaxARQ);
 
 		long start = System.currentTimeMillis();
-		try (CloseableQueryExec qexec = new CloseableQueryExec(graphStore.toDataset(), query)) {
+		try (CloseableQueryExec qexec = new CloseableQueryExec(getDataset(), query)) {
 			ResultSet actualResultSet = qexec.execSelect();
 			LOG.debug("Query time to first result: {} ms", (System.currentTimeMillis() - start));
 
@@ -210,5 +231,9 @@ public class SpatialTestDataset {
 
 	public Dataset getDataset() {
 		return graphStore.toDataset();
+	}
+
+	protected static Resource createResource(String qName) {
+		return ResourceFactory.createResource(PFX_MAP.expandPrefix(qName));
 	}
 }

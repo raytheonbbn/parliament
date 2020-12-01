@@ -179,7 +179,7 @@ public class ThreadTestMethods extends SpatialTestDataset {
 			id = new AtomicLong(Thread.currentThread().getId());
 			LOG.debug("{} Start", getThreadId());
 
-			try (CloseableQueryExec qExec = new CloseableQueryExec(ds, queryStr)) {
+			try (CloseableQueryExec qExec = SpatialTestDataset.performQuery(ds, queryStr)) {
 				ResultSet rs = qExec.execSelect();
 				assertTrue(rs.hasNext());
 				while (rs.hasNext()) {

@@ -44,11 +44,8 @@
 
 	<target name="resolve" depends="resolveUpToDateCheck" unless="isResolveUpToDate">
 		<ivy:retrieve type="jar,bundle,native-src"/>
-		<touch file="lib/LastResolvePerformedAt.txt" mkdirs="true"/>
-	</target>
-
-	<target name="report" depends="resolve">
 		<ivy:report todir="${reportsDir}/ivy"/>
+		<touch file="lib/LastResolvePerformedAt.txt" mkdirs="true"/>
 	</target>
 
 	<target name="clean-cache">
