@@ -77,21 +77,6 @@
 		</delete>
 	</target>
 
-	<target name="reportAll" depends="init" description="Runs ivy reports (and resolve) on all projects">
-		<ant dir="${basedir}/Parliament" target="report" inheritAll="false"/>
-		<ant dir="${basedir}/jena/JosekiParliamentClient" target="report" inheritAll="false"/>
-		<ant dir="${basedir}/jena/JenaGraph" target="report" inheritAll="false"/>
-		<ant dir="${basedir}/jena/JosekiExtensions" target="report" inheritAll="false"/>
-		<ant dir="${basedir}/jena/NumericIndex" target="report" inheritAll="false"/>
-		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="report" inheritAll="false"/>
-		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="report" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/ParliamentSail" target="report" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/CSameAsSail" target="report" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/LuceneSail" target="report" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/SameAsSail" target="report" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="report" inheritAll="false"/>
-	</target>
-
 	<target name="runTests" depends="createDistro" description="Runs extended unit and integration tests">
 		<ant dir="${basedir}/jena/JosekiParliamentClient" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JenaGraph" target="runTests" inheritAll="false"/>
@@ -106,6 +91,8 @@
 		<ant dir="${basedir}/Sesame/SameAsSail" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="runTests" inheritAll="false"/>
 		-->
+
+		<ant dir="${basedir}" target="generateTestReport" inheritAll="true"/>
 	</target>
 
 	<target name="createDistro" description="Create the binary distribution"
