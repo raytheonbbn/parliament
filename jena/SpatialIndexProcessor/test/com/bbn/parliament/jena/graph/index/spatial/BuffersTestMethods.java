@@ -103,8 +103,7 @@ public class BuffersTestMethods extends SpatialTestDataset {
 	}
 
 	private static final String VARIABLE_DISTANCE_QUERY = ""
-		+ "SELECT DISTINCT ?a\n"
-		+ "WHERE {\n"
+		+ "SELECT DISTINCT ?a WHERE {\n"
 		+ "  ?x a example:Car ;\n"
 		+ "    georss:where ?carloc ;\n"
 		+ "    example:range ?distance .\n"
@@ -128,8 +127,7 @@ public class BuffersTestMethods extends SpatialTestDataset {
 	}
 
 	private static final String BOUND_VARIABLE_EXTENT_QUERY = ""
-		+ "SELECT DISTINCT ?a\n"
-		+ "WHERE {\n"
+		+ "SELECT DISTINCT ?a WHERE {\n"
 		+ "  ?extent a gml:Point ;\n"
 		+ "    gml:pos \"34 36\" .\n"
 		+ "  ?buffer a spatial:Buffer ;\n"
@@ -152,8 +150,7 @@ public class BuffersTestMethods extends SpatialTestDataset {
 	}
 
 	private static final String ZERO_DISTANCE_QUERY = ""
-		+ "SELECT ?a\n"
-		+ "WHERE {\n"
+		+ "SELECT ?a WHERE {\n"
 		+ "  ?buffer a spatial:Buffer ;\n"
 		+ "    spatial:distance \"0.0\"^^xsd:double;\n"
 		+ "    spatial:extent [\n"
@@ -178,36 +175,11 @@ public class BuffersTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String THOUSAND_DISTANCE_QUERY_1 = ""
-		+ "SELECT DISTINCT ?a\n"
-		+ "WHERE {\n"
+	private static final String THOUSAND_DISTANCE_QUERY = ""
+		+ "SELECT DISTINCT ?a WHERE {\n"
 		+ "  ?buffer a spatial:Buffer ;\n"
-		+ "    spatial:distance \"5914.0\"^^xsd:double;\n"
-		+ "    spatial:extent cities:pointLondon .\n"
-		+ "  ?a a example:SpatialThing ;\n"
-		+ "    georss:where ?point ;\n"
-		+ "    georss:where [\n"
-		+ "      rcc:part ?buffer\n"
-		+ "    ] .\n"
-		+ "}";
-	private static final String THOUSAND_DISTANCE_QUERY_2 = ""
-		+ "SELECT DISTINCT ?a\n"
-		+ "WHERE {\n"
-		+ "  ?buffer a spatial:Buffer ;\n"
-		+ "    spatial:distance \"5585.0\"^^xsd:double;\n"
-		+ "    spatial:extent cities:polyLondon .\n"
-		+ "  ?a a example:SpatialThing ;\n"
-		+ "    georss:where ?point ;\n"
-		+ "    georss:where [\n"
-		+ "      rcc:part ?buffer\n"
-		+ "    ] .\n"
-		+ "}";
-	private static final String THOUSAND_DISTANCE_QUERY_3 = ""
-		+ "SELECT DISTINCT ?a\n"
-		+ "WHERE {\n"
-		+ "  ?buffer a spatial:Buffer ;\n"
-		+ "    spatial:distance \"1004.0\"^^xsd:double;\n"
-		+ "    spatial:extent cities:pointWashDC .\n"
+		+ "    spatial:distance \"%1$d.0\"^^xsd:double;\n"
+		+ "    spatial:extent cities:%2$s .\n"
 		+ "  ?a a example:SpatialThing ;\n"
 		+ "    georss:where ?point ;\n"
 		+ "    georss:where [\n"
@@ -215,21 +187,26 @@ public class BuffersTestMethods extends SpatialTestDataset {
 		+ "    ] .\n"
 		+ "}";
 
-	public void testBufferThousandDistance() {
-		loadData("queries/cities.ttl");
+	public void testBufferThousandDistance1() {
+		thousandDistanceTestHelper(5914, "pointLondon", "cities:london", "cities:paris",
+			"cities:ottawa", "cities:newyork", "cities:greaterlondon", "cities:washdc");
+	}
 
-		try (CloseableQueryExec qexec = performQuery(THOUSAND_DISTANCE_QUERY_1)) {
-			checkResults(qexec, "cities:london", "cities:paris", "cities:ottowa",
-				"cities:newyork", "cities:greaterlondon", "cities:washdc");
-		}
+	public void testBufferThousandDistance2() {
+		thousandDistanceTestHelper(5585, "polyLondon", "cities:london", "cities:paris",
+			"cities:ottawa", "cities:newyork", "cities:greaterlondon");
+	}
 
-		try (CloseableQueryExec qexec = performQuery(THOUSAND_DISTANCE_QUERY_2)) {
-			checkResults(qexec, "cities:london", "cities:paris", "cities:ottowa",
-				"cities:newyork", "cities:greaterlondon");
-		}
+	public void testBufferThousandDistance3() {
+		thousandDistanceTestHelper(1004, "pointWashDC", "cities:ottawa", "cities:newyork",
+			"cities:washdc");
+	}
 
-		try (CloseableQueryExec qexec = performQuery(THOUSAND_DISTANCE_QUERY_3)) {
-			checkResults(qexec, "cities:ottowa", "cities:newyork", "cities:washdc");
+	private void thousandDistanceTestHelper(int distance, String city, String... expectedResults) {
+		loadData("queries/Cities.ttl");
+		String query = String.format(THOUSAND_DISTANCE_QUERY, distance, city);
+		try (CloseableQueryExec qexec = performQuery(query)) {
+			checkResults(qexec, expectedResults);
 		}
 	}
 }

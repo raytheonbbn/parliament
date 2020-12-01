@@ -17,7 +17,6 @@ import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 public class FloatingExtentsTestMethods extends SpatialTestDataset {
 	private static final Logger LOG = LoggerFactory.getLogger(FloatingExtentsTestMethods.class);
@@ -111,9 +110,9 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 			ResultSet result = qexec.execSelect();
 			assertTrue(result.hasNext());
 
-			Resource sl3 = ResourceFactory.createResource("example2:building3");
-			Resource sl4 = ResourceFactory.createResource("example2:building4");
-			Resource sl5 = ResourceFactory.createResource("example2:building5");
+			Resource sl3 = createResource("example2:building3");
+			Resource sl4 = createResource("example2:building4");
+			Resource sl5 = createResource("example2:building5");
 
 			List<Resource[]> triples = new ArrayList<>();
 			triples.add(new Resource[] { sl3, sl4, sl5 });
@@ -178,7 +177,7 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 			Resource obs1 = solution.getResource("building1");
 			assertNotNull(obs1);
 
-			Resource sl1 = ResourceFactory.createResource("example1:building1");
+			Resource sl1 = createResource("example1:building1");
 			assertEquals(sl1, obs1);
 		}
 	}
@@ -212,8 +211,8 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 			assertNotNull(obs2);
 			assertNotSame(obs1, obs2);
 
-			assertEquals(ResourceFactory.createResource("example1:building1"), obs1);
-			assertEquals(ResourceFactory.createResource("example1:building2"), obs2);
+			assertEquals(createResource("example1:building1"), obs1);
+			assertEquals(createResource("example1:building2"), obs2);
 		}
 	}
 
@@ -248,8 +247,8 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 			assertNotNull(obs1);
 			assertNotNull(obs2);
 
-			assertEquals(ResourceFactory.createResource("example1:building1"), obs1);
-			assertEquals(ResourceFactory.createResource("example1:building2"), obs2);
+			assertEquals(createResource("example1:building1"), obs1);
+			assertEquals(createResource("example1:building2"), obs2);
 
 			assertNotNull(circle);
 		}
@@ -276,8 +275,8 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 			ResultSet result = qexec.execSelect();
 			assertTrue(result.hasNext());
 
-			Resource sl1 = ResourceFactory.createResource("example1:building1");
-			Resource sl2 = ResourceFactory.createResource("example1:building2");
+			Resource sl1 = createResource("example1:building1");
+			Resource sl2 = createResource("example1:building2");
 
 			List<Resource[]> pairs = new ArrayList<>();
 			pairs.add(new Resource[] { sl1, sl2 });
@@ -333,8 +332,8 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 			ResultSet result = qexec.execSelect();
 			assertTrue(result.hasNext());
 
-			Resource sl1 = ResourceFactory.createResource("example1:building1");
-			Resource sl2 = ResourceFactory.createResource("example1:building2");
+			Resource sl1 = createResource("example1:building1");
+			Resource sl2 = createResource("example1:building2");
 
 			List<Resource[]> pairs = new ArrayList<>();
 			pairs.add(new Resource[] { sl1, sl2 });
@@ -449,11 +448,11 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 			ResultSet result = qexec.execSelect();
 			assertTrue(result.hasNext());
 
-			Resource sl1 = ResourceFactory.createResource("example1:building1");
-			Resource sl2 = ResourceFactory.createResource("example1:building2");
-			Resource sl3 = ResourceFactory.createResource("example2:building3");
-			Resource sl4 = ResourceFactory.createResource("example2:building4");
-			Resource sl5 = ResourceFactory.createResource("example2:building5");
+			Resource sl1 = createResource("example1:building1");
+			Resource sl2 = createResource("example1:building2");
+			Resource sl3 = createResource("example2:building3");
+			Resource sl4 = createResource("example2:building4");
+			Resource sl5 = createResource("example2:building5");
 
 			List<Resource[]> pairs = new ArrayList<>();
 			pairs.add(new Resource[] { sl1, sl2 });
