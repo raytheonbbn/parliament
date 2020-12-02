@@ -42,7 +42,7 @@ You will need to acquire and install one or more appropriate compilers for each 
 
 On Macintosh, \ac{pmnt} builds as a universal binary using Apple's Xcode development tools.
 
-\ac{pmnt} assumes the presence of the Java Developer Kit (JDK), version 8.  Furthermore, you will need a 64-bit \ac{jvm} in order to run a 64-bit build of \ac{pmnt}.
+\ac{pmnt} assumes the presence of the Java Developer Kit (JDK), version 11.  Furthermore, you will need a 64-bit \ac{jvm} in order to run a 64-bit build of \ac{pmnt}.
 \begin{itemize}
 	\item On Windows, download and install the JDK from Oracle.  The 32-bit and 64-bit versions are separate downloads and installations.
 
@@ -235,7 +235,7 @@ tools/build/src/engine/bootstrap/ tools/build/src/engine/bin.*
 
 Next we need to configure Boost.Build so that it can build \ac{pmnt}.  Start by defining the following environment variables:
 \begin{itemize}
-	\item\verb|JAVA_HOME|: The location of your JDK installation, which must be version 8 or higher.
+	\item\verb|JAVA_HOME|: The location of your JDK installation, which must be version 11 or higher.
 
 	\item\verb|BDB_VERSION|: As described above in Section~\ref{sec:BuildingBerkeleyDB}.
 
