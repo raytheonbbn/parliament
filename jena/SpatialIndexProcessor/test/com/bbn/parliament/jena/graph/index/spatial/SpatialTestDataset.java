@@ -33,7 +33,7 @@ import com.hp.hpl.jena.query.ParameterizedSparqlString;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFactory;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -41,6 +41,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.shared.PrefixMapping;
+import com.hp.hpl.jena.sparql.resultset.ResultSetRewindable;
 import com.hp.hpl.jena.util.FileManager;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -209,12 +210,12 @@ public class SpatialTestDataset {
 	}
 
 	public void runTest(String queryFile, String resultFile) {
-		ResultSet expectedResultSet = QueryTestUtil.loadResultSet(resultFile);
+		ResultSetRewindable expectedResultSet = QueryTestUtil.loadResultSet(resultFile);
 		Query query = QueryFactory.read(queryFile, Syntax.syntaxARQ);
 
 		long start = System.currentTimeMillis();
 		try (CloseableQueryExec qexec = new CloseableQueryExec(getDataset(), query)) {
-			ResultSet actualResultSet = qexec.execSelect();
+			ResultSetRewindable actualResultSet = ResultSetFactory.makeRewindable(qexec.execSelect());
 			LOG.debug("Query time to first result: {} ms", (System.currentTimeMillis() - start));
 
 			StringBuilder message = new StringBuilder();

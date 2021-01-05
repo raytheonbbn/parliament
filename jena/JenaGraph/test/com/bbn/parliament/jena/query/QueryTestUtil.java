@@ -4,9 +4,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.io.UncheckedIOException;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
@@ -27,56 +26,46 @@ import com.hp.hpl.jena.sparql.resultset.ResultSetRewindable;
 public class QueryTestUtil {
 	private QueryTestUtil() {}	// prevents instantiation
 
-	private static ResultSetRewindable makeUnique(ResultSetRewindable results) {
+	private static ResultSetRewindable makeUnique(ResultSet results) {
 		// VERY crude.  Utilizes the fact that bindings have value equality.
-		Set<Binding> seen = new HashSet<>();
-		List<Binding> seenInOriginalOrder = new ArrayList<>();
-
+		Set<Binding> seen = new LinkedHashSet<>();
 		while (results.hasNext()) {
-			Binding b = results.nextBinding();
-			if (!seen.contains(b)) {
-				seen.add(b);
-				seenInOriginalOrder.add(b);
-			}
+			seen.add(results.nextBinding());
 		}
-		QueryIterator qIter = new QueryIterPlainWrapper(seenInOriginalOrder.iterator());
-		ResultSet rs = new ResultSetStream(results.getResultVars(), ModelFactory.createDefaultModel(), qIter);
+		QueryIterator qIter = new QueryIterPlainWrapper(seen.iterator());
+		Model m = ModelFactory.createDefaultModel();
+		ResultSet rs = new ResultSetStream(results.getResultVars(), m, qIter);
 		return ResultSetFactory.makeRewindable(rs);
 	}
 
-	public static boolean equals(ResultSet expected, ResultSet actual, Query query) {
-		ResultSetRewindable exp = ResultSetFactory.makeRewindable(expected);
-		ResultSetRewindable act = ResultSetFactory.makeRewindable(actual);
+	public static boolean equals(ResultSetRewindable expected, ResultSetRewindable actual,
+			Query query, StringBuilder message) {
 		if (query.isReduced()) {
-			exp = makeUnique(exp);
-			act = makeUnique(act);
+			expected = makeUnique(expected);
+			actual = makeUnique(actual);
 		}
-		return query.isOrdered()
-			? ResultSetCompare.equalsByValueAndOrder(exp, act)
-			: ResultSetCompare.equalsByValue(exp, act);
-	}
-
-	public static boolean equals(ResultSet expected, ResultSet actual, Query query, StringBuilder message) {
-		ResultSetRewindable e = ResultSetFactory.makeRewindable(expected);
-		ResultSetRewindable a = ResultSetFactory.makeRewindable(actual);
-		boolean matches = QueryTestUtil.equals(e, a, query);
+		boolean matches = query.isOrdered()
+			? ResultSetCompare.equalsByValueAndOrder(expected, actual)
+			: ResultSetCompare.equalsByValue(expected, actual);
 		if (!matches) {
-			e.reset();
-			a.reset();
-			message.append(String.format("Expected:%n%1$s%n", ResultSetFormatter.asText(e)));
-			message.append(String.format("Actual:%n%1$s", ResultSetFormatter.asText(a)));
+			expected.reset();
+			actual.reset();
+			message.append(String.format("Expected:%n%1$s%n", ResultSetFormatter.asText(expected)));
+			message.append(String.format("Actual:%n%1$s", ResultSetFormatter.asText(actual)));
 		}
 		return matches;
 	}
 
-	public static ResultSet loadResultSet(String resultSet) {
-		return resultSet.toLowerCase().endsWith("srx")
-			? ResultSetFactory.fromXML(getResource(resultSet))
-			: ResultSetFactory.fromRDF(loadModel(resultSet));
-	}
-
-	public static Model loadModel(String model) {
-		return loadModel(model, null);
+	public static ResultSetRewindable loadResultSet(String resultSet) {
+		if (resultSet.toLowerCase().endsWith("srx")) {
+			try (InputStream in = getResource(resultSet)) {
+				return ResultSetFactory.makeRewindable(ResultSetFactory.fromXML(in));
+			} catch (IOException ex) {
+				throw new UncheckedIOException(ex);
+			}
+		} else {
+			return ResultSetFactory.makeRewindable(ResultSetFactory.fromRDF(loadModel(resultSet, null)));
+		}
 	}
 
 	public static Model loadModel(String resource, String base) {

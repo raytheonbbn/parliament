@@ -403,7 +403,7 @@
 	<target name="runTests" depends="createTestConfig,compileJavaTests">
 		<echo message="Native artifacts directory:  '${deployableSvrDir}'"/>
 		<mkdir dir="${reportsDir}/${deployableSvrDir}"/>
-		<junit fork="yes" printsummary="yes" haltonfailure="${haltUnitTestsOnFailure}">
+		<junit fork="yes" printsummary="yes" haltonfailure="yes">
 			<env key="LD_LIBRARY_PATH" path="${targetDir}/${deployableSvrDir}/bin;${env.LD_LIBRARY_PATH}"/>
 			<env key="PATH" path="${targetDir}/${deployableSvrDir}/bin;${env.PATH}"/>
 			<env key="PARLIAMENT_KB_CONFIG_PATH" value="${testKbConfigFile}"/>
