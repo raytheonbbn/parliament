@@ -6,13 +6,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterAll;
@@ -28,19 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.TestingDataset;
+import com.bbn.parliament.jena.joseki.client.QuerySolutionStream;
 import com.hp.hpl.jena.query.ARQ;
 import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QueryParseException;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFactory;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFList;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -49,6 +42,7 @@ import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.engine.ExecutionContext;
 import com.hp.hpl.jena.sparql.engine.QueryIterator;
 import com.hp.hpl.jena.sparql.engine.iterator.QueryIterRoot;
+import com.hp.hpl.jena.sparql.resultset.ResultSetRewindable;
 import com.hp.hpl.jena.sparql.resultset.SPARQLResult;
 import com.hp.hpl.jena.sparql.util.Context;
 import com.hp.hpl.jena.sparql.vocabulary.ResultSetGraphVocab;
@@ -86,7 +80,7 @@ public class KbOpExecutorDAWGTest {
 		"triple-match",
 		"type-promotion",
 	};
-	private static final String[] INVALID_TESTS = {
+	private static final List<String> INVALID_TESTS = Arrays.asList(
 		// This test has data and query identical to that for
 		// "optional-filter/dawg-optional-filter-005-not-simplified", but
 		// different results.  Not sure how that's supposed to work.
@@ -106,29 +100,22 @@ public class KbOpExecutorDAWGTest {
 
 		// Did the query parse change in SPARQL 1.1?  Or did ARQ fix a bug after 2.9.4?
 		"basic/Basic - Term 6",
-		"basic/Basic - Term 7",
-	};
-	private static final String MANIFEST_QUERY = ""
-		+ "prefix mf: <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#>%n"
-		+ "prefix qt: <http://www.w3.org/2001/sw/DataAccess/tests/test-query#>%n"
-		+ "select distinct ?manifest ?entryList where {%n"
-		+ "	?manifest a mf:Manifest ;%n"
-		+ "		mf:entries ?entryList .%n"
-		+ "}%n";
+		"basic/Basic - Term 7"
+	);
 	private static final String MANIFEST_ENTRY_QUERY = ""
-		+ "prefix mf: <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#>%n"
-		+ "prefix qt: <http://www.w3.org/2001/sw/DataAccess/tests/test-query#>%n"
-		+ "select distinct ?entry ?name ?result ?query ?data ?graphData where {%n"
-		+ "	values ?entry {%n"
-		+ "%1$s"
-		+ "	}%n"
-		+ "	?entry mf:name ?name ;%n"
-		+ "		mf:result ?result ;%n"
-		+ "		mf:action ?action .%n"
-		+ "	?action qt:query ?query .%n"
-		+ "	optional { ?action qt:data ?data }%n"
-		+ "	optional { ?action qt:graphData ?graphData }%n"
-		+ "}%n";
+		+ "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+		+ "prefix mf:  <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#>\n"
+		+ "prefix qt:  <http://www.w3.org/2001/sw/DataAccess/tests/test-query#>\n"
+		+ "select distinct ?entry ?name ?result ?query ?data ?graphData where {\n"
+		+ "	?manifest a mf:Manifest ;\n"
+		+ "		mf:entries/rdf:rest*/rdf:first ?entry .\n"
+		+ "	?entry mf:name ?name ;\n"
+		+ "		mf:result ?result ;\n"
+		+ "		mf:action ?action .\n"
+		+ "	?action qt:query ?query .\n"
+		+ "	optional { ?action qt:data ?data }\n"
+		+ "	optional { ?action qt:graphData ?graphData }\n"
+		+ "}";
 	private static final File DAWG_ROOT_DIR = new File("data/data-r2");
 	private static final Pattern FILE_URI_FIXER = Pattern.compile("^(file:/)([^/].*)$");
 	private static final Pattern FILE_URI_FIXER_2 = Pattern.compile("^(file:///[A-Za-z]):(.*)$");
@@ -168,61 +155,35 @@ public class KbOpExecutorDAWGTest {
 		CheckerLiterals.WarnOnBadLiterals = oldWarningFlag;
 	}
 
-	public static Stream<DAWGManifestEntry> generateData() {
-		List<DAWGManifestEntry> testDataList = new ArrayList<>();
+	private static Stream<DAWGManifestEntry> testDawgTest() {
+		Map<Resource, DAWGManifestEntry> testDataMap = new HashMap<>();
 		for (String relTestDir : DAWG_TEST_DIRS) {
 			File testDir = new File(DAWG_ROOT_DIR, relTestDir);
 			File manifestFile = new File(testDir, "manifest.ttl");
 			log.debug("Loading manifest file '{}' with base '{}'",
 				manifestFile.getPath(), testDir.getPath());
-			Model manifestModel = QueryTestUtil.loadModel(manifestFile.getPath(), testDir.getPath());
-			QueryExecution exec = QueryExecutionFactory.create(
-				String.format(MANIFEST_QUERY), manifestModel);
-			ResultSet rs = exec.execSelect();
-			List<RDFNode> bigEntryList = new ArrayList<>();
-			while (rs.hasNext()) {
-				QuerySolution qs = rs.nextSolution();
-				Resource entryList = qs.getResource("entryList");
-				if (entryList != null) {
-					RDFList entries = entryList.as(RDFList.class);
-					if (entries != null) {
-						bigEntryList.addAll(entries.asJavaList());
-					}
-				}
+			Model manifestModel = QueryTestUtil.loadModel(
+				manifestFile.getPath(), testDir.getPath());
+			try (QuerySolutionStream stream = new QuerySolutionStream(
+					MANIFEST_ENTRY_QUERY, manifestModel)) {
+				stream.forEach(qs -> {
+					Resource entry = qs.getResource("entry");
+					testDataMap
+						.computeIfAbsent(entry, DAWGManifestEntry::new)
+						.addQuerySolution(qs, testDir);
+				});
 			}
-			exec.close();
-
-			String values = bigEntryList.stream()
-				.map(node -> node.asResource().getURI())
-				.collect(Collectors.joining(String.format(">%n\t\t<"), "\t\t<", String.format(">%n")));
-			exec = QueryExecutionFactory.create(
-				String.format(MANIFEST_ENTRY_QUERY, values), manifestModel);
-			rs = exec.execSelect();
-			Map<Resource, DAWGManifestEntry> testDataMap = new HashMap<>();
-			while (rs.hasNext()) {
-				QuerySolution qs = rs.nextSolution();
-				Resource entry = qs.getResource("entry");
-				if (entry != null) {
-					DAWGManifestEntry me = testDataMap.computeIfAbsent(entry, k -> new DAWGManifestEntry(entry));
-					me.addQuerySolution(qs, testDir);
-				}
-			}
-			exec.close();
-
-			testDataList.addAll(testDataMap.values());
 		}
-		log.info("Found {} DAWG tests to be run", testDataList.size());
-		return testDataList.stream();
+		log.info("Found {} DAWG tests to be run", testDataMap.size());
+		return testDataMap.values().stream();
 	}
 
 	@ParameterizedTest
-	@MethodSource("generateData")
+	@MethodSource
 	public void testDawgTest(DAWGManifestEntry me) throws IOException {
-		for (String invalid : INVALID_TESTS) {
-			if (me.getCurrentTest().equals(invalid)) {
-				log.warn("Skipping DAWG test '{}'", invalid);
-				return;
-			}
+		if (INVALID_TESTS.contains(me.getCurrentTest())) {
+			log.warn("Skipping DAWG test '{}'", me.getCurrentTest());
+			return;
 		}
 		for (File dataFile : me.getData()) {
 			QueryTestUtil.loadResource(dataFile.getPath(), dataset.getDefaultGraph());
@@ -245,15 +206,7 @@ public class KbOpExecutorDAWGTest {
 		try {
 			Query q = QueryFactory.read(me.getQuery().getPath());
 			if (q.isSelectType()) {
-				ResultSet rs = QueryTestUtil.loadResultSet(me.getResult().getPath());
-				if (log.isDebugEnabled() && rs.getResultVars().contains("g")) {
-					while (rs.hasNext()) {
-						QuerySolution qs = rs.next();
-						RDFNode n = qs.get("g");
-						String uri = (n == null) ? "null" : n.asResource().getURI();
-						log.debug("Value of ?g in test '{}':  '{}'", me.getName(), uri);
-					}
-				}
+				ResultSetRewindable rs = QueryTestUtil.loadResultSet(me.getResult().getPath());
 				runDAWGTest(q, rs, me);
 			} else if (q.isAskType()) {
 				SPARQLResult expectedResultSet = ResultSetFactory.result(me.getResult().getPath());
@@ -265,19 +218,13 @@ public class KbOpExecutorDAWGTest {
 					StmtIterator sIter = resultsAsModel.listStatements(null, RDF.type,
 						ResultSetGraphVocab.ResultSet);
 					if (!sIter.hasNext()) {
-						log.warn("Could not find ASK result for '{}'", me.getName());
-						return;
+						fail(String.format("Could not find ASK result for '%1$s'", me.getName()));
 					}
-					Statement s = sIter.nextStatement();
+					Statement s = sIter.next();
 					if (sIter.hasNext()) {
-						log.warn("More than one ASK result for '{}'", me.getName());
-						return;
+						fail(String.format("More than one ASK result for '%1$s'", me.getName()));
 					}
-					Resource r = s.getSubject();
-					Property p = resultsAsModel.createProperty(
-						ResultSetGraphVocab.getURI() + "boolean");
-
-					answer = r.getRequiredProperty(p).getBoolean();
+					answer = s.getSubject().getRequiredProperty(ResultSetGraphVocab.p_boolean).getBoolean();
 				}
 				runDAWGTest(q, answer, me);
 			}
@@ -287,11 +234,12 @@ public class KbOpExecutorDAWGTest {
 		}
 	}
 
-	private void runDAWGTest(Query query, ResultSet expectedResultSet, DAWGManifestEntry me) {
+	private void runDAWGTest(Query query, ResultSetRewindable expectedResultSet, DAWGManifestEntry me) {
 		Op op = Algebra.compile(query);
 		QueryIterator input = QueryIterRoot.create(execCxt);
 		QueryIterator it = opExecutor.executeOp(op, input);
-		ResultSet actualResultSet = ResultSetFactory.create(it, query.getResultVars());
+		ResultSetRewindable actualResultSet = ResultSetFactory.makeRewindable(
+			ResultSetFactory.create(it, query.getResultVars()));
 
 		StringBuilder message = new StringBuilder();
 		message.append(String.format("%n'%1$s': Result sets are not equal:%n%n", me.getCurrentTest()));
