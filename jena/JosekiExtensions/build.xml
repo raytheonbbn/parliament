@@ -239,7 +239,7 @@
 		</copy>
 		<mkdir dir="${basedir}/tmp-server/log"/>
 
-		<junit fork="yes" printsummary="yes" haltonfailure="${haltUnitTestsOnFailure}" showoutput="yes" dir="${basedir}/tmp-server">
+		<junit fork="yes" printsummary="yes" haltonfailure="yes" showoutput="yes" dir="${basedir}/tmp-server">
 			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
 			<!-- This used to use jetty-test.xml, but that was written for Jetty 6.  Now
 				that we're using Jetty 9, we'll just use jetty.xml rather than bothering to

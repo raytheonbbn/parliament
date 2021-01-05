@@ -36,10 +36,3 @@ nativeBuildParams=toolset=gcc address-model=64 variant=release
 # contain the official release build parameters, and such a release should
 # always run the unit tests.)
 #skipNativeUnitTest=This value does not matter.
-
-#################################################
-# Set to "no" to halt the build whenever a Java-based unit test does not succeed.
-# (Only do this in "build.properties" -- "build.properties.default" should always
-# contain the official release build parameters, and we want to ensure that all
-# unit tests succeed in a release.
-haltUnitTestsOnFailure=yes
