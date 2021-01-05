@@ -107,4 +107,9 @@ public class DAWGManifestEntry {
 	public List<File> getGraphData() {
 		return graphData;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("DAWG test '%1$s' (%2$s)", name, entry.getLocalName());
+	}
 }
