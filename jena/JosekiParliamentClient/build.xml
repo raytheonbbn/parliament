@@ -58,7 +58,7 @@
 	<!-- Runs unit tests for a specific native directory (the name of which is expected as a parameter) -->
 	<target name="runTestsForOneNativeDir">
 		<echo message="nativeArtifactsDir = '${nativeArtifactsDir}'"/>
-		<junit fork="yes" printsummary="yes" haltonfailure="${haltUnitTestsOnFailure}">
+		<junit fork="yes" printsummary="yes" haltonfailure="yes">
 			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
 			<classpath>
 				<pathelement location="${testBinDir}"/>

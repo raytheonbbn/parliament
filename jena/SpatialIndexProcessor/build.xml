@@ -81,8 +81,8 @@
 	<target name="runTestsForOneNativeDir">
 		<echo message="nativeArtifactsDir = '${nativeArtifactsDir}'"/>
 		<mkdir dir="${reportsDir}"/>
-		<!-- TODO: Once unit tests pass, change haltonfailure to "${haltUnitTestsOnFailure}" -->
-		<junit fork="yes" printsummary="yes" haltonfailure="false" showoutput="yes" dir="${testBinDir}">
+		<!-- TODO: Once unit tests pass, change haltonfailure to "yes" -->
+		<junit fork="yes" printsummary="yes" haltonfailure="no" showoutput="yes" dir="${testBinDir}">
 			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
 			<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
 			<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
