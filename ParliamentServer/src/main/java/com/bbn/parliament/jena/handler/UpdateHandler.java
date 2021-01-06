@@ -30,7 +30,7 @@ public class UpdateHandler {
 		try (ConcurrentRequestLock lock = ConcurrentRequestController.getWriteLock()) {
 			trackable.run();
 		} catch (TrackableException | DataFormatException | MissingGraphException | IOException ex) {
-			throw new QueryExecutionException("Error while executing query", ex);
+			throw new QueryExecutionException(ex, "Error while executing query");
 		}
 	}
 }

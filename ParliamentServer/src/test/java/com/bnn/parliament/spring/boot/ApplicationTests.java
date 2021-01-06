@@ -55,42 +55,37 @@ class ApplicationTests {
 		"application", "sparql-update");
 	private static final Logger LOG = LoggerFactory.getLogger(ApplicationTests.class);
 
-	private static final String EVERYTHING_QUERY = """
-		select distinct ?s ?o ?p ?g where {
-			{ ?s ?p ?o }
-			union
-			{ graph ?g { ?s ?p ?o } }
-		}
-		""";
-	private static final String CLASS_QUERY = """
-		prefix owl: <http://www.w3.org/2002/07/owl#>
-		select distinct ?class where {
-			?class a owl:Class .
-			filter (!isblank(?class))
-		}
-		""";
-	private static final String THING_QUERY = """
-		prefix owl:  <http://www.w3.org/2002/07/owl#>
-		prefix ex:   <http://www.example.org/>
-		select distinct ?a where {
-			bind ( ex:Test as ?a )
-			?a a owl:Thing .
-		}
-		""";
-	private static final String THING_INSERT = """
-		prefix owl:  <http://www.w3.org/2002/07/owl#>
-		prefix ex:   <http://www.example.org/>
-		insert data {
-			ex:ApplicationTests a owl:Thing .
-		}
-		""";
-	private static final String THING_DELETE = """
-		prefix owl:  <http://www.w3.org/2002/07/owl#>
-		prefix ex:   <http://www.example.org/>
-		delete data {
-			ex:ApplicationTests a owl:Thing .
-		}
-		""";
+	private static final String EVERYTHING_QUERY = ""
+		+ "select distinct ?s ?o ?p ?g where {\n"
+		+ "	{ ?s ?p ?o }\n"
+		+ "	union\n"
+		+ "	{ graph ?g { ?s ?p ?o } }\n"
+		+ "}";
+	private static final String CLASS_QUERY = ""
+		+ "prefix owl: <http://www.w3.org/2002/07/owl#>\n"
+		+ "select distinct ?class where {\n"
+		+ "	?class a owl:Class .\n"
+		+ "	filter (!isblank(?class))\n"
+		+ "}";
+	private static final String THING_QUERY = ""
+		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>\n"
+		+ "prefix ex:   <http://www.example.org/>\n"
+		+ "select distinct ?a where {\n"
+		+ "	bind ( ex:Test as ?a )\n"
+		+ "	?a a owl:Thing .\n"
+		+ "}";
+	private static final String THING_INSERT = ""
+		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>\n"
+		+ "prefix ex:   <http://www.example.org/>\n"
+		+ "insert data {\n"
+		+ "	ex:ApplicationTests a owl:Thing .\n"
+		+ "}";
+	private static final String THING_DELETE = ""
+		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>\n"
+		+ "prefix ex:   <http://www.example.org/>\n"
+		+ "delete data {\n"
+		+ "	ex:ApplicationTests a owl:Thing .\n"
+		+ "}";
 
 	@Autowired
 	private MockMvc mvc;

@@ -184,12 +184,14 @@ public class GraphStoreController {
 	@SuppressWarnings("static-method")
 	@PatchMapping(value = ENDPOINT, params = "default")
 	public void updateDefaultGraph(@RequestParam(value = "default") String defaultGraph) {
-		throw new UnsupportedEndpointException();
+		throw new UnsupportedEndpointException("The PATCH method is unsupported on this "
+			+ "endpoint. Please use the SPARQL Update endpoint instead.");
 	}
 
 	@SuppressWarnings("static-method")
 	@PatchMapping(value = ENDPOINT, params = "graph")
 	public void updateNamedGraph(@RequestParam(value = "graph") String graphUri) {
-		throw new UnsupportedEndpointException();
+		throw new UnsupportedEndpointException("The PATCH method is unsupported on this "
+			+ "endpoint. Please use the SPARQL Update endpoint instead.");
 	}
 }

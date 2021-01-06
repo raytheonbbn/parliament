@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -24,7 +25,7 @@ final class ServiceUtil {
 		return Stream.concat(Stream.of(formatType), streamFromAccept)
 			.filter(Optional::isPresent)
 			.map(Optional::get)
-			.collect(Collectors.toUnmodifiableList());
+			.collect(Collectors.toList());
 	}
 
 	public static String getRequestor(HttpHeaders headers, HttpServletRequest request) {
@@ -34,9 +35,9 @@ final class ServiceUtil {
 			: hostAddr.getHostString();
 		int port = request.getRemotePort();
 		String user = request.getRemoteUser();
-		return (user == null || user.isBlank())
-			? "%1$s:%2$d".formatted(host, port)
-			: "%1$s:%2$d (%3$s)".formatted(host, port, user);
+		return (StringUtils.isBlank(user))
+			? String.format("%1$s:%2$d", host, port)
+			: String.format("%1$s:%2$d (%3$s)", host, port, user);
 	}
 
 	public static MediaType mediaTypeFromString(String mediaType) {
@@ -44,7 +45,7 @@ final class ServiceUtil {
 			.split("/", 2);
 		if (pieces.length == 0) {
 			throw new IllegalArgumentException(
-				"'%1$s' is not a legal media type".formatted(mediaType));
+				String.format("'%1$s' is not a legal media type", mediaType));
 		} else if (pieces.length == 1) {
 			return new MediaType(pieces[0]);
 		} else {

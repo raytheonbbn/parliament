@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -89,7 +90,7 @@ public class QueryController {
 
 	private File getTempDir() {
 		File result = null;
-		if (multipartLocation != null && !multipartLocation.isBlank()) {
+		if (!StringUtils.isBlank(multipartLocation)) {
 			result = new File(multipartLocation.trim());
 			if (!result.exists() || !result.isDirectory()) {
 				result = null;

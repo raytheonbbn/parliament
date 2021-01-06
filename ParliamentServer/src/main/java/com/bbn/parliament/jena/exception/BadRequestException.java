@@ -3,19 +3,12 @@ package com.bbn.parliament.jena.exception;
 public class BadRequestException extends Exception {
 	private static final long serialVersionUID = 1L;
 
-	public BadRequestException() {
+	public BadRequestException(String format, Object... args) {
+		super(String.format(format, args));
 	}
 
-	public BadRequestException(String message) {
-		super(message);
-	}
-
-	public BadRequestException(Throwable cause) {
-		super(cause);
-	}
-
-	public BadRequestException(String message, Throwable cause) {
-		super(message, cause);
+	public BadRequestException(Throwable cause, String format, Object... args) {
+		super(String.format(format, args), cause);
 	}
 
 	public BadRequestException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {

@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -77,54 +78,47 @@ public class ParliamentServerTests {
 	private static final String TEST_LITERAL = "Test";
 	private static final Logger LOG = LoggerFactory.getLogger(ParliamentServerTests.class);
 
-	private static final String EVERYTHING_QUERY = """
-		select distinct ?s ?o ?p ?g where {
-			{ ?s ?p ?o }
-			union
-			{ graph ?g { ?s ?p ?o } }
-		}
-		""";
-	private static final String CLASS_QUERY = """
-		prefix owl: <http://www.w3.org/2002/07/owl#>
-		select distinct ?class where {
-			?class a owl:Class .
-			filter (!isblank(?class))
-		}
-		""";
-	private static final String THING_QUERY = """
-		prefix owl:  <http://www.w3.org/2002/07/owl#>
-		prefix ex:   <http://www.example.org/>
-		select distinct ?a where {
-			bind ( ex:Test as ?a )
-			?a a owl:Thing .
-		}
-		""";
-	private static final String THING_INSERT = """
-		prefix owl:  <http://www.w3.org/2002/07/owl#>
-		prefix ex:   <http://www.example.org/>
-		insert data {
-			ex:Test a owl:Thing .
-		}
-		""";
-	private static final String THING_DELETE = """
-		prefix owl:  <http://www.w3.org/2002/07/owl#>
-		prefix ex:   <http://www.example.org/>
-		delete data {
-			ex:Test a owl:Thing .
-		}
-		""";
-	private static final String CSV_QUOTING_TEST_QUERY = """
-		prefix ex: <http://example.org/#>
-		select distinct ?s ?p ?o where {
-			bind( ex:comment as ?p )
-			?s ?p ?o .
-		} order by ?o
-		""";
-	private static final String NG_QUERY = """
-		select distinct ?g where {
-			graph ?g { }
-		}
-		""";
+	private static final String EVERYTHING_QUERY = ""
+		+ "select distinct ?s ?o ?p ?g where {\n"
+		+ "	{ ?s ?p ?o }\n"
+		+ "	union\n"
+		+ "	{ graph ?g { ?s ?p ?o } }\n"
+		+ "}";
+	private static final String CLASS_QUERY = ""
+		+ "prefix owl: <http://www.w3.org/2002/07/owl#>\n"
+		+ "select distinct ?class where {\n"
+		+ "	?class a owl:Class .\n"
+		+ "	filter (!isblank(?class))\n"
+		+ "}";
+	private static final String THING_QUERY = ""
+		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>\n"
+		+ "prefix ex:   <http://www.example.org/>\n"
+		+ "select distinct ?a where {\n"
+		+ "	bind ( ex:Test as ?a )\n"
+		+ "	?a a owl:Thing .\n"
+		+ "}";
+	private static final String THING_INSERT = ""
+		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>\n"
+		+ "prefix ex:   <http://www.example.org/>\n"
+		+ "insert data {\n"
+		+ "	ex:Test a owl:Thing .\n"
+		+ "}";
+	private static final String THING_DELETE = ""
+		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>\n"
+		+ "prefix ex:   <http://www.example.org/>\n"
+		+ "delete data {\n"
+		+ "	ex:Test a owl:Thing .\n"
+		+ "}";
+	private static final String CSV_QUOTING_TEST_QUERY = ""
+		+ "prefix ex: <http://example.org/#>\n"
+		+ "select distinct ?s ?p ?o where {\n"
+		+ "	bind( ex:comment as ?p )\n"
+		+ "	?s ?p ?o .\n"
+		+ "} order by ?o";
+	private static final String NG_QUERY = ""
+		+ "select distinct ?g where {\n"
+		+ "	graph ?g { }\n"
+		+ "}";
 
 	@LocalServerPort
 	private int serverPort;
@@ -145,8 +139,8 @@ public class ParliamentServerTests {
 
 	@BeforeEach
 	public void beforeEach() {
-		sparqlUrl = RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL.formatted(HOST, serverPort);
-		bulkUrl = RemoteModel.DEFAULT_BULK_ENDPOINT_URL.formatted(HOST, serverPort);
+		sparqlUrl = String.format(RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL, HOST, serverPort);
+		bulkUrl = String.format(RemoteModel.DEFAULT_BULK_ENDPOINT_URL, HOST, serverPort);
 		rm = new RemoteModel(sparqlUrl, bulkUrl);
 	}
 
@@ -215,7 +209,7 @@ public class ParliamentServerTests {
 			return stream
 				.map(qs -> qs.getResource("g"))
 				.map(Resource::getURI)
-				.collect(Collectors.toUnmodifiableSet());
+				.collect(Collectors.toSet());
 		}
 	}
 
@@ -494,7 +488,7 @@ public class ParliamentServerTests {
 		Node s = Node.createURI(sub);
 		Node p = Node.createURI(pred);
 		QuadDataAcc qd = new QuadDataAcc();
-		if (graphName == null || graphName.isBlank()) {
+		if (StringUtils.isBlank(graphName)) {
 			qd.addTriple(new Triple(s, p, obj));
 		} else {
 			qd.addQuad(new Quad(Node.createURI(graphName), s, p, obj));

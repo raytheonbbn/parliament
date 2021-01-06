@@ -52,8 +52,8 @@ public class GraphExportHandler {
 				? ModelManager.inst().getDefaultModel()
 				: ModelManager.inst().getModel(graphName);
 			if (null == model) {
-				throw new IOException(new MissingGraphException(String.format(
-					"Named graph <%1$s> does not exist", graphName)));
+				throw new IOException(
+					new MissingGraphException("Named graph <%1$s> does not exist", graphName));
 			}
 
 			LOG.info("Exporting <{}> as {}", graphName, contentType);

@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -121,9 +122,9 @@ public final class Inserter {
 				String zipEntryName = ze.getName();
 				FileNameDecomposition decomp = new FileNameDecomposition(zipEntryName);
 				if (RDFFormat.UNKNOWN == decomp.getFormat()) {
-					throw new DataFormatException(String.format("Unsupported file extension "
+					throw new DataFormatException("Unsupported file extension "
 						+ "on \"%1$s\" -- must be one of 'ttl', 'n3', 'nt', "
-						+ "'rdf', 'owl', or 'xml'", zipEntryName));
+						+ "'rdf', 'owl', or 'xml'", zipEntryName);
 				}
 
 				Supplier<InputStream> entryStrmProvider = getZipStrmProvider(zin);
@@ -166,8 +167,8 @@ public final class Inserter {
 				String dirName = stmt.getObject().toString();
 
 				if (!dirNamesSeen.contains(dirName)) {
-					throw new DataFormatException(String.format("Master Graph contains a "
-						+ "directory name (%1$s) not present in the zip file", dirName));
+					throw new DataFormatException("Master Graph contains a "
+						+ "directory name (%1$s) not present in the zip file", dirName);
 				}
 
 				dirToGraphNameMap.put(dirName, graphNm);
@@ -179,21 +180,12 @@ public final class Inserter {
 		}
 
 		if (dirNamesSeen.size() != dirToGraphNameMap.size()) {
-
-			StringBuilder sb = new StringBuilder();
-			boolean firstTime = true;
-			for (String dirName : dirNamesSeen) {
-				if (!dirToGraphNameMap.containsKey(dirName)) {
-					if (!firstTime) {
-						sb.append(", ");
-					}
-					sb.append(dirName);
-					firstTime = false;
-				}
-			}
-
-			throw new DataFormatException("Mismatch between the number of files "
-				+ "in the zip file and the number in the Master Graph.  There are extra directories in the zip file: " + sb.toString());
+			String extraDirs = dirNamesSeen.stream()
+				.filter(dirName -> !dirToGraphNameMap.containsKey(dirName))
+				.collect(Collectors.joining(", "));
+			throw new DataFormatException("Mismatch between the number of files in "
+				+ "the zip file and the number in the Master Graph.  There are extra "
+				+ "directories in the zip file: %1$s", extraDirs);
 		}
 
 		// Now that we like the input, we can clear the old repo
@@ -329,8 +321,7 @@ public final class Inserter {
 		String graphLabel = isDefaultGraph ? "Default Graph" : graphName;
 
 		if (null == model) {
-			throw new MissingGraphException(
-				String.format("There is no graph named \"%1$s\"", graphName));
+			throw new MissingGraphException("There is no graph named \"%1$s\"", graphName);
 		}
 
 		if (verifyOption == VerifyOption.VERIFY) {
@@ -405,8 +396,7 @@ public final class Inserter {
 				format = RDFFormat.parseFilename(fileName);
 			}
 			if (RDFFormat.UNKNOWN == format) {
-				throw new DataFormatException(String.format(
-					"Unsupported data format \"%1$s\"", dataFormat));
+				throw new DataFormatException("Unsupported data format \"%1$s\"", dataFormat);
 			}
 			return format;
 		}
