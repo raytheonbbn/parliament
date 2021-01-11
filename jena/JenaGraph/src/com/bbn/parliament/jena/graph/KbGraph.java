@@ -150,6 +150,7 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 	 *            a Triple[Match] encoding the pattern to look for
 	 * @return an iterator of all triples in this graph that match m
 	 */
+	@SuppressWarnings("resource")
 	@Override
 	public ExtendedIterator<Triple> graphBaseFind(TripleMatch m) {
 		try {

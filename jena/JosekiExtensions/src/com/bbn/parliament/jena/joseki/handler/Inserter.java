@@ -170,7 +170,9 @@ public class Inserter {
 				// Get the Master Graph separately as a temporary in-memory model
 				if (decomp.isMasterGraph()) {
 					masterGraph = ModelFactory.createDefaultModel();
-					masterGraph.read(entryStrmProvider.getInputStream(), baseUri, decomp.getFormat().toString());
+					try (InputStream is = entryStrmProvider.getInputStream()) {
+						masterGraph.read(is, baseUri, decomp.getFormat().toString());
+					}
 				} else {
 					long num = verify(entryStrmProvider, baseUri, decomp.getFormat());
 					if (num > 0) {

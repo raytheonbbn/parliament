@@ -8,6 +8,7 @@ package com.bbn.parliament.jena.joseki.bridge.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
@@ -28,7 +29,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +103,7 @@ public class XSLTFilter implements Filter {
 			wrapper.run(new Runnable() {
 				@Override
 				public void run() {
-					try {
+					try (OutputStream toClose = wrapper.getOutputStream()) {
 						chain.doFilter(req, wrapper);
 
 						if ("application/xml".equals(resp.getContentType()) && contentType != null) {
@@ -122,8 +122,6 @@ public class XSLTFilter implements Filter {
 					} catch (RuntimeException ex) {
 						LOG.error("RuntimeException writing to PipedServletResponseWrapper", ex);
 						_threadRuntimeException = ex;
-					} finally {
-						IOUtils.closeQuietly(wrapper.getOutputStream());
 					}
 				}
 			});
@@ -141,7 +139,9 @@ public class XSLTFilter implements Filter {
 
 				try (InputStream in = wrapper.getInputStream()) {
 					StreamSource xmlSource = new StreamSource(in);
-					StreamResult result = new StreamResult(resp.getOutputStream());
+					@SuppressWarnings("resource")
+					OutputStream os = resp.getOutputStream();
+					StreamResult result = new StreamResult(os);
 					transformer.transform(xmlSource, result);
 					LOG.trace("Transformed source");
 				}
