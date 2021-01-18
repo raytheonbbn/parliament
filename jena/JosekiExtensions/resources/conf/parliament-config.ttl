@@ -101,6 +101,10 @@
 			par:prefix "gml" ;
 			par:uri <http://www.opengis.net/ont/gml#>
 		]
+		[
+			par:prefix "units" ;
+			par:uri <http://www.opengis.net/def/uom/OGC/1.0/>
+		]
 	) ;
 	par:indexHandler :indexHandler .
 

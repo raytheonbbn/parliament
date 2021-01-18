@@ -22,9 +22,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
-/** Utility methods for HTTP clients.  Taken from Sesame 1.2.6. */
-public class HttpClientUtil {
+public final class HttpClientUtil {
 	private static final String CRLF = "\r\n";
+
+	private HttpClientUtil() {}	// prevents instantiation
 
 	/**
 	 * Prepares an HttpURLConnection for a POST request that sends the
@@ -35,9 +36,8 @@ public class HttpClientUtil {
 	 *
 	 * @exception IOException If an I/O error occurs.
 	 */
-	public static void preparePostRequest(HttpURLConnection connection, Map<String, Object> parameters)
-		throws IOException
-	{
+	public static void preparePostRequest(HttpURLConnection connection,
+			Map<String, Object> parameters) throws IOException {
 		// Create x-www-url-encoded parameter string
 		String postData = buildQueryString(parameters);
 
@@ -56,14 +56,15 @@ public class HttpClientUtil {
 		}
 	}
 
-	public static void prepareMultipartPostRequest(HttpURLConnection connection, Map<String,Object> parameters, String encoding)
-		throws UnsupportedEncodingException, IOException
-	{
+	public static void prepareMultipartPostRequest(HttpURLConnection connection,
+			Map<String,Object> parameters, String encoding)
+			throws UnsupportedEncodingException, IOException {
 		String boundary = "---8qP3mZ1yyysss---";
 		byte[] postData = buildMultipartFormData(parameters, boundary, encoding);
 
 		// Build the form data as a multipart/form-data byte array.
-		connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+		connection.setRequestProperty("Content-Type",
+			"multipart/form-data; boundary=" + boundary);
 		connection.setRequestProperty("Content-Length", String.valueOf(postData.length));
 
 		// Set up request
@@ -78,15 +79,14 @@ public class HttpClientUtil {
 		}
 	}
 
-	public static void prepareMultipartPostRequestInputStreamAware(HttpURLConnection connection, Map<String,Object> parameters, String encoding)
-		throws UnsupportedEncodingException, IOException
-	{
+	public static void prepareMultipartPostRequestInputStreamAware(
+			HttpURLConnection connection, Map<String,Object> parameters, String encoding)
+			throws UnsupportedEncodingException, IOException {
 		// Partition the parameters into InputStream or other, so that
 		// we can write the non-InputStream parameters first as they
 		// are likely to be much smaller than the InputStreams
 		Map<String, Object> inputStreamParameters = new HashMap<>();
 		Map<String, Object> nonInputStreamParameters = new HashMap<>();
-
 		for (Map.Entry<String, Object> entry : parameters.entrySet()) {
 			String key = entry.getKey();
 			Object value = entry.getValue();
@@ -99,47 +99,34 @@ public class HttpClientUtil {
 		}
 
 		String boundary = "---8qP3mZ1yyysss---";
-		byte[] postParams = buildMultipartFormData(nonInputStreamParameters, boundary, encoding, false);
+		byte[] postParams = buildMultipartFormData(
+			nonInputStreamParameters, boundary, encoding, false);
 
 		// Build the form data as a multipart/form-data byte array.
-		connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+		connection.setRequestProperty("Content-Type",
+			"multipart/form-data; boundary=" + boundary);
 
 		// Set up request
 		connection.setRequestMethod("POST");
 		connection.setDoInput(true);
 		connection.setDoOutput(true);
 		connection.setUseCaches(false);
-
-		// Set "transfer-encoding: chunked" on the connection to allow
-		// the request to be streamed in chunks to the remote repository
-		//
-		// This method is only availible in JDK >1.5 (see Sun bug #5026745:
-		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5026745 )
-		//
-		// Also, because of a separate bug in commons-fileupload-1.1,
-		// the remote Sesame repository will not accept transfers
-		// without a Content-Length header.  This bug is fixed in
-		// commons-fileupload-1.2, so the remote Sesame server needs
-		// to have this new library.
-		// See Apache bugs #37395 and #39162:
-		// http://issues.apache.org/bugzilla/show_bug.cgi?id=37794
-		// http://issues.apache.org/bugzilla/show_bug.cgi?id=39162
 		connection.setChunkedStreamingMode(10000);
 
 		// Write the form data to the connection
 		try (OutputStream postStream = connection.getOutputStream()) {
 			postStream.write(postParams);
 
-			byte[] startBoundary = (CRLF + "--" + boundary + CRLF).getBytes();
-			byte[] endBoundary = (CRLF + "--" + boundary + "--" + CRLF).getBytes();
+			byte[] startBoundary = (CRLF + "--" + boundary + CRLF).getBytes(encoding);
+			byte[] endBoundary = (CRLF + "--" + boundary + "--" + CRLF).getBytes(encoding);
 
-			Iterator<Map.Entry<String, Object>> isIter = inputStreamParameters.entrySet().iterator();
-			while (isIter.hasNext()) {
-				Map.Entry<String, Object> entry = isIter.next();
+			for (Map.Entry<String, Object> entry : inputStreamParameters.entrySet()) {
 				String key = entry.getKey();
 				Object value = entry.getValue();
 
-				byte[] partHeader = ("Content-Disposition: form-data; name=\"" + key + "\"" + CRLF + CRLF).getBytes();
+				byte[] partHeader = String.format(
+					"Content-Disposition: form-data; name=\"%1$s\"%2$s%2$s",
+					key, CRLF).getBytes(encoding);
 
 				postStream.write(startBoundary);
 				postStream.write(partHeader);
@@ -159,9 +146,7 @@ public class HttpClientUtil {
 	 * @param out The OutputStream to write data to.
 	 * @return The total number of bytes transfered.
 	 */
-	public static final long transfer(InputStream in, OutputStream out)
-		throws IOException
-	{
+	public static long transfer(InputStream in, OutputStream out) throws IOException {
 		long totalBytes = 0;
 		int bytesInBuf = 0;
 		byte[] buf = new byte[4096];
@@ -180,38 +165,45 @@ public class HttpClientUtil {
 	 *
 	 * @see #buildMultipartFormData(Map, String, String, boolean)
 	 */
-	public static byte[] buildMultipartFormData(Map<String, Object> parameters, String boundary, String encoding)
-		throws UnsupportedEncodingException
-	{
+	public static byte[] buildMultipartFormData(Map<String, Object> parameters,
+			String boundary, String encoding) throws UnsupportedEncodingException {
 		return buildMultipartFormData(parameters, boundary, encoding, true);
 	}
 
 	/**
-	 * Builds a multipart/form-data encoded byte array of the specified parameters,
-	 * that complies to <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>.
-	 * Note that the request sent to the server should have a header of the following
-	 * form:
-	 * <pre>{@code
-	 * Content-type: multipart/form-data, boundary=boundary-parameter}.
-	 * }</pre>
-	 * E.g.:
-	 * <pre>{@code}
-	 * HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-	 * connection.setRequestProperty("Content-type", "multipart/form-data, boundary=AaB03x");
-	 * }</pre>
+	 * Builds a multipart/form-data encoded byte array of the given parameters that
+	 * complies with <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>. The
+	 * request sent to the server should have a header of the following form:
 	 *
-	 * @param parameters A map of String keys to values that are either {@code FilePart}s, in
-	 * which case its contents will be uploaded; byte arrays, which will be uploaded as-is; or
-	 * any other Object, in which case the value of the object's {@code toString()} method
-	 * will be used.
-	 * @param boundary A boundary to use as separator between the encoded parts of the data.
+	 * <pre>
+	 * {@code
+	 * Content-type: multipart/form-data, boundary=boundary-parameter}.
+	 * }
+	 * </pre>
+	 *
+	 * E.g.:
+	 *
+	 * <pre>
+	 * {
+	 * 	&#64;code
+	 * 	HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	 * 	conn.setRequestProperty("Content-type", "multipart/form-data, boundary=AaB03x");
+	 * }
+	 * </pre>
+	 *
+	 * @param parameters A map of String keys to values that are either
+	 *        {@code FilePart}s, in which case its contents will be uploaded; byte
+	 *        arrays, which will be uploaded as-is; or any other Object, in which
+	 *        case the value of the object's {@code toString()} method will be used.
+	 * @param boundary A boundary to use as separator between the encoded parts of
+	 *        the data.
 	 * @param encoding The character encoding for the data, e.g. "UTF-8".
 	 * @param includeEndBoundary Whether or not to include the end boundary
 	 * @return A byte array in multipart/form-data format.
 	 */
-	public static byte[] buildMultipartFormData(Map<String, Object> parameters, String boundary, String encoding, boolean includeEndBoundary)
-		throws UnsupportedEncodingException
-	{
+	public static byte[] buildMultipartFormData(Map<String, Object> parameters,
+			String boundary, String encoding, boolean includeEndBoundary)
+			throws UnsupportedEncodingException {
 		List<byte[]> parts = new ArrayList<>(parameters.size());
 		int partLengthSum = 0;
 
@@ -221,23 +213,12 @@ public class HttpClientUtil {
 			String key = entry.getKey();
 			Object value = entry.getValue();
 
-			byte[] partHeader, partContents;
-
-			//if (value instanceof FilePart) {
-			//	FilePart fp = (FilePart)value;
-			//	partHeader =
-			//		("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + fp.getName() + "\"" + CRLF +
-			//			"Content-Type: " + fp.getContentType() + CRLF + CRLF).getBytes();
-			//	partContents = fp.getBytes();
-			//} else {
-			partHeader = ("Content-Disposition: form-data; name=\"" + key + "\"" + CRLF + CRLF).getBytes();
-
-			if (value instanceof byte[]) {
-				partContents = (byte[])value;
-			} else {
-				partContents = value.toString().getBytes(encoding);
-				//				}
-			}
+			byte[] partHeader = String.format(
+				"Content-Disposition: form-data; name=\"%1$s\"%2$s%2$s",
+				key, CRLF).getBytes(encoding);
+			byte[] partContents = (value instanceof byte[])
+				? (byte[]) value
+				: value.toString().getBytes(encoding);
 
 			byte[] part = new byte[partHeader.length + partContents.length];
 			System.arraycopy(partHeader, 0, part, 0, partHeader.length);
@@ -247,8 +228,8 @@ public class HttpClientUtil {
 			partLengthSum += part.length;
 		}
 
-		byte[] startBoundary = (CRLF + "--" + boundary + CRLF).getBytes();
-		byte[] endBoundary = (CRLF + "--" + boundary + "--" + CRLF).getBytes();
+		byte[] startBoundary = (CRLF + "--" + boundary + CRLF).getBytes(encoding);
+		byte[] endBoundary = (CRLF + "--" + boundary + "--" + CRLF).getBytes(encoding);
 
 		int totalLength = parts.size() * startBoundary.length +
 			(includeEndBoundary ? endBoundary.length : 0) + partLengthSum;
@@ -324,12 +305,9 @@ public class HttpClientUtil {
 
 			if (cInt >= 48 && cInt <= 57 ||
 				cInt >= 65 && cInt <= 90 ||
-				cInt >= 97 && cInt <= 122)
-			{
-				// alphanumeric character
-				buf.append(c);
-			}
-			else {
+				cInt >= 97 && cInt <= 122) {
+				buf.append(c);	// alphanumeric character
+			} else {
 				// Escape all non-alphanumerics
 				buf.append('%');
 				String hexVal = Integer.toHexString(cInt);
@@ -360,9 +338,7 @@ public class HttpClientUtil {
 	 *
 	 * @see #setAcceptGZIPEncoding
 	 */
-	public static InputStream getInputStream(URLConnection conn)
-		throws IOException
-	{
+	public static InputStream getInputStream(URLConnection conn) throws IOException {
 		InputStream responseStream = conn.getInputStream();
 
 		String contentEncoding = conn.getContentEncoding();

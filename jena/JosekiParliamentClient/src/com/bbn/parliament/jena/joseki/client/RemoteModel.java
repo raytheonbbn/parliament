@@ -21,7 +21,6 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -812,12 +811,7 @@ public class RemoteModel {
 		HttpClientUtil.setAcceptGZIPEncoding(conn);
 
 		if (multipart) {
-			try {
-				HttpClientUtil.prepareMultipartPostRequestInputStreamAware(conn, params, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				// UTF-8 must be supported by all compliant JVM's, this exception should never be thrown.
-				throw new RuntimeException("UTF-8 character encoding not supported on this platform");
-			}
+			HttpClientUtil.prepareMultipartPostRequestInputStreamAware(conn, params, "UTF-8");
 		} else {
 			HttpClientUtil.preparePostRequest(conn, params);
 		}
@@ -834,10 +828,8 @@ public class RemoteModel {
 
 	private static void checkResponse(HttpURLConnection conn) throws IOException {
 		int responseCode = conn.getResponseCode();
-
 		if (responseCode != HttpURLConnection.HTTP_OK) {
 			String responseMsg = conn.getResponseMessage();
-			//System.out.println("HTTP Error: " + responseCode + " -- " + responseMsg);
 			throw new IOException(responseMsg);
 		}
 	}

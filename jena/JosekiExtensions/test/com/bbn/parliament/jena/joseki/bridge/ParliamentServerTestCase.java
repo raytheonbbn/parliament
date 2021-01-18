@@ -6,14 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,12 +30,12 @@ import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.joseki.bridge.tracker.Tracker;
 import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
+import com.bbn.parliament.jena.joseki.client.HttpClientUtil;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.joseki.client.RemoteModel;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -60,6 +63,7 @@ public class ParliamentServerTestCase {
 	private static final String[] RSRCS_TO_LOAD = { "univ-bench.owl", "University15_20.owl.zip" };
 	private static final String CSV_QUOTE_TEST_INPUT = "csv-quote-test-input.ttl";
 	private static final String CSV_QUOTE_TEST_EXPECTED_RESULT = "csv-quote-test-expected-result.csv";
+	private static final String CSV_QUOTE_TEST_ACTUAL_XML_RESULT = "../csv-quote-test-actual-result.xml";
 	private static final String TEST_SUBJECT = "http://example.org/#Test";
 	private static final String TEST_CLASS = "http://example.org/#TestClass";
 	private static final String TEST_LITERAL = "Test";
@@ -426,26 +430,8 @@ public class ParliamentServerTestCase {
 
 	@Test
 	public void csvQuotingTest() throws IOException {
-		try (InputStream is = getClass().getResourceAsStream(CSV_QUOTE_TEST_INPUT)) {
-			if (is == null) {
-				fail(String.format("Unable to find resource '%1$s'", CSV_QUOTE_TEST_INPUT));
-			}
+		try (InputStream is = getResourceAsStream(CSV_QUOTE_TEST_INPUT)) {
 			rm.insertStatements(is, RDFFormat.parseFilename(CSV_QUOTE_TEST_INPUT), null, true);
-		}
-
-		log.info("CSV quote test results:");
-		try (CloseableQueryExec qe = new CloseableQueryExec(SPARQL_URL, String.format(CSV_QUOTING_TEST_QUERY))) {
-			ResultSet rs = qe.execSelect();
-			while (rs.hasNext()) {
-				QuerySolution qs = rs.next();
-				Resource s = qs.getResource("s");
-				Resource p = qs.getResource("p");
-				Literal o = qs.getLiteral("o");
-				String sStr = s.isAnon()
-					? s.getId().getLabelString()
-					: s.getURI();
-				log.info("   {} {} \"{}\"", sStr, p.getURI(), o.getLexicalForm());
-			}
 		}
 
 		String actualResponse;
@@ -453,22 +439,45 @@ public class ParliamentServerTestCase {
 		params.put("query", String.format(CSV_QUOTING_TEST_QUERY));
 		params.put("stylesheet", "/xml-to-csv.xsl");
 		try (InputStream is = rm.sendRequest(params)) {
-			actualResponse = readStreamToEnd(is, "RemoteModel.sendRequest() returned null");
+			actualResponse = readStreamToEnd(is);
 		}
-		log.info("CSV quote result as CSV:{}{}", System.lineSeparator(), actualResponse);
 
 		String expectedResponse;
-		try (InputStream is = getClass().getResourceAsStream(CSV_QUOTE_TEST_EXPECTED_RESULT)) {
-			expectedResponse = readStreamToEnd(is, "Unable to find resource '%1$s'", CSV_QUOTE_TEST_EXPECTED_RESULT);
+		try (InputStream is = getResourceAsStream(CSV_QUOTE_TEST_EXPECTED_RESULT)) {
+			expectedResponse = readStreamToEnd(is);
 		}
 
+		// In case we are about to fail, record the XML result set to a file so we can diagnose:
+		if (!Objects.equals(expectedResponse, actualResponse)) {
+			params.remove("stylesheet");
+			try (
+				InputStream is = rm.sendRequest(params);
+				OutputStream os = new FileOutputStream(CSV_QUOTE_TEST_ACTUAL_XML_RESULT);
+			) {
+				HttpClientUtil.transfer(is, os);
+			}
+			log.error("CSV quote actual result as XML written to {}", CSV_QUOTE_TEST_ACTUAL_XML_RESULT);
+		}
 		assertEquals(expectedResponse, actualResponse);
 	}
 
-	private static String readStreamToEnd(InputStream is, String errorMsg, Object... args) throws IOException {
-		if (is == null) {
-			fail(String.format(errorMsg, args));
+	private InputStream getResourceAsStream(String resourceName) {
+		InputStream result = getClass().getResourceAsStream(resourceName);
+		if (result == null) {
+			fail(String.format("Resource not found: '%1$s'", resourceName));
 		}
+		return result;
+	}
+
+	/**
+	 * Reads stream to its end and returns the results as a string. All end-of-line
+	 * situations are converted to the platform's native EOL format.
+	 *
+	 * @param is The stream to read
+	 * @return The stream contents as a string
+	 * @throws IOException on error
+	 */
+	private static String readStreamToEnd(InputStream is) throws IOException {
 		try (
 			Reader rdr = new InputStreamReader(is, StandardCharsets.UTF_8);
 			BufferedReader brdr = new BufferedReader(rdr);
