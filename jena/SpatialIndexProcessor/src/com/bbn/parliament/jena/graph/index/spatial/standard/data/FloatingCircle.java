@@ -15,14 +15,14 @@ import java.util.Set;
 import org.geotools.referencing.datum.DefaultEllipsoid;
 
 import com.bbn.parliament.jena.graph.index.spatial.standard.SpatialGeometryFactory;
-import com.vividsolutions.jts.algorithm.MinimumDiameter;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.algorithm.MinimumDiameter;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 
 public class FloatingCircle extends EphemeralGeometry {
 	private static final long serialVersionUID = 1L;
@@ -78,7 +78,7 @@ public class FloatingCircle extends EphemeralGeometry {
 			return null;
 		}
 
-		MultiPoint multiPoint = factory.createMultiPoint(points.toArray(new Coordinate[] { }));
+		MultiPoint multiPoint = factory.createMultiPointFromCoords(points.toArray(new Coordinate[] { }));
 		MinimumDiameter md = new MinimumDiameter(multiPoint);
 
 		LineString ls = md.getDiameter();
@@ -107,10 +107,22 @@ public class FloatingCircle extends EphemeralGeometry {
 		return "Floating Circle";
 	}
 
-	/** {@inheritDoc} */
 	@Override
-	public int getNumPoints() {
+	protected int getTypeCode() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	protected Geometry reverseInternal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Geometry copyInternal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -12,7 +12,7 @@ import com.bbn.parliament.jena.graph.index.spatial.Profile;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialPropertyFunctionFactory;
 import com.bbn.parliament.jena.query.index.operand.OperandFactory;
 import com.hp.hpl.jena.graph.Graph;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public class StandardProfile implements Profile {
 	private GeometryRecordFactory recordFactory;

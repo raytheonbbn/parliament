@@ -19,7 +19,7 @@
 	<property name="macosReleaseDir" value="${artifactsDir}/clang/release/universal"/>
 
 	<target name="clean" description="Cleans up after the ant build">
-		<echo message="Using JDK ${ant.java.version}"/>
+		<echo message="Using java version ${java.version}"/>
 
 		<delete dir="${targetDir}" deleteonexit="true"/>
 		<delete file="${basedir}/Parliament/Test/ParliamentKbConfig.txt"/>
@@ -250,7 +250,7 @@
 	</target>
 
 	<target name="init">
-		<echo message="Using JDK ${ant.java.version}"/>
+		<echo message="Using java version ${java.version}"/>
 		<mkdir dir="${artifactsDir}"/>
 		<mkdir dir="${reportsDir}"/>
 	</target>

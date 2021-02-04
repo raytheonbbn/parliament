@@ -2,7 +2,7 @@ package com.bbn.parliament.jena.graph.index.spatial;
 
 import com.bbn.parliament.jena.graph.index.RecordFactory;
 import com.hp.hpl.jena.graph.Triple;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public interface GeometryRecordFactory extends RecordFactory<Geometry> {
 	/**

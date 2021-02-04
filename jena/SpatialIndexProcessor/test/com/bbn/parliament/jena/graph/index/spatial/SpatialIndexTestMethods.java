@@ -18,8 +18,8 @@ import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.query.index.QueryableIndexTestMethods;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 
 public abstract class SpatialIndexTestMethods extends QueryableIndexTestMethods<SpatialIndex, Geometry> {
 	@Override

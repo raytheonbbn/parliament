@@ -7,7 +7,7 @@ import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.GeoSPARQL
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.function.FunctionEnv;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public abstract class RelationFunction extends DoubleGeometrySpatialFunction {
 	private Operation operation;

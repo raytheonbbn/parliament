@@ -9,14 +9,14 @@ import javax.xml.namespace.QName;
 import org.geotools.gml3.GMLConfiguration;
 import org.geotools.metadata.iso.citation.Citations;
 import org.geotools.referencing.crs.AbstractCRS;
-import org.geotools.xml.Encoder;
-import org.geotools.xml.Parser;
+import org.geotools.xsd.Encoder;
+import org.geotools.xsd.Parser;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.GML;
 import com.hp.hpl.jena.datatypes.DatatypeFormatException;
-import com.vividsolutions.jts.geom.Geometry;
 
 /** @author rbattle */
 public class GMLLiteral extends GeoSPARQLLiteral {
@@ -83,7 +83,7 @@ public class GMLLiteral extends GeoSPARQLLiteral {
 		//String iri = getCoordinateReferenceSystemURI((String) geometry.getUserData());
 
 		GMLConfiguration conf = new GMLConfiguration();
-		org.geotools.xml.Encoder e = new Encoder(conf);
+		Encoder e = new Encoder(conf);
 		QName qname = new QName("http://www.opengis.net/gml", geometry.getGeometryType());
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {

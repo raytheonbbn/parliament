@@ -17,7 +17,7 @@ import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Geof;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Units;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.WKT;
 import com.bbn.parliament.jena.query.index.operand.OperandFactory;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public class GeoSPARQLProfile implements Profile {
 	@SuppressWarnings("unused")

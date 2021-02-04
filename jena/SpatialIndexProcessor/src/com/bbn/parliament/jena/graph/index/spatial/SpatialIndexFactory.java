@@ -10,7 +10,7 @@ import com.bbn.parliament.jena.graph.index.spatial.sql.postgres.PostgresIndex;
 import com.bbn.parliament.jena.util.FileUtil;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public class SpatialIndexFactory extends IndexFactory<SpatialIndex, Geometry> {
 	private static final String LABEL = "Spatial Index";

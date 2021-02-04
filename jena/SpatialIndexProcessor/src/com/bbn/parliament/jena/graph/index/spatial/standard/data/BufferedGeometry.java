@@ -11,7 +11,9 @@ import java.util.List;
 
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.CRS.AxisOrder;
 import org.geotools.referencing.GeodeticCalculator;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.operation.projection.PointOutsideEnvelopeException;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
@@ -23,14 +25,15 @@ import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.graph.index.spatial.standard.SpatialGeometryFactory;
 import com.bbn.parliament.jena.graph.index.spatial.standard.StdConstants;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.operation.buffer.BufferOp;
-import com.vividsolutions.jts.operation.buffer.BufferParameters;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.operation.buffer.BufferOp;
+import org.locationtech.jts.operation.buffer.BufferParameters;
 
 /** @author Robert Battle */
 public class BufferedGeometry extends EphemeralGeometry {
@@ -105,12 +108,15 @@ public class BufferedGeometry extends EphemeralGeometry {
 		int srid = SpatialGeometryFactory.UTMZoneSRID(extent.getEnvelope());
 
 		try {
-			destCRS = CRS.decode("EPSG:" + srid);
+			destCRS = CRS.decode("EPSG:" + srid, true);
 
-			Geometry buffered = projectAndBuffer(extent, distance, destCRS);
+			Geometry buffered = extent instanceof Polygon ? projectAndBufferPoly(extent, distance, destCRS) :
+				projectAndBuffer(extent, distance, destCRS);
+			
 			boolean canReproject = true;
+
 			try {
-				JTS.checkCoordinatesRange(buffered, WGS84_CRS);
+				JTS.checkCoordinatesRange(buffered, DefaultGeographicCRS.WGS84);
 				buffer = buffered;
 			} catch (PointOutsideEnvelopeException e) {
 				canReproject = false;
@@ -118,7 +124,7 @@ public class BufferedGeometry extends EphemeralGeometry {
 			if (!canReproject) {
 				if (extent instanceof Point) {
 					Point point = (Point) extent;
-					GeodeticCalculator calc = new GeodeticCalculator();
+					GeodeticCalculator calc = new GeodeticCalculator(WGS84_CRS);
 					calc.setStartingGeographicPoint(point.getX(), point.getY());
 					List<Coordinate> coords = new ArrayList<>();
 					Coordinate first = null;
@@ -168,12 +174,26 @@ public class BufferedGeometry extends EphemeralGeometry {
 							throw new RuntimeException("Invalid index");
 						}
 
-						calc.setStartingGeographicPoint(point.x, point.y);
+						if (CRS.getAxisOrder(DefaultGeographicCRS.WGS84).equals(AxisOrder.NORTH_EAST)) {
+							calc.setStartingGeographicPoint(point.x, point.y);
+					      } else {
+					    	  calc.setStartingGeographicPoint(point.y, point.x);
+					      }
+
 						for (int i : degrees) {
+							Coordinate coord;
 							calc.setDirection(i, distance);
-							Coordinate coord = new Coordinate(
-								calc.getDestinationGeographicPoint().getX(),
-								calc.getDestinationGeographicPoint().getY());
+							//convert back to the lat/lon
+							if (CRS.getAxisOrder(DefaultGeographicCRS.WGS84).equals(AxisOrder.NORTH_EAST)) {
+								 coord = new Coordinate(
+										calc.getDestinationGeographicPoint().getX(),
+										calc.getDestinationGeographicPoint().getY());
+						      } else {
+						    	  coord = new Coordinate(
+											calc.getDestinationGeographicPoint().getY(),
+											calc.getDestinationGeographicPoint().getX());
+						      }
+
 							if (null == first) {
 								first = coord;
 							}
@@ -211,4 +231,53 @@ public class BufferedGeometry extends EphemeralGeometry {
 		Geometry buffered = op.getResultGeometry(distance);
 		return JTS.transform(buffered, reverseTransform);
 	}
+	
+	private static Geometry projectAndBufferPoly(Geometry geom, double distance, CoordinateReferenceSystem origCRS)
+			throws FactoryException, MismatchedDimensionException, TransformException {
+		LOG.debug("Transforming: {} from {} to {}",
+				new Object[] { geom.getEnvelope(), WGS84_CRS.getName().getCode(), origCRS.getName().getCode() });
+		Geometry pGeom = geom.getEnvelope();
+		MathTransform toTransform, fromTransform = null;
+		double x = geom.getCoordinate().x;
+	    double y = geom.getCoordinate().y;
+	    String code = "AUTO:42001," + x + "," + y;
+	    CoordinateReferenceSystem utm = CRS.decode(code, true);
+	    CoordinateReferenceSystem wgs84= CRS.decode("EPSG:4326", true);
+	    CoordinateReferenceSystem wgs84inv= CRS.decode("EPSG:4326", false);
+	    
+	    
+	    CoordinateReferenceSystem google = CRS.decode("EPSG:3857", true);
+	    MathTransform WGS84toGoogle= CRS.findMathTransform(wgs84, google);
+	    MathTransform GoogletoWSG84= CRS.findMathTransform(google, wgs84);
+	    
+	    Geometry pOrigToGoogle = JTS.transform(geom, WGS84toGoogle);
+	    Geometry pOrigToGoogleBuffer = pOrigToGoogle.buffer(distance, 20);
+	    Geometry pGoogleToWSG84Buffer = JTS.transform(pOrigToGoogleBuffer, GoogletoWSG84);
+	    Geometry retGeom =  pGoogleToWSG84Buffer;
+		try {
+			JTS.checkCoordinatesRange(retGeom, DefaultGeographicCRS.WGS84);
+		} catch (PointOutsideEnvelopeException e) {
+			LOG.warn("Buffer could not be transformed correctly.");
+		}
+		return retGeom;
+	}
+
+	@Override
+	protected int getTypeCode() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	protected Geometry reverseInternal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Geometry copyInternal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

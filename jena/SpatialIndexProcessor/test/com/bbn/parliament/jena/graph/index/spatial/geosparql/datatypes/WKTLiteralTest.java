@@ -10,8 +10,8 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 import com.hp.hpl.jena.datatypes.DatatypeFormatException;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 
 @RunWith(JUnitPlatform.class)
 public class WKTLiteralTest implements LiteralTestCase {
