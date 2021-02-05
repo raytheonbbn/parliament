@@ -70,9 +70,9 @@
 			conf="bridge->default"/>
 		<dependency org="org.geotools" name="gt-epsg-hsql" rev="${geotools.version}"
 			conf="bridge->default"/>
-		<dependency org="org.geotools.xsd" name="gt-xsd-core" rev="${geotools.version}"
-			conf="bridge->default"/>
 		<dependency org="org.geotools" name="gt-epsg-wkt" rev="${geotools.version}"
+			conf="bridge->default"/>
+		<dependency org="org.geotools.xsd" name="gt-xsd-core" rev="${geotools.version}"
 			conf="bridge->default"/>
 		<dependency org="org.geotools.xsd" name="gt-xsd-gml3" rev="${geotools.version}"
 			conf="bridge->default"/>

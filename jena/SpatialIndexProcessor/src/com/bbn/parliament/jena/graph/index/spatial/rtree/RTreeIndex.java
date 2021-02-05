@@ -8,6 +8,10 @@ import org.deegree.io.rtree.HyperBoundingBox;
 import org.deegree.io.rtree.HyperPoint;
 import org.deegree.io.rtree.RTree;
 import org.deegree.io.rtree.RTreeException;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.IntersectionMatrix;
+import org.locationtech.jts.io.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,10 +27,6 @@ import com.bbn.parliament.jena.util.FileUtil;
 import com.bbn.parliament.jena.util.NodeUtil;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.util.iterator.ClosableIterator;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.IntersectionMatrix;
-import org.locationtech.jts.io.ParseException;
 
 public class RTreeIndex extends SpatialIndex {
 	private static final Logger LOG = LoggerFactory.getLogger(RTreeIndex.class);

@@ -2,8 +2,8 @@ package com.bbn.parliament.jena.graph.index.spatial.sql.postgres;
 
 import java.util.Properties;
 
-import com.bbn.parliament.jena.graph.index.spatial.SpatialTestDataset;
 import com.bbn.parliament.jena.graph.index.spatial.Constants;
+import com.bbn.parliament.jena.graph.index.spatial.SpatialTestDataset;
 
 public class PostgresPropertyFactory {
 	public static Properties create() {

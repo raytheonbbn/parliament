@@ -2,6 +2,7 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql;
 
 import java.util.Properties;
 
+import org.locationtech.jts.geom.Geometry;
 import org.openjena.riot.system.PrefixMap;
 
 import com.bbn.parliament.jena.graph.index.spatial.GeometryRecordFactory;
@@ -17,7 +18,6 @@ import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Geof;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Units;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.WKT;
 import com.bbn.parliament.jena.query.index.operand.OperandFactory;
-import org.locationtech.jts.geom.Geometry;
 
 public class GeoSPARQLProfile implements Profile {
 	@SuppressWarnings("unused")

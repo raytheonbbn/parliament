@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.locationtech.jts.geom.Geometry;
+
 import com.bbn.parliament.jena.graph.index.spatial.GeometryRecord;
 import com.bbn.parliament.jena.graph.index.spatial.GeometryRecordFactory;
 import com.hp.hpl.jena.graph.Graph;
@@ -13,7 +15,6 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
-import org.locationtech.jts.geom.Geometry;
 
 public class StandardRecordFactory implements GeometryRecordFactory {
 	private static List<Triple> MATCHES;

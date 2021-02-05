@@ -2,6 +2,8 @@ package com.bbn.parliament.jena.graph.index.spatial;
 
 import java.util.Properties;
 
+import org.locationtech.jts.geom.Geometry;
+
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.index.IndexFactory;
 import com.bbn.parliament.jena.graph.index.spatial.jts.JTSIndex;
@@ -10,7 +12,6 @@ import com.bbn.parliament.jena.graph.index.spatial.sql.postgres.PostgresIndex;
 import com.bbn.parliament.jena.util.FileUtil;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
-import org.locationtech.jts.geom.Geometry;
 
 public class SpatialIndexFactory extends IndexFactory<SpatialIndex, Geometry> {
 	private static final String LABEL = "Spatial Index";

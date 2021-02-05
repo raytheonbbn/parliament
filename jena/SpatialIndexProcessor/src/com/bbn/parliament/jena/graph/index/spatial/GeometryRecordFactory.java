@@ -1,8 +1,9 @@
 package com.bbn.parliament.jena.graph.index.spatial;
 
+import org.locationtech.jts.geom.Geometry;
+
 import com.bbn.parliament.jena.graph.index.RecordFactory;
 import com.hp.hpl.jena.graph.Triple;
-import org.locationtech.jts.geom.Geometry;
 
 public interface GeometryRecordFactory extends RecordFactory<Geometry> {
 	/**

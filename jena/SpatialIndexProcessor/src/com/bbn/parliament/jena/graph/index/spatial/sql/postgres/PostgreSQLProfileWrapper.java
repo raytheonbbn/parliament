@@ -1,5 +1,6 @@
 package com.bbn.parliament.jena.graph.index.spatial.sql.postgres;
 
+import org.locationtech.jts.geom.Geometry;
 import org.openjena.riot.system.PrefixMap;
 
 import com.bbn.parliament.jena.graph.index.spatial.GeometryRecordFactory;
@@ -8,7 +9,6 @@ import com.bbn.parliament.jena.graph.index.spatial.IterablePropertyFunctionFacto
 import com.bbn.parliament.jena.graph.index.spatial.OperationFactory;
 import com.bbn.parliament.jena.graph.index.spatial.Profile;
 import com.bbn.parliament.jena.query.index.operand.OperandFactory;
-import org.locationtech.jts.geom.Geometry;
 
 public class PostgreSQLProfileWrapper implements Profile {
 	private Profile base;

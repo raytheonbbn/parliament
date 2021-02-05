@@ -6,7 +6,6 @@
 
 package com.bbn.parliament.jena.graph.index.spatial.standard.data;
 
-import com.hp.hpl.jena.graph.Node;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateFilter;
 import org.locationtech.jts.geom.CoordinateSequenceComparator;
@@ -16,6 +15,8 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryComponentFilter;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.GeometryFilter;
+
+import com.hp.hpl.jena.graph.Node;
 
 /** @author Robert Battle */
 public abstract class EphemeralGeometry extends Geometry {

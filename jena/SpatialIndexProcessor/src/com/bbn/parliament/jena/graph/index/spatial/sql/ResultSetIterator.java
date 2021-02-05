@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.locationtech.jts.geom.Geometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,6 @@ import com.bbn.parliament.jena.graph.index.spatial.GeometryRecord;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialIndexException;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.util.iterator.ClosableIterator;
-import org.locationtech.jts.geom.Geometry;
 
 /** @author Robert Battle */
 public class ResultSetIterator implements ClosableIterator<Record<Geometry>> {

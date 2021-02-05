@@ -9,13 +9,6 @@ package com.bbn.parliament.jena.graph.index.spatial;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.bbn.parliament.jena.graph.KbGraph;
-import com.bbn.parliament.jena.graph.index.spatial.standard.SpatialGeometryFactory;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdf.model.AnonId;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
@@ -25,6 +18,13 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
 import org.locationtech.jts.io.WKBWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.bbn.parliament.jena.graph.KbGraph;
+import com.bbn.parliament.jena.graph.index.spatial.standard.SpatialGeometryFactory;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.rdf.model.AnonId;
 
 /** @author Robert Battle */
 public class GeometryConverter {

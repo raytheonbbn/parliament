@@ -2,6 +2,7 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes;
 
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -14,7 +15,6 @@ import com.bbn.parliament.jena.graph.index.spatial.geosparql.TransformCache;
 import com.bbn.parliament.jena.graph.index.spatial.standard.StdConstants;
 import com.hp.hpl.jena.datatypes.BaseDatatype;
 import com.hp.hpl.jena.datatypes.DatatypeFormatException;
-import org.locationtech.jts.geom.Geometry;
 
 /**
  * Base literal type. The lexical form is parsed. All geometries are normalized to WGS84

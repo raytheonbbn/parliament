@@ -2,13 +2,21 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql.function.util;
 
 import java.util.List;
 
-import org.geotools.gml3.Curve;
-import org.geotools.gml3.MultiCurve;
+import org.geotools.geometry.jts.MultiCurve;
 import org.geotools.gml3.MultiSurface;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.geometry.coordinate.ArcString;
 import org.opengis.geometry.coordinate.PolyhedralSurface;
 import org.opengis.geometry.coordinate.Tin;
 import org.opengis.geometry.coordinate.Triangle;
+import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.Surface;
 
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.GMLLiteral;
@@ -22,14 +30,6 @@ import com.hp.hpl.jena.query.QueryException;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.function.FunctionEnv;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 
 /** @author rbattle */
 public class LiteralToGeometryType extends SpatialFunctionBase {

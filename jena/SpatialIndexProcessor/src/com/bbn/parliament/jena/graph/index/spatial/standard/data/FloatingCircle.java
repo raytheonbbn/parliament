@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.geotools.referencing.datum.DefaultEllipsoid;
-
-import com.bbn.parliament.jena.graph.index.spatial.standard.SpatialGeometryFactory;
 import org.locationtech.jts.algorithm.MinimumDiameter;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -23,6 +21,8 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+
+import com.bbn.parliament.jena.graph.index.spatial.standard.SpatialGeometryFactory;
 
 public class FloatingCircle extends EphemeralGeometry {
 	private static final long serialVersionUID = 1L;
@@ -78,7 +78,7 @@ public class FloatingCircle extends EphemeralGeometry {
 			return null;
 		}
 
-		MultiPoint multiPoint = factory.createMultiPoint(points.toArray(new Coordinate[] { }));
+		MultiPoint multiPoint = factory.createMultiPointFromCoords(points.toArray(new Coordinate[] { }));
 		MinimumDiameter md = new MinimumDiameter(multiPoint);
 
 		LineString ls = md.getDiameter();
@@ -109,8 +109,20 @@ public class FloatingCircle extends EphemeralGeometry {
 
 	/** {@inheritDoc} */
 	@Override
-	public int getNumPoints() {
+	protected int getTypeCode() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	protected Geometry reverseInternal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Geometry copyInternal() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

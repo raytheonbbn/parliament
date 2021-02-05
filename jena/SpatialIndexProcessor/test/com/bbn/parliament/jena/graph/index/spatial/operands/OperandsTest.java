@@ -12,12 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-
-import com.bbn.parliament.jena.graph.index.spatial.GeometryConverter;
-import com.bbn.parliament.jena.graph.index.spatial.Operation;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Polygon;
+
+import com.bbn.parliament.jena.graph.index.spatial.GeometryConverter;
+import com.bbn.parliament.jena.graph.index.spatial.Operation;
 
 /** @author gjoiner */
 @RunWith(JUnitPlatform.class)

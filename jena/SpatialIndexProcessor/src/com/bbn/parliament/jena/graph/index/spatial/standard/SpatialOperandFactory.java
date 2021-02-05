@@ -3,6 +3,13 @@ package com.bbn.parliament.jena.graph.index.spatial.standard;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+
 import com.bbn.parliament.jena.graph.index.spatial.standard.data.BufferedGeometry;
 import com.bbn.parliament.jena.graph.index.spatial.standard.data.FloatingCircle;
 import com.bbn.parliament.jena.query.index.operand.Operand;
@@ -12,12 +19,6 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sparql.core.BasicPattern;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 
 /** @author rbattle */
 public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {

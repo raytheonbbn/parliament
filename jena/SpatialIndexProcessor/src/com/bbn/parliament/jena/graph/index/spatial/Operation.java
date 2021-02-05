@@ -4,12 +4,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
-import com.bbn.parliament.jena.graph.index.Record;
-import com.hp.hpl.jena.util.iterator.ClosableIterator;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.IntersectionMatrix;
 import org.locationtech.jts.geom.Point;
+
+import com.bbn.parliament.jena.graph.index.Record;
+import com.hp.hpl.jena.util.iterator.ClosableIterator;
+import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 public abstract class Operation {
 	public final boolean relate(Geometry a, Geometry b) {
@@ -304,7 +305,7 @@ public abstract class Operation {
 		public static final Operation PO = new MatrixTester("TTTTTTTTT");
 		public static final Operation TPPI = new MatrixTester("TTTFTTFFT");
 		public static final Operation TPP = new MatrixTester("TFFTTFTTT");
-		public static final Operation NTPP = new MatrixTester("TFFTFFTTT");
+		public static final Operation NTPP = new MatrixTester("TFFTFFTTT");//"T*F**F***" //this works, but not really correct?
 		public static final Operation NTPPI = new MatrixTester("TTTFFTFFT");
 	}
 
