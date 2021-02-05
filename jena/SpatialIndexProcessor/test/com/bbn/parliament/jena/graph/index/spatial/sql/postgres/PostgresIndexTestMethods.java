@@ -14,7 +14,7 @@ import com.bbn.parliament.jena.graph.index.spatial.sql.PersistentStore;
 import com.bbn.parliament.jena.graph.index.spatial.sql.PersistentStoreException;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public class PostgresIndexTestMethods extends SpatialIndexTestMethods {
 	@Override

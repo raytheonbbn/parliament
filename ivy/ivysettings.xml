@@ -9,7 +9,8 @@
 	<property name="berkeleydb-je.version" value="18.3.12"/>
 	<property name="commons-codec.version" value="1.9"/>
 	<property name="commons-dbcp.version" value="1.4"/>
-	<property name="geotools.version" value="2.7.2"/>
+	<property name="geotools.version" value="24.2"/>
+	<property name="jts.version" value="1.18.0"/>
 	<property name="httpclient-cache.version" value="4.5.2"/>
 	<property name="httpclient.version" value="4.5.2"/>
 	<property name="httpcore.version" value="4.4.4"/>

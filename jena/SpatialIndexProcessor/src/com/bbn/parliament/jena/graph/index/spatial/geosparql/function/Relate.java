@@ -7,7 +7,7 @@ import com.hp.hpl.jena.query.QueryExecException;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.function.FunctionEnv;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /** @author rbattle */
 public class Relate extends DoubleGeometrySpatialFunction {

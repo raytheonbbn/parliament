@@ -15,9 +15,9 @@ import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.graph.index.spatial.GeometryConverter;
 import com.bbn.parliament.jena.graph.index.spatial.Operation;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Polygon;
 
 /** @author gjoiner */
 @RunWith(JUnitPlatform.class)

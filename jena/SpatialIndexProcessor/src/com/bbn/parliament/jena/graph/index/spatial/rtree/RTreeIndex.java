@@ -23,10 +23,10 @@ import com.bbn.parliament.jena.util.FileUtil;
 import com.bbn.parliament.jena.util.NodeUtil;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.util.iterator.ClosableIterator;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.IntersectionMatrix;
-import com.vividsolutions.jts.io.ParseException;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.IntersectionMatrix;
+import org.locationtech.jts.io.ParseException;
 
 public class RTreeIndex extends SpatialIndex {
 	private static final Logger LOG = LoggerFactory.getLogger(RTreeIndex.class);

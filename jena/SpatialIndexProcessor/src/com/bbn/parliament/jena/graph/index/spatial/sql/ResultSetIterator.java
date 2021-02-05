@@ -19,7 +19,7 @@ import com.bbn.parliament.jena.graph.index.spatial.GeometryRecord;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialIndexException;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.util.iterator.ClosableIterator;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /** @author Robert Battle */
 public class ResultSetIterator implements ClosableIterator<Record<Geometry>> {

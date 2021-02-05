@@ -4,7 +4,7 @@ import com.bbn.parliament.jena.graph.index.IndexFactory;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialIndex;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialIndexFactory;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialIndexTestMethods;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public class RTreeIndexTestMethods extends SpatialIndexTestMethods {
 	@Override

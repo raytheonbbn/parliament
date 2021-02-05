@@ -31,11 +31,11 @@ import com.hp.hpl.jena.sparql.engine.iterator.QueryIterCommonParent;
 import com.hp.hpl.jena.sparql.engine.iterator.QueryIterRepeatApply;
 import com.hp.hpl.jena.sparql.util.IterLib;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 
 public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geometry> {
 	private static final Logger LOG = LoggerFactory.getLogger(SpatialPropertyFunction.class);

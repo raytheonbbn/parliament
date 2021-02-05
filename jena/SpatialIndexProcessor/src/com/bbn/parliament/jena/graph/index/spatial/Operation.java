@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 import com.bbn.parliament.jena.graph.index.Record;
 import com.hp.hpl.jena.util.iterator.ClosableIterator;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.IntersectionMatrix;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.IntersectionMatrix;
+import org.locationtech.jts.geom.Point;
 
 public abstract class Operation {
 	public final boolean relate(Geometry a, Geometry b) {

@@ -27,7 +27,7 @@ import com.bbn.parliament.jena.graph.index.spatial.sql.PersistentStoreException;
 import com.bbn.parliament.jena.graph.index.spatial.sql.ResultSetIterator;
 import com.bbn.parliament.jena.graph.index.spatial.sql.SQLGeometryIndex;
 import com.hp.hpl.jena.graph.Node;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /** @author Robert Battle */
 public class PostgresIndex extends SQLGeometryIndex {

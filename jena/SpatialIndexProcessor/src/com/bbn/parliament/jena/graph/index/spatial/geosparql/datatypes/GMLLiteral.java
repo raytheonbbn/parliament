@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.GML;
 import com.hp.hpl.jena.datatypes.DatatypeFormatException;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /** @author rbattle */
 public class GMLLiteral extends GeoSPARQLLiteral {

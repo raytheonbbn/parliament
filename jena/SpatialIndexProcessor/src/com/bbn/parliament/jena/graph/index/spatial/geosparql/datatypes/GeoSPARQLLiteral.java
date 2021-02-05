@@ -14,7 +14,7 @@ import com.bbn.parliament.jena.graph.index.spatial.geosparql.TransformCache;
 import com.bbn.parliament.jena.graph.index.spatial.standard.StdConstants;
 import com.hp.hpl.jena.datatypes.BaseDatatype;
 import com.hp.hpl.jena.datatypes.DatatypeFormatException;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * Base literal type. The lexical form is parsed. All geometries are normalized to WGS84
