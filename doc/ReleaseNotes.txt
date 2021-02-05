@@ -17,7 +17,9 @@ Version 2.7.14 (?):
 
 * Updated to Visual Studio 2019 (14.2)
 
-* Update to Apache Commons Daemon 1.2.3
+* Updated to Apache Commons Daemon 1.2.3
+
+* Updated to Jetty 9.4.36
 
 * Numerous updates to bring in line with Java 15
 
