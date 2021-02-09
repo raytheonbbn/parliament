@@ -109,7 +109,7 @@ public class GeoSPARQLFunctionFactory implements IterableFunctionFactory {
 		try {
 			return imp.getDeclaredConstructor().newInstance();
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-			| InvocationTargetException | NoSuchMethodException | SecurityException ex) {
+				| InvocationTargetException | NoSuchMethodException | SecurityException ex) {
 			throw new QueryExecException(String.format(
 				"Could not instantiate function for %1$s", uri), ex);
 		}

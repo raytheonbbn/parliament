@@ -1,9 +1,9 @@
 package com.bbn.parliament.jena.graph.index.spatial;
 
+import org.locationtech.jts.geom.Geometry;
 import org.openjena.riot.system.PrefixMap;
 
 import com.bbn.parliament.jena.query.index.operand.OperandFactory;
-import com.vividsolutions.jts.geom.Geometry;
 
 public interface Profile {
 	public GeometryRecordFactory getRecordFactory();

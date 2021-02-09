@@ -3,6 +3,8 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.locationtech.jts.geom.Point;
+
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.WKTLiteral;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Geo;
 import com.hp.hpl.jena.graph.Node;
@@ -10,7 +12,6 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
-import com.vividsolutions.jts.geom.Point;
 
 public class DataGenerator {
 	private static final WKTLiteral WKT = new WKTLiteral();

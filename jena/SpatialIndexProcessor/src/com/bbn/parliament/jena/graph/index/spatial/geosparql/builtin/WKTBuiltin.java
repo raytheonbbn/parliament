@@ -1,5 +1,8 @@
 package com.bbn.parliament.jena.graph.index.spatial.geosparql.builtin;
 
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,9 +13,6 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.reasoner.rulesys.RuleContext;
 import com.hp.hpl.jena.reasoner.rulesys.builtins.BaseBuiltin;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
 
 /** @author rbattle */
 public class WKTBuiltin extends BaseBuiltin {
