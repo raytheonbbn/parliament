@@ -6,9 +6,9 @@
 
 package com.bbn.parliament.jena.graph.index.spatial;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.IntersectionMatrix;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.IntersectionMatrix;
+import org.locationtech.jts.geom.Point;
 
 /** @author Robert Battle */
 public interface ExtentTester {

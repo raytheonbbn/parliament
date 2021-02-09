@@ -2,10 +2,11 @@ package com.bbn.parliament.jena.graph.index.spatial;
 
 import java.util.Iterator;
 
+import org.locationtech.jts.geom.Geometry;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.hp.hpl.jena.util.iterator.ClosableIterator;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * An iterator that, given an iterator of items, will check each item and return

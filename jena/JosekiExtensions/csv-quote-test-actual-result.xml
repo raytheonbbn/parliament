@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<sparql xmlns="http://www.w3.org/2005/sparql-results#">
+  <head>
+    <variable name="s"/>
+    <variable name="p"/>
+    <variable name="o"/>
+  </head>
+  <results>
+    <result>
+      <binding name="s">
+        <bnode>b0</bnode>
+      </binding>
+      <binding name="p">
+        <uri>http://example.org/#comment</uri>
+      </binding>
+      <binding name="o">
+        <literal></literal>
+      </binding>
+    </result>
+    <result>
+      <binding name="s">
+        <bnode>b0</bnode>
+      </binding>
+      <binding name="p">
+        <uri>http://example.org/#comment</uri>
+      </binding>
+      <binding name="o">
+        <literal>	A comment that starts with a tab.</literal>
+      </binding>
+    </result>
+    <result>
+      <binding name="s">
+        <bnode>b0</bnode>
+      </binding>
+      <binding name="p">
+        <uri>http://example.org/#comment</uri>
+      </binding>
+      <binding name="o">
+        <literal>&#x0A;President Trump on Thursday backed down from his controversial push&#x0A;to add a citizenship question to the 2020 Census, effectively conceding&#x0A;defeat in a battle he had revived just last week and promised to continue&#x0A;despite a recent string of legal defeats.&#x0A;&#x0A;Trump announced that he instead plans to order every federal agency to give&#x0A;records to the Commerce Department that detail the numbers of citizens and&#x0A;noncitizens in the United States.&#x0A;&#x0A;"I'm proud to be a citizen, you're proud to be a citizen," Trump said at&#x0A;the late afternoon event in the White House Rose Garden. "The only people&#x0A;that are not proud to be citizens are the ones who are fighting us all the&#x0A;way about the word 'citizen.'"&#x0A;&#x0A;The announcement marked the end of a 19-month push by the administration to&#x0A;ask about citizenship status on the decennial survey, which opponents&#x0A;decried as an effort to systematically undercount Latinos and scare&#x0A;immigrant communities from participating in a survey that helps determine&#x0A;congressional districts and the disbursement of some federal funds.&#x0A;</literal>
+      </binding>
+    </result>
+    <result>
+      <binding name="s">
+        <bnode>b0</bnode>
+      </binding>
+      <binding name="p">
+        <uri>http://example.org/#comment</uri>
+      </binding>
+      <binding name="o">
+        <literal> A comment that starts with a space.</literal>
+      </binding>
+    </result>
+    <result>
+      <binding name="s">
+        <bnode>b0</bnode>
+      </binding>
+      <binding name="p">
+        <uri>http://example.org/#comment</uri>
+      </binding>
+      <binding name="o">
+        <literal>A comment&#x0A;with a newline.</literal>
+      </binding>
+    </result>
+    <result>
+      <binding name="s">
+        <bnode>b0</bnode>
+      </binding>
+      <binding name="p">
+        <uri>http://example.org/#comment</uri>
+      </binding>
+      <binding name="o">
+        <literal>A comment&#x0D;with a carriage return.</literal>
+      </binding>
+    </result>
+    <result>
+      <binding name="s">
+        <bnode>b0</bnode>
+      </binding>
+      <binding name="p">
+        <uri>http://example.org/#comment</uri>
+      </binding>
+      <binding name="o">
+        <literal>A comment that ends with a space </literal>
+      </binding>
+    </result>
+    <result>
+      <binding name="s">
+        <bnode>b0</bnode>
+      </binding>
+      <binding name="p">
+        <uri>http://example.org/#comment</uri>
+      </binding>
+      <binding name="o">
+        <literal>A comment that ends with a tab	</literal>
+      </binding>
+    </result>
+    <result>
+      <binding name="s">
+        <bnode>b0</bnode>
+      </binding>
+      <binding name="p">
+        <uri>http://example.org/#comment</uri>
+      </binding>
+      <binding name="o">
+        <literal>A comment with "quotes".</literal>
+      </binding>
+    </result>
+    <result>
+      <binding name="s">
+        <bnode>b0</bnode>
+      </binding>
+      <binding name="p">
+        <uri>http://example.org/#comment</uri>
+      </binding>
+      <binding name="o">
+        <literal>A comment, with a comma.</literal>
+      </binding>
+    </result>
+    <result>
+      <binding name="s">
+        <bnode>b0</bnode>
+      </binding>
+      <binding name="p">
+        <uri>http://example.org/#comment</uri>
+      </binding>
+      <binding name="o">
+        <literal>A simple comment.</literal>
+      </binding>
+    </result>
+  </results>
+</sparql>

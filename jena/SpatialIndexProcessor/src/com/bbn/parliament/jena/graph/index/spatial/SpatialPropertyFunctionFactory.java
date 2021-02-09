@@ -3,10 +3,11 @@ package com.bbn.parliament.jena.graph.index.spatial;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import org.locationtech.jts.geom.Geometry;
+
 import com.bbn.parliament.jena.query.index.operand.OperandFactory;
 import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunction;
 import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunctionFactory;
-import com.vividsolutions.jts.geom.Geometry;
 
 /** @author rbattle */
 public class SpatialPropertyFunctionFactory implements IndexPropertyFunctionFactory<Geometry>, IterablePropertyFunctionFactory {
