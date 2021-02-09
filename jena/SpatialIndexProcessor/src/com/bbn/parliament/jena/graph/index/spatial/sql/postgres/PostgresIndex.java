@@ -15,6 +15,8 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.locationtech.jts.geom.Geometry;
+
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.spatial.Constants;
@@ -27,7 +29,6 @@ import com.bbn.parliament.jena.graph.index.spatial.sql.PersistentStoreException;
 import com.bbn.parliament.jena.graph.index.spatial.sql.ResultSetIterator;
 import com.bbn.parliament.jena.graph.index.spatial.sql.SQLGeometryIndex;
 import com.hp.hpl.jena.graph.Node;
-import com.vividsolutions.jts.geom.Geometry;
 
 /** @author Robert Battle */
 public class PostgresIndex extends SQLGeometryIndex {

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.locationtech.jts.geom.Geometry;
+
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.GML;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Geo;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.WKT;
@@ -15,7 +17,6 @@ import com.hp.hpl.jena.sparql.core.BasicPattern;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import com.hp.hpl.jena.vocabulary.RDF;
-import com.vividsolutions.jts.geom.Geometry;
 
 public class GeoSPARQLOperandFactory extends OperandFactoryBase<Geometry> {
 	/** {@inheritDoc} */

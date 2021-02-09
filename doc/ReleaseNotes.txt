@@ -6,7 +6,7 @@ Version 2.7.14 (?):
   command line, the logging configuration is unchanged, so you will still be able to
   see the log contents in real time in that case.)
 
-* Updated for Apple's clang 11 compiler
+* Updated for Apple's clang 12 compiler
 
 * Fixed an issue in the way Ivy dependencies on SLF4J were coded.
 
@@ -17,7 +17,9 @@ Version 2.7.14 (?):
 
 * Updated to Visual Studio 2019 (14.2)
 
-* Update to Apache Commons Daemon 1.2.3
+* Updated to Apache Commons Daemon 1.2.3
+
+* Updated to Jetty 9.4.36
 
 * Numerous updates to bring in line with Java 15
 

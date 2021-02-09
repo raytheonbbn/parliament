@@ -2,6 +2,7 @@ package com.bbn.parliament.jena.graph.index.spatial.standard;
 
 import java.util.Properties;
 
+import org.locationtech.jts.geom.Geometry;
 import org.openjena.riot.system.PrefixMap;
 
 import com.bbn.parliament.jena.graph.index.spatial.GeometryRecordFactory;
@@ -12,7 +13,6 @@ import com.bbn.parliament.jena.graph.index.spatial.Profile;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialPropertyFunctionFactory;
 import com.bbn.parliament.jena.query.index.operand.OperandFactory;
 import com.hp.hpl.jena.graph.Graph;
-import com.vividsolutions.jts.geom.Geometry;
 
 public class StandardProfile implements Profile {
 	private GeometryRecordFactory recordFactory;

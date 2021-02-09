@@ -3,6 +3,8 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql;
 import java.util.Arrays;
 import java.util.List;
 
+import org.locationtech.jts.geom.Geometry;
+
 import com.bbn.parliament.jena.graph.index.spatial.GeometryRecord;
 import com.bbn.parliament.jena.graph.index.spatial.GeometryRecordFactory;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.GMLLiteral;
@@ -13,7 +15,6 @@ import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.datatypes.xsd.impl.XSDBaseStringType;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
-import com.vividsolutions.jts.geom.Geometry;
 
 /** @author rbattle */
 public class GeoSPARQLRecordFactory implements GeometryRecordFactory {
