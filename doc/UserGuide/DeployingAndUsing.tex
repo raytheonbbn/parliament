@@ -205,6 +205,90 @@ Note that the query strings passed to the remote model in Figure~\ref{figure-usi
 
 
 
+\subsection{Securing a \ac{pmnt} Server}
+\label{section-securing-parliament}
+
+This section discusses how to use an Apache web server (httpd) or NGINX on a Linux machine (or virtual machine) as a secure proxy for a Parliament server running on the same machine.  This procedure will implement TLS so that the communication channel is encrypted and the server is authenticated to clients.  Client authentication is not covered, although we may add that in a later version.
+
+Before we begin, update the operating system.  (Note that the commands below use \texttt{yum}.  Please substitute \texttt{apt} for \texttt{yum} if your Linux distribution uses that package manager instead.)
+
+\begin{Verbatim}
+	sudo yum update
+\end{Verbatim}
+
+Next install required software.
+
+\begin{Verbatim}
+	sudo yum install «java-development-kit»
+\end{Verbatim}
+
+where \texttt{«java-development-kit»} is \texttt{java-8-amazon-corretto-headless} on AWS and \texttt{openjdk-8-jdk-headless} in other environments.  Next install your desired Web server to serve as a proxy.  To use Apache:
+
+\begin{Verbatim}
+	sudo yum install httpd mod_ssl
+\end{Verbatim}
+
+Or to use NGINX:
+
+\begin{Verbatim}
+	sudo yum install nginx-light
+\end{Verbatim}
+
+On your virtual machine, configure the following:
+
+\begin{itemize}
+	\item Deploy Parliament in the standard way.  (See Section~\ref{section-std-server-init-deploy} or~\ref{section-std-server-upgrade} above for details.)
+
+	\item It is crucial that in the startup scripts \texttt{StartParliamentDaemon.sh} and \texttt{StartParliament.sh}, located in the root directory of your Parliament installation, the JETTY\_HOST setting near the top \emph{must} be set to localhost (or 127.0.0.1).  This prevents Parliament itself from being directly exposed to network traffic from outside the machine.
+
+	\item In those same two files, ensure JETTY\_PORT is set to 8089.  In reality, most any port may be used here.  8089 is Parliament's default, and a useful choice.  The instructions below assume this port.
+
+	\item Ensure that any firewalls (either on the machine itself or elsewhere) are set to allow HTTP (port 80) and HTTPS (port 443) traffic to reach the machine from any network locations that need access to the Parliament server.
+\end{itemize}
+
+Acquire a web server certificate for the machine from your favorite certificate authority.  This typically includes two or three files:
+
+\begin{itemize}
+	\item The certificate itself, referred to as \texttt{certificate.crt} below.
+
+	\item The private key, called \texttt{private.key} below.
+
+	\item The root and intermediate certificate chain, called \texttt{ca-bundle.crt} below.  Note that sometimes the certificates in this file are bundled into \texttt{certificate.crt}, in which case this file will be missing.  Apache prefers the three separate files, while NGINX prefers that the certificate and certificate chain be bundled together.
+\end{itemize}
+
+Create a directory for these files and store them there.  The actual location is not important, but we will refer to it as \texttt{/etc/server-certs} below.  The three files, and especially the private key, should be stored only at this location on the server to prevent unauthorized disclosure.  A backup in a separate, secure location is also a good idea.  To finish securing the files, run these commands:
+
+\begin{Verbatim}
+	sudo chmod u=rw,go= /etc/server-certs/*
+	sudo chown root.root /etc/server-certs/*
+\end{Verbatim}
+
+If you are using the Apache Web server, copy the following file from your \ac{pmnt} installation's \texttt{conf} directory to \texttt{/etc/httpd/conf.d}:
+
+\begin{Verbatim}
+	parliament-redirect-httpd.conf
+\end{Verbatim}
+
+In that file, substitute your machine's host name (the host name that you used when you requested the certificate) in the indicated places, and be sure that the file contains the correct paths to the three certificate files and the correct port for Parliament.  Then restart the web server to activate the new configuration with this command:
+
+\begin{Verbatim}
+	sudo systemctl restart httpd
+\end{Verbatim}
+
+If you are using NGINX, the procedure is similar.  Copy the following file from your \ac{pmnt} installation's \texttt{conf} directory to \texttt{/etc/nginx/sites-available}:
+
+\begin{Verbatim}
+	parliament-redirect-nginx.conf
+\end{Verbatim}
+
+In that file, substitute your machine's host name (the host name that you used when you requested the certificate) in the indicated places, and be sure that the file contains the correct paths to the two certificate files and the correct port for Parliament.  Then restart the web server to activate the new configuration with this command:
+
+\begin{Verbatim}
+	sudo systemctl restart nginx
+\end{Verbatim}
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Configuring \ac{pmnt}}
 \label{section-configuring-pmnt}
