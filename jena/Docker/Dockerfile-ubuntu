@@ -1,0 +1,37 @@
+# Docker Parliament triple store
+#
+
+FROM ubuntu
+	
+#all the setup under root needed
+USER root
+ARG https_proxy
+ARG http_proxy=$https_proxy
+
+RUN apt-get -qq update && apt-get install --fix-missing -y --allow-downgrades \
+	unzip openjdk-8-jdk curl
+
+RUN groupadd -g 1999 tenant && \
+	adduser --system --uid 1999 --gid 1999 tenant
+
+WORKDIR /tmp
+COPY *.zip Parliament.zip
+ARG parl_url
+RUN if [ ! -z ${parl_url+x} ]; then rm Parliament.zip; curl -Lk -o Parliament.zip $parl_url; fi  
+RUN unzip *.zip
+WORKDIR /usr/local/Parliament
+RUN dir=`ls -d /tmp/Parliament*/`;cp -r $dir/* .
+RUN sed -i 's/localhost/0.0.0.0/' StartParliament.sh \
+ && sed -i 's/localhost/0.0.0.0/' conf/jetty.xml
+RUN rm -rf /tmp/Parliament*
+RUN chown -R tenant:tenant /usr/local/Parliament
+#Now only the rest is run as an app user
+USER tenant
+
+# Set environment
+#
+RUN export JAVA_HOME=$(realpath `which java`|sed 's/\/jre\/bin\/java//')
+WORKDIR /usr/local/Parliament
+
+EXPOSE 8089
+ENTRYPOINT ["./StartParliament.sh"]

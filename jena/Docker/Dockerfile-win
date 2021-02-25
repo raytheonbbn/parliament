@@ -1,0 +1,42 @@
+# Docker Parliament triple store for windows
+#
+
+FROM   mcr.microsoft.com/windows/servercore:ltsc2019
+
+WORKDIR "C:\\"
+
+#Install Parliament
+COPY *.zip Parliament.zip
+COPY webssl.ps1 .
+ARG parl_url
+RUN powershell -command \
+	if ( Test-Path 'env:parl_url' ) \
+		{ rm *.zip ; \
+			if ( Test-Path 'env:https_proxy' ) \
+			{ .\webssl.ps1 ; curl -Uri %parl_url% -OutFile Parliament.zip -proxy %https_proxy% } \
+			else { curl -Uri %parl_url% -OutFile Parliament.zip } \
+	}
+RUN powershell -command Expand-Archive -Force Parliament.zip -DestinationPath .
+RUN powershell -command "$file=Get-ChildItem Parliament* -directory ; ren $file.Basename Parliament"
+RUN powershell -command rm Parliament.zip
+
+# Install Java 
+# Should check and update below variables for latest before building: https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/latest
+ARG JAVA_URL=https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u282-b08/OpenJDK8U-jdk_x64_windows_8u282b08.zip
+RUN setx path "C:\openjdk-8u282-b08\bin;%path%"
+ENV JAVA_HOME "C:\openjdk-8u282-b08"
+
+# Proxy needed incase behind corporate firewalls
+ARG https_proxy
+RUN powershell -command if ( Test-Path 'env:https_proxy' ) { .\webssl.ps1 ; curl -Uri %JAVA_URL% -OutFile java.zip -proxy %https_proxy% } else { curl -Uri %JAVA_URL% -OutFile java.zip }
+RUN powershell -command Expand-Archive -Force java.zip -DestinationPath .
+RUN powershell -command rm java.zip, webssl.ps1
+
+# Update Parliament configurations
+WORKDIR Parliament
+RUN powershell -command "$Content = Get-Content StartParliament.bat ; $Content.replace('localhost','0.0.0.0') | Set-Content StartParliament.bat"
+RUN RedistributablePackages\vc_redist.x64.exe /install /quiet /norestart
+
+EXPOSE 8089
+
+ENTRYPOINT StartParliament.bat

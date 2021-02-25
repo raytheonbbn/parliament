@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<project name="Docker" default="build">
+	<description>Builds the Spatial Index Processor</description>
+
+	<import file="${basedir}/../../build-common.xml" />
+
+	<property name="binDir" value="${targetDir}/bin/${ant.project.name}" />
+	<property name="testBinDir" value="${targetDir}/test-bin/${ant.project.name}" />
+	<property name="jarFile" value="${artifactsDir}/${ant.project.name}.jar" />
+	<!-- Find the boost.build toolset to use for the current platform -->
+
+	<target name="clean">
+		<delete dir="${binDir}" includeEmptyDirs="true" />
+	</target>
+
+	<target name="createContext">
+		<copy todir="${binDir}">
+			<fileset dir="${basedir}" includes="Dockerfile-*,webssl.ps1" />
+			<fileset dir="${targetDir}/distro" />
+		</copy>
+	</target>
+
+	<target name="build" depends="clean, createContext">
+		<if>
+			<os family="windows" />
+			<then>
+				<antcall target="build-win" />
+			</then>
+			<else>
+				<antcall target="build-rhel8" />
+			</else>
+		</if>
+
+	</target>
+
+	<target name="build-win">
+		<echo message="Building for Windows" />
+		<exec executable="docker" dir="${binDir}">
+			<arg value="build" />
+			<arg value="-t" />
+			<arg value="parliament-win" />
+			<arg value="-f" />
+			<arg value="Dockerfile-win" />
+			<arg value="--build-arg" />
+			<arg value="https_proxy" />
+			<arg value="--build-arg" />
+			<arg value="parl_url" />
+			<arg value="." />
+		</exec>
+	</target>
+
+	<target name="build-rhel8">
+		<echo message="Building for RHEL8" />
+		<exec executable="docker" dir="${binDir}">
+			<arg value="build" />
+			<arg value="-t" />
+			<arg value="parliament-rhel8" />
+			<arg value="-f" />
+			<arg value="Dockerfile-rhel8" />
+			<arg value="--build-arg" />
+			<arg value="https_proxy" />
+			<arg value="--build-arg" />
+			<arg value="parl_url" />
+			<arg value="." />
+		</exec>
+	</target>
+	
+
+	<target name="build-ubuntu">
+		<echo message="Building for Ubuntu" />
+		<exec executable="docker" dir="${binDir}">
+			<arg value="build" />
+			<arg value="-t" />
+			<arg value="parliament-ubuntu" />
+			<arg value="-f" />
+			<arg value="Dockerfile-ubuntu" />
+			<arg value="--build-arg" />
+			<arg value="https_proxy" />
+			<arg value="--build-arg" />
+			<arg value="parl_url" />
+			<arg value="." />
+		</exec>
+	</target>
+	
+</project>
