@@ -147,6 +147,7 @@
 				<include name="jetty.xml"/>
 				<include name="webdefault.xml"/>
 				<include name="log4j.*.properties"/>
+				<include name="parliament-redirect-*.conf"/>
 			</fileset>
 		</copy>
 

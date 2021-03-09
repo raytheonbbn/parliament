@@ -16,6 +16,7 @@
 
 \usepackage{parskip}				% Begin paragraphs with empty line, not indent
 \usepackage{xcolor}
+\usepackage{fancyvrb}
 \usepackage{titling}
 \usepackage{fnpct}
 \usepackage[inline]{enumitem}
@@ -69,9 +70,9 @@
 %\predate{\begin{center}\large}
 %\postdate{\par\end{center}}
 
-\settofirstfound{\mainfont}{Georgia,TeX Gyre Bonum,Constantia}
+\settofirstfound{\mainfont}{Georgia,TeX Gyre Bonum,Hoefler Text}
 \settofirstfound{\sansfont}{Verdana,TeX Gyre Heros,Gill Sans}
-\settofirstfound{\monofont}{Consolas,Menlo,Andale Mono}
+\settofirstfound{\monofont}{Menlo,Consolas,Andale Mono}
 \settofirstfound{\mathfont}{Cambria Math,TeX Gyre Bonum Math,STIX Math}
 \defaultfontfeatures{Mapping=tex-text}
 \setmainfont{\mainfont}
@@ -123,6 +124,8 @@
 \hyphenation{serv-let serv-lets}
 \hyphenation{trac-ta-ble}
 \hyphenation{war-fight-er war-fight-ers}
+
+\fvset{tabsize=3}
 
 \begin{document}
 \acuse{pmnt} % Only long & short forms, never "first appearance"
