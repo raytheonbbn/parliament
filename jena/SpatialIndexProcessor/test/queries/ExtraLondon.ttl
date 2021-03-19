@@ -2,17 +2,11 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-
-@prefix snap: <http://www.ifomis.org/bfo/1.0/snap#> .
-@prefix span: <http://www.ifomis.org/bfo/1.0/span#> .
-@prefix time: <http://www.w3.org/2006/time#> .
 @prefix georss: <http://www.georss.org/georss/> .
 @prefix gml: <http://www.opengis.net/gml/> .
 
 @prefix example: <http://parliament.semwebcentral.org/spatial/examples#> .
 @prefix : <http://parliament.semwebcentral.org/spatial/examples/cities#> .
-
-
 
 :buckinghamPalace
 	rdfs:label "Buckingham Palace" ;
@@ -21,14 +15,14 @@
 
 :pointBuckinghamPalace
 	a gml:Point ;
-	gml:pos "51.50088 -0.14248"^^xsd:string .
+	gml:pos "51.50088 -0.14248" .
 
 :polyBuckingham
 	rdfs:label "Buckingham Palace Poly" ;
 	a gml:Polygon ;
 	gml:exterior [
-		 a gml:LinearRing ;
-		gml:posList "51.50186 -0.14594 51.49943 -0.14305 51.50124 -0.13686 51.50369 -0.13969"^^xsd:string
+		a gml:LinearRing ;
+		gml:posList "51.50186 -0.14594 51.49943 -0.14305 51.50124 -0.13686 51.50369 -0.13969"
 	] .
 
 :victoriaMemorial
@@ -38,4 +32,4 @@
 
 :pointVictoriaMemorial
 	a gml:Point ;
-	gml:pos "51.501865 -0.140580"^^xsd:string .
+	gml:pos "51.501865 -0.140580" .

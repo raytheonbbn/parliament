@@ -2,46 +2,38 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-
-@prefix snap: <http://www.ifomis.org/bfo/1.0/snap#> .
-@prefix span: <http://www.ifomis.org/bfo/1.0/span#> .
-@prefix time: <http://www.w3.org/2006/time#> .
+@prefix gml:  <http://www.opengis.net/gml/> .
 @prefix georss: <http://www.georss.org/georss/> .
-@prefix gml: <http://www.opengis.net/gml/> .
 
 @prefix example: <http://parliament.semwebcentral.org/spatial/examples#> .
 @prefix : <http://parliament.semwebcentral.org/spatial/examples/example2#> .
 
 <http://parliament.semwebcentral.org/spatial/examples/example2>
-  a owl:Ontology ;
-  owl:imports <http://parliament.semwebcentral.org/spatial/examples> ;
-  owl:versionInfo "$Rev$" ;
-  rdfs:label "Example2 Data Ontology" .
+	a owl:Ontology ;
+	owl:imports <http://parliament.semwebcentral.org/spatial/examples> ;
+	owl:versionInfo "$Rev$" ;
+	rdfs:label "Example2 Data Ontology" .
 
-#building 3
 :building3 a example:Building ;
-  georss:where :point3 .
+	georss:where :point3 .
 
 :point3 a gml:Point ;
 	gml:pos "34.845206 35.915989" .
 
-#building 4
 :building4 a example:Building ;
-  georss:where :point4 .
+	georss:where :point4 .
 
 :point4 a gml:Point ;
 	gml:pos "34.844878 35.915558" .
 
-#building 5
 :building5 a example:Building ;
-  georss:where :point5 .
+	georss:where :point5 .
 
 :point5 a gml:Point ;
 	gml:pos "34.845067 35.914806" .
 
-#building 6
 :building6 a example:Building ;
-  georss:where :point6 .
+	georss:where :point6 .
 
 :point6 a gml:Point ;
-   gml:pos "90 -60" .
+	gml:pos "90 -60" .
