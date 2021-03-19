@@ -362,15 +362,14 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 					}
 				}
 				if (!found) {
-					System.err.println("not found: ");
-					System.err.println(obs1.getURI());
-					System.err.println(obs2.getURI());
+					LOG.error("not found:");
+					LOG.error("   {}", obs1.getURI());
+					LOG.error("   {}", obs2.getURI());
 				}
 				assertTrue(found);
-				System.out.println("found: ");
-				System.out.println(obs1.getURI());
-				System.out.println(obs2.getURI());
-
+				LOG.debug("found:");
+				LOG.debug("   {}", obs1.getURI());
+				LOG.debug("   {}", obs2.getURI());
 			}
 			assertEquals(0, pairs.size());
 		}

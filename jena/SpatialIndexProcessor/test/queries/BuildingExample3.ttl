@@ -2,21 +2,17 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-
-@prefix snap: <http://www.ifomis.org/bfo/1.0/snap#> .
-@prefix span: <http://www.ifomis.org/bfo/1.0/span#> .
-@prefix time: <http://www.w3.org/2006/time#> .
+@prefix gml:  <http://www.opengis.net/gml/> .
 @prefix georss: <http://www.georss.org/georss/> .
-@prefix gml: <http://www.opengis.net/gml/> .
 
 @prefix example: <http://parliament.semwebcentral.org/spatial/examples#> .
 @prefix : <http://parliament.semwebcentral.org/spatial/examples/example3#> .
 
 <http://parliament.semwebcentral.org/spatial/examples/example3>
-  a owl:Ontology ;
-  owl:imports <http://parliament.semwebcentral.org/spatial/examples> ;
-  owl:versionInfo "$Rev$" ;
-  rdfs:label "Example3 Data Ontology" .
+	a owl:Ontology ;
+	owl:imports <http://parliament.semwebcentral.org/spatial/examples> ;
+	owl:versionInfo "$Rev$" ;
+	rdfs:label "Example3 Data Ontology" .
 
 
 :region1 a gml:Polygon .
@@ -25,7 +21,7 @@
 :region1Exterior gml:posList "-0.5 -0.5 -0.5 5.5 0.5 5.5 0.5 -0.5 -0.5 -0.5" .
 
 :campus1 a example:Campus ;
-  georss:where :region1 .
+	georss:where :region1 .
 
 :region2 a gml:Polygon .
 :region2 gml:exterior :region2Exterior .
@@ -33,7 +29,7 @@
 :region2Exterior gml:posList "34.844878 35.914806 34.844878 35.915989 34.845206 35.915989 34.845206 35.914806 34.844878 35.914806" .
 
 :campus2 a example:Campus ;
-   georss:where :region2 .
+	georss:where :region2 .
 
 
 :interiorRegionTest a gml:Polygon .
@@ -49,24 +45,23 @@
 :interiorRegionTestInt2 gml:posList "-16 -16 -16 -18 -18 -18 -18 -16 -16 -16" .
 
 :campus3 a example:Campus ;
-  georss:where :interiorRegionTest .
+	georss:where :interiorRegionTest .
 
 :campus3building1 a example:Building ;
-  georss:where [
-    a gml:Point ;
-    gml:pos "-11 -11"
-  ] .
+	georss:where [
+		a gml:Point ;
+		gml:pos "-11 -11"
+	] .
 
 :campus3building2 a example:Building ;
-  georss:where [
-    a gml:Point ;
-    gml:pos "-12 -18"
-  ] .
+	georss:where [
+		a gml:Point ;
+		gml:pos "-12 -18"
+	] .
 
-## this buildign is in a "hole" so it is not part of the campus
-#
+# this building is in a "hole" so it is not part of the campus
 :campus3building3 a example:Building ;
-  georss:where [
-    a gml:Point ;
-    gml:pos "-13 -13"
-  ] .
+	georss:where [
+		a gml:Point ;
+		gml:pos "-13 -13"
+	] .

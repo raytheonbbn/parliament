@@ -2,10 +2,6 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-
-@prefix snap: <http://www.ifomis.org/bfo/1.0/snap#> .
-@prefix span: <http://www.ifomis.org/bfo/1.0/span#> .
-@prefix time: <http://www.w3.org/2006/time#> .
 @prefix georss: <http://www.georss.org/georss/> .
 @prefix gml: <http://www.opengis.net/gml/> .
 

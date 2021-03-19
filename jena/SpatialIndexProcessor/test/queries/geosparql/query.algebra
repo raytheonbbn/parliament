@@ -1,18 +1,21 @@
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-PREFIX sf:  <http://www.opengis.net/ont/sf#>
+PREFIX sf: <http://www.opengis.net/ont/sf#>
 
 (slice _ 100
-  (graph ?g
-    (assign ((?wkt (<http://www.opengis.net/geosparql/function/intersection> ?boundary ?x_wkt)))
-      (sequence
-        (assign ((?boundary "<http://www.opengis.net/def/crs/EPSG/0/4326> POLYGON((-88.09879913729105 -180.0, -88.09879913729105 180.0, 88.11039138342491 180.0, 88.11039138342491 -180.0, -88.09879913729105 -180.0))"^^<http://www.opengis.net/geosparql#wktLiteral>))
-          (table unit))
-        (indexfunc
-          ??0 @rdf:type http://www.opengis.net/geosparql#Geometry
-          ??0 @http://www.opengis.net/geosparql#asWKT ?boundary
-          ?x @http://www.opengis.net/geosparql#asWKT ?x_wkt
-          ?x http://www.opengis.net/geosparql#sfWithin _:b0
-          (bgp (triple ?x <http://www.opengis.net/geosparql#asWKT> ?x_wkt))
-        )
-      ))))
+	(graph ?g
+		(assign ((?wkt (<http://www.opengis.net/geosparql/function/intersection> ?boundary ?x_wkt)))
+			(sequence
+				(assign ((?boundary "<http://www.opengis.net/def/crs/EPSG/0/4326> POLYGON((-88.09879913729105 -180.0, -88.09879913729105 180.0, 88.11039138342491 180.0, 88.11039138342491 -180.0, -88.09879913729105 -180.0))"^^<http://www.opengis.net/geosparql#wktLiteral>))
+					(table unit))
+				(indexfunc
+					??0 @rdf:type http://www.opengis.net/geosparql#Geometry
+					??0 @http://www.opengis.net/geosparql#asWKT ?boundary
+					?x @http://www.opengis.net/geosparql#asWKT ?x_wkt
+					?x http://www.opengis.net/geosparql#sfWithin _:b0
+					(bgp (triple ?x <http://www.opengis.net/geosparql#asWKT> ?x_wkt))
+				)
+			)
+		)
+	)
+)
