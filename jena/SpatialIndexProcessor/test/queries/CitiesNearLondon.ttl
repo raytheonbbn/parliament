@@ -9,35 +9,43 @@
 
 
 
-cities:paris a example:SpatialPoint ;
-	georss:where cities:pointParis .
+cities:brentwood a example:SpatialPoint ;
+	rdfs:label "Brentwood" ;
+	rdfs:comment "1850 m from polyLondon, 32490 m from pointLondon" ;
+	georss:where cities:pointBrentwood .
 
-cities:pointParis a gml:Point ;
-	gml:pos "48.856667 2.350833" .
-
-
-
-cities:ottawa a example:SpatialPoint ;
-	georss:where cities:pointOttawa .
-
-cities:pointOttawa a gml:Point ;
-	gml:pos "45.420833 -75.69" .
+cities:pointBrentwood a gml:Point ;
+	gml:pos "51.62381032481193 0.3090556075795869" .
 
 
 
-cities:newyork a example:SpatialPoint ;
-	georss:where cities:pointNewYork .
+cities:gravesend a example:SpatialPoint ;
+	rdfs:label "Gravesend" ;
+	rdfs:comment "6500 m from polyLondon, 35590 m from pointLondon" ;
+	georss:where cities:pointGravesend .
 
-cities:pointNewYork a gml:Point ;
-	gml:pos "40.716667 -74" .
+cities:pointGravesend a gml:Point ;
+	gml:pos "51.44476427070406 0.3724773862243502" .
 
 
 
-cities:washdc a example:SpatialPoint ;
-	georss:where cities:pointWashDC .
+cities:leatherhead a example:SpatialPoint ;
+	rdfs:label "Leatherhead" ;
+	rdfs:comment "Just inside polyLondon, 27720 m from pointLondon" ;
+	georss:where cities:pointLeatherhead .
 
-cities:pointWashDC a gml:Point ;
-	gml:pos "38.895111 -77.036667" .
+cities:pointLeatherhead a gml:Point ;
+	gml:pos "51.29838778698787 -0.3304975713539227" .
+
+
+
+cities:stAlbans a example:SpatialPoint ;
+	rdfs:label "St. Albans" ;
+	rdfs:comment "4970 m from polyLondon, 30310 m from pointLondon" ;
+	georss:where cities:pointStAlbans .
+
+cities:pointStAlbans a gml:Point ;
+	gml:pos "51.75413200471383 -0.3381167179357525" .
 
 
 

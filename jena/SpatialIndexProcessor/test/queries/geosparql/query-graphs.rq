@@ -2,15 +2,14 @@ PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
 PREFIX sf:  <http://www.opengis.net/ont/sf#>
 
-SELECT  *
-WHERE
-  { GRAPH ?g
-      { LET (?boundary := "<http://www.opengis.net/def/crs/EPSG/0/4326> POLYGON((-88.09879913729105 -180.0, -88.09879913729105 180.0, 88.11039138342491 180.0, 88.11039138342491 -180.0, -88.09879913729105 -180.0))"^^geo:wktLiteral)
-        ?x geo:asWKT ?x_wkt .
-        ?x geo:sfWithin _:b0 .
-        _:b0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> geo:Geometry .
-        _:b0 geo:asWKT ?boundary
-        LET (?wkt := geof:intersection(?boundary, ?x_wkt))
-      }
-  }
-LIMIT   100
+SELECT * WHERE {
+	GRAPH ?g {
+		LET (?boundary := "<http://www.opengis.net/def/crs/EPSG/0/4326> POLYGON((-88.09879913729105 -180.0, -88.09879913729105 180.0, 88.11039138342491 180.0, 88.11039138342491 -180.0, -88.09879913729105 -180.0))"^^geo:wktLiteral)
+		?x geo:asWKT ?x_wkt .
+		?x geo:sfWithin _:b0 .
+		_:b0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> geo:Geometry .
+		_:b0 geo:asWKT ?boundary
+		LET (?wkt := geof:intersection(?boundary, ?x_wkt))
+	}
+}
+LIMIT 100
