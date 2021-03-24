@@ -15,8 +15,6 @@
 	</configurations>
 
 	<dependencies>
-		<!-- dependency org="commons-daemon" name="commons-daemon" rev="1.2.3"
-			conf="default->default"/ -->
 		<dependency org="org.apache.jena" name="jena-arq" rev="2.9.4"
 			conf="default->default"/>
 		<dependency org="org.slf4j" name="slf4j-api" rev="${slf4j.version}"
@@ -26,18 +24,23 @@
 		<dependency org="org.slf4j" name="jcl-over-slf4j" rev="${slf4j.version}"
 			conf="default->default"/>
 
-		<dependency org="commons-daemon" name="commons-daemon" rev="1.2.3" conf="default->default">
+		<dependency org="commons-daemon" name="commons-daemon" rev="${commons-daemon.version}"
+			conf="default->default">
 			<artifact name="commons-daemon" type="jar"
-				url="https://repo1.maven.org/maven2/commons-daemon/commons-daemon/1.2.3/commons-daemon-1.2.3.jar"/>
+				url="https://repo1.maven.org/maven2/commons-daemon/commons-daemon/${commons-daemon.version}/commons-daemon-${commons-daemon.version}.jar"/>
 			<artifact name="commons-daemon" type="native-src" ext="tar.gz"
-				url="https://repo1.maven.org/maven2/commons-daemon/commons-daemon/1.2.3/commons-daemon-1.2.3-native-src.tar.gz"/>
+				url="https://repo1.maven.org/maven2/commons-daemon/commons-daemon/${commons-daemon.version}/commons-daemon-${commons-daemon.version}-native-src.tar.gz"/>
 		</dependency>
 
 		<!-- dependency org="junit" name="junit" rev="4.12" conf="test->default"/ -->
-		<dependency org="org.junit.jupiter" name="junit-jupiter-api" rev="5.1.0" conf="test->default"/>
-		<dependency org="org.junit.jupiter" name="junit-jupiter-params" rev="5.1.0" conf="test->default"/>
-		<dependency org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.1.0" conf="test->default"/>
-		<dependency org="org.junit.platform" name="junit-platform-runner" rev="1.1.0" conf="test->default"/>
+		<dependency org="org.junit.jupiter" name="junit-jupiter-api" rev="5.1.0"
+			conf="test->default"/>
+		<dependency org="org.junit.jupiter" name="junit-jupiter-params" rev="5.1.0"
+			conf="test->default"/>
+		<dependency org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.1.0"
+			conf="test->default"/>
+		<dependency org="org.junit.platform" name="junit-platform-runner" rev="1.1.0"
+			conf="test->default"/>
 
 		<exclude org="commons-logging"/>
 		<override org="org.apache.httpcomponents" module="httpclient-cache"

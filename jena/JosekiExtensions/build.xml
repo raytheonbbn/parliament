@@ -196,7 +196,6 @@
 				<copy todir="${deployableSvrDir}">
 					<fileset dir="${configDir}/unix">
 						<include name="*.sh"/>
-						<include name="*.service"/>
 					</fileset>
 				</copy>
 				<chmod file="${deployableSvrDir}/*.sh" perm="ugo+rx" verbose="true"/>

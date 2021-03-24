@@ -493,10 +493,9 @@
 			todir="${targetDir}/${deployableSvrDir}/bin"/>
 		<chmod file="${targetDir}/${deployableSvrDir}/bin/jsvc" perm="ugo+rx" verbose="true"/>
 
-		<!-- ant dir="${untarPath}" target="jar" inheritAll="false"/>
-		<move todir="${targetDir}/${deployableSvrDir}/lib">
-			<fileset dir="${untarPath}/dist" includes="commons-daemon-*.jar"/>
-		</move -->
+		<copy todir="${targetDir}/${deployableSvrDir}/lib">
+			<fileset dir="${basedir}/lib/default" includes="commons-daemon-*.jar"/>
+		</copy>
 
 		<delete dir="${daemonBinDir}"/>
 	</target>
