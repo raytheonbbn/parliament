@@ -22,10 +22,10 @@ echo Using the following version of Java:
 java -version
 echo.
 
-set MIN_MEM=128m
-set MAX_MEM=512m
+set JAVA_HEAP_SIZE=512m
 rem Set JETTY_HOST to 0.0.0.0 to make it accessible from other machines on the network:
 set JETTY_HOST=localhost
+rem set JETTY_HOST=0.0.0.0
 set JETTY_PORT=8089
 
 set DEBUG_ARG=-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n
@@ -37,7 +37,7 @@ set Path=%KBROOT%bin;%Path%
 set LCP=
 for /r "%KBROOT%lib" %%i in (*.jar) do set LCP=!LCP!;%%i
 
-set EXEC=java -server -Xms%MIN_MEM% -Xmx%MAX_MEM% -cp "%LCP%"
+set EXEC=java -server -Xmx%JAVA_HEAP_SIZE% -cp "%LCP%"
 rem Uncomment this line to enable remote debugging:
 rem set EXEC=%EXEC% %DEBUG_ARG%
 set EXEC=%EXEC% -Dcom.sun.management.jmxremote

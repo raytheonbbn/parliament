@@ -3,11 +3,11 @@
 setlocal enableextensions enabledelayedexpansion
 
 rem These must be in MB:
-set MIN_MEM=128
-set MAX_MEM=512
+set JAVA_HEAP_SIZE=512
 
 rem Set JETTY_HOST to 0.0.0.0 to make Parliament accessible from other machines:
 set JETTY_HOST=localhost
+rem set JETTY_HOST=0.0.0.0
 set JETTY_PORT=8089
 
 if not defined JAVA_HOME (
@@ -50,7 +50,7 @@ set EXEC=%EXEC% --Install "%KBROOT%bin\ParliamentService.exe"
 rem set EXEC=%EXEC% --ServiceUser "domain\your_user_name_here"
 rem set EXEC=%EXEC% --ServicePassword "your_user_password_here"
 set EXEC=%EXEC% --LibraryPath "%KBROOT%bin"
-set EXEC=%EXEC% --Jvm "%JVM_DLL%" --JvmMs "%MIN_MEM%" --JvmMx "%MAX_MEM%"
+set EXEC=%EXEC% --Jvm "%JVM_DLL%" --JvmMx "%JAVA_HEAP_SIZE%"
 set EXEC=%EXEC% --Classpath "%LCP%"
 set EXEC=%EXEC% --JvmOptions -Dcom.sun.management.jmxremote
 set EXEC=%EXEC% ++JvmOptions -Dlog4j.configuration=conf/log4j.daemon.properties
