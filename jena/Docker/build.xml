@@ -74,10 +74,6 @@
 			<arg value="https_proxy" />
 			<arg value="--build-arg" />
 			<arg value="parl_url" />
-			<arg value="--build-arg" />
-			<arg value="parl_version" />
-			<arg value="--build-arg" />
-			<arg value="version=${parliamentVersion}" />
 			<arg value="." />
 		</exec>
 		<echo message="Saving Image" />
