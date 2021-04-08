@@ -1,17 +1,15 @@
 PREFIX uom:  <http://www.opengis.net/def/uom/OGC/1.0/>
 PREFIX my:   <http://example.org/ApplicationSchema#>
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX geo:  <http://www.opengis.net/ont/geosparql#>
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
 
-SELECT ?f
-WHERE { my:C my:hasExactGeometry ?cGeom .
-        ?cGeom geo:asWKT ?cWKT .
-        ?f my:hasExactGeometry ?fGeom .
-        ?fGeom geo:asWKT ?fWKT .
-        FILTER (?fGeom != ?cGeom) .
-        LET (?distance := geof:distance(?cWKT, ?fWKT,
-              uom:metre)) .
+SELECT ?f WHERE {
+	my:C my:hasExactGeometry ?cGeom .
+	?cGeom geo:asWKT ?cWKT .
+	?f my:hasExactGeometry ?fGeom .
+	?fGeom geo:asWKT ?fWKT .
+	FILTER (?fGeom != ?cGeom) .
+	LET (?distance := geof:distance(?cWKT, ?fWKT, uom:metre)) .
 }
-ORDER BY ASC (geof:distance(?cWKT, ?fWKT,
-              uom:metre))
+ORDER BY ASC (geof:distance(?cWKT, ?fWKT, uom:metre))
 LIMIT 3

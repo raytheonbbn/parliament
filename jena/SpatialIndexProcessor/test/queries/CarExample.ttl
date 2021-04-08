@@ -2,10 +2,6 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-
-@prefix snap: <http://www.ifomis.org/bfo/1.0/snap#> .
-@prefix span: <http://www.ifomis.org/bfo/1.0/span#> .
-@prefix time: <http://www.w3.org/2006/time#> .
 @prefix georss: <http://www.georss.org/georss/> .
 @prefix gml: <http://www.opengis.net/gml/> .
 
@@ -13,14 +9,14 @@
 @prefix : <http://parliament.semwebcentral.org/spatial/examples/example4#> .
 
 <http://parliament.semwebcentral.org/spatial/examples/example4>
-  a owl:Ontology ;
-  owl:imports <http://parliament.semwebcentral.org/spatial/examples> ;
-  owl:versionInfo "$Rev$" ;
-  rdfs:label "Example4 Data Ontology" .
+	a owl:Ontology ;
+	owl:imports <http://parliament.semwebcentral.org/spatial/examples> ;
+	owl:versionInfo "$Rev$" ;
+	rdfs:label "Example4 Data Ontology" .
 
 :car a example:Car ;
-  example:range "1000.0"^^xsd:double ;
-  georss:where [
-    a gml:Point ;
-    gml:pos "30 40"
-  ] .
+	example:range "1000.0"^^xsd:double ;
+	georss:where [
+		a gml:Point ;
+		gml:pos "30 40"
+	] .

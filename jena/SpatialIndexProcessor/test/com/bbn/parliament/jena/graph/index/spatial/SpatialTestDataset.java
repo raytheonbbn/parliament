@@ -1,7 +1,7 @@
 package com.bbn.parliament.jena.graph.index.spatial;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -170,10 +170,10 @@ public class SpatialTestDataset {
 	}
 
 	public static void checkResults(CloseableQueryExec qexec, String... expectedResultQNames) {
-		Set<String> expectedResultSet = Arrays.stream(expectedResultQNames)
+		Set<String> expectedResults = Arrays.stream(expectedResultQNames)
 			.map(PFX_MAP::expandPrefix)
 			.collect(Collectors.toCollection(TreeSet::new));
-		Set<String> actualResultSet = StreamUtil.asStream(qexec.execSelect())
+		Set<String> actualResults = StreamUtil.asStream(qexec.execSelect())
 			.map(qs -> qs.get("a"))
 			.filter(Objects::nonNull)
 			.filter(RDFNode::isURIResource)
@@ -181,32 +181,29 @@ public class SpatialTestDataset {
 			.map(Resource::getURI)
 			.collect(Collectors.toCollection(TreeSet::new));
 
-		LOG.info("SpatialTestDataset.checkResults expectedResultSet:  {}", formatUriSet(expectedResultSet));
-		LOG.info("SpatialTestDataset.checkResults actualResultSet:    {}", formatUriSet(actualResultSet));
+		Set<String> expectedMinusActual = setDiff(expectedResults, actualResults);
+		Set<String> actualMinusExpected = setDiff(actualResults, expectedResults);
 
-		Set<String> expectedMinusActual = uriSetDiff(expectedResultSet, actualResultSet,
-			"Expected results that were not found");
-		Set<String> actualMinusExpected = uriSetDiff(actualResultSet, expectedResultSet,
-			"Actual results that were not expected");
-
-		assertEquals(expectedResultSet.size(), actualResultSet.size());
-		assertEquals(0, expectedMinusActual.size());
-		assertEquals(0, actualMinusExpected.size());
+		if (expectedMinusActual.size() != 0 || actualMinusExpected.size() != 0) {
+			logUris("Expected results:   ", expectedResults);
+			logUris("Actual results:     ", actualResults);
+			logUris("Missing results:    ", expectedMinusActual);
+			logUris("Unexpected results: ", actualMinusExpected);
+			fail("Expected and actual result sets differ");
+		}
 	}
 
-	private static Set<String> uriSetDiff(Set<String> lhs, Set<String> rhs, String msg) {
-		SortedSet<String> diff = new TreeSet<>(lhs);
+	private static <E> Set<E> setDiff(Set<E> lhs, Set<E> rhs) {
+		SortedSet<E> diff = new TreeSet<>(lhs);
 		diff.removeAll(rhs);
-		if (diff.size() > 0) {
-			LOG.error("{}:  {}", msg, formatUriSet(diff));
-		}
 		return diff;
 	}
 
-	private static String formatUriSet(Set<String> set) {
-		return set.stream()
+	private static void logUris(String msg, Set<String> set) {
+		String uris = set.stream()
 			.map(PFX_MAP::qnameFor)
 			.collect(Collectors.joining(", "));
+		LOG.error("{}{}", msg, uris);
 	}
 
 	public void runTest(String queryFile, String resultFile) {

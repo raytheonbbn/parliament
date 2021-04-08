@@ -196,12 +196,11 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 	}
 
 	/*
-	 * Test method
-	 * 
-	 * This method could be more easily implemented by storing the
-	 * expected and actual results in sets and using set differences. However,
-	 * when T is Geometry (in the spatial index), Record cannot be stored in a
-	 * HashSet. See the javadoc for GeometryRecord for an explanation.
+	 * This method could be more easily implemented by storing the expected and
+	 * actual results in sets and using set differences. However, when T is
+	 * SpatialIndex, Record cannot be stored in a HashSet. (See GeometryRecord's
+	 * javadoc for an explanation.) Further, Record does not implement Comparable,
+	 * so we cannot use TreeSet either.
 	 */
 	public void testIterator(T index) {
 		assertFalse(index.iterator().hasNext());
@@ -218,14 +217,20 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 		List<Record<I>> actualRecords = StreamUtil.asStream(index.iterator())
 			.collect(Collectors.toList());
 
-		expectedRecords.forEach(
-			record -> LOG.info("Expected record:  {}", record));
-		actualRecords.forEach(
-			record -> LOG.info("Actual record:  {}", record));
+		boolean expectedEqualsActual = (expectedRecords.size() == actualRecords.size());
+		if (expectedEqualsActual) {
+			for (Record<I> actualRecord : actualRecords) {
+				if (!expectedRecords.contains(actualRecord)) {
+					expectedEqualsActual = false;
+					break;
+				}
+			}
+		}
 
-		assertEquals(expectedRecords.size(), actualRecords.size());
-		for (Record<I> actualRecord : actualRecords) {
-			assertTrue(expectedRecords.contains(actualRecord));
+		if (!expectedEqualsActual) {
+			expectedRecords.forEach( record -> LOG.info("Expected record:  {}", record));
+			actualRecords.forEach(record -> LOG.info("Actual record:  {}", record));
+			fail("Expected and actual results differ");
 		}
 	}
 

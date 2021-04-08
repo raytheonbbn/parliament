@@ -1,11 +1,16 @@
 package com.bbn.parliament.jena.graph.index.spatial.sql.postgres;
 
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
@@ -76,20 +81,14 @@ public class PostgresBuffersTest {
 	}
 
 	@SuppressWarnings("static-method")
-	@Test
-	public void testBufferThousandDistance1() {
-		testMethods.testBufferThousandDistance1();
+	@ParameterizedTest
+	@MethodSource("thousandDistanceTestArgs")
+	public void testBufferThousandDistance(String testData, String city, double distance,
+		String[] expectedResults) {
+		testMethods.testThousandDistance(testData, city, distance, expectedResults);
 	}
 
-	@SuppressWarnings("static-method")
-	@Test
-	public void testBufferThousandDistance2() {
-		testMethods.testBufferThousandDistance2();
-	}
-
-	@SuppressWarnings("static-method")
-	@Test
-	public void testBufferThousandDistance3() {
-		testMethods.testBufferThousandDistance3();
+	private static Stream<Arguments> thousandDistanceTestArgs() {
+		return BuffersTestMethods.thousandDistanceTestArgs();
 	}
 }
