@@ -7,6 +7,7 @@ constant FLAGS_ubuntu20 : <cxxflags>"-std=c++17 -Wall" <linkflags>"-std=c++17" ;
 constant FLAGS_ubuntu18 : <cxxflags>"-std=c++17 -Wall" <linkflags>"-std=c++17" ;
 constant FLAGS_ubuntu17 : <cxxflags>"-std=c++14 -Wall" <linkflags>"-std=c++14" ;
 constant FLAGS_ubuntu16 : <cxxflags>"-std=c++14 -Wall" <linkflags>"-std=c++14" ;
+constant FLAGS_rhel8    : <cxxflags>"-std=c++17 -Wall" <linkflags>"-std=c++17 -lstdc++fs" ;
 constant FLAGS_centos8  : <cxxflags>"-std=c++17 -Wall" <linkflags>"-std=c++17 -lstdc++fs" ;
 constant FLAGS_centos7  : <cxxflags>"-std=c++11 -Wall" <linkflags>"-std=c++11" ;
 

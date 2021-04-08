@@ -30,6 +30,7 @@ Here \texttt{\textbf{\textit{X.Y.Z}}} is the \ac{pmnt} version number and \textt
 		\emph{Toolset}		& \emph{Corresponding Platform}\\
 		\headingrule
 		\path|clang|		& Universal binaries for Mac OS X\\
+		\path|gcc-rhel|	& 64-bit Red Hat Enterprise Linux\\
 		\path|gcc-centos|	& 64-bit CentOS Linux\\
 		\path|gcc-ubuntu|	& 64-bit Ubuntu Linux\\
 		\path|msvc-64|		& 64-bit Windows\\
@@ -82,7 +83,7 @@ Uninstall the service with \path|UninstallParliamentService.bat|.
 
 \subsubsection{Installing as a Linux/UNIX Daemon}
 
-For variants of Linux that support systemd, such as CentOS and Ubuntu, this command will install \ac{pmnt} as a systemd service:
+For variants of Linux that support systemd, such as RHEL, CentOS, and Ubuntu, this command will install \ac{pmnt} as a systemd service:
 \begin{quote}
 	\path|sudo parliament.sh install|
 \end{quote}
