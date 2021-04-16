@@ -28,7 +28,7 @@ if [ -d "/etc/systemd/system" -a -f "`which systemctl`" ]; then
 	IS_SYSTEM_D="true"
 fi
 
-if [ ! -d "$JAVA_HOME" ]; then
+if [ "$1" != "interactive" -a ! -d "$JAVA_HOME" ]; then
 	echo The JAVA_HOME environment variable is not set.
 	exit 1
 fi
@@ -77,19 +77,25 @@ esac
 
 
 ######### Set up the command line: #########
-MAIN_CLASS=com.bbn.parliament.jena.jetty.JettyDaemon
-EXEC="$PMNT_DIR/bin/jsvc -jvm server -showversion -home ""$JAVA_HOME"" -cwd $PMNT_DIR"
-if [ -n "$DAEMON_USER" ]; then
-	EXEC="$EXEC -user ""$DAEMON_USER"""
+if [ "$1" = 'interactive' ]; then
+	MAIN_CLASS=com.bbn.parliament.jena.jetty.CmdLineJettyServer
+	LOG4J_CONFIG=interactive
+	EXEC='java -server'
+else
+	MAIN_CLASS=com.bbn.parliament.jena.jetty.JettyDaemon
+	LOG4J_CONFIG=daemon
+	EXEC="$PMNT_DIR/bin/jsvc -jvm server -showversion -home ""$JAVA_HOME"" -cwd $PMNT_DIR"
+	if [ -n "$DAEMON_USER" ]; then
+		EXEC="$EXEC -user ""$DAEMON_USER"""
+	fi
+	EXEC="$EXEC -outfile $LOG_FILE -errfile &1 -pidfile $PID_FILE -procname Parliament"
+	# Uncomment this line to enable verbose jsvc output:
+	#EXEC="$EXEC -debug"
 fi
-EXEC="$EXEC -outfile $LOG_FILE -errfile &1 -pidfile $PID_FILE -procname Parliament"
-
-# Uncomment this line to enable verbose jsvc output:
-#EXEC="$EXEC -debug"
 
 EXEC="$EXEC -Xmx$JAVA_HEAP_SIZE -cp $CLASSPATH:$PMNT_DIR/lib/*"
 EXEC="$EXEC -Djava.library.path=$PMNT_DIR/bin -Dcom.sun.management.jmxremote"
-EXEC="$EXEC -Dlog4j.configuration=file:$PMNT_DIR/conf/log4j.daemon.properties"
+EXEC="$EXEC -Dlog4j.configuration=file:$PMNT_DIR/conf/log4j.$LOG4J_CONFIG.properties"
 EXEC="$EXEC -Djetty.host=$JETTY_HOST -Djetty.port=$JETTY_PORT"
 EXEC="$EXEC -DjettyConfig=$PMNT_DIR/conf/jetty.xml"
 if [ -n "$DEBUG_ARG" ]; then
@@ -106,7 +112,7 @@ fi
 ######### Usage of this script: #########
 function printUsage {
 	echo ""
-	echo "Usage: $(basename $0) {start|stop|restart|install|uninstall}"
+	echo "Usage: $(basename $0) {start|stop|restart|install|uninstall|interactive}"
 	echo ""
 	echo "where:"
 	echo ""
@@ -127,6 +133,8 @@ function printUsage {
 		echo ""
 		echo "   'uninstall' [not available on this platform]"
 	fi
+	echo ""
+	echo "   'interactive' starts Parliament as an attached process in the current shell"
 	echo ""
 	exit 3
 }
@@ -171,7 +179,7 @@ function installSystemDService {
 
 
 ######### Execute: #########
-if [ "$1" = "start" ]; then
+if [ "$1" = "start" -o "$1" = "interactive" ]; then
 	$EXEC $MAIN_CLASS
 elif [ "$1" = "stop" ]; then
 	if [ -f "$PID_FILE" ]; then
