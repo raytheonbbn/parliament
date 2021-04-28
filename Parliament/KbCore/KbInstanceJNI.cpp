@@ -11,6 +11,7 @@
 #include "parliament/KbConfig.h"
 #include "parliament/KbInstance.h"
 #include "parliament/JNIHelper.h"
+#include "parliament/Log.h"
 #include "parliament/StmtIterator.h"
 #include "parliament/ReificationIterator.h"
 #include "parliament/Util.h"
@@ -18,8 +19,11 @@
 #include <ostream>
 
 using namespace ::bbn::parliament;
+namespace pmnt = ::bbn::parliament;
 using ::std::basic_ostream;
 using ::std::string;
+
+static auto g_log(pmnt::log::getSource("KbInstanceJNI"));
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* /* pVM */, void* /* pReserved */)
 {
@@ -128,7 +132,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_init(
 		KbInstance* pKb = new KbInstance(config);
 
 		JNIHelper::setPtrFld(pEnv, obj, "m_pKb", pKb);
-	END_JNI_EXCEPTION_HANDLER(pEnv)
+		END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
 JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_dispose(

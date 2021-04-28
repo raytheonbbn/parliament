@@ -112,6 +112,9 @@
 		* A test-specific KB directory to sequester those temporary files, and
 		* Reduced initial statement and resource capacity to make test run faster.
 	-->
+	<condition property="testKbDir" value="${env.USERPROFILE}/test-kb-data" else="test-kb-data">
+		<os family="winnt"/>
+	</condition>
 	<target name="createTestConfig">
 		<copy todir="${targetDir}/test-bin" preservelastmodified="true" flatten="true">
 			<fileset dir="${kbRootDir}/Parliament/KbCore" includes="Parliament*Config.txt"/>
@@ -123,7 +126,7 @@
 		</replaceregexp>
 		<replaceregexp flags="mig"
 			match="(kbDirectoryPath *= *)kb-data"
-			replace="\1test-kb-data">
+			replace="\1${testKbDir}">
 			<fileset dir="${targetDir}/test-bin" includes="Parliament*Config.txt"/>
 		</replaceregexp>
 		<replaceregexp flags="mig"

@@ -21,6 +21,8 @@ Version 2.7.14 (?):
 
 * Updated to Visual Studio 2019 (14.2)
 
+* Updated to Boost 1.76.0
+
 * Updated to Apache Commons Daemon 1.2.4
 
 * Updated to Jetty 9.4.36

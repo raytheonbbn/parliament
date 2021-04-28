@@ -272,11 +272,6 @@
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
 			<param name="callingBinary" value="libParliament.dylib"/>
-			<param name="calledBinary" value="libboost_regex${boostLibSuffix}"/>
-		</antcall>
-		<antcall target="changeInstallName">
-			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libParliament.dylib"/>
 			<param name="calledBinary" value="libboost_thread${boostLibSuffix}"/>
 		</antcall>
 
@@ -303,11 +298,6 @@
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
 			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
-			<param name="calledBinary" value="libboost_regex${boostLibSuffix}"/>
-		</antcall>
-		<antcall target="changeInstallName">
-			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
 			<param name="calledBinary" value="libboost_thread${boostLibSuffix}"/>
 		</antcall>
 
@@ -325,11 +315,6 @@
 			<param name="dylibDir" value="${dylibDir}"/>
 			<param name="callingBinary" value="libboost_log${boostLibSuffix}"/>
 			<param name="calledBinary" value="libboost_filesystem${boostLibSuffix}"/>
-		</antcall>
-		<antcall target="changeInstallName">
-			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libboost_log${boostLibSuffix}"/>
-			<param name="calledBinary" value="libboost_regex${boostLibSuffix}"/>
 		</antcall>
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
