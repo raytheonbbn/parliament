@@ -43,7 +43,7 @@ JETTY_HOST=localhost
 #JETTY_HOST=0.0.0.0
 JETTY_PORT=8089
 JAVA_HEAP_SIZE=512m
-DAEMON_USER=iemmons
+#DAEMON_USER=iemmons
 
 export PARLIAMENT_KB_CONFIG_PATH=$PMNT_DIR/ParliamentKbConfig.txt
 export PARLIAMENT_LOG_CONFIG_PATH=$PMNT_DIR/ParliamentLogConfig.txt
@@ -197,6 +197,7 @@ function installSystemDService {
 	fi
 
 	ln -s "$SERVICE_FILE" "$SERVICE_LINK"
+	systemctl daemon-reload
 	# Does this next command need to be preceded by 'systemctl start parliament'?
 	systemctl enable parliament
 }
