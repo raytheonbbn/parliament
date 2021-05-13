@@ -12,7 +12,7 @@ There are several ways to use \ac{pmnt}.  By far the most common is as a server 
 
 Pre-built binaries for common platforms are available on the \ac{pmnt} Web site\urlcite{http://parliament.semwebcentral.org/}.  You can also build \ac{pmnt} yourself (see Chapter~\ref{chapter-building-parliament}).
 
-This chapter starts with instructions for installing a \ac{pmnt} server (Section~\ref{section-std-server-deploy}), followed by a discussion of the \ac{pmnt} configuration file (Section~\ref{section-configuring-pmnt}).  Then comes a detailed discussion of each of the less common deployment scenarios.  The chapter concludes with discussions of \ac{pmnt} utilities and troubleshooting (Sections~\ref{section-parliamentadmin-utility} and~\ref{section-troubleshooting}).
+This chapter starts with instructions for installing a \ac{pmnt} server (Section~\ref{section-std-server-deploy}), followed by a discussion of the \ac{pmnt} configuration file (Section~\ref{section-configuring-pmnt}).  Then comes a detailed discussion of each of the less common deployment scenarios.  The chapter concludes with a discussion of \ac{pmnt} utilities and some troubleshooting (Sections~\ref{section-parliamentadmin-utility} and~\ref{section-troubleshooting}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Deploying a \ac{pmnt} Server}
@@ -60,44 +60,90 @@ Once you have downloaded a distribution, these steps will yield a functioning \a
 	\begin{quote}
 		\path|StartParliament.bat|
 	\end{quote}
-	This locates your Java installation by simply invoking the command \path|java| and relying on the operating system's native facilities to locate the \ac{jvm} executable.
 
-	On other platforms, switch to the \path|ParliamentKB| directory and control \ac{pmnt} using this command:
+	On other platforms, switch to the \path|ParliamentKB| directory and start \ac{pmnt} using this command:
 	\begin{quote}
-		\texttt{./parliament.sh \{ start | stop | restart \}}
+		\texttt{./parliament interactive}
 	\end{quote}
-	This runs \ac{pmnt} as a detached process, locating your Java installation using the \verb|JAVA_HOME| environment variable.  See Section~\ref{section-troubleshooting} for more information.
+	For backwards compatibility, you an also type:
+	\begin{quote}
+		\texttt{./StartParliament}
+	\end{quote}
+
+	Whatever platform you are using, this starts \ac{pmnt} as a command line process running under the current terminal.  You can shut down the server by typing ``exit'' or ``Ctrl+C''.
 \end{enumerate}
 
 The procedure above uses \acp{pmnt} standard startup script, which directly starts the server.  However, in many cases it is preferable to run \ac{pmnt} as a Windows service or as a UNIX daemon.
 
 \subsubsection{Installing as a Windows Service}
 
-The script \path|InstallParliamentService.bat| installs \ac{pmnt} as a Windows service.  This script uses the \verb|JAVA_HOME| environment variable to locate your Java installation\footnote{See Section~\ref{section-troubleshooting} for information about choosing among multiple Java installations.}.  After running this script, use the Services management console to start and stop \ac{pmnt} and to run \ac{pmnt} automatically upon system startup.
+The script \path|InstallParliamentService.bat| installs \ac{pmnt} as a Windows service.  After running this script, use the Services management console to start and stop \ac{pmnt} and to run \ac{pmnt} automatically upon system startup.
 
 Usually, \ac{pmnt} cannot be installed as a Windows service if it resides on a mapped network drive.  This is because the mapping is an artifact of your user login, and services run outside that context.
 
-If you change any of the parameters in \path|InstallParliamentService.bat| (see Section~\ref{section-configuring-pmnt}), you will need to re-run it in order to have those changes reflected in the installed service definition.
+If you change any of the parameters in \path|InstallParliamentService.bat| (see Section~\ref{section-configuring-pmnt}) or upgrade your Java installation, you will need to uninstall and re-install the service in order to have those changes reflected in the installed service definition.
 
 Uninstall the service with \path|UninstallParliamentService.bat|.
 
-\subsubsection{Installing as a Linux/UNIX Daemon}
+\subsubsection{Installing as a Linux Daemon}
 
-For variants of Linux that support systemd, such as RHEL, CentOS, and Ubuntu, this command will install \ac{pmnt} as a systemd service:
-\begin{quote}
-	\path|sudo parliament.sh install|
-\end{quote}
-Thereafter, \ac{pmnt} is controlled via the \path|systemctl| command:
+This section is focused on variants of Linux that support systemd, such as RHEL, CentOS, and Ubuntu.  For setup on non-systemd Linux, please use the next section.
+
+To install \ac{pmnt} as a systemd service, we begin by establishing a user account (and group) under which \ac{pmnt} will run.  To do this from scratch, use the following commands:
+
+\begin{verbatim}
+     sudo groupadd -r pargroup
+     sudo useradd -r -s /bin/false -g pargroup paruser
+\end{verbatim}
+
+Next we need to create a data directory in a location of your choice, such as \path|/var/parliament-data|.  \ac{pmnt} will store its content here, as well as logging and temporary files.  Ensure that this directory is owned and writable by the group and user established above:
+
+\begin{verbatim}
+     sudo chmod u+rw,go-w parliament-data
+     sudo chown -R paruser:pargroup parliament-data
+\end{verbatim}
+
+Now unzip the \ac{pmnt} distribution to a location of your choice, such as \path|/opt/ParliamentKB| or \path|/usr/local/ParliamentKB|.  It is fine for this directory to be owned by root and read-only for the group and user established above.  In addition, make the following edits:
+
+\begin{itemize}
+	\item In \path|parliament|, uncomment the line containing \path|DAEMON_USER| and set it to the name of the user created above.
+
+	\item In \path|ParliamentKbConfig.txt|, set the \path|kbDirectoryPath| entry to the absolute path of the data directory you created above.
+\end{itemize}
+
+Finally, from the \ac{pmnt} directory, issue these commands:
+
+\begin{verbatim}
+     sudo ./parliament install
+     sudo systemctl start parliament
+\end{verbatim}
+
+At this point, \ac{pmnt} is running in the background, and whenever the system is shut down and restarted, \ac{pmnt} will also properly shut down and restart.  You control \ac{pmnt} via the \path|systemctl| command:
 \begin{quote}
 	\texttt{sudo systemctl \{ start | stop | restart \} parliament}
 \end{quote}
 
-To uninstall \ac{pmnt} as a systemd service, first run the following commands (again, you will likely need elevated rights):
+You can check whether \ac{pmnt} is running with either of these commands:
+
+\begin{verbatim}
+     ps -ef | grep -i parliament | grep -v grep
+     sudo systemctl show parliament
+\end{verbatim}
+
+To uninstall \ac{pmnt} as a systemd service, run this command:
+\begin{verbatim}
+     sudo parliament uninstall
+\end{verbatim}
+
+\subsubsection{Installing as a UNIX Daemon}
+
+For UNIX and non-systemd Linux variants, this command will run \ac{pmnt} as a detached process suitable to run as a daemon:
+
 \begin{quote}
-	\path|sudo parliament.sh uninstall|
+	\texttt{./parliament \{ start | stop | restart \}}
 \end{quote}
 
-For other Linux variants (and for UNIX), the \path|parliament.sh start| command will start \ac{pmnt} as a detached process, i.e., as a daemon.  The exact method for wiring this into the operating system's infrastructure for starting and stopping daemon processes varies from platform to platform.
+However, there is currently no built-in support for wiring this into the operating system's infrastructure for starting and stopping daemon processes, because this infrastructure varies from platform to platform.  In the future, this may be remedied for specific platforms, such as MacOS X.
 
 
 
@@ -130,7 +176,7 @@ Once you see the ``Insert operation successful'' message, your upgraded \ac{pmnt
 \subsection{Usage}
 \label{section-std-server-usage}
 
-\emph{Important note:}  When you shut down \ac{pmnt}, it is important to shut it down gracefully.  Otherwise, the \ac{pmnt} files may not be flushed to disk before they are closed, and they may be badly corrupted.  If you run \ac{pmnt} as a Windows service or UNIX Daemon (see Section~\ref{section-std-server-init-deploy}), this is generally not a problem, because the operating system sends a shut-down message at the appropriate times.  However, if you run \ac{pmnt} explicitly via \path|parliament.sh start| (or \path|StartParliament.bat| on Windows), you will need to shut it down yourself by typing the command ``exit'' followed by «return» or «enter».
+\emph{Important note:}  When you shut down \ac{pmnt}, it is important to shut it down gracefully.  Otherwise, the \ac{pmnt} files may not be flushed to disk before they are closed, and they may be badly corrupted.  If you run \ac{pmnt} as a Windows service or UNIX Daemon (see Section~\ref{section-std-server-init-deploy}), this is generally not a problem, because the operating system sends a shut-down message at the appropriate times.  However, if you run \ac{pmnt} explicitly via \path|parliament start| (or \path|StartParliament.bat| on Windows), you will need to shut it down yourself by typing the command ``exit'' followed by «return» or «enter».
 
 To use the \ac{pmnt} server, you will need the the connection \acp{url} listed in Table~\ref{table-pmnt-connect-urls}.  (See Section~\ref{section-configuring-pmnt} to configure your server to run on a host name and port other than ``localhost'' and ``8089''.)
 \begin{table}[htbp]
@@ -238,7 +284,7 @@ On your virtual machine, configure the following:
 \begin{itemize}
 	\item Deploy \ac{pmnt} in the standard way.  (See Section~\ref{section-std-server-init-deploy} or~\ref{section-std-server-upgrade} above for details.)
 
-	\item It is crucial that in the startup scripts \texttt{StartParliamentDaemon.sh} and \texttt{StartParliament.sh}, located in the root directory of your \ac{pmnt} installation, the JETTY\_HOST setting near the top \emph{must} be set to localhost (or 127.0.0.1).  This prevents \ac{pmnt} itself from being directly exposed to network traffic from outside the machine.
+	\item It is crucial that in the startup script \texttt{parliament}, located in the root directory of your \ac{pmnt} installation, the JETTY\_HOST setting near the top \emph{must} be set to localhost (or 127.0.0.1).  This prevents \ac{pmnt} itself from being directly exposed to network traffic from outside the machine.
 
 	\item In those same two files, ensure JETTY\_PORT is set to 8089.  In reality, most any port may be used here.  8089 is \acp{pmnt} default, and a useful choice.  The instructions below assume this port.
 
@@ -759,11 +805,11 @@ Because \ac{pmnt} is most often used within a Java environment, the most common 
 
 	\item Running \path|ParliamentAdmin| helps to diagnose unsatisfied link errors, because this tool also loads the \ac{pmnt} \ac{dll}, but it does so without involving Java (because \path|ParliamentAdmin| is written in C++).  This technique can be used to isolate the error to either the operating system level (when \path|ParliamentAdmin| fails to load the \ac{dll}) or to the Java level (when \path|ParliamentAdmin| succeeds).  Even the simple command ``\path|ParliamentAdmin -v|'' to get the version requires loading the \ac{pmnt} \ac{dll}, so this is an easy test.
 
-	\item Multiple Java installations can confuse the \ac{dll} loading process.  The scripts \path|StartParliament.sh| and \path|StartParliament.bat| find Java by simply invoking the command \path|java| and relying on the operating system to locate the installation.  In these cases, the \verb|JAVA_HOME| environment variable is not used, unless the operating system uses it.  On Windows, the process by which the \path|java| command finds and loads the \ac{jvm} is quite complex.  The following web page sheds some light on how you can manage this process:
+	\item Multiple Java installations can confuse the \ac{dll} loading process.  The scripts \path|parliament| (with the ``interactive'' or ``install'' options) and \path|StartParliament.bat| find Java by simply invoking the command \path|java| and relying on the operating system to locate the installation.  In these cases, the \verb|JAVA_HOME| environment variable is not used, unless the operating system uses it.  On Windows, the process by which the \path|java| command finds and loads the \ac{jvm} is quite complex.  The following web page sheds some light on how you can manage this process:
 \begin{quote}\small
 	\url{http://mindprod.com/jgloss/javaexe.html#MULTIPLES}
 \end{quote}
-In the case of the \path|InstallParliamentService| script, the situation is quite different.  The \path|java| command is not used at all, and instead the service executable directly loads the \path|jvm.dll| library.  This is located by using the \verb|JAVA_HOME| environment variable at the time the service is installed.  (This means that if you upgrade your Java installation after installing the service, you will have to uninstall and reinstall the service in order for it to find the \path|jvm.dll| library.)
+The scripts \path|parliament| (with the ``start,'' ``stop,'' or ``restart'' options) and \path|InstallParliamentService.bat| find Java differently.  Here the \path|java| command is not used at all, and instead the service executable directly loads the \path|jvm.dll| library, located via the \verb|JAVA_HOME| environment variable.  On Windows, this is done at the time the service is installed, so if you upgrade your Java installation after installtion, you will have to uninstall and reinstall the service in order for it to find the \path|jvm.dll| library.
 
 	\item The process by which Windows searches for \acp{dll} is somewhat complex, so understanding it can often help pinpoint the problem.  The search process is as follows:
 

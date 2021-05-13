@@ -1,36 +1,5 @@
 #!/bin/bash
 
-######### Usage of this script: #########
-function printUsage {
-	echo ""
-	echo "Usage: $(basename $0) {start|stop|restart|install|uninstall|interactive}"
-	echo ""
-	echo "where:"
-	echo ""
-	echo "   'start' runs Parliament as a detached process"
-	echo ""
-	echo "   'stop' stops the detached Parliament process"
-	echo ""
-	echo "   'restart' stops and then immediately starts Parliament"
-	echo ""
-	if [ "$IS_SYSTEM_D" = "true" ]; then
-		echo "   'install' sets Parliament up as a systemd service, so that it"
-		echo "      can be controlled via the systemctl command"
-		echo ""
-		echo "   'uninstall' removes the Parliament systemd service definition"
-	else
-		echo "   'install' [not available on this platform]"
-		echo ""
-		echo "   'uninstall' [not available on this platform]"
-	fi
-	echo ""
-	echo "   'interactive' starts Parliament as an attached process in the"
-	echo "      current shell"
-	echo ""
-	exit 3
-}
-
-
 ######### Find the Parliament installation directory: #########
 cd "`dirname ""$0""`"
 PMNT_DIR="`pwd`"
@@ -48,10 +17,42 @@ JAVA_HEAP_SIZE=512m
 export PARLIAMENT_KB_CONFIG_PATH=$PMNT_DIR/ParliamentKbConfig.txt
 export PARLIAMENT_LOG_CONFIG_PATH=$PMNT_DIR/ParliamentLogConfig.txt
 
-LOG_FILE=$PMNT_DIR/log/jsvc.log
-
 # Uncomment this line to enable remote debugging:
 #DEBUG_ARG=-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n -Dcom.sun.management.jmxremote
+
+
+######### Usage of this script: #########
+function printUsage {
+	echo ""
+	echo "Usage: $(basename $0) {start|stop|restart|install|uninstall|interactive}"
+	echo ""
+	echo "where:"
+	echo ""
+	echo "   'interactive' starts Parliament as an attached process in the"
+	echo "      current shell"
+	echo ""
+	if [ "$IS_SYSTEM_D" = "true" ]; then
+		echo "   'install' sets Parliament up as a systemd service, so that it"
+		echo "      can be controlled via the systemctl command"
+		echo ""
+		echo "   'uninstall' removes the Parliament systemd service definition"
+	else
+		echo "   'install' [not available on this platform]"
+		echo ""
+		echo "   'uninstall' [not available on this platform]"
+	fi
+	echo ""
+	echo "   'start' runs Parliament as a detached process"
+	echo "      [Recommended only for MacOS X, Unix, and non-systemd Linux variants]"
+	echo ""
+	echo "   'stop' stops the detached Parliament process"
+	echo "      [Recommended only for MacOS X, Unix, and non-systemd Linux variants]"
+	echo ""
+	echo "   'restart' stops and then immediately starts Parliament"
+	echo "      [Recommended only for MacOS X, Unix, and non-systemd Linux variants]"
+	echo ""
+	exit 3
+}
 
 
 ######### Error checking & environment detection: #########
@@ -84,7 +85,7 @@ fi
 
 
 ######### Compute the PID file location: #########
-KB_DIR=`sed -n 's/kbDirectoryPath[ \t]*=\(.*\)$/\1/p' $PARLIAMENT_KB_CONFIG_PATH | tail -n 1 | tr -d '[:space:]'`
+KB_DIR=`grep -v '^[ \t]*#' $PARLIAMENT_KB_CONFIG_PATH | sed -n 's/kbDirectoryPath[ \t]*=\(.*\)$/\1/p' | tail -n 1 | tr -d '[:space:]'`
 SAVED_DIR=`pwd`
 cd "$PMNT_DIR"
 if [ ! -d "$KB_DIR" ]; then
@@ -116,12 +117,13 @@ else
 	if [ -n "$DAEMON_USER" ]; then
 		EXEC="$EXEC -user ""$DAEMON_USER"""
 	fi
-	EXEC="$EXEC -outfile $LOG_FILE -errfile &1 -pidfile $PID_FILE -procname Parliament"
+	EXEC="$EXEC -outfile $KB_DIR/log/jsvc.log -errfile &1 -pidfile $PID_FILE"
+	EXEC="$EXEC -procname Parliament"
 	# Uncomment this line to enable verbose jsvc output:
 	#EXEC="$EXEC -debug"
 fi
 
-EXEC="$EXEC -Xmx$JAVA_HEAP_SIZE -cp $CLASSPATH:$PMNT_DIR/lib/*"
+EXEC="$EXEC -Xmx$JAVA_HEAP_SIZE -cp $CLASSPATH:$PMNT_DIR/lib/* -Dlog.path.base=$KB_DIR"
 EXEC="$EXEC -Dlog4j.configuration=file:$PMNT_DIR/conf/log4j.$LOG4J_CONFIG.properties"
 EXEC="$EXEC -Djetty.host=$JETTY_HOST -Djetty.port=$JETTY_PORT"
 EXEC="$EXEC -DjettyConfig=$PMNT_DIR/conf/jetty.xml -Djava.library.path=$PMNT_DIR/bin"
@@ -148,6 +150,7 @@ function setSharedLibPath {
 			export LD_LIBRARY_PATH=$PMNT_DIR/bin:$LD_LIBRARY_PATH
 			;;
 	esac
+	export PARLIAMENT_LOG_PATH_BASE=$KB_DIR
 }
 
 
@@ -178,7 +181,8 @@ function createSystemDServiceFile {
 	echo "Environment= \\" >> $1
 	echo "   LD_LIBRARY_PATH=$PMNT_DIR/bin:$LD_LIBRARY_PATH \\" >> $1
 	echo "   PARLIAMENT_KB_CONFIG_PATH=$PMNT_DIR/ParliamentKbConfig.txt \\" >> $1
-	echo "   PARLIAMENT_LOG_CONFIG_PATH=$PMNT_DIR/ParliamentLogConfig.txt" >> $1
+	echo "   PARLIAMENT_LOG_CONFIG_PATH=$PMNT_DIR/ParliamentLogConfig.txt \\" >> $1
+	echo "   PARLIAMENT_LOG_PATH_BASE=$KB_DIR" >> $1
 	echo '' >> $1
 	echo "ExecStart=$EXEC $MAIN_CLASS" >> $1
 	echo '' >> $1
@@ -216,8 +220,8 @@ elif [ "$1" = "stop" ]; then
 		exit 1
 	fi
 elif [ "$1" = "restart" ]; then
+	setSharedLibPath
 	if [ -f "$PID_FILE" ]; then
-		setSharedLibPath
 		$EXEC -stop $MAIN_CLASS
 	fi
 	$EXEC $MAIN_CLASS

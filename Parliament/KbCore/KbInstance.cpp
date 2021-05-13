@@ -41,7 +41,6 @@
 
 #include <iomanip>
 #include <ostream>
-#include <sstream>
 #include <utility>
 #include <vector>
 
@@ -61,7 +60,6 @@ using ::std::make_pair;
 using ::std::make_shared;
 using ::std::nothrow_t;
 using ::std::ostream;
-using ::std::ostringstream;
 using ::std::pair;
 using ::std::remove;
 using ::std::setfill;
@@ -1356,16 +1354,9 @@ string pmnt::KbInstance::formatRsrcUri(ResourceId rsrcId, bool includeRsrcId) co
 		}
 	}
 
-	if (includeRsrcId)
-	{
-		ostringstream ss;
-		ss << result << " [" << rsrcId << "]";
-		return ss.str();
-	}
-	else
-	{
-		return result;
-	}
+	return includeRsrcId
+		? str(format{"%1% [%2%]"} % result % rsrcId)
+		: result;
 }
 
 void pmnt::KbInstance::deleteKb(const KbConfig& cfg, bool deleteContainingDir)

@@ -59,7 +59,7 @@ public class CmdLineJettyServer {
 				+ "#####   Warning:  Killing the server process by any means other  #####%n"
 				+ "#####   than graceful shutdown may result in corrupt knowledge   #####%n"
 				+ "#####   base files.  Please shut down the server by typing       #####%n"
-				+ "#####   'exit' at the prompt below.                              #####%n"
+				+ "#####   'exit' or 'Ctrl+C' at the prompt below.                  #####%n"
 				+ "#####                                                            #####%n"
 				+ "######################################################################%n"
 				+ "######################################################################%n"

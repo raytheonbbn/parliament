@@ -80,6 +80,7 @@ make $(TestDir)/ParliamentLogConfig.txt : $(KbCoreDir)/ParliamentLogConfig.txt :
 
 exe UnicodeTestCaseGen
 	:	UnicodeTestCaseGen.cpp
+		/site-config//BoostHeaderOnlyLibraries
 	:	<include>.
 		<visibility>hidden
 		<threading>multi

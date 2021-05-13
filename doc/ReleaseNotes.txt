@@ -1,14 +1,20 @@
-Version 2.7.14 (?):
+Version 2.8.0:
+
+* Changed the startup scripts on Linux/UNIX to properly support systemd service
+  installation.
+
+* Changed the startup scripts on Windows to parallel the Linux/UNIX scripts,
+  and converted them to PowerShell.
+
+* Fixed an issue on UNIX/Linux platforms that prevented the Parliament daemon
+  from receiving SIGTERM signals, making Parliament difficult to use in a
+  Docker container.
 
 * Reduced the volume of logging when Parliament is running in daemon mode.
   Log4j is now configured without a console logger, which means that the
   contents of the parliament.log file are not duplicated in the jsvc-log.txt
   file.  (When run at the command line, the logging configuration is unchanged,
   so you will still be able to see the log contents in real time in that case.)
-
-* Fixed an issue on UNIX/Linux platforms that prevented the Parliament daemon
-  from receiving SIGTERM signals, making Parliament difficult to use in a
-  Docker container.
 
 * Numerous updates to bring in line with Java 11 & 15 (but still using Java 8)
 

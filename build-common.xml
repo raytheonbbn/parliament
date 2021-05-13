@@ -108,13 +108,19 @@
 
 	<!--
 		Create configuration files for testing with:
-		* Console logging off to reduce the spew of text scrolling by during a build,
-		* A test-specific KB directory to sequester those temporary files, and
-		* Reduced initial statement and resource capacity to make test run faster.
+		* Console logging off to reduce the spew of text scrolling by during a build
+		* A test-specific KB directory to sequester those temporary files.  On Windows,
+		  we put this on the local disk to avoid weird permissions problems 
+		* Reduced initial statement and resource capacity to make test run faster
 	-->
 	<condition property="testKbDir" value="${env.USERPROFILE}/test-kb-data" else="test-kb-data">
 		<os family="winnt"/>
 	</condition>
+	<propertyregex property="escapedTestKbDir"
+		input="${testKbDir}"
+		regexp="\\"
+		replace="/"
+		casesensitive="false"/>
 	<target name="createTestConfig">
 		<copy todir="${targetDir}/test-bin" preservelastmodified="true" flatten="true">
 			<fileset dir="${kbRootDir}/Parliament/KbCore" includes="Parliament*Config.txt"/>
@@ -126,7 +132,7 @@
 		</replaceregexp>
 		<replaceregexp flags="mig"
 			match="(kbDirectoryPath *= *)kb-data"
-			replace="\1${testKbDir}">
+			replace="\1${escapedTestKbDir}">
 			<fileset dir="${targetDir}/test-bin" includes="Parliament*Config.txt"/>
 		</replaceregexp>
 		<replaceregexp flags="mig"

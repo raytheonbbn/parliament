@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultCtor)
 {
 	LogConfig c;
 
-	BOOST_CHECK_EQUAL(true, c.logToConsole());
+	BOOST_CHECK_EQUAL(false, c.logToConsole());
 	BOOST_CHECK_EQUAL(false, c.logConsoleAsynchronous());
 	BOOST_CHECK_EQUAL(true, c.logConsoleAutoFlush());
 	BOOST_CHECK_EQUAL(true, c.logToFile());
