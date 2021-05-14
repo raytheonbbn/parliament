@@ -111,6 +111,7 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 	}
 
 	/** Get the default graph's configuration. */
+	@SuppressWarnings("resource")
 	public KbConfig getDefaultGraphConfig() {
 		return getDefaultGraph().getConfig();
 	}
@@ -220,7 +221,7 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 
 	/** Clear the store and remove all graphs. */
 	public void clear(boolean deleteContainingDirectory) {
-		File containingDir = new File(getDefaultGraph().getConfig().m_kbDirectoryPath);
+		File containingDir = new File(getDefaultGraphConfig().m_kbDirectoryPath);
 
 		// We create a clone of the graph names so that as the iteration below removes
 		// elements from the named graphs collection, the iteration is not affected.
@@ -537,6 +538,7 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 	}
 
 	/** {@inheritDoc} */
+	@SuppressWarnings("resource")
 	@Override
 	public void close() {
 		StreamUtil.asStream(listGraphNodes())

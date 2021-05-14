@@ -7,21 +7,23 @@
 #include "parliament/LogConfig.h"
 #include "parliament/CharacterLiteral.h"
 #include "parliament/UnicodeIterator.h"
+#include "parliament/Util.h"
 
 namespace pmnt = ::bbn::parliament;
 
 using ::std::string;
 
 static constexpr pmnt::TChar k_envVarName[] = _T("PARLIAMENT_LOG_CONFIG_PATH");
+static constexpr pmnt::TChar k_logPathBaseVarName[] = _T("PARLIAMENT_LOG_PATH_BASE");
 static constexpr pmnt::TChar k_defaultConfigFileName[] = _T("ParliamentLogConfig.txt");
 
 pmnt::LogConfig::LogConfig() :
 	m_ceMap(),
-	m_logToConsole(true),
+	m_logToConsole(false),
 	m_logConsoleAsynchronous(false),
 	m_logConsoleAutoFlush(true),
 	m_logToFile(true),
-	m_logFilePath(convertUtf8ToPath("log/ParliamentNative%3N_%Y-%m-%d_%H-%M-%S.log")),
+	m_logFilePath(convertUtf8ToLogPath("log/ParliamentNative%3N_%Y-%m-%d_%H-%M-%S.log")),
 	m_logFileAsynchronous(false),
 	m_logFileAutoFlush(true),
 	m_logFileRotationSize(10u * 1024u * 1024u),
@@ -40,7 +42,7 @@ pmnt::LogConfig::LogConfig() :
 	m_ceMap["logToFile"] = [](const string& value, uint32 lineNum, LogConfig& c)
 		{ c.m_logToFile = parseBool(value, lineNum); };
 	m_ceMap["logFilePath"] = [](const string& value, uint32 lineNum, LogConfig& c)
-		{ c.m_logFilePath = convertUtf8ToPath(value); };
+		{ c.m_logFilePath = convertUtf8ToLogPath(value); };
 	m_ceMap["logFileAsynchronous"] = [](const string& value, uint32 lineNum, LogConfig& c)
 		{ c.m_logFileAsynchronous = parseBool(value, lineNum); };
 	m_ceMap["logFileAutoFlush"] = [](const string& value, uint32 lineNum, LogConfig& c)
@@ -80,4 +82,19 @@ const pmnt::Config::ConfigEntryMap& pmnt::LogConfig::getConfigEntryMap() const
 	// and that is covariant, so it should be okay.
 	const ConfigEntryMap& ref = m_ceMap;
 	return reinterpret_cast<const Config::ConfigEntryMap&>(ref);
+}
+
+pmnt::Config::Path pmnt::LogConfig::convertUtf8ToLogPath(const string& value)
+{
+	auto result = convertUtf8ToPath(value);
+	if (result.is_relative())
+	{
+		pmnt::TString logPathBase = pmnt::tGetEnvVar(k_logPathBaseVarName);
+		if (!logPathBase.empty())
+		{
+			auto base = convertUtf8ToPath(convertTCharToUtf8(logPathBase));
+			return base /= result;
+		}
+	}
+	return result;
 }

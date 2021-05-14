@@ -20,11 +20,10 @@
 
 #include <cctype>
 #include <cstdint>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <iterator>
 #include <limits>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -32,7 +31,13 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#include <boost/format.hpp>
+
 using namespace ::std;
+
+using ::boost::format;
+using ::std::setfill;
+using ::std::setw;
 
 using Utf16Char = ::std::uint16_t;
 using Utf16String = ::std::basic_string<Utf16Char>;
@@ -92,18 +97,16 @@ static Utf16String utf8ToUtf16(const string& utf8Str)
 	int length = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, pUtf8Str, -1, nullptr, 0);
 	if (length == 0)
 	{
-		ostringstream s;
-		s << "MultiByteToWideChar #1 failure 0x" << setw(8) << setfill('0') << ::GetLastError();
-		throw exception(s.str().c_str());
+		auto errMsg = str(format{"MultiByteToWideChar failure #1 0x%1$08x"} % ::GetLastError());
+		throw exception(errMsg.c_str());
 	}
 
 	vector<Utf16Char> buffer(length);
 	if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, pUtf8Str, -1,
 		reinterpret_cast<LPWSTR>(&buffer[0]), length) == 0)
 	{
-		ostringstream s;
-		s << "MultiByteToWideChar #2 failure 0x" << setw(8) << setfill('0') << ::GetLastError();
-		throw exception(s.str().c_str());
+		auto errMsg = str(format{"MultiByteToWideChar failure #2 0x%1$08x"} % ::GetLastError());
+		throw exception(errMsg.c_str());
 	}
 
 	return &buffer[0];

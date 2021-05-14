@@ -113,6 +113,7 @@ private:
 	const TChar* getEnvVarName() const override;
 	const TChar* getDefaultConfigFileName() const override;
 	const Config::ConfigEntryMap& getConfigEntryMap() const override;
+	static Path convertUtf8ToLogPath(const ::std::string& value);
 
 	// Implementation note:  It may strike you as odd that this is an instance member
 	// rather than a static member as in KbConfig.  The reason is that unlike KbConfig,

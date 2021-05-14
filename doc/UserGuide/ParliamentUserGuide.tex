@@ -7,6 +7,7 @@
 % !TEX tabbedFile{DeployingAndUsing.tex}
 % !TEX tabbedFile{Building.tex}
 % !TEX tabbedFile{Appendices.tex}
+% !TEX tabbedFile{acronyms.tex}
 
 \documentclass[12pt,letterpaper,openany,oneside,draft]{book}
 
@@ -46,7 +47,8 @@
 \usepackage{fontspec,xltxtra,xunicode}
 \usepackage{iffont}
 \usepackage{unicode-math}
-\usepackage[final]{hyperref}	% Should be the last use-package command
+\usepackage[unicode,final]{hyperref}	% Should be the last use-package command
+\def\UrlBreaks{\do\/\do-}
 
 %\newcommand{\red}[1]{{\color{red}#1}}
 %\newcommand{\paraleader}[1]{\textbf{#1}}
@@ -70,25 +72,15 @@
 %\predate{\begin{center}\large}
 %\postdate{\par\end{center}}
 
-\settofirstfound{\mainfont}{Georgia,TeX Gyre Bonum,Hoefler Text}
-\settofirstfound{\sansfont}{Verdana,TeX Gyre Heros,Gill Sans}
-\settofirstfound{\monofont}{Menlo,Consolas,Andale Mono}
+\settofirstfound{\mainfont}{Georgia,TeX Gyre Bonum}
+\settofirstfound{\sansfont}{Verdana,TeX Gyre Heros}
+\settofirstfound{\monofont}{Menlo,Andale Mono,Lucida Console,Courier New}
 \settofirstfound{\mathfont}{Cambria Math,TeX Gyre Bonum Math,STIX Math}
 \defaultfontfeatures{Mapping=tex-text}
-\setmainfont{\mainfont}
-\setsansfont{\sansfont}[Scale=MatchLowercase]
+\setmainfont{Georgia}
+\setsansfont{Verdana}[Scale=MatchLowercase]
 \setmonofont{\monofont}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
 \setmathfont{\mathfont}
-%\setmainfont{Georgia}
-%\setmainfont{TeX Gyre Pagella}[Numbers=Uppercase]
-%\setmainfont{Constantia}[Numbers=Uppercase]
-%\setsansfont{Verdana}[Scale=MatchLowercase]
-%\setsansfont{TeX Gyre Heros}[Scale=MatchLowercase]
-%\setmonofont{Consolas}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
-%\setmonofont{Menlo}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
-%\setmathfont{TeX Gyre Pagella Math}
-%\setmathfont{STIX Math}
-%\setmathfont{Cambria Math}
 
 \pagestyle{fancy}
 \renewcommand{\chaptermark}[1]
@@ -147,8 +139,7 @@
 
 \acsetup{
 	list/name=Glossary,
-	list/heading=chapter,
-	extra-style=plain}
+	list/heading=chapter}
 \printacronyms
 
 \sloppy

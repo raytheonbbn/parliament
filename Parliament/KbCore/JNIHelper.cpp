@@ -7,13 +7,12 @@
 #include "parliament/JNIHelper.h"
 
 #include <cstdarg>
-#include <sstream>
 
 namespace pmnt = ::bbn::parliament;
 
+using ::boost::format;
 using ::std::basic_string;
 using ::std::exception;
-using ::std::ostringstream;
 using ::std::size_t;
 using ::std::string;
 
@@ -179,11 +178,10 @@ void pmnt::JNIHelper::setStaticShortFld(JNIEnv* pEnv, jclass cls,
 void pmnt::JNIHelper::throwException(JNIEnv* pEnv, const exception& ex,
 	const char* pSrcFile, uint32 srcLineNum)
 {
-	ostringstream s;
-	s << typeid(ex).name() << " thrown from " << pSrcFile << " at line "
-		<< srcLineNum << ":  " << ex.what();
+	auto errMsg = str(format{"%1% thrown from %2% at line %3%: %4%"}
+		% typeid(ex).name() % pSrcFile % srcLineNum % ex.what());
 	throwJavaException(pEnv, "com/bbn/parliament/jni/NativeCodeException",
-		s.str().c_str());
+		errMsg.c_str());
 }
 
 void pmnt::JNIHelper::throwJavaException(JNIEnv* pEnv,

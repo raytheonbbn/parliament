@@ -8,9 +8,13 @@
 #include "parliament/Platform.h"
 #include "parliament/KbInstance.h"
 #include "parliament/JNIHelper.h"
+#include "parliament/Log.h"
 #include "parliament/StmtIterator.h"
 
 using namespace ::bbn::parliament;
+namespace pmnt = ::bbn::parliament;
+
+static auto g_log(pmnt::log::getSource("StmtIteratorJNI"));
 
 JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_StmtIterator_dispose(
 	JNIEnv* pEnv, jobject /* obj */, jlong iterPtr)
