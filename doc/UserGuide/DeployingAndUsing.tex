@@ -58,7 +58,7 @@ Once you have downloaded a distribution, these steps will yield a functioning \a
 
 	\item On Windows, open a PowerShell, switch to the \path|ParliamentKB| directory, and invoke the startup script to start the \ac{pmnt} server:
 	\begin{quote}
-		\path|.\parliament.ps1 -interactive|
+		\path|.\parliament.ps1 -foreground|
 	\end{quote}
 	For backwards compatibility, you may also use a command prompt and type:
 	\begin{quote}
@@ -67,7 +67,7 @@ Once you have downloaded a distribution, these steps will yield a functioning \a
 
 	On other platforms, open a shell, switch to the \path|ParliamentKB| directory, and start \ac{pmnt} using this command:
 	\begin{quote}
-		\texttt{./parliament interactive}
+		\texttt{./parliament foreground}
 	\end{quote}
 	For backwards compatibility, you an also type:
 	\begin{quote}
@@ -215,8 +215,8 @@ Once you see the ``Insert operation successful'' message, your upgraded \ac{pmnt
 
 \emph{Important note:}  When you shut down \ac{pmnt}, it is important to shut it down gracefully.  Otherwise, the \ac{pmnt} files may not be flushed to disk before they are closed, and they may be corrupted.  If you run \ac{pmnt} as a Windows service or Linux/UNIX Daemon (see Section~\ref{section-std-server-init-deploy}), this is generally not a problem, because the operating system sends a shutdown message at the appropriate times.  However, if you run \ac{pmnt} explicitly using the command
 \begin{quote}
-	\path|parliament interactive|\hfill(on Linux/UNIX)\\
-	\path|.\parliament.ps1 -interactive|\hfill(on Windows)
+	\path|parliament foreground|\hfill(on Linux/UNIX)\\
+	\path|.\parliament.ps1 -foreground|\hfill(on Windows)
 \end{quote}
 then you will need to shut it down yourself by typing the command ``exit'' followed by «return» or «enter».
 
@@ -441,7 +441,7 @@ The configuration file is a plain text file containing name-value pairs.  The na
 
 The recognized settings are as follows:
 \begin{description}
-	\item[kbDirectoryPath] The path of the \ac{pmnt} knowledge base files.  If they do not yet exist, they will be created here.  \emph{Default: \path|kb-data|}
+	\item[kbDirectoryPath] The path of the \ac{pmnt} knowledge base files.  If they do not yet exist, they will be created here.  Log files will also be stored here in the \path|log| sub-directory.  \emph{Default: \path|kb-data|}
 
 	\item[stmtFileName] The name of the memory-mapped file containing records of statements. \emph{Default: \path|statements.mem|}
 
@@ -561,7 +561,7 @@ where ``IFP'' stands for ``InverseFunctionalProperty''. \emph{Default: ``on''}
 
 These files configure logging for \acp{pmnt} Java code:
 \begin{quote}
-	\path|ParliamentKB/conf/log4j.interactive.properties|\\
+	\path|ParliamentKB/conf/log4j.foreground.properties|\\
 	\path|ParliamentKB/conf/log4j.daemon.properties|
 \end{quote}
 They are standard Log4J configuration files.  The first applies when running \ac{pmnt} from the command line, and the second is used when running as a daemon or service.
@@ -849,8 +849,8 @@ Because \ac{pmnt} is most often used within a Java environment, the most common 
 
 	\item Multiple Java installations can confuse the \ac{dll} loading process.  If you invoke \ac{pmnt} using any of the following:
 \begin{quote}
-	\path~parliament {interactive|install}~\hfill(on Linux/UNIX)\\
-	\path|.\parliament.ps1 -interactive|\hfill(on Windows)
+	\path~parliament {foreground|install}~\hfill(on Linux/UNIX)\\
+	\path|.\parliament.ps1 -foreground|\hfill(on Windows)
 \end{quote}
 	then the Java installation is found by simply invoking the command \path|java| and relying on the operating system to locate the installation.  In these cases, the \verb|JAVA_HOME| environment variable is not used, unless the operating system uses it.
 

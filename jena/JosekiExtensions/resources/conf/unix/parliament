@@ -1,9 +1,8 @@
 #!/bin/bash
 
 ######### Find the Parliament installation directory: #########
-cd "`dirname ""$0""`"
-PMNT_DIR="`pwd`"
-cd - > /dev/null
+PMNT_DIR="`dirname \"$0\"`"               # relative
+PMNT_DIR="`( cd \"$PMNT_DIR\" && pwd )`"  # absolutized and normalized
 
 
 ######### User-settable configuration parameters: #########
@@ -24,11 +23,11 @@ export PARLIAMENT_LOG_CONFIG_PATH=$PMNT_DIR/ParliamentLogConfig.txt
 ######### Usage of this script: #########
 function printUsage {
 	echo ""
-	echo "Usage: $(basename $0) {start|stop|restart|install|uninstall|interactive}"
+	echo "Usage: $(basename $0) {foreground|install|uninstall|start|stop|restart}"
 	echo ""
 	echo "where:"
 	echo ""
-	echo "   'interactive' starts Parliament as an attached process in the"
+	echo "   'foreground' starts Parliament as an attached process in the"
 	echo "      current shell"
 	echo ""
 	if [ "$IS_SYSTEM_D" = "true" ]; then
@@ -60,7 +59,7 @@ if [ -d "/etc/systemd/system" -a -f "`which systemctl`" ]; then
 	IS_SYSTEM_D="true"
 fi
 
-if [ "$1" != "interactive" -o "$1" != "install" -o "$1" != "uninstall" ]; then
+if [ "$1" != "foreground" -o "$1" != "install" -o "$1" != "uninstall" ]; then
 	# Do nothing
 	echo -n ''
 elif [ ! -d "$JAVA_HOME" ]; then
@@ -92,8 +91,7 @@ if [ ! -d "$KB_DIR" ]; then
 	#echo "Creating missing KB directory ""$KB_DIR""."
 	mkdir -p $KB_DIR
 fi
-cd "$KB_DIR"
-KB_DIR="`pwd`"
+KB_DIR="`( cd \"$KB_DIR\" && pwd )`"
 cd "$SAVED_DIR"
 PID_FILE=$KB_DIR/pid.txt
 
@@ -101,9 +99,9 @@ PID_FILE=$KB_DIR/pid.txt
 ######### Set up the command line: #########
 SERVICE_FILE="$PMNT_DIR/conf/parliament.service"
 SERVICE_LINK='/etc/systemd/system/parliament.service'
-if [ "$1" = 'interactive' ]; then
+if [ "$1" = 'foreground' ]; then
 	MAIN_CLASS=com.bbn.parliament.jena.jetty.CmdLineJettyServer
-	LOG4J_CONFIG=interactive
+	LOG4J_CONFIG=foreground
 	EXEC='java -server'
 elif [ "$1" = 'install' -o "$1" = 'uninstall' -o "$1" = 'test' ]; then
 	MAIN_CLASS=com.bbn.parliament.jena.jetty.CmdLineJettyServer
@@ -208,7 +206,7 @@ function installSystemDService {
 
 
 ######### Execute: #########
-if [ "$1" = "start" -o "$1" = "interactive" ]; then
+if [ "$1" = "start" -o "$1" = "foreground" ]; then
 	setSharedLibPath
 	$EXEC $MAIN_CLASS
 elif [ "$1" = "stop" ]; then

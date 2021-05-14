@@ -1,5 +1,13 @@
 Version 2.8.0:
 
+* Introduced a clean separation between Parliament's software and data files.
+  The software files may now be read-only to the account under which Parliament
+  is running, and the data files are easily moved to a writable location
+  suitable for mass storage, such as an alternate partition, network mount,
+  NAS or SAN device.  All data files, including log files, are now stored under
+  the directory given by the kbDirectoryPath setting in ParliamentKbConfig.txt
+  (default is kb-data under the installation directory).
+
 * Changed the startup scripts on Linux/UNIX to properly support systemd service
   installation.
 

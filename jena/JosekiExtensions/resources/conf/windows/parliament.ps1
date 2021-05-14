@@ -2,15 +2,21 @@
 .synopsis
 Starts Parliament directly, or installs it as a service
 .description
-Get-Function displays the name and syntax of all functions in the session.
+This script either starts the Parliament semantic graph store (or triple
+store) directly in the current shell or it installs and uninstalls it as
+a Windows service, to be controlled via the Services management console.
 #>
 
 param (
-	# Starts Parliament as an attached process in the current shell
-	[switch][Alias("attached","inter")]$interactive,
-	# Sets up Parliament as a service, so that it can be controlled via the service control panel or the sc command
+	# (-f or -fg) Starts Parliament directly in the current shell
+	[Alias("f","fg")]
+	[switch]$foreground,
+	# (-i) Installs Parliament as a service, so that it can be controlled
+	# via the Services management console or the sc command
+	[Alias("i")]
 	[switch]$install,
-	# Removes the Parliament service definition
+	# (-u) Removes the Parliament service definition
+	[Alias("u")]
 	[switch]$uninstall
 )
 
@@ -35,7 +41,7 @@ $remoteMgmt = '-Dcom.sun.management.jmxremote'
 
 ######### Validate command line: #########
 $switchCount = 0
-if ($interactive) {
+if ($foreground) {
 	$switchCount += 1
 }
 if ($install) {
@@ -45,12 +51,12 @@ if ($uninstall) {
 	$switchCount += 1
 }
 if ($switchCount -lt 1) {
-	echo 'Please specify one of -interactive, -install, or -uninstall.'
+	echo 'Please specify one of -foreground, -install, or -uninstall.'
 	echo ('(Type "help {0}" for documentation.)' -f [System.IO.Path]::GetFileName($PSCommandPath))
 	exit 1
 }
 if ($switchCount -gt 1) {
-	echo 'Please choose only one of -interactive, -install, or -uninstall.'
+	echo 'Please choose only one of -foreground, -install, or -uninstall.'
 	echo ('(Type "help {0}" for documentation.)' -f [System.IO.Path]::GetFileName($PSCommandPath))
 	exit 1
 }
@@ -103,7 +109,7 @@ $env:Path += ";$pmntDir\bin"
 
 
 ######### Set up the command line: #########
-if ($interactive) {
+if ($foreground) {
 	$argList = @(
 		'-server',
 		("-Xmx$javaHeapSize" + 'm'),
@@ -111,7 +117,7 @@ if ($interactive) {
 		#$debugArgs,	# Uncomment to enable remote debugging
 		#$remoteMgmt,	# Uncomment to enable remote management
 		"-Dlog.path.base=$kbDirFwdSlash",
-		"-Dlog4j.configuration=file:$pmntDirFwdSlash/conf/log4j.interactive.properties",
+		"-Dlog4j.configuration=file:$pmntDirFwdSlash/conf/log4j.foreground.properties",
 		"-Djetty.host=$jettyHost",
 		"-Djetty.port=$jettyPort",
 		"-Djava.library.path=$pmntDirFwdSlash/bin",
