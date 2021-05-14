@@ -29,11 +29,7 @@ You will need to acquire and install one or more appropriate compilers for each 
 		\midrule
 		Ubuntu 20 (64-bit) & GCC 9.3.0 & gcc \\
 		\midrule
-		RHEL 8 (64-bit) & GCC 8.3.1 & gcc \\
-		\midrule
-		Centos 8 (64-bit) & GCC 8.3.1 & gcc \\
-		\midrule
-		Centos 7 (64-bit) & GCC 4.8.5 & gcc \\
+		RHEL/CentOS 8 (64-bit) & GCC 8.3.1 & gcc \\
 		\bottomrule
 	\end{tabular}
 	\caption{Supported Platforms and Compilers}
@@ -136,15 +132,15 @@ We emphasize libraries that work well with the C++ Standard Library. Boost libra
 We aim to establish ``existing practice'' and provide reference implementations so that Boost libraries are suitable for eventual standardization. Ten Boost libraries are already included in the \href{http://www.open-std.org/jtc1/sc22/wg21/}{C++ Standards Committee's} Library Technical Report (\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1745.pdf}{TR1}) and in the new C++11 Standard.  C++11 also includes several more Boost libraries in addition to those from TR1.  More Boost libraries are proposed for standardization in C++17.
 \end{quote}
 
-To get started, download the Boost source distribution (version 1.74.0 or later) from the Boost web site.  Unpack this to a handy location on your disk.  This location may be anywhere you like.  Define this environment variable pointing there:
+To get started, download the Boost source distribution (version 1.76.0 or later) from the Boost web site.  Unpack this to a handy location on your disk.  This location may be anywhere you like.  Define this environment variable pointing there:
 
 {
 	%\renewcommand{\arraystretch}{1.5}
 	\renewcommand{\tabcolsep}{0pt}
 	\begin{tabular}{l@{\hspace{2em}}l}
-		\verb|set BOOST_ROOT=C:\boost_1_74_0|
+		\verb|set BOOST_ROOT=C:\boost_1_76_0|
 			& (on Windows)\\
-		\verb|export BOOST_ROOT=~/boost_1_74_0|
+		\verb|export BOOST_ROOT=~/boost_1_76_0|
 			& (on Macintosh and Linux)\\
 	\end{tabular}
 }
@@ -163,7 +159,7 @@ Open a Command Prompt, change to the \verb|BOOST_ROOT| directory, and issue the 
 b2 -q -j3 --disable-icu --ignore-site-config --layout=versioned
 --build-dir=build-msvc --stagedir=stage-msvc --with-atomic
 --with-chrono --with-date_time --with-filesystem --with-log
---with-regex --with-test --with-thread toolset=msvc
+--with-test --with-thread toolset=msvc
 define=BOOST_TEST_ALTERNATIVE_INIT_API address-model=32,64
 variant=debug,release link=shared,static runtime-link=shared stage
 \end{verbatim}}
@@ -185,7 +181,7 @@ Open a Terminal window, change to the \verb|BOOST_ROOT| directory, and issue the
 
 {\small\begin{verbatim}
 ./bootstrap.sh --without-icu --with-toolset=clang --with-libraries=
-atomic,chrono,date_time,filesystem,log,regex,test,thread
+atomic,chrono,date_time,filesystem,log,test,thread
 \end{verbatim}}
 
 This will build the executable \verb|b2| in \verb|BOOST_ROOT|.  Move this binary to any location on your path.  Then issue the following command:
@@ -211,7 +207,7 @@ At a shell, change to the \verb|BOOST_ROOT| directory, and issue the following c
 
 {\small\begin{verbatim}
 ./bootstrap.sh --without-icu --with-toolset=gcc --with-libraries=
-atomic,chrono,date_time,filesystem,log,regex,test,thread
+atomic,chrono,date_time,filesystem,log,test,thread
 \end{verbatim}}
 
 This will build the executable \verb|b2| in \verb|BOOST_ROOT|.  Move this binary to any location on your path.  Then issue the following command:
@@ -243,7 +239,7 @@ Next we need to configure Boost.Build so that it can build \ac{pmnt}.  Start by 
 
 	\item\verb|BDB_HOME|: As described above in Section~\ref{sec:BuildingBerkeleyDB}.
 
-	\item\verb|BOOST_VERSION|: The version of Boost (currently 1\_74\_0).
+	\item\verb|BOOST_VERSION|: The version of Boost (currently 1\_76\_0).
 
 	\item\verb|BOOST_ROOT|: As described above in Section~\ref{sec:BuildingBoost}.
 

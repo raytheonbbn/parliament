@@ -5,18 +5,16 @@
 // All rights reserved.
 
 #include "parliament/Util.h"
+#include "parliament/CharacterLiteral.h"
 #include "parliament/Exceptions.h"
+#include "parliament/Log.h"
 #include "parliament/Types.h"
 #include "parliament/Version.h"
 #include "parliament/Windows.h"
 
-#include <cstring>
-#include <locale>
-#include <sstream>
 #include <cstdlib>
 #include <string>
-
-#include <boost/algorithm/string/predicate.hpp>
+#include <vector>
 
 #if !defined(PARLIAMENT_WINDOWS) && !defined(PARLIAMENT_SOLARIS)
 #	include <sys/time.h>
@@ -24,15 +22,10 @@
 
 namespace pmnt = ::bbn::parliament;
 
-using ::boost::algorithm::ends_with;
-using ::boost::algorithm::starts_with;
-
-using ::std::char_traits;
-using ::std::ctype;
-using ::std::locale;
-using ::std::ostringstream;
+using ::boost::format;
 using ::std::string;
-using ::std::use_facet;
+
+static auto g_log(pmnt::log::getSource("Util"));
 
 
 
@@ -49,13 +42,46 @@ string pmnt::getKbVersion()
 
 pmnt::TString pmnt::tGetEnvVar(const TChar* pVarName)
 {
-	const TChar* pEnvVarValue =
-#if defined(PARLIAMENT_WINDOWS) && defined(UNICODE)
-		::_wgetenv(pVarName);
+#if defined(PARLIAMENT_WINDOWS)
+#if defined(PARLIAMENT_UNIT_TEST)
+	constexpr size_t k_bufferIncrement = 8;	// Force a retry with enlarged buffer at test time
 #else
-		::getenv(pVarName);
+	constexpr size_t k_bufferIncrement = 512;
 #endif
+	for (DWORD bufferSize = k_bufferIncrement;; bufferSize += k_bufferIncrement)
+	{
+		::std::vector<TChar> buffer(bufferSize, _T('\0'));
+
+		DWORD numChars = ::GetEnvironmentVariable(pVarName, &(buffer[0]), bufferSize);
+		auto errCode = Exception::getSysErrCode();
+		if (numChars == 0)
+		{
+			if (errCode == ERROR_ENVVAR_NOT_FOUND)
+			{
+				return TString();
+			}
+			else
+			{
+				auto errMsg = str(format{
+					"GetEnvironmentVariable error: var = '%1%', numChars = %2%, error code = %3%"}
+						% pVarName % numChars % errCode);
+				PMNT_LOG(g_log, log::Level::error) << errMsg;
+				throw Exception(errMsg);
+			}
+		}
+		else if (numChars < buffer.size())
+		{
+			return TString(&(buffer[0]));
+		}
+		else
+		{
+			// The buffer is too small -- loop around and try again with a bigger buffer
+		}
+	}
+#else
+	const TChar* pEnvVarValue = ::getenv(pVarName);
 	return (pEnvVarValue == nullptr) ? TString() : TString(pEnvVarValue);
+#endif
 }
 
 
@@ -89,11 +115,11 @@ pmnt::HiResTimer::HiResTime pmnt::HiResTimer::getHiResTime()
 		uint64 perfCount;
 		if (!::QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&perfCount)))
 		{
-			SysErrCode errCode = Exception::getSysErrCode();
-			string errMsg = Exception::getSysErrMsg(errCode);
-			ostringstream s;
-			s << "The Windows API QueryPerformanceCounter failed:  " << errMsg << " (" << errCode << ")";
-			throw Exception(s.str());
+			auto errCode = Exception::getSysErrCode();
+			auto errMsg = str(format{"QueryPerformanceCounter error: %1% (%2%)"}
+					% Exception::getSysErrMsg(errCode) % errCode);
+			PMNT_LOG(g_log, log::Level::error) << errMsg;
+			throw Exception(errMsg);
 		}
 		return perfCount;
 	}
@@ -109,11 +135,11 @@ pmnt::HiResTimer::HiResTime pmnt::HiResTimer::getHiResTime()
 	struct timeval t;
 	if (gettimeofday(&t, nullptr) != 0)
 	{
-		SysErrCode errCode = Exception::getSysErrCode();
-		string errMsg = Exception::getSysErrMsg(errCode);
-		ostringstream s;
-		s << "The POSIX API gettimeofday failed:  " << errMsg << " (" << errCode << ")";
-		throw Exception(s.str());
+		auto errCode = Exception::getSysErrCode();
+		auto errMsg = str(format{"gettimeofday error: %1% (%2%)"}
+				% Exception::getSysErrMsg(errCode) % errCode);
+		PMNT_LOG(g_log, log::Level::error) << errMsg;
+		throw Exception(errMsg);
 	}
 	return ((uint64) t.tv_sec * 1000000) + (uint64) t.tv_usec;
 #endif

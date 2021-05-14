@@ -539,6 +539,7 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 	}
 
 	/** {@inheritDoc} */
+	@SuppressWarnings("resource")
 	@Override
 	public void close() {
 		StreamUtil.asStream(listGraphNodes())

@@ -6,7 +6,6 @@
 
 package com.bbn.parliament.jena.jetty;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 
@@ -26,20 +25,27 @@ public class CmdLineJettyServer {
 		@Override
 		public void run() {
 			try {
-				for (boolean timeToExit = false; !timeToExit;) {
+				for (;;) {
 					printPrompt();
 					byte[] bytes = new byte[256];
 					int count = System.in.read(bytes);
-					String consoleInput = new String(bytes, 0, count, StandardCharsets.UTF_8).trim();
-					timeToExit = consoleInput.equalsIgnoreCase("exit");
+					if (count < 0) {
+						// This means the read reached the end of the stream. This only
+						// happens when the process has no proper stdin, i.e., when the
+						// process is being run as a daemon.  We exit the loop here to stop
+						// pointlessly checking for an "exit" command that will never come,
+						// but we do not send the shutdown signal.  In this case, that will
+						// come via the shutdown hook below.
+						break;
+					}
+					String consoleInput = new String(bytes, 0, count, StandardCharsets.UTF_8);
+					if ("exit".equalsIgnoreCase(consoleInput.trim())) {
+						sendShutdownSignal();
+						break;
+					}
 				}
-			} catch (IOException ex) {
-				LOG.error("IOException:", ex);
-			} finally {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Sending shutdown signal from {}", Thread.currentThread().getName());
-				}
-				serverShouldShutDown.countDown();
+			} catch (Throwable ex) {
+				LOG.error("Exception:", ex);
 			}
 		}
 
@@ -53,7 +59,7 @@ public class CmdLineJettyServer {
 				+ "#####   Warning:  Killing the server process by any means other  #####%n"
 				+ "#####   than graceful shutdown may result in corrupt knowledge   #####%n"
 				+ "#####   base files.  Please shut down the server by typing       #####%n"
-				+ "#####   'exit' at the prompt below.                              #####%n"
+				+ "#####   'exit' or 'Ctrl+C' at the prompt below.                  #####%n"
 				+ "#####                                                            #####%n"
 				+ "######################################################################%n"
 				+ "######################################################################%n"
@@ -71,11 +77,13 @@ public class CmdLineJettyServer {
 
 		@Override
 		public void run() {
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Sending shutdown signal from {}", Thread.currentThread().getName());
-			}
-			serverShouldShutDown.countDown();
+			sendShutdownSignal();
 		}
+	}
+
+	private static void sendShutdownSignal() {
+		LOG.info("Sending shutdown signal from {}", Thread.currentThread().getName());
+		serverShouldShutDown.countDown();
 	}
 
 	/** Default entry point. */
@@ -93,7 +101,7 @@ public class CmdLineJettyServer {
 			serverShouldShutDown.await();
 
 			System.out.format("Shutting down server%n");
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			LOG.error("Parliament server encountered an exception", ex);
 		} finally {
 			JettyServerCore.getInstance().stop();

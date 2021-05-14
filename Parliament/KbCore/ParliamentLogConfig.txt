@@ -9,7 +9,7 @@
 
 #####   Logging configuration   #####
 
-logToConsole             = yes
+logToConsole             = no
 logConsoleAsynchronous   = no
 logConsoleAutoFlush      = yes
 logToFile                = yes

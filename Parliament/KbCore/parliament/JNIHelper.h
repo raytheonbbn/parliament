@@ -311,11 +311,17 @@ PARLIAMENT_NAMESPACE_END
 		}																				\
 		catch (const ::std::exception& ex)									\
 		{																				\
+			PMNT_LOG(g_log, log::Level::error) << typeid(ex).name()	\
+				<< " caught in " << __FILE__ << " at line "				\
+				<< __LINE__ << ":  " << ex.what();							\
 			JNIHelper::throwException(pEnv, ex, __FILE__, __LINE__);	\
 		}																				\
 	}																					\
 	catch (const JavaException&)												\
 	{																					\
+		PMNT_LOG(g_log, log::Level::error)									\
+			<< "JavaException caught in " << __FILE__ << " at line "	\
+			<< __LINE__;															\
 		/* Do nothing, so as to return to the JVM. */					\
 	}
 

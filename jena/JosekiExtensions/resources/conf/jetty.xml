@@ -194,7 +194,7 @@
 						<New id="RequestLog" class="org.eclipse.jetty.server.handler.RequestLogHandler">
 							<Set name="RequestLog">
 								<New id="RequestLog" class="org.eclipse.jetty.server.AsyncNCSARequestLog">
-									<Set name="filename"><Property name="jetty.base" default="."/><Property name="requestlog.filename" default="/log/yyyy_mm_dd.request.log"/></Set>
+									<Set name="filename"><SystemProperty name="log.path.base" default="."/><Property name="requestlog.filename" default="/log/yyyy_mm_dd.request.log"/></Set>
 									<Set name="filenameDateFormat"><Property name="requestlog.filenameDateFormat" default="yyyy_MM_dd"/></Set>
 									<Set name="retainDays"><Property name="requestlog.retain" default="90"/></Set>
 									<Set name="append"><Property name="requestlog.append" default="false"/></Set>
@@ -279,7 +279,7 @@
 						<New class="org.eclipse.jetty.deploy.providers.WebAppProvider">
 							<Set name="monitoredDirName"><Property name="jetty.base" default="."/>/<Property name="jetty.deploy.monitoredDirName" default="webapps"/></Set>
 							<Set name="defaultsDescriptor"><Property name="jetty.home" default="."/>/conf/webdefault.xml</Set>
-							<Set name="tempDir"><Property name="jetty.base" default="."/>/tmp</Set>
+							<Set name="tempDir"><SystemProperty name="log.path.base" default="."/>/tmp</Set>
 							<Set name="scanInterval"><Property name="jetty.deploy.scanInterval" default="1"/></Set>
 							<Set name="extractWars"><Property name="jetty.deploy.extractWars" default="true"/></Set>
 							<Set name="configurationManager">
