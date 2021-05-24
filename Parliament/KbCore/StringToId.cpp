@@ -14,370 +14,50 @@
 #include "parliament/Util.h"
 
 #include <algorithm>
+#include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <db.h>
 
-#if defined(USE_IN_MEMORY_LOOKUP_TABLE)
-#include <boost/filesystem/fstream.hpp>
-#endif
-
-namespace bfs = ::boost::filesystem;
 namespace pmnt = ::bbn::parliament;
 
-using ::boost::bad_lexical_cast;
 using ::boost::format;
 using ::boost::lexical_cast;
 
-using ::std::bad_alloc;
 using ::std::char_traits;
 using ::std::copy;
 using ::std::make_pair;
 using ::std::string;
 
-#if defined(USE_IN_MEMORY_LOOKUP_TABLE)
-using ::std::getline;
-using ::std::ios_base;
-using ::std::make_pair;
-
-using RsrcIFStream = bfs::basic_ifstream<pmnt::RsrcChar>;
-using RsrcOFStream = bfs::basic_ofstream<pmnt::RsrcChar>;
-#endif
-
-static const char k_optionRegExStr[] = "^[ \t]*([0-9]+)[ \t]*([kKmMgG])[ \t]*,[ \t]*([0-9]+)[ \t]*$";
+static constexpr char k_bdbErrorPrefix[] = "Berkeley DB";
+static constexpr char k_optionRegExStr[] = "^[ \t]*([0-9]+)[ \t]*([kKmMgG])[ \t]*,[ \t]*([0-9]+)[ \t]*$";
 
 static auto g_log(pmnt::log::getSource("StringToId"));
 
-static void initInDbt(DBT& dbt, const void* pData, size_t dataLen)
+template <typename DataElement>
+static auto initInputDbt(DBT& dbt, const DataElement* pData, size_t numElements) -> void
 {
 	memset(&dbt, 0, sizeof(dbt));
 	dbt.flags = DB_DBT_USERMEM;
-	dbt.data = const_cast<void*>(pData);
-	dbt.ulen = dbt.size = static_cast<pmnt::uint32>(dataLen);
+	dbt.data = reinterpret_cast<void*>(const_cast<DataElement*>(pData));
+	dbt.ulen = dbt.size = static_cast<pmnt::uint32>(numElements * sizeof(*pData));
 }
 
-static void initOutDbt(DBT& dbt, void* pBuffer, size_t bufferLen)
+template <typename DataElement>
+static auto initOutputDbt(DBT& dbt, DataElement* pBuffer, size_t numElements) -> void
 {
 	memset(&dbt, 0, sizeof(dbt));
 	dbt.flags = DB_DBT_USERMEM;
 	dbt.data = pBuffer;
-	dbt.ulen = static_cast<pmnt::uint32>(bufferLen);
+	dbt.ulen = static_cast<pmnt::uint32>(numElements * sizeof(*pBuffer));
 }
 
 //======================================================
 
-pmnt::StrToIdEntryIterator::StrToIdEntryIterator() :
-	m_pDB(nullptr),
-	m_buffer(),
-	m_curVal(nullValue()),
-	m_pCursor(nullptr)
-{
-}
-
-pmnt::StrToIdEntryIterator::StrToIdEntryIterator(DB* pDB) :
-	m_pDB(pDB),
-	m_buffer(k_initialBufferSize),
-	m_curVal(make_pair(&(m_buffer[0]), k_nullRsrcId)),
-	m_pCursor(createCursor(m_pDB))
-{
-	advanceCursor();
-}
-
-pmnt::StrToIdEntryIterator::StrToIdEntryIterator(const StrToIdEntryIterator& rhs) :
-	m_pDB(rhs.m_pDB),
-	m_buffer(rhs.m_buffer),
-	m_curVal(m_pDB == nullptr ? nullValue() : make_pair(&(m_buffer[0]), rhs.m_curVal.second)),
-	m_pCursor(m_pDB == nullptr ? nullptr : createCursor(m_pDB))
-{
-	if (m_pDB != nullptr)
-	{
-		setCursorPosition();
-	}
-}
-
-pmnt::StrToIdEntryIterator& pmnt::StrToIdEntryIterator::operator=(
-	const StrToIdEntryIterator& rhs)
-{
-	if (this != &rhs)
-	{
-		m_pDB = rhs.m_pDB;
-		if (m_pDB == nullptr)
-		{
-			if (!m_buffer.empty())
-			{
-				m_buffer[0] = 0;
-			}
-			m_curVal = nullValue();
-			closeCursor();
-		}
-		else
-		{
-			if (rhs.m_buffer.size() > m_buffer.size())
-			{
-				m_buffer.resize(rhs.m_buffer.size());
-			}
-			copy(begin(rhs.m_buffer), end(rhs.m_buffer), begin(m_buffer));
-			m_curVal = make_pair(&(m_buffer[0]), rhs.m_curVal.second);
-			if (m_pCursor == nullptr)
-			{
-				m_pCursor = createCursor(m_pDB);
-			}
-
-			setCursorPosition();
-		}
-	}
-	return *this;
-}
-
-pmnt::StrToIdEntryIterator::~StrToIdEntryIterator()
-{
-	closeCursor();
-}
-
-// Preincrement:
-pmnt::StrToIdEntryIterator& pmnt::StrToIdEntryIterator::operator++()
-{
-	advanceCursor();
-	return *this;
-}
-
-// Postincrement:
-pmnt::StrToIdEntryIterator pmnt::StrToIdEntryIterator::operator++(int)
-{
-	StrToIdEntryIterator copy(*this);
-	advanceCursor();
-	return copy;
-}
-
-bool pmnt::StrToIdEntryIterator::operator==(const StrToIdEntryIterator& rhs) const
-{
-	bool result = false;
-	if (m_pDB == nullptr && rhs.m_pDB == nullptr)
-	{
-		result = true;
-	}
-	else if (m_pDB == rhs.m_pDB)
-	{
-		size_t lhsLen = char_traits<Buffer::value_type>::length(m_curVal.first);
-		size_t rhsLen = char_traits<Buffer::value_type>::length(rhs.m_curVal.first);
-		if (lhsLen == rhsLen && char_traits<Buffer::value_type>::compare(
-			m_curVal.first, rhs.m_curVal.first, lhsLen) == 0)
-		{
-			result = true;
-		}
-	}
-	return result;
-}
-
-DBC* pmnt::StrToIdEntryIterator::createCursor(DB* pDB)
-{
-	DBC* pCursor = nullptr;
-	int err = pDB->cursor(pDB, nullptr, &pCursor, 0);
-	if (err != 0)
-	{
-		throw Exception(format("Unable to create Berkeley DB cursor:  %1% (%2%)")
-			% db_strerror(err) % err);
-	}
-	return pCursor;
-}
-
-void pmnt::StrToIdEntryIterator::closeCursor()
-{
-	if (m_pCursor != nullptr)
-	{
-		int err = m_pCursor->c_close(m_pCursor);
-		m_pCursor = nullptr;
-		if (err != 0)
-		{
-			PMNT_LOG(g_log, log::Level::error)
-				<< format("Unable to close Berkeley DB cursor:  %1% (%2%)")
-					% db_strerror(err) % err;
-		}
-	}
-}
-
-// Intended to be called only from the copy ctor and the assignment operator
-void pmnt::StrToIdEntryIterator::setCursorPosition()
-{
-	DBT key, val;
-	initInDbt(key, m_curVal.first,
-		char_traits<Buffer::value_type>::length(m_curVal.first) * sizeof(Buffer::value_type));
-	initOutDbt(val, &m_curVal.second, sizeof(m_curVal.second));
-
-	int err = m_pCursor->c_get(m_pCursor, &key, &val, DB_SET);
-	if (err == 0)
-	{
-		// Do nothing
-	}
-	else if (err == DB_NOTFOUND)
-	{
-		// Convert this to an "end" iterator:
-		closeCursor();
-		m_pDB = nullptr;
-	}
-	else
-	{
-		closeCursor();
-		m_pDB = nullptr;
-		throw Exception(format("Unable to advance Berkeley DB cursor:  %1% (%2%)")
-			% db_strerror(err) % err);
-	}
-}
-
-//TODO: Replace "#if" with "if constexpr" (C++17) when all compilers support it:
-void pmnt::StrToIdEntryIterator::checkBufferSizeDivisibleByCharSize(uint32 bufferSize)
-{
-#if defined(PARLIAMENT_RSRC_AS_UTF16)
-	//if constexpr (sizeof(Buffer::value_type) > 1)
-	//{
-		if (bufferSize % sizeof(Buffer::value_type) != 0)
-		{
-			throw Exception(
-				format("Berkeley DB buffer size %1% is not divisible by character size %2%")
-				% bufferSize % sizeof(Buffer::value_type));
-		}
-	//}
-#endif
-}
-
-// Intended to be called only from ctor and operator++
-void pmnt::StrToIdEntryIterator::advanceCursor()
-{
-	while (m_pDB != nullptr)
-	{
-		DBT key, val;
-		initOutDbt(key, m_curVal.first, (m_buffer.size() - 1) * sizeof(Buffer::value_type));
-		initOutDbt(val, &m_curVal.second, sizeof(m_curVal.second));
-
-		int err = m_pCursor->c_get(m_pCursor, &key, &val, DB_NEXT);
-		if (err == 0)
-		{
-			checkBufferSizeDivisibleByCharSize(key.size);
-			m_buffer[key.size / sizeof(Buffer::value_type)] = 0;
-			break;
-		}
-		else if (err == DB_BUFFER_SMALL)
-		{
-			checkBufferSizeDivisibleByCharSize(key.size);
-			m_buffer.resize(key.size / sizeof(Buffer::value_type) + 1);
-		}
-		else if (err == DB_NOTFOUND)
-		{
-			// Convert this to an "end" iterator:
-			closeCursor();
-			m_pDB = nullptr;
-		}
-		else
-		{
-			closeCursor();
-			m_pDB = nullptr;
-			throw Exception(format("Unable to advance Berkeley DB cursor:  %1% (%2%)")
-				% db_strerror(err) % err);
-		}
-	}
-}
-
-// ======================================================================
-
-pmnt::StringToId::StringToId(const bfs::path& filePath, const string& optionStr, bool readOnly) :
-	m_filePath(filePath),
-	m_optionStr(optionStr),
-	m_readOnly(readOnly),
-#if defined(USE_IN_MEMORY_LOOKUP_TABLE)
-	m_db()
-#else
-	m_pDB(nullptr)
-#endif
-{
-#if defined(USE_IN_MEMORY_LOOKUP_TABLE)
-	RsrcIFStream strm(m_filePath, ios_base::in);
-	while (true)
-	{
-		RsrcString rawRsrc, rsrc, rawId;
-		getline(strm, rawRsrc);
-		getline(strm, rawId);
-		if (!strm && rawId.length() <= 0)
-		{
-			break;
-		}
-
-		bool lastCharWasBackslash = false;
-		for (auto it = cBegin(rawRsrc); it != cEnd(rawRsrc); ++it)
-		{
-			RsrcChar ch = *it;
-			if (lastCharWasBackslash)
-			{
-				switch (ch)
-				{
-				case 'n':
-					rsrc += '\n';
-					break;
-				case 'r':
-					rsrc += '\r';
-					break;
-				case '\\':
-					rsrc += '\\';
-					break;
-				default:
-					rsrc += '\\';
-					rsrc += ch;
-					break;
-				}
-				lastCharWasBackslash = false;
-			}
-			else if (ch == '\\')
-			{
-				lastCharWasBackslash = true;
-			}
-			else
-			{
-				rsrc += ch;
-			}
-		}
-
-		size_t id = lexical_cast<size_t>(rawId);
-
-		m_db.insert(make_pair(rsrc, id));
-	}
-#else
-	auto opt = parseOptionString(m_optionStr);
-
-	int err = db_create(&m_pDB, nullptr, 0);
-	if (err != 0)
-	{
-		throw Exception(format("Unable to create Berkeley DB instance:  %1% (%2%)")
-			% db_strerror(err) % err);
-	}
-
-	m_pDB->set_errfile(m_pDB, stderr);
-	m_pDB->set_errpfx(m_pDB, "Berkeley DB");
-
-	err = m_pDB->set_cachesize(m_pDB, opt.m_cacheGBytes, opt.m_cacheBytes, opt.m_numCacheSegments);
-	if (err != 0)
-	{
-		m_pDB->close(m_pDB, 0);
-		m_pDB = nullptr;
-		throw Exception(format("Unable to set Berkeley DB cache size:  %1% (%2%)")
-			% db_strerror(err) % err);
-	}
-
-	uint32 flags = DB_THREAD | (m_readOnly ? DB_RDONLY : DB_CREATE);
-#if defined(PARLIAMENT_WINDOWS)
-	err = m_pDB->open(m_pDB, nullptr, pathAsUtf8(m_filePath).c_str(), nullptr, DB_BTREE, flags, 0);
-#else
-	err = m_pDB->open(m_pDB, nullptr, m_filePath.c_str(), nullptr, DB_BTREE, flags, 0);
-#endif
-	if (err != 0)
-	{
-		m_pDB->close(m_pDB, 0);
-		m_pDB = nullptr;
-		throw Exception(format("Unable to open Berkeley DB:  %1% (%2%)")
-			% db_strerror(err) % err);
-	}
-#endif
-}
-
-pmnt::StringToId::Options pmnt::StringToId::parseOptionString(const string& optionStr)
+pmnt::BerkeleyDbEnvOptions::BerkeleyDbEnvOptions(const ::std::string& optionStr) :
+	m_cacheGBytes(0),
+	m_cacheBytes(0),
+	m_numCacheSegments(0)
 {
 	RegEx rex = compileRegEx(k_optionRegExStr);
 	SMatch captures;
@@ -402,12 +82,11 @@ pmnt::StringToId::Options pmnt::StringToId::parseOptionString(const string& opti
 				totalCacheSize *= 1024ul * 1024ul * 1024ul;
 				break;
 			}
-			return Options{
-				static_cast<uint32>(totalCacheSize / (1024ul * 1024ul * 1024ul)),	// cacheGBytes
-				static_cast<uint32>(totalCacheSize % (1024ul * 1024ul * 1024ul)),	// cacheBytes
-				lexical_cast<uint32>(captures[3].str())};									// numCacheSegments
+			m_cacheGBytes = static_cast<uint32>(totalCacheSize / (1024ul * 1024ul * 1024ul));
+			m_cacheBytes = static_cast<uint32>(totalCacheSize % (1024ul * 1024ul * 1024ul));
+			m_numCacheSegments = lexical_cast<uint32>(captures[3].str());
 		}
-		catch (const bad_lexical_cast& ex)
+		catch (const ::boost::bad_lexical_cast& ex)
 		{
 			throw Exception(format("Unable to parse bdbCacheSize option string \"%1%\" "
 				"due to a numeric conversion error:  %2%") % optionStr % ex.what());
@@ -420,80 +99,349 @@ pmnt::StringToId::Options pmnt::StringToId::parseOptionString(const string& opti
 	}
 }
 
-pmnt::StringToId::~StringToId()
+// ======================================================================
+
+static auto freeDbEnv(__db_env* pDbEnv) noexcept -> void
 {
-#if defined(USE_IN_MEMORY_LOOKUP_TABLE)
-	HiResTimer timer;
-	if (!m_readOnly)
+	if (pDbEnv)
 	{
-		RsrcOFStream strm(m_filePath, ios_base::out | ios_base::trunc);
-		for (const auto& entry : m_db)
-		{
-			for (auto ch : entry.first)
-			{
-				switch (ch)
-				{
-				case '\n':
-					strm << "\\n";
-					break;
-				case '\r':
-					strm << "\\r";
-					break;
-				case '\\':
-					strm << "\\\\";
-					break;
-				default:
-					strm << ch;
-					break;
-				}
-			}
-			strm << ::std::endl << entry.second << ::std::endl;
-		}
-	}
-	timer.stop();
-	PMNT_LOG(g_log, log::Level::debug) << format("Time to write string-to-id map = %1% seconds")
-		% timer.getSec();
-#else
-	if (m_pDB != nullptr)
-	{
-		int err = m_pDB->close(m_pDB, 0);
-		m_pDB = nullptr;
+		PMNT_LOG(g_log, pmnt::log::Level::info) << "Closing Berkeley DB environment...";
+		auto err = pDbEnv->close(pDbEnv, 0);
 		if (err != 0)
 		{
-			PMNT_LOG(g_log, log::Level::error) << format("Unable to close Berkeley DB:  %1% (%2%)")
-				% db_strerror(err) % err;
+			PMNT_LOG(g_log, pmnt::log::Level::error)
+				<< format("Unable to close Berkeley DB environment:  %1% (%2%)")
+					% db_strerror(err) % err;
 		}
+		PMNT_LOG(g_log, pmnt::log::Level::info) << "Berkeley DB environment closed.";
 	}
-#endif
 }
 
-void pmnt::StringToId::sync()
+pmnt::BerkeleyDbEnv::BerkeleyDbEnv(const Path& filePath, const ::std::string& optionStr) :
+	m_homeDir{deriveHomeDir(filePath)},
+	m_options{optionStr},
+	m_pDbEnv{createDbEnv(), &freeDbEnv}
 {
-#if !defined(USE_IN_MEMORY_LOOKUP_TABLE)
+	m_pDbEnv->set_errfile(m_pDbEnv.get(), stderr);
+	m_pDbEnv->set_errpfx(m_pDbEnv.get(), k_bdbErrorPrefix);
+
+	auto err1 = m_pDbEnv->set_cachesize(m_pDbEnv.get(), m_options.m_cacheGBytes,
+		m_options.m_cacheBytes, m_options.m_numCacheSegments);
+	if (err1 != 0)
+	{
+		throw Exception(format("Unable to set Berkeley DB cache size:  %1% (%2%)")
+			% db_strerror(err1) % err1);
+	}
+
+	auto err2{m_pDbEnv->open(m_pDbEnv.get(),
+#if defined(PARLIAMENT_WINDOWS)
+		pathAsUtf8(m_homeDir).c_str(),
+#else
+		m_homeDir.c_str(),
+#endif
+		DB_INIT_MPOOL | DB_PRIVATE | DB_CREATE | DB_THREAD, 0)};
+	if (err2 != 0)
+	{
+		throw Exception(format("Unable to open Berkeley DB:  %1% (%2%)")
+			% db_strerror(err2) % err2);
+	}
+}
+
+auto pmnt::BerkeleyDbEnv::deriveHomeDir(const Path& filePath) -> Path
+{
+	auto homeDir = absolute(filePath).parent_path();
+	if (exists(homeDir) && is_directory(homeDir))
+	{
+		return homeDir;
+	}
+	else if (!exists(homeDir))
+	{
+		create_directories(homeDir);
+		return homeDir;
+	}
+	else
+	{
+		throw Exception(format("Unable to create Berkeley DB environment because '%1%' is not a directory")
+			% homeDir.generic_string());
+	}
+}
+
+auto pmnt::BerkeleyDbEnv::createDbEnv() -> __db_env*
+{
+	auto pDbEnv = static_cast<__db_env*>(nullptr);
+	auto err = db_env_create(&pDbEnv, 0);
+	if (err != 0)
+	{
+		throw Exception(format("Unable to create Berkeley DB environment:  %1% (%2%)")
+			% db_strerror(err) % err);
+	}
+	return pDbEnv;
+}
+
+pmnt::BerkeleyDbEnv::~BerkeleyDbEnv() = default;
+
+//======================================================
+
+static auto freeDbCursor(__dbc* pCursor) noexcept -> void
+{
+	if (pCursor)
+	{
+		auto err = pCursor->c_close(pCursor);
+		if (err != 0)
+		{
+			PMNT_LOG(g_log, pmnt::log::Level::error)
+				<< format("Unable to close Berkeley DB cursor:  %1% (%2%)")
+					% db_strerror(err) % err;
+		}
+	}
+}
+
+pmnt::StrToIdEntryIterator::StrToIdEntryIterator() :
+	m_pDB{nullptr},
+	m_buffer{},
+	m_curVal{nullValue()},
+	m_pCursor{nullptr, &freeDbCursor}
+{
+}
+
+pmnt::StrToIdEntryIterator::StrToIdEntryIterator(__db* pDB) :
+	m_pDB{pDB},
+	m_buffer(k_initialBufferSize),
+	m_curVal{make_pair(&(m_buffer[0]), k_nullRsrcId)},
+	m_pCursor{createCursor(m_pDB), &freeDbCursor}
+{
+	advanceCursor();
+}
+
+pmnt::StrToIdEntryIterator::StrToIdEntryIterator(const StrToIdEntryIterator& rhs) :
+	m_pDB{rhs.m_pDB},
+	m_buffer(rhs.m_buffer),
+	m_curVal{m_pDB == nullptr ? nullValue() : make_pair(&(m_buffer[0]), rhs.m_curVal.second)},
+	m_pCursor{(m_pDB == nullptr ? nullptr : createCursor(m_pDB)), &freeDbCursor}
+{
+	if (m_pDB != nullptr)
+	{
+		setCursorPosition();
+	}
+}
+
+auto pmnt::StrToIdEntryIterator::operator=(const StrToIdEntryIterator& rhs) -> StrToIdEntryIterator&
+{
+	StrToIdEntryIterator temp(rhs);
+	swap(temp);
+	return *this;
+}
+
+pmnt::StrToIdEntryIterator::StrToIdEntryIterator(StrToIdEntryIterator&&) noexcept = default;
+auto pmnt::StrToIdEntryIterator::operator=(StrToIdEntryIterator&&) noexcept -> StrToIdEntryIterator& = default;
+pmnt::StrToIdEntryIterator::~StrToIdEntryIterator() = default;
+
+auto pmnt::StrToIdEntryIterator::swap(StrToIdEntryIterator& other) noexcept -> void
+{
+	using ::std::swap;
+	swap(m_pDB, other.m_pDB);
+	swap(m_buffer, other.m_buffer);
+	swap(m_curVal, other.m_curVal);
+	swap(m_pCursor, other.m_pCursor);
+}
+
+auto pmnt::StrToIdEntryIterator::operator==(const StrToIdEntryIterator& rhs) const -> bool
+{
+	if (m_pDB == nullptr && rhs.m_pDB == nullptr)
+	{
+		return true;
+	}
+	else if (m_pDB == rhs.m_pDB)
+	{
+		auto lhsLen = char_traits<Buffer::value_type>::length(m_curVal.first);
+		auto rhsLen = char_traits<Buffer::value_type>::length(rhs.m_curVal.first);
+		if (lhsLen == rhsLen && char_traits<Buffer::value_type>::compare(
+			m_curVal.first, rhs.m_curVal.first, lhsLen) == 0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+auto pmnt::StrToIdEntryIterator::createCursor(__db* pDB) -> __dbc*
+{
+	auto pCursor = static_cast<__dbc*>(nullptr);
+	auto err = pDB->cursor(pDB, nullptr, &pCursor, 0);
+	if (err != 0)
+	{
+		throw Exception(format("Unable to create Berkeley DB cursor:  %1% (%2%)")
+			% db_strerror(err) % err);
+	}
+	return pCursor;
+}
+
+// Intended to be called only from the copy ctor and the assignment operator
+auto pmnt::StrToIdEntryIterator::setCursorPosition() -> void
+{
+	auto key = DBT{};
+	auto val = DBT{};
+	initInputDbt(key, m_curVal.first, char_traits<Buffer::value_type>::length(m_curVal.first));
+	initOutputDbt(val, &m_curVal.second, 1);
+
+	int err = m_pCursor->c_get(m_pCursor.get(), &key, &val, DB_SET);
+	if (err == 0)
+	{
+		// Do nothing
+	}
+	else if (err == DB_NOTFOUND)
+	{
+		advanceToEnd();
+	}
+	else
+	{
+		advanceToEnd();
+		throw Exception(format("Unable to advance Berkeley DB cursor:  %1% (%2%)")
+			% db_strerror(err) % err);
+	}
+}
+
+auto pmnt::StrToIdEntryIterator::checkBufferSizeDivisibleByCharSize(uint32 bufferSize) -> void
+{
+	if constexpr (sizeof(Buffer::value_type) > 1)
+	{
+		if (bufferSize % sizeof(Buffer::value_type) != 0)
+		{
+			throw Exception(
+				format("Berkeley DB buffer size %1% is not divisible by character size %2%")
+				% bufferSize % sizeof(Buffer::value_type));
+		}
+	}
+}
+
+// Intended to be called only from ctor and operator++
+auto pmnt::StrToIdEntryIterator::advanceCursor() -> void
+{
+	while (m_pDB != nullptr)
+	{
+		auto key = DBT{};
+		auto val = DBT{};
+		initOutputDbt(key, m_curVal.first, m_buffer.size() - 1);
+		initOutputDbt(val, &m_curVal.second, 1);
+
+		int err = m_pCursor->c_get(m_pCursor.get(), &key, &val, DB_NEXT);
+		if (err == 0)
+		{
+			checkBufferSizeDivisibleByCharSize(key.size);
+			m_buffer[key.size / sizeof(Buffer::value_type)] = 0;
+			break;
+		}
+		else if (err == DB_BUFFER_SMALL)
+		{
+			checkBufferSizeDivisibleByCharSize(key.size);
+			m_buffer.resize(key.size / sizeof(Buffer::value_type) + 1);
+		}
+		else if (err == DB_NOTFOUND)
+		{
+			advanceToEnd();
+		}
+		else
+		{
+			advanceToEnd();
+			throw Exception(format("Unable to advance Berkeley DB cursor:  %1% (%2%)")
+				% db_strerror(err) % err);
+		}
+	}
+}
+
+// Converts this to an "end" iterator
+auto pmnt::StrToIdEntryIterator::advanceToEnd() -> void
+{
+	closeCursor();
+	m_pDB = nullptr;
+}
+
+// ======================================================================
+
+static auto freeDb(__db* pDb) noexcept -> void
+{
+	if (pDb)
+	{
+		PMNT_LOG(g_log, pmnt::log::Level::info) << "Closing Berkeley DB...";
+		auto err = pDb->close(pDb, 0);
+		if (err != 0)
+		{
+			PMNT_LOG(g_log, pmnt::log::Level::error) << format("Unable to close Berkeley DB:  %1% (%2%)")
+				% db_strerror(err) % err;
+		}
+		PMNT_LOG(g_log, pmnt::log::Level::info) << "Berkeley DB closed.";
+	}
+}
+
+pmnt::StringToId::StringToId(const Path& filePath, const string& optionStr, bool readOnly) :
+	m_filePath{absolute(filePath)},
+	m_readOnly{readOnly},
+	m_pDB{createDb(filePath, optionStr), &freeDb}
+{
+	uint32 flags = DB_THREAD | (m_readOnly ? DB_RDONLY : DB_CREATE);
+	auto err2{m_pDB->open(m_pDB.get(), nullptr,
+#if defined(PARLIAMENT_WINDOWS)
+		pathAsUtf8(m_filePath).c_str(),
+#else
+		m_filePath.c_str(),
+#endif
+		nullptr, DB_BTREE, flags, 0)};
+	if (err2 != 0)
+	{
+		throw Exception(format("Unable to open Berkeley DB:  %1% (%2%)")
+			% db_strerror(err2) % err2);
+	}
+}
+
+auto pmnt::StringToId::createDb(const Path& filePath, const string& optionStr) -> __db*
+{
+	auto pEnv = BerkeleyDbEnv::getInstance(filePath, optionStr).getEnvPtr();
+	auto pDb = static_cast<__db*>(nullptr);
+	auto err = db_create(&pDb, pEnv, 0);
+	if (err != 0)
+	{
+		throw Exception(format("Unable to create Berkeley DB instance:  %1% (%2%)")
+			% db_strerror(err) % err);
+	}
+	return pDb;
+}
+
+pmnt::StringToId::StringToId(StringToId&&) noexcept = default;
+auto pmnt::StringToId::operator=(StringToId&&) noexcept -> StringToId& = default;
+pmnt::StringToId::~StringToId() = default;
+
+auto pmnt::StringToId::swap(StringToId& other) noexcept -> void
+{
+	using ::std::swap;
+	swap(m_filePath, other.m_filePath);
+	swap(m_readOnly, other.m_readOnly);
+	swap(m_pDB, other.m_pDB);
+}
+
+auto pmnt::StringToId::sync() -> void
+{
 	if (!m_readOnly)
 	{
-		int err = m_pDB->sync(m_pDB, 0);
+		int err = m_pDB->sync(m_pDB.get(), 0);
 		if (err != 0)
 		{
 			throw Exception(format("Unable to sync Berkeley DB:  %1% (%2%)")
 				% db_strerror(err) % err);
 		}
 	}
-#endif
 }
 
-void pmnt::StringToId::compact()
+auto pmnt::StringToId::compact() -> void
 {
 	checkWritable();
 
-#if !defined(USE_IN_MEMORY_LOOKUP_TABLE)
 	// We compact 3 times to avoid leaving any empty pages in the middle of the file.
 	// Compacting repeatedly tends to return these empty pages to the file system.
 	for (int i = 0; i < 3; ++i)
 	{
 		DB_COMPACT compactData;
 		memset(&compactData, 0, sizeof(compactData));
-		int err = m_pDB->compact(m_pDB, nullptr, nullptr, nullptr, &compactData,
+		int err = m_pDB->compact(m_pDB.get(), nullptr, nullptr, nullptr, &compactData,
 			DB_FREE_SPACE, nullptr);
 		if (err != 0)
 		{
@@ -501,41 +449,32 @@ void pmnt::StringToId::compact()
 				% db_strerror(err) % err);
 		}
 	}
-#endif
 }
 
-size_t pmnt::StringToId::find(const RsrcChar* pKey, size_t keyLen) const
+auto pmnt::StringToId::find(const RsrcChar* pKey, size_t keyLen) const -> ResourceId
 {
 	if (pKey == nullptr)
 	{
 		throw Exception("StringToId::find called with a null key");
 	}
 
-	size_t result = k_nullRsrcId;
+	ResourceId result = k_nullRsrcId;
 
-#if defined(USE_IN_MEMORY_LOOKUP_TABLE)
-	RsrcString key(pKey, pKey + keyLen);
-	auto it = m_db.find(key);
-	if (it != m_db.end())
-	{
-		result = it->second;
-	}
-#else
-	DBT key, val;
-	initInDbt(key, pKey, keyLen * sizeof(*pKey));
-	initOutDbt(val, &result, sizeof(result));
+	auto key = DBT{};
+	auto val = DBT{};
+	initInputDbt(key, pKey, keyLen);
+	initOutputDbt(val, &result, 1);
 
-	int err = m_pDB->get(m_pDB, nullptr, &key, &val, 0);
+	int err = m_pDB->get(m_pDB.get(), nullptr, &key, &val, 0);
 	if (err != 0 && err != DB_NOTFOUND)
 	{
 		throw Exception(format("Unable to find key in Berkeley DB:  %1% (%2%)")
 			% db_strerror(err) % err);
 	}
-#endif
 	return result;
 }
 
-void pmnt::StringToId::insert(const RsrcChar* pKey, size_t keyLen, size_t value)
+auto pmnt::StringToId::insert(const RsrcChar* pKey, size_t keyLen, ResourceId value) -> void
 {
 	checkWritable();
 
@@ -552,24 +491,20 @@ void pmnt::StringToId::insert(const RsrcChar* pKey, size_t keyLen, size_t value)
 		throw Exception("StringToId::insert called with a null value");
 	}
 
-#if defined(USE_IN_MEMORY_LOOKUP_TABLE)
-	RsrcString key(pKey, pKey + keyLen);
-	m_db.insert(make_pair(key, value));
-#else
-	DBT key, val;
-	initInDbt(key, pKey, keyLen * sizeof(*pKey));
-	initInDbt(val, &value, sizeof(value));
+	auto key = DBT{};
+	auto val = DBT{};
+	initInputDbt(key, pKey, keyLen);
+	initInputDbt(val, &value, 1);
 
-	int err = m_pDB->put(m_pDB, nullptr, &key, &val, DB_NOOVERWRITE);
+	int err = m_pDB->put(m_pDB.get(), nullptr, &key, &val, DB_NOOVERWRITE);
 	if (err != 0 && err != DB_KEYEXIST)
 	{
 		throw Exception(format("Unable to insert key in Berkeley DB:  %1% (%2%)")
 			% db_strerror(err) % err);
 	}
-#endif
 }
 
-void pmnt::StringToId::checkWritable() const
+auto pmnt::StringToId::checkWritable() const -> void
 {
 	if (m_readOnly)
 	{
