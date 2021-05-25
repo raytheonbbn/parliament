@@ -88,8 +88,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_parseSuccessTests),
 	tc)
 {
-	BOOST_CHECK_NO_THROW(BerkeleyDbEnvOptions{tc.m_pOptions});
-	auto opt = BerkeleyDbEnvOptions{tc.m_pOptions};
+	auto opt = BerkeleyDbEnvOptions{};
+	BOOST_CHECK_NO_THROW(opt = BerkeleyDbEnvOptions{tc.m_pOptions});
 
 	BOOST_CHECK_EQUAL(tc.m_cacheGBytes, opt.m_cacheGBytes);
 	BOOST_CHECK_EQUAL(tc.m_cacheBytes, opt.m_cacheBytes);

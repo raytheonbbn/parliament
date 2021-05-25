@@ -18,6 +18,12 @@ Version 2.8.0:
   from receiving SIGTERM signals, making Parliament difficult to use in a
   Docker container.
 
+* Made the bdbCacheSize configuration parameter in ParliamentKbConfig.txt
+  global across all graphs. Previously, a cache of this size was dedicated to
+  each named graph. With this change, a single cache of this size is shared by
+  all graphs. This is particularly beneficial to deployments that have a large
+  number of graphs.
+
 * Reduced the volume of logging when Parliament is running in daemon mode.
   Log4j is now configured without a console logger, which means that the
   contents of the parliament.log file are not duplicated in the jsvc-log.txt

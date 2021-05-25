@@ -24,8 +24,15 @@ struct __dbc;
 
 namespace bbn::parliament {
 
+using BDbEnvPtr = ::std::shared_ptr<__db_env>;
+
 struct BerkeleyDbEnvOptions
 {
+	BerkeleyDbEnvOptions() :
+		m_cacheGBytes(0),
+		m_cacheBytes(0),
+		m_numCacheSegments(0)
+	{}
 	BerkeleyDbEnvOptions(const ::std::string& optionStr);
 
 	uint32 m_cacheGBytes;
@@ -33,41 +40,42 @@ struct BerkeleyDbEnvOptions
 	uint32 m_numCacheSegments;
 };
 
-class BerkeleyDbEnv
+class BDbEnvManager
 {
 public:
 	using Path = ::boost::filesystem::path;
+	using WeakBDbEnvPtr = ::std::weak_ptr<__db_env>;
 
 	// Under C++11, this instance is instantiated on first use and guaranteed to be
 	// destroyed.  In addition, these operations are guaranteed to be thread-safe.
-	static BerkeleyDbEnv& getInstance(const Path& filePath, const ::std::string& optionStr)
+	static BDbEnvManager& getInstance()
 	{
-		static auto instance = BerkeleyDbEnv{filePath, optionStr};
+		static auto instance = BDbEnvManager{};
 		return instance;
 	}
 
-	BerkeleyDbEnv(const BerkeleyDbEnv&) = delete;
-	auto operator=(const BerkeleyDbEnv&) -> BerkeleyDbEnv& = delete;
-	BerkeleyDbEnv(BerkeleyDbEnv&&) = delete;
-	auto operator=(BerkeleyDbEnv&&) -> BerkeleyDbEnv& = delete;
-	~BerkeleyDbEnv();
+	BDbEnvManager(const BDbEnvManager&) = delete;
+	auto operator=(const BDbEnvManager&) -> BDbEnvManager& = delete;
+	BDbEnvManager(BDbEnvManager&&) = delete;
+	auto operator=(BDbEnvManager&&) -> BDbEnvManager& = delete;
+	~BDbEnvManager();
 
 	// Intended for the StringToId class below:
-	auto getEnvPtr() const -> __db_env*
-		{ return m_pDbEnv.get(); }
+	auto getEnv(const Path& filePath, const ::std::string& optionStr) -> BDbEnvPtr;
 
 private:
-	using DbEnvDeleterFunction = void (*)(__db_env* pDbEnv) noexcept;
-	using DbEnvPtr = ::std::unique_ptr<__db_env, DbEnvDeleterFunction>;
-
-	BerkeleyDbEnv(const Path& filePath, const ::std::string& optionStr);
+	BDbEnvManager() :
+		m_homeDir(),
+		m_options(),
+		m_pDbEnv()
+	{}
 
 	static auto deriveHomeDir(const Path& filePath) -> Path;
 	static auto createDbEnv() -> __db_env*;
 
 	Path						m_homeDir;
 	BerkeleyDbEnvOptions	m_options;
-	DbEnvPtr					m_pDbEnv;
+	WeakBDbEnvPtr			m_pDbEnv;
 };
 
 class StrToIdEntryIterator
@@ -193,12 +201,13 @@ private:
 	using DbDeleterFunction = void (*)(__db* pDb) noexcept;
 	using DbPtr = ::std::unique_ptr<__db, DbDeleterFunction>;
 
-	static auto createDb(const Path& filePath, const ::std::string& optionStr) -> __db*;
+	static auto createDb(BDbEnvPtr pDbEnv) -> __db*;
 	auto checkWritable() const -> void;
 
-	Path	m_filePath;
-	bool	m_readOnly;
-	DbPtr	m_pDB;
+	Path			m_filePath;
+	bool			m_readOnly;
+	BDbEnvPtr	m_pDbEnv;
+	DbPtr			m_pDB;
 };
 
 // See Effective C++, 3rd Edition, Item 25:

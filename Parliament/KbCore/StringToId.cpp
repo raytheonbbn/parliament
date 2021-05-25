@@ -18,8 +18,12 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <db.h>
+#include <mutex>
 
 namespace pmnt = ::bbn::parliament;
+
+using Mutex = ::std::recursive_mutex;
+using Lock = ::std::lock_guard<Mutex>;
 
 using ::boost::format;
 using ::boost::lexical_cast;
@@ -32,6 +36,7 @@ using ::std::string;
 static constexpr char k_bdbErrorPrefix[] = "Berkeley DB";
 static constexpr char k_optionRegExStr[] = "^[ \t]*([0-9]+)[ \t]*([kKmMgG])[ \t]*,[ \t]*([0-9]+)[ \t]*$";
 
+static auto g_environmentMutex = Mutex{};
 static auto g_log(pmnt::log::getSource("StringToId"));
 
 template <typename DataElement>
@@ -52,9 +57,9 @@ static auto initOutputDbt(DBT& dbt, DataElement* pBuffer, size_t numElements) ->
 	dbt.ulen = static_cast<pmnt::uint32>(numElements * sizeof(*pBuffer));
 }
 
-//======================================================
+// ======================================================================
 
-pmnt::BerkeleyDbEnvOptions::BerkeleyDbEnvOptions(const ::std::string& optionStr) :
+pmnt::BerkeleyDbEnvOptions::BerkeleyDbEnvOptions(const string& optionStr) :
 	m_cacheGBytes(0),
 	m_cacheBytes(0),
 	m_numCacheSegments(0)
@@ -105,7 +110,6 @@ static auto freeDbEnv(__db_env* pDbEnv) noexcept -> void
 {
 	if (pDbEnv)
 	{
-		PMNT_LOG(g_log, pmnt::log::Level::info) << "Closing Berkeley DB environment...";
 		auto err = pDbEnv->close(pDbEnv, 0);
 		if (err != 0)
 		{
@@ -113,41 +117,53 @@ static auto freeDbEnv(__db_env* pDbEnv) noexcept -> void
 				<< format("Unable to close Berkeley DB environment:  %1% (%2%)")
 					% db_strerror(err) % err;
 		}
-		PMNT_LOG(g_log, pmnt::log::Level::info) << "Berkeley DB environment closed.";
 	}
 }
 
-pmnt::BerkeleyDbEnv::BerkeleyDbEnv(const Path& filePath, const ::std::string& optionStr) :
-	m_homeDir{deriveHomeDir(filePath)},
-	m_options{optionStr},
-	m_pDbEnv{createDbEnv(), &freeDbEnv}
+auto pmnt::BDbEnvManager::getEnv(const Path& filePath, const string& optionStr) -> BDbEnvPtr
 {
-	m_pDbEnv->set_errfile(m_pDbEnv.get(), stderr);
-	m_pDbEnv->set_errpfx(m_pDbEnv.get(), k_bdbErrorPrefix);
+	// This lock guards against the situation in which no environment exists and two
+	// threads request one at the same time.  Without the lock, both threads could try
+	// to create the environment independently, resulting in two environments.
+	auto exclusiveLock = Lock{g_environmentMutex};
 
-	auto err1 = m_pDbEnv->set_cachesize(m_pDbEnv.get(), m_options.m_cacheGBytes,
-		m_options.m_cacheBytes, m_options.m_numCacheSegments);
-	if (err1 != 0)
+	auto pEnv = m_pDbEnv.lock();
+	if (!pEnv)
 	{
-		throw Exception(format("Unable to set Berkeley DB cache size:  %1% (%2%)")
-			% db_strerror(err1) % err1);
-	}
+		m_homeDir = deriveHomeDir(filePath);
+		m_options = BerkeleyDbEnvOptions{optionStr};
+		pEnv = BDbEnvPtr{createDbEnv(), &freeDbEnv};
 
-	auto err2{m_pDbEnv->open(m_pDbEnv.get(),
-#if defined(PARLIAMENT_WINDOWS)
-		pathAsUtf8(m_homeDir).c_str(),
-#else
-		m_homeDir.c_str(),
-#endif
-		DB_INIT_MPOOL | DB_PRIVATE | DB_CREATE | DB_THREAD, 0)};
-	if (err2 != 0)
-	{
-		throw Exception(format("Unable to open Berkeley DB:  %1% (%2%)")
-			% db_strerror(err2) % err2);
+		pEnv->set_errfile(pEnv.get(), stderr);
+		pEnv->set_errpfx(pEnv.get(), k_bdbErrorPrefix);
+
+		auto err1 = pEnv->set_cachesize(pEnv.get(), m_options.m_cacheGBytes,
+			m_options.m_cacheBytes, m_options.m_numCacheSegments);
+		if (err1 != 0)
+		{
+			throw Exception(format("Unable to set Berkeley DB cache size:  %1% (%2%)")
+				% db_strerror(err1) % err1);
+		}
+
+		auto err2 = pEnv->open(pEnv.get(),
+	#if defined(PARLIAMENT_WINDOWS)
+			pathAsUtf8(m_homeDir).c_str(),
+	#else
+			m_homeDir.c_str(),
+	#endif
+			DB_INIT_MPOOL | DB_PRIVATE | DB_CREATE | DB_THREAD, 0);
+		if (err2 != 0)
+		{
+			throw Exception(format("Unable to open Berkeley DB:  %1% (%2%)")
+				% db_strerror(err2) % err2);
+		}
+
+		m_pDbEnv = pEnv;
 	}
+	return pEnv;
 }
 
-auto pmnt::BerkeleyDbEnv::deriveHomeDir(const Path& filePath) -> Path
+auto pmnt::BDbEnvManager::deriveHomeDir(const Path& filePath) -> Path
 {
 	auto homeDir = absolute(filePath).parent_path();
 	if (exists(homeDir) && is_directory(homeDir))
@@ -166,7 +182,7 @@ auto pmnt::BerkeleyDbEnv::deriveHomeDir(const Path& filePath) -> Path
 	}
 }
 
-auto pmnt::BerkeleyDbEnv::createDbEnv() -> __db_env*
+auto pmnt::BDbEnvManager::createDbEnv() -> __db_env*
 {
 	auto pDbEnv = static_cast<__db_env*>(nullptr);
 	auto err = db_env_create(&pDbEnv, 0);
@@ -178,9 +194,9 @@ auto pmnt::BerkeleyDbEnv::createDbEnv() -> __db_env*
 	return pDbEnv;
 }
 
-pmnt::BerkeleyDbEnv::~BerkeleyDbEnv() = default;
+pmnt::BDbEnvManager::~BDbEnvManager() = default;
 
-//======================================================
+// ======================================================================
 
 static auto freeDbCursor(__dbc* pCursor) noexcept -> void
 {
@@ -284,7 +300,7 @@ auto pmnt::StrToIdEntryIterator::setCursorPosition() -> void
 	initInputDbt(key, m_curVal.first, char_traits<Buffer::value_type>::length(m_curVal.first));
 	initOutputDbt(val, &m_curVal.second, 1);
 
-	int err = m_pCursor->c_get(m_pCursor.get(), &key, &val, DB_SET);
+	auto err = m_pCursor->c_get(m_pCursor.get(), &key, &val, DB_SET);
 	if (err == 0)
 	{
 		// Do nothing
@@ -324,7 +340,7 @@ auto pmnt::StrToIdEntryIterator::advanceCursor() -> void
 		initOutputDbt(key, m_curVal.first, m_buffer.size() - 1);
 		initOutputDbt(val, &m_curVal.second, 1);
 
-		int err = m_pCursor->c_get(m_pCursor.get(), &key, &val, DB_NEXT);
+		auto err = m_pCursor->c_get(m_pCursor.get(), &key, &val, DB_NEXT);
 		if (err == 0)
 		{
 			checkBufferSizeDivisibleByCharSize(key.size);
@@ -362,21 +378,20 @@ static auto freeDb(__db* pDb) noexcept -> void
 {
 	if (pDb)
 	{
-		PMNT_LOG(g_log, pmnt::log::Level::info) << "Closing Berkeley DB...";
 		auto err = pDb->close(pDb, 0);
 		if (err != 0)
 		{
 			PMNT_LOG(g_log, pmnt::log::Level::error) << format("Unable to close Berkeley DB:  %1% (%2%)")
 				% db_strerror(err) % err;
 		}
-		PMNT_LOG(g_log, pmnt::log::Level::info) << "Berkeley DB closed.";
 	}
 }
 
 pmnt::StringToId::StringToId(const Path& filePath, const string& optionStr, bool readOnly) :
 	m_filePath{absolute(filePath)},
 	m_readOnly{readOnly},
-	m_pDB{createDb(filePath, optionStr), &freeDb}
+	m_pDbEnv{BDbEnvManager::getInstance().getEnv(filePath, optionStr)},
+	m_pDB{createDb(m_pDbEnv), &freeDb}
 {
 	uint32 flags = DB_THREAD | (m_readOnly ? DB_RDONLY : DB_CREATE);
 	auto err2{m_pDB->open(m_pDB.get(), nullptr,
@@ -393,11 +408,10 @@ pmnt::StringToId::StringToId(const Path& filePath, const string& optionStr, bool
 	}
 }
 
-auto pmnt::StringToId::createDb(const Path& filePath, const string& optionStr) -> __db*
+auto pmnt::StringToId::createDb(BDbEnvPtr pDbEnv) -> __db*
 {
-	auto pEnv = BerkeleyDbEnv::getInstance(filePath, optionStr).getEnvPtr();
 	auto pDb = static_cast<__db*>(nullptr);
-	auto err = db_create(&pDb, pEnv, 0);
+	auto err = db_create(&pDb, pDbEnv.get(), 0);
 	if (err != 0)
 	{
 		throw Exception(format("Unable to create Berkeley DB instance:  %1% (%2%)")
@@ -422,7 +436,7 @@ auto pmnt::StringToId::sync() -> void
 {
 	if (!m_readOnly)
 	{
-		int err = m_pDB->sync(m_pDB.get(), 0);
+		auto err = m_pDB->sync(m_pDB.get(), 0);
 		if (err != 0)
 		{
 			throw Exception(format("Unable to sync Berkeley DB:  %1% (%2%)")
@@ -441,7 +455,7 @@ auto pmnt::StringToId::compact() -> void
 	{
 		DB_COMPACT compactData;
 		memset(&compactData, 0, sizeof(compactData));
-		int err = m_pDB->compact(m_pDB.get(), nullptr, nullptr, nullptr, &compactData,
+		auto err = m_pDB->compact(m_pDB.get(), nullptr, nullptr, nullptr, &compactData,
 			DB_FREE_SPACE, nullptr);
 		if (err != 0)
 		{
@@ -465,7 +479,7 @@ auto pmnt::StringToId::find(const RsrcChar* pKey, size_t keyLen) const -> Resour
 	initInputDbt(key, pKey, keyLen);
 	initOutputDbt(val, &result, 1);
 
-	int err = m_pDB->get(m_pDB.get(), nullptr, &key, &val, 0);
+	auto err = m_pDB->get(m_pDB.get(), nullptr, &key, &val, 0);
 	if (err != 0 && err != DB_NOTFOUND)
 	{
 		throw Exception(format("Unable to find key in Berkeley DB:  %1% (%2%)")
@@ -496,7 +510,7 @@ auto pmnt::StringToId::insert(const RsrcChar* pKey, size_t keyLen, ResourceId va
 	initInputDbt(key, pKey, keyLen);
 	initInputDbt(val, &value, 1);
 
-	int err = m_pDB->put(m_pDB.get(), nullptr, &key, &val, DB_NOOVERWRITE);
+	auto err = m_pDB->put(m_pDB.get(), nullptr, &key, &val, DB_NOOVERWRITE);
 	if (err != 0 && err != DB_KEYEXIST)
 	{
 		throw Exception(format("Unable to insert key in Berkeley DB:  %1% (%2%)")
