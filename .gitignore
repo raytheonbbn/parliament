@@ -5,7 +5,6 @@ log/
 
 /build.properties
 /dependencies/
-/doc/UserGuide/acronyms.tex
 /doc/UserGuide/missfont.log
 /doc/UserGuide/ParliamentUserGuide.acr
 /doc/UserGuide/ParliamentUserGuide.aux
@@ -20,7 +19,6 @@ log/
 /doc/UserGuide/ParliamentUserGuide.synctex.gz
 /doc/UserGuide/ParliamentUserGuide.synctex(busy)
 /doc/UserGuide/ParliamentUserGuide.toc
-/doc/UserGuide/references.bib
 /jena/JosekiExtensions/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab/
 /jena/JenaGraph/*.log*
 *.log*

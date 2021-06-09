@@ -118,7 +118,14 @@
 
 	<target name="war" depends="jarBridge">
 		<war destfile="${warFile}" webxml="${basedir}/resources/WEB-INF/web.xml">
-			<lib dir="${libDir}/bridge" includes="**/*.jar" excludes="**/javax.servlet-api-*.jar"/>
+			<lib dir="${libDir}/bridge">
+				<include name="**/*.jar"/>
+				<exclude name="**/javax.servlet-api-*.jar"/>
+				<exclude name="**/log4j-*.jar"/>
+				<exclude name="**/jcl-over-slf4j-*.jar"/>
+				<exclude name="**/slf4j-api-*.jar"/>
+				<exclude name="**/slf4j-log4j12-*.jar"/>
+			</lib>
 			<lib dir="${josekiLibDir}" includes="**/joseki-*.jar"/>
 			<lib dir="${openMapLibDir}" includes="**/*.jar"/>
 			<lib dir="${deegreeLibDir}" includes="**/*.jar"/>
@@ -170,29 +177,23 @@
 			<os family="windows"/>
 			<then>
 				<copy todir="${deployableSvrDir}">
+					<fileset dir="${configDir}/windows" includes="*.ps1"/>
 					<fileset dir="${configDir}/windows" includes="*.bat"/>
 				</copy>
 			</then>
-			<elseif>
-				<os family="mac"/>
-				<then>
-					<copy todir="${deployableSvrDir}">
-						<fileset dir="${configDir}/unix">
-							<include name="*.sh"/>
-							<exclude name="InstallService.sh"/>
-						</fileset>
-					</copy>
-					<chmod file="${deployableSvrDir}/*.sh" perm="ugo+rx" verbose="true"/>
-				</then>
-			</elseif>
 			<else>
 				<copy todir="${deployableSvrDir}">
 					<fileset dir="${configDir}/unix">
-						<include name="*.sh"/>
-						<include name="*.service"/>
+						<include name="parliament"/>
+						<include name="StartParliament.sh"/>
 					</fileset>
 				</copy>
-				<chmod file="${deployableSvrDir}/*.sh" perm="ugo+rx" verbose="true"/>
+				<chmod perm="ugo+rx" verbose="true">
+					<fileset dir="${deployableSvrDir}">
+						<include name="parliament"/>
+						<include name="StartParliament.sh"/>
+					</fileset>
+				</chmod>
 			</else>
 		</if>
 	</target>

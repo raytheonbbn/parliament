@@ -135,7 +135,7 @@ pmnt::KbConfig::KbConfig() :
 	m_initialStmtCapacity(500000),
 	m_stmtGrowthIncrement(1000000),
 	m_stmtGrowthFactor(0),
-	m_bdbCacheSize("32m,1"),
+	m_bdbCacheSize("256m,1"),
 	m_normalizeTypedStringLiterals(true),
 	m_timeoutDuration(5),
 	m_timeoutUnit(TimeUnit::k_min),

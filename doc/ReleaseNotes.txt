@@ -1,29 +1,55 @@
-Version 2.7.14 (?):
+Version 2.8.0:
 
-* Reduced the volume of logging when Parliament is running in daemon mode.  Log4j is
-  now configured without a console logger, which means that the contents of the
-  parliament.log file are not duplicated in the jsvc-log.txt file.  (When run at the
-  command line, the logging configuration is unchanged, so you will still be able to
-  see the log contents in real time in that case.)
+* Introduced a clean separation between Parliament's software and data files.
+  The software files may now be read-only to the account under which Parliament
+  is running, and the data files are easily moved to a writable location
+  suitable for mass storage, such as an alternate partition, network mount,
+  NAS or SAN device.  All data files, including log files, are now stored under
+  the directory given by the kbDirectoryPath setting in ParliamentKbConfig.txt
+  (default is kb-data under the installation directory).
 
-* Updated for Apple's clang 12 compiler
+* Changed the startup scripts on Linux/UNIX to properly support systemd service
+  installation.
+
+* Changed the startup scripts on Windows to parallel the Linux/UNIX scripts,
+  and converted them to PowerShell.
+
+* Fixed an issue on UNIX/Linux platforms that prevented the Parliament daemon
+  from receiving SIGTERM signals, making Parliament difficult to use in a
+  Docker container.
+
+* Made the bdbCacheSize configuration parameter in ParliamentKbConfig.txt
+  global across all graphs. Previously, a cache of this size was dedicated to
+  each named graph. With this change, a single cache of this size is shared by
+  all graphs. This is particularly beneficial to deployments that have a large
+  number of graphs.
+
+* Reduced the volume of logging when Parliament is running in daemon mode.
+  Log4j is now configured without a console logger, which means that the
+  contents of the parliament.log file are not duplicated in the jsvc-log.txt
+  file.  (When run at the command line, the logging configuration is unchanged,
+  so you will still be able to see the log contents in real time in that case.)
+
+* Numerous updates to bring in line with Java 11 & 15 (but still using Java 8)
+
+* Added a User Guide section detailing how to secure a Parliament instance.
 
 * Fixed an issue in the way Ivy dependencies on SLF4J were coded.
 
-* Removed the obsolete support for Ivy publishing to a BBN-internal Ivy repository.
+* Removed the obsolete support for Ivy publishing to a BBN-internal Ivy
+  repository.
 
-* Fixed an issue on UNIX/Linux platforms that prevented the Parliament daemon from
-  receiving SIGTERM signals, making Parliament difficult to use in a Docker container.
-
-* Added a section to the User Guide detailing how to secure a Parliament instance.
+* Updated for Apple's clang 12 compiler
 
 * Updated to Visual Studio 2019 (14.2)
 
-* Updated to Apache Commons Daemon 1.2.3
+* Updated to GeoTools version 24.2
+
+* Updated to Boost 1.76.0
+
+* Updated to Apache Commons Daemon 1.2.4
 
 * Updated to Jetty 9.4.36
-
-* Numerous updates to bring in line with Java 15
 
 
 =================================================

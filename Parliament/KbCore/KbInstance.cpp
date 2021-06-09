@@ -41,7 +41,6 @@
 
 #include <iomanip>
 #include <ostream>
-#include <sstream>
 #include <utility>
 #include <vector>
 
@@ -61,7 +60,6 @@ using ::std::make_pair;
 using ::std::make_shared;
 using ::std::nothrow_t;
 using ::std::ostream;
-using ::std::ostringstream;
 using ::std::pair;
 using ::std::remove;
 using ::std::setfill;
@@ -74,7 +72,8 @@ static auto g_log(pmnt::log::getSource("KbInstance"));
 pmnt::KbInstance::KbInstance(const KbConfig& config) :
 	m_pi(makeUnique<Impl>(config, this))
 {
-	PMNT_LOG(g_log, log::Level::debug) << "Initializing KbInstance";
+	PMNT_LOG(g_log, log::Level::info) << "Initializing KbInstance for "
+		<< m_pi->m_config.kbDirectoryPath().generic_string();
 
 	if (!m_pi->m_config.readOnly())
 	{
@@ -169,7 +168,8 @@ pmnt::KbDisposition pmnt::KbInstance::determineDisposition(
 pmnt::KbInstance::~KbInstance()
 {
 	m_pi->m_stmtHndlrList.clear();	// Just in case...
-	PMNT_LOG(g_log, log::Level::debug) << "KbInstance destructed";
+	PMNT_LOG(g_log, log::Level::info) << "KbInstance destructed for "
+		<< m_pi->m_config.kbDirectoryPath().generic_string();
 }
 
 const pmnt::KbConfig& pmnt::KbInstance::config() const
@@ -1354,16 +1354,9 @@ string pmnt::KbInstance::formatRsrcUri(ResourceId rsrcId, bool includeRsrcId) co
 		}
 	}
 
-	if (includeRsrcId)
-	{
-		ostringstream ss;
-		ss << result << " [" << rsrcId << "]";
-		return ss.str();
-	}
-	else
-	{
-		return result;
-	}
+	return includeRsrcId
+		? str(format{"%1% [%2%]"} % result % rsrcId)
+		: result;
 }
 
 void pmnt::KbInstance::deleteKb(const KbConfig& cfg, bool deleteContainingDir)

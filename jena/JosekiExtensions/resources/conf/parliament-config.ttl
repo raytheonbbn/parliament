@@ -111,7 +111,7 @@
 	par:index [
 		par:processorFactoryClass "com.bbn.parliament.jena.graph.index.spatial.SpatialIndexFactory" ;
 		par:indexType "RTree" ;
-		par:geoSPARQL false ;
+		par:geoSPARQL true ;
 	] ;
 	par:index [
 		par:processorFactoryClass "com.bbn.parliament.jena.graph.index.temporal.TemporalIndexFactory" ;

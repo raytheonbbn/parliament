@@ -4,13 +4,16 @@
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
 
+#include <boost/filesystem.hpp>
 #include <boost/test/unit_test.hpp>
 #include <algorithm>
 #include <iterator>
 #include <string>
 #include "parliament/Exceptions.h"
+#include "parliament/CharacterLiteral.h"
 #include "parliament/Util.h"
 #include "parliament/ArrayLength.h"
+#include "parliament/UnicodeIterator.h"
 #if defined(PARLIAMENT_WINDOWS)
 #	include "parliament/Windows.h"
 #else
@@ -18,6 +21,8 @@
 #endif
 
 using namespace ::bbn::parliament;
+using ::boost::filesystem::current_path;
+using ::boost::filesystem::path;
 using ::std::count;
 using ::std::string;
 
@@ -54,6 +59,20 @@ BOOST_AUTO_TEST_CASE(testVersion)
 	BOOST_CHECK(ver.length() > 0);
 	BOOST_CHECK(ver.find_first_not_of(".0123456789") == string::npos);
 	BOOST_CHECK(count(begin(ver), end(ver), '.') == 3);
+}
+
+BOOST_AUTO_TEST_CASE(testGetEnv)
+{
+#if defined(PARLIAMENT_WINDOWS)
+	auto varValue = tGetEnvVar(_T("CommonProgramFiles"));
+	BOOST_CHECK_EQUAL(convertTCharToUtf8(_T("C:\\Program Files\\Common Files")),
+		convertTCharToUtf8(varValue));
+#else
+	auto varValue = tGetEnvVar(_T("PWD"));
+	BOOST_CHECK(!varValue.empty());
+	auto varValuePath = convertUtf8ToPath(convertTCharToUtf8(varValue));
+	BOOST_CHECK_EQUAL(current_path(), varValuePath);
+#endif
 }
 
 BOOST_AUTO_TEST_SUITE_END()
