@@ -15,6 +15,8 @@ Version 2.7.14 (?):
 * Fixed an issue on UNIX/Linux platforms that prevented the Parliament daemon from
   receiving SIGTERM signals, making Parliament difficult to use in a Docker container.
 
+* Added a section to the User Guide detailing how to secure a Parliament instance.
+
 * Updated to Visual Studio 2019 (14.2)
 
 * Updated to Apache Commons Daemon 1.2.3
