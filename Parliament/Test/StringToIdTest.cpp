@@ -38,8 +38,8 @@ struct ParseTestCase
 
 static const RsrcString		k_testKey1		= convertToRsrcChar("Hello World!");
 static const RsrcString		k_testKey2		= convertToRsrcChar("Goodbye World!");
-static const size_t			k_testValue1	= 37;
-static const size_t			k_testValue2	= 43;
+static const ResourceId		k_testValue1	= 37;
+static const ResourceId		k_testValue2	= 43;
 static const ParseTestCase	k_parseSuccessTests[]	=
 	{
 		{ 0, 32 * 1024 * 1024, 1, "32m,1" },
@@ -71,7 +71,6 @@ static ostream& operator<<(ostream& os, const ParseTestCase& tc)
 	return os;
 }
 
-#if !defined(USE_IN_MEMORY_LOOKUP_TABLE)
 static void reportBdbError(int err, const char* pFileName, int lineNum)
 {
 	if (err != 0)
@@ -81,7 +80,6 @@ static void reportBdbError(int err, const char* pFileName, int lineNum)
 			% pFileName % lineNum % db_strerror(err) % err);
 	}
 }
-#endif
 
 BOOST_AUTO_TEST_SUITE(StringToIdTestSuite)
 
@@ -90,8 +88,8 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_parseSuccessTests),
 	tc)
 {
-	auto opt = StringToId::Options{};
-	BOOST_CHECK_NO_THROW(opt = StringToId::testParseOptionString(tc.m_pOptions));
+	auto opt = BerkeleyDbEnvOptions{};
+	BOOST_CHECK_NO_THROW(opt = BerkeleyDbEnvOptions{tc.m_pOptions});
 
 	BOOST_CHECK_EQUAL(tc.m_cacheGBytes, opt.m_cacheGBytes);
 	BOOST_CHECK_EQUAL(tc.m_cacheBytes, opt.m_cacheBytes);
@@ -103,7 +101,7 @@ BOOST_DATA_TEST_CASE(
 	bdata::make(k_parseFailureTests),
 	pTC)
 {
-	BOOST_CHECK_THROW(StringToId::testParseOptionString(pTC), Exception);
+	BOOST_CHECK_THROW(BerkeleyDbEnvOptions{pTC}, Exception);
 }
 
 BOOST_AUTO_TEST_CASE(testStringToIdCorrectness)
@@ -132,7 +130,6 @@ BOOST_AUTO_TEST_CASE(testStringToIdCorrectness)
 		BOOST_CHECK_EQUAL(false, s2i.isMember(k_testKey2));
 	}
 
-#if !defined(USE_IN_MEMORY_LOOKUP_TABLE)
 	DB* pDB = nullptr;
 	{
 		reportBdbError(
@@ -157,7 +154,7 @@ BOOST_AUTO_TEST_CASE(testStringToIdCorrectness)
 			key.data = keyBuffer;
 			key.ulen = sizeof(keyBuffer);
 
-			size_t id;
+			ResourceId id;
 			DBT value;
 			memset(&value, 0, sizeof(value));
 			value.flags = DB_DBT_USERMEM;
@@ -196,7 +193,6 @@ BOOST_AUTO_TEST_CASE(testStringToIdCorrectness)
 
 		BOOST_CHECK_EQUAL(1u, numRecords);
 	}
-#endif
 }
 
 BOOST_AUTO_TEST_CASE(testStrToIdEntryIterator)
