@@ -1,14 +1,19 @@
 # Docker Parliament triple store
+# Note, this requires appropriate credentials and docker login to Ironbank repo to run
 #
+ARG BASE_REGISTRY=registry1.dso.mil
+ARG BASE_IMAGE=ironbank/redhat/openjdk/openjdk8-devel
+ARG BASE_TAG=latest
 
-FROM registry.access.redhat.com/ubi8/ubi:latest
-#all the setup under root needed
+FROM $BASE_REGISTRY/$BASE_IMAGE:$BASE_TAG
+
 USER root
 ARG https_proxy
 
-RUN yum install -y unzip java-1.8.0-openjdk curl
-# Extras for debugging 
-# RUN yum install -y procps-ng nmap net-tools
+RUN dnf install -y unzip  && \
+	dnf clean all && \
+    rm -rf /var/cache/dnf
+
 
 RUN groupadd -g 501 tenant && \
 	adduser -r -u 501 -g tenant tenant

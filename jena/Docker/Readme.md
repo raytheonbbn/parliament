@@ -57,16 +57,16 @@ Verify it was loaded with:
 
 Parliament publishes to port 8089 in the container. You will need to map a local port you need to run it on using the run command.  E.g., to run it locally on port 80 you would use the following:
 
-    docker run --name parliament -rm -dip 80:8089 parliament-rhel8-2.7.13
+    docker run --name parliament -dip 80:8089 parliament-rhel8-2.7.13
 
-You can (should) also run it with a local directory used for persistent storage (this recommended, otherwise it will reset when the container shuts down). Create your directory and map it as follows:
+You can (should) also run it with a local directory used for persistent storage (this is recommended). Create your directory and map it as follows:
 
     mkdir -p C:\data\kb-data
-    docker run --name parliament --rm -dip 80:8089 -v C:\data\kb-data:/usr/local/Parliament/kb-data parliament-rhel8-2.7.13
+    docker run --name parliament -dip 80:8089 -v C:\data\kb-data:/usr/local/Parliament/kb-data parliament-rhel8-2.7.13
 
 or for a Windows container:
 
-    docker run --name parliament --rm -dip 80:8089 -v C:\data\kb-data:c:\Parliament/kb-data parliament-win-2.7.13
+    docker run --name parliament -dip 80:8089 -v C:\data\kb-data:c:\Parliament/kb-data parliament-win-2.7.13
      
 If you need to connect to running parliament container:
 

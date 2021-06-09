@@ -11,8 +11,8 @@ ARG http_proxy=$https_proxy
 RUN apt-get -qq update && apt-get install --fix-missing -y --allow-downgrades \
 	unzip openjdk-8-jdk curl
 
-RUN groupadd -g 1999 tenant && \
-	adduser --system --uid 1999 --gid 1999 tenant
+RUN groupadd -g 501 tenant && \
+	adduser --system --uid 501 --gid 501 tenant
 
 WORKDIR /tmp
 COPY *.zip Parliament.zip
