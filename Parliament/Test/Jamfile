@@ -36,7 +36,6 @@ run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 		/site-config//BoostFileSystem/<link>static
 		/site-config//BoostLog/<link>static
 		/site-config//BoostLogSetup/<link>static
-		/site-config//BoostRegex/<link>static
 		/site-config//BoostThread/<link>static
 		/site-config//BoostUnitTest/<link>static
 	:	# arguments
@@ -81,6 +80,7 @@ make $(TestDir)/ParliamentLogConfig.txt : $(KbCoreDir)/ParliamentLogConfig.txt :
 
 exe UnicodeTestCaseGen
 	:	UnicodeTestCaseGen.cpp
+		/site-config//BoostHeaderOnlyLibraries
 	:	<include>.
 		<visibility>hidden
 		<threading>multi

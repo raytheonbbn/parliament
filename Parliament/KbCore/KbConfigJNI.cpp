@@ -8,10 +8,14 @@
 #include "parliament/Platform.h"
 #include "parliament/KbConfig.h"
 #include "parliament/JNIHelper.h"
+#include "parliament/Log.h"
 #include "parliament/UnicodeIterator.h"
 
 using namespace ::bbn::parliament;
+namespace pmnt = ::bbn::parliament;
 using ::std::string;
+
+static auto g_log(pmnt::log::getSource("KbConfigJNI"));
 
 // Note:  If you change this method, be sure to make parallel changes
 // to the method assignJavaConfigToCppConfig in KbInstanceJNI.cpp.

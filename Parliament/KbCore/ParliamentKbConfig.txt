@@ -21,7 +21,7 @@ stmtGrowthFactor       = 0
 # gigabytes).  The portion after the comma specifies how many segments the memory
 # should be broken across, for compatibility with systems that limit the size of
 # single memory allocations.
-bdbCacheSize           = 32m,1
+bdbCacheSize           = 256m,1
 
 # If upgrading a triple store from version 2.7.9 or prior, either set this option
 # to "no" or export, clear, and then restore the backup:

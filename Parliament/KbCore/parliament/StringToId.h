@@ -12,27 +12,71 @@
 
 #include <boost/filesystem/path.hpp>
 #include <iterator>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-// Un-comment this to switch to an all in-memory implementation.  This is
-// useful only for diagnostic purposes, for experiments that test the disk-
-// related behavior of the memory-mapped files in isolation from any disk-
-// related effects of BDB.
-//#define USE_IN_MEMORY_LOOKUP_TABLE
-
-#if defined(USE_IN_MEMORY_LOOKUP_TABLE)
-#	include <unordered_map>
-#else
 // Forward declarations of types defined by Berkeley DB:
+struct __db_env;
 struct __db;
-using DB = struct __db;
 struct __dbc;
-using DBC = struct __dbc;
-#endif
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament {
+
+using BDbEnvPtr = ::std::shared_ptr<__db_env>;
+
+struct BerkeleyDbEnvOptions
+{
+	BerkeleyDbEnvOptions() :
+		m_cacheGBytes(0),
+		m_cacheBytes(0),
+		m_numCacheSegments(0)
+	{}
+	BerkeleyDbEnvOptions(const ::std::string& optionStr);
+
+	uint32 m_cacheGBytes;
+	uint32 m_cacheBytes;
+	uint32 m_numCacheSegments;
+};
+
+class BDbEnvManager
+{
+public:
+	using Path = ::boost::filesystem::path;
+	using WeakBDbEnvPtr = ::std::weak_ptr<__db_env>;
+
+	// Under C++11, this instance is instantiated on first use and guaranteed to be
+	// destroyed.  In addition, these operations are guaranteed to be thread-safe.
+	static BDbEnvManager& getInstance()
+	{
+		static auto instance = BDbEnvManager{};
+		return instance;
+	}
+
+	BDbEnvManager(const BDbEnvManager&) = delete;
+	auto operator=(const BDbEnvManager&) -> BDbEnvManager& = delete;
+	BDbEnvManager(BDbEnvManager&&) = delete;
+	auto operator=(BDbEnvManager&&) -> BDbEnvManager& = delete;
+	~BDbEnvManager();
+
+	// Intended for the StringToId class below:
+	auto getEnv(const Path& filePath, const ::std::string& optionStr) -> BDbEnvPtr;
+
+private:
+	BDbEnvManager() :
+		m_homeDir(),
+		m_options(),
+		m_pDbEnv()
+	{}
+
+	static auto deriveHomeDir(const Path& filePath) -> Path;
+	static auto createDbEnv() -> __db_env*;
+
+	Path						m_homeDir;
+	BerkeleyDbEnvOptions	m_options;
+	WeakBDbEnvPtr			m_pDbEnv;
+};
 
 class StrToIdEntryIterator
 {
@@ -46,131 +90,160 @@ public:
 	// Conceptually private:  These two ctors are intended to be called only
 	// from the begin() and end() methods on StringToId
 	StrToIdEntryIterator();				// Creates an "end" iterator
-	StrToIdEntryIterator(DB* pDB);	// Creates a "begin" iterator
+	StrToIdEntryIterator(__db* pDB);	// Creates a "begin" iterator
 
-	StrToIdEntryIterator(const StrToIdEntryIterator& rhs);
-	StrToIdEntryIterator& operator=(const StrToIdEntryIterator& rhs);
-
+	StrToIdEntryIterator(const StrToIdEntryIterator&);
+	auto operator=(const StrToIdEntryIterator&) -> StrToIdEntryIterator&;
+	StrToIdEntryIterator(StrToIdEntryIterator&&) noexcept;
+	auto operator=(StrToIdEntryIterator&&) noexcept -> StrToIdEntryIterator&;
 	PARLIAMENT_EXPORT ~StrToIdEntryIterator();
 
-	PARLIAMENT_EXPORT StrToIdEntryIterator& operator++();		// preincrement -- efficient
-	PARLIAMENT_EXPORT StrToIdEntryIterator operator++(int);	// postincrement -- expensive
+	auto swap(StrToIdEntryIterator& other) noexcept -> void;
 
-	PARLIAMENT_EXPORT reference operator*() const
+	PARLIAMENT_EXPORT auto operator++() -> StrToIdEntryIterator&	// preincrement
+		{
+			advanceCursor();
+			return *this;
+		}
+	PARLIAMENT_EXPORT auto operator++(int) -> StrToIdEntryIterator	// postincrement
+		{
+			auto copy = StrToIdEntryIterator{*this};
+			advanceCursor();
+			return copy;
+		}
+
+	PARLIAMENT_EXPORT auto operator*() const -> reference
 		{ return m_curVal; }
-	PARLIAMENT_EXPORT pointer operator->() const
+	PARLIAMENT_EXPORT auto operator->() const -> pointer
 		{ return &m_curVal; }
 
-	PARLIAMENT_EXPORT bool operator==(const StrToIdEntryIterator& rhs) const;
-	PARLIAMENT_EXPORT bool operator!=(const StrToIdEntryIterator& rhs) const
+	PARLIAMENT_EXPORT auto operator==(const StrToIdEntryIterator& rhs) const -> bool;
+	PARLIAMENT_EXPORT auto operator!=(const StrToIdEntryIterator& rhs) const -> bool
 		{ return !(*this == rhs); }
 
 private:
 	using Buffer = ::std::vector<RsrcChar>;
+	using DbcDeleterFunction = void (*)(__dbc* pCursor) noexcept;
+	using DbcPtr = ::std::unique_ptr<__dbc, DbcDeleterFunction>;
 
-	static value_type nullValue()
+	static auto nullValue() -> value_type
 		{ return ::std::make_pair(static_cast<value_type::first_type>(nullptr), k_nullRsrcId); }
-	static DBC* createCursor(DB* pDB);
-	static inline void checkBufferSizeDivisibleByCharSize(uint32 bufferSize);
+	static auto createCursor(__db* pDB) -> __dbc*;
+	static inline auto checkBufferSizeDivisibleByCharSize(uint32 bufferSize) -> void;
 
-	void closeCursor();
-	void setCursorPosition();
-	void advanceCursor();
+	auto closeCursor() -> void
+		{ m_pCursor.reset(nullptr); }
+	auto setCursorPosition() -> void;
+	auto advanceCursor() -> void;
+	auto advanceToEnd() -> void;
 
 	static const size_t	k_initialBufferSize = 128;
 
-	DB*						m_pDB;		// Owned elsewhere -- do not clean this up on destruction!
-	Buffer					m_buffer;
-	value_type				m_curVal;
-	DBC*						m_pCursor;
+	__db*			m_pDB;		// Owned elsewhere -- do not clean up on destruction!
+	Buffer		m_buffer;
+	value_type	m_curVal;
+	DbcPtr		m_pCursor;
 };
 
 class StringToId
 {
 public:
 	using const_iterator = StrToIdEntryIterator;
+	using Path = ::boost::filesystem::path;
 
-	struct Options
-	{
-		Options() : m_cacheGBytes(0), m_cacheBytes(0), m_numCacheSegments(0) {}
-		Options(uint32 cacheGBytes, uint32 cacheBytes, uint32 numCacheSegments) :
-			m_cacheGBytes(cacheGBytes),
-			m_cacheBytes(cacheBytes),
-			m_numCacheSegments(numCacheSegments)
-		{}
-
-		uint32 m_cacheGBytes;
-		uint32 m_cacheBytes;
-		uint32 m_numCacheSegments;
-	};
-
-	StringToId(const ::boost::filesystem::path& filePath, const ::std::string& optionStr, bool readOnly);
+	StringToId(const Path& filePath, const ::std::string& optionStr, bool readOnly);
 	StringToId(const StringToId&) = delete;
-	StringToId& operator=(const StringToId&) = delete;
-	StringToId(StringToId&&) = delete;
-	StringToId& operator=(StringToId&&) = delete;
+	auto operator=(const StringToId&) -> StringToId& = delete;
+	StringToId(StringToId&&) noexcept;
+	auto operator=(StringToId&&) noexcept -> StringToId&;
 	~StringToId();
 
-	void sync();
-	void compact();
+	auto swap(StringToId& other) noexcept -> void;
 
-	bool isMember(const RsrcChar* pKey, size_t keyLen) const
+	auto sync() -> void;
+	auto compact() -> void;
+
+	auto isMember(const RsrcChar* pKey, size_t keyLen) const -> bool
 		{ return find(pKey, keyLen) != k_nullRsrcId; }
 
-	bool isMember(const RsrcChar* pKey) const
+	auto isMember(const RsrcChar* pKey) const -> bool
 		{ return find(pKey) != k_nullRsrcId; }
 
-	bool isMember(const RsrcString& key) const
+	auto isMember(const RsrcString& key) const -> bool
 		{ return find(key) != k_nullRsrcId; }
 
-	size_t find(const RsrcChar* pKey, size_t keyLen) const;
+	auto find(const RsrcChar* pKey, size_t keyLen) const -> ResourceId;
 
-	size_t find(const RsrcChar* pKey) const
+	auto find(const RsrcChar* pKey) const -> ResourceId
 		{ return find(pKey, ::std::char_traits<RsrcChar>::length(pKey)); }
 
-	size_t find(const RsrcString& key) const
+	auto find(const RsrcString& key) const -> ResourceId
 		{ return find(key.c_str(), key.length()); }
 
-	const_iterator begin() const
-		{ return StrToIdEntryIterator(m_pDB); }
-	const_iterator cbegin() const
-		{ return StrToIdEntryIterator(m_pDB); }
-	const_iterator end() const
+	auto begin() const -> const_iterator
+		{ return StrToIdEntryIterator(m_pDB.get()); }
+	auto cbegin() const -> const_iterator
+		{ return StrToIdEntryIterator(m_pDB.get()); }
+	auto end() const -> const_iterator
 		{ return StrToIdEntryIterator(); }
-	const_iterator cend() const
+	auto cend() const -> const_iterator
 		{ return StrToIdEntryIterator(); }
 
-	void insert(const RsrcChar* pKey, size_t keyLen, size_t value);
+	auto insert(const RsrcChar* pKey, size_t keyLen, ResourceId value) -> void;
 
-	void insert(const RsrcChar* pKey, size_t value)
+	auto insert(const RsrcChar* pKey, ResourceId value) -> void
 		{ insert(pKey, ::std::char_traits<RsrcChar>::length(pKey), value); }
 
-	void insert(const RsrcString& key, size_t value)
+	auto insert(const RsrcString& key, ResourceId value) -> void
 		{ insert(key.c_str(), key.length(), value); }
 
-#if defined(PARLIAMENT_UNIT_TEST)
-	static Options testParseOptionString(const ::std::string& optionStr)
-		{ return parseOptionString(optionStr); }
-#endif
-
 private:
-#if defined(USE_IN_MEMORY_LOOKUP_TABLE)
-	using StringToIntMap = ::std::unordered_map<RsrcString, size_t>;
-#endif
+	using DbDeleterFunction = void (*)(__db* pDb) noexcept;
+	using DbPtr = ::std::unique_ptr<__db, DbDeleterFunction>;
 
-	static Options parseOptionString(const ::std::string& optionStr);
-	void checkWritable() const;
+	static auto createDb(BDbEnvPtr pDbEnv) -> __db*;
+	auto checkWritable() const -> void;
 
-	::boost::filesystem::path	m_filePath;
-	::std::string					m_optionStr;
-	bool								m_readOnly;
-#if defined(USE_IN_MEMORY_LOOKUP_TABLE)
-	StringToIntMap					m_db;
-#else
-	DB*								m_pDB;
-#endif
+	Path			m_filePath;
+	bool			m_readOnly;
+	BDbEnvPtr	m_pDbEnv;
+	DbPtr			m_pDB;
 };
 
-PARLIAMENT_NAMESPACE_END
+// See Effective C++, 3rd Edition, Item 25:
+inline void swap(StrToIdEntryIterator& lhs, StrToIdEntryIterator& rhs) noexcept
+{
+	lhs.swap(rhs);
+}
+
+// See Effective C++, 3rd Edition, Item 25:
+inline void swap(StringToId& lhs, StringToId& rhs) noexcept
+{
+	lhs.swap(rhs);
+}
+
+} // namespace end
+
+// See Effective C++, 3rd Edition, Item 25:
+namespace std {
+	template<>
+	inline void swap<::bbn::parliament::StrToIdEntryIterator>(
+		::bbn::parliament::StrToIdEntryIterator& lhs,
+		::bbn::parliament::StrToIdEntryIterator& rhs) noexcept
+	{
+		lhs.swap(rhs);
+	}
+}
+
+// See Effective C++, 3rd Edition, Item 25:
+namespace std {
+	template<>
+	inline void swap<::bbn::parliament::StringToId>(
+		::bbn::parliament::StringToId& lhs,
+		::bbn::parliament::StringToId& rhs) noexcept
+	{
+		lhs.swap(rhs);
+	}
+}
 
 #endif // !PARLIAMENT_STRINGTOID_H_INCLUDED

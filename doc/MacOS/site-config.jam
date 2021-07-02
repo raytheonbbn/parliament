@@ -89,16 +89,6 @@ alias BoostLogSetup
 		<define>BOOST_LOG_NO_SHORTHAND_NAMES
 	;
 
-alias BoostRegex
-	:	# no sources
-	:	$(BoostDyDbgLibPfx)regex$(BoostDyDbgLibSfx)
-		$(BoostDyRlsLibPfx)regex$(BoostDyRlsLibSfx)
-		$(BoostStDbgLibPfx)regex$(BoostStDbgLibSfx)
-		$(BoostStRlsLibPfx)regex$(BoostStRlsLibSfx)
-	:	# no default build
-	:	<include>$(BoostDir)
-	;
-
 alias BoostThread
 	:	# no sources
 	:	$(BoostDyDbgLibPfx)thread$(BoostDyDbgLibSfx)
