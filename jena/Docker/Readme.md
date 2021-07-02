@@ -75,5 +75,5 @@ If you need to connect to running parliament container:
 To stop the running container use:  
 
     docker stop parliament
-Note: if you have not set up a volume for persistent storage (mapped to "Parliament/kb-data" as above), all data will be lost when it is stopped.
+Note: if you have not set up a volume for persistent storage (mapped to "Parliament/kb-data" as above), all data will be lost if the container is removed.
 
