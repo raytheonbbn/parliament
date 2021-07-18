@@ -14,7 +14,6 @@
 #include <stdexcept>
 #include <sstream>
 #include <stdexcept>
-#include <tuple>
 #include "parliament/Types.h"
 
 using namespace ::std;
@@ -244,9 +243,7 @@ JNIEXPORT void JNICALL Java_JniAssessments_dispose(JNIEnv* pEnv, jobject obj)
 	auto it = g_map.find(obj);
 	if (it != end(g_map))
 	{
-		jobject globalRef;
-		CppTestClass* pObj;
-		tie(globalRef, pObj) = *it;
+		auto [globalRef, pObj] = *it;
 		g_map.erase(obj);
 		pEnv->DeleteGlobalRef(globalRef);
 		delete pObj;
@@ -273,7 +270,6 @@ JNIEXPORT jdouble JNICALL Java_JniAssessments_testMethod3(JNIEnv* pEnv, jobject 
 	{
 		throw invalid_argument("Unable to find object in map");
 	}
-	CppTestClass* pObj;
-	tie(ignore, pObj) = *it;
+	auto [ignore, pObj] = *it;
 	return pObj->accumulate(d);
 }

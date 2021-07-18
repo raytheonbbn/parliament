@@ -19,7 +19,8 @@ import com.hp.hpl.jena.graph.Triple;
 /** @author rbattle */
 public class GeoSPARQLRecordFactory implements GeometryRecordFactory {
 
-	private static final List<Triple> MATCHES = Arrays.asList(Triple.create(Node.ANY, Geo.Nodes.asWKT, Node.ANY),
+	private static final List<Triple> MATCHES = Arrays.asList(
+		Triple.create(Node.ANY, Geo.Nodes.asWKT, Node.ANY),
 		Triple.create(Node.ANY, Geo.Nodes.asGML, Node.ANY));
 
 	public GeoSPARQLRecordFactory() {

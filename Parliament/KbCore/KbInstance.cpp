@@ -65,7 +65,6 @@ using ::std::remove;
 using ::std::setfill;
 using ::std::setw;
 using ::std::string;
-using ::std::tie;
 
 static auto g_log(pmnt::log::getSource("KbInstance"));
 
@@ -228,10 +227,7 @@ pmnt::ResourceId pmnt::KbInstance::uriToRsrcId(
 	{
 		PMNT_LOG(g_log, log::Level::debug) << format{"Normalizing '%1%'"}
 			% convertFromRsrcChar(RsrcString(pUri, pUri + uriLen));
-		RsrcString lexicalForm;
-		RsrcString datatypeUri;
-		RsrcString langTag;
-		::std::tie(lexicalForm, datatypeUri, langTag) = LiteralUtils::parseLiteral(pUri, pUri + uriLen);
+		auto [lexicalForm, datatypeUri, langTag] = LiteralUtils::parseLiteral(pUri, pUri + uriLen);
 		PMNT_LOG(g_log, log::Level::debug) << format{"     parse: lex form = '%1%', dtype = '%2%', lang = '%3%'"}
 			% convertFromRsrcChar(lexicalForm) % convertFromRsrcChar(datatypeUri) % convertFromRsrcChar(langTag);
 		if (datatypeUri == LiteralUtils::k_plainLiteralDatatype)
@@ -692,9 +688,7 @@ void pmnt::KbInstance::handleReificationAdd(ResourceId subjectId,
 	if (pr.m_subId != k_nullRsrcId && pr.m_predId != k_nullRsrcId && pr.m_objId != k_nullRsrcId)
 	{
 		// This reification is complete, so assert it:
-		ResourceId stmtName;
-		StatementId stmtId;
-		tie(stmtName, stmtId) = addReification(subjectId, pr.m_subId, pr.m_predId, pr.m_objId);
+		auto [stmtName, stmtId] = addReification(subjectId, pr.m_subId, pr.m_predId, pr.m_objId);
 		m_pi->m_reificationMap.erase(it);
 
 		// Fire the triggers:
@@ -1118,10 +1112,7 @@ void pmnt::KbInstance::encodeRsrc(ostream& strm, ResourceId rsrcId,
 	else if (isRsrcLiteral(rsrcId))
 	{
 		auto pRsrc = rsrcIdToUri(rsrcId);
-		RsrcString lexicalForm;
-		RsrcString datatypeUri;
-		RsrcString langTag;
-		::std::tie(lexicalForm, datatypeUri, langTag) = LiteralUtils::parseLiteral(pRsrc);
+		auto [lexicalForm, datatypeUri, langTag] = LiteralUtils::parseLiteral(pRsrc);
 		if (datatypeUri.empty() && langTag.empty())
 		{
 			strm << '"';
