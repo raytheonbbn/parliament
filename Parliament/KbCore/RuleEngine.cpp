@@ -28,7 +28,6 @@
 #include <iterator>
 #include <memory>
 #include <ostream>
-#include <tuple>
 #include <typeinfo>
 #include <utility>
 
@@ -186,10 +185,7 @@ double pmnt::SWRLBuiltinRuleAtom::getDoubleFromLiteralStr(const RsrcChar* pLiter
 {
 	try
 	{
-		RsrcString lexicalForm;
-		RsrcString datatypeUri;
-		RsrcString lang;
-		::std::tie(lexicalForm, datatypeUri, lang) = LiteralUtils::parseLiteral(pLiteral);
+		auto [lexicalForm, datatypeUri, lang] = LiteralUtils::parseLiteral(pLiteral);
 		if (datatypeUri.empty())
 		{
 			return LiteralUtils::convertToDouble(lexicalForm, lang.empty()
@@ -439,9 +435,7 @@ void pmnt::RuleEngine::checkTriggers(const RuleTriggerMap& triggerMap,
 {
 	using TriggerList = ::std::vector<RuleTrigger>;
 
-	RuleTriggerMap::const_iterator rangeBegin;
-	RuleTriggerMap::const_iterator rangeEnd;
-	::std::tie(rangeBegin, rangeEnd) = triggerMap.equal_range(rsrcId);
+	auto [rangeBegin, rangeEnd] = triggerMap.equal_range(rsrcId);
 
 	// Make a copy, because the loop body below can change the content of triggerMap:
 	TriggerList matchedTriggers;

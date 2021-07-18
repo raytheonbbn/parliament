@@ -22,7 +22,7 @@ Version 2.8.0:
   global across all graphs. Previously, a cache of this size was dedicated to
   each named graph. With this change, a single cache of this size is shared by
   all graphs. This is particularly beneficial to deployments that have a large
-  number of graphs.
+  number of graphs.  Also, raised the default cache size from 32 MB to 256 MB.
 
 * Reduced the volume of logging when Parliament is running in daemon mode.
   Log4j is now configured without a console logger, which means that the
@@ -32,7 +32,8 @@ Version 2.8.0:
 
 * Numerous updates to bring in line with Java 11 & 15 (but still using Java 8)
 
-* Added a User Guide section detailing how to secure a Parliament instance.
+* Several documentation improvements, including a new section detailing how to
+  secure a Parliament instance.
 
 * Fixed an issue in the way Ivy dependencies on SLF4J were coded.
 
