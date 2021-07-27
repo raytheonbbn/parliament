@@ -1,119 +1,125 @@
-@prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
-@prefix rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix owl:	<http://www.w3.org/2002/07/owl#> .
-@prefix xsd:	<http://www.w3.org/2001/XMLSchema#> .
-@prefix par:	<http://parliament.semwebcentral.org/parliament-config#> .
-@prefix :		<http://parliament.semwebcentral.org/parliament-config-example#> .
+@prefix rdfs:		<http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:		<http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:		<http://www.w3.org/2002/07/owl#> .
+@prefix xsd:		<http://www.w3.org/2001/XMLSchema#> .
+@prefix par-cfg:	<http://parliament.semwebcentral.org/parliament-config#> .
+@prefix :			<http://parliament.semwebcentral.org/parliament-config-example#> .
 
 []
-	a par:Configuration ;
-	par:deferredFileOutputStreamThreshold 10485760 ;
-	par:prefixes (
+	a par-cfg:Configuration ;
+	par-cfg:deferredFileOutputStreamThreshold 10485760 ;
+	par-cfg:prefixes (
 		[
-			par:prefix "rdf";
-			par:uri <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+			par-cfg:prefix "rdf";
+			par-cfg:uri <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 		]
 		[
-			par:prefix "rdfs";
-			par:uri <http://www.w3.org/2000/01/rdf-schema#>
+			par-cfg:prefix "rdfs";
+			par-cfg:uri <http://www.w3.org/2000/01/rdf-schema#>
 		]
 		[
-			par:prefix "owl";
-			par:uri <http://www.w3.org/2002/07/owl#>
+			par-cfg:prefix "owl";
+			par-cfg:uri <http://www.w3.org/2002/07/owl#>
 		]
 		[
-			par:prefix "xsd";
-			par:uri <http://www.w3.org/2001/XMLSchema#>
+			par-cfg:prefix "xsd";
+			par-cfg:uri <http://www.w3.org/2001/XMLSchema#>
 		]
 		[
-			par:prefix "xml";
-			par:uri <http://www.w3.org/XML/1998/namespace>
+			par-cfg:prefix "xml";
+			par-cfg:uri <http://www.w3.org/XML/1998/namespace>
 		]
 		[
-			par:prefix "fn";
-			par:uri <http://www.w3.org/2005/xpath-functions#>
+			par-cfg:prefix "fn";
+			par-cfg:uri <http://www.w3.org/2005/xpath-functions#>
 		]
 		[
-			par:prefix "afn";
-			par:uri <http://jena.hpl.hp.com/ARQ/function#>
+			par-cfg:prefix "afn";
+			par-cfg:uri <http://jena.hpl.hp.com/ARQ/function#>
 		]
 		[
-			par:prefix "par";
-			par:uri <http://parliament.semwebcentral.org/parliament#>
+			par-cfg:prefix "par";
+			par-cfg:uri <http://parliament.semwebcentral.org/parliament#>
 		]
 		[
-			par:prefix "dc" ;
-			par:uri <http://purl.org/dc/elements/1.1/>
+			par-cfg:prefix "par-fxn";
+			par-cfg:uri <http://parliament.semwebcentral.org/pfunction#>
 		]
 		[
-			par:prefix "ja" ;
-			par:uri <http://jena.hpl.hp.com/2005/11/Assembler#>
+			par-cfg:prefix "dc" ;
+			par-cfg:uri <http://purl.org/dc/elements/1.1/>
 		]
 		[
-			par:prefix "rss" ;
-			par:uri <http://purl.org/rss/1.0/>
+			par-cfg:prefix "ja" ;
+			par-cfg:uri <http://jena.hpl.hp.com/2005/11/Assembler#>
 		]
 		[
-			par:prefix "vcard" ;
-			par:uri <http://www.w3.org/2001/vcard-rdf/3.0#>
+			par-cfg:prefix "rss" ;
+			par-cfg:uri <http://purl.org/rss/1.0/>
 		]
 		[
-			par:prefix "dul" ;
-			par:uri <http://www.loa-cnr.it/ontologies/DUL.owl#>
+			par-cfg:prefix "vcard" ;
+			par-cfg:uri <http://www.w3.org/2001/vcard-rdf/3.0#>
 		]
 		[
-			par:prefix "skos" ;
-			par:uri <http://www.w3.org/2004/02/skos/core#>
+			par-cfg:prefix "dul" ;
+			par-cfg:uri <http://www.loa-cnr.it/ontologies/DUL.owl#>
 		]
 		[
-			par:prefix "ssn" ;
-			par:uri <http://purl.oclc.org/NET/ssnx/ssn#>
+			par-cfg:prefix "skos" ;
+			par-cfg:uri <http://www.w3.org/2004/02/skos/core#>
 		]
 		[
-			par:prefix "time" ;
-			par:uri <http://www.w3.org/2006/time#>
+			par-cfg:prefix "ssn" ;
+			par-cfg:uri <http://purl.oclc.org/NET/ssnx/ssn#>
 		]
 		[
-			par:prefix "pt" ;
-			par:uri <http://bbn.com/ParliamentTime#>
+			par-cfg:prefix "time" ;
+			par-cfg:uri <http://www.w3.org/2006/time#>
 		]
 		[
-			par:prefix "ogc" ;
-			par:uri <http://www.opengis.net/>
+			par-cfg:prefix "pt" ;
+			par-cfg:uri <http://bbn.com/ParliamentTime#>
 		]
 		[
-			par:prefix "geo" ;
-			par:uri <http://www.opengis.net/ont/geosparql#>
+			par-cfg:prefix "ogc" ;
+			par-cfg:uri <http://www.opengis.net/>
 		]
 		[
-			par:prefix "geof" ;
-			par:uri <http://www.opengis.net/def/function/geosparql/>
+			par-cfg:prefix "geo" ;
+			par-cfg:uri <http://www.opengis.net/ont/geosparql#>
 		]
 		[
-			par:prefix "geor" ;
-			par:uri <http://www.opengis.net/def/rule/geosparql/>
+			par-cfg:prefix "geof" ;
+			par-cfg:uri <http://www.opengis.net/def/function/geosparql/>
 		]
 		[
-			par:prefix "sf" ;
-			par:uri <http://www.opengis.net/ont/sf#>
+			par-cfg:prefix "geor" ;
+			par-cfg:uri <http://www.opengis.net/def/rule/geosparql/>
 		]
 		[
-			par:prefix "gml" ;
-			par:uri <http://www.opengis.net/ont/gml#>
+			par-cfg:prefix "sf" ;
+			par-cfg:uri <http://www.opengis.net/ont/sf#>
+		]
+		[
+			par-cfg:prefix "gml" ;
+			par-cfg:uri <http://www.opengis.net/ont/gml#>
 		]
 	) ;
-	par:indexHandler :indexHandler .
+	par-cfg:indexHandler :indexHandler ;
+.
 
 :indexHandler
-	a par:IndexProcessorConfigurationHandler ;
+	a par-cfg:IndexProcessorConfigurationHandler ;
 	# change to true to enable indexing whenever a graph is created
-	par:enabledByDefault false ;
-	par:index [
-		par:processorFactoryClass "com.bbn.parliament.jena.graph.index.spatial.SpatialIndexFactory" ;
-		par:indexType "RTree" ;
-		par:geoSPARQL true ;
+	par-cfg:enabledByDefault false ;
+	par-cfg:index [
+		par-cfg:processorFactoryClass "com.bbn.parliament.jena.graph.index.spatial.SpatialIndexFactory" ;
+		par-cfg:indexType "RTree" ;
+		par-cfg:geoSPARQL true ;
 	] ;
-	par:index [
-		par:processorFactoryClass "com.bbn.parliament.jena.graph.index.temporal.TemporalIndexFactory" ;
-		par:indexType "bdb" ;
-	] .
+	par-cfg:index [
+		par-cfg:processorFactoryClass "com.bbn.parliament.jena.graph.index.temporal.TemporalIndexFactory" ;
+		par-cfg:indexType "bdb" ;
+	] ;
+.

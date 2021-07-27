@@ -137,25 +137,25 @@ auto pmnt::BDbEnvManager::getEnv(const Path& filePath, const string& optionStr) 
 		pEnv->set_errfile(pEnv.get(), stderr);
 		pEnv->set_errpfx(pEnv.get(), k_bdbErrorPrefix);
 
-		auto err1 = pEnv->set_cachesize(pEnv.get(), m_options.m_cacheGBytes,
-			m_options.m_cacheBytes, m_options.m_numCacheSegments);
-		if (err1 != 0)
+		if (auto err = pEnv->set_cachesize(pEnv.get(), m_options.m_cacheGBytes,
+				m_options.m_cacheBytes, m_options.m_numCacheSegments);
+			err != 0)
 		{
 			throw Exception(format("Unable to set Berkeley DB cache size:  %1% (%2%)")
-				% db_strerror(err1) % err1);
+				% db_strerror(err) % err);
 		}
 
-		auto err2 = pEnv->open(pEnv.get(),
-	#if defined(PARLIAMENT_WINDOWS)
-			pathAsUtf8(m_homeDir).c_str(),
-	#else
-			m_homeDir.c_str(),
-	#endif
-			DB_INIT_MPOOL | DB_PRIVATE | DB_CREATE | DB_THREAD, 0);
-		if (err2 != 0)
+		if (auto err = pEnv->open(pEnv.get(),
+#if defined(PARLIAMENT_WINDOWS)
+				pathAsUtf8(m_homeDir).c_str(),
+#else
+				m_homeDir.c_str(),
+#endif
+				DB_INIT_MPOOL | DB_PRIVATE | DB_CREATE | DB_THREAD, 0);
+			err != 0)
 		{
 			throw Exception(format("Unable to open Berkeley DB:  %1% (%2%)")
-				% db_strerror(err2) % err2);
+				% db_strerror(err) % err);
 		}
 
 		m_pDbEnv = pEnv;
