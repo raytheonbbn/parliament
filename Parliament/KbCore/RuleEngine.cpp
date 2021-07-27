@@ -552,11 +552,11 @@ void pmnt::RuleEngine::expandFwdChainNode(FwdChainNode& fcNode)
 	{
 		PMNT_LOG(g_log, log::Level::debug) << "expandFwdChainNode -- inside iterator loop";
 
-		auto pFCNode2 = makeUnique<FwdChainNode>(fcNode);
-		pFCNode2->getMatchList()[nextAtomIdx] = true;
-		if (checkStatementAddBinding(atom, iter.statement(), pFCNode2->getBindingList()))
+		auto pFCNode = makeUnique<FwdChainNode>(fcNode);
+		pFCNode->getMatchList()[nextAtomIdx] = true;
+		if (checkStatementAddBinding(atom, iter.statement(), pFCNode->getBindingList()))
 		{
-			m_fwdChainList.push_back(::std::move(pFCNode2));
+			m_fwdChainList.push_back(::std::move(pFCNode));
 		}
 	}
 
