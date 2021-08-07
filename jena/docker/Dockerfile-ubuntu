@@ -1,5 +1,4 @@
 # Docker Parliament triple store
-#
 
 FROM ubuntu
 

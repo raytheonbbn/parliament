@@ -1,6 +1,6 @@
 # Docker Parliament triple store
-# Note, this requires appropriate credentials and docker login to Ironbank repo to run
-#
+# (Requires appropriate credentials and docker login to Ironbank repo to run)
+
 ARG BASE_REGISTRY=registry1.dso.mil
 ARG BASE_IMAGE=ironbank/redhat/openjdk/openjdk8-devel
 ARG BASE_TAG=latest
@@ -13,7 +13,6 @@ ARG https_proxy
 RUN dnf install -y unzip  && \
 	dnf clean all && \
 	rm -rf /var/cache/dnf
-
 
 RUN groupadd -g 501 tenant && \
 	adduser -r -u 501 -g tenant tenant
