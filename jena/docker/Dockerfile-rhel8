@@ -7,7 +7,7 @@ USER root
 ARG https_proxy
 
 RUN yum install -y unzip java-1.8.0-openjdk curl
-# Extras for debugging 
+# Extras for debugging
 # RUN yum install -y procps-ng nmap net-tools
 
 RUN groupadd -g 501 tenant && \
@@ -16,7 +16,7 @@ RUN groupadd -g 501 tenant && \
 WORKDIR /tmp
 COPY *.zip Parliament.zip
 ARG parl_url
-RUN if [ ! -z ${parl_url+x} ]; then rm Parliament.zip; curl -Lk -o Parliament.zip $parl_url; fi  
+RUN if [ ! -z ${parl_url+x} ]; then rm Parliament.zip; curl -Lk -o Parliament.zip $parl_url; fi
 RUN unzip *.zip
 WORKDIR /usr/local/Parliament
 RUN dir=`ls -d /tmp/Parliament*/`;cp -r $dir/* .

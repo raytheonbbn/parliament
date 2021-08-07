@@ -2,7 +2,7 @@
 #
 
 FROM ubuntu
-	
+
 #all the setup under root needed
 USER root
 ARG https_proxy
@@ -17,7 +17,7 @@ RUN groupadd -g 501 tenant && \
 WORKDIR /tmp
 COPY *.zip Parliament.zip
 ARG parl_url
-RUN if [ ! -z ${parl_url+x} ]; then rm Parliament.zip; curl -Lk -o Parliament.zip $parl_url; fi  
+RUN if [ ! -z ${parl_url+x} ]; then rm Parliament.zip; curl -Lk -o Parliament.zip $parl_url; fi
 RUN unzip *.zip
 WORKDIR /usr/local/Parliament
 RUN dir=`ls -d /tmp/Parliament*/`;cp -r $dir/* .
