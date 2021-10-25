@@ -18,6 +18,9 @@ Version 2.8.0:
   from receiving SIGTERM signals, making Parliament difficult to use in a
   Docker container.
 
+* Added scripts to build Docker containers to be released alongside the
+  standard Parliament releases.
+
 * Made the bdbCacheSize configuration parameter in ParliamentKbConfig.txt
   global across all graphs. Previously, a cache of this size was dedicated to
   each named graph. With this change, a single cache of this size is shared by
@@ -30,7 +33,7 @@ Version 2.8.0:
   file.  (When run at the command line, the logging configuration is unchanged,
   so you will still be able to see the log contents in real time in that case.)
 
-* Numerous updates to bring in line with Java 11 & 15 (but still using Java 8)
+* Numerous updates to bring in line with Java 11 & 17 (but still using Java 8)
 
 * Several documentation improvements, including a new section detailing how to
   secure a Parliament instance.

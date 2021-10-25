@@ -1,41 +1,35 @@
 # Docker Parliament triple store for windows
 
-FROM   mcr.microsoft.com/windows/servercore:ltsc2019
+# escape=`
 
-WORKDIR "C:\\"
+#FROM microsoft/nanoserver
+#FROM microsoft/windowsservercore
+FROM mcr.microsoft.com/windows/servercore:ltsc2019
 
-#Install Parliament
-COPY *.zip Parliament.zip
-COPY webssl.ps1 .
-ARG parl_url
-RUN powershell -command \
-	if ( Test-Path 'env:parl_url' ) \
-		{ rm *.zip ; \
-			if ( Test-Path 'env:https_proxy' ) \
-			{ .\webssl.ps1 ; curl -Uri %parl_url% -OutFile Parliament.zip -proxy %https_proxy% } \
-			else { curl -Uri %parl_url% -OutFile Parliament.zip } \
-	}
-RUN powershell -command Expand-Archive -Force Parliament.zip -DestinationPath .
-RUN powershell -command "$file=Get-ChildItem Parliament* -directory ; ren $file.Basename Parliament"
-RUN powershell -command rm Parliament.zip
+SHELL ["powershell", "-command"]
 
-# Install Java
-# Should check and update below variables for latest before building: https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/latest
-ARG JAVA_URL=https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u282-b08/OpenJDK8U-jdk_x64_windows_8u282b08.zip
-RUN setx path "C:\openjdk-8u282-b08\bin;%path%"
-ENV JAVA_HOME "C:\openjdk-8u282-b08"
+# Create data directory:
+WORKDIR C:\ProgramData\parliament-data
 
-# Proxy needed incase behind corporate firewalls
-ARG https_proxy
-RUN powershell -command if ( Test-Path 'env:https_proxy' ) { .\webssl.ps1 ; curl -Uri %JAVA_URL% -OutFile java.zip -proxy %https_proxy% } else { curl -Uri %JAVA_URL% -OutFile java.zip }
-RUN powershell -command Expand-Archive -Force java.zip -DestinationPath .
-RUN powershell -command rm java.zip, webssl.ps1
+# Install Java:
+WORKDIR "C:\Program Files"
+ARG java_dir
+COPY $java_dir .
+RUN setx Path "C:\Program Files\$java_dir\bin;%Path%" /m
+RUN setx JAVA_HOME "C:\Program Files\$java_dir" /m
+#ENV JAVA_HOME "C:\Program Files\$java_dir"
 
-# Update Parliament configurations
-WORKDIR Parliament
-RUN powershell -command "$Content = Get-Content StartParliament.bat ; $Content.replace('localhost','0.0.0.0') | Set-Content StartParliament.bat"
-RUN RedistributablePackages\vc_redist.x64.exe /install /quiet /norestart
+# Install Parliament:
+WORKDIR "C:\Program Files"
+ARG parliament_version
+COPY parliament-$parliament_version .
+WORKDIR "C:\Program Files\parliament-$parliament_version\RedistributablePackages"
+RUN vc_redist.x64.exe /install /quiet /norestart
+
+# Setup Parliament as a Windows service:
+WORKDIR "C:\Program Files\parliament-$parliament_version"
+RUN parliament.ps1 -install
 
 EXPOSE 8089
-
-ENTRYPOINT StartParliament.bat
+VOLUME C:\ProgramData\parliament-data
+#ENTRYPOINT ["parliament.ps1", "-foreground"]

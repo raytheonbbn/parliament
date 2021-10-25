@@ -1,0 +1,13 @@
+#!/bin/bash
+
+image_os=ubuntu
+#image_os=rhel8
+#image_os=win
+
+#docker run -d -it -p 80:8089 --name=parliament-$image_os \
+#	--mount type=volume,src=parliament-data-$image_os,dst=/var/parliament-data \
+#	parliament-2.8.0-$image_os /bin/bash
+
+docker run -d -p 80:8089 --name=parliament-$image_os \
+	--mount type=volume,src=parliament-data-$image_os,dst=/var/parliament-data \
+	parliament-2.8.0-$image_os

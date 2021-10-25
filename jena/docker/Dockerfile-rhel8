@@ -1,40 +1,36 @@
 # Docker Parliament triple store
 
-ARG BASE_REGISTRY=registry.access.redhat.com
-ARG BASE_IMAGE=ubi8/ubi
-ARG BASE_TAG=latest
+FROM registry.access.redhat.com/ubi8/ubi:latest
 
-FROM $BASE_REGISTRY/$BASE_IMAGE:$BASE_TAG
-
-#all the setup under root needed
 USER root
-ARG https_proxy
 
-RUN yum install -y unzip java-1.8.0-openjdk curl
+# TODO: Need to register to Red Hat Subscription Management:
+#ARG redhat_dev_password
+#RUN subscription-manager register --auto-attach --username=IanEmmons --password="$redhat_dev_password"
+
+RUN yum update -y
+RUN yum install -y java-1.8.0-openjdk-headless
+#RUN yum install -y java-11-openjdk-headless
 # Extras for debugging
 # RUN yum install -y procps-ng nmap net-tools
 
-RUN groupadd -g 501 tenant && \
-	adduser -r -u 501 -g tenant tenant
+RUN useradd --system --user-group --uid 501 tenant
 
-WORKDIR /tmp
-COPY *.zip Parliament.zip
-ARG parl_url
-RUN if [ ! -z ${parl_url+x} ]; then rm Parliament.zip; curl -Lk -o Parliament.zip $parl_url; fi
-RUN unzip *.zip
-WORKDIR /usr/local/Parliament
-RUN dir=`ls -d /tmp/Parliament*/`;cp -r $dir/* .
-RUN sed -i 's/localhost/0.0.0.0/' StartParliament.sh \
- && sed -i 's/localhost/0.0.0.0/' conf/jetty.xml
-RUN rm -rf /tmp/Parliament*
-RUN chown -R tenant:tenant /usr/local/Parliament
-#Now only the rest is run as an app user
+RUN mkdir -p /var/parliament-data
+RUN chmod -R u=rwx,go=rx /var/parliament-data
+RUN chown -R tenant:tenant /var/parliament-data
+
+ARG parliament_version
+COPY parliament-$parliament_version /opt/parliament-$parliament_version/
+
+# These are needed because the unzip task in ant doesn't preserve file permissions:
+WORKDIR /opt/parliament-$parliament_version
+RUN find . -type d -print0 | xargs -0 -I% chmod u=rwx,go=rx "%"
+RUN find . -type f -print0 | xargs -0 -I% chmod u=rw,go=r "%"
+RUN chmod +x ./bin/* ./parliament
+
 USER tenant
-
-# Set environment
-#
-RUN export JAVA_HOME=$(realpath `which java`|sed 's/\/jre\/bin\/java//')
-WORKDIR /usr/local/Parliament
-
 EXPOSE 8089
-ENTRYPOINT ["./StartParliament.sh"]
+VOLUME /var/parliament-data
+WORKDIR /opt/parliament-$parliament_version
+ENTRYPOINT ["./parliament", "container"]
