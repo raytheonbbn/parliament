@@ -1,0 +1,35 @@
+# Docker Parliament triple store for windows
+
+# escape=`
+
+#FROM microsoft/nanoserver
+#FROM microsoft/windowsservercore
+FROM mcr.microsoft.com/windows/servercore:ltsc2019
+
+SHELL ["powershell", "-command"]
+
+# Create data directory:
+WORKDIR C:\ProgramData\parliament-data
+
+# Install Java:
+WORKDIR "C:\Program Files"
+ARG java_dir
+COPY $java_dir .
+RUN setx Path "C:\Program Files\$java_dir\bin;%Path%" /m
+RUN setx JAVA_HOME "C:\Program Files\$java_dir" /m
+#ENV JAVA_HOME "C:\Program Files\$java_dir"
+
+# Install Parliament:
+WORKDIR "C:\Program Files"
+ARG parliament_version
+COPY parliament-$parliament_version .
+WORKDIR "C:\Program Files\parliament-$parliament_version\RedistributablePackages"
+RUN vc_redist.x64.exe /install /quiet /norestart
+
+# Setup Parliament as a Windows service:
+WORKDIR "C:\Program Files\parliament-$parliament_version"
+RUN parliament.ps1 -install
+
+EXPOSE 8089
+VOLUME C:\ProgramData\parliament-data
+#ENTRYPOINT ["parliament.ps1", "-foreground"]

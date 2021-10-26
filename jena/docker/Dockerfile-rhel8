@@ -1,0 +1,36 @@
+# Docker Parliament triple store
+
+FROM registry.access.redhat.com/ubi8/ubi:latest
+
+USER root
+
+# TODO: Need to register to Red Hat Subscription Management:
+#ARG redhat_dev_password
+#RUN subscription-manager register --auto-attach --username=IanEmmons --password="$redhat_dev_password"
+
+RUN yum update -y
+RUN yum install -y java-1.8.0-openjdk-headless
+#RUN yum install -y java-11-openjdk-headless
+# Extras for debugging
+# RUN yum install -y procps-ng nmap net-tools
+
+RUN useradd --system --user-group --uid 501 tenant
+
+RUN mkdir -p /var/parliament-data
+RUN chmod -R u=rwx,go=rx /var/parliament-data
+RUN chown -R tenant:tenant /var/parliament-data
+
+ARG parliament_version
+COPY parliament-$parliament_version /opt/parliament-$parliament_version/
+
+# These are needed because the unzip task in ant doesn't preserve file permissions:
+WORKDIR /opt/parliament-$parliament_version
+RUN find . -type d -print0 | xargs -0 -I% chmod u=rwx,go=rx "%"
+RUN find . -type f -print0 | xargs -0 -I% chmod u=rw,go=r "%"
+RUN chmod +x ./bin/* ./parliament
+
+USER tenant
+EXPOSE 8089
+VOLUME /var/parliament-data
+WORKDIR /opt/parliament-$parliament_version
+ENTRYPOINT ["./parliament", "container"]

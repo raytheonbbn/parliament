@@ -24,6 +24,9 @@ parliament-test.log
 /doc/UserGuide/ParliamentUserGuide.synctex(busy)
 /doc/UserGuide/ParliamentUserGuide.toc
 /jena/JosekiExtensions/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab/
+/jena/JenaGraph/*.log*
+*.log*
+/jena/JenaGraph/test-kb-data/
 /Parliament/AdminClient/.settings/language.settings.xml
 /Parliament/AdminClient/Debug_with_Linux GCC/
 /Parliament/AdminClient/Debug_with_MacOSX GCC/
@@ -37,3 +40,4 @@ parliament-test.log
 /Parliament/Test/ParliamentKbConfig.txt
 /Parliament/Test/ParliamentLogConfig.txt
 /target/
+

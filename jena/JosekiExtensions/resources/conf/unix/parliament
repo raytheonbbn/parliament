@@ -23,12 +23,14 @@ export PARLIAMENT_LOG_CONFIG_PATH=$PMNT_DIR/ParliamentLogConfig.txt
 ######### Usage of this script: #########
 function printUsage {
 	echo ""
-	echo "Usage: $(basename $0) {foreground|install|uninstall|start|stop|restart}"
+	echo "Usage: $(basename $0) {foreground|container|install|uninstall|start|stop|restart}"
 	echo ""
 	echo "where:"
 	echo ""
 	echo "   'foreground' starts Parliament as an attached process in the"
 	echo "      current shell"
+	echo ""
+	echo "   'container' starts Parliament in a container environment like Docker"
 	echo ""
 	if [ "$IS_SYSTEM_D" = "true" ]; then
 		echo "   'install' sets Parliament up as a systemd service, so that it"
@@ -59,7 +61,7 @@ if [ -d "/etc/systemd/system" -a -f "`which systemctl`" ]; then
 	IS_SYSTEM_D="true"
 fi
 
-if [ "$1" != "foreground" -o "$1" != "install" -o "$1" != "uninstall" ]; then
+if [ "$1" != "start" -a "$1" != "stop" -a "$1" != "restart" ]; then
 	# Do nothing
 	echo -n ''
 elif [ ! -d "$JAVA_HOME" ]; then
@@ -102,6 +104,10 @@ SERVICE_LINK='/etc/systemd/system/parliament.service'
 if [ "$1" = 'foreground' ]; then
 	MAIN_CLASS=com.bbn.parliament.jena.jetty.CmdLineJettyServer
 	LOG4J_CONFIG=foreground
+	EXEC='java -server'
+elif [ "$1" = 'container' ]; then
+	MAIN_CLASS=com.bbn.parliament.jena.jetty.CmdLineJettyServer
+	LOG4J_CONFIG=daemon
 	EXEC='java -server'
 elif [ "$1" = 'install' -o "$1" = 'uninstall' -o "$1" = 'test' ]; then
 	MAIN_CLASS=com.bbn.parliament.jena.jetty.CmdLineJettyServer
@@ -206,13 +212,13 @@ function installSystemDService {
 
 
 ######### Execute: #########
-if [ "$1" = "start" -o "$1" = "foreground" ]; then
+if [ "$1" = "start" -o "$1" = "foreground" -o "$1" = "container" ]; then
 	setSharedLibPath
-	$EXEC $MAIN_CLASS
+	exec $EXEC $MAIN_CLASS
 elif [ "$1" = "stop" ]; then
 	if [ -f "$PID_FILE" ]; then
 		setSharedLibPath
-		$EXEC -stop $MAIN_CLASS
+		exec $EXEC -stop $MAIN_CLASS
 	else
 		echo 'The Parliament daemon is not running.'
 		exit 1
@@ -222,7 +228,7 @@ elif [ "$1" = "restart" ]; then
 	if [ -f "$PID_FILE" ]; then
 		$EXEC -stop $MAIN_CLASS
 	fi
-	$EXEC $MAIN_CLASS
+	exec $EXEC $MAIN_CLASS
 elif [ "$1" = "install" -a "$IS_SYSTEM_D" = "true" ]; then
 	installSystemDService
 	echo 'You can now control Parliament via the command'
@@ -232,13 +238,6 @@ elif [ "$1" = "uninstall" -a "$IS_SYSTEM_D" = "true" ]; then
 	systemctl disable parliament
 	rm "$SERVICE_FILE"
 	echo 'Parliament has been uninstalled as a systemd service'
-elif [ "$1" = "test" ]; then
-	if [ "$IS_SYSTEM_D" = "true" ]; then
-		echo "Running on a systemd operating system"
-	else
-		echo "This is not a systemd operating system"
-	fi
-	createSystemDServiceFile "$SERVICE_FILE.test"
 else
 	printUsage
 fi
