@@ -122,18 +122,18 @@ If you change any of the parameters in \path|parliament.ps1| after installing as
 
 This section is focused on variants of Linux that support systemd, such as RHEL, CentOS, and Ubuntu.  For setup on non-systemd Linux, please use the next section.
 
-To install \ac{pmnt} as a systemd service, we begin by establishing a user account (and group) under which \ac{pmnt} will run.  To do this from scratch, use the following commands:
+To install \ac{pmnt} as a systemd service, we begin by establishing a system account (and group) under which \ac{pmnt} will run.  To do this from scratch, use the following command:
 
-\begin{verbatim}
-     sudo groupadd -r pargroup
-     sudo useradd -r -s /bin/false -g pargroup paruser
-\end{verbatim}
+\begin{quote}
+	\texttt{sudo adduser --system --group parliament}\hfill (Ubuntu)
+	\texttt{sudo useradd --system -U parliament}\hfill (RHEL)
+\end{quote}
 
 Next we need to create a data directory in a location of your choice, such as \path|/var/parliament-data|.  \ac{pmnt} will store its content here, as well as logging and temporary files.  Ensure that this directory is owned and writable by the group and user established above:
 
 \begin{verbatim}
-     sudo chmod u+rw,go-w parliament-data
-     sudo chown -R paruser:pargroup parliament-data
+     sudo chmod u=rwx,go=rx /var/parliament-data
+     sudo chown -R parliament:parliament /var/parliament-data
 \end{verbatim}
 
 Now unzip the \ac{pmnt} distribution to a location of your choice, such as \path|/opt/ParliamentKB| or \path|/usr/local/ParliamentKB|.  It is fine for this directory to be owned by root and read-only for the group and user established above.
