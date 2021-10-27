@@ -49,7 +49,7 @@ Version 2.8.0:
 
 * Updated to GeoTools version 24.2
 
-* Updated to Boost 1.76.0
+* Updated to Boost 1.77.0
 
 * Updated to Apache Commons Daemon 1.2.4
 
