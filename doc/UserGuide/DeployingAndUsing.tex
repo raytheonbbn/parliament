@@ -458,10 +458,42 @@ Finally, restart the web server to activate the new configuration with this comm
 \section{Configuring \ac{pmnt}}
 \label{section-configuring-pmnt}
 
-\ac{pmnt} has a few configuration files, discussed in the sections below.
+The section begins with a how-to for common configuration tasks, followed by a more detailed discussion of each of \acp{pmnt} configuration files.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{\acp{pmnt} Startup Scripts}
+\subsection{Common Configuration Tasks}
+\label{section-common-config-tasks}
+
+\emph{Changing the host name and port:} See Section~\ref{section-pmnt-startup-script}.
+
+\emph{Changing the location of \acp{pmnt} data files:} See the \texttt{kbDirectoryPath} setting in Section~\ref{section-main-config}.
+
+\emph{Setting the query timeout:} See the \texttt{TimeoutDuration} and \texttt{TimeoutUnit} settings in Section~\ref{section-main-config}.
+
+\emph{Memory configuration:} Because \ac{pmnt} uses four separate pools of memory, finding the optimal configuration is not easy.  These four pools of memory are:
+\begin{itemize}[noitemsep]
+	\item The Java heap (to configure, see Section~\ref{section-pmnt-startup-script})
+	\item Berkeley DB's cache (configured via the \texttt{bdbCacheSize} setting discussed in Section~\ref{section-main-config})
+	\item The demand-paged cache maintained by the operating system for memory-mapped files (not configurable)
+	\item The C++ heap (not configurable)
+\end{itemize}
+Achieving the right balance between these pools of memory is tricky, but here are a few guidelines:
+
+\begin{itemize}
+	\item Don't make the Java heap too big. Many Java programmers are accustomed to setting their Java heap as large as possible, but for \ac{pmnt}, the Java heap is not as important as the Berkeley DB cache and the memory-mapped files.
+
+	\item The Berkeley DB cache size is probably the most important setting for achieving good performance.  Do not be afraid to experiment with values much larger than the default.
+
+	\item The sum of the Java heap size and the Berkeley DB cache size should be significantly less than the total memory available, in order to leave sufficient memory for the memory-mapped files.
+\end{itemize}
+
+\emph{Concurrency:} \ac{pmnt} has a many readers/single writer model of concurrency.  In other words, if \ac{pmnt} receives several requests at once, and all of them are read-only requests (such as a query), then \ac{pmnt} will execute those requests in parallel.  Whenever \ac{pmnt} receives a request that requires writing (such as an insert, a \ac{sparql} Update, or a graph creation), that request will wait until all other executing requests are finished, and then it will execute. And while it is executing, all other requests (read or write) will wait in the queue until it is finished.
+
+This model works well in most situations, where the number of concurrent requests is not terribly large and read-only requests dominate.  A few dozen concurrent queries is not uncommon in our experience, and works well.  Larger numbers of concurrent read-only requests will work correctly, but the performance may degrade because all those requests ultimately are reading from the same I/O device.  Therefore, caching becomes the key issue for concurrency levels this high (see memory configuration above).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\acp{pmnt} Startup Script}
+\label{section-pmnt-startup-script}
 
 You can change the host name (or IP address) and port of the \ac{sparql} endpoint by setting \verb|JETTY_HOST| and \verb|JETTY_PORT| in the startup script.  These default to \verb|localhost| and 8089, respectively.  To make \ac{pmnt} addressable on any of a host's network interfaces, change \verb|JETTY_HOST| to ``0.0.0.0''.
 
@@ -470,7 +502,8 @@ You can control the amount of memory set aside for the Java heap by setting \ver
 Note that if you are running the server as a Windows service, you must change these parameters in the install script, and you will have to re-run the install script to make your changes effective.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{\acp{pmnt} Main Configuration File}
+\subsection{\acp{pmnt} Main Configuration File}
+\label{section-main-config}
 
 \acp{pmnt} main configuration file contains settings pertaining to storage, query, and inference.  It is typically called \path|ParliamentKbConfig.txt|, and \ac{pmnt} finds it like so:
 
@@ -602,7 +635,8 @@ where ``IFP'' stands for ``InverseFunctionalProperty''. \emph{Default: ``on''}
 \end{description}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{\acp{pmnt} Logging Configuration}
+\subsection{\acp{pmnt} Logging Configuration}
+\label{section-logging-config}
 
 These files configure logging for \acp{pmnt} Java code:
 \begin{quote}
@@ -651,7 +685,8 @@ The file \path|ParliamentLogConfig.txt| controls native code logging.  Its forma
 \end{description}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{\acp{pmnt} Servlet Container Configuration File}
+\subsection{\acp{pmnt} Servlet Container Configuration}
+\label{section-servlet-container-config}
 
 The file \path|ParliamentKB/conf/jetty.xml| configures the Jetty servlet container.  Generally, there is no need to modify this file.
 

@@ -27,7 +27,8 @@ bdbCacheSize           = 256m,1
 # to "no" or export, clear, and then restore the backup:
 normalizeTypedStringLiterals = yes
 
-# Query execution configuration
+# Query execution configuration. Valid units are "nanoseconds", "microseconds",
+# "milliseconds", "seconds", "minutes", "hours", and "days".
 TimeoutDuration        = 5
 TimeoutUnit            = minutes
 
