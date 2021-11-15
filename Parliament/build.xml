@@ -13,6 +13,36 @@
 	<property name="daemonBinDir" value="${targetDir}/bin/daemon"/>
 
 	<target name="deliverArtifacts" depends="jar">
+		<!-- Find the name of the current platform -->
+		<if>
+			<os family="winnt"/>
+			<then>
+				<property name="platform" value="win"/>
+			</then>
+			<elseif>
+				<os family="mac"/>
+				<then>
+					<property name="platform" value="mac"/>
+				</then>
+			</elseif>
+			<elseif>
+				<and>
+					<os family="unix"/>
+					<isset property="env.LINUX_DISTRO"/>
+				</and>
+				<then>
+					<property name="platform" value="${env.LINUX_DISTRO}"/>
+				</then>
+			</elseif>
+			<else>
+				<fail>
+					Either this is an unsupported platform (something other than Windows,
+					Mac OS, or Linux), or this is a Linux platform, but the LINUX_DISTRO
+					environment variable has not been set.
+				</fail>
+			</else>
+		</if>
+
 		<!-- Find the boost.build toolset to use for the current platform -->
 		<condition property="genericToolset" value="msvc">
 			<os family="winnt"/>
@@ -54,20 +84,6 @@
 		<mkdir dir="${binDir}"/>
 		<echo message="Build params:     '${buildParams}'"/>
 
-		<!-- Extract the toolset and toolsetAbbrev from the build parameters -->
-		<propertyregex property="toolset"
-			input="${buildParams}"
-			regexp="^.*toolset=([a-zA-Z0-9_]*(-[0-9\.]*)?)\b.*$"
-			select="\1"
-			casesensitive="false"/>
-		<propertyregex property="toolsetAbbrev"
-			input="${toolset}"
-			regexp="^([a-z0-9]+)(-([0-9]+)((\.0)|(\.([0-9]+)))?)?$"
-			replace="\1\3\7"
-			casesensitive="false"/>
-		<echo message="toolset:          '${toolset}'"/>
-		<echo message="toolsetAbbrev:    '${toolsetAbbrev}'"/>
-
 		<!-- Extract the variant (debug or release) and variantSuffix from the build parameters -->
 		<propertyregex property="variant"
 			input="${buildParams}"
@@ -103,8 +119,8 @@
 
 		<!-- Compute the deployable server directory name under artifacts -->
 		<condition property="deployableSvrDir"
-				value="Parliament-v${parliamentVersion}-${toolsetAbbrev}${variantSuffix}"
-				else="Parliament-v${parliamentVersion}-${toolsetAbbrev}${variantSuffix}-${addrModel}">
+				value="parliament-${parliamentVersion}-${platform}${variantSuffix}"
+				else="parliament-${parliamentVersion}-${platform}${variantSuffix}-${addrModel}">
 			<equals arg1="${addrModel}" arg2="universal"/>
 		</condition>
 		<echo message="${deployableSvrDir}${line.separator}"

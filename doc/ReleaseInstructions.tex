@@ -20,20 +20,17 @@
 %\usepackage{unicode-math}
 \usepackage[final]{hyperref}	% Should be the last use-package command
 
-\newcommand{\pmnt}{\texorpdfstring
-	{Parliament\raisebox{0.7ex}
-	{\scriptsize\texttrademark}}{Parliament}}
 \newcommand{\urlcite}[1]{\footnote{\url{#1}}}
 
-\title{\texorpdfstring{Managing \protect\pmnt{} Dependencies\protect\footnote{The following is adapted from email messages written by Troy Self.}}{Managing Parliament Dependencies}}
+\title{Managing Parliament™ Dependencies}
 \author{Ian Emmons}
 \date{\today}
 
 \defaultfontfeatures{Mapping=tex-text}
 \setmainfont{Georgia}
-\setsansfont{Calibri}[Scale=MatchLowercase]
-\setmonofont{Consolas}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
-%\setmathfont{STIX Math}
+\setsansfont{Verdana}[Scale=MatchLowercase]
+\setmonofont{Menlo}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
+%\setmathfont{TeX Gyre Bonum Math}
 
 \definecolor{hyperlinkcolor}{rgb}{0,0,0.625}
 \hypersetup{
@@ -54,7 +51,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-\pmnt{} has the following two targets in its main build file:
+[Adapted from email messages written by Troy Self.]
+
+Parliament™ has the following two targets in its main build file:
 \begin{itemize}[noitemsep]
 	\item \texttt{publish-integration}
 	\item \texttt{publish-release}

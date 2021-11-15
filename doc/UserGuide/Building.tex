@@ -8,14 +8,14 @@
 
 \ac{pmnt} is a cross-platform, mixed-language library.  It's core is written in portable C++, but it also has a Java interface.  As a result of both the cross-platform and multi-language requirements, the build infrastructure for \ac{pmnt} requires a little bit of work to configure.  This chapter is your guide through that process.
 
-\acp{pmnt} build infrastructure has two main parts.  The top-level portion is based on ant, a build tool widely used in the Java development community.  This portion of the infrastructure builds the Java half of the \ac{pmnt} code base, and it also invokes the second portion, which is based on Boost.Build.  Boost.Build is a system that is well-adapted to building C++ code.  It has the advantages of being portable and much simpler to use than make files.  It is also the standard build system of the Boost project, whose libraries are used by the C++ portion of \ac{pmnt}.
+\acp{pmnt} build infrastructure has two main parts.  The top-level portion is based on ant, a build tool used in the Java development community.  This portion of the infrastructure builds the Java half of the \ac{pmnt} code base, and it also invokes the second portion, which is based on Boost.Build.  Boost.Build is a system that is well-adapted to building C++ code.  It has the advantages of being portable and much simpler to use than make files.  It is also the standard build system of the Boost project, whose libraries are used by the C++ portion of \ac{pmnt}.
 
 This chapter will step through the libraries and tools that \ac{pmnt} depends upon and show you how to configure them on your system.  At the end of this chapter, you should have a working copy of the \ac{pmnt} source code from which you can build \ac{pmnt} binaries.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Platforms and Prerequisites}
 
-You will need to acquire and install one or more appropriate compilers for each operating system on which you wish to build.  \ac{pmnt} has been tested on the platform and compiler combinations shown in Table~\ref{platforms-and-compilers}.  Note that the last column shows the corresponding Boost.Build toolset name, which will be used extensively in the sections below as we configure the \ac{pmnt} build infrastructure.
+You will need an appropriate C++ compiler for each operating system on which you wish to build.  \ac{pmnt} has been tested on the platform and compiler combinations shown in Table~\ref{platforms-and-compilers}.  The last column shows the corresponding Boost.Build toolset name, which will appear in the sections below as we configure the \ac{pmnt} build infrastructure.
 
 \begin{table}[htbp]
 	\centering
@@ -25,20 +25,20 @@ You will need to acquire and install one or more appropriate compilers for each 
 		\headingrule
 		Windows 10 (32- and 64-bit) & Visual Studio 2019 & msvc-14.2 \\
 		\midrule
-		Mac OS X 10.15 (Catalina) & Xcode 12.4 & clang \\
+		Mac OS X 10.15 Catalina (64-bit) & Xcode 12.4 & clang \\
 		\midrule
 		Ubuntu 20 (64-bit) & GCC 9.3.0 & gcc \\
 		\midrule
-		RHEL/CentOS 8 (64-bit) & GCC 8.3.1 & gcc \\
+		RHEL/CentOS 8 (64-bit) & GCC 8.4.1 & gcc \\
 		\bottomrule
 	\end{tabular}
 	\caption{Supported Platforms and Compilers}
 	\label{platforms-and-compilers}
 \end{table}
 
-\acp{pmnt} capacity is much higher when running as a 64-bit process\footnote{On 32-bit Windows \ac{pmnt} runs out of virtual address space after storing 5 to 10 million statements.}, so 64-bit builds are recommended.
+\acp{pmnt} capacity is much higher when running as a 64-bit process, so 64-bit builds are recommended.  (On 32-bit Windows, \ac{pmnt} runs out of virtual address space after storing 5 to 10 million statements.)
 
-On Macintosh, \ac{pmnt} builds as a universal binary using Apple's Xcode development tools.
+%On Macintosh, \ac{pmnt} builds as a universal binary using Apple's Xcode development tools.
 
 \ac{pmnt} assumes the presence of the Java Developer Kit (JDK), version 8.  Furthermore, you will need a 64-bit \ac{jvm} in order to run a 64-bit build of \ac{pmnt}.
 \begin{itemize}
@@ -49,7 +49,7 @@ On Macintosh, \ac{pmnt} builds as a universal binary using Apple's Xcode develop
 	\item On Linux, you may need to install one or more packages, depending on your particular distribution.
 \end{itemize}
 
-You will need Apache Ant version 1.10.1 or later\urlcite{http://ant.apache.org/} and Apache Ivy version 2.4.0 or later\urlcite{http://ant.apache.org/ivy}.  Install these according to their documentation.  Finally, you need a client for the git version control system\urlcite{https://git-scm.com/downloads}.
+You will need Apache Ant version 1.10.12 or later\urlcite{http://ant.apache.org/} and Apache Ivy version 2.5.0 or later\urlcite{http://ant.apache.org/ivy}.  Install these according to their documentation.  Finally, you need a client for the git version control system\urlcite{https://git-scm.com/downloads}.
 
 Once you have these prerequisites installed, you can clone the \ac{pmnt} code base from here:
 \begin{quote}
@@ -59,14 +59,14 @@ Because GitHub limits repository size, \acp{pmnt} does not include larger binary
 \begin{quote}\sloppy
 	\url{https://github.com/SemWebCentral/parliament/releases/download/dependencies-«latest-date»/parliament-dependencies-«latest-date».zip}
 \end{quote}
-and expand it in the \path|dependencies| subdirectory of your clone.
+and expand it in the \path|dependencies| subdirectory of your clone.  (You can find the latest date by viewing the Releases page for \ac{pmnt} on GitHub.)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Configuring Eclipse}
 
 The \ac{pmnt} code base includes Eclipse projects for all of its Java and C++ code.  These are useful for inspecting and editing code, but it is important to note that they are not the official build mechanism.  In fact, it is difficult to configure the C++ Eclipse projects to build at all.  (The Java projects do build correctly, but they are still not the official build mechanism.)  This may be corrected in the future, but the \ac{jni} layer between the Java and native code makes this complex.  Therefore the C++ projects should be regarded merely as an editing convenience.
 
-To setup Eclipse, you need the Photon or later version of the Eclipse \ac{ide} for Java Developers, plus the \ac{cdt}.  One way to acquire this set of components is to download the Eclipse \ac{ide} for Java\urlcite{http://www.eclipse.org/}, install it, and use its ``Install New Software'' menu item to download and install the \ac{cdt}.  The procedure for this changes a bit between Eclipse releases, but you can find instructions on the \ac{cdt} web site\urlcite{http://www.eclipse.org/cdt/}.
+To setup Eclipse, you need one of the 2021 (or later) quarterly releases of the Eclipse \ac{ide} for Java Developers, plus the \ac{cdt}.  One way to acquire this set of components is to download the Eclipse \ac{ide} for Java\urlcite{http://www.eclipse.org/}, install it, and use its ``Install New Software'' menu item to download and install the \ac{cdt}.  The procedure for this changes a bit between Eclipse releases, but you can find instructions on the \ac{cdt} web site\urlcite{http://www.eclipse.org/cdt/}.
 
 To use Eclipse with your \ac{pmnt} working copy, first choose (or create) an Eclipse workspace.  Then import all existing projects from within your \ac{pmnt} working copy.  To do so, choose Import from the File menu and select ``Existing Projects into Workspace'' under the General category.  Press the Next button, and enter the root directory of your \ac{pmnt} working copy in the ``Select root directory'' box.  Press the Select All button, make sure that ``Copy projects into workspace'' is unchecked, and press the Finish button.  At this point all of the \ac{pmnt} projects will be displayed in the Package Explorer view.
 
@@ -158,10 +158,10 @@ Open a Command Prompt, change to the \verb|BOOST_ROOT| directory, and issue the 
 {\small\begin{verbatim}
 b2 -q -j3 --disable-icu --ignore-site-config --layout=versioned
 --build-dir=build-msvc --stagedir=stage-msvc --with-atomic
---with-chrono --with-date_time --with-filesystem --with-log
---with-test --with-thread toolset=msvc
-define=BOOST_TEST_ALTERNATIVE_INIT_API address-model=32,64
-variant=debug,release link=shared,static runtime-link=shared stage
+--with-chrono --with-filesystem --with-log --with-test --with-thread
+toolset=msvc define=BOOST_TEST_ALTERNATIVE_INIT_API
+address-model=32,64 variant=debug,release link=shared,static
+runtime-link=shared stage
 \end{verbatim}}
 
 This will build the libraries in \path|stage-msvc/lib|.  The following commands will delete intermediate build products to save disk space:
@@ -181,7 +181,7 @@ Open a Terminal window, change to the \verb|BOOST_ROOT| directory, and issue the
 
 {\small\begin{verbatim}
 ./bootstrap.sh --without-icu --with-toolset=clang --with-libraries=
-atomic,chrono,date_time,filesystem,log,test,thread
+atomic,chrono,filesystem,log,test,thread
 \end{verbatim}}
 
 This will build the executable \verb|b2| in \verb|BOOST_ROOT|.  Move this binary to any location on your path.  Then issue the following command:
@@ -202,28 +202,54 @@ tools/build/src/engine/bootstrap/ tools/build/src/engine/bin.*
 \end{verbatim}}
 
 \subsection{Building Boost on Linux}
+\label{sec:BuildingBoostOnLinux}
 
-At a shell, change to the \verb|BOOST_ROOT| directory, and issue the following command:
+First, define this environment variable:
+
+{\small\begin{verbatim}
+export LINUX_DISTRO=«platform»
+\end{verbatim}}
+
+where «platform» indicates the particular flavor of Linux you are using.  For the flavors of Linux that are officially supported, this should be set as given in Table~\ref{tbl:SupportedLinuxFlavors}.
+
+\begin{table}[htbp]
+	\centering
+	\begin{tabular}{ll}
+		\toprule
+		\emph{Platform}	& \emph{Description}\\
+		\headingrule
+		\path|centos8|		& CentOS Linux 8\\
+		\path|rhel8|		& Red Hat Enterprise Linux 8\\
+		\path|ubuntu20|	& Ubuntu Linux 20, LTS\\
+		\bottomrule
+	\end{tabular}
+	\caption{Supported Linux Flavors}
+	\label{tbl:SupportedLinuxFlavors}
+\end{table}
+
+
+In a shell, change to the \verb|BOOST_ROOT| directory, and issue the following command:
 
 {\small\begin{verbatim}
 ./bootstrap.sh --without-icu --with-toolset=gcc --with-libraries=
-atomic,chrono,date_time,filesystem,log,test,thread
+atomic,chrono,filesystem,log,test,thread
 \end{verbatim}}
 
 This will build the executable \verb|b2| in \verb|BOOST_ROOT|.  Move this binary to any location on your path.  Then issue the following command:
 
 {\small\begin{verbatim}
 b2 -q -j3 --disable-icu --ignore-site-config --layout=versioned
---build-dir=build-gcc --stagedir=stage-gcc toolset=gcc
+--build-dir=build-gcc-$LINUX_DISTRO
+--stagedir=stagedir=stage-gcc-$LINUX_DISTRO toolset=gcc
 define=BOOST_TEST_ALTERNATIVE_INIT_API address-model=64
 variant=debug,release link=shared,static runtime-link=shared
 cxxflags=-std=c++17 linkflags=-std=c++17 stage
 \end{verbatim}}
 
-This will build the libraries in \path|stage-gcc/lib|.  If your compiler does not support the C++17 standard, change ``17'' to ``14'' or ``11'' in the above command (in two places).  The following commands will delete intermediate build products to save disk space:
+This will build the libraries in \path|stage-gcc/lib|.  If your compiler does not support the C++17 standard, change ``17'' to ``14'' in the above command (in two places).  The following commands will delete intermediate build products to save disk space:
 
 {\small\begin{verbatim}
-rm -r bjam bootstrap.log project-config.jam build-gcc/
+rm -r bjam bootstrap.log project-config.jam build-gcc-$LINUX_DISTRO
 tools/build/src/engine/bootstrap/ tools/build/src/engine/bin.*
 \end{verbatim}}
 
@@ -233,6 +259,8 @@ tools/build/src/engine/bootstrap/ tools/build/src/engine/bin.*
 
 Next we need to configure Boost.Build so that it can build \ac{pmnt}.  Start by defining the following environment variables:
 \begin{itemize}
+	\item\verb|LINUX_DISTRO|: \emph{(Linux only)} The flavor of Linux you are using.  See Table~\ref{tbl:SupportedLinuxFlavors} in Section~\ref{sec:BuildingBoostOnLinux} above.
+
 	\item\verb|JAVA_HOME|: The location of your JDK installation, which must be version 8 or higher.
 
 	\item\verb|BDB_VERSION|: As described above in Section~\ref{sec:BuildingBerkeleyDB}.
@@ -316,11 +344,11 @@ Within your working copy of the \ac{pmnt} repository, in the directories \path|d
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Building \ac{pmnt} Itself}
 
-You are now ready to build \ac{pmnt}.  To do so, issue the command \path|ant| from the root directory of your \ac{pmnt} working copy --- \emph{but don't try this until you have read the next couple of paragraphs.}  This command builds the entire repository, including both native and Java code, and create a distribution-ready package in this directory:
+You are now ready to build \ac{pmnt}.  To do so, issue the command \path|ant| from the root directory of your \ac{pmnt} working copy --- \emph{but don't try this until you have read the next couple of paragraphs.}  This command builds the entire repository, including both native and Java code, and creates a distribution-ready package in this directory:
 \begin{quote}
-	\texttt{targets/Parliament-v\textbf{\textit{X.Y.Z}}-\textbf{\textit{toolset}}}
+	\texttt{targets/parliament-\textbf{\textit{x.y.z}}-\textbf{\textit{platform}}}
 \end{quote}
-where \texttt{\textbf{\textit{X.Y.Z}}} is the \ac{pmnt} version number and \texttt{\textbf{\textit{toolset}}} indicates the platform on which the distribution runs, as shown in Table~\ref{tbl:ToolsetPlatformCorrespondence}.  The \path|ant clean| command deletes all build products.
+where \texttt{\textbf{\textit{x.y.z}}} is the \ac{pmnt} version number and \texttt{\textbf{\textit{platform}}} indicates the platform on which the distribution runs, as shown in Table~\ref{tbl:SupportedPlatforms}.  The \path|ant clean| command deletes all build products.
 
 The file \path|build.properties|, located in the root of your working copy, controls the \ac{pmnt} build.  This file does not exist by default.  If the build does not find it, it uses \path|build.properties.default| instead.  The latter contains the build options used to create an official release of \ac{pmnt}, which typically includes several different release builds.  To build a single variant, copy \path|build.properties.default| to \path|build.properties| and then customize the latter.  The file itself contains instructions.  Please change \path|build.properties.default| directly \emph{only if you intend to update the official release build options.}
 

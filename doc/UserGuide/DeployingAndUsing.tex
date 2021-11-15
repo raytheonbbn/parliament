@@ -12,37 +12,37 @@ There are several ways to use \ac{pmnt}.  By far the most common is as a server 
 
 Pre-built binaries for common platforms are available on the \ac{pmnt} Web site\urlcite{http://parliament.semwebcentral.org/}.  You can also build \ac{pmnt} yourself (see Chapter~\ref{chapter-building-parliament}).
 
-This chapter starts with instructions for installing a \ac{pmnt} server (Section~\ref{section-std-server-deploy}), followed by a discussion of the \ac{pmnt} configuration file (Section~\ref{section-configuring-pmnt}).  Then comes a detailed discussion of each of the less common deployment scenarios.  The chapter concludes with a discussion of \ac{pmnt} utilities and some troubleshooting (Sections~\ref{section-parliamentadmin-utility} and~\ref{section-troubleshooting}).
+This chapter starts with instructions for installing a \ac{pmnt} server (Section~\ref{section-std-server-deploy}), followed by a discussion of the \ac{pmnt} configuration file (Section~\ref{section-configuring-pmnt}).  Then comes a detailed discussion of each of the less common deployment scenarios.  The chapter concludes with a discussion of \ac{pmnt} utilities and troubleshooting (Sections~\ref{section-parliamentadmin-utility} and~\ref{section-troubleshooting}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Deploying a \ac{pmnt} Server}
 \label{section-std-server-deploy}
 
-A \ac{pmnt} distribution is a compressed archive containing a ready-to-run \ac{pmnt} Server, with the following naming convention:
+A \ac{pmnt} distribution is a compressed archive containing a ready-to-run \ac{pmnt} server, with the following naming convention:
 \begin{quote}
-	\texttt{Parliament-v\textbf{\textit{X.Y.Z}}-\textbf{\textit{toolset}}.zip}
+	\texttt{parliament-\textbf{\textit{x.y.z}}-\textbf{\textit{platform}}.zip}
 \end{quote}
-Here \texttt{\textbf{\textit{X.Y.Z}}} is the \ac{pmnt} version number and \texttt{\textbf{\textit{toolset}}} indicates the platform on which the distribution runs, as shown in Table~\ref{tbl:ToolsetPlatformCorrespondence}.
+Here \texttt{\textbf{\textit{x.y.z}}} is the \ac{pmnt} version number and \texttt{\textbf{\textit{platform}}} indicates the platform, as shown in Table~\ref{tbl:SupportedPlatforms}\footnote{At present, only Intel/AMD architectures are supported.  We expect to support Apple Silicon and ARM binaries in a future release.}.
 \begin{table}[htbp]
 	\centering
-	\begin{tabular}{ll}
+	\begin{tabular}{lll}
 		\toprule
-		\emph{Toolset}		& \emph{Corresponding Platform}\\
+		\emph{Platform}	& \emph{Description}				& \emph{Binaries}\\
 		\headingrule
-		\path|clang|		& Universal binaries for Mac OS X\\
-		\path|gcc-rhel|	& 64-bit Red Hat Enterprise Linux\\
-		\path|gcc-centos|	& 64-bit CentOS Linux\\
-		\path|gcc-ubuntu|	& 64-bit Ubuntu Linux\\
-		\path|msvc-64|		& 64-bit Windows\\
-		\path|msvc-32|		& 32-bit Windows\\
+		\path|centos8|		& CentOS Linux 8					& 64-bit\\
+		\path|mac|			& Mac OS Catalina and newer	& 64-bit\\
+		\path|rhel8|		& Red Hat Enterprise Linux 8	& 64-bit\\
+		\path|ubuntu20|	& Ubuntu Linux 20, LTS			& 64-bit\\
+		\path|win-64|		& Windows 10 and newer			& 64-bit\\
+		\path|win-32|		& Windows 10 and newer			& 32-bit\\
 		\bottomrule
 	\end{tabular}
-	\caption{Toolset-to-Platform Correspondence}
-	\label{tbl:ToolsetPlatformCorrespondence}
+	\caption{Supported Platforms}
+	\label{tbl:SupportedPlatforms}
 \end{table}
 If you are building \ac{pmnt} yourself according to the instructions in Chapter~\ref{chapter-building-parliament}, then these archives appear in the \path|target/distro| directory at the end of the build process.
 
-As shown in Table~\ref{tbl:ToolsetPlatformCorrespondence}, on Windows there is a choice between 32-bit and 64-bit builds.  Whenever possible, use the 64-bit version, because 32-bit \ac{pmnt} is limited to 5--10 million statements.
+As shown in Table~\ref{tbl:SupportedPlatforms}, on Windows there is a choice between 32-bit and 64-bit builds.  Whenever possible, use the 64-bit version, because 32-bit \ac{pmnt} is limited to 5--10 million statements.
 
 \subsection{Installing for the First Time}
 \label{section-std-server-init-deploy}
