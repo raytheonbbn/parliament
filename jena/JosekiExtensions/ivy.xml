@@ -50,7 +50,7 @@
 			conf="bridge->default"/>
 		<dependency org="org.apache.jena" name="jena-arq" rev="2.9.4"
 			conf="bridge->default"/>
-		<dependency org="commons-fileupload" name="commons-fileupload" rev="1.3.3"
+		<dependency org="commons-fileupload" name="commons-fileupload" rev="1.4"
 			conf="bridge->default"/>
 		<dependency org="org.apache.httpcomponents" name="httpclient" rev="${httpclient.version}"
 			conf="bridge->default"/>
@@ -81,11 +81,10 @@
 		<dependency org="org.postgresql" name="postgresql" rev="9.4.1208"
 			conf="bridge->default"/>
 
-		<!-- dependency org="junit" name="junit" rev="4.12" conf="test->default"/ -->
-		<dependency org="org.junit.jupiter" name="junit-jupiter-api" rev="5.1.0" conf="test->default"/>
-		<dependency org="org.junit.jupiter" name="junit-jupiter-params" rev="5.1.0" conf="test->default"/>
-		<dependency org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.1.0" conf="test->default"/>
-		<dependency org="org.junit.platform" name="junit-platform-runner" rev="1.1.0" conf="test->default"/>
+		<dependency org="org.junit.jupiter" name="junit-jupiter" rev="${junit-jupiter.version}"
+			conf="test->default"/>
+		<dependency org="org.junit.platform" name="junit-platform-runner" rev="${junit-platform-runner.version}"
+			conf="test->default"/>
 
 		<exclude org="commons-logging"/>
 		<override org="org.apache.httpcomponents" module="httpclient-cache"
