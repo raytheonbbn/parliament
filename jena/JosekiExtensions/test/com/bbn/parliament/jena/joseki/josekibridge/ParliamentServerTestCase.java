@@ -11,8 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.joseki.bridge.ParliamentBridge;
 import com.bbn.parliament.jena.joseki.bridge.ParliamentBridgeException;
@@ -21,7 +19,6 @@ import com.bbn.parliament.jena.joseki.bridge.configuration.IndexProcessorConfigu
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
 
 /** @author Robert Battle */
-@RunWith(JUnitPlatform.class)
 public class ParliamentServerTestCase {
 	@SuppressWarnings("static-method")
 	@BeforeEach

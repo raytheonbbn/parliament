@@ -83,7 +83,7 @@
 
 		<dependency org="org.junit.jupiter" name="junit-jupiter" rev="${junit-jupiter.version}"
 			conf="test->default"/>
-		<dependency org="org.junit.platform" name="junit-platform-runner" rev="${junit-platform-runner.version}"
+		<dependency org="org.junit.platform" name="junit-platform-launcher" rev="${junit-platform-launcher.version}"
 			conf="test->default"/>
 
 		<exclude org="commons-logging"/>

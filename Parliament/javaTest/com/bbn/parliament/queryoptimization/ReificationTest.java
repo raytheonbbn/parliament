@@ -9,8 +9,6 @@ import java.util.Vector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jni.KbConfig;
 import com.bbn.parliament.jni.KbInstance;
@@ -21,7 +19,6 @@ import com.bbn.parliament.jni.StmtIterator;
 import com.bbn.parliament.jni.StmtIterator.Statement;
 
 /** @author dkolas */
-@RunWith(JUnitPlatform.class)
 public class ReificationTest {
 	private KbConfig config;
 	private KbInstance kb;

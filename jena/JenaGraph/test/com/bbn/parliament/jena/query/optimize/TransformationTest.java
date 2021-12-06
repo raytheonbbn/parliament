@@ -12,8 +12,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.TestingDataset;
 import com.bbn.parliament.jena.query.QueryTestUtil;
@@ -23,7 +21,6 @@ import com.hp.hpl.jena.sparql.core.BasicPattern;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.optimizer.reorder.ReorderTransformation;
 
-@RunWith(JUnitPlatform.class)
 public class TransformationTest {
 	private static TestingDataset dataset;
 	private static List<ReorderTransformation> transformations;

@@ -18,8 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.NodeCreateUtils;
 import com.bbn.parliament.jni.KbConfig;
@@ -42,7 +40,6 @@ import com.hp.hpl.jena.util.CollectionFactory;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 /** @author dkolas */
-@RunWith(JUnitPlatform.class)
 public class KbGraphTest {
 	private KbConfig config;
 	private KbGraph graph;

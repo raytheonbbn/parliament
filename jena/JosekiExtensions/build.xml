@@ -221,8 +221,7 @@
 			list="${antRunnableServerList}" delimiter="|" inheritall="true"/>
 	</target>
 
-	<!-- Runs unit tests for a specific native directory (the name of which
-		is expected as a parameter) -->
+	<!-- Runs unit tests for a specific native directory, which is expected as a parameter -->
 	<target name="runTestsForOneNativeDir">
 		<echo message="nativeArtifactsDir = '${nativeArtifactsDir}'"/>
 		<delete dir="${basedir}/tmp-server"/>
@@ -234,18 +233,7 @@
 		</copy>
 		<mkdir dir="${basedir}/tmp-server/log"/>
 
-		<junit fork="yes" printsummary="yes" haltonfailure="yes" showoutput="yes" dir="${basedir}/tmp-server">
-			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
-			<!-- This used to use jetty-test.xml, but that was written for Jetty 6.  Now
-				that we're using Jetty 9, we'll just use jetty.xml rather than bothering to
-				port the test configuration. -->
-			<sysproperty key="jettyConfig" value="${basedir}/resources/conf/jetty.xml"/>
-			<sysproperty key="jetty.port" value="8586"/>
-			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
-			<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
-			<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
-			<env key="PARLIAMENT_KB_CONFIG_PATH" value="${testKbConfigFile}"/>
-			<env key="PARLIAMENT_LOG_CONFIG_PATH" value="${testLogConfigFile}"/>
+		<junitlauncher printsummary="yes" haltonfailure="yes">
 			<classpath>
 				<fileset dir="${libDir}/test" includes="**/*.jar"/>
 				<fileset dir="${josekiLibDir}" includes="**/joseki-*.jar"/>
@@ -261,11 +249,43 @@
 				<fileset dir="${artifactsDir}" includes="TemporalIndexProcessor.jar"/>
 				<pathelement location="${testBinDir}"/>
 			</classpath>
-			<formatter type="xml"/>
-			<batchtest fork="yes" todir="${reportsDir}/${ant.project.name}">
-				<fileset dir="${basedir}/test" includes="**/*TestCase.java"/>
-			</batchtest>
-		</junit>
+			<listener type="legacy-xml" outputdir="${reportsDir}/${ant.project.name}"
+				sendSysErr="true" sendSysOut="true"/>
+
+			<!--
+			Separating ParliamentServerTestCase from the rest so that they run in different
+			processes.  This avoids a problem where two different class loaders (The JUnit
+			one and the one in Jetty) each try to load Parliament's native code library,
+			which makes Java unhappy.
+			-->
+			<test name="com.bbn.parliament.jena.joseki.bridge.ParliamentServerTestCase">
+				<fork dir="${basedir}/tmp-server">
+					<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
+					<!-- This used to use jetty-test.xml, but that was written for Jetty 6.  Now
+						that we're using Jetty 9, we'll just use jetty.xml rather than bothering to
+						port the test configuration. -->
+					<sysproperty key="jettyConfig" value="${basedir}/resources/conf/jetty.xml"/>
+					<sysproperty key="jetty.port" value="8586"/>
+					<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
+					<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
+					<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
+					<env key="PARLIAMENT_KB_CONFIG_PATH" value="${testKbConfigFile}"/>
+					<env key="PARLIAMENT_LOG_CONFIG_PATH" value="${testLogConfigFile}"/>
+				</fork>
+			</test>
+			<testclasses>
+				<fileset dir="${testBinDir}" includes="**/*TestCase.class"
+					excludes="**/bridge/ParliamentServerTestCase.class"/>
+				<fork>
+					<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
+					<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
+					<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
+					<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
+					<env key="PARLIAMENT_KB_CONFIG_PATH" value="${testKbConfigFile}"/>
+					<env key="PARLIAMENT_LOG_CONFIG_PATH" value="${testLogConfigFile}"/>
+				</fork>
+			</testclasses>
+		</junitlauncher>
 		<delete dir="${basedir}/tmp-server"/>
 	</target>
 </project>

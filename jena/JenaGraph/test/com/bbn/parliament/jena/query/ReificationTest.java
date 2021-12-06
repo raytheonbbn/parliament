@@ -14,8 +14,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.TestingDataset;
 import com.hp.hpl.jena.query.Query;
@@ -34,7 +32,6 @@ import com.hp.hpl.jena.sparql.engine.iterator.QueryIterPlainWrapper;
 import com.hp.hpl.jena.sparql.resultset.ResultSetCompare;
 
 /** @author dkolas */
-@RunWith(JUnitPlatform.class)
 public class ReificationTest {
 	private static final String PREFIXES = "PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \r\n" +
 			"PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#> \r\n" +

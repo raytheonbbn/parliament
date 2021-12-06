@@ -9,13 +9,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.graph.index.spatial.Constants;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialTestDataset;
 
-@RunWith(JUnitPlatform.class)
 public class GeoSPARQLTest {
 	private static final boolean USE_RTREE_INDEX = true;
 

@@ -20,8 +20,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jni.KbConfig;
@@ -33,7 +31,6 @@ import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-@RunWith(JUnitPlatform.class)
 public class DumpKbAsNTriplesTest {
 	private static final File TEST_DATA_DIR = new File("data");
 	private static final File TEST_INPUT = new File(TEST_DATA_DIR, "DumpTestData.ttl");

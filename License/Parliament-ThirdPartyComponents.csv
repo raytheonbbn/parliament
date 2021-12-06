@@ -29,7 +29,7 @@ Joseki,Andy Seabourne,Foreign (Britain),,,3.4.4,,BSD,
 jsonld-java,Peter Ansell,Foreign (Australia),com.github.jsonld-java,jsonld-java,0.8.3,https://github.com/jsonld-java/jsonld-java,BSD,https://github.com/jsonld-java/jsonld-java/blob/master/LICENCE
 jts-core,Martin Davis,,org.locationtech.jts,jts-core,1.18.0,https://projects.eclipse.org/projects/locationtech.jts,EPL 2.0,https://github.com/locationtech/jts/blob/master/LICENSE_EPLv2.txt
 JUnit 5,JUnit Lambda Project,Foreign,org.junit.jupiter,junit-jupiter,5.8.1,https://junit.org/junit5/,EPL 2.0,https://github.com/junit-team/junit5/blob/master/LICENSE.md
-JUnit 5,JUnit Lambda Project,Foreign,org.junit.platform,junit-platform-runner,1.8.1,https://junit.org/junit5/,EPL 2.0,https://github.com/junit-team/junit5/blob/master/LICENSE.md
+JUnit 5,JUnit Lambda Project,Foreign,org.junit.platform,junit-platform-launcher,1.8.1,https://junit.org/junit5/,EPL 2.0,https://github.com/junit-team/junit5/blob/master/LICENSE.md
 PostgreSQL JDBC Driver,Planet PostgreSQL,Mixed,org.postgresql,postgresql,9.4.1208,https://www.postgresql.org/,BSD- and MIT-like,https://opensource.org/licenses/postgresql
 SLF4J (slf4j-api),"SLF4J Project, Quality Open Software",Foreign (Swiss),org.slf4j,slf4j-api,1.7.21,https://www.slf4j.org/,MIT,https://www.slf4j.org/license.html
 SLF4J (jcl-over-slf4j),"SLF4J Project, Quality Open Software",Foreign (Swiss),org.slf4j,jcl-over-slf4j,1.7.21,https://www.slf4j.org/,MIT,https://www.slf4j.org/license.html

@@ -157,7 +157,9 @@ public class ModelManager {
 		try {
 			stopFlushTimer();
 
-			_kbGraphStore.clear();
+			if (_kbGraphStore != null) {
+				_kbGraphStore.clear();
+			}
 			_dataSource = null;
 
 			initialize();

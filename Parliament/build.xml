@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <project name="Parliament" default="deliverArtifacts" xmlns:ivy="antlib:org.apache.ivy.ant">
-	<description>Invokes Visual Studio to build Parliament.</description>
+	<description>Builds Parliament's native code and closely related Java code.</description>
 
 	<import file="${basedir}/../build-common.xml"/>
 
@@ -123,6 +123,7 @@
 				else="parliament-${parliamentVersion}-${platform}${variantSuffix}-${addrModel}">
 			<equals arg1="${addrModel}" arg2="universal"/>
 		</condition>
+		<echo message="deployableSvrDir  '${deployableSvrDir}'"/>
 		<echo message="${deployableSvrDir}${line.separator}"
 			file="${deployableServersFile}"
 			append="true"/>
@@ -404,30 +405,31 @@
 	<target name="runTests" depends="createTestConfig,compileJavaTests">
 		<echo message="Native artifacts directory:  '${deployableSvrDir}'"/>
 		<mkdir dir="${reportsDir}/${deployableSvrDir}"/>
-		<junit fork="yes" printsummary="yes" haltonfailure="yes">
-			<env key="LD_LIBRARY_PATH" path="${targetDir}/${deployableSvrDir}/bin;${env.LD_LIBRARY_PATH}"/>
-			<env key="PATH" path="${targetDir}/${deployableSvrDir}/bin;${env.PATH}"/>
-			<env key="PARLIAMENT_KB_CONFIG_PATH" value="${testKbConfigFile}"/>
-			<env key="PARLIAMENT_LOG_CONFIG_PATH" value="${testLogConfigFile}"/>
-
-			<!-- These env vars are for running under clang's 'santizer' options: -->
-			<!-- env key="DYLD_INSERT_LIBRARIES" path="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib"/ -->
-			<!-- env key="UBSAN_OPTIONS" value="print_stacktrace=1"/ -->
-
-			<sysproperty key="java.library.path" value="${targetDir}/${deployableSvrDir}/bin"/>
-			<sysproperty key="log4j.configuration" value="file://${kbRootDir}/log4j.junit.properties"/>
+		<junitlauncher printsummary="yes" haltonfailure="yes">
 			<classpath>
 				<pathelement location="${testBinDir}"/>
 				<pathelement location="${jarFile}"/>
 				<fileset dir="${basedir}/lib/test" includes="*.jar"/>
 			</classpath>
+			<listener type="legacy-xml" outputdir="${reportsDir}/${deployableSvrDir}"
+				sendSysErr="true" sendSysOut="true"/>
+			<testclasses>
+				<fileset dir="${testBinDir}" includes="**/*Test.class"/>
+				<fork>
+					<env key="LD_LIBRARY_PATH" path="${targetDir}/${deployableSvrDir}/bin;${env.LD_LIBRARY_PATH}"/>
+					<env key="PATH" path="${targetDir}/${deployableSvrDir}/bin;${env.PATH}"/>
+					<env key="PARLIAMENT_KB_CONFIG_PATH" value="${testKbConfigFile}"/>
+					<env key="PARLIAMENT_LOG_CONFIG_PATH" value="${testLogConfigFile}"/>
 
-			<formatter type="xml"/>
+					<!-- These env vars are for running under clang's 'santizer' options: -->
+					<!-- env key="DYLD_INSERT_LIBRARIES" path="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib"/ -->
+					<!-- env key="UBSAN_OPTIONS" value="print_stacktrace=1"/ -->
 
-			<batchtest fork="yes" todir="${reportsDir}/${deployableSvrDir}">
-				<fileset dir="${basedir}/javaTest" includes="**/*Test.java"/>
-			</batchtest>
-		</junit>
+					<sysproperty key="java.library.path" value="${targetDir}/${deployableSvrDir}/bin"/>
+					<sysproperty key="log4j.configuration" value="file://${kbRootDir}/log4j.junit.properties"/>
+				</fork>
+			</testclasses>
+		</junitlauncher>
 		<touch file="${junitFlagFile}" mkdirs="true"/>
 	</target>
 

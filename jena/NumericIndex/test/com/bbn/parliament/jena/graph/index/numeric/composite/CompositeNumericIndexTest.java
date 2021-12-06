@@ -2,12 +2,9 @@ package com.bbn.parliament.jena.graph.index.numeric.composite;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.query.index.IndexTestMethods;
 
-@RunWith(JUnitPlatform.class)
 public class CompositeNumericIndexTest {
 	@SuppressWarnings("static-method")
 	@ParameterizedTest

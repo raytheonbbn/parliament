@@ -16,8 +16,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.graph.index.temporal.Constants;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalTestServer;
@@ -26,7 +24,6 @@ import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.vocabulary.XSD;
 
 /** @author dkolas */
-@RunWith(JUnitPlatform.class)
 public class DuplicateEntriesTest {
 	private static final String TRIPLES = ""
 		+ "@prefix ex:  <http://example.org/example#> .\n"

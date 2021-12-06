@@ -3,13 +3,10 @@ package com.bbn.parliament.jena.graph.index.numeric;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.query.index.IndexTestMethods;
 
 /** @author rbattle */
-@RunWith(JUnitPlatform.class)
 public class NumericIndexTest {
 	@SuppressWarnings("static-method")
 	@ParameterizedTest

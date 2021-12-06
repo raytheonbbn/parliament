@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryFactory;
@@ -18,7 +16,6 @@ import com.hp.hpl.jena.sparql.sse.SSE;
  *
  * @author rbattle
  */
-@RunWith(JUnitPlatform.class)
 public class KbOptimizerTest {
 	@BeforeAll
 	public static void beforeAll() {

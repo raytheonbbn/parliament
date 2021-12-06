@@ -7,8 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.graph.index.temporal.pt.TemporalIndexField;
 import com.hp.hpl.jena.datatypes.DatatypeFormatException;
@@ -16,7 +14,6 @@ import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.shared.impl.JenaParameters;
 
-@RunWith(JUnitPlatform.class)
 public class IntervalValidityTest {
 	@SuppressWarnings("static-method")
 	@BeforeEach

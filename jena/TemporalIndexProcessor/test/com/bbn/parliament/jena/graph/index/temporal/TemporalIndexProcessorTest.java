@@ -21,8 +21,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.Record;
@@ -36,7 +34,6 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 /** @author rbattle */
-@RunWith(JUnitPlatform.class)
 public class TemporalIndexProcessorTest {
 	private static TemporalTestServer testServer;
 

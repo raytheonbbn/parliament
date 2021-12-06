@@ -10,11 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 /** @author sallen */
-@RunWith(JUnitPlatform.class)
 public class RDFFormatTest {
 	/** Test for {@link com.bbn.parliament.jena.util.RDFFormat#parse(java.lang.String)}. */
 	@SuppressWarnings("static-method")
