@@ -85,7 +85,7 @@ Use the following procedure to install \ac{pmnt} as a Windows service.
 
 If you want \ac{pmnt} to run under a dedicated account, start by creating that account.  This step is optional.
 
-Next create a data directory in a location of your choice.  One reasonable option is \path|C:\ProgramData\parliament-data|.  \ac{pmnt} will store its content here, as well as logging and temporary files.  Ensure that this directory is writable by the user established above, if you created one.
+Next create a data directory in a location of your choice.  One reasonable option is \path|C:\ProgramData\parliament-data|.  \ac{pmnt} will store its content here, as well as logging and temporary files.  Ensure that this directory is writable by the user established above.  (Even if you did not create such a user, you may need to grant access to the ``Local Service'' account.)
 
 Now unzip the \ac{pmnt} distribution to a location of your choice, such as \path|C:\Program Files\ParliamentKB|.  It is fine for this directory to be read-only for the user established above.
 
