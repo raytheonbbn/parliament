@@ -15,7 +15,7 @@ import com.bbn.parliament.jena.graph.index.spatial.geosparql.function.GeoSPARQLF
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.GML;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Geo;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Geof;
-import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Units;
+import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.UOM;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.WKT;
 import com.bbn.parliament.jena.query.index.operand.OperandFactory;
 
@@ -52,7 +52,7 @@ public class GeoSPARQLProfile implements Profile {
 
 		prefixes.add("geo", Geo.uri);
 		prefixes.add("geof", Geof.uri);
-		prefixes.add("units", Units.uri);
+		prefixes.add("uom", UOM.uri);
 		prefixes.add("sf", WKT.DATATYPE_URI);
 		prefixes.add("gml", GML.DATATYPE_URI);
 

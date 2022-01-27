@@ -16,7 +16,7 @@ import org.opengis.referencing.operation.TransformException;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.TransformCache;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.GeoSPARQLLiteral;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.GML;
-import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Units;
+import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.UOM;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.WKT;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.QueryBuildException;
@@ -43,19 +43,19 @@ public abstract class SpatialFunctionBase implements Function {
 	protected static void checkUnits(NodeValue nv) throws QueryExecException {
 		Node node = nv.asNode();
 
-		if (Units.Nodes.metre.equals(node)) {
+		if (UOM.Nodes.metre.equals(node)) {
 			return;
 		}
-		if (Units.Nodes.degree.equals(node)) {
+		if (UOM.Nodes.degree.equals(node)) {
 			return;
 		}
-		if (Units.Nodes.GridSpacing.equals(node)) {
+		if (UOM.Nodes.GridSpacing.equals(node)) {
 			return;
 		}
-		if (Units.Nodes.radian.equals(node)) {
+		if (UOM.Nodes.radian.equals(node)) {
 			return;
 		}
-		if (Units.Nodes.unity.equals(node)) {
+		if (UOM.Nodes.unity.equals(node)) {
 			return;
 		}
 
