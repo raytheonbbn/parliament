@@ -1,5 +1,8 @@
 Version 2.8.0:
 
+* In addition to releasing for Linux, Mac, and Windows machines, there is now
+  a Docker image on Docker Hub (idemmons/parliament:2.8.0).
+
 * Introduced a clean separation between Parliament's software and data files.
   The software files may now be read-only to the account under which Parliament
   is running, and the data files are easily moved to a writable location

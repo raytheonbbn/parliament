@@ -1,6 +1,7 @@
 # Docker Parliament triple store
 
-FROM ubuntu
+# This is Ubuntu 20.04 LTE:
+FROM ubuntu:focal
 
 USER root
 

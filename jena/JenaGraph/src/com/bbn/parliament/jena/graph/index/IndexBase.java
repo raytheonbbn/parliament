@@ -157,12 +157,7 @@ public abstract class IndexBase<T> implements Index<T> {
 		if (closed) {
 			throw new IllegalStateException("Index closed");
 		}
-
-		long start = System.currentTimeMillis();
-		boolean add = doAdd(r);
-		long end = System.currentTimeMillis();
-		LOG.trace("Add completed in: {}ms", (end - start));
-		return add;
+		return doAdd(r);
 	}
 
 	/**
