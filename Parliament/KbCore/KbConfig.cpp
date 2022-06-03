@@ -8,6 +8,7 @@
 #include "parliament/CharacterLiteral.h"
 #include "parliament/Log.h"
 #include "parliament/UnicodeIterator.h"
+#include "parliament/Util.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -25,6 +26,7 @@ static ::boost::once_flag g_onceInitFlag = BOOST_ONCE_INIT;
 static auto g_log = pmnt::log::getSource("KbConfig");
 static constexpr pmnt::TChar k_envVarName[] = _T("PARLIAMENT_KB_CONFIG_PATH");
 static constexpr pmnt::TChar k_defaultConfigFileName[] = _T("ParliamentKbConfig.txt");
+static constexpr pmnt::TChar k_bdbCacheSizeVarName[] = _T("PARLIAMENT_BDB_CACHE_SIZE");
 pmnt::KbConfig::ConfigEntryMap pmnt::KbConfig::g_ceMap;
 bool pmnt::KbConfig::g_isConfigEntryMapInitialized = pmnt::KbConfig::initConfigEntryMap();
 
@@ -77,7 +79,20 @@ void pmnt::KbConfig::unsynchronizedInitConfigEntryMap()
 	g_ceMap["stmtGrowthFactor"] = [](const string& value, uint32 lineNum, KbConfig& c)
 		{ c.m_stmtGrowthFactor = parseDouble(value, lineNum); };
 	g_ceMap["bdbCacheSize"] = [](const string& value, uint32 lineNum, KbConfig& c)
-		{ c.m_bdbCacheSize = value; };
+		{
+			auto envVarValue = convertTCharToUtf8(tGetEnvVar(k_bdbCacheSizeVarName));
+			if (!envVarValue.empty())
+			{
+				c.m_bdbCacheSize = envVarValue;
+				PMNT_LOG(g_log, log::Level::info)
+					<< "The '" << convertTCharToUtf8(k_bdbCacheSizeVarName) << "' environment"
+						" variable overrode the corresponding value in the configuration file";
+			}
+			else
+			{
+				c.m_bdbCacheSize = value;
+			}
+		};
 	g_ceMap["normalizeTypedStringLiterals"] = [](const string& value, uint32 lineNum, KbConfig& c)
 		{ c.m_normalizeTypedStringLiterals = parseBool(value, lineNum); };
 	g_ceMap["TimeoutDuration"] = [](const string& value, uint32 lineNum, KbConfig& c)
@@ -135,7 +150,7 @@ pmnt::KbConfig::KbConfig() :
 	m_initialStmtCapacity(500000),
 	m_stmtGrowthIncrement(1000000),
 	m_stmtGrowthFactor(0),
-	m_bdbCacheSize("256m,1"),
+	m_bdbCacheSize("512m,1"),
 	m_normalizeTypedStringLiterals(true),
 	m_timeoutDuration(5),
 	m_timeoutUnit(TimeUnit::k_min),

@@ -7,11 +7,11 @@
 #include "parliament/XSDDurations.h"
 #include "parliament/Exceptions.h"
 #include "parliament/UnicodeIterator.h"
-#include "parliament/Util.h"
 
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <cmath>
+#include <iterator>
 #include <sstream>
 
 namespace pmnt = ::bbn::parliament;
@@ -42,7 +42,7 @@ T convertAndClearBuffer(pmnt::Utf32String& buffer)
 {
 	try
 	{
-		auto utf8Buffer = pmnt::convertUtf32ToUtf8(pmnt::cBegin(buffer), pmnt::cEnd(buffer));
+		auto utf8Buffer = pmnt::convertUtf32ToUtf8(cbegin(buffer), cend(buffer));
 		buffer.clear();
 		return lexical_cast<T>(utf8Buffer);
 	}

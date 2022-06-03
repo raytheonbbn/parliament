@@ -29,10 +29,13 @@ To run the container, with options to mount the \texttt{«data-dir»} volume and
 \begin{verbatim}
 docker run -d -p 80:8089 --name=parliament-«version»
    --mount type=volume,src=«data-dir»,dst=/var/parliament-data
+   --env PARLIAMENT_JAVA_HEAP_SIZE=512m
+   --env PARLIAMENT_BDB_CACHE_SIZE=512m,1
    idemmons/parliament:«version»
 \end{verbatim}
 
-Table~\ref{table-pmnt-container-connect-urls} lists \acp{pmnt} endpoints, as discussed in Section~\ref{section-std-server-usage}.
+The two environment variables are optional.  If they are left out, the default values used will be the values shown in the command line above.  (See Sections~\ref{section-pmnt-startup-script} and~\ref{section-main-config} for discussions of these settings.)  Table~\ref{table-pmnt-container-connect-urls} lists the endpoints exposed by the running container, as discussed in Section~\ref{section-std-server-usage}.
+
 \begin{table}[htbp]
 	\centering
 	\begin{tabular}{ll}
@@ -526,11 +529,13 @@ This model works well in most situations, where the number of concurrent request
 \subsection{\acp{pmnt} Startup Script}
 \label{section-pmnt-startup-script}
 
-You can change the host name (or IP address) and port of the \ac{sparql} endpoint by setting \verb|JETTY_HOST| and \verb|JETTY_PORT| in the startup script.  These default to \verb|localhost| and 8089, respectively.  To make \ac{pmnt} addressable on any of a host's network interfaces, change \verb|JETTY_HOST| to ``0.0.0.0''.
+\acp{pmnt} startup script, located in the root installation directory, contains a few configuration settings.  On Windows it is the PowerShell script \path|parliament.ps1|, while other platforms use the bash script \path|parliament|.
 
-You can control the amount of memory set aside for the Java heap by setting \verb|JAVA_HEAP_SIZE| in the same location.  While it is important to allow the \ac{jvm} sufficient memory, it is also important to realize that a significant portion of \ac{pmnt} is native code, and therefore does not use the Java heap.  Java programmers are often inclined to set \verb|JAVA_HEAP_SIZE| close to the total memory of the machine, but this will starve \acp{pmnt} native code of the memory it needs to achieve good performance.  The default heap size is 512 MB, which is reasonable for machines with 4 to 8 GB of total memory.
+Change the host name (or IP address) and port of the \ac{sparql} endpoint by setting \verb|JETTY_HOST| and \verb|JETTY_PORT| in the startup script (\verb|$jettyHost| and \verb|$jettyPort| on Windows).  These default to \verb|localhost| and 8089, respectively.  To make \ac{pmnt} addressable on any of a host's network interfaces, change \verb|JETTY_HOST| to ``0.0.0.0''.
 
-Note that if you are running the server as a Windows service, you must change these parameters in the install script, and you will have to re-run the install script to make your changes effective.
+Setting \verb|DEFAULT_JAVA_HEAP_SIZE| (\verb|$defaultJavaHeapSize| on Windows) controls the amount of memory set aside for the Java heap.  A common mistake of people used to Java software is to set this to the total memory on the machine.  While it is certainly important to give the \ac{jvm} sufficient memory, a significant portion of \ac{pmnt} is native code that does not use the Java heap.  Setting this parameter too high will starve the native code of the memory it needs.  The default of 512 MB is reasonable for machines with 4 to 8 GB of total memory.  On Windows, this value must be an integer in units of MB.  On other platforms, it is an integer concatenated with an `m' (MB) or `g' (GB).
+
+If you are running the server as a Windows service, you must re-run the startup script with the install option to make your changes effective.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{\acp{pmnt} Main Configuration File}
@@ -582,7 +587,7 @@ The recognized settings are as follows:
 
 	\item[stmtGrowthFactor] The factor by which \ac{pmnt} increases the size of the statement table when it runs out of space in the file.  If this is less than or equal to one, then geometric growth of the statement table is disabled, in which case stmtGrowthIncrement must be at least one (see above).  Note that this is a decimal number that should be formatted according to your locale, e.g., ``1.1`` in the US or ``1,1'' in Europe. \emph{Default: ``0''}
 
-	\item[bdbCacheSize] The amount of memory to be devoted to the Berkeley DB cache.  The portion before the comma is the total cache size (with a k for kilobytes, m for megabytes, g for gigabytes).  The portion after the comma specifies how many segments the memory should be broken across, for compatibility with systems that limit the size of single memory allocations.  On systems with 4 to 8 GB of memory, ``256m,1'' seems to be a reasonable setting. \emph{Default: ``256m,1''}
+	\item[bdbCacheSize] The amount of memory to be devoted to the Berkeley DB cache.  The portion before the comma is the total cache size (with a k for kilobytes, m for megabytes, g for gigabytes).  The portion after the comma specifies how many segments the memory should be broken across, for compatibility with systems that limit the size of single memory allocations.  On systems with 4 to 8 GB of memory, ``512m,1'' seems to be a reasonable setting. \emph{Default: ``512m,1''}
 
 	\item[normalizeTypedStringLiterals] Instructs \ac{pmnt} to convert typed string literals to plain literals, both upon insert and at query time, as mandated in \ac{rdf} 1.1.  In \ac{pmnt} versions before the implementation of this option (versions~2.7.9 and prior), the behavior was as if the option were set to ``no''.  Therefore, if you are migrating a \ac{pmnt} installation originally created with one of these older versions to a newer version, you must do one of two things:
 	\begin{enumerate}

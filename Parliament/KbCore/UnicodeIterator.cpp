@@ -277,7 +277,7 @@ void pmnt::UnicodeIteratorBase::postError(const char* pMsg)
 	}
 	else
 	{
-		m_pError = makeUnique<UnicodeException>(pMsg);
+		m_pError = ::std::make_unique<UnicodeException>(pMsg);
 	}
 }
 

@@ -6,11 +6,11 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/test/unit_test.hpp>
+#include <iterator>
 #include <string>
 #include <vector>
 
 #include "parliament/RegEx.h"
-#include "parliament/Util.h"
 #include "parliament/Version.h"
 
 using namespace ::bbn::parliament;
@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(testVersionNumber)
 	}
 
 	BOOST_CHECK_EQUAL(verArray.size(), parsedVersions.size());
-	BOOST_CHECK(equal(cBegin(verArray), cEnd(verArray), cBegin(parsedVersions)));
+	BOOST_CHECK(equal(cbegin(verArray), cend(verArray), cbegin(parsedVersions)));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

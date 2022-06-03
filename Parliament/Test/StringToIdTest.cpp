@@ -8,6 +8,7 @@
 #include <boost/test/data/monomorphic.hpp>
 #include <boost/test/data/test_case.hpp>
 #include <boost/format.hpp>
+#include <iterator>
 #include <ostream>
 #include <string>
 #include <stdexcept>
@@ -17,13 +18,14 @@
 #include "parliament/CharacterLiteral.h"
 #include "parliament/Exceptions.h"
 #include "parliament/UnicodeIterator.h"
-#include "parliament/Util.h"
 #include "TestUtils.h"
 
 namespace bdata = ::boost::unit_test::data;
 
 using namespace ::bbn::parliament;
 using ::boost::format;
+using ::std::cbegin;
+using ::std::cend;
 using ::std::char_traits;
 using ::std::exception;
 using ::std::ostream;
@@ -199,7 +201,7 @@ BOOST_AUTO_TEST_CASE(testStrToIdEntryIterator)
 {
 	FileDeleter deleter(k_fName);
 	StringToId s2i(k_fName, k_options, false);
-	for (auto it = cBegin(s2i); it != cEnd(s2i); ++it)
+	for (auto it = cbegin(s2i); it != cend(s2i); ++it)
 	{
 		BOOST_ERROR("Iteration over an empty StringToId yielded an entry");
 	}
@@ -210,7 +212,7 @@ BOOST_AUTO_TEST_CASE(testStrToIdEntryIterator)
 	BOOST_CHECK_EQUAL(k_testValue2, s2i.find(k_testKey2));
 
 	size_t i = 0;
-	for (auto it = cBegin(s2i); it != cEnd(s2i); ++it, ++i)
+	for (auto it = cbegin(s2i); it != cend(s2i); ++it, ++i)
 	{
 		if (i == 0)
 		{
@@ -234,8 +236,8 @@ BOOST_AUTO_TEST_CASE(testStrToIdEntryIterator)
 	BOOST_CHECK_MESSAGE(i == 2,
 		format("Iteration over a StringToId yielded too few entries (i == %1%)") % i);
 
-	auto end1(cEnd(s2i));
-	auto it1(cBegin(s2i));
+	auto end1(cend(s2i));
+	auto it1(cbegin(s2i));
 	++it1;
 	BOOST_CHECK_EQUAL(convertFromRsrcChar(k_testKey1), convertFromRsrcChar(it1->first));
 	BOOST_CHECK_EQUAL(k_testValue1, it1->second);

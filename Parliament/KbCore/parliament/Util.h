@@ -74,30 +74,6 @@ private:
 
 
 // ===========================================================================
-// Some C++14 items that should have been in C++11
-// ===========================================================================
-
-template<typename T, typename... Ts>
-::std::unique_ptr<T> makeUnique(Ts&&... params)
-{
-	return ::std::unique_ptr<T>(new T(::std::forward<Ts>(params)...));
-}
-
-template<typename C>
-auto cBegin(const C& container) -> decltype(::std::begin(container))
-{
-	return ::std::begin(container);
-}
-
-template<typename C>
-auto cEnd(const C& container) -> decltype(::std::end(container))
-{
-	return ::std::end(container);
-}
-
-
-
-// ===========================================================================
 // Unsigned iterator distance:  Use this to compute the distance between two
 // iterators as an unsigned number.  Useful in cases where you are sure that
 // first precedes last, so that the distance is positive, and where you need
