@@ -41,6 +41,8 @@ using ::std::end;
 using ::std::endl;
 using ::std::make_pair;
 using ::std::make_shared;
+using ::std::make_unique;
+using ::std::move;
 using ::std::ostream;
 using ::std::shared_ptr;
 using ::std::string;
@@ -413,14 +415,14 @@ void pmnt::RuleEngine::checkBuiltinTriggers(ResourceId rsrcId, const Statement& 
 //		// could later queue for subsequent fire
 //		const RuleTrigger& trigger = range.first->second;
 //
-//		auto pFCNode = ::std::make_unique<FwdChainNode>(m_ruleList[trigger.m_ruleIdx]);
+//		auto pFCNode = make_unique<FwdChainNode>(m_ruleList[trigger.m_ruleIdx]);
 //		SWRLBuiltinRuleAtom* atom = pFCNode->getBodyBuiltIns()[trigger.m_atomIdx];
 //
 //		if (checkStatementAddBinding(*atom, stmt, pFCNode->getBindingList()))
 //		{
 //			PMNT_LOG(g_log, log::Level::debug) << "checkStatementAddBinding successful";
 //			pFCNode->getMatchList()[trigger.m_atomIdx] = true;
-//			traverseFwdChainTree(::std::move(pFCNode));
+//			traverseFwdChainTree(move(pFCNode));
 //		}
 //		else
 //		{
@@ -445,13 +447,13 @@ void pmnt::RuleEngine::checkTriggers(const RuleTriggerMap& triggerMap,
 
 	for (const auto& trigger : matchedTriggers)
 	{
-		auto pFCNode = ::std::make_unique<FwdChainNode>(m_ruleList[trigger.m_ruleIdx]);
+		auto pFCNode = make_unique<FwdChainNode>(m_ruleList[trigger.m_ruleIdx]);
 		const RuleAtom& atom = m_ruleList[trigger.m_ruleIdx]->getBody()[trigger.m_atomIdx];
 		if (checkStatementAddBinding(atom, stmt, pFCNode->getBindingList()))
 		{
 			PMNT_LOG(g_log, log::Level::debug) << "checkStatementAddBinding successful";
 			pFCNode->getMatchList()[trigger.m_atomIdx] = true;
-			traverseFwdChainTree(::std::move(pFCNode));
+			traverseFwdChainTree(move(pFCNode));
 		}
 		else
 		{
@@ -475,8 +477,8 @@ void pmnt::RuleEngine::addRule(shared_ptr<Rule> pNewRule)
 	if (m_startupTimeIsOver || pNewRule->mustRunAtStartup() || m_pKB->config().runAllRulesAtStartup())
 	{
 		//create fcNode having no bindings and no matched atoms
-		auto fcNode = ::std::make_unique<FwdChainNode>(pNewRule);
-		traverseFwdChainTree(::std::move(fcNode));
+		auto fcNode = make_unique<FwdChainNode>(pNewRule);
+		traverseFwdChainTree(move(fcNode));
 	}
 }
 
@@ -551,11 +553,11 @@ void pmnt::RuleEngine::expandFwdChainNode(FwdChainNode& fcNode)
 	{
 		PMNT_LOG(g_log, log::Level::debug) << "expandFwdChainNode -- inside iterator loop";
 
-		auto pFCNode = ::std::make_unique<FwdChainNode>(fcNode);
+		auto pFCNode = make_unique<FwdChainNode>(fcNode);
 		pFCNode->getMatchList()[nextAtomIdx] = true;
 		if (checkStatementAddBinding(atom, iter.statement(), pFCNode->getBindingList()))
 		{
-			m_fwdChainList.push_back(::std::move(pFCNode));
+			m_fwdChainList.push_back(move(pFCNode));
 		}
 	}
 
@@ -565,13 +567,13 @@ void pmnt::RuleEngine::expandFwdChainNode(FwdChainNode& fcNode)
 void pmnt::RuleEngine::traverseFwdChainTree(FwdChainNodePtr pRootFCNode)
 {
 	//setup fcNodeList
-	m_fwdChainList.push_back(::std::move(pRootFCNode));
+	m_fwdChainList.push_back(move(pRootFCNode));
 
 	PMNT_LOG(g_log, log::Level::debug) << "traverseFwdChainNode";
 
 	//main fcNode loop
 	while (!m_fwdChainList.empty()) {
-		auto pFCNode = ::std::move(m_fwdChainList.back());
+		auto pFCNode = move(m_fwdChainList.back());
 		m_fwdChainList.pop_back();
 		expandFwdChainNode(*pFCNode);
 	}

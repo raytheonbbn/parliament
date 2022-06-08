@@ -7,15 +7,14 @@
 package com.bbn.parliament.jena.jetty;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.jetty.deploy.DeploymentManager;
 import org.eclipse.jetty.deploy.providers.WebAppProvider;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.xml.XmlConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,9 +88,9 @@ public class JettyServerCore {
 		server = new Server();
 
 		String configPath = System.getProperty(JETTY_CONF_SYS_PROP_NAME, CONF_JETTY_XML);
-		try (InputStream strm = new FileInputStream(configPath))
+		try (Resource configResource = Resource.newResource(configPath))
 		{
-			XmlConfiguration configuration = new XmlConfiguration(strm);
+			XmlConfiguration configuration = new XmlConfiguration(configResource);
 			configuration.configure(server);
 			validateAndCreateTempDir(getTempDir());
 		}

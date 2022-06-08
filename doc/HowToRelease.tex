@@ -100,9 +100,10 @@ For each platform above, start the appropriate machine or virtual machine and pe
 Finally, on Ubuntu only, build the Docker image:
 \begin{verbatim}
    cd jena/docker
-   ant -D../../target/distro/parliament-2.8.0-ubuntu20-64.zip
+   ant -Ddistro=../../target/distro/
+         parliament-2.8.1-ubuntu20-64.zip
    cp ../../target/distro/
-         parliament-2.8.0-ubuntu-docker.tar.bz2 release
+         parliament-2.8.1-ubuntu-docker.tar.bz2 release
 \end{verbatim}
 
 
@@ -118,7 +119,7 @@ For each supported platforms, run through the following steps to verify that thi
 
 \testStep Load \texttt{deft-data-load.nt} and \texttt{geo-example.ttl} from the dependencies directory.
 
-\testStep Verify that there are 3 instances in the geospatial index.
+\testStep Verify that there are 4 instances in the geospatial index.
 
 \testStep Explore a bit to ensure that functionality works as expected.
 
@@ -235,7 +236,7 @@ From the root of your Parliament working copy, run these commands:
    zip -9 -r release/parliament-dependencies-2022-04-25.zip
          dependencies/
    git tag -a -m "Dependencies archive released on
-         2022-04-25 prior to releasing version 2.8.0"
+         2022-04-25 prior to releasing version 2.8.1"
          dependencies-2022-04-25
 \end{verbatim}
 
@@ -247,8 +248,8 @@ From the root of your Parliament working copy, run these commands:
 Tag the release:
 
 \begin{verbatim}
-   git tag -a -m "Release version 2.8.0, created 2022-04-27"
-         release-2.8.0
+   git tag -a -m "Release version 2.8.1, created 2022-04-27"
+         release-2.8.1
 \end{verbatim}
 
 Upload artifacts, including dependencies
@@ -261,8 +262,8 @@ Post what's new
 \section{Publish the Docker Image}
 
 \begin{verbatim}
-docker tag parliament-2.8.0-ubuntu idemmons/parliament:2.8.0
-docker push idemmons/parliament:2.8.0
+docker tag parliament-2.8.1-ubuntu idemmons/parliament:2.8.1
+docker push idemmons/parliament:2.8.1
 \end{verbatim}
 
 

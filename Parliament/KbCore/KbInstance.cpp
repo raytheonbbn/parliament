@@ -59,6 +59,7 @@ using ::std::hex;
 using ::std::istream;
 using ::std::make_pair;
 using ::std::make_shared;
+using ::std::make_unique;
 using ::std::nothrow_t;
 using ::std::ostream;
 using ::std::pair;
@@ -70,7 +71,7 @@ using ::std::string;
 static auto g_log(pmnt::log::getSource("KbInstance"));
 
 pmnt::KbInstance::KbInstance(const KbConfig& config) :
-	m_pi(::std::make_unique<Impl>(config, this))
+	m_pi(make_unique<Impl>(config, this))
 {
 	PMNT_LOG(g_log, log::Level::info) << "Initializing KbInstance for "
 		<< m_pi->m_config.kbDirectoryPath().generic_string();
