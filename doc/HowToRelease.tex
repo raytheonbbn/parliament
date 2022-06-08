@@ -123,8 +123,7 @@ For each supported platforms, run through the following steps to verify that thi
 
 \testStep Explore a bit to ensure that functionality works as expected.
 
-\testStep Run the following queries:
-
+\testStep Run this query:
 \begin{verbatim}
    select distinct ?cls ?p ?value where {
       values ?pred { owl:maxQualifiedCardinality
@@ -136,6 +135,7 @@ For each supported platforms, run through the following steps to verify that thi
    } order by ?cls ?p
 \end{verbatim}
 
+\testStep Run this query:
 \begin{verbatim}
    prefix acore: <http://adept-kb.bbn.com/adept-core#>
    select distinct ?x ?xType ?xDirectType where {
@@ -150,6 +150,7 @@ For each supported platforms, run through the following steps to verify that thi
    } order by ?x ?xType ?xDirectType
 \end{verbatim}
 
+\testStep Run this query:
 \begin{verbatim}
    prefix acore: <http://adept-kb.bbn.com/adept-core#>
    select distinct ?super ?directSuper where {
@@ -159,6 +160,20 @@ For each supported platforms, run through the following steps to verify that thi
          acore:Divorce par:directSubClassOf ?directSuper .
       }
    } order by ?super ?directSuper
+\end{verbatim}
+
+\testStep Run this query:
+\begin{verbatim}
+select ?feature1 ?feature2 ?distance where {
+   ?feature1 geo:hasGeometry ?geometry1 .
+   ?geometry1 a sf:Point ;
+      geo:asWKT ?wkt1 .
+   ?feature2 geo:hasGeometry ?geometry2 .
+   ?geometry2 a sf:Point ;
+      geo:asWKT ?wkt2 .
+   filter (str(?feature1) <= str(?feature2))
+   bind (geof:distance(?wkt1, ?wkt2, uom:metre) as ?distance)
+} order by ?feature1 ?feature2
 \end{verbatim}
 
 \testStep Run this query, which contains a Cartesian product in the result set.  Switch to the admin page and watch it time out.
@@ -186,22 +201,31 @@ On Linux:
 
 \begin{verbatim}
    env LD_LIBRARY_PATH=../bin
-      PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt
       PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt
+      PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt
       ../bin/ParliamentAdmin -s
    env LD_LIBRARY_PATH=../bin
-      PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt
       PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt
+      PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt
       ../bin/ParliamentAdmin -t -e foo.nt
 \end{verbatim}
 
-On Mac: Substitute \texttt{DYLD\_LIBRARY\_PATH} for \texttt{LD\_LIBRARY\_PATH} in the commands above.
+On Mac:
+
+\begin{verbatim}
+   env PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt
+      PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt
+      ../bin/ParliamentAdmin -s
+   env PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt
+      PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt
+      ../bin/ParliamentAdmin -t -e foo.nt
+\end{verbatim}
 
 On Windows:
 
 \begin{verbatim}
-   set PARLIAMENT_LOG_CONFIG_PATH=..\ParliamentLogConfig.txt
    set PARLIAMENT_KB_CONFIG_PATH=..\ParliamentKbConfig.txt
+   set PARLIAMENT_LOG_CONFIG_PATH=..\ParliamentLogConfig.txt
    ..\bin\ParliamentAdmin /s
    ..\bin\ParliamentAdmin /t /e foo.nt
 \end{verbatim}
