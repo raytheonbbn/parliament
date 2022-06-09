@@ -1,0 +1,30 @@
+# Docker Parliament triple store
+
+# Requires appropriate credentials and docker login to Ironbank repo:
+FROM registry1.dso.mil/ironbank/redhat/openjdk/openjdk8-devel:latest
+
+USER root
+
+RUN dnf clean all
+RUN rm -rf /var/cache/dnf
+
+RUN useradd --system --user-group --uid 501 tenant
+
+RUN mkdir -p /var/parliament-data
+RUN chmod -R u=rwx,go=rx /var/parliament-data
+RUN chown -R tenant:tenant /var/parliament-data
+
+ARG parliament_version
+COPY parliament-$parliament_version /opt/parliament-$parliament_version/
+
+# These are needed because the unzip task in ant doesn't preserve file permissions:
+WORKDIR /opt/parliament-$parliament_version
+RUN find . -type d -print0 | xargs -0 -I% chmod u=rwx,go=rx "%"
+RUN find . -type f -print0 | xargs -0 -I% chmod u=rw,go=r "%"
+RUN chmod +x ./bin/* ./parliament
+
+USER tenant
+EXPOSE 8089
+VOLUME /var/parliament-data
+WORKDIR /opt/parliament-$parliament_version
+ENTRYPOINT ["./parliament", "container"]
