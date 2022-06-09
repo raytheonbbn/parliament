@@ -81,7 +81,7 @@ Parliament currently supports these platforms:
 	\item Macintosh
 	\item Ubuntu Linux
 	\item Red Hat Enterprise Linux (RHEL)
-	\item Windows
+	\item Windows (both 64- and 32-bit)
 \end{itemize}
 
 For each platform above, start the appropriate machine or virtual machine and perform the following steps:
@@ -230,23 +230,13 @@ On Windows:
    ..\bin\ParliamentAdmin /t /e foo.nt
 \end{verbatim}
 
-\testStep Install as service (Windows and Linux) according to the instructions in the User Guide.
+\testStep On Windows and Linux, install as service (see Section 2.2.1 in the User Guide) and start it running.  On Mac, start as a daemon.
 
-\testStep Start as service (Windows and Linux) or Daemon (Mac)
+\testStep Run through the test steps above.
 
-\testStep Run one of the queries above.
+\testStep Shut down the service or daemon.  On Windows and Linux, uninstall the service.
 
-\testStep Shut down the service or daemon.
-
-\testStep Uninstall the service (Windows and Linux).
-
-\testStep Start the Docker container.
-
-\testStep Insert some data.
-
-\testStep Run a couple queries.
-
-\testStep Stop the container.
+\testStep Start the Docker container, run through the test steps above, and stop the container.
 
 
 

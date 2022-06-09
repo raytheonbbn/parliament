@@ -64,8 +64,8 @@ BOOST_AUTO_TEST_CASE(testVersion)
 BOOST_AUTO_TEST_CASE(testGetEnv)
 {
 #if defined(PARLIAMENT_WINDOWS)
-	auto varValue = tGetEnvVar(_T("CommonProgramFiles"));
-	BOOST_CHECK_EQUAL(convertTCharToUtf8(_T("C:\\Program Files\\Common Files")),
+	auto varValue = tGetEnvVar(_T("ALLUSERSPROFILE"));
+	BOOST_CHECK_EQUAL(convertTCharToUtf8(_T("C:\\ProgramData")),
 		convertTCharToUtf8(varValue));
 #else
 	auto varValue = tGetEnvVar(_T("PWD"));
