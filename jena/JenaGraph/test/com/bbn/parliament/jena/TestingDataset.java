@@ -57,8 +57,8 @@ public class TestingDataset {
 	public KbGraph getNamedGraph(Node graphUri) {
 		if (!dataset.containsGraph(graphUri)) {
 			@SuppressWarnings("resource")
-			KbGraph graph = KbGraphFactory.createNamedGraph();
-			dataset.addGraph(graphUri, graph);
+			KbGraph newGraph = KbGraphFactory.createNamedGraph();
+			dataset.addGraph(graphUri, newGraph);
 		}
 		return (KbGraph) dataset.getGraph(graphUri);
 	}

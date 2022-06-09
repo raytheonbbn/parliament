@@ -16,7 +16,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.GeoSPARQLLiteral;
-import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Units;
+import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.UOM;
 import com.bbn.parliament.jena.graph.index.spatial.standard.SpatialGeometryFactory;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.QueryExecException;
@@ -46,7 +46,7 @@ public class Distance extends DoubleGeometrySpatialFunction {
 		MathTransform transform;
 		double distance = Double.MAX_VALUE;
 		Node unitsNode = units.getNode();
-		if (Units.Nodes.metre.equals(unitsNode)) {
+		if (UOM.Nodes.metre.equals(unitsNode)) {
 			// transform to UTM zones
 			int srid1 = SpatialGeometryFactory.UTMZoneSRID(m1.getEnvelope());
 			int srid2 = SpatialGeometryFactory.UTMZoneSRID(m2.getEnvelope());
@@ -78,10 +78,10 @@ public class Distance extends DoubleGeometrySpatialFunction {
 				throw new QueryExecException(
 					"Could not find transformation between WGS84 and EPSG:" + srid1);
 			}
-		} else if (Units.Nodes.degree.equals(unitsNode)) {
+		} else if (UOM.Nodes.degree.equals(unitsNode)) {
 			// WGS84 UoM is degrees so nothing needs to change
 			distance = m1.distance(m2);
-		} else if (Units.Nodes.radian.equals(unitsNode)) {
+		} else if (UOM.Nodes.radian.equals(unitsNode)) {
 			distance = Math.toRadians(m1.distance(m2));
 		} else {
 			throw new UnsupportedUnitsException(unitsNode);

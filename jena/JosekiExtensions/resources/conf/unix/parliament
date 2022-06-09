@@ -10,7 +10,7 @@ PMNT_DIR="`( cd \"$PMNT_DIR\" && pwd )`"  # absolutized and normalized
 JETTY_HOST=localhost
 #JETTY_HOST=0.0.0.0
 JETTY_PORT=8089
-JAVA_HEAP_SIZE=512m
+DEFAULT_JAVA_HEAP_SIZE=512m
 #DAEMON_USER=iemmons
 
 export PARLIAMENT_KB_CONFIG_PATH=$PMNT_DIR/ParliamentKbConfig.txt
@@ -127,7 +127,9 @@ else
 	#EXEC="$EXEC -debug"
 fi
 
-EXEC="$EXEC -Xmx$JAVA_HEAP_SIZE -cp $CLASSPATH:$PMNT_DIR/lib/* -Dlog.path.base=$KB_DIR"
+#EXEC="$EXEC -Xms${PARLIAMENT_JAVA_HEAP_SIZE:=$DEFAULT_JAVA_HEAP_SIZE}"
+EXEC="$EXEC -Xmx${PARLIAMENT_JAVA_HEAP_SIZE:=$DEFAULT_JAVA_HEAP_SIZE}"
+EXEC="$EXEC -cp $CLASSPATH:$PMNT_DIR/lib/* -Dlog.path.base=$KB_DIR"
 EXEC="$EXEC -Dlog4j.configuration=file:$PMNT_DIR/conf/log4j.$LOG4J_CONFIG.properties"
 EXEC="$EXEC -Djetty.host=$JETTY_HOST -Djetty.port=$JETTY_PORT"
 EXEC="$EXEC -DjettyConfig=$PMNT_DIR/conf/jetty.xml -Djava.library.path=$PMNT_DIR/bin"

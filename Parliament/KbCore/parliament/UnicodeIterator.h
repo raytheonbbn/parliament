@@ -10,11 +10,11 @@
 #include "parliament/Platform.h"
 #include "parliament/Types.h"
 #include "parliament/Exceptions.h"
-#include "parliament/Util.h"
 
 #include <boost/filesystem/path.hpp>
 #include <climits>
 #include <iterator>
+#include <memory>
 #include <string>
 
 PARLIAMENT_NAMESPACE_BEGIN
@@ -392,7 +392,7 @@ protected:
 
 	UnicodeIteratorBase(const UnicodeIteratorBase& rhs) :
 		m_pError(rhs.m_pError
-			? makeUnique<UnicodeException>(*rhs.m_pError)
+			? ::std::make_unique<UnicodeException>(*rhs.m_pError)
 			: nullptr),
 		m_distanceToEnd(rhs.m_distanceToEnd),
 		m_char(rhs.m_char),
@@ -404,7 +404,7 @@ protected:
 	UnicodeIteratorBase& operator=(const UnicodeIteratorBase& rhs)
 	{
 		m_pError = rhs.m_pError
-			? makeUnique<UnicodeException>(*rhs.m_pError)
+			? ::std::make_unique<UnicodeException>(*rhs.m_pError)
 			: nullptr;
 		m_distanceToEnd = rhs.m_distanceToEnd;
 		m_char = rhs.m_char;

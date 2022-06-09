@@ -69,20 +69,23 @@
 	<!-- Runs unit tests for a specific native directory (the name of which is expected as a parameter) -->
 	<target name="runTestsForOneNativeDir">
 		<echo message="nativeArtifactsDir = '${nativeArtifactsDir}'"/>
-		<mkdir dir="${reportsDir}"/>
-		<junit fork="yes" printsummary="yes" haltonfailure="yes">
-			<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
-			<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
-			<env key="PARLIAMENT_KB_CONFIG_PATH" value="${testKbConfigFile}"/>
-			<env key="PARLIAMENT_LOG_CONFIG_PATH" value="${testLogConfigFile}"/>
-			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
-			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
+		<mkdir dir="${reportsDir}/${ant.project.name}"/>
+		<junitlauncher printsummary="yes" haltonfailure="yes">
 			<classpath refid="testClassPath"/>
 			<classpath location="${testBinDir}"/>
-			<formatter type="xml"/>
-			<batchtest fork="yes" todir="${reportsDir}/${ant.project.name}">
-				<fileset dir="${basedir}/test" includes="**/*Test.java"/>
-			</batchtest>
-		</junit>
+			<listener type="legacy-xml" outputdir="${reportsDir}/${ant.project.name}"
+				sendSysErr="true" sendSysOut="true"/>
+			<testclasses>
+				<fileset dir="${testBinDir}" includes="**/*Test.class"/>
+				<fork>
+					<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
+					<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
+					<env key="PARLIAMENT_KB_CONFIG_PATH" value="${testKbConfigFile}"/>
+					<env key="PARLIAMENT_LOG_CONFIG_PATH" value="${testLogConfigFile}"/>
+					<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
+					<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
+				</fork>
+			</testclasses>
+		</junitlauncher>
 	</target>
 </project>

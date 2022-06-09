@@ -6,43 +6,90 @@
 \chapter{Deploying and Using \acl{pmnt}}
 \label{chapter-deploying-and-using}
 
-There are several ways to use \ac{pmnt}.  By far the most common is as a server application that exposes a \ac{sparql} endpoint.  The binary distribution directly supports this usage, running \ac{pmnt} within the included Jetty servlet engine.  See Section~\ref{section-std-server-deploy} for complete instructions.
+There are several ways to use \ac{pmnt}.  By far the most common is as a server application that exposes a \ac{sparql} endpoint.  \acp{pmnt} Docker image and its more traditional binary distribution directly support this usage, running \ac{pmnt} within the included Jetty servlet engine.  See Sections~\ref{section-std-container-deploy} and~\ref{section-std-server-deploy} for instructions.
 
 \ac{pmnt} can also be used with other servlet engines such as Tomcat and Glassfish (see Section~\ref{section-parliament-with-jena-and-tomcat}) or as an in-process library (Section~\ref{section-parliament-in-process}).
 
 Pre-built binaries for common platforms are available on the \ac{pmnt} Web site\urlcite{http://parliament.semwebcentral.org/}.  You can also build \ac{pmnt} yourself (see Chapter~\ref{chapter-building-parliament}).
 
-This chapter starts with instructions for installing a \ac{pmnt} server (Section~\ref{section-std-server-deploy}), followed by a discussion of the \ac{pmnt} configuration file (Section~\ref{section-configuring-pmnt}).  Then comes a detailed discussion of each of the less common deployment scenarios.  The chapter concludes with a discussion of \ac{pmnt} utilities and some troubleshooting (Sections~\ref{section-parliamentadmin-utility} and~\ref{section-troubleshooting}).
+This chapter starts with instructions for running a \ac{pmnt} container (Section~\ref{section-std-container-deploy}) and for installing a \ac{pmnt} server (Section~\ref{section-std-server-deploy}), followed by a discussion of the \ac{pmnt} configuration file (Section~\ref{section-configuring-pmnt}).  Then comes a detailed discussion of each of the less common deployment scenarios.  The chapter concludes with a discussion of \acp{pmnt} utilities and some troubleshooting hints (Sections~\ref{section-parliamentadmin-utility} and~\ref{section-troubleshooting}, respectively).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Deploying a \ac{pmnt} Container}
+\label{section-std-container-deploy}
+
+\acp{pmnt} Docker image can be found on Docker Hub here:
+\begin{quote}
+\texttt{idemmons/parliament:«version»}
+\end{quote}
+
+To run the container, use this command (with line breaks added for readability):
+{\small
+\begin{verbatim}
+docker run -d -p 80:8089 --name=parliament-«version»
+   --mount type=volume,src=parliament-data,dst=/var/parliament-data
+   --env PARLIAMENT_JAVA_HEAP_SIZE=512m
+   --env PARLIAMENT_BDB_CACHE_SIZE=512m,1
+   idemmons/parliament:«version»
+\end{verbatim}
+}
+
+As given here, the mount option will create a local Docker volume called \path|parliament-data| to contain \acp{pmnt} data files and logs.  Using variations of this option, you can cause the container to store the data files and logs in a broad variety of locations and file systems, such as on an external storage array.  (See the Docker documentation for more information.)
+
+Alternately, Docker can store \acp{pmnt} data files and logs in a local directory on the container's host with this syntax:
+{\small
+\begin{verbatim}
+docker run -d -p 80:8089 --name=parliament-«version»
+   --mount type=bind,src=/host/directory,dst=/var/parliament-data
+   --env PARLIAMENT_JAVA_HEAP_SIZE=512m
+   --env PARLIAMENT_BDB_CACHE_SIZE=512m,1
+   idemmons/parliament:«version»
+\end{verbatim}
+}
+
+The two environment variables are optional.  If they are left out, the default values used will be the values shown in the command line above.  (See Sections~\ref{section-pmnt-startup-script} and~\ref{section-main-config} for discussions of these settings.)  Table~\ref{table-pmnt-container-connect-urls} lists the endpoints exposed by the running container, as discussed in Section~\ref{section-std-server-usage}.
+
+\begin{table}[htbp]
+	\centering
+	\begin{tabular}{ll}
+		\acs*{http} interface: & \nolinkurl{http://«host»/parliament}\\
+		\ac{sparql} endpoint: & \nolinkurl{http://«host»/parliament/sparql}\\
+		Bulk loader: & \nolinkurl{http://«host»/parliament/bulk}\\
+	\end{tabular}
+	\caption{\acs*{pmnt} Container Connection \acsp*{url}}
+	\label{table-pmnt-container-connect-urls}
+\end{table}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Deploying a \ac{pmnt} Server}
 \label{section-std-server-deploy}
 
-A \ac{pmnt} distribution is a compressed archive containing a ready-to-run \ac{pmnt} Server, with the following naming convention:
+A \ac{pmnt} distribution is a compressed archive containing a ready-to-run \ac{pmnt} server, with the following naming convention:
 \begin{quote}
-	\texttt{Parliament-v\textbf{\textit{X.Y.Z}}-\textbf{\textit{toolset}}.zip}
+	\texttt{parliament-\textbf{\textit{x.y.z}}-\textbf{\textit{platform}}.zip}
 \end{quote}
-Here \texttt{\textbf{\textit{X.Y.Z}}} is the \ac{pmnt} version number and \texttt{\textbf{\textit{toolset}}} indicates the platform on which the distribution runs, as shown in Table~\ref{tbl:ToolsetPlatformCorrespondence}.
+Here \texttt{\textbf{\textit{x.y.z}}} is the \ac{pmnt} version number and \texttt{\textbf{\textit{platform}}} indicates the platform, as shown in Table~\ref{tbl:SupportedPlatforms}\footnote{At present, only Intel/AMD architectures are supported.  We expect to support Apple Silicon and ARM binaries in a future release.}.
 \begin{table}[htbp]
 	\centering
-	\begin{tabular}{ll}
+	\begin{tabular}{lll}
 		\toprule
-		\emph{Toolset}		& \emph{Corresponding Platform}\\
+		\emph{Platform}	& \emph{Description}				& \emph{Binaries}\\
 		\headingrule
-		\path|clang|		& Universal binaries for Mac OS X\\
-		\path|gcc-rhel|	& 64-bit Red Hat Enterprise Linux\\
-		\path|gcc-centos|	& 64-bit CentOS Linux\\
-		\path|gcc-ubuntu|	& 64-bit Ubuntu Linux\\
-		\path|msvc-64|		& 64-bit Windows\\
-		\path|msvc-32|		& 32-bit Windows\\
+		\path|mac|			& Mac OS Catalina and newer	& 64-bit\\
+		\path|rhel8|		& Red Hat Enterprise Linux 8	& 64-bit\\
+		\path|ubuntu20|	& Ubuntu Linux 20, LTS			& 64-bit\\
+		\path|win-64|		& Windows 10 and newer			& 64-bit\\
+		\path|win-32|		& Windows 10 and newer			& 32-bit\\
 		\bottomrule
 	\end{tabular}
-	\caption{Toolset-to-Platform Correspondence}
-	\label{tbl:ToolsetPlatformCorrespondence}
+	\caption{Supported Platforms}
+	\label{tbl:SupportedPlatforms}
 \end{table}
 If you are building \ac{pmnt} yourself according to the instructions in Chapter~\ref{chapter-building-parliament}, then these archives appear in the \path|target/distro| directory at the end of the build process.
 
-As shown in Table~\ref{tbl:ToolsetPlatformCorrespondence}, on Windows there is a choice between 32-bit and 64-bit builds.  Whenever possible, use the 64-bit version, because 32-bit \ac{pmnt} is limited to 5--10 million statements.
+As shown in Table~\ref{tbl:SupportedPlatforms}, on Windows there is a choice between 32-bit and 64-bit builds.  Whenever possible, use the 64-bit version, because 32-bit \ac{pmnt} is limited to 5--10 million statements.
 
 \subsection{Installing for the First Time}
 \label{section-std-server-init-deploy}
@@ -85,7 +132,7 @@ Use the following procedure to install \ac{pmnt} as a Windows service.
 
 If you want \ac{pmnt} to run under a dedicated account, start by creating that account.  This step is optional.
 
-Next create a data directory in a location of your choice.  One reasonable option is \path|C:\ProgramData\parliament-data|.  \ac{pmnt} will store its content here, as well as logging and temporary files.  Ensure that this directory is writable by the user established above, if you created one.
+Next create a data directory in a location of your choice.  One reasonable option is \path|C:\ProgramData\parliament-data|.  \ac{pmnt} will store its content here, as well as logging and temporary files.  Ensure that this directory is writable by the user established above.  (Even if you did not create such a user, you may need to grant access to the ``Local Service'' account.)
 
 Now unzip the \ac{pmnt} distribution to a location of your choice, such as \path|C:\Program Files\ParliamentKB|.  It is fine for this directory to be read-only for the user established above.
 
@@ -120,7 +167,7 @@ If you change any of the parameters in \path|parliament.ps1| after installing as
 
 \subsubsection{Installing as a Linux Daemon}
 
-This section is focused on variants of Linux that support systemd, such as RHEL, CentOS, and Ubuntu.  For setup on non-systemd Linux, please use the next section.
+This section is focused on variants of Linux that support systemd, such as RHEL and Ubuntu.  For setup on non-systemd Linux, please use the next section.
 
 To install \ac{pmnt} as a systemd service, we begin by establishing a system account (and group) under which \ac{pmnt} will run.  To do this from scratch, use the following command:
 
@@ -169,7 +216,7 @@ You can check whether \ac{pmnt} is running with either of these commands:
 
 To uninstall \ac{pmnt} as a systemd service, run this command:
 \begin{verbatim}
-     sudo parliament uninstall
+     sudo ./parliament uninstall
 \end{verbatim}
 
 \subsubsection{Installing as a UNIX Daemon}
@@ -262,7 +309,7 @@ A common update operation is inserting a body of \ac{rdf} into \ac{pmnt}, shown 
 \begin{figure}[htbp]
 	\footnotesize
 	\VerbatimInput{includes/jena2-insert.java}
-	\caption{Inserting \ac{rdf} with Jena 2}
+	\caption{Inserting \acs*{rdf} with Jena 2}
 	\label{figure-sparql-insert-with-jena-2}
 \end{figure}
 
@@ -282,7 +329,7 @@ If you are using \acp{pmnt} client-side library, and in particular the RemoteMod
 \begin{figure}[htbp]
 	\footnotesize
 	\VerbatimInput{includes/jena3-insert.java}
-	\caption{Inserting \ac{rdf} with Jena 3}
+	\caption{Inserting \acs*{rdf} with Jena 3}
 	\label{figure-sparql-insert-with-jena-3}
 \end{figure}
 
@@ -458,19 +505,54 @@ Finally, restart the web server to activate the new configuration with this comm
 \section{Configuring \ac{pmnt}}
 \label{section-configuring-pmnt}
 
-\ac{pmnt} has a few configuration files, discussed in the sections below.
+The section begins with a how-to for common configuration tasks, followed by a more detailed discussion of each of \acp{pmnt} configuration files.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{\acp{pmnt} Startup Scripts}
+\subsection{Common Configuration Tasks}
+\label{section-common-config-tasks}
 
-You can change the host name (or IP address) and port of the \ac{sparql} endpoint by setting \verb|JETTY_HOST| and \verb|JETTY_PORT| in the startup script.  These default to \verb|localhost| and 8089, respectively.  To make \ac{pmnt} addressable on any of a host's network interfaces, change \verb|JETTY_HOST| to ``0.0.0.0''.
+\emph{Changing the host name and port:} See Section~\ref{section-pmnt-startup-script}.
 
-You can control the amount of memory set aside for the Java heap by setting \verb|JAVA_HEAP_SIZE| in the same location.  While it is important to allow the \ac{jvm} sufficient memory, it is also important to realize that a significant portion of \ac{pmnt} is native code, and therefore does not use the Java heap.  Java programmers are often inclined to set \verb|JAVA_HEAP_SIZE| close to the total memory of the machine, but this will starve \acp{pmnt} native code of the memory it needs to achieve good performance.  The default heap size is 512 MB, which is reasonable for machines with 4 to 8 GB of total memory.
+\emph{Changing the location of \acp{pmnt} data files:} See the \texttt{kbDirectoryPath} setting in Section~\ref{section-main-config}.
 
-Note that if you are running the server as a Windows service, you must change these parameters in the install script, and you will have to re-run the install script to make your changes effective.
+\emph{Setting the query timeout:} See the \texttt{TimeoutDuration} and \texttt{TimeoutUnit} settings in Section~\ref{section-main-config}.
+
+\emph{Memory configuration:} Because \ac{pmnt} uses four separate pools of memory, finding the optimal configuration is not easy.  These four pools of memory are:
+\begin{itemize}[noitemsep]
+	\item The Java heap (to configure, see Section~\ref{section-pmnt-startup-script})
+	\item Berkeley DB's cache (configured via the \texttt{bdbCacheSize} setting discussed in Section~\ref{section-main-config})
+	\item The demand-paged cache maintained by the operating system for memory-mapped files (not configurable)
+	\item The C++ heap (not configurable)
+\end{itemize}
+Achieving the right balance between these pools of memory is tricky, but here are a few guidelines:
+
+\begin{itemize}
+	\item Don't make the Java heap too big. Many Java programmers are accustomed to setting their Java heap as large as possible, but for \ac{pmnt}, the Java heap is not as important as the Berkeley DB cache and the memory-mapped files.
+
+	\item The Berkeley DB cache size is probably the most important setting for achieving good performance.  Do not be afraid to experiment with values much larger than the default.
+
+	\item The sum of the Java heap size and the Berkeley DB cache size should be significantly less than the total memory available, in order to leave sufficient memory for the memory-mapped files.
+\end{itemize}
+
+\emph{Concurrency:} \ac{pmnt} has a many readers/single writer model of concurrency.  In other words, if \ac{pmnt} receives several requests at once, and all of them are read-only requests (such as a query), then \ac{pmnt} will execute those requests in parallel.  Whenever \ac{pmnt} receives a request that requires writing (such as an insert, a \ac{sparql} Update, or a graph creation), that request will wait until all other executing requests are finished, and then it will execute. And while it is executing, all other requests (read or write) will wait in the queue until it is finished.
+
+This model works well in most situations, where the number of concurrent requests is not terribly large and read-only requests dominate.  A few dozen concurrent queries is not uncommon in our experience, and works well.  Larger numbers of concurrent read-only requests will work correctly, but the performance may degrade because all those requests ultimately are reading from the same I/O device.  Therefore, caching becomes the key issue for concurrency levels this high (see memory configuration above).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{\acp{pmnt} Main Configuration File}
+\subsection{\acp{pmnt} Startup Script}
+\label{section-pmnt-startup-script}
+
+\acp{pmnt} startup script, located in the root installation directory, contains a few configuration settings.  On Windows it is the PowerShell script \path|parliament.ps1|, while other platforms use the bash script \path|parliament|.
+
+Change the host name (or IP address) and port of the \ac{sparql} endpoint by setting \verb|JETTY_HOST| and \verb|JETTY_PORT| in the startup script (\verb|$jettyHost| and \verb|$jettyPort| on Windows).  These default to \verb|localhost| and 8089, respectively.  To make \ac{pmnt} addressable on any of a host's network interfaces, change \verb|JETTY_HOST| to ``0.0.0.0''.
+
+Setting \verb|DEFAULT_JAVA_HEAP_SIZE| (\verb|$defaultJavaHeapSize| on Windows) controls the amount of memory set aside for the Java heap.  A common mistake of people used to Java software is to set this to the total memory on the machine.  While it is certainly important to give the \ac{jvm} sufficient memory, a significant portion of \ac{pmnt} is native code that does not use the Java heap.  Setting this parameter too high will starve the native code of the memory it needs.  The default of 512 MB is reasonable for machines with 4 to 8 GB of total memory.  On Windows, this value must be an integer in units of MB.  On other platforms, it is an integer concatenated with an `m' (MB) or `g' (GB).
+
+If you are running the server as a Windows service, you must re-run the startup script with the install option to make your changes effective.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\acp{pmnt} Main Configuration File}
+\label{section-main-config}
 
 \acp{pmnt} main configuration file contains settings pertaining to storage, query, and inference.  It is typically called \path|ParliamentKbConfig.txt|, and \ac{pmnt} finds it like so:
 
@@ -518,7 +600,7 @@ The recognized settings are as follows:
 
 	\item[stmtGrowthFactor] The factor by which \ac{pmnt} increases the size of the statement table when it runs out of space in the file.  If this is less than or equal to one, then geometric growth of the statement table is disabled, in which case stmtGrowthIncrement must be at least one (see above).  Note that this is a decimal number that should be formatted according to your locale, e.g., ``1.1`` in the US or ``1,1'' in Europe. \emph{Default: ``0''}
 
-	\item[bdbCacheSize] The amount of memory to be devoted to the Berkeley DB cache.  The portion before the comma is the total cache size (with a k for kilobytes, m for megabytes, g for gigabytes).  The portion after the comma specifies how many segments the memory should be broken across, for compatibility with systems that limit the size of single memory allocations.  On systems with 4 to 8 GB of memory, ``256m,1'' seems to be a reasonable setting. \emph{Default: ``256m,1''}
+	\item[bdbCacheSize] The amount of memory to be devoted to the Berkeley DB cache.  The portion before the comma is the total cache size (with a k for kilobytes, m for megabytes, g for gigabytes).  The portion after the comma specifies how many segments the memory should be broken across, for compatibility with systems that limit the size of single memory allocations.  On systems with 4 to 8 GB of memory, ``512m,1'' seems to be a reasonable setting. \emph{Default: ``512m,1''}
 
 	\item[normalizeTypedStringLiterals] Instructs \ac{pmnt} to convert typed string literals to plain literals, both upon insert and at query time, as mandated in \ac{rdf} 1.1.  In \ac{pmnt} versions before the implementation of this option (versions~2.7.9 and prior), the behavior was as if the option were set to ``no''.  Therefore, if you are migrating a \ac{pmnt} installation originally created with one of these older versions to a newer version, you must do one of two things:
 	\begin{enumerate}
@@ -602,7 +684,8 @@ where ``IFP'' stands for ``InverseFunctionalProperty''. \emph{Default: ``on''}
 \end{description}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{\acp{pmnt} Logging Configuration}
+\subsection{\acp{pmnt} Logging Configuration}
+\label{section-logging-config}
 
 These files configure logging for \acp{pmnt} Java code:
 \begin{quote}
@@ -651,7 +734,8 @@ The file \path|ParliamentLogConfig.txt| controls native code logging.  Its forma
 \end{description}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{\acp{pmnt} Servlet Container Configuration File}
+\subsection{\acp{pmnt} Servlet Container Configuration}
+\label{section-servlet-container-config}
 
 The file \path|ParliamentKB/conf/jetty.xml| configures the Jetty servlet container.  Generally, there is no need to modify this file.
 

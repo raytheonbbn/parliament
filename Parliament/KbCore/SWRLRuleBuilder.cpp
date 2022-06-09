@@ -9,14 +9,15 @@
 #include "parliament/Log.h"
 #include "parliament/SWRLBuiltins.h"
 #include "parliament/UnicodeIterator.h"
-#include "parliament/Util.h"
 
 #include <boost/format.hpp>
 #include <iterator>
+#include <memory>
 
 namespace pmnt = ::bbn::parliament;
 
 using ::boost::format;
+using ::std::make_unique;
 
 static auto g_log(::pmnt::log::getSource("SWRLRuleBuilder"));
 
@@ -89,135 +90,135 @@ pmnt::SWRLBuiltinAtomPtr pmnt::SWRLRuleBuilder::buildBuiltinAtom(
 	const auto builtinIdStr = safeRsrcIdToUri(builtinId);
 	if (builtinIdStr == uriLib().m_swrlbMultiply.str())
 	{
-		pResult = makeUnique<MultiplyBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<MultiplyBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbAdd.str())
 	{
-		pResult = makeUnique<AddBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<AddBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbSubtract.str())
 	{
-		pResult = makeUnique<SubtractBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<SubtractBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbDivide.str())
 	{
-		pResult = makeUnique<DivideBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<DivideBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbStringEqualIgnoreCase.str())
 	{
-		pResult = makeUnique<StringEqualIngnoreCaseBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<StringEqualIngnoreCaseBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbStringConcat.str())
 	{
-		pResult = makeUnique<StringConcatBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<StringConcatBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbYearMonthDuration.str())
 	{
-		pResult = makeUnique<YearMonthDurationBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<YearMonthDurationBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbDayTimeDuration.str())
 	{
-		pResult = makeUnique<DayTimeDurationBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<DayTimeDurationBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbDateTime.str())
 	{
-		pResult = makeUnique<DateTimeBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<DateTimeBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbDate.str())
 	{
-		pResult = makeUnique<DateBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<DateBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbTime.str())
 	{
-		pResult = makeUnique<TimeBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<TimeBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbAddYearMonthDurations.str())
 	{
-		pResult = makeUnique<AddYearMonthDurationsBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<AddYearMonthDurationsBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbSubtractYearMonthDurations.str())
 	{
-		pResult = makeUnique<SubtractYearMonthDurationsBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<SubtractYearMonthDurationsBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbMultiplyYearMonthDuration.str())
 	{
-		pResult = makeUnique<MultiplyYearMonthDurationBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<MultiplyYearMonthDurationBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbDivideYearMonthDurations.str())
 	{
-		pResult = makeUnique<DivideYearMonthDurationsBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<DivideYearMonthDurationsBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbAddDayTimeDurations.str())
 	{
-		pResult = makeUnique<AddDayTimeDurationsBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<AddDayTimeDurationsBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbSubtractDayTimeDurations.str())
 	{
-		pResult = makeUnique<SubtractDayTimeDurationsBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<SubtractDayTimeDurationsBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbMultiplyDayTimeDurations.str())
 	{
-		pResult = makeUnique<MultiplyDayTimeDurationsBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<MultiplyDayTimeDurationsBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbDivideDayTimeDuration.str())
 	{
-		pResult = makeUnique<DivideDayTimeDurationBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<DivideDayTimeDurationBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbSubtractDates.str())
 	{
-		pResult = makeUnique<SubtractDatesBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<SubtractDatesBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbSubtractTimes.str())
 	{
-		pResult = makeUnique<SubtractTimesBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<SubtractTimesBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbAddYearMonthDurationToDateTime.str())
 	{
-		pResult = makeUnique<AddYearMonthDurationToDateTimeBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<AddYearMonthDurationToDateTimeBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbAddDayTimeDurationToDateTime.str())
 	{
-		pResult = makeUnique<AddDayTimeDurationToDateTimeBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<AddDayTimeDurationToDateTimeBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbSubtractYearMonthDurationFromDateTime.str())
 	{
-		pResult = makeUnique<SubtractYearMonthDurationFromDateTimeBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<SubtractYearMonthDurationFromDateTimeBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbSubtractDayTimeDurationFromDateTime.str())
 	{
-		pResult = makeUnique<SubtractDayTimeDurationFromDateTimeBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<SubtractDayTimeDurationFromDateTimeBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbAddYearMonthDurationToDate.str())
 	{
-		pResult = makeUnique<AddYearMonthDurationToDateBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<AddYearMonthDurationToDateBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbAddDayTimeDurationToDate.str())
 	{
-		pResult = makeUnique<AddDayTimeDurationToDateBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<AddDayTimeDurationToDateBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbSubtractYearMonthDurationFromDate.str())
 	{
-		pResult = makeUnique<SubtractYearMonthDurationFromDateBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<SubtractYearMonthDurationFromDateBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbSubtractDayTimeDurationFromDate.str())
 	{
-		pResult = makeUnique<SubtractDayTimeDurationFromDateBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<SubtractDayTimeDurationFromDateBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbAddDayTimeDurationToTime.str())
 	{
-		pResult = makeUnique<AddDayTimeDurationToTimeBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<AddDayTimeDurationToTimeBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbSubtractDayTimeDurationFromTime.str())
 	{
-		pResult = makeUnique<SubtractDayTimeDurationFromTimeBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<SubtractDayTimeDurationFromTimeBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbSubtractDateTimesYieldingYearMonthDuration.str())
 	{
-		pResult = makeUnique<SubtractDateTimesYieldingYearMonthDurationBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<SubtractDateTimesYieldingYearMonthDurationBuiltinRuleAtom>(builtinIdStr);
 	}
 	else if (builtinIdStr == uriLib().m_swrlbSubtractDateTimesYieldingDayTimeDuration.str())
 	{
-		pResult = makeUnique<SubtractDateTimesYieldingDayTimeDurationBuiltinRuleAtom>(builtinIdStr);
+		pResult = make_unique<SubtractDateTimesYieldingDayTimeDurationBuiltinRuleAtom>(builtinIdStr);
 	}
 	else
 	{

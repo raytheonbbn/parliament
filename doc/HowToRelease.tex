@@ -1,0 +1,301 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = XeLaTeX
+
+\documentclass[12pt,letterpaper,draft]{article}
+
+\newcounter{TestStepCounter}
+
+\usepackage{parskip}
+\usepackage{color}
+\usepackage{titling}
+\usepackage{fnpct}
+\usepackage[inline]{enumitem}
+%\usepackage{booktabs}
+%\usepackage{array}
+%\usepackage[final]{graphicx}
+%\usepackage{amsmath}
+%\usepackage{amssymb}
+%\usepackage{tikz}
+\usepackage{path}
+%\usepackage{dirtree}
+\usepackage{fontspec,xltxtra,xunicode}
+%\usepackage{unicode-math}
+\usepackage[final]{hyperref}	% Should be the last use-package command
+
+\newcommand{\urlcite}[1]{\footnote{\url{#1}}}
+\newcommand{\testStep}{\stepcounter{TestStepCounter}\textbf{Step \theTestStepCounter:} }
+
+\title{Managing Parliament™ Dependencies}
+\author{Ian Emmons}
+\date{\today}
+
+\defaultfontfeatures{Mapping=tex-text}
+\setmainfont{Georgia}
+\setsansfont{Verdana}[Scale=MatchLowercase]
+\setmonofont{Menlo}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
+%\setmathfont{TeX Gyre Bonum Math}
+
+\definecolor{hyperlinkcolor}{rgb}{0,0,0.625}
+\hypersetup{
+	final=true,
+	unicode=true,
+	bookmarksnumbered=true,
+	pdftitle={\thetitle},
+	pdfauthor={\theauthor},
+	colorlinks=true,
+	allcolors=hyperlinkcolor
+}
+
+%\hyphenation{da-ta-base da-ta-bas-es}
+
+\begin{document}
+\maketitle
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+This document lists the steps to create a new release of Parliament™.
+
+As a preliminary step, create a directory to store the release artifacts so that you will always have them available locally.  The rest of this document will refer to this location as \texttt{release}.  For example, the author uses this folder:
+
+\begin{verbatim}
+   ~/Desktop/Parliament/releases/«version-number»
+\end{verbatim}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Consider Upgrading Boost}
+
+Check on the latest available version of the Boost libraries\urlcite{https://www.boost.org} and consider upgrading to that version.  This step is not strictly necessary, but it is nice to stay relatively current, and Boost updates every quarter.  Instructions for this process can be found in the Parliament User Guide.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Prepare the Release on Each Plaform}
+
+Parliament currently supports these platforms:
+\begin{itemize}[noitemsep]
+	\item Macintosh
+	\item Ubuntu Linux
+	\item Red Hat Enterprise Linux (RHEL)
+	\item Windows (both 64- and 32-bit)
+\end{itemize}
+
+For each platform above, start the appropriate machine or virtual machine and perform the following steps:
+\begin{enumerate}
+	\item Run the operating system's update process.  On Windows, also run the Visual Studio updater.
+
+	\item If the compiler has been updated, consider rebuilding the Boost and Berkeley DB libraries.  (See the User Guide for details.)
+
+	\item Create a clean build of Parliament itself.
+
+	\item Check the JUnit report (\texttt{target/reports/junit-noframes.html}) to be sure that the only outstanding test issues are the usual 12 geospatial index failures.
+
+	\item Copy the distribution archive from \texttt{target/distro} to \texttt{release}.
+\end{enumerate}
+
+Finally, on Ubuntu only, build the Docker image:
+\begin{verbatim}
+   cd jena/docker
+   ant -Ddistro=../../target/distro/
+         parliament-2.8.2-ubuntu20-64.zip
+   cp ../../target/distro/
+         parliament-2.8.2-ubuntu-docker.tar.bz2 release
+\end{verbatim}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Test on Each Plaform}
+
+For each supported platforms, run through the following steps to verify that things are working well.
+
+\testStep Set a short query timeout of 10 or 15 seconds and start Parliament.
+
+\testStep Start Parliament and create the indexes.
+
+\testStep Load \texttt{deft-data-load.nt} and \texttt{geo-example.ttl} from the dependencies directory.
+
+\testStep Verify that there are 4 instances in the geospatial index.
+
+\testStep Explore a bit to ensure that functionality works as expected.
+
+\testStep Run this query:
+\begin{verbatim}
+   select distinct ?cls ?p ?value where {
+      values ?pred { owl:maxQualifiedCardinality
+            owl:qualifiedCardinality }
+      ?cls rdfs:subClassOf ?r .
+      ?r a owl:Restriction ;
+         owl:onProperty ?p ;
+         ?pred ?value .
+   } order by ?cls ?p
+\end{verbatim}
+
+\testStep Run this query:
+\begin{verbatim}
+   prefix acore: <http://adept-kb.bbn.com/adept-core#>
+   select distinct ?x ?xType ?xDirectType where {
+      ?x a acore:Role .
+      {
+         {
+            ?x a ?xType .
+         } union {
+            ?x par:directType ?xDirectType .
+         }
+      }
+   } order by ?x ?xType ?xDirectType
+\end{verbatim}
+
+\testStep Run this query:
+\begin{verbatim}
+   prefix acore: <http://adept-kb.bbn.com/adept-core#>
+   select distinct ?super ?directSuper where {
+      {
+         acore:Divorce rdfs:subClassOf ?super .
+      } union {
+         acore:Divorce par:directSubClassOf ?directSuper .
+      }
+   } order by ?super ?directSuper
+\end{verbatim}
+
+\testStep Run this query:
+\begin{verbatim}
+select ?feature1 ?feature2 ?distance where {
+   ?feature1 geo:hasGeometry ?geometry1 .
+   ?geometry1 a sf:Point ;
+      geo:asWKT ?wkt1 .
+   ?feature2 geo:hasGeometry ?geometry2 .
+   ?geometry2 a sf:Point ;
+      geo:asWKT ?wkt2 .
+   filter (str(?feature1) <= str(?feature2))
+   bind (geof:distance(?wkt1, ?wkt2, uom:metre) as ?distance)
+} order by ?feature1 ?feature2
+\end{verbatim}
+
+\testStep Run this query, which contains a Cartesian product in the result set.  Switch to the admin page and watch it time out.
+
+\begin{verbatim}
+   select distinct ?x1 ?y1 ?x2 ?y2 where {
+      ?x1 rdfs:subClassOf ?y1 .
+      ?x2 rdfs:subClassOf ?y2 .
+   }
+\end{verbatim}
+
+\testStep On the Insert Data page, attempt to insert a reserved predicate and verify that this fails:
+
+\begin{verbatim}
+   owl:Thing par:directType owl:Class .
+\end{verbatim}
+
+\testStep Export the entire repository as N-Triples, and then export the default graph as Turtle.
+
+\testStep Shut down the server.
+
+\testStep From the \texttt{kb-data} directory, run these commands:
+
+On Linux:
+
+\begin{verbatim}
+   env LD_LIBRARY_PATH=../bin
+      PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt
+      PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt
+      ../bin/ParliamentAdmin -s
+   env LD_LIBRARY_PATH=../bin
+      PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt
+      PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt
+      ../bin/ParliamentAdmin -t -e foo.nt
+\end{verbatim}
+
+On Mac:
+
+\begin{verbatim}
+   env PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt
+      PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt
+      ../bin/ParliamentAdmin -s
+   env PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt
+      PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt
+      ../bin/ParliamentAdmin -t -e foo.nt
+\end{verbatim}
+
+On Windows:
+
+\begin{verbatim}
+   set PARLIAMENT_KB_CONFIG_PATH=..\ParliamentKbConfig.txt
+   set PARLIAMENT_LOG_CONFIG_PATH=..\ParliamentLogConfig.txt
+   ..\bin\ParliamentAdmin /s
+   ..\bin\ParliamentAdmin /t /e foo.nt
+\end{verbatim}
+
+\testStep On Windows and Linux, install as service (see Section 2.2.1 in the User Guide) and start it running.  On Mac, start as a daemon.
+
+\testStep Run through the test steps above.
+
+\testStep Shut down the service or daemon.  On Windows and Linux, uninstall the service.
+
+\testStep Start the Docker container, run through the test steps above, and stop the container.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Prepare the Dependencies Archive}
+
+From the root of your Parliament working copy, run these commands:
+
+\begin{verbatim}
+   find dependencies -name .DS_Store -delete
+   zip -9 -r release/parliament-dependencies-2022-04-25.zip
+         dependencies/
+   git tag -a -m "Dependencies archive released on
+         2022-04-25 prior to releasing version 2.8.2"
+         dependencies-2022-04-25
+\end{verbatim}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Update README.md}
+
+Update the What's New section of \path|README.md|.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Tag and Publish the Release on GitHub}
+
+Tag the release:
+
+\begin{verbatim}
+   git tag -a -m "Release version 2.8.2, created 2022-04-27"
+         release-2.8.2
+\end{verbatim}
+
+Upload artifacts, including dependencies
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Publish the Docker Image}
+
+\begin{verbatim}
+docker tag parliament-2.8.2-ubuntu idemmons/parliament:2.8.2
+docker push idemmons/parliament:2.8.2
+\end{verbatim}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Bump the Version Number}
+
+In preparation for the next version, increment the version number in this header file:
+\begin{verbatim}
+   Parliament/KbCore/parliament/Version.h
+\end{verbatim}
+Be sure to set both the string and numeric forms to the same values.
+
+Add a new (empty) section to the top of the readme file for changes in the next version, and commit the changes.
+
+\end{document}

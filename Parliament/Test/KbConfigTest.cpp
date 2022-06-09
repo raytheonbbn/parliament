@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultCtor)
 	BOOST_CHECK_EQUAL(500000u, defaults.initialStmtCapacity());
 	BOOST_CHECK_EQUAL(1000000u, defaults.stmtGrowthIncrement());
 	BOOST_CHECK_EQUAL(0.0, defaults.stmtGrowthFactor());
-	BOOST_CHECK_EQUAL(string("256m,1"), defaults.bdbCacheSize());
+	BOOST_CHECK_EQUAL(string("512m,1"), defaults.bdbCacheSize());
 
 	BOOST_CHECK_EQUAL(true, defaults.normalizeTypedStringLiterals());
 

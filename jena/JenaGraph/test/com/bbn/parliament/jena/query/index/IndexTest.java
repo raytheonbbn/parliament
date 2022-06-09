@@ -11,8 +11,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.TestingDataset;
 import com.bbn.parliament.jena.graph.KbGraph;
@@ -30,7 +28,6 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
 
-@RunWith(JUnitPlatform.class)
 public class IndexTest {
 	private static TestingDataset dataset;
 	private static MockIndexFactory factory;

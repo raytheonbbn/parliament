@@ -13,7 +13,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.GeoSPARQLLiteral;
-import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Units;
+import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.UOM;
 import com.bbn.parliament.jena.graph.index.spatial.standard.SpatialGeometryFactory;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.QueryExecException;
@@ -39,12 +39,12 @@ public class Buffer extends SingleGeometrySpatialFunction {
 		Node unitsNode = units.getNode();
 
 		Geometry buffered = g;
-		if (Units.Nodes.degree.equals(unitsNode)) {
+		if (UOM.Nodes.degree.equals(unitsNode)) {
 			// UoM for WGS84 is degree
 			buffered = g.buffer(distance);
-		} else if (Units.Nodes.radian.equals(unitsNode)) {
+		} else if (UOM.Nodes.radian.equals(unitsNode)) {
 			buffered = g.buffer(Math.toDegrees(distance));
-		} else if (Units.Nodes.metre.equals(unitsNode)) {
+		} else if (UOM.Nodes.metre.equals(unitsNode)) {
 			CoordinateReferenceSystem destination;
 			MathTransform transform;
 			MathTransform inverse;

@@ -5,12 +5,12 @@
 // All rights reserved.
 
 #include "parliament/KbInstanceImpl.h"
-#include "parliament/Util.h"
 
 #include <boost/format.hpp>
 
 #include <algorithm>
 #include <iomanip>
+#include <iterator>
 #include <map>
 #include <ostream>
 #include <stdexcept>
@@ -20,6 +20,8 @@
 namespace pmnt = ::bbn::parliament;
 
 using ::boost::format;
+using ::std::cbegin;
+using ::std::cend;
 using ::std::char_traits;
 using ::std::dec;
 using ::std::endl;
@@ -71,7 +73,7 @@ bool pmnt::KbInstance::validate(ostream& s) const
 	}
 
 	bool foundUnusedRsrcStr = false;
-	for (auto it = cBegin(rsrcOffsetMap); it != cEnd(rsrcOffsetMap); ++it)
+	for (auto it = cbegin(rsrcOffsetMap); it != cend(rsrcOffsetMap); ++it)
 	{
 		if (it->second.size() < 1)
 		{
@@ -88,7 +90,7 @@ bool pmnt::KbInstance::validate(ostream& s) const
 	}
 
 	bool foundOverusedRsrcStr = false;
-	for (auto it = cBegin(rsrcOffsetMap); it != cEnd(rsrcOffsetMap); ++it)
+	for (auto it = cbegin(rsrcOffsetMap); it != cend(rsrcOffsetMap); ++it)
 	{
 		if (it->second.size() > 1)
 		{
@@ -103,7 +105,7 @@ bool pmnt::KbInstance::validate(ostream& s) const
 			s << "   " << rsrcOffset << ":  " << pRsrc << endl;
 
 			bool firstTimeThrough = true;
-			for (auto it2 = cBegin(it->second); it2 != cEnd(it->second); ++it2)
+			for (auto it2 = cbegin(it->second); it2 != cend(it->second); ++it2)
 			{
 				s << (firstTimeThrough ? "      " : ", ") << *it2;
 				firstTimeThrough = false;
@@ -116,7 +118,7 @@ bool pmnt::KbInstance::validate(ostream& s) const
 	{
 		s << endl << "Resource records with a wild resource string offset:" << endl;
 	}
-	for (auto it = cBegin(wildRsrcList); it != cEnd(wildRsrcList); ++it)
+	for (auto it = cbegin(wildRsrcList); it != cend(wildRsrcList); ++it)
 	{
 		isKbValid = false;
 		ResourceId rsrcId = *it;
@@ -223,7 +225,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 
 	sort(::std::begin(encounteredOffsetsList), ::std::end(encounteredOffsetsList));
 	size_t currentRsrcStart = 0;
-	auto ofsIt = cBegin(encounteredOffsetsList);
+	auto ofsIt = cbegin(encounteredOffsetsList);
 	OffsetList unusedOffsetsList;
 	OffsetList multiUsedOffsetsList;
 	for (size_t i = 0; i < m_pi->m_uriTbl.size(); ++i)
@@ -231,7 +233,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 		const RsrcChar* p = m_pi->m_uriTbl.getRecordAt(i);
 		if (*p == 0)
 		{
-			if (ofsIt == cEnd(encounteredOffsetsList) || *ofsIt > currentRsrcStart)
+			if (ofsIt == cend(encounteredOffsetsList) || *ofsIt > currentRsrcStart)
 			{
 				// currentRsrcStart is unused:
 				unusedOffsetsList.push_back(currentRsrcStart);
@@ -242,13 +244,13 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 				// indicates a failure in the logic of the above iteration over m_rsrcTbl.
 				throw logic_error(str(format(
 					"encounteredOffsetsList is malformed at position %1%, bad value is %2%")
-					% distance(cBegin(encounteredOffsetsList), ofsIt) % *ofsIt));
+					% distance(cbegin(encounteredOffsetsList), ofsIt) % *ofsIt));
 			}
 			else
 			{
 				// Advance ofsIt to the next distinct value:
 				size_t numOccurances = 0;
-				while (ofsIt != cEnd(encounteredOffsetsList) && *ofsIt == currentRsrcStart)
+				while (ofsIt != cend(encounteredOffsetsList) && *ofsIt == currentRsrcStart)
 				{
 					++numOccurances;
 					++ofsIt;
@@ -260,7 +262,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 					throw logic_error(str(format("Logic error while processing "
 						"encounteredOffsetsList (ofsIt is at end: %1%, *ofsIt: %2%, "
 						"currentRsrcStart: %3%")
-						% (ofsIt != cEnd(encounteredOffsetsList)) % *ofsIt % currentRsrcStart));
+						% (ofsIt != cend(encounteredOffsetsList)) % *ofsIt % currentRsrcStart));
 				}
 				else if (numOccurances > 1)
 				{
@@ -281,7 +283,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 		isKbValid = false;
 		s << endl << "Resources whose valid bit is not set:" << endl;
 	}
-	for (auto it = cBegin(noValidBitRsrcList); it != cEnd(noValidBitRsrcList); ++it)
+	for (auto it = cbegin(noValidBitRsrcList); it != cend(noValidBitRsrcList); ++it)
 	{
 		ResourceId rsrcId = *it;
 		const RsrcChar* pRsrc = rsrcIdToUri(rsrcId);
@@ -293,7 +295,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 		isKbValid = false;
 		s << endl << "Anonymous resources whose offset is not null:" << endl;
 	}
-	for (auto it = cBegin(badAnonRsrcList); it != cEnd(badAnonRsrcList); ++it)
+	for (auto it = cbegin(badAnonRsrcList); it != cend(badAnonRsrcList); ++it)
 	{
 		ResourceId rsrcId = *it;
 		s << "   " << rsrcId << endl;
@@ -304,7 +306,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 		isKbValid = false;
 		s << endl << "Resources whose offset is wild (off the end):" << endl;
 	}
-	for (auto it = cBegin(offTheEndWildRsrcList); it != cEnd(offTheEndWildRsrcList); ++it)
+	for (auto it = cbegin(offTheEndWildRsrcList); it != cend(offTheEndWildRsrcList); ++it)
 	{
 		ResourceId rsrcId = *it;
 		KbRsrc& rsrc = m_pi->m_rsrcTbl.getRecordAt(rsrcId);
@@ -317,7 +319,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 		isKbValid = false;
 		s << endl << "Resources whose offset is wild (in the middle):" << endl;
 	}
-	for (auto it = cBegin(inTheMiddleWildRsrcList); it != cEnd(inTheMiddleWildRsrcList); ++it)
+	for (auto it = cbegin(inTheMiddleWildRsrcList); it != cend(inTheMiddleWildRsrcList); ++it)
 	{
 		ResourceId rsrcId = *it;
 		KbRsrc& rsrc = m_pi->m_rsrcTbl.getRecordAt(rsrcId);
@@ -330,7 +332,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 		isKbValid = false;
 		s << endl << "Resource strings that are not used by any resources:" << endl;
 	}
-	for (auto it = cBegin(unusedOffsetsList); it != cEnd(unusedOffsetsList); ++it)
+	for (auto it = cbegin(unusedOffsetsList); it != cend(unusedOffsetsList); ++it)
 	{
 		size_t rsrcOffset = *it;
 		const RsrcChar* pRsrc = m_pi->m_uriTbl.getRecordAt(rsrcOffset);
@@ -342,7 +344,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 		isKbValid = false;
 		s << endl << "Resource strings that are used by more than one resource:" << endl;
 	}
-	for (auto it = cBegin(multiUsedOffsetsList); it != cEnd(multiUsedOffsetsList); ++it)
+	for (auto it = cbegin(multiUsedOffsetsList); it != cend(multiUsedOffsetsList); ++it)
 	{
 		size_t rsrcOffset = *it;
 		const RsrcChar* pRsrc = m_pi->m_uriTbl.getRecordAt(rsrcOffset);
@@ -407,7 +409,7 @@ bool pmnt::KbInstance::validateStrToIdMapping(ostream& s) const
 	}
 
 	// Check each BDB entry against the rsrc table:
-	for (auto it = cBegin(m_pi->m_uriToRsrcId); it != cEnd(m_pi->m_uriToRsrcId); ++it)
+	for (auto it = cbegin(m_pi->m_uriToRsrcId); it != cend(m_pi->m_uriToRsrcId); ++it)
 	{
 		const RsrcChar* pStr1 = it->first;
 		ResourceId rsrcId = it->second;
@@ -433,7 +435,7 @@ bool pmnt::KbInstance::validateStrToIdMapping(ostream& s) const
 	{
 		s << endl << "Resource IDs that are missing from BDB:" << endl;
 	}
-	for (auto it = cBegin(rsrcsMissingFromBdb); it != cEnd(rsrcsMissingFromBdb); ++it)
+	for (auto it = cbegin(rsrcsMissingFromBdb); it != cend(rsrcsMissingFromBdb); ++it)
 	{
 		s << "   " << *it << " <" << rsrcIdToUri(*it) << ">" << endl;
 	}

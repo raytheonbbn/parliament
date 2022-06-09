@@ -64,7 +64,7 @@
 			regexp="^.*([0-9]+\.[0-9]+\.[0-9]+).*$" replace="\1"/>
 		<echo message="Version: ${fileVersion}"/>
 		<unzip src="${zipFilePath}" dest="${binDir}"/>
-		<dirset id="distroDirs" dir="${binDir}" includes="Parliament*"/>
+		<dirset id="distroDirs" dir="${binDir}" includes="parliament-*"/>
 		<property name="unzippedDistro" refid="distroDirs"/>
 		<property name="dockerDistroDir" value="${binDir}/parliament-${fileVersion}"/>
 		<move file="${binDir}/${unzippedDistro}" tofile="${dockerDistroDir}"/>

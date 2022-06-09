@@ -1,4 +1,15 @@
-Version 2.8.0:
+Version 2.8.2:
+
+
+
+
+
+=================================================
+
+Version 2.8.1 (2.8.0 was never released):
+
+* In addition to releasing for Linux, Mac, and Windows machines, there is now
+  a Docker image on Docker Hub (idemmons/parliament:2.8.1).
 
 * Introduced a clean separation between Parliament's software and data files.
   The software files may now be read-only to the account under which Parliament
@@ -18,14 +29,11 @@ Version 2.8.0:
   from receiving SIGTERM signals, making Parliament difficult to use in a
   Docker container.
 
-* Added scripts to build Docker containers to be released alongside the
-  standard Parliament releases.
-
 * Made the bdbCacheSize configuration parameter in ParliamentKbConfig.txt
   global across all graphs. Previously, a cache of this size was dedicated to
   each named graph. With this change, a single cache of this size is shared by
   all graphs. This is particularly beneficial to deployments that have a large
-  number of graphs.  Also, raised the default cache size from 32 MB to 256 MB.
+  number of graphs.  Also, raised the default cache size from 32 MB to 512 MB.
 
 * Reduced the volume of logging when Parliament is running in daemon mode.
   Log4j is now configured without a console logger, which means that the
@@ -49,9 +57,9 @@ Version 2.8.0:
 
 * Updated to GeoTools version 24.2
 
-* Updated to Boost 1.76.0
+* Updated to Boost 1.78.0
 
-* Updated to Apache Commons Daemon 1.2.4
+* Updated to Apache Commons Daemon 1.3.1
 
 * Updated to Jetty 9.4.36
 

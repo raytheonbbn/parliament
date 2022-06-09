@@ -21,7 +21,6 @@
 #include "parliament/LiteralUtils.h"
 #include "parliament/Statement.h"
 #include "parliament/UnicodeIterator.h"
-#include "parliament/Util.h"
 
 #include "parliament/DomainRule.h"
 #include "parliament/EquivalentClassRule.h"
@@ -40,6 +39,8 @@
 #include <boost/format.hpp>
 
 #include <iomanip>
+#include <iterator>
+#include <memory>
 #include <ostream>
 #include <utility>
 #include <vector>
@@ -58,6 +59,7 @@ using ::std::hex;
 using ::std::istream;
 using ::std::make_pair;
 using ::std::make_shared;
+using ::std::make_unique;
 using ::std::nothrow_t;
 using ::std::ostream;
 using ::std::pair;
@@ -69,7 +71,7 @@ using ::std::string;
 static auto g_log(pmnt::log::getSource("KbInstance"));
 
 pmnt::KbInstance::KbInstance(const KbConfig& config) :
-	m_pi(makeUnique<Impl>(config, this))
+	m_pi(make_unique<Impl>(config, this))
 {
 	PMNT_LOG(g_log, log::Level::info) << "Initializing KbInstance for "
 		<< m_pi->m_config.kbDirectoryPath().generic_string();
@@ -662,7 +664,7 @@ void pmnt::KbInstance::handleReificationAdd(ResourceId subjectId,
 	ResourceId predicateId, ResourceId objectId)
 {
 	auto it = m_pi->m_reificationMap.find(subjectId);
-	if (it == cEnd(m_pi->m_reificationMap))
+	if (it == cend(m_pi->m_reificationMap))
 	{
 		it = m_pi->m_reificationMap.insert(make_pair(subjectId, PartialReification())).first;
 	}
@@ -1058,8 +1060,8 @@ bool pmnt::KbInstance::isRsrcValid(ResourceId rsrcId) const
 
 void pmnt::KbInstance::addNewStmtHndlr(NewStmtHandler* pHandler)
 {
-	auto end = cEnd(m_pi->m_stmtHndlrList);
-	auto it = ::std::find(cBegin(m_pi->m_stmtHndlrList), end, pHandler);
+	auto end = cend(m_pi->m_stmtHndlrList);
+	auto it = ::std::find(cbegin(m_pi->m_stmtHndlrList), end, pHandler);
 	if (it == end)
 	{
 		m_pi->m_stmtHndlrList.push_back(pHandler);

@@ -10,6 +10,7 @@
 #include <boost/test/data/test_case.hpp>
 #include <cstdio>
 #include <exception>
+#include <iterator>
 #include <limits>
 #include <set>
 #include <sstream>
@@ -21,7 +22,6 @@
 #include "parliament/StmtIterator.h"
 #include "parliament/UnicodeIterator.h"
 #include "parliament/UriLib.h"
-#include "parliament/Util.h"
 #include "TestUtils.h"
 
 namespace bdata = ::boost::unit_test::data;
@@ -80,8 +80,8 @@ template<typename T>
 static void checkSetsEqual(const ::std::set<T>& expectedSet, const ::std::set<T>& actualSet)
 {
 	BOOST_CHECK_EQUAL(expectedSet.size(), actualSet.size());
-	for (auto it1 = cBegin(expectedSet), it2 = cBegin(actualSet);
-		it1 != cEnd(expectedSet) && it2 != cEnd(actualSet);
+	for (auto it1 = cbegin(expectedSet), it2 = cbegin(actualSet);
+		it1 != cend(expectedSet) && it2 != cend(actualSet);
 		++it1, ++it2)
 	{
 		BOOST_CHECK_EQUAL(*it1, *it2);

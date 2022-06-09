@@ -6,13 +6,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.graph.index.spatial.QueryTestMethods;
 
 /** @author rbattle */
-@RunWith(JUnitPlatform.class)
 public class JTSQueryTest {
 	private static QueryTestMethods testMethods;
 

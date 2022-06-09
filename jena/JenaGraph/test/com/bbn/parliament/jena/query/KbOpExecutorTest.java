@@ -11,8 +11,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.TestingDataset;
 import com.bbn.parliament.jena.graph.KbGraph;
@@ -28,7 +26,6 @@ import com.hp.hpl.jena.sparql.engine.iterator.QueryIterRoot;
 import com.hp.hpl.jena.sparql.sse.SSE;
 import com.hp.hpl.jena.sparql.util.Context;
 
-@RunWith(JUnitPlatform.class)
 public class KbOpExecutorTest {
 	private static TestingDataset dataset;
 

@@ -8,8 +8,6 @@ import java.util.GregorianCalendar;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.graph.index.temporal.Constants;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
@@ -20,7 +18,6 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.shared.impl.JenaParameters;
 
 /** @author mhale */
-@RunWith(JUnitPlatform.class)
 public class IntervalRepresentationTest {
 	private static final String MIN = "MIN";
 	private static final String MAX = "MAX";

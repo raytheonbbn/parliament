@@ -11,8 +11,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.Kb;
 import com.bbn.parliament.jena.TestingDataset;
@@ -40,7 +38,6 @@ import com.hp.hpl.jena.sparql.engine.main.OpExecutor;
 import com.hp.hpl.jena.sparql.sse.SSE;
 import com.hp.hpl.jena.sparql.util.Context;
 
-@RunWith(JUnitPlatform.class)
 public class IndexExecutionTest {
 	private static final int NUM_MOCKED_ITEMS = 5;
 

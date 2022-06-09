@@ -12,11 +12,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 /** @author dkolas */
-@RunWith(JUnitPlatform.class)
 public class TreeWidthEstimatorTest {
 	@SuppressWarnings("static-method")
 	@BeforeEach

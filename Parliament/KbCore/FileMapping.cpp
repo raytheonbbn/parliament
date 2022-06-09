@@ -8,9 +8,9 @@
 #include "parliament/FileHandle.h"
 #include "parliament/Exceptions.h"
 #include "parliament/Log.h"
-#include "parliament/Util.h"
 
 #include <boost/format.hpp>
+#include <iterator>
 #if !defined(PARLIAMENT_WINDOWS)
 #	include <sys/mman.h>
 #endif
@@ -230,7 +230,7 @@ void pmnt::FileMapping::printHistogram(BitFlagsHistogram& hist,
 	::std::cout << ::std::endl
 		<< "Histogram of memory page " << desc << " for memory mapped file" << ::std::endl
 		<< colHeading << ",Number of " << pageSize << "-Byte Pages" << ::std::endl;
-	::std::for_each(cBegin(hist), cEnd(hist),
+	::std::for_each(cbegin(hist), cend(hist),
 		[getKeyLabel](const BitFlagsHistogram::value_type& e)
 		{
 			::std::cout << getKeyLabel(e.first) << ',' << e.second << ::std::endl;

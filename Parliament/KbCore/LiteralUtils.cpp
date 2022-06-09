@@ -141,14 +141,14 @@ double pmnt::LiteralUtils::defaultConversion(const RsrcString& lexicalForm)
 template <typename ConstBidiIter>
 pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteralImpl(ConstBidiIter first, ConstBidiIter last)
 {
-	if (search(first, last, cBegin(k_quote), cEnd(k_quote)) != first)
+	if (search(first, last, cbegin(k_quote), cend(k_quote)) != first)
 	{
 		throw Exception(format("Literal does not begin with a double quote: %1%")
 			% convertFromRsrcChar(RsrcString(first, last)));
 	}
 
 	// Try for a plain literal:
-	auto trailingQuoteIt = find_end(first, last, cBegin(k_quote), cEnd(k_quote));
+	auto trailingQuoteIt = find_end(first, last, cbegin(k_quote), cend(k_quote));
 	if (unsignedDist(first, last) >= (2 * k_quote.size())
 		&& unsignedDist(trailingQuoteIt, last) == k_quote.size())
 	{
@@ -157,7 +157,7 @@ pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteralImpl(ConstBidiIter first
 	}
 
 	// Try for a typed literal:
-	auto typeSepIt = find_end(first, last, cBegin(k_typeSep), cEnd(k_typeSep));
+	auto typeSepIt = find_end(first, last, cbegin(k_typeSep), cend(k_typeSep));
 	if (unsignedDist(first, last) > (k_quote.size() + k_typeSep.size())
 		&& unsignedDist(typeSepIt, last) > k_typeSep.size())
 	{
@@ -168,7 +168,7 @@ pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteralImpl(ConstBidiIter first
 	}
 
 	// Try for a language-tagged literal:
-	auto langSepIt = find_end(first, last, cBegin(k_langSep), cEnd(k_langSep));
+	auto langSepIt = find_end(first, last, cbegin(k_langSep), cend(k_langSep));
 	if (unsignedDist(first, last) > (k_quote.size() + k_langSep.size())
 		&& unsignedDist(langSepIt, last) > k_langSep.size())
 	{
@@ -191,7 +191,7 @@ pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteralImpl(ConstBidiIter first
 
 pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteral(const RsrcString& literal)
 {
-	return parseLiteralImpl(cBegin(literal), cEnd(literal));
+	return parseLiteralImpl(cbegin(literal), cend(literal));
 }
 
 pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteral(const RsrcChar* pLiteral)

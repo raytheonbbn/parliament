@@ -6,14 +6,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.graph.index.spatial.QueryTestMethods;
 
 /** @author rbattle */
 @Disabled
-@RunWith(JUnitPlatform.class)
 public class PostgresQueryTest {
 	private static QueryTestMethods testMethods;
 

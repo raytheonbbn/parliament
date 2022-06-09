@@ -10,15 +10,12 @@ import java.util.TreeSet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.Operand;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.query.TestIndexFactory;
 
-@RunWith(JUnitPlatform.class)
 public class HasEndTest extends BaseOperandTestClass {
 	@Override
 	@BeforeEach

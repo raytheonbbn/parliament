@@ -13,13 +13,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jni.StmtIterator.Statement;
 
 /** @author iemmons */
-@RunWith(JUnitPlatform.class)
 public class JniTest {
 	private static final String UNICODE_LABEL = "\"\u0056\u004d\u0057\u0430\u0058\u4e8c\u0059\ud800\udf02\u005a\"";
 

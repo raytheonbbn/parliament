@@ -30,7 +30,7 @@ $pmntDirFwdSlash = echo $pmntDir | %{$_ -replace '\\', '/'}
 $jettyHost = 'localhost'
 #$jettyHost = '0.0.0.0'
 $jettyPort = '8089'
-$javaHeapSize = '512'	# must be in MB
+$defaultJavaHeapSize = '512'	# must be in MB
 
 $env:PARLIAMENT_KB_CONFIG_PATH = [System.IO.Path]::Combine($pmntDir, 'ParliamentKbConfig.txt')
 $env:PARLIAMENT_LOG_CONFIG_PATH = [System.IO.Path]::Combine($pmntDir, 'ParliamentLogConfig.txt')
@@ -109,6 +109,11 @@ $env:Path += ";$pmntDir\bin"
 
 
 ######### Set up the command line: #########
+if ("$env:PARLIAMENT_JAVA_HEAP_SIZE" -ne "") {
+	$javaHeapSize = "$env:PARLIAMENT_JAVA_HEAP_SIZE"
+} else {
+	$javaHeapSize = $defaultJavaHeapSize
+}
 if ($foreground) {
 	$argList = @(
 		'-server',

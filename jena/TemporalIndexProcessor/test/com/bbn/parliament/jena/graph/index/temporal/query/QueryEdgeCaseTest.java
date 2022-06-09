@@ -19,8 +19,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +35,6 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 /** @author dkolas */
-@RunWith(JUnitPlatform.class)
 public class QueryEdgeCaseTest {
 	private static final String NS = "http://foo/#";
 	private static final String EXTENT_NS = "http://foo/Event#";

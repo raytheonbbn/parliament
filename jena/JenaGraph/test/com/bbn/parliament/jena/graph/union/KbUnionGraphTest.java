@@ -15,8 +15,6 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +30,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.FileManager;
 
-@RunWith(JUnitPlatform.class)
 public class KbUnionGraphTest {
 	private static final String LEFT_BASE = "http://example.org/left";
 	private static final String RIGHT_BASE = "http://example.org/right";

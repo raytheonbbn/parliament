@@ -4,7 +4,8 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
-public class Units {
+// Units Of Measure
+public class UOM {
 	public static final String uri = "http://www.opengis.net/def/uom/OGC/1.0/";
 
 	protected static final Resource resource(String local) {
@@ -19,10 +20,10 @@ public class Units {
 
 	@SuppressWarnings("hiding")
 	public static class Nodes {
-		public static final Node degree = Units.degree.asNode();
-		public static final Node metre = Units.metre.asNode();
-		public static final Node radian = Units.radian.asNode();
-		public static final Node unity = Units.unity.asNode();
-		public static final Node GridSpacing = Units.GridSpacing.asNode();
+		public static final Node degree = UOM.degree.asNode();
+		public static final Node metre = UOM.metre.asNode();
+		public static final Node radian = UOM.radian.asNode();
+		public static final Node unity = UOM.unity.asNode();
+		public static final Node GridSpacing = UOM.GridSpacing.asNode();
 	}
 }

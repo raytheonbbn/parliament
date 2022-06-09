@@ -1,6 +1,5 @@
 package com.bbn.parliament.jena.query;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -20,8 +19,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import org.openjena.riot.checker.CheckerLiterals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +46,6 @@ import com.hp.hpl.jena.sparql.util.Context;
 import com.hp.hpl.jena.sparql.vocabulary.ResultSetGraphVocab;
 import com.hp.hpl.jena.vocabulary.RDF;
 
-@RunWith(JUnitPlatform.class)
 public class KbOpExecutorDAWGTest {
 	private static final String[] DAWG_TEST_DIRS = {
 		"algebra",
@@ -251,7 +247,7 @@ public class KbOpExecutorDAWGTest {
 		StringBuilder message = new StringBuilder();
 		message.append(String.format("%n'%1$s': Result sets are not equal:%n%n", me.getCurrentTest()));
 		boolean matches = QueryTestUtil.equals(expectedResultSet, actualResultSet, query, message);
-		assertTrue(message.toString(), matches);
+		assertTrue(matches, message.toString());
 	}
 
 	private void runDAWGTest(Query query, boolean answer, DAWGManifestEntry me) {

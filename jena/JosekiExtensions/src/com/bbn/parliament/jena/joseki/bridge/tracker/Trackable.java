@@ -110,10 +110,6 @@ public abstract class Trackable extends Observable implements TrackableMXBean, C
 		setStatus(Status.FINISHED);
 	}
 
-	protected void setCancelled() {
-		setStatus(Status.CANCELLED);
-	}
-
 	protected void setStatus(Status status) {
 		synchronized (_statusLock) {
 			_status = status;

@@ -96,7 +96,8 @@ class IndexListener<T> implements GraphListener {
 			LOG.error(String.format("Error while adding %s to index", r), e);
 		}
 		if (!added) {
-			LOG.warn("Did not add {} to index {}", r, index);
+			// 99% of the time this means we tried to add a duplicate to the index.
+			LOG.debug("Did not add {} to index {}", r, index);
 		}
 	}
 

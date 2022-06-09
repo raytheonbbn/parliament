@@ -92,7 +92,10 @@
 		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="runTests" inheritAll="false"/>
 		-->
 
-		<ant dir="${basedir}" target="generateTestReport" inheritAll="true"/>
+		<junitreport todir="${reportsDir}" tofile="aggregated-junit-reports.xml">
+			<fileset dir="${reportsDir}" includes="**/TEST-*.xml"/>
+			<report format="noframes" todir="${reportsDir}"/>
+		</junitreport>
 	</target>
 
 	<target name="createDistro" description="Create the binary distribution"
@@ -147,35 +150,6 @@
 				<include name="bin/ParliamentAdmin"/>
 			</zipfileset>
 		</zip>
-	</target>
-
-	<target name="generateTestReport" depends="testSummaryUpToDateCheck"
-		unless="isTestSummaryUpToDate" description="Generates test summary">
-		<xslt destdir="${reportsDir}/junit-summaries" style="junit-test-outcomes.xsl"
-			filedirparameter="fileDir">
-			<fileset dir="${reportsDir}" includes="**/TEST-*.xml"/>
-			<mapper>
-				<chainedmapper>
-					<flattenmapper/>
-					<globmapper from="TEST-*.xml" to="*.txt"/>
-				</chainedmapper>
-			</mapper>
-		</xslt>
-		<echo file="${reportsDir}/junit-summaries/column-headers.txt" append="false"
-			message="AAA Project,Class,Tests,Failures,Errors,Skipped,Time (sec)${line.separator}"/>
-		<concat destfile="${reportsDir}/junit-summary.csv">
-			<fileset dir="${reportsDir}/junit-summaries" includes="*.txt"/>
-			<filterchain>
-				<sortfilter/>
-			</filterchain>
-		</concat>
-		<delete dir="${reportsDir}/junit-summaries"/>
-	</target>
-	
-	<target name="testSummaryUpToDateCheck">
-		<uptodate property="isTestSummaryUpToDate" targetfile="${reportsDir}/junit-summary.csv">
-			<srcfiles dir="${reportsDir}" includes="**/TEST-*.xml"/>
-		</uptodate>
 	</target>
 
 	<fileset id="javadocSrcPath" dir="${kbRootDir}">

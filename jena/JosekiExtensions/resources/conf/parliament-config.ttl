@@ -106,8 +106,8 @@
 			par-cfg:uri <http://www.opengis.net/ont/gml#>
 		]
 		[
-			par:prefix "units" ;
-			par:uri <http://www.opengis.net/def/uom/OGC/1.0/>
+			par-cfg:prefix "uom" ;
+			par-cfg:uri <http://www.opengis.net/def/uom/OGC/1.0/>
 		]
 	) ;
 	par-cfg:indexHandler :indexHandler ;

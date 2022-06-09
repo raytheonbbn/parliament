@@ -15,6 +15,8 @@
 
 namespace pmnt = ::bbn::parliament;
 
+using ::std::make_unique;
+
 // Once the bits are split out into bytes of UTF-8, this is a mask OR-ed
 // into the first byte, depending on how many bytes follow.  There are
 // as many entries in this table as there are UTF-8 sequence types.
@@ -277,7 +279,7 @@ void pmnt::UnicodeIteratorBase::postError(const char* pMsg)
 	}
 	else
 	{
-		m_pError = makeUnique<UnicodeException>(pMsg);
+		m_pError = make_unique<UnicodeException>(pMsg);
 	}
 }
 

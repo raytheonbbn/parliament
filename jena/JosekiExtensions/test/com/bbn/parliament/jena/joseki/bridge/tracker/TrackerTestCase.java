@@ -10,8 +10,6 @@ import java.util.zip.ZipInputStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import com.bbn.parliament.jena.joseki.bridge.tracker.management.TrackableMXBean.Status;
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
@@ -19,7 +17,6 @@ import com.bbn.parliament.jena.joseki.handler.Inserter;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.sparql.pfunction.PropertyFunctionRegistry;
 
-@RunWith(JUnitPlatform.class)
 public class TrackerTestCase {
 	@SuppressWarnings("static-method")
 	@BeforeEach
