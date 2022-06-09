@@ -1,6 +1,8 @@
 #!/bin/bash
 
 version=2.8.1
+#mount_option=type=volume,src=parliament-data
+mount_option=type=bind,src=/Users/iemmons/parliament-data
 image_os=ubuntu
 #image_os=rhel8
 #image_os=win
@@ -11,5 +13,5 @@ image_os=ubuntu
 
 docker run -d -p 80:8089 --name=parliament-$image_os \
 	--env PARLIAMENT_JAVA_HEAP_SIZE=640m --env PARLIAMENT_BDB_CACHE_SIZE=1g,1 \
-	--mount type=volume,src=parliament-data-$image_os,dst=/var/parliament-data \
+	--mount $mount_option,dst=/var/parliament-data \
 	parliament-$version-$image_os

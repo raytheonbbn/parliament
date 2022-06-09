@@ -23,16 +23,29 @@ This chapter starts with instructions for running a \ac{pmnt} container (Section
 \texttt{idemmons/parliament:«version»}
 \end{quote}
 
-Before deploying this image, create a directory for \acp{pmnt} data files.  A traditional choice on the local file system would be \path|/var/parliament-data| for Linux and Unix systems and \path|C:\ProgramData\parliament-data| on Windows.  A location on an external storage device might also be a good choice.  Whatever you choose, we will refer to this location as \texttt{«data-dir»}.
-
-To run the container, with options to mount the \texttt{«data-dir»} volume and map the port, use this command (with line breaks added for readability):
+To run the container, use this command (with line breaks added for readability):
+{\small
 \begin{verbatim}
 docker run -d -p 80:8089 --name=parliament-«version»
-   --mount type=volume,src=«data-dir»,dst=/var/parliament-data
+   --mount type=volume,src=parliament-data,dst=/var/parliament-data
    --env PARLIAMENT_JAVA_HEAP_SIZE=512m
    --env PARLIAMENT_BDB_CACHE_SIZE=512m,1
    idemmons/parliament:«version»
 \end{verbatim}
+}
+
+As given here, the mount option will create a local Docker volume called \path|parliament-data| to contain \acp{pmnt} data files and logs.  Using variations of this option, you can cause the container to store the data files and logs in a broad variety of locations and file systems, such as on an external storage array.  (See the Docker documentation for more information.)
+
+Alternately, Docker can store \acp{pmnt} data files and logs in a local directory on the container's host with this syntax:
+{\small
+\begin{verbatim}
+docker run -d -p 80:8089 --name=parliament-«version»
+   --mount type=bind,src=/host/directory,dst=/var/parliament-data
+   --env PARLIAMENT_JAVA_HEAP_SIZE=512m
+   --env PARLIAMENT_BDB_CACHE_SIZE=512m,1
+   idemmons/parliament:«version»
+\end{verbatim}
+}
 
 The two environment variables are optional.  If they are left out, the default values used will be the values shown in the command line above.  (See Sections~\ref{section-pmnt-startup-script} and~\ref{section-main-config} for discussions of these settings.)  Table~\ref{table-pmnt-container-connect-urls} lists the endpoints exposed by the running container, as discussed in Section~\ref{section-std-server-usage}.
 
