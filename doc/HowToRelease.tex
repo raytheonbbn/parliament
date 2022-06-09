@@ -101,9 +101,9 @@ Finally, on Ubuntu only, build the Docker image:
 \begin{verbatim}
    cd jena/docker
    ant -Ddistro=../../target/distro/
-         parliament-2.8.1-ubuntu20-64.zip
+         parliament-2.8.2-ubuntu20-64.zip
    cp ../../target/distro/
-         parliament-2.8.1-ubuntu-docker.tar.bz2 release
+         parliament-2.8.2-ubuntu-docker.tar.bz2 release
 \end{verbatim}
 
 
@@ -250,7 +250,7 @@ From the root of your Parliament working copy, run these commands:
    zip -9 -r release/parliament-dependencies-2022-04-25.zip
          dependencies/
    git tag -a -m "Dependencies archive released on
-         2022-04-25 prior to releasing version 2.8.1"
+         2022-04-25 prior to releasing version 2.8.2"
          dependencies-2022-04-25
 \end{verbatim}
 
@@ -269,8 +269,8 @@ Update the What's New section of \path|README.md|.
 Tag the release:
 
 \begin{verbatim}
-   git tag -a -m "Release version 2.8.1, created 2022-04-27"
-         release-2.8.1
+   git tag -a -m "Release version 2.8.2, created 2022-04-27"
+         release-2.8.2
 \end{verbatim}
 
 Upload artifacts, including dependencies
@@ -281,8 +281,8 @@ Upload artifacts, including dependencies
 \section{Publish the Docker Image}
 
 \begin{verbatim}
-docker tag parliament-2.8.1-ubuntu idemmons/parliament:2.8.1
-docker push idemmons/parliament:2.8.1
+docker tag parliament-2.8.2-ubuntu idemmons/parliament:2.8.2
+docker push idemmons/parliament:2.8.2
 \end{verbatim}
 
 

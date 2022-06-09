@@ -8,12 +8,12 @@ command-line argument and a target, like so:
 Here `parliament-distribution` is mandatory and takes one of the following forms:
 
 * The URL of a Parliament release on GitHub, e.g.,
-  https://github.com/SemWebCentral/parliament/releases/download/release-2.8.1/Parliament-v2.8.1-gcc-ubuntu20-64.zip
+  https://github.com/SemWebCentral/parliament/releases/download/release-2.8.2/Parliament-v2.8.2-gcc-ubuntu20-64.zip
 
 * The absolute or relative path to an already-downloaded Parliament release, e.g.,
-  somedir/Parliament-v2.8.1-gcc-ubuntu20-64.zip
+  somedir/Parliament-v2.8.2-gcc-ubuntu20-64.zip
 
-Note that the distribution you use must be version 2.8.1 or later.
+Note that the distribution you use must be version 2.8.2 or later.
 
 Valid values for `target` are:
 
@@ -29,7 +29,7 @@ Once the build finishes, the Docker image will appear in the `target/distro` dir
 
 You can load the factory built images by downloading one of the docker image *-docker.tar.bz2 files from github, or if you built a new container, it will be found in the `target/distro` directory.  Load locally using:
 
-	docker load -i parliament-2.8.1-ubuntu-docker.tar.bz2
+	docker load -i parliament-2.8.2-ubuntu-docker.tar.bz2
 
 You can verify it was loaded properly with:
 
@@ -39,7 +39,7 @@ Parliament operates on port 8089 in the container and exposes a volume at the de
 
 	docker run -d -p 80:8089 --name=parliament \
 		--mount type=volume,src=parliament-data,dst=/var/parliament-data \
-		parliament-2.8.1
+		parliament-2.8.2
 
 To stop the running container use:
 
