@@ -158,8 +158,10 @@ public class LuceneRdfSource implements RdfSource, StackedSail
 				{
 					Document document = hits.doc(i);
 					long index = Long.parseLong(document.getField("index").stringValue());
+					@SuppressWarnings("resource")
+					KbInstance kb = getKb();
 					iterators.add(_baseSail.getStatements(null, null,
-						new KbLiteral(getKb(), index)));
+						new KbLiteral(kb, index)));
 				}
 				indexSearcher.close();
 				return new StatementIteratorIterator(iterators);

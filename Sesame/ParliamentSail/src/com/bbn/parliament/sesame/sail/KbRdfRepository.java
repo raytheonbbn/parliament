@@ -54,7 +54,9 @@ public class KbRdfRepository extends KbRdfSource implements RdfRepository
 	{
 		if(_adds > 0)
 		{
-			getKb().sync();
+			@SuppressWarnings("resource")
+			KbInstance kb = getKb();
+			kb.sync();
 		}
 
 		_transactionStarted = false;
@@ -77,7 +79,9 @@ public class KbRdfRepository extends KbRdfSource implements RdfRepository
 			KbBNode bnode = _bnodes.get(object);
 			if(bnode == null)
 			{
-				bnode = new KbBNode(getKb(), getKb().createAnonymousRsrc());
+				@SuppressWarnings("resource")
+				KbInstance kb = getKb();
+				bnode = new KbBNode(kb, kb.createAnonymousRsrc());
 				_bnodes.put(object, bnode);
 			}
 			return toLong(bnode, true);
@@ -101,7 +105,9 @@ public class KbRdfRepository extends KbRdfSource implements RdfRepository
 		long p = toLongRW(pred);
 		long o = toLongRW(obj);
 
-		getKb().addStmt(s, p, o, false);
+		@SuppressWarnings("resource")
+		KbInstance kb = getKb();
+		kb.addStmt(s, p, o, false);
 
 		++_adds;
 	}
@@ -131,7 +137,9 @@ public class KbRdfRepository extends KbRdfSource implements RdfRepository
 			while (iterator.hasNext())
 			{
 				KbStatement statement = (KbStatement) iterator.next();
-				getKb().deleteStmt(
+				@SuppressWarnings("resource")
+				KbInstance kb = getKb();
+				kb.deleteStmt(
 					statement.getUnderlyingStatement().getSubject(),
 					statement.getUnderlyingStatement().getPredicate(),
 					statement.getUnderlyingStatement().getObject());

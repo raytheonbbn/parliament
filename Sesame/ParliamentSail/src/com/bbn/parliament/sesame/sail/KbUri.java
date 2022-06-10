@@ -23,7 +23,7 @@ public class KbUri extends KbResource implements URI
 	public KbUri(KbInstance kb, long index)
 	{
 		super(kb, index);
-		_uri = getKb().rsrcIdToUri(getIndex(getKb()));
+		_uri = kb.rsrcIdToUri(getIndex(kb));
 	}
 
 	/** Assumes that the caller has guaranteed that the index and uri arguments correspond. */
@@ -113,7 +113,9 @@ public class KbUri extends KbResource implements URI
 	{
 		if (_uri == null)
 		{
-			_uri = getKb().rsrcIdToUri(getIndex(getKb()));
+			@SuppressWarnings("resource")
+			KbInstance kb = getKb();
+			_uri = kb.rsrcIdToUri(getIndex(kb));
 		}
 		return _uri;
 	}

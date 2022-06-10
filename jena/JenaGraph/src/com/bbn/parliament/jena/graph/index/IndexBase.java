@@ -2,9 +2,6 @@ package com.bbn.parliament.jena.graph.index;
 
 import java.util.Iterator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Base class for implementing indexes. This class provides checks to make sure
  * the index is not in an illegal state when the index operations are called.
@@ -13,7 +10,6 @@ import org.slf4j.LoggerFactory;
  * @author rbattle
  */
 public abstract class IndexBase<T> implements Index<T> {
-	private static final Logger LOG = LoggerFactory.getLogger(IndexBase.class);
 	private boolean closed = true;
 
 	/**

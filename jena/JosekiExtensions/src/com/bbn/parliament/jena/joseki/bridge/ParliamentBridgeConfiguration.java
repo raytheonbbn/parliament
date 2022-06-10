@@ -211,16 +211,13 @@ public class ParliamentBridgeConfiguration {
 
 			// Create and initialize configuration handler:
 			try {
-				ConfigurationHandler cHndlr = ConfigurationHandler.class.cast(cls
-					.newInstance());
+				ConfigurationHandler cHndlr = ConfigurationHandler.class.cast(
+					cls.getDeclaredConstructor().newInstance());
 				log.info("Initializing {}", cls.getName());
 				cHndlr.initialize(handler);
 				configurationHandlers.add(cHndlr);
-			} catch (InstantiationException ex) {
-				log.error("Could not instantiate " + cls.getName(), ex);
-				continue;
-			} catch (IllegalAccessException ex) {
-				log.error("Could not access " + cls.getName(), ex);
+			} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException ex) {
+				log.error("Error while instantiating " + cls.getName(), ex);
 				continue;
 			} catch (ConfigurationException ex) {
 				log.error("Error while loading configuration handler "

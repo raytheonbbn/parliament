@@ -28,6 +28,7 @@ import org.openrdf.sesame.sail.SailInitializationException;
 import org.openrdf.sesame.sail.SailInternalException;
 import org.openrdf.sesame.sail.SailUpdateException;
 
+import com.bbn.parliament.jni.KbInstance;
 import com.bbn.parliament.sesame.sail.KbValue;
 
 public class LuceneRdfRepository extends LuceneRdfSource implements RdfRepository
@@ -78,7 +79,9 @@ public class LuceneRdfRepository extends LuceneRdfSource implements RdfRepositor
 		try
 		{
 			_indexWriter = new IndexWriter(_indexPath, _analyzer, false);
-			_startIndex = getKb().rsrcCount();
+			@SuppressWarnings("resource")
+			KbInstance kb = getKb();
+			_startIndex = kb.rsrcCount();
 			_indicesAdded.clear();
 		}
 		catch (CorruptIndexException ex)
@@ -127,7 +130,10 @@ public class LuceneRdfRepository extends LuceneRdfSource implements RdfRepositor
 	{
 		if (obj instanceof Literal)
 		{
-			long index = ((KbValue) obj).getIndex(getKb());
+			@SuppressWarnings("resource")
+			KbInstance kb = getKb();
+			long index = ((KbValue) obj).getIndex(kb);
+			kb = null;
 			String indexString = "" + index;
 
 			// look for existing index
