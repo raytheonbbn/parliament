@@ -46,7 +46,6 @@
 		<dependency org="org.eclipse.jetty" name="jetty-jmx" rev="${jetty.version}"
 			conf="server->default"/>
 
-		<exclude org="xml-apis"/>
 		<dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0"
 			conf="bridge->default"/>
 		<dependency org="org.apache.jena" name="jena-arq" rev="2.9.4"
@@ -88,6 +87,7 @@
 			conf="test->default"/>
 
 		<exclude org="commons-logging"/>
+		<exclude org="xml-apis"/>
 		<override org="org.apache.httpcomponents" module="httpclient-cache"
 			rev="${httpclient-cache.version}"/>
 		<override org="org.apache.httpcomponents" module="httpclient"

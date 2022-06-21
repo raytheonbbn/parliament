@@ -13,7 +13,6 @@
 	</configurations>
 
 	<dependencies>
-		<exclude org="xml-apis"/>
 		<dependency org="com.sleepycat" name="je" rev="${berkeleydb-je.version}"
 			conf="default->default"/>
 		<dependency org="org.apache.jena" name="jena-arq" rev="2.9.4"
@@ -28,6 +27,7 @@
 		<dependency org="junit" name="junit" rev="4.12" conf="test->default"/>
 
 		<exclude org="commons-logging"/>
+		<exclude org="xml-apis"/>
 		<override org="org.apache.httpcomponents" module="httpclient-cache"
 			rev="${httpclient-cache.version}"/>
 		<override org="org.apache.httpcomponents" module="httpclient"

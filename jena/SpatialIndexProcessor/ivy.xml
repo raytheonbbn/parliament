@@ -13,7 +13,6 @@
 	</configurations>
 
 	<dependencies>
-		<exclude org="xml-apis"/>
 		<dependency org="commons-dbcp" name="commons-dbcp" rev="${commons-dbcp.version}"
 			conf="default->default"/>
 		<dependency org="org.locationtech.jts" name="jts-core" rev="${jts.version}"
@@ -51,6 +50,7 @@
 			conf="test->default"/>
 
 		<exclude org="commons-logging"/>
+		<exclude org="xml-apis"/>
 		<override org="org.apache.httpcomponents" module="httpclient-cache"
 			rev="${httpclient-cache.version}"/>
 		<override org="org.apache.httpcomponents" module="httpclient"

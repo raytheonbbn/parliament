@@ -15,7 +15,6 @@
 	</configurations>
 
 	<dependencies>
-		<exclude org="xml-apis"/>
 		<dependency org="org.apache.jena" name="jena-arq" rev="2.9.4"
 			conf="default->default"/>
 		<dependency org="org.slf4j" name="slf4j-api" rev="${slf4j.version}"
@@ -39,6 +38,7 @@
 			conf="test->default"/>
 
 		<exclude org="commons-logging"/>
+		<exclude org="xml-apis"/>
 		<override org="org.apache.httpcomponents" module="httpclient-cache"
 			rev="${httpclient-cache.version}"/>
 		<override org="org.apache.httpcomponents" module="httpclient"
