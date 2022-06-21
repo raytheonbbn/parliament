@@ -545,7 +545,6 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 		StreamUtil.asStream(listGraphNodes())
 			.map(graphName -> getGraph(graphName))
 			.forEach(KbGraphStore::closeGraph);
-		@SuppressWarnings("resource")
 		KbGraph defaultGraph = getDefaultGraph();
 		closeGraph(defaultGraph);
 	}

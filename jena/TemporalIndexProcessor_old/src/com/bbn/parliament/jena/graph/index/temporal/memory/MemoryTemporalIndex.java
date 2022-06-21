@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
+
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalIndex;
@@ -248,7 +249,7 @@ public class MemoryTemporalIndex extends TemporalIndex {
 			nodes = Collections.emptyList();
 		}
 		final Iterator<Node> nit = nodes.iterator();
-		return new Iterator<Record<TemporalExtent>>() {
+		return new Iterator<>() {
 
 			@Override
 			public boolean hasNext() {

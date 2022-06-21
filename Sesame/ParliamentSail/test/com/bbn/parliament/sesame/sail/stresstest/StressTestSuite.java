@@ -100,7 +100,7 @@ public class StressTestSuite
 					{
 						// This will throw an exception if the string isn't just
 						// digits
-						Integer num = new Integer(args[j]);
+						Integer num = Integer.parseInt(args[j]);
 						// ...throw it anyway if it came back negative
 						if (num.intValue() <= 0)
 						{
@@ -135,7 +135,7 @@ public class StressTestSuite
 					{
 						// This will throw an exception if the string isn't just
 						// digits
-						Integer num = new Integer(args[j]);
+						Integer num = Integer.parseInt(args[j]);
 						// ...throw it anyway if it came back negative
 						if (num.intValue() < 0)
 						{
@@ -170,7 +170,7 @@ public class StressTestSuite
 					{
 						// This will throw an exception if the string isn't just
 						// digits
-						Integer num = new Integer(args[j]);
+						Integer num = Integer.parseInt(args[j]);
 						// ...throw it anyway if it came back negative
 						if (num.intValue() <= 0)
 						{

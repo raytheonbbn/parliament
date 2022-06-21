@@ -78,7 +78,7 @@ public class StmtIterator implements Iterator<StmtIterator.Statement>, Closeable
 	}
 
 	private static final ThreadLocal<AtomicBoolean> m_isQueryCanceled =
-		new ThreadLocal<AtomicBoolean>() {
+		new ThreadLocal<>() {
 			@Override protected AtomicBoolean initialValue() {
 				return new AtomicBoolean(false);
 			}

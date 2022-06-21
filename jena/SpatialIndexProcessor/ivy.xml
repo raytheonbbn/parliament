@@ -13,6 +13,7 @@
 	</configurations>
 
 	<dependencies>
+		<exclude org="xml-apis"/>
 		<dependency org="commons-dbcp" name="commons-dbcp" rev="${commons-dbcp.version}"
 			conf="default->default"/>
 		<dependency org="org.locationtech.jts" name="jts-core" rev="${jts.version}"

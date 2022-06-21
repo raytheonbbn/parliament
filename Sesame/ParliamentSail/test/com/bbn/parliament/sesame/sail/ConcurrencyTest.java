@@ -7,7 +7,6 @@ package com.bbn.parliament.sesame.sail;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -52,11 +51,6 @@ public class ConcurrencyTest extends TestCase
 			}
 			System.load(kbBinDir + "/libdb47.dll");
 			System.load(kbBinDir + "/Parliament.dll");
-		}
-		catch (FileNotFoundException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		catch (IOException e)
 		{
@@ -136,8 +130,7 @@ public class ConcurrencyTest extends TestCase
 			{
 				if (!files[i].delete())
 				{
-					System.out
-					.println("Error deleting KB files.  Some thread probably still has a lock on them.");
+					System.out.println("Error deleting KB files.  Some thread probably still has a lock on them.");
 				}
 			}
 		}
@@ -148,16 +141,11 @@ public class ConcurrencyTest extends TestCase
 		@Override
 		public void run()
 		{
-			try
+			try (InputStream in = _repository.extractRDF(RDFFormat.RDFXML, true, true, false, true))
 			{
-				_repository.extractRDF(RDFFormat.RDFXML, true, true, false, true);
+				// Do nothing
 			}
-			catch (IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (AccessDeniedException e)
+			catch (IOException | AccessDeniedException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -217,12 +205,7 @@ public class ConcurrencyTest extends TestCase
 				_repository.addData(_toAdd, "", RDFFormat.NTRIPLES, true,
 					new StdOutAdminListener());
 			}
-			catch (IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (AccessDeniedException e)
+			catch (IOException | AccessDeniedException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();

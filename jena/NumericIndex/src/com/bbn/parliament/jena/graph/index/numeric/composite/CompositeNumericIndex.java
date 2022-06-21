@@ -230,7 +230,7 @@ public class CompositeNumericIndex extends IndexBase<Number> implements Composit
 	public Iterator<Record<Number>> doIterator() {
 		final Iterator<Map.Entry<String, NumericIndex<? extends Number>>> nit = subIndexes.entrySet().iterator();
 
-		Iterator<Record<Number>> it = new ClosableIterator<Record<Number>>() {
+		Iterator<Record<Number>> it = new ClosableIterator<>() {
 			private Iterator<?> current = null;
 			private boolean hasNext = false;
 			private boolean hasBeenNexted = true;

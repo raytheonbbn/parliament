@@ -15,6 +15,7 @@
 	</configurations>
 
 	<dependencies>
+		<exclude org="xml-apis"/>
 		<dependency org="org.apache.jena" name="jena-arq" rev="2.9.4"
 			conf="default->default"/>
 		<dependency org="org.slf4j" name="slf4j-api" rev="${slf4j.version}"
