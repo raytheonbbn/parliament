@@ -152,6 +152,7 @@ public class ModelManager {
 
 	public void clearKb() {
 		try (ConcurrentRequestLock lock = ConcurrentRequestController.getWriteLock()) {
+			@SuppressWarnings("unused") int intentionallyUnused = lock.hashCode();
 			stopFlushTimer();
 
 			_kbGraphStore.clear();
@@ -178,6 +179,7 @@ public class ModelManager {
 		// However, other readers may continue during the flush, so we don't
 		// need a write lock.
 		try (ConcurrentRequestLock lock = ConcurrentRequestController.getReadLock()) {
+			@SuppressWarnings("unused") int intentionallyUnused = lock.hashCode();
 			_kbGraphStore.flush();
 		}
 

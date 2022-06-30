@@ -48,6 +48,7 @@ public class GraphExportHandler {
 
 	public void handleRequest(OutputStream out) throws IOException {
 		try (ConcurrentRequestLock lock = ConcurrentRequestController.getReadLock()) {
+			@SuppressWarnings("unused") int intentionallyUnused = lock.hashCode();
 			Model model = graphName.equals(KbGraphStore.DEFAULT_GRAPH_BASENAME)
 				? ModelManager.inst().getDefaultModel()
 				: ModelManager.inst().getModel(graphName);

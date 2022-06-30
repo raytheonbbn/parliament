@@ -62,6 +62,7 @@ public class QueryHandler {
 		try {
 			SparqlStmtLogger.logSparqlStmt(query);
 			try (ConcurrentRequestLock lock = ConcurrentRequestController.getReadLock()) {
+				@SuppressWarnings("unused") int intentionallyUnused = lock.hashCode();
 				execQuery(out);
 			}
 		} catch (TrackableException | DataFormatException | MissingGraphException | QueryExecutionException ex) {

@@ -27,6 +27,7 @@ public class DatasetExportHandler {
 		String serverName) throws IOException {
 
 		try (ConcurrentRequestLock lock = ConcurrentRequestController.getReadLock()) {
+			@SuppressWarnings("unused") int intentionallyUnused = lock.hashCode();
 			LOG.info("Exporting entire repository to ZIP file in \"{}\" format.", contentType);
 
 			String zipFilename = String.format(ZIP_FILENAME_FORMAT, serverName, Instant.now());

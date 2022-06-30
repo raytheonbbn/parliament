@@ -28,6 +28,7 @@ public class UpdateHandler {
 		TrackableUpdate trackable = Tracker.getInstance().createUpdate(sparqlStmt, requestor);
 
 		try (ConcurrentRequestLock lock = ConcurrentRequestController.getWriteLock()) {
+			@SuppressWarnings("unused") int intentionallyUnused = lock.hashCode();
 			trackable.run();
 		} catch (TrackableException | DataFormatException | MissingGraphException | IOException ex) {
 			throw new QueryExecutionException(ex, "Error while executing query");

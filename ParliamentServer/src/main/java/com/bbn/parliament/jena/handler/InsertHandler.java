@@ -30,6 +30,7 @@ public class InsertHandler {
 		TrackableInsert ti = Tracker.getInstance().createInsert(inserter, requestor);
 
 		try (ConcurrentRequestLock lock = ConcurrentRequestController.getWriteLock()) {
+			@SuppressWarnings("unused") int intentionallyUnused = lock.hashCode();
 			ti.run();
 			return ti.getInserter().getNumStatements();
 		}
