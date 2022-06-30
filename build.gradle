@@ -13,6 +13,8 @@ ext {
 	//springBootGradlePluginDependency = 'org.springframework.boot:spring-boot-gradle-plugin:2.1.6.RELEASE'
 	//springBootThymeleafDependency = 'org.springframework.boot:spring-boot-starter-thymeleaf:2.1.6.RELEASE'
 	//springBootWebDependency = 'org.springframework.boot:spring-boot-starter-web:2.1.6.RELEASE'
+
+	tgtDir = file("${rootDir}/target")
 }
 
 allprojects {

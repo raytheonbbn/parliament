@@ -9,7 +9,6 @@ targetCompatibility = '17'
 defaultTasks 'bootRun'
 
 ext {
-	pmntVer = '2.8.2'
 	genJavaDir = file("$buildDir/generated/java")
 	artifactsDir = file("$rootDir/target/artifacts")
 }
@@ -70,13 +69,15 @@ compileJava.dependsOn runSchemagen
 
 test {
 	useJUnitPlatform()
+
+	def distroDir = tgtDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
+
 	systemProperties = [
-		'java.library.path' : "${rootDir}/target/Parliament-v${pmntVer}-clang/bin",
+		'java.library.path' : "${distroDir}/bin",
 		'log4j.configuration' : "file:///${rootDir}/log4j.junit.properties",
 	]
 	environment = [
-		'LD_LIBRARY_PATH' : "${rootDir}/target/Parliament-v${pmntVer}-gcc/bin",
-		'Path' : "${rootDir}/target/Parliament-v${pmntVer}-msvc/bin;${System.getenv('Path')}",
+		'LD_LIBRARY_PATH' : "${distroDir}/bin",
 		'PARLIAMENT_KB_CONFIG_PATH' : "${rootDir}/target/test-bin/ParliamentKbConfig.txt",
 		'PARLIAMENT_LOG_CONFIG_PATH' : "${rootDir}/target/test-bin/ParliamentLogConfig.txt",
 	]
@@ -88,10 +89,11 @@ task copyTestResources(type: Copy) {
 }
 
 bootRun {
-	systemProperty 'java.library.path', "${rootDir}/target/Parliament-v${pmntVer}-clang/bin"
+	def distroDir = tgtDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
+
+	systemProperty 'java.library.path', "${distroDir}/bin"
 	environment = [
-		'LD_LIBRARY_PATH' : "${rootDir}/target/Parliament-v${pmntVer}-gcc/bin",
-		'Path' : "${rootDir}/target/Parliament-v${pmntVer}-msvc/bin;${System.getenv('Path')}",
+		'LD_LIBRARY_PATH' : "${distroDir}/bin",
 		'PARLIAMENT_KB_CONFIG_PATH' : "${rootDir}/Parliament/KbCore/ParliamentKbConfig.txt",
 		'PARLIAMENT_LOG_CONFIG_PATH' : "${rootDir}/Parliament/KbCore/ParliamentLogConfig.txt",
 	]

@@ -19,7 +19,7 @@
 	<property name="jsonld-java.version" value="0.8.3"/>
 	<property name="junit-jupiter.version" value="5.8.1"/>
 	<property name="junit-platform-launcher.version" value="1.8.1"/>
-	<property name="slf4j.version" value="1.7.21"/>
+	<property name="slf4j.version" value="1.7.36"/>
 
 	<!-- If no resolver is specified, use the default chain -->
 	<settings defaultResolver="default"/>
