@@ -1,6 +1,6 @@
 plugins {
 	id 'org.springframework.boot' version '2.7.0'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.12.RELEASE'
 	id 'java'
 }
 
@@ -14,6 +14,8 @@ ext {
 }
 
 dependencies {
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
 	implementation fileTree(dir: artifactsDir, include: ['JenaParliament.jar'])
 	implementation fileTree(dir: artifactsDir, include: ['JosekiParliamentClient.jar'])
 	implementation fileTree(dir: artifactsDir, include: ['NumericIndex.jar'])
@@ -25,25 +27,14 @@ dependencies {
 	implementation "$commonsLangDependency"
 
 	implementation("$jenaArqDependency") {
-		exclude group: 'commons-logging', module: 'commons-logging'
+		exclude group: 'org.slf4j', module: 'jcl-over-slf4j'
+		exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+		exclude group: 'log4j', module: 'log4j'
 	}
 	implementation "$slf4jApiDependency"
-	//implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.13.3'
-	implementation "$jclOverSlf4j"
-
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}
-}
 
-// By default, Spring wants to use logback, which then gets upset because
-// SLF4J is present.  This allows SLF4J to take over:
-configurations {
-	all*.exclude module : 'spring-boot-starter-logging'
-//	all {
-//		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-//	}
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 sourceSets {
@@ -72,10 +63,8 @@ test {
 
 	def distroDir = tgtDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
 
-	systemProperties = [
-		'java.library.path' : "${distroDir}/bin",
-		'log4j.configuration' : "file:///${rootDir}/log4j.junit.properties",
-	]
+	systemProperty 'java.library.path', "${distroDir}/bin"
+	//systemProperty 'log4j.configuration', "file:///${rootDir}/log4j.junit.properties"
 	environment = [
 		'LD_LIBRARY_PATH' : "${distroDir}/bin",
 		'PARLIAMENT_KB_CONFIG_PATH' : "${rootDir}/target/test-bin/ParliamentKbConfig.txt",

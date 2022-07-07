@@ -39,6 +39,7 @@ import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
 import com.bbn.parliament.jena.joseki.client.QuerySolutionStream;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.joseki.client.RemoteModel;
+import com.bnn.parliament.test_util.RdfResourceLoader;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -61,8 +62,6 @@ import com.hp.hpl.jena.update.UpdateProcessor;
 import com.hp.hpl.jena.update.UpdateRequest;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
-
-import test_util.RdfResourceLoader;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

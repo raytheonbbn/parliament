@@ -34,9 +34,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.spring.boot.controller.QueryController;
-
-import test_util.MatchAny;
-import test_util.RdfResourceLoader;
+import com.bnn.parliament.test_util.MatchAny;
+import com.bnn.parliament.test_util.RdfResourceLoader;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -105,6 +104,8 @@ class ApplicationTests {
 
 	@Test
 	public void testApplicationContextAndLogging() {
+		LOG.info("Executing test method testApplicationContextAndLogging()");
+
 		assertThat(controller).isNotNull();
 
 		LOG.error("Test message at the error level");
@@ -116,6 +117,8 @@ class ApplicationTests {
 
 	@Test
 	public void testEmptySelectQuery() throws Exception {
+		LOG.info("Executing test method testEmptySelectQuery()");
+
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(QUERY_ENDPOINT);
 		mvc.perform(requestBuilder)
 			.andDo(print())
@@ -124,6 +127,8 @@ class ApplicationTests {
 
 	@Test
 	public void testValidSelectQuery() throws Exception {
+		LOG.info("Executing test method testValidSelectQuery()");
+
 		String query = "select * where { ?x ?y ?z }";
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(QUERY_ENDPOINT)
 			.queryParam("query", query);
@@ -142,6 +147,8 @@ class ApplicationTests {
 
 	@Test
 	public void generalKBFunctionalityTest() throws Exception {
+		LOG.info("Executing test method generalKBFunctionalityTest()");
+
 		deleteDefaultGraph();
 		verifySelectQueryResultCount(EVERYTHING_QUERY, 0);
 		loadSampleData();
@@ -191,6 +198,7 @@ class ApplicationTests {
 	}
 
 	private void insertRsrc(String rsrcName, RDFFormat rdfFormat, InputStream input) throws Exception {
+		LOG.debug("Inserting resource '{}' as {} ...", rsrcName, rdfFormat);
 		String fileName = new File(rsrcName).getName();
 		MockMultipartFile part = new MockMultipartFile(fileName, fileName, rdfFormat.getMediaType(), input);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.multipart(GRAPHSTORE_ENDPOINT)
@@ -199,6 +207,7 @@ class ApplicationTests {
 		mvc.perform(requestBuilder)
 			.andDo(print())
 			.andExpect(status().isOk());
+		LOG.debug("Inserted resource '{}'", rsrcName);
 	}
 
 	private void doUpdate(String update) throws Exception {

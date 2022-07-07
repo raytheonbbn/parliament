@@ -1,4 +1,4 @@
-package test_util;
+package com.bnn.parliament.test_util;
 
 import java.util.ArrayList;
 import java.util.List;

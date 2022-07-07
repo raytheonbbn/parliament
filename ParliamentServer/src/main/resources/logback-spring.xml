@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property name="logDir" value="./log"/>
+	<property name="fileNm" value="parliament"/>
+
+	<appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSX} %-5level [%t] %C{1.} %m%n</Pattern>
+		</encoder>
+	</appender>
+
+	<appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${logDir}/${fileNm}.log</file>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSX} %-5level [%t] %C{1.} %m%n</Pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily and when the file reaches 10 MegaBytes -->
+			<fileNamePattern>${logDir}/${fileNm}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+	</appender>
+	
+	<root level="info">
+		<appender-ref ref="RollingFile"/>
+		<appender-ref ref="Console"/>
+	</root>
+
+	<!-- logger name="org.mortbay" level="warn" additivity="false">
+		<appender-ref ref="RollingFile"/>
+		<appender-ref ref="Console"/>
+	</logger>
+
+	<logger name="org.joseki" level="warn" additivity="false">
+		<appender-ref ref="RollingFile"/>
+		<appender-ref ref="Console"/>
+	</logger>
+
+	<logger name="com.hp.hpl.jena" level="warn" additivity="false">
+		<appender-ref ref="RollingFile"/>
+		<appender-ref ref="Console"/>
+	</logger -->
+
+	<logger name="com.bbn.parliament" level="trace" additivity="false">
+		<appender-ref ref="RollingFile"/>
+		<appender-ref ref="Console"/>
+	</logger>
+</configuration>
