@@ -11,6 +11,8 @@ defaultTasks 'bootRun'
 ext {
 	genJavaDir = file("$buildDir/generated/java")
 	artifactsDir = file("$rootDir/target/artifacts")
+	configVocabFile = "${projectDir}/src/main/resources/config-ont.ttl"
+	configVocabClass = "${genJavaDir}/com/bbn/parliament/jena/bridge/configuration/vocab/ConfigOnt.java"
 }
 
 dependencies {
@@ -45,10 +47,13 @@ sourceSets {
 
 // See https://jena.apache.org/documentation/tools/schemagen.html
 task runSchemagen(type: JavaExec) {
+	inputs.file(configVocabFile)
+	outputs.file(configVocabClass)
+
 	classpath = sourceSets.main.compileClasspath
 	mainClass = 'jena.schemagen'
 	args = [
-		'-i', "${projectDir}/src/main/resources/config-ont.ttl",
+		'-i', configVocabFile,
 		'-o', "${genJavaDir}",
 		'--owl',
 		'-n', 'ConfigOnt',
