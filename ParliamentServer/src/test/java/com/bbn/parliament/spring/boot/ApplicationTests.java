@@ -1,9 +1,8 @@
-package com.bnn.parliament.spring.boot;
+package com.bbn.parliament.spring.boot;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.blankString;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,8 +33,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.spring.boot.controller.QueryController;
-import com.bnn.parliament.test_util.MatchAny;
-import com.bnn.parliament.test_util.RdfResourceLoader;
+import com.bbn.parliament.test_util.MatchAny;
+import com.bbn.parliament.test_util.RdfResourceLoader;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -54,37 +53,42 @@ class ApplicationTests {
 		"application", "sparql-update");
 	private static final Logger LOG = LoggerFactory.getLogger(ApplicationTests.class);
 
-	private static final String EVERYTHING_QUERY = ""
-		+ "select distinct ?s ?o ?p ?g where {\n"
-		+ "	{ ?s ?p ?o }\n"
-		+ "	union\n"
-		+ "	{ graph ?g { ?s ?p ?o } }\n"
-		+ "}";
-	private static final String CLASS_QUERY = ""
-		+ "prefix owl: <http://www.w3.org/2002/07/owl#>\n"
-		+ "select distinct ?class where {\n"
-		+ "	?class a owl:Class .\n"
-		+ "	filter (!isblank(?class))\n"
-		+ "}";
-	private static final String THING_QUERY = ""
-		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>\n"
-		+ "prefix ex:   <http://www.example.org/>\n"
-		+ "select distinct ?a where {\n"
-		+ "	bind ( ex:Test as ?a )\n"
-		+ "	?a a owl:Thing .\n"
-		+ "}";
-	private static final String THING_INSERT = ""
-		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>\n"
-		+ "prefix ex:   <http://www.example.org/>\n"
-		+ "insert data {\n"
-		+ "	ex:ApplicationTests a owl:Thing .\n"
-		+ "}";
-	private static final String THING_DELETE = ""
-		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>\n"
-		+ "prefix ex:   <http://www.example.org/>\n"
-		+ "delete data {\n"
-		+ "	ex:ApplicationTests a owl:Thing .\n"
-		+ "}";
+	private static final String EVERYTHING_QUERY = """
+		select distinct ?s ?o ?p ?g where {
+			{ ?s ?p ?o }
+			union
+			{ graph ?g { ?s ?p ?o } }
+		}
+		""";
+	private static final String CLASS_QUERY = """
+		prefix owl: <http://www.w3.org/2002/07/owl#>
+		select distinct ?class where {
+			?class a owl:Class .
+			filter (!isblank(?class))
+		}
+		""";
+	private static final String THING_QUERY = """
+		prefix owl: <http://www.w3.org/2002/07/owl#>
+		prefix ex:  <http://www.example.org/>
+		select distinct ?a where {
+			bind ( ex:TestThing as ?a )
+			?a a owl:Thing .
+		}
+		""";
+	private static final String THING_INSERT = """
+		prefix owl: <http://www.w3.org/2002/07/owl#>
+		prefix ex:  <http://www.example.org/>
+		insert data {
+			ex:TestThing a owl:Thing .
+		}
+		""";
+	private static final String THING_DELETE = """
+		prefix owl: <http://www.w3.org/2002/07/owl#>
+		prefix ex:  <http://www.example.org/>
+		delete data {
+			ex:TestThing a owl:Thing .
+		}
+		""";
 
 	@Autowired
 	private MockMvc mvc;
@@ -151,7 +155,9 @@ class ApplicationTests {
 
 		deleteDefaultGraph();
 		verifySelectQueryResultCount(EVERYTHING_QUERY, 0);
-		loadSampleData();
+		for (String rsrcName : RSRCS_TO_LOAD) {
+			RdfResourceLoader.load(rsrcName, this::insertRsrc);
+		}
 		verifySelectQueryResultCount(CLASS_QUERY, 43);
 		verifySelectQueryResultCount(THING_QUERY, 0);
 		doUpdate(THING_INSERT);
@@ -187,22 +193,11 @@ class ApplicationTests {
 			.andExpect(jsonOrBlankCountMatcher);
 	}
 
-	private void loadSampleData() {
-		try {
-			for (String rsrcName : RSRCS_TO_LOAD) {
-				RdfResourceLoader.load(rsrcName, this::insertRsrc);
-			}
-		} catch (Exception ex) {
-			fail(ex.getMessage());
-		}
-	}
-
 	private void insertRsrc(String rsrcName, RDFFormat rdfFormat, InputStream input) throws Exception {
 		LOG.debug("Inserting resource '{}' as {} ...", rsrcName, rdfFormat);
 		String fileName = new File(rsrcName).getName();
-		MockMultipartFile part = new MockMultipartFile(fileName, fileName, rdfFormat.getMediaType(), input);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.multipart(GRAPHSTORE_ENDPOINT)
-			.file(part)
+			.file(new MockMultipartFile("file", fileName, rdfFormat.getMediaType(), input))
 			.queryParam("default", "");
 		mvc.perform(requestBuilder)
 			.andDo(print())

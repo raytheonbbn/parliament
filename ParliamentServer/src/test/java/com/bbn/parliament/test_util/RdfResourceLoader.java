@@ -1,4 +1,4 @@
-package com.bnn.parliament.test_util;
+package com.bbn.parliament.test_util;
 
 import java.io.FileNotFoundException;
 import java.io.FilterInputStream;

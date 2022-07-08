@@ -1,4 +1,4 @@
-package com.bnn.parliament.spring.boot;
+package com.bbn.parliament.spring.boot;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

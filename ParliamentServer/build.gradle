@@ -12,7 +12,10 @@ ext {
 	genJavaDir = file("$buildDir/generated/java")
 	artifactsDir = file("$rootDir/target/artifacts")
 	configVocabFile = "${projectDir}/src/main/resources/config-ont.ttl"
-	configVocabClass = "${genJavaDir}/com/bbn/parliament/jena/bridge/configuration/vocab/ConfigOnt.java"
+	configVocabPackage = 'com.bbn.parliament.jena.bridge.configuration.vocab'
+	configVocabDir = configVocabPackage.replaceAll(/\./, '/')
+	configVocabClassNm = 'ConfigOnt'
+	configVocabSource = "${genJavaDir}/${configVocabDir}/${configVocabClassNm}.java"
 }
 
 dependencies {
@@ -33,6 +36,7 @@ dependencies {
 		exclude group: 'org.slf4j', module: 'slf4j-log4j12'
 		exclude group: 'log4j', module: 'log4j'
 	}
+	implementation "$jsonLdDependency"
 	implementation "$slf4jApiDependency"
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
@@ -48,7 +52,7 @@ sourceSets {
 // See https://jena.apache.org/documentation/tools/schemagen.html
 task runSchemagen(type: JavaExec) {
 	inputs.file(configVocabFile)
-	outputs.file(configVocabClass)
+	outputs.file(configVocabSource)
 
 	classpath = sourceSets.main.compileClasspath
 	mainClass = 'jena.schemagen'
@@ -56,8 +60,8 @@ task runSchemagen(type: JavaExec) {
 		'-i', configVocabFile,
 		'-o', "${genJavaDir}",
 		'--owl',
-		'-n', 'ConfigOnt',
-		'--package', 'com.bbn.parliament.jena.bridge.configuration.vocab'
+		'-n', configVocabClassNm,
+		'--package', configVocabPackage
 	]
 }
 

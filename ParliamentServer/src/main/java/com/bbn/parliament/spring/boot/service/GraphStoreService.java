@@ -10,6 +10,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,17 +33,21 @@ import com.bbn.parliament.jena.handler.UpdateHandler;
 
 @Service
 public class GraphStoreService {
-	private static final String INSERT_RESPONSE_BODY = ""
-		+ "<html>\n"
-		+ "	<head>\n"
-		+ "		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=%4$s\"/>\n"
-		+ "		<title>%2$s (%1$d) Inserted %3$d statements</title>\n"
-		+ "	</head>\n"
-		+ "	<body>\n"
-		+ "		<h2>HTTP %2$s: %1$d</h2>\n"
-		+ "		<p>Inserted %3$d statements.</p>\n"
-		+ "	</body>\n"
-		+ "</html>";
+	private static final String INSERT_RESPONSE_BODY = """
+		<html>
+			<head>
+				<meta http-equiv="Content-Type" content="text/html; charset=%4$s"/>
+				<title>%2$s (%1$d) Inserted %3$d statements</title>
+			</head>
+			<body>
+				<h2>HTTP %2$s: %1$d</h2>
+				<p>Inserted %3$d statements.</p>
+			</body>
+		</html>
+		""";
+
+	@SuppressWarnings("unused")
+	private static final Logger LOG = LoggerFactory.getLogger(GraphStoreService.class);
 
 	@SuppressWarnings("static-method")
 	public ResponseEntity<StreamingResponseBody> doGetGraph(String graphUri, String format,
@@ -65,9 +71,9 @@ public class GraphStoreService {
 		String option = (dropGraphOption == DropGraphOption.SILENT)
 			? "SILENT" : "";
 		if (graphUri == null || graphUri.isEmpty()) {
-			updateStmt = String.format("DROP %1$s DEFAULT ;", option);
+			updateStmt = "DROP %1$s DEFAULT ;".formatted(option);
 		} else if (ModelManager.inst().containsModel(graphUri)) {
-			updateStmt = String.format("DROP %1$s GRAPH <%2s> ;", option, graphUri);
+			updateStmt = "DROP %1$s GRAPH <%2s> ;".formatted(option, graphUri);
 		} else {
 			throw new MissingGraphException("Named graph <%1$s> does not exist", graphUri);
 		}
@@ -137,7 +143,7 @@ public class GraphStoreService {
 		HttpStatus status = HttpStatus.OK;
 		final Charset charSet = StandardCharsets.UTF_8;
 		MediaType responseContentType = new MediaType(MediaType.TEXT_HTML, charSet);
-		String body = String.format(INSERT_RESPONSE_BODY,
+		String body = INSERT_RESPONSE_BODY.formatted(
 			status.value(), status.name(), numStatements, charSet.name());
 		return ResponseEntity.status(status)
 			.contentType(responseContentType)
