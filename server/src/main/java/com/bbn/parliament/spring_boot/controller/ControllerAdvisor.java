@@ -1,4 +1,4 @@
-package com.bbn.parliament.spring.boot.controller;
+package com.bbn.parliament.spring_boot.controller;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

@@ -20,7 +20,7 @@ import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.graph.ModelManager;
 import com.bbn.parliament.jena.util.FileUtil;
-import com.bbn.parliament.spring.boot.service.AcceptableMediaType;
+import com.bbn.parliament.spring_boot.service.AcceptableMediaType;
 import com.hp.hpl.jena.rdf.model.Model;
 
 /** @author sallen */

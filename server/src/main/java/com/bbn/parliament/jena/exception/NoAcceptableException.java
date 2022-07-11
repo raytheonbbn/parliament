@@ -3,8 +3,8 @@ package com.bbn.parliament.jena.exception;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import com.bbn.parliament.spring.boot.service.AcceptableMediaType;
-import com.bbn.parliament.spring.boot.service.QueryResultCategory;
+import com.bbn.parliament.spring_boot.service.AcceptableMediaType;
+import com.bbn.parliament.spring_boot.service.QueryResultCategory;
 
 public class NoAcceptableException extends RuntimeException {
 	private static final long serialVersionUID = 1L;

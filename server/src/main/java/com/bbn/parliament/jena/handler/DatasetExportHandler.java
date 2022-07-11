@@ -15,7 +15,7 @@ import com.bbn.parliament.jena.bridge.ConcurrentRequestLock;
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.graph.ModelManager;
-import com.bbn.parliament.spring.boot.service.AcceptableMediaType;
+import com.bbn.parliament.spring_boot.service.AcceptableMediaType;
 import com.hp.hpl.jena.rdf.model.Model;
 
 public class DatasetExportHandler {

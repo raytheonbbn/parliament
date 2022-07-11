@@ -1,4 +1,4 @@
-package com.bbn.parliament.spring.boot.controller;
+package com.bbn.parliament.spring_boot.controller;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -27,8 +27,8 @@ import com.bbn.parliament.jena.exception.DataFormatException;
 import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.exception.QueryExecutionException;
 import com.bbn.parliament.jena.exception.UnsupportedEndpointException;
-import com.bbn.parliament.spring.boot.service.DropGraphOption;
-import com.bbn.parliament.spring.boot.service.GraphStoreService;
+import com.bbn.parliament.spring_boot.service.DropGraphOption;
+import com.bbn.parliament.spring_boot.service.GraphStoreService;
 
 /**
  * Controller for Spring Boot Server. Routes HTTP requests from

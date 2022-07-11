@@ -1,4 +1,4 @@
-package com.bbn.parliament.spring.boot;
+package com.bbn.parliament.spring_boot;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.blankString;
@@ -32,7 +32,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
-import com.bbn.parliament.spring.boot.controller.QueryController;
+import com.bbn.parliament.spring_boot.controller.QueryController;
 import com.bbn.parliament.test_util.MatchAny;
 import com.bbn.parliament.test_util.RdfResourceLoader;
 

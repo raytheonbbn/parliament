@@ -26,8 +26,8 @@ import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.exception.NoAcceptableException;
 import com.bbn.parliament.jena.exception.QueryExecutionException;
 import com.bbn.parliament.jena.util.JsonLdRdfWriter;
-import com.bbn.parliament.spring.boot.service.AcceptableMediaType;
-import com.bbn.parliament.spring.boot.service.QueryResultCategory;
+import com.bbn.parliament.spring_boot.service.AcceptableMediaType;
+import com.bbn.parliament.spring_boot.service.QueryResultCategory;
 import com.hp.hpl.jena.query.QueryParseException;
 import com.hp.hpl.jena.rdf.model.Model;
 

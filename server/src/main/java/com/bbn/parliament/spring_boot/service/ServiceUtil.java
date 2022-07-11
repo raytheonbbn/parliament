@@ -1,4 +1,4 @@
-package com.bbn.parliament.spring.boot.service;
+package com.bbn.parliament.spring_boot.service;
 
 import java.net.InetSocketAddress;
 import java.util.Comparator;

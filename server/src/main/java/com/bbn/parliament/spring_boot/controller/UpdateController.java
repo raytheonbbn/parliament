@@ -1,4 +1,4 @@
-package com.bbn.parliament.spring.boot.controller;
+package com.bbn.parliament.spring_boot.controller;
 
 import java.util.List;
 import java.util.Objects;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bbn.parliament.jena.exception.BadRequestException;
 import com.bbn.parliament.jena.exception.QueryExecutionException;
-import com.bbn.parliament.spring.boot.service.UpdateService;
+import com.bbn.parliament.spring_boot.service.UpdateService;
 
 /**
  * Controller for Spring Boot Server. Routes HTTP requests from

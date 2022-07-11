@@ -1,4 +1,4 @@
-package com.bbn.parliament.spring.boot;
+package com.bbn.parliament.spring_boot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

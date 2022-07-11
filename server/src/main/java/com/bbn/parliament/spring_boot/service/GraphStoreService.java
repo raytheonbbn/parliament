@@ -1,4 +1,4 @@
-package com.bbn.parliament.spring.boot.service;
+package com.bbn.parliament.spring_boot.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

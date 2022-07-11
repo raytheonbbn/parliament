@@ -1,4 +1,4 @@
-package com.bbn.parliament.spring.boot.controller;
+package com.bbn.parliament.spring_boot.controller;
 
 import java.io.File;
 import java.util.List;
@@ -27,7 +27,7 @@ import com.bbn.parliament.jena.bridge.ParliamentBridgeConfiguration;
 import com.bbn.parliament.jena.bridge.ParliamentBridgeException;
 import com.bbn.parliament.jena.bridge.util.HttpServerUtil;
 import com.bbn.parliament.jena.exception.BadRequestException;
-import com.bbn.parliament.spring.boot.service.QueryService;
+import com.bbn.parliament.spring_boot.service.QueryService;
 
 /**
  * Controller for Spring Boot Server. Routes HTTP requests from
