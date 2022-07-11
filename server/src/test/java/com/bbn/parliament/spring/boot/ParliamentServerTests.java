@@ -72,9 +72,9 @@ public class ParliamentServerTests {
 	private static final String[] RSRCS_TO_LOAD = { "univ-bench.owl", "University15_20.owl.zip" };
 	private static final String CSV_QUOTE_TEST_INPUT = "csv-quote-test-input.ttl";
 	private static final String CSV_QUOTE_TEST_EXPECTED_RESULT = "csv-quote-test-expected-result.csv";
-	private static final String TEST_SUBJECT = "http://example.org/#Test";
+	private static final String TEST_SUBJECT = "http://example.org/#TestItem";
 	private static final String TEST_CLASS = "http://example.org/#TestClass";
-	private static final String TEST_LITERAL = "Test";
+	private static final String TEST_LITERAL = "TestLiteral";
 	private static final Logger LOG = LoggerFactory.getLogger(ParliamentServerTests.class);
 
 	private static final String EVERYTHING_QUERY = """
@@ -95,7 +95,7 @@ public class ParliamentServerTests {
 		prefix owl:  <http://www.w3.org/2002/07/owl#>
 		prefix ex:   <http://www.example.org/>
 		select distinct ?a where {
-			bind ( ex:Test as ?a )
+			bind ( ex:TestItem as ?a )
 			?a a owl:Thing .
 		}
 		""";
@@ -103,14 +103,14 @@ public class ParliamentServerTests {
 		prefix owl:  <http://www.w3.org/2002/07/owl#>
 		prefix ex:   <http://www.example.org/>
 		insert data {
-			ex:Test a owl:Thing .
+			ex:TestItem a owl:Thing .
 		}
 		""";
 	private static final String THING_DELETE = """
 		prefix owl:  <http://www.w3.org/2002/07/owl#>
 		prefix ex:   <http://www.example.org/>
 		delete data {
-			ex:Test a owl:Thing .
+			ex:TestItem a owl:Thing .
 		}
 		""";
 	private static final String CSV_QUOTING_TEST_QUERY = """

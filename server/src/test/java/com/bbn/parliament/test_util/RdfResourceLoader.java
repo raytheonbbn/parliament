@@ -1,10 +1,10 @@
 package com.bbn.parliament.test_util;
 
-import java.io.FileNotFoundException;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.MissingResourceException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -12,7 +12,6 @@ import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.hp.hpl.jena.rdf.model.Model;
 
 public class RdfResourceLoader {
-
 	@FunctionalInterface
 	public static interface SampleDataConsumer {
 		void accept(String rsrcName, RDFFormat rdfFormat, InputStream input) throws Exception;
@@ -98,11 +97,11 @@ public class RdfResourceLoader {
 		}
 	}
 
-	private static InputStream getResourceAsStream(String rsrcName) throws FileNotFoundException {
+	public static InputStream getResourceAsStream(String rsrcName) {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		InputStream is = cl.getResourceAsStream(rsrcName);
 		if (is == null) {
-			throw new FileNotFoundException(String.format("Unable to find resource '%1$s'", rsrcName));
+			throw new MissingResourceException("Unable to find resource", null, rsrcName);
 		}
 		return is;
 	}

@@ -33,11 +33,10 @@ public class MatchAny implements ResultMatcher {
 		}
 
 		String message = errors.stream()
-			.map(ex -> String.format("%1$s: %2$s",
-				ex.getClass().getSimpleName(), ex.getMessage()))
+			.map(ex -> "%1$s: %2$s".formatted(ex.getClass().getSimpleName(), ex.getMessage()))
 			.collect(Collectors.joining(
-				String.format("%n   "),
-				String.format("%1$s failure:%n   ", MatchAny.class.getSimpleName()),
+				"%n   ".formatted(),
+				"%1$s failure:%n   ".formatted(MatchAny.class.getSimpleName()),
 				""));
 		throw new AssertionError(message);
 	}

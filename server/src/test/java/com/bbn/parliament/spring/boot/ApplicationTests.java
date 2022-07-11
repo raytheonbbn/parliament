@@ -71,7 +71,7 @@ class ApplicationTests {
 		prefix owl: <http://www.w3.org/2002/07/owl#>
 		prefix ex:  <http://www.example.org/>
 		select distinct ?a where {
-			bind ( ex:TestThing as ?a )
+			bind ( ex:TestItem as ?a )
 			?a a owl:Thing .
 		}
 		""";
@@ -79,14 +79,14 @@ class ApplicationTests {
 		prefix owl: <http://www.w3.org/2002/07/owl#>
 		prefix ex:  <http://www.example.org/>
 		insert data {
-			ex:TestThing a owl:Thing .
+			ex:TestItem a owl:Thing .
 		}
 		""";
 	private static final String THING_DELETE = """
 		prefix owl: <http://www.w3.org/2002/07/owl#>
 		prefix ex:  <http://www.example.org/>
 		delete data {
-			ex:TestThing a owl:Thing .
+			ex:TestItem a owl:Thing .
 		}
 		""";
 
