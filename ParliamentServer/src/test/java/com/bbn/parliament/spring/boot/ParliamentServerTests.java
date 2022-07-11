@@ -77,47 +77,54 @@ public class ParliamentServerTests {
 	private static final String TEST_LITERAL = "Test";
 	private static final Logger LOG = LoggerFactory.getLogger(ParliamentServerTests.class);
 
-	private static final String EVERYTHING_QUERY = ""
-		+ "select distinct ?s ?o ?p ?g where {\n"
-		+ "	{ ?s ?p ?o }\n"
-		+ "	union\n"
-		+ "	{ graph ?g { ?s ?p ?o } }\n"
-		+ "}";
-	private static final String CLASS_QUERY = ""
-		+ "prefix owl: <http://www.w3.org/2002/07/owl#>\n"
-		+ "select distinct ?class where {\n"
-		+ "	?class a owl:Class .\n"
-		+ "	filter (!isblank(?class))\n"
-		+ "}";
-	private static final String THING_QUERY = ""
-		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>\n"
-		+ "prefix ex:   <http://www.example.org/>\n"
-		+ "select distinct ?a where {\n"
-		+ "	bind ( ex:Test as ?a )\n"
-		+ "	?a a owl:Thing .\n"
-		+ "}";
-	private static final String THING_INSERT = ""
-		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>\n"
-		+ "prefix ex:   <http://www.example.org/>\n"
-		+ "insert data {\n"
-		+ "	ex:Test a owl:Thing .\n"
-		+ "}";
-	private static final String THING_DELETE = ""
-		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>\n"
-		+ "prefix ex:   <http://www.example.org/>\n"
-		+ "delete data {\n"
-		+ "	ex:Test a owl:Thing .\n"
-		+ "}";
-	private static final String CSV_QUOTING_TEST_QUERY = ""
-		+ "prefix ex: <http://example.org/#>\n"
-		+ "select distinct ?s ?p ?o where {\n"
-		+ "	bind( ex:comment as ?p )\n"
-		+ "	?s ?p ?o .\n"
-		+ "} order by ?o";
-	private static final String NG_QUERY = ""
-		+ "select distinct ?g where {\n"
-		+ "	graph ?g { }\n"
-		+ "}";
+	private static final String EVERYTHING_QUERY = """
+		select distinct ?s ?o ?p ?g where {
+			{ ?s ?p ?o }
+			union
+			{ graph ?g { ?s ?p ?o } }
+		}
+		""";
+	private static final String CLASS_QUERY = """
+		prefix owl: <http://www.w3.org/2002/07/owl#>
+		select distinct ?class where {
+			?class a owl:Class .
+			filter (!isblank(?class))
+		}
+		""";
+	private static final String THING_QUERY = """
+		prefix owl:  <http://www.w3.org/2002/07/owl#>
+		prefix ex:   <http://www.example.org/>
+		select distinct ?a where {
+			bind ( ex:Test as ?a )
+			?a a owl:Thing .
+		}
+		""";
+	private static final String THING_INSERT = """
+		prefix owl:  <http://www.w3.org/2002/07/owl#>
+		prefix ex:   <http://www.example.org/>
+		insert data {
+			ex:Test a owl:Thing .
+		}
+		""";
+	private static final String THING_DELETE = """
+		prefix owl:  <http://www.w3.org/2002/07/owl#>
+		prefix ex:   <http://www.example.org/>
+		delete data {
+			ex:Test a owl:Thing .
+		}
+		""";
+	private static final String CSV_QUOTING_TEST_QUERY = """
+		prefix ex: <http://example.org/#>
+		select distinct ?s ?p ?o where {
+			bind( ex:comment as ?p )
+			?s ?p ?o .
+		} order by ?o
+		""";
+	private static final String NG_QUERY = """
+		select distinct ?g where {
+			graph ?g {}
+		}
+		""";
 
 	@LocalServerPort
 	private int serverPort;
@@ -138,8 +145,8 @@ public class ParliamentServerTests {
 
 	@BeforeEach
 	public void beforeEach() {
-		sparqlUrl = String.format(RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL, HOST, serverPort);
-		bulkUrl = String.format(RemoteModel.DEFAULT_BULK_ENDPOINT_URL, HOST, serverPort);
+		sparqlUrl = RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL.formatted(HOST, serverPort);
+		bulkUrl = RemoteModel.DEFAULT_BULK_ENDPOINT_URL.formatted(HOST, serverPort);
 		rm = new RemoteModel(sparqlUrl, bulkUrl);
 	}
 
@@ -265,14 +272,12 @@ public class ParliamentServerTests {
 		String graphUri = "http://example.org/foo/bar/#Graph2";
 		String bs = "http://example.org/brusselsprouts";
 		String y = "http://example.org/yucky";
-		String updateQuery = String.format("%%1$s <%1$s> { <%2$s> a <%3$s> . }",
-			graphUri, bs, y);
-		String query = String.format("select * where { graph <%1$s> {?thing a <%2$s> } }",
-			graphUri, y);
+		String updateQuery = "%%1$s <%1$s> { <%2$s> a <%3$s> . }".formatted(graphUri, bs, y);
+		String query = "select * where { graph <%1$s> {?thing a <%2$s> } }".formatted(graphUri, y);
 
 		rm.createNamedGraph(graphUri);
 
-		rm.updateQuery(String.format(updateQuery, "insert data into"));
+		rm.updateQuery(updateQuery.formatted("insert data into"));
 
 		ResultSet rs = rm.selectQuery(query);
 		boolean foundIt = false;
@@ -284,7 +289,7 @@ public class ParliamentServerTests {
 		}
 		assertTrue(foundIt);
 
-		rm.updateQuery(String.format(updateQuery, "delete data from"));
+		rm.updateQuery(updateQuery.formatted("delete data from"));
 
 		rs = rm.selectQuery(query);
 		foundIt = false;
@@ -341,9 +346,8 @@ public class ParliamentServerTests {
 	@Test
 	public void remoteModelInsertQueryNamedGraphTest() throws IOException {
 		String graphUri = "http://example.org/foo/bar/#Graph3";
-		String query = String.format(
-			"select * where { ?x a <%1$s> . graph <%2$s> { ?x a <%1$s> } }",
-			TEST_CLASS, graphUri);
+		String query = "select * where { ?x a <%1$s> . graph <%2$s> { ?x a <%1$s> } }"
+			.formatted(TEST_CLASS, graphUri);
 
 		rm.createNamedGraph(graphUri);
 
@@ -367,13 +371,10 @@ public class ParliamentServerTests {
 		String graph1Uri = "http://example.org/foo/bar/#Graph4";
 		String graph2Uri = "http://example.org/foo/bar/#Graph5";
 		String unionGraphUri = "http://example.org/foo/bar/#UnionGraph";
-		String triple1 = String.format("<%1$s> <%2$s> <%3$s1> .",
-			TEST_SUBJECT, RDF.type, TEST_CLASS);
-		String triple2 = String.format("<%1$s> <%2$s> <%3$s2> .",
-			TEST_SUBJECT, RDF.type, TEST_CLASS);
-		String query = String.format(
-			"select * where { graph <%1$s> { ?x a <%2$s1> , <%2$s2> . } }",
-			unionGraphUri, TEST_CLASS);
+		String triple1 = "<%1$s> <%2$s> <%3$s1> .".formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
+		String triple2 = "<%1$s> <%2$s> <%3$s2> .".formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
+		String query = "select * where { graph <%1$s> { ?x a <%2$s1> , <%2$s2> . } }"
+			.formatted(unionGraphUri, TEST_CLASS);
 
 		rm.createNamedGraph(graph1Uri);
 		rm.insertStatements(triple1, RDFFormat.NTRIPLES, null, graph1Uri, true);
@@ -411,13 +412,13 @@ public class ParliamentServerTests {
 	public void csvQuotingTest() throws IOException {
 		try (InputStream is = getClass().getClassLoader().getResourceAsStream(CSV_QUOTE_TEST_INPUT)) {
 			if (is == null) {
-				fail(String.format("Unable to find resource '%1$s'", CSV_QUOTE_TEST_INPUT));
+				fail("Unable to find resource '%1$s'".formatted(CSV_QUOTE_TEST_INPUT));
 			}
 			rm.insertStatements(is, RDFFormat.parseFilename(CSV_QUOTE_TEST_INPUT), null, true);
 		}
 
 		LOG.info("CSV quote test results:");
-		try (CloseableQueryExec qe = new CloseableQueryExec(sparqlUrl, String.format(CSV_QUOTING_TEST_QUERY))) {
+		try (CloseableQueryExec qe = new CloseableQueryExec(sparqlUrl, CSV_QUOTING_TEST_QUERY)) {
 			ResultSet rs = qe.execSelect();
 			while (rs.hasNext()) {
 				QuerySolution qs = rs.next();
@@ -433,7 +434,7 @@ public class ParliamentServerTests {
 
 		String actualResponse;
 		Map<String, Object> params = new HashMap<>();
-		params.put("query", String.format(CSV_QUOTING_TEST_QUERY));
+		params.put("query", CSV_QUOTING_TEST_QUERY);
 		params.put("stylesheet", "/xml-to-csv.xsl");
 		try (InputStream is = rm.sendRequest(params)) {
 			actualResponse = readStreamToEnd(is, "RemoteModel.sendRequest() returned null");
@@ -450,7 +451,7 @@ public class ParliamentServerTests {
 
 	private static String readStreamToEnd(InputStream is, String errorMsg, Object... args) throws IOException {
 		if (is == null) {
-			fail(String.format(errorMsg, args));
+			fail(errorMsg.formatted(args));
 		}
 		try (
 			Reader rdr = new InputStreamReader(is, StandardCharsets.UTF_8);
@@ -461,11 +462,11 @@ public class ParliamentServerTests {
 	}
 
 	private QuerySolutionStream doSelectQuery(String queryFmt, Object... args) {
-		return new QuerySolutionStream(String.format(queryFmt, args), sparqlUrl);
+		return new QuerySolutionStream(queryFmt.formatted(args), sparqlUrl);
 	}
 
 	private boolean doAskQuery(String queryFmt, Object... args) {
-		String query = String.format(queryFmt, args);
+		String query = queryFmt.formatted(args);
 		try (CloseableQueryExec qe = new CloseableQueryExec(sparqlUrl, query)) {
 			return qe.execAsk();
 		}
@@ -517,7 +518,7 @@ public class ParliamentServerTests {
 	}
 
 	private void doUpdate(String queryFmt, Object... args) {
-		UpdateRequest ur = UpdateFactory.create(String.format(queryFmt, args));
+		UpdateRequest ur = UpdateFactory.create(queryFmt.formatted(args));
 		UpdateProcessor exec = UpdateExecutionFactory.createRemote(ur, sparqlUrl);
 		executeUpdate(exec);
 	}
