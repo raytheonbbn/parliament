@@ -11,8 +11,8 @@
 
 	<target name="buildDependencies">
 		<ant dir="${kbRootDir}/Parliament" target="jar" inheritAll="false"/>
-		<ant dir="${kbRootDir}/Sesame/ParliamentSail" target="jar" inheritAll="false"/>
-		<ant dir="${kbRootDir}/Sesame/SameAsSail" target="jar" inheritAll="false"/>
+		<ant dir="${kbRootDir}/sesame/ParliamentSail" target="jar" inheritAll="false"/>
+		<ant dir="${kbRootDir}/sesame/SameAsSail" target="jar" inheritAll="false"/>
 	</target>
 
 	<target name="compile" depends="buildDependencies,resolve">
@@ -35,8 +35,8 @@
 	</target>
 
 	<target name="install" depends="jar">
-		<ant dir="${kbRootDir}/Sesame/ParliamentSail" target="install" inheritAll="false"/>
-		<ant dir="${kbRootDir}/Sesame/SameAsSail" target="install" inheritAll="false"/>
+		<ant dir="${kbRootDir}/sesame/ParliamentSail" target="install" inheritAll="false"/>
+		<ant dir="${kbRootDir}/sesame/SameAsSail" target="install" inheritAll="false"/>
 		<copy todir="${tomcat}/webapps/${sesameAppName}/WEB-INF/lib">
 			<fileset file="${jarFile}"/>
 		</copy>

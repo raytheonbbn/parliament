@@ -41,6 +41,5 @@ parliament-test.log
 /Parliament/Test/Debug_with_MacOSX GCC/
 /Parliament/Test/ParliamentKbConfig.txt
 /Parliament/Test/ParliamentLogConfig.txt
-/ParliamentServer/test-kb-data/
+/server/test-kb-data/
 /target/
-

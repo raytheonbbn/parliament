@@ -42,11 +42,11 @@
 		<delete dir="${basedir}/jena/TemporalIndexProcessor_old/lib"/>
 		<delete dir="${basedir}/Parliament/lib"/>
 		<delete dir="${basedir}/Parliament/KbCore/parliament/generated"/>
-		<delete dir="${basedir}/Sesame/CSameAsSail/lib"/>
-		<delete dir="${basedir}/Sesame/LuceneSail/lib"/>
-		<delete dir="${basedir}/Sesame/ParliamentSail/lib"/>
-		<delete dir="${basedir}/Sesame/SameAsSail/lib"/>
-		<delete dir="${basedir}/Sesame/Swrl2Sesame/lib"/>
+		<delete dir="${basedir}/sesame/CSameAsSail/lib"/>
+		<delete dir="${basedir}/sesame/LuceneSail/lib"/>
+		<delete dir="${basedir}/sesame/ParliamentSail/lib"/>
+		<delete dir="${basedir}/sesame/SameAsSail/lib"/>
+		<delete dir="${basedir}/sesame/Swrl2Sesame/lib"/>
 
 		<ant dir="${basedir}/jena/JosekiExtensions" target="clean" inheritAll="false"/>
 	</target>
@@ -65,11 +65,11 @@
 		<delete file="${basedir}/Parliament/AdminClient/.settings/language.settings.xml"/>
 		<delete file="${basedir}/Parliament/KbCore/.settings/language.settings.xml"/>
 		<delete file="${basedir}/Parliament/Test/.settings/language.settings.xml"/>
-		<delete dir="${basedir}/Sesame/CSameAsSail/bin"/>
-		<delete dir="${basedir}/Sesame/LuceneSail/bin"/>
-		<delete dir="${basedir}/Sesame/ParliamentSail/bin"/>
-		<delete dir="${basedir}/Sesame/SameAsSail/bin"/>
-		<delete dir="${basedir}/Sesame/Swrl2Sesame/bin"/>
+		<delete dir="${basedir}/sesame/CSameAsSail/bin"/>
+		<delete dir="${basedir}/sesame/LuceneSail/bin"/>
+		<delete dir="${basedir}/sesame/ParliamentSail/bin"/>
+		<delete dir="${basedir}/sesame/SameAsSail/bin"/>
+		<delete dir="${basedir}/sesame/Swrl2Sesame/bin"/>
 
 		<delete includeemptydirs="true">
 			<fileset dir="${basedir}/Parliament" includes="**/Debug_with_*/"/>
@@ -85,11 +85,11 @@
 		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="runTests" inheritAll="false"/>
 		<!--
-		<ant dir="${basedir}/Sesame/CSameAsSail" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/ParliamentSail" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/LuceneSail" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/SameAsSail" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/CSameAsSail" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/ParliamentSail" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/LuceneSail" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/SameAsSail" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/Swrl2Sesame" target="runTests" inheritAll="false"/>
 		-->
 
 		<junitreport todir="${reportsDir}" tofile="aggregated-junit-reports.xml">
@@ -114,20 +114,20 @@
 		<ant dir="${basedir}/jena/NumericIndex" target="jar" inheritAll="false"/>
 		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="jar" inheritAll="false"/>
 		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="jar" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/CSameAsSail" target="jar" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/ParliamentSail" target="jar" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/LuceneSail" target="jar" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/SameAsSail" target="jar" inheritAll="false"/>
-		<ant dir="${basedir}/Sesame/Swrl2Sesame" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/CSameAsSail" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/ParliamentSail" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/LuceneSail" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/SameAsSail" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/Swrl2Sesame" target="jar" inheritAll="false"/>
 	</target>
 
 	<!-- Copy docs to the ${toDir} directory.  Expects parameter toDir. -->
 	<target name="copyDocs">
 		<copy todir="${toDir}" file="${kbRootDir}/doc/UserGuide/ParliamentUserGuide.pdf"/>
-		<copy todir="${toDir}/License">
-			<fileset dir="${basedir}/License" includes="*.html,*.md,*.txt"/>
+		<copy todir="${toDir}/license">
+			<fileset dir="${basedir}/license" includes="*.html,*.md,*.txt"/>
 		</copy>
-		<copy tofile="${toDir}/License/Parliament-License.md" file="${basedir}/LICENSE.md"/>
+		<copy tofile="${toDir}/license/parliament-license.md" file="${basedir}/LICENSE.md"/>
 		<copy todir="${toDir}/javadoc">
 			<fileset dir="${javadocDir}"/>
 		</copy>
@@ -163,11 +163,11 @@
 		<include name="jena/SpatialIndexProcessor/src/**/*.java"/>
 		<include name="jena/TemporalIndexProcessor/src/**/*.java"/>
 
-		<!-- include name="Sesame/CSameAsSail/src/**/*.java"/>
-		<include name="Sesame/LuceneSail/src/**/*.java"/>
-		<include name="Sesame/ParliamentSail/src/**/*.java"/>
-		<include name="Sesame/SameAsSail/src/**/*.java"/>
-		<include name="Sesame/Swrl2Sesame/src/**/*.java"/ -->
+		<!-- include name="sesame/CSameAsSail/src/**/*.java"/>
+		<include name="sesame/LuceneSail/src/**/*.java"/>
+		<include name="sesame/ParliamentSail/src/**/*.java"/>
+		<include name="sesame/SameAsSail/src/**/*.java"/>
+		<include name="sesame/Swrl2Sesame/src/**/*.java"/ -->
 	</fileset>
 
 	<target name="javadocUpToDateCheck">
@@ -215,7 +215,7 @@
 				<fileset dir="${parliamentDependenciesDir}/joseki" includes="**/*.jar"/>
 				<fileset dir="${parliamentDependenciesDir}/openmap" includes="**/*.jar"/>
 				<fileset dir="${parliamentDependenciesDir}/swrl-jaxb" includes="swrl-jaxb*.jar"/>
-				<!-- fileset dir="${basedir}/Sesame/LuceneSail/lib" includes="**/*.jar"/ -->
+				<!-- fileset dir="${basedir}/sesame/LuceneSail/lib" includes="**/*.jar"/ -->
 			</classpath>
 			<arg value="-quiet"/>
 			<arg value="-Xdoclint:all,-missing"/>
