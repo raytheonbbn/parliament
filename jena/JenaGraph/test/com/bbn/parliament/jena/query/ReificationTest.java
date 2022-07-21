@@ -34,58 +34,60 @@ import com.hp.hpl.jena.sparql.resultset.ResultSetCompare;
 
 /** @author dkolas */
 public class ReificationTest {
-	private static final String PREFIXES = "PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \r\n" +
-			"PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#> \r\n" +
-			"PREFIX  owl:  <http://www.w3.org/2002/07/owl#> \r\n" +
-			"PREFIX  xsd:  <http://www.w3.org/2001/XMLSchema#> \r\n" +
-			"PREFIX  dc:   <http://purl.org/dc/elements/1.1/> \r\n" +
-			"PREFIX  : <http://example.org/foo#> \r\n";
+	private static final String PREFIXES = """
+		prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+		prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		prefix owl:  <http://www.w3.org/2002/07/owl#>
+		prefix xsd:  <http://www.w3.org/2001/XMLSchema#>
+		prefix dc:   <http://purl.org/dc/elements/1.1/>
+		prefix :     <http://example.org/foo#>
+		""";
 
-	private static final String INPUT_DATA = "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\r\n" +
-			"@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\r\n" +
-			"@prefix owl:  <http://www.w3.org/2002/07/owl#> .\r\n" +
-			"@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .\r\n" +
-			"@prefix dc:   <http://purl.org/dc/elements/1.1/> .\r\n" +
-			"@prefix : <http://example.org/foo#> .\r\n" +
-			"\r\n" +
-			":A :B :C .\r\n" +
-			":D :E :F .\r\n" +
-			":G :H :I .\r\n" +
-			"\r\n" +
+	private static final String INPUT_DATA = """
+		@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+		@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+		@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+		@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+		@prefix dc:   <http://purl.org/dc/elements/1.1/> .
+		@prefix : <http://example.org/foo#> .
 
-			":J a rdf:Statement;\r\n" +
-			"	rdf:subject :A;\r\n" +
-			"	rdf:predicate :B;\r\n" +
-			"	rdf:object :C;\r\n" +
-			"	dc:creator :X .\n" +
+		:A :B :C .
+		:D :E :F .
+		:G :H :I .
 
-			":J2 a rdf:Statement;\r\n" +
-			"	rdf:subject :A;\r\n" +
-			"	rdf:predicate :B;\r\n" +
-			"	rdf:object :C;\r\n" +
-			"	dc:creator :Y .\n" +
+		:J a rdf:Statement;
+			rdf:subject :A;
+			rdf:predicate :B;
+			rdf:object :C;
+			dc:creator :X .
 
-			":J3 a rdf:Statement;\r\n" +
-			"	rdf:subject :A;\r\n" +
-			"	rdf:predicate :B;\r\n" +
-			"	rdf:object :C;\r\n" +
-			"	dc:creator :X .\n" +
+		:J2 a rdf:Statement;
+			rdf:subject :A;
+			rdf:predicate :B;
+			rdf:object :C;
+			dc:creator :Y .
 
-			":J4 a rdf:Statement;\r\n" +
-			"	rdf:subject :D;\r\n" +
-			"	rdf:predicate :B;\r\n" +
-			"	rdf:object :C ;\r\n" +
-			"	dc:creator :X .\n" +
+		:J3 a rdf:Statement;
+			rdf:subject :A;
+			rdf:predicate :B;
+			rdf:object :C;
+			dc:creator :X .
 
-			":J :isBetterThan :J2 .\n" +
+		:J4 a rdf:Statement;
+			rdf:subject :D;
+			rdf:predicate :B;
+			rdf:object :C ;
+			dc:creator :X .
 
-			":A1 dc:creator :C1 .\n" +
-			":A2 dc:creator :C2 .\n" +
-			":A3 dc:creator :C3 .\n" +
-			":A4 dc:creator :C4 .\n" +
+		:J :isBetterThan :J2 .
 
-			":Jpartial rdf:subject :A .\n" +
-			"";
+		:A1 dc:creator :C1 .
+		:A2 dc:creator :C2 .
+		:A3 dc:creator :C3 .
+		:A4 dc:creator :C4 .
+
+		:Jpartial rdf:subject :A .
+		""";
 
 	private static TestingDataset dataset;
 
@@ -118,138 +120,138 @@ public class ReificationTest {
 
 	@Test
 	public void testReificationQuery1(){
-		String query = PREFIXES +
-				"SELECT ?stmt ?creator \n" +
-				"WHERE {\n" +
-				"	?stmt a rdf:Statement;\n" +
-				"		rdf:subject :A;\n" +
-				"		rdf:predicate :B;\n" +
-				"		rdf:object :C;\n" +
-				"		dc:creator ?creator .\n" +
-				"}";
+		String query = PREFIXES + """
+				select ?stmt ?creator where {
+					?stmt a rdf:Statement;
+						rdf:subject :A;
+						rdf:predicate :B;
+						rdf:object :C;
+						dc:creator ?creator .
+				}
+				""";
 		testAQuery(query);
 	}
 
 	@Test
 	public void testReificationQuery2(){
-		String query = PREFIXES +
-				"SELECT ?stmt ?p ?creator \n" +
-				"WHERE {\n" +
-				"	?stmt a rdf:Statement;\n" +
-				"		rdf:subject :A;\n" +
-				"		rdf:predicate ?p;\n" +
-				"		rdf:object :C;\n" +
-				"		dc:creator ?creator .\n" +
-				"}";
+		String query = PREFIXES + """
+				select ?stmt ?p ?creator where {
+					?stmt a rdf:Statement;
+						rdf:subject :A;
+						rdf:predicate ?p;
+						rdf:object :C;
+						dc:creator ?creator .
+				}
+				""";
 		testAQuery(query);
 	}
 
 	@Test
 	public void testReificationQuery3(){
-		String query = PREFIXES +
-				"SELECT ?stmt ?p ?p2 ?creator \n" +
-				"WHERE {\n" +
-				"	?stmt a rdf:Statement;\n" +
-				"		rdf:subject :A;\n" +
-				"		rdf:predicate ?p;\n" +
-				"		rdf:predicate ?p2;\n" +
-				"		rdf:object :C;\n" +
-				"		dc:creator ?creator .\n" +
-				"}";
+		String query = PREFIXES + """
+				select ?stmt ?p ?p2 ?creator where {
+					?stmt a rdf:Statement;
+						rdf:subject :A;
+						rdf:predicate ?p;
+						rdf:predicate ?p2;
+						rdf:object :C;
+						dc:creator ?creator .
+				}
+				""";
 		testAQuery(query);
 	}
 
 	@Test
 	public void testReificationQuery4(){
-		String query = PREFIXES +
-				"SELECT ?stmt ?s \n" +
-				"WHERE {\n" +
-				"	?stmt a rdf:Statement;\n" +
-				"		rdf:subject ?s;\n" +
-				"		rdf:predicate :B;\n" +
-				"		rdf:object :C;\n" +
-				"		dc:creator ?creator .\n" +
-				"}";
+		String query = PREFIXES + """
+				select ?stmt ?s where {
+					?stmt a rdf:Statement;
+						rdf:subject ?s;
+						rdf:predicate :B;
+						rdf:object :C;
+						dc:creator ?creator .
+				}
+				""";
 		testAQuery(query);
 	}
 
 	@Test
 	public void testReificationQuery5(){
-		String query = PREFIXES +
-				"SELECT ?stmt ?s ?p ?o \n" +
-				"WHERE {\n" +
-				"	?stmt a rdf:Statement;\n" +
-				"		rdf:subject ?s;\n" +
-				"		rdf:predicate ?p;\n" +
-				"		rdf:object ?o;\n" +
-				"		dc:creator ?creator .\n" +
-				"}";
+		String query = PREFIXES + """
+				select ?stmt ?s ?p ?o where {
+					?stmt a rdf:Statement;
+						rdf:subject ?s;
+						rdf:predicate ?p;
+						rdf:object ?o;
+						dc:creator ?creator .
+				}
+				""";
 		testAQuery(query);
 	}
 
 	@Test
 	public void testReificationQuery6(){
-		String query = PREFIXES +
-				"SELECT ?stmt ?s \n" +
-				"WHERE {\n" +
-				"	?stmt a rdf:Statement;\n" +
-				"		rdf:subject ?s;\n" +
-				"		rdf:predicate :B;\n" +
-				"		rdf:object :C;\n" +
-				"		dc:creator ?creator .\n" +
-				"}";
+		String query = PREFIXES + """
+				select ?stmt ?s where {
+					?stmt a rdf:Statement;
+						rdf:subject ?s;
+						rdf:predicate :B;
+						rdf:object :C;
+						dc:creator ?creator .
+				}
+				""";
 		testAQuery(query);
 	}
 
 	@Test
 	public void testReificationQuery7(){
-		String query = PREFIXES +
-				"SELECT ?s ?p ?o ?creator\n" +
-				"WHERE {\n" +
-				"	:J2 a rdf:Statement;\n" +
-				"		rdf:subject ?s;\n" +
-				"		rdf:predicate ?p;\n" +
-				"		rdf:object ?o;\n" +
-				"		dc:creator ?creator .\n" +
-				"}";
+		String query = PREFIXES + """
+				select ?s ?p ?o ?creator where {
+					:J2 a rdf:Statement;
+						rdf:subject ?s;
+						rdf:predicate ?p;
+						rdf:object ?o;
+						dc:creator ?creator .
+				}
+				""";
 		testAQuery(query);
 	}
 
 	@Test
 	public void testReificationQuery8(){
-		String query = PREFIXES +
-				"SELECT ?s1 ?s2 ?o\n" +
-				"WHERE {\n" +
-				"	?s1 a rdf:Statement;\n" +
-				"		rdf:predicate :B;\n" +
-				"		:isBetterThan ?s2 .\n" +
-				"	?s2 a rdf:Statement;\n" +
-				"		rdf:subject ?s;\n" +
-				"		rdf:predicate :B;\n" +
-				"		rdf:object ?o .\n" +
-				"}";
+		String query = PREFIXES + """
+				select ?s1 ?s2 ?o where {
+					?s1 a rdf:Statement;
+						rdf:predicate :B;
+						:isBetterThan ?s2 .
+					?s2 a rdf:Statement;
+						rdf:subject ?s;
+						rdf:predicate :B;
+						rdf:object ?o .
+				}
+				""";
 		testAQuery(query);
 	}
 
 	@Test
 	public void testReificationQuery9(){
-		String query = PREFIXES +
-				"SELECT ?s1 ?o\n" +
-				"WHERE {\n" +
-				"	?s1 a rdf:Statement;\n" +
-				"		rdf:predicate :B;\n" +
-				"}";
+		String query = PREFIXES + """
+				select ?s1 ?o where {
+					?s1 a rdf:Statement;
+						rdf:predicate :B;
+				}
+				""";
 		testAQuery(query);
 	}
 
 	@Test
 	public void testReificationQuery10(){
-		String query = PREFIXES +
-				"SELECT ?s1 ?c\n" +
-				"WHERE {\n" +
-				"	?s1 rdf:predicate ?b;\n" +
-				"		dc:creator ?c .\n" +
-				"}";
+		String query = PREFIXES + """
+				select ?s1 ?c where {
+					?s1 rdf:predicate ?b;
+						dc:creator ?c .
+				}
+				""";
 		testAQuery(query);
 	}
 
@@ -257,11 +259,11 @@ public class ReificationTest {
 	// This test will fail until partial reifications on insert are handled somehow.
 	//@Test
 	public void testPartialReificationQuery(){
-		String query = PREFIXES +
-				"SELECT ?stmt ?s \n" +
-				"WHERE {\n" +
-				"	?stmt rdf:subject ?s.\n" +
-				"}";
+		String query = PREFIXES + """
+				select ?stmt ?s where {
+					?stmt rdf:subject ?s.
+				}
+				""";
 		testAQuery(query);
 	}
 

@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.joseki.client.RemoteModel;
+import com.hp.hpl.jena.vocabulary.RDF;
 
 /** @author dkolas */
 public class InsertionTester {
@@ -33,19 +34,26 @@ public class InsertionTester {
 		//sendInsertRequest("http://foo/#foo", "<http://foo/#Dave> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://foo/#Person> .");
 		//sendInsertRequest(null, "<http://foo/#foo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://foo/#AGoodGraphToQuery> .");
 
-		sendInsertRequest(KbGraphStore.MASTER_GRAPH,
-			"<http://foo/#UnionFoo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <"+KbGraphStore.UNION_GRAPH_CLASS+"> ;" +
-				" <"+KbGraphStore.LEFT_GRAPH_PROPERTY+"> <http://foo/#foo> ;"+
-				" <"+KbGraphStore.RIGHT_GRAPH_PROPERTY+"> <http://foo/#foo2> ."
-			);
+		sendInsertRequest(KbGraphStore.MASTER_GRAPH, """
+			<http://foo/#UnionFoo> <%1$s> <%2$s> ;
+				<%3$s> <http://foo/#foo> ;
+				<%4$s> <http://foo/#foo2> .
+			""".formatted(RDF.type.getURI(), KbGraphStore.UNION_GRAPH_CLASS,
+				KbGraphStore.LEFT_GRAPH_PROPERTY,
+				KbGraphStore.RIGHT_GRAPH_PROPERTY));
 
-		sendInsertRequest(KbGraphStore.MASTER_GRAPH, statementsForAGraphDeclaration("http://foo/#foo2", "foo2"));
-		sendInsertRequest("http://foo/#foo2", "<http://foo/#Dave> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://foo/#Tool> .");
+		sendInsertRequest(KbGraphStore.MASTER_GRAPH,
+			statementsForAGraphDeclaration("http://foo/#foo2", "foo2"));
+		sendInsertRequest("http://foo/#foo2",
+			"<http://foo/#Dave> <%1$s> <http://foo/#Tool> .".formatted(RDF.type.getURI()));
 	}
 
 	private static String statementsForAGraphDeclaration(String uri, String graphDir) {
-		return "<"+uri+"> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <"+KbGraphStore.GRAPH_CLASS+"> ;"+
-			"\n <"+KbGraphStore.GRAPH_DIR_PROPERTY+"> \""+graphDir+"\" .";
+		return """
+			<%1$s> <%2$s> <%3$s> ;
+				<%4$s> "%5$s" .
+			""".formatted(uri, RDF.type.getURI(), KbGraphStore.GRAPH_CLASS,
+				KbGraphStore.GRAPH_DIR_PROPERTY, graphDir);
 	}
 
 	private static void sendInsertRequest(String graph, String statements) throws IOException {

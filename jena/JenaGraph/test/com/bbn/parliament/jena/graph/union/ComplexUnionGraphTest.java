@@ -46,39 +46,45 @@ public class ComplexUnionGraphTest {
 	private static final File INPUT_DATA_FILE = new File(
 		System.getProperty("test.data.path"), "univ-bench-03.zip");
 	private static final File KB_DATA_DIR = new File("./union-test-kb-data");
-	private static final String PREFIXES = "prefix ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> ";
+	private static final String PREFIXES = """
+		prefix ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#>
+		""";
 
-	private static final String QUERY0 = PREFIXES +
-		"select ?x ?y ?z where { " +
-		"	?x a ub:GraduateStudent . " +
-		"	?y a ub:University . " +
-		"	?z a ub:Department . " +
-		"	?x ub:memberOf ?z . " +
-		"	?z ub:subOrganizationOf ?y . " +
-		"	?x ub:undergraduateDegreeFrom ?y . " +
-		"}";
-	private static final String QUERY1 = PREFIXES +
-		"select ?x ?y1 ?y2 ?y3 where { " +
-		"	?x a ub:Professor ; " +
-		"		ub:worksFor <http://www.Department0.University0.edu> ; " +
-		"		ub:name ?y1 ; " +
-		"		ub:emailAddress ?y2 ; " +
-		"		ub:telephone ?y3 . " +
-		"}";
-	private static final String QUERY2 = PREFIXES +
-		"select ?x ?y ?z where { " +
-		"	?x a ub:Student . " +
-		"	?y a ub:Faculty . " +
-		"	?z a ub:Course . " +
-		"	?x ub:advisor ?y . " +
-		"	?y ub:teacherOf ?z . " +
-		"	?x ub:takesCourse ?z . " +
-		"}";
-	private static final String QUERY3 = PREFIXES +
-		"select ?x ?y where { " +
-		"	?x a ub:GraduateStudent ; " +
-		"		ub:name ?y . " +
-		"}";
+	private static final String QUERY0 = PREFIXES + """
+		select ?x ?y ?z where {
+			?x a ub:GraduateStudent .
+			?y a ub:University .
+			?z a ub:Department .
+			?x ub:memberOf ?z .
+			?z ub:subOrganizationOf ?y .
+			?x ub:undergraduateDegreeFrom ?y .
+		}
+		""";
+	private static final String QUERY1 = PREFIXES + """
+		select ?x ?y1 ?y2 ?y3 where {
+			?x a ub:Professor ;
+				ub:worksFor <http://www.Department0.University0.edu> ;
+				ub:name ?y1 ;
+				ub:emailAddress ?y2 ;
+				ub:telephone ?y3 .
+		}
+		""";
+	private static final String QUERY2 = PREFIXES + """
+		select ?x ?y ?z where {
+			?x a ub:Student .
+			?y a ub:Faculty .
+			?z a ub:Course .
+			?x ub:advisor ?y .
+			?y ub:teacherOf ?z .
+			?x ub:takesCourse ?z .
+		}
+		""";
+	private static final String QUERY3 = PREFIXES + """
+		select ?x ?y where {
+			?x a ub:GraduateStudent ;
+				ub:name ?y .
+		}
+		""";
 	private static final String[] QUERYS = {
 		QUERY0,
 		QUERY1,

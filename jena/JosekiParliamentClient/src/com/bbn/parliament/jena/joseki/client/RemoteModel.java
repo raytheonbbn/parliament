@@ -624,16 +624,12 @@ public class RemoteModel {
 	public void createNamedUnionGraph(String namedUnionGraphURI,
 		String leftGraphURI, String rightGraphURI) throws IOException {
 
-		String query = String.format(
-			"PREFIX parPF: <java:com.bbn.parliament.jena.pfunction.> \n" +
-				"INSERT { } \n" +
-				"WHERE \n" +
-				"{ \n" +
-				"   <%1$s> parPF:createUnionGraph ( <%2$s> <%3$s> ) . \n" +
-				"} \n",
-				namedUnionGraphURI, leftGraphURI, rightGraphURI
-			);
-
+		String query = """
+			prefix parPF: <java:com.bbn.parliament.jena.pfunction.>
+			insert {} where {
+				<%1$s> parPF:createUnionGraph ( <%2$s> <%3$s> ) .
+			}
+			""".formatted(namedUnionGraphURI, leftGraphURI, rightGraphURI);
 		this.updateQuery(query);
 	}
 
