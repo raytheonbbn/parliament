@@ -76,8 +76,8 @@ public class ExportHandler extends AbstractHandler {
 	@Override
 	public void handleMultipartFormRequest(HttpServletRequest req,
 		HttpServletResponse resp) throws ServletErrorResponseException {
-		throw new ServletErrorResponseException("'multipart/form data' requests are not "
-			+ "supported by this handler.");
+		throw new ServletErrorResponseException(
+			"'multipart/form data' requests are not supported by this handler.");
 	}
 
 	protected void handleRequest(HttpServletRequest req, HttpServletResponse resp,

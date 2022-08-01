@@ -36,61 +36,56 @@ public class ThreadTestMethods extends SpatialTestDataset {
 		loadData("queries/BuildingExample3.ttl");
 	}
 
-	private static final String SIMPLE_QUERY = ""
-		+ "SELECT ?a\n"
-		+ "WHERE {\n"
-		+ "?polygon a gml:Polygon .\n"
-		+ "?polygon gml:exterior ?ext .\n"
-		+ "?ext a gml:LinearRing .\n"
-		+ "?ext gml:posList \"34.8448761696609 33 34.8448761696609 35.9148048779863 34.8448761696609 37 40 37 40 33 34.8448761696609 33\" .\n"
-		+ "?a rcc:nonTangentialProperPart ?polygon .\n"
-		+ "}";
+	private static final String SIMPLE_QUERY = """
+		select ?a where {
+			?polygon a gml:Polygon ;
+				gml:exterior ?ext .
+			?ext a gml:LinearRing ;
+				gml:posList "34.8448761696609 33 34.8448761696609 35.9148048779863 34.8448761696609 37 40 37 40 33 34.8448761696609 33" .
+			?a rcc:nonTangentialProperPart ?polygon .
+		}
+		""";
 
 	public void testSimpleQuery() {
 		startThreadTest(SIMPLE_QUERY, 4, 10);
 	}
 
-	private static final String CIRCLE_3_EXTENTS_QUERY = ""
-		+ "SELECT DISTINCT\n"
-		+ "  ?building1 ?building2 ?building3\n"
-		+ "WHERE {\n"
-		+ "  ?circle a gml:Circle ;\n"
-		+ "     gml:radius \"0.1\"^^xsd:double .\n"
-		+ "  (?sreg1 ?sreg2 ?sreg3) rcc:part ?circle .\n"
-		+ "  ?building1 a example:SpatialThing ;\n"
-		+ "     georss:where ?sreg1 .\n"
-		+ "  ?building2 a example:SpatialThing ;\n"
-		+ "     georss:where ?sreg2 .\n"
-		+ "  ?building3 a example:SpatialThing ;\n"
-		+ "     georss:where ?sreg3 .\n"
-		+ "  FILTER (?sreg1 != ?sreg2 &&\n"
-		+ "     ?sreg1 != ?sreg3 &&\n"
-		+ "     ?sreg2 != ?sreg3\n"
-		+ "  )\n"
-		+ "}";
+	private static final String CIRCLE_3_EXTENTS_QUERY = """
+		select distinct ?building1 ?building2 ?building3 where {
+			?circle a gml:Circle ;
+				gml:radius "0.1"^^xsd:double .
+			(?sreg1 ?sreg2 ?sreg3) rcc:part ?circle .
+			?building1 a example:SpatialThing ;
+				georss:where ?sreg1 .
+			?building2 a example:SpatialThing ;
+				georss:where ?sreg2 .
+			?building3 a example:SpatialThing ;
+				georss:where ?sreg3 .
+			filter (?sreg1 != ?sreg2 && ?sreg1 != ?sreg3 && ?sreg2 != ?sreg3)
+		}
+		""";
 
 	public void testCircle3Extents() {
 		startThreadTest(CIRCLE_3_EXTENTS_QUERY, 6, 20);
 	}
 
-	private static final String OPTIONAL_PART_QUERY = ""
-		+ "SELECT DISTINCT\n"
-		+ "  ?x ?y\n"
-		+ "WHERE {\n"
-		+ "  ?poly1 a gml:Polygon ;\n"
-		+ "    gml:exterior [\n"
-		+ "      a gml:LinearRing ;\n"
-		+ "      gml:posList \"34.90 36.0 34.845 36.0 34.845 35.8 34.9 35.8 34.9 36.0\"\n"
-		+ "    ] .\n"
-		+ "  ?x rcc:part ?poly1 .\n"
-		+ "  OPTIONAL {\n"
-		+ "    ?poly2 a gml:Polygon ;\n"
-		+ "       gml:exterior ?poly2ext .\n"
-		+ "    ?poly2ext a gml:LinearRing ;\n"
-		+ "       gml:posList \"34.90 36.0 34.845 36.0 34.845 35.8 34.9 35.8 34.9 36.0\" .\n"
-		+ "    ?y rcc:part ?poly2 .\n"
-		+ "  }\n"
-		+ "}";
+	private static final String OPTIONAL_PART_QUERY = """
+		select distinct ?x ?y where {
+			?poly1 a gml:Polygon ;
+				gml:exterior [
+					a gml:LinearRing ;
+					gml:posList "34.90 36.0 34.845 36.0 34.845 35.8 34.9 35.8 34.9 36.0"
+				] .
+			?x rcc:part ?poly1 .
+			optional {
+				?poly2 a gml:Polygon ;
+					gml:exterior ?poly2ext .
+				?poly2ext a gml:LinearRing ;
+					gml:posList "34.90 36.0 34.845 36.0 34.845 35.8 34.9 35.8 34.9 36.0" .
+				?y rcc:part ?poly2 .
+			}
+		}
+		""";
 
 	public void testOptionalPart() {
 		startThreadTest(OPTIONAL_PART_QUERY, 9, 50);
@@ -142,7 +137,8 @@ public class ThreadTestMethods extends SpatialTestDataset {
 					continue;
 				}
 				if (tq.isFinished()) {
-					assertEquals(amount, tq.getCount(), String.format("Thread #%1$d invalid count", tq.getThreadId()));
+					assertEquals(amount, tq.getCount(),
+						"Thread #%1$d invalid count".formatted(tq.getThreadId()));
 				}
 				isfinished = (tq.isFinished()) && isfinished;
 

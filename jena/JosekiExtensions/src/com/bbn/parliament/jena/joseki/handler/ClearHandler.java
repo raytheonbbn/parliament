@@ -56,8 +56,8 @@ public class ClearHandler extends AbstractHandler {
 	@Override
 	public void handleMultipartFormRequest(HttpServletRequest req,
 		HttpServletResponse resp) throws ServletErrorResponseException {
-		throw new ServletErrorResponseException("'multipart/form data' requests are not "
-			+ "supported by this handler.");
+		throw new ServletErrorResponseException(
+			"'multipart/form data' requests are not supported by this handler.");
 	}
 
 	@SuppressWarnings("static-method")
@@ -67,8 +67,9 @@ public class ClearHandler extends AbstractHandler {
 		// Default to false, and only set to true if "yes" is passed
 		boolean performClear = "yes".equalsIgnoreCase(performClearStr);
 		if (!performClear) {
-			throw new ServletErrorResponseException("Set 'performClear' parameter to 'yes' "
-				+ "in order to verify that you actually want to peform this operation.");
+			throw new ServletErrorResponseException("""
+				Set the 'performClear' parameter to 'yes' in order to verify that you \
+				want to perform this operation.""");
 		}
 
 		// Default to false, and only set to true if "yes" is passed

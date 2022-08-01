@@ -124,8 +124,8 @@ public class CompositeNumericIndex extends IndexBase<Number> implements Composit
 		} else if (value instanceof Float) {
 			return createFloatIndex(predicate);
 		}
-		throw new RuntimeException(value.getClass().getName()
-			+ " is in invalid type for the numeric index");
+		throw new RuntimeException(
+			value.getClass().getName() + " is an invalid type for the numeric index");
 	}
 
 	private NumericIndex<Integer> createIntegerIndex(String predicate) {

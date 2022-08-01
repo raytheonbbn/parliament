@@ -50,22 +50,24 @@ public class CmdLineJettyServer {
 		}
 
 		private static void printPrompt() {
-			System.out.format("%n"
-				+ "%n"
-				+ "%n"
-				+ "######################################################################%n"
-				+ "######################################################################%n"
-				+ "#####                                                            #####%n"
-				+ "#####   Warning:  Killing the server process by any means other  #####%n"
-				+ "#####   than graceful shutdown may result in corrupt knowledge   #####%n"
-				+ "#####   base files.  Please shut down the server by typing       #####%n"
-				+ "#####   'exit' or 'Ctrl+C' at the prompt below.                  #####%n"
-				+ "#####                                                            #####%n"
-				+ "######################################################################%n"
-				+ "######################################################################%n"
-				+ "%n"
-				+ "%n"
-				+ "Type 'exit' and press <return> or <enter> to shut down the server.%n");
+			System.out.format("""
+
+
+
+				######################################################################
+				######################################################################
+				#####                                                            #####
+				#####   Warning:  Killing the server process by any means other  #####
+				#####   than graceful shutdown may result in corrupt knowledge   #####
+				#####   base files.  Please shut down the server by typing       #####
+				#####   'exit' or 'Ctrl+C' at the prompt below.                  #####
+				#####                                                            #####
+				######################################################################
+				######################################################################
+
+
+				Type 'exit' and press <return> or <enter> to shut down the server.
+				""");
 		}
 	}
 
@@ -100,7 +102,7 @@ public class CmdLineJettyServer {
 
 			serverShouldShutDown.await();
 
-			System.out.format("Shutting down server%n");
+			System.out.println("Shutting down server");
 		} catch (Throwable ex) {
 			LOG.error("Parliament server encountered an exception", ex);
 		} finally {

@@ -17,20 +17,26 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.shared.impl.JenaParameters;
+import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 public class TemporalTestServer implements AutoCloseable {
 	public static final Property INSTANT_PF = ResourceFactory.createProperty(Constants.PT_AS_INSTANT.getURI());
 	public static final Property INTERVAL_PF = ResourceFactory.createProperty(Constants.PT_AS_INTERVAL.getURI());
 
-	public static final String COMMON_PREFIXES = ""
-			+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-			+ "PREFIX owl:  <http://www.w3.org/2002/07/owl#>\n"
-			+ "PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>\n"
-			+ "PREFIX snap: <http://www.ifomis.org/bfo/1.0/snap#>\n"
-			+ "PREFIX span: <http://www.ifomis.org/bfo/1.0/span#>\n"
-			+ "PREFIX time: <"+Constants.OT_NS+">\n"
-			+ "PREFIX pt: <"+Constants.PT_NS+">\n";
+	public static final String COMMON_PREFIXES = """
+			prefix rdf:  <%1$s>
+			prefix rdfs: <%2$s>
+			prefix owl:  <%3$s>
+			prefix xsd:  <%4$s>
+			prefix snap: <http://www.ifomis.org/bfo/1.0/snap#>
+			prefix span: <http://www.ifomis.org/bfo/1.0/span#>
+			prefix time: <%5$s>
+			prefix pt:   <%6$s>
+			""".formatted(RDF.getURI(), RDFS.getURI(), OWL.getURI(), XSD.getURI(),
+				Constants.OT_NS, Constants.PT_NS);
 
 	private KbGraph graph;
 	private KbGraphStore graphStore;

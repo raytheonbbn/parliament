@@ -100,11 +100,13 @@ public class NumericIndexTestMethods extends QueryableIndexTestMethods<NumericIn
 		// model.add(ResourceFactory.createResource(example + "5"),
 		// ResourceFactory.createProperty(AGE_URI),
 		// ResourceFactory.createTypedLiteral(53));
-		String query = "PREFIX xsd: <"
-			+ XSD.getURI()
-			+ ">\nSELECT ?x WHERE { ?x <"
-			+ AGE_URI
-			+ "> ?z . FILTER (?z < \"30\"^^xsd:integer && ?z >= \"25\"^^xsd:integer)  }";
+		String query = """
+			PREFIX xsd: <%1$s>
+			SELECT ?x WHERE {
+				?x <%2$s> ?z .
+				FILTER (?z < "30"^^xsd:integer && ?z >= "25"^^xsd:integer)
+			}
+			""".formatted(XSD.getURI(), AGE_URI);
 
 		try {
 			assertEquals(5L, index.size());
@@ -161,11 +163,17 @@ public class NumericIndexTestMethods extends QueryableIndexTestMethods<NumericIn
 		model.add(five, nameProp, ResourceFactory.createTypedLiteral("Five"));
 		model.add(five, friendProp, two);
 		model.add(five, friendProp, three);
-		String query = "SELECT ?x ?name ?y WHERE { "
-			+ "?x <http://example.org#age> ?age . "
-			+ "?x <http://example.org#name> ?name ."
-			+ "OPTIONAL { " + "  ?x <http://example.org#friend> ?y ." + "}"
-			+ "FILTER (!bound(?y)) " + "FILTER (?age > 25.0)  " + "}";
+		String query = """
+			SELECT ?x ?name ?y WHERE {
+				?x <http://example.org#age> ?age .
+				?x <http://example.org#name> ?name .
+				OPTIONAL {
+					?x <http://example.org#friend> ?y .
+				}
+				FILTER (!bound(?y))
+				FILTER (?age > 25.0)
+			}
+			""";
 
 		try {
 			assertEquals(5L, index.size());

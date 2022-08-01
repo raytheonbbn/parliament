@@ -99,20 +99,21 @@ public class KbOpExecutorDAWGTest {
 		"basic/Basic - Term 6",
 		"basic/Basic - Term 7"
 	);
-	private static final String MANIFEST_ENTRY_QUERY = ""
-		+ "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-		+ "prefix mf:  <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#>\n"
-		+ "prefix qt:  <http://www.w3.org/2001/sw/DataAccess/tests/test-query#>\n"
-		+ "select distinct ?entry ?name ?result ?query ?data ?graphData where {\n"
-		+ "	?manifest a mf:Manifest ;\n"
-		+ "		mf:entries/rdf:rest*/rdf:first ?entry .\n"
-		+ "	?entry mf:name ?name ;\n"
-		+ "		mf:result ?result ;\n"
-		+ "		mf:action ?action .\n"
-		+ "	?action qt:query ?query .\n"
-		+ "	optional { ?action qt:data ?data }\n"
-		+ "	optional { ?action qt:graphData ?graphData }\n"
-		+ "}";
+	private static final String MANIFEST_ENTRY_QUERY = """
+		prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+		prefix mf:  <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#>
+		prefix qt:  <http://www.w3.org/2001/sw/DataAccess/tests/test-query#>
+		select distinct ?entry ?name ?result ?query ?data ?graphData where {
+			?manifest a mf:Manifest ;
+				mf:entries/rdf:rest*/rdf:first ?entry .
+			?entry mf:name ?name ;
+				mf:result ?result ;
+				mf:action ?action .
+			?action qt:query ?query .
+			optional { ?action qt:data ?data }
+			optional { ?action qt:graphData ?graphData }
+		}
+		""";
 	private static final File DAWG_ROOT_DIR = new File("data/data-r2");
 	private static final Pattern FILE_URI_FIXER = Pattern.compile("^(file:/)([^/].*)$");
 	private static final Pattern FILE_URI_FIXER_2 = Pattern.compile("^(file:///[A-Za-z]):(.*)$");

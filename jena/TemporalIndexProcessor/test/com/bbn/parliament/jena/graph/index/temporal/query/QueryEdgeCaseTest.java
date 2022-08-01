@@ -38,6 +38,9 @@ import com.hp.hpl.jena.vocabulary.RDF;
 public class QueryEdgeCaseTest {
 	private static final String NS = "http://foo/#";
 	private static final String EXTENT_NS = "http://foo/Event#";
+	private static final String COMMON_PREFIXES = TemporalTestServer.COMMON_PREFIXES + """
+		prefix foo: <%1$s>
+		""".formatted(NS);
 	private static final Logger LOG = LoggerFactory.getLogger(QueryEdgeCaseTest.class);
 
 	private static TemporalTestServer testServer;
@@ -79,14 +82,13 @@ public class QueryEdgeCaseTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testDuplicateEntries() {
-		String query = TemporalTestServer.COMMON_PREFIXES
-				+ "PREFIX foo: <"+NS+">\n"
-				+ "SELECT DISTINCT ?thing\n"
-				+ "WHERE {\n"
-				+ "		?thing foo:atTime ?temporal .\n"
-				+ "		?before	pt:asInstant \"2006-02-16T00:00:01Z\"^^xsd:dateTime .\n"
-				+ "		?temporal time:before ?before .\n"
-				+ "}";
+		String query = COMMON_PREFIXES + """
+				select distinct ?thing where {
+					?thing foo:atTime ?temporal .
+					?before	pt:asInstant "2006-02-16T00:00:01Z"^^xsd:dateTime .
+					?temporal time:before ?before .
+				}
+				""";
 		try (CloseableQueryExec qExec = new CloseableQueryExec(testServer.getDataset(), query)) {
 			ResultSet resultSet = qExec.execSelect();
 			checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8");
@@ -97,16 +99,15 @@ public class QueryEdgeCaseTest {
 	@Test
 	/** Tests the query processor's ability to filter through irrelevant triples with similar subjects */
 	public void testIndexFilter() {
-		String query = TemporalTestServer.COMMON_PREFIXES
-				+ "PREFIX foo: <"+NS+">\n"
-				+ "SELECT DISTINCT ?thing\n"
-				+ "WHERE {\n"
-				+ "		?thing foo:atTime ?temporal .\n"
-				+ "		?before a time:Instant ;\n"
-				+ "			pt:asInstant \"2006-02-16T00:00:01Z\"^^xsd:dateTime .\n"
-				+ "		?temporal a time:Instant ;\n"
-				+ "			time:before ?before .\n"
-				+ "}";
+		String query = COMMON_PREFIXES + """
+				select distinct ?thing where {
+					?thing foo:atTime ?temporal .
+					?before a time:Instant ;
+						pt:asInstant "2006-02-16T00:00:01Z"^^xsd:dateTime .
+					?temporal a time:Instant ;
+						time:before ?before .
+				}
+				""";
 		try (CloseableQueryExec qExec = new CloseableQueryExec(testServer.getDataset(), query)) {
 			ResultSet resultSet = qExec.execSelect();
 			checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8");
@@ -117,17 +118,16 @@ public class QueryEdgeCaseTest {
 	@Test
 	/** Tests the query processor's ability to filter through irrelevant triples with similar subjects */
 	public void PartialIndexQueryTest() {
-		String query = TemporalTestServer.COMMON_PREFIXES
-				+ "PREFIX foo: <"+NS+">\n"
-				+ "SELECT DISTINCT ?thing\n"
-				+ "WHERE {\n"
-				+ "		?thing foo:atTime ?temporal .\n"
-				+ "		?before a time:Instant ;\n"
-				+ "			pt:asInstant \"2006-02-16T00:00:01Z\"^^xsd:dateTime ;\n"
-				+ "			?p ?o .\n"
-				+ "		?temporal a time:Instant ;\n"
-				+ "			time:before ?before .\n"
-				+ "}";
+		String query = COMMON_PREFIXES + """
+				select distinct ?thing where {
+					?thing foo:atTime ?temporal .
+					?before a time:Instant ;
+						pt:asInstant "2006-02-16T00:00:01Z"^^xsd:dateTime ;
+						?p ?o .
+					?temporal a time:Instant ;
+						time:before ?before .
+				}
+				""";
 		try (CloseableQueryExec qExec = new CloseableQueryExec(testServer.getDataset(), query)) {
 			ResultSet resultSet = qExec.execSelect();
 			checkResults(resultSet);
@@ -137,14 +137,13 @@ public class QueryEdgeCaseTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testBlankNodes() {
-		String query = TemporalTestServer.COMMON_PREFIXES
-				+ "PREFIX foo: <"+NS+">\n"
-				+ "SELECT DISTINCT ?thing\n"
-				+ "WHERE {\n"
-				+ "		?thing foo:atTime ?temporal .\n"
-				+ "		?temporal time:before [\n"
-				+ "			pt:asInstant \"2006-02-16T00:00:01Z\"^^xsd:dateTime ] .\n"
-				+ "}";
+		String query = COMMON_PREFIXES + """
+				select distinct ?thing where {
+					?thing foo:atTime ?temporal .
+					?temporal time:before [
+						pt:asInstant "2006-02-16T00:00:01Z"^^xsd:dateTime ] .
+				}
+				""";
 		try (CloseableQueryExec qExec = new CloseableQueryExec(testServer.getDataset(), query)) {
 			ResultSet resultSet = qExec.execSelect();
 			checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8");
@@ -154,14 +153,13 @@ public class QueryEdgeCaseTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testUnboundedOperands() {
-		String query = TemporalTestServer.COMMON_PREFIXES
-				+ "PREFIX foo: <"+NS+">\n"
-				+ "SELECT DISTINCT ?thing\n"
-				+ "WHERE {\n"
-				+ "		?thing foo:atTime ?temporal .\n"
-				+ "		?interval pt:asInterval \",\"^^<" + Constants.PT_TIME_INTERVAL + "> .\n"
-				+ "		?interval time:inside ?temporal .\n"
-				+ "}";
+		String query = COMMON_PREFIXES + """
+				select distinct ?thing where {
+					?thing foo:atTime ?temporal .
+					?interval pt:asInterval ","^^pt:intervalLiteral .
+					?interval time:inside ?temporal .
+				}
+				""";
 		try (CloseableQueryExec qExec = new CloseableQueryExec(testServer.getDataset(), query)) {
 			ResultSet resultSet = qExec.execSelect();
 			checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8", NS+"10");

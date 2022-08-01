@@ -43,17 +43,18 @@ public abstract class AbstractHandler {
 		final int status = HttpServletResponse.SC_OK;
 		resp.setStatus(status);
 		try (PrintWriter wtr = resp.getWriter()) {
-			wtr.format("<html>%n"
-				+ "<head>%n"
-				+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\"/>%n"
-				+ "<title>OK %1$d %2$s</title>%n"
-				+ "</head>%n"
-				+ "<body>%n"
-				+ "<h2>HTTP OK: %1$d</h2>%n"
-				+ "<pre>%2$s</pre>%n"
-				+ "</body>%n"
-				+ "</html>%n",
-				status, msg);
+			wtr.format("""
+				<html>
+					<head>
+						<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+						<title>OK %1$d %2$s</title>
+					</head>
+					<body>
+						<h2>HTTP OK: %1$d</h2>
+						<pre>%2$s</pre>
+					</body>
+				</html>
+				""", status, msg);
 		}
 	}
 }

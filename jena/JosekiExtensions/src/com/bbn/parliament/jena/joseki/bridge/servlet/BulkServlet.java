@@ -110,8 +110,8 @@ public class BulkServlet extends HttpServlet {
 					}
 				} else if ("delete".equals(svcUri)) {
 					LOG.info("Delete operation from {}", req.getRemoteAddr());
-					throw new ServletErrorResponseException("Bulk delete is not supported.  "
-						+ "Use SPARQL/Update to remove statements.");
+					throw new ServletErrorResponseException(
+						"Bulk delete is unsupported. Use SPARQL-Update to remove statements.");
 				} else if ("clear".equals(svcUri)) {
 					LOG.info("Clear operation from {}", req.getRemoteAddr());
 					ClearHandler handler = new ClearHandler();

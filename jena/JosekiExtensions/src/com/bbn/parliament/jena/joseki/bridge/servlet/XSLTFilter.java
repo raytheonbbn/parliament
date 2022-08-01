@@ -39,13 +39,15 @@ import org.slf4j.LoggerFactory;
  * @author sallen
  */
 public class XSLTFilter implements Filter {
-	private static final String METHOD_XFORM = "<?xml version=\"1.0\"?>"
-		+ "<xsl:transform version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
-		+ "	<xsl:output method=\"text\" encoding=\"utf-8\"/>"
-		+ "	<xsl:template match=\"/xsl:transform|/xsl:stylesheet\">"
-		+ "		<xsl:value-of select=\"xsl:output/@method\"/>"
-		+ "	</xsl:template>"
-		+ "</xsl:transform>";
+	private static final String METHOD_XFORM = """
+		<?xml version="1.0"?>
+		<xsl:transform version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+			<xsl:output method="text" encoding="utf-8"/>
+			<xsl:template match="/xsl:transform|/xsl:stylesheet">
+				<xsl:value-of select="xsl:output/@method"/>
+			</xsl:template>
+		</xsl:transform>
+		""";
 
 	private static final Logger LOG = LoggerFactory.getLogger(XSLTFilter.class);
 
@@ -89,7 +91,7 @@ public class XSLTFilter implements Filter {
 						styleURL = null;
 					}
 				} catch (MalformedURLException ex) {
-					LOG.warn("Malformed stylesheet parameter \"{}\":  {}", styleSheet, ex.getMessage());
+					LOG.warn("Malformed stylesheet parameter '{}':  {}", styleSheet, ex.getMessage());
 				}
 			}
 		}

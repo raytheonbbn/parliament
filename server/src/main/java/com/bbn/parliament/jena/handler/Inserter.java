@@ -9,6 +9,7 @@ package com.bbn.parliament.jena.handler;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -122,9 +123,13 @@ public final class Inserter {
 				String zipEntryName = ze.getName();
 				FileNameDecomposition decomp = new FileNameDecomposition(zipEntryName);
 				if (RDFFormat.UNKNOWN == decomp.getFormat()) {
-					throw new DataFormatException("Unsupported file extension "
-						+ "on \"%1$s\" -- must be one of 'ttl', 'n3', 'nt', "
-						+ "'rdf', 'owl', or 'xml'", zipEntryName);
+					var extList = Arrays.stream(RDFFormat.values())
+						.filter(rdfFmt -> rdfFmt.isJenaReadable() || rdfFmt == RDFFormat.JSON_LD)
+						.flatMap(rdfFmt -> Arrays.stream(rdfFmt.getExtensions()))
+						.collect(Collectors.joining("', '"));
+					throw new DataFormatException(
+						"Unsupported file extension on \"%1$s\": Must be one of '%2$s'",
+						zipEntryName, extList);
 				}
 
 				Supplier<InputStream> entryStrmProvider = getZipStrmProvider(zin);
@@ -167,8 +172,9 @@ public final class Inserter {
 				String dirName = stmt.getObject().toString();
 
 				if (!dirNamesSeen.contains(dirName)) {
-					throw new DataFormatException("Master Graph contains a "
-						+ "directory name (%1$s) not present in the zip file", dirName);
+					throw new DataFormatException("""
+						The Master Graph contains a directory name (%1$s) not present in \
+						the zip file""", dirName);
 				}
 
 				dirToGraphNameMap.put(dirName, graphNm);
@@ -183,9 +189,9 @@ public final class Inserter {
 			String extraDirs = dirNamesSeen.stream()
 				.filter(dirName -> !dirToGraphNameMap.containsKey(dirName))
 				.collect(Collectors.joining(", "));
-			throw new DataFormatException("Mismatch between the number of files in "
-				+ "the zip file and the number in the Master Graph.  There are extra "
-				+ "directories in the zip file: %1$s", extraDirs);
+			throw new DataFormatException("""
+				Mismatch between the number of files in the zip file and the number in the \
+				Master Graph.  There are extra directories in the zip file: %1$s""", extraDirs);
 		}
 
 		// Now that we like the input, we can clear the old repo
@@ -375,18 +381,18 @@ public final class Inserter {
 	private RDFFormat getRdfFormat() throws DataFormatException {
 		if (dataFormat == null || dataFormat.isEmpty() || "auto".equalsIgnoreCase(dataFormat)) {
 			if (null == fileName || fileName.isEmpty()) {
-				throw new DataFormatException("The serialization format of "
-					+ "the RDF was specified to be determined by the fileName "
-					+ "extension, but the fileName was not availible.  Please "
-					+ "resubmit with the proper data format specified.");
+				throw new DataFormatException("""
+					The serialization format of the RDF was specified to be determined by \
+					the fileName extension, but the fileName was not available.  Please \
+					resubmit with the proper data format specified.""");
 			}
 
 			RDFFormat format = RDFFormat.parseFilename(fileName);
 			if (RDFFormat.UNKNOWN == format) {
-				throw new DataFormatException("Unable to determine the "
-					+ "serialization format of the RDF document from the "
-					+ "fileName extension.  Please resubmit with the "
-					+ "proper data format specified.");
+				throw new DataFormatException("""
+					Unable to determine the serialization format of the RDF document from \
+					the fileName extension.  Please resubmit with the proper data format \
+					specified.""");
 			}
 			LOG.debug("Mapping input fileName '{}' to {} format", fileName, format);
 			return format;

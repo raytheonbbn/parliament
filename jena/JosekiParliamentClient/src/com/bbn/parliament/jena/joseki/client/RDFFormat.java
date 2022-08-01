@@ -211,6 +211,14 @@ public enum RDFFormat {
 		return (fileExtList.length == 0) ? null : fileExtList[0];
 	}
 
+	/**
+	 * Returns a filename extension string that matches this RDFFormat, or "txt" for
+	 * RDFFormat.UNKNOWN.
+	 */
+	public String[] getExtensions() {
+		return fileExtList.clone();
+	}
+
 	/** Returns media type string for this RDFFormat, or null for RDFFormat.UNKNOWN. */
 	public String getMediaType() {
 		return (mediaTypeList.length == 0) ? null : mediaTypeList[0];

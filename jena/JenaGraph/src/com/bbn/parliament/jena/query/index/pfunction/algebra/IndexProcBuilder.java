@@ -77,8 +77,7 @@ public class IndexProcBuilder {
 
 		@Override
 		public void output(IndentedWriter out, SerializationContext sCxt) {
-			out.print("ProcedureIndexPF [" + FmtUtils.stringForNode(pfNode, sCxt)
-			+ "]");
+			out.print("ProcedureIndexPF [" + FmtUtils.stringForNode(pfNode, sCxt) + "]");
 			out.print("[");
 			subjArg.output(out, sCxt);
 			out.print("][");

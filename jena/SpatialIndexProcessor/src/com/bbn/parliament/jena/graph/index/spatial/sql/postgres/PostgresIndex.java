@@ -125,23 +125,22 @@ public class PostgresIndex extends SQLGeometryIndex {
 			Statement stmt = c.createStatement();
 		) {
 			// check if spatial table exists
-			String sql1 = String.format(
-				"SELECT relname FROM pg_class WHERE relname = '%1$s'",
-				tableName);
+			String sql1 = "SELECT relname FROM pg_class WHERE relname = '%1$s'"
+				.formatted(tableName);
 			try (ResultSet rs = stmt.executeQuery(sql1)) {
 				if (!rs.next()) {
-					execute(
-						"CREATE TABLE %1$s ( id SERIAL PRIMARY KEY, node VARCHAR(256) )",
+					execute("CREATE TABLE %1$s ( id SERIAL PRIMARY KEY, node VARCHAR(256) )",
 						tableName);
 				}
 			}
 
 			// check if geometry column exists
-			String sql2 = String.format(""
-				+ "SELECT attname FROM pg_attribute, pg_type WHERE%n"
-				+ "typname = '%1$s' AND attrelid = typrelid AND attname NOT IN%n"
-				+ "('cmin', 'cmax', 'ctid', 'oid', 'tableoid', 'xmin', 'xmax');",
-				tableName);
+			String sql2 = """
+				SELECT attname FROM pg_attribute, pg_type WHERE
+					typname = '%1$s'
+					AND attrelid = typrelid
+					AND attname NOT IN ('cmin', 'cmax', 'ctid', 'oid', 'tableoid', 'xmin', 'xmax');
+				""".formatted(tableName);
 			int count = 0;
 			try (ResultSet rs = stmt.executeQuery(sql2)) {
 				while (rs.next()) {
@@ -149,18 +148,17 @@ public class PostgresIndex extends SQLGeometryIndex {
 				}
 			}
 			if (count == 2) {
-				execute(
-					"SELECT AddGeometryColumn('%1$s','%2$s',%3$d,'GEOMETRY',2)",
+				execute("SELECT AddGeometryColumn('%1$s','%2$s',%3$d,'GEOMETRY',2)",
 					tableName, GEOMETRY_COLUMN, Constants.WGS84_SRID);
-				execute(
-					"CREATE INDEX %1$s%2$s ON %1$s USING GIST ( %3$s)",
+				execute("CREATE INDEX %1$s%2$s ON %1$s USING GIST ( %3$s)",
 					tableName, GEOMETRY_INDEX_SUFFIX, GEOMETRY_COLUMN);
 			}
 
 			// check if node index exists
-			String sql3 = String.format(
-				"SELECT indexname from pg_indexes where tablename = '%1$s' AND indexname NOT IN ('%1$s', '%1$s_pkey')",
-				tableName);
+			String sql3 = """
+				SELECT indexname from pg_indexes WHERE tablename = '%1$s'
+					AND indexname NOT IN ('%1$s', '%1$s_pkey')
+				""".formatted(tableName);
 			boolean hasNodeIndex = false;
 			try (ResultSet rs = stmt.executeQuery(sql3)) {
 				while (rs.next()) {
@@ -171,8 +169,7 @@ public class PostgresIndex extends SQLGeometryIndex {
 				}
 			}
 			if (!hasNodeIndex) {
-				execute(
-					"CREATE UNIQUE INDEX %1$s%2$s ON %1$s USING btree(node)",
+				execute("CREATE UNIQUE INDEX %1$s%2$s ON %1$s USING btree(node)",
 					tableName, NODE_INDEX_SUFFIX);
 			}
 		} catch (PersistentStoreException | SQLException ex) {

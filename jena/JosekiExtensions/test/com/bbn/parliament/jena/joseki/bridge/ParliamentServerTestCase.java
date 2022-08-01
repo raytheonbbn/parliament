@@ -64,47 +64,45 @@ public class ParliamentServerTestCase {
 	private static final String TEST_SUBJECT = "http://example.org/#Test";
 	private static final String TEST_CLASS = "http://example.org/#TestClass";
 	private static final String TEST_LITERAL = "Test";
-	private static final String EVERYTHING_QUERY = ""
-		+ "select ?s ?o ?p ?g where {%n"
-		+ "	{ ?s ?p ?o }%n"
-		+ "	union%n"
-		+ "	{ graph ?g { ?s ?p ?o } }%n"
-		+ "}";
-	private static final String CLASS_QUERY = ""
-		+ "prefix owl: <http://www.w3.org/2002/07/owl#>%n"
-		+ "%n"
-		+ "select distinct ?class where {%n"
-		+ "	?class a owl:Class .%n"
-		+ "	filter (!isblank(?class))%n"
-		+ "}";
-	private static final String THING_QUERY = ""
-		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>%n"
-		+ "prefix ex:   <http://www.example.org/>%n"
-		+ "%n"
-		+ "select ?a where {%n"
-		+ "	bind ( ex:Test as ?a )%n"
-		+ "	?a a owl:Thing .%n"
-		+ "}";
-	private static final String THING_INSERT = ""
-		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>%n"
-		+ "prefix ex:   <http://www.example.org/>%n"
-		+ "%n"
-		+ "insert data {%n"
-		+ "	ex:Test a owl:Thing .%n"
-		+ "}";
-	private static final String THING_DELETE = ""
-		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>%n"
-		+ "prefix ex:   <http://www.example.org/>%n"
-		+ "%n"
-		+ "delete data {%n"
-		+ "	ex:Test a owl:Thing .%n"
-		+ "}";
-	private static final String CSV_QUOTING_TEST_QUERY = ""
-		+ "prefix ex: <http://example.org/#>%n"
-		+ "select ?s ?p ?o where {%n"
-		+ "	bind( ex:comment as ?p )%n"
-		+ "	?s ?p ?o .%n"
-		+ "} order by ?o";
+	private static final String PREFIXES = """
+		prefix owl: <http://www.w3.org/2002/07/owl#>
+		prefix ex:  <http://www.example.org/>
+		""";
+	private static final String EVERYTHING_QUERY = PREFIXES + """
+		select ?s ?o ?p ?g where {
+			{ ?s ?p ?o }
+			union
+			{ graph ?g { ?s ?p ?o } }
+		}
+		""";
+	private static final String CLASS_QUERY = PREFIXES + """
+		select distinct ?class where {
+			?class a owl:Class .
+			filter (!isblank(?class))
+		}
+		""";
+	private static final String THING_QUERY = PREFIXES + """
+		select ?a where {
+			bind ( ex:Test as ?a )
+			?a a owl:Thing .
+		}
+		""";
+	private static final String THING_INSERT = PREFIXES + """
+		insert data {
+			ex:Test a owl:Thing .
+		}
+		""";
+	private static final String THING_DELETE = PREFIXES + """
+		delete data {
+			ex:Test a owl:Thing .
+		}
+		""";
+	private static final String CSV_QUOTING_TEST_QUERY = PREFIXES + """
+		select ?s ?p ?o where {
+			bind( ex:comment as ?p )
+			?s ?p ?o .
+		} order by ?o
+		""";
 	private static final RemoteModel rm = new RemoteModel(SPARQL_URL, BULK_URL);
 	private static final Logger log = LoggerFactory.getLogger(ParliamentServerTestCase.class);
 

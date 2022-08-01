@@ -115,10 +115,11 @@ public class DumpKbAsNTriplesTest {
 	private long countNamedEntities() {
 		QueryExecution qe = null;
 		try {
-			qe = QueryExecutionFactory.create(
-				"select (count(distinct *) as ?count) where { "
-					+ "?x a <http://example.org/#NamedEntity> }",
-				model);
+			qe = QueryExecutionFactory.create("""
+				select (count(distinct *) as ?count) where {
+					?x a <http://example.org/#NamedEntity> .
+				}
+				""", model);
 			ResultSet rs = qe.execSelect();
 			if (rs.hasNext()) {
 				QuerySolution qs = rs.next();

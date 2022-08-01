@@ -126,9 +126,9 @@ public abstract class AbstractStressTest
 		_numThreadLoops = numThreadLoops;
 		_writerPercentage = writerPercentage;
 		_props = new Properties();
-		System.out.println("---------- " + _numThreads + " threads, "
-			+ _numThreadLoops + " ops per thread, " + _writerPercentage
-			+ "% writers ----------");
+		System.out.format(
+			"---------- %1$d threads, %2$d ops per thread, %3$d%% writers ----------%n",
+			_numThreads, _numThreadLoops, _writerPercentage);
 		try
 		{
 			try (InputStream in = new FileInputStream(PROP_FILE)) {
@@ -190,10 +190,9 @@ public abstract class AbstractStressTest
 				}
 			}
 		}
-		catch (IOException ioe)
+		catch (IOException ex)
 		{
-			System.err.println("Unable to load " + PROP_FILE
-				+ ". This isn't gonna work so great.");
+			System.err.format("Unable to load '%1$s'%n", PROP_FILE);
 		}
 	}
 
@@ -288,8 +287,14 @@ public abstract class AbstractStressTest
 				String object = nodeUris.get(j).toString();
 				String predicate = randomUri(propertyUris);
 
-				toAdd.append("<" + subject + "> <" + predicate + "> <" + object
-					+ "> .\n");
+				toAdd
+					.append("<")
+					.append(subject)
+					.append("> <")
+					.append(predicate)
+					.append("> <")
+					.append(object)
+					.append("> .\n");
 			}
 		}
 		return toAdd;
@@ -511,11 +516,8 @@ public abstract class AbstractStressTest
 
 		protected void timestamp(String message)
 		{
-			Calendar current = Calendar.getInstance();
-			System.out.println(this.getClass().getSimpleName() + " " + _id + " "
-				+ message + " at " + current.get(Calendar.HOUR) + ":"
-				+ current.get(Calendar.MINUTE) + ":" + current.get(Calendar.SECOND)
-				+ "." + current.get(Calendar.MILLISECOND));
+			System.out.format("%1$s %2$d %3$s at %3$H:%3$M:%3$S.%3$N%n",
+				getClass().getSimpleName(), _id, message, Calendar.getInstance());
 		}
 
 		long getTotalElapsedTime()

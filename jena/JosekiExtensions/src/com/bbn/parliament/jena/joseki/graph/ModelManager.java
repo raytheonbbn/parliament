@@ -318,8 +318,9 @@ public class ModelManager {
 		@Override
 		public void run() {
 			if (System.currentTimeMillis() - scheduledExecutionTime() >= _delay) {
-				_log.warn("Skipping overly delayed FlushTimerTask execution.  "
-					+ "Is your flush timer delay setting too short?");
+				_log.warn("""
+					Skipping overly delayed FlushTimerTask execution. \
+					Is your flush timer delay setting too short?""");
 			} else {
 				_modelMgr.flushKb();
 			}

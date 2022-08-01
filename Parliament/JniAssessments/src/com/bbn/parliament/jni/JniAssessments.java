@@ -33,7 +33,7 @@ public class JniAssessments
 
 	/** Returns whether the JNI API copies the string */
 	public static native boolean testJniStringEncoding(String str,
-			boolean testCriticalStrFunctions, boolean testWideCharEncoding);
+		boolean testCriticalStrFunctions, boolean testWideCharEncoding);
 
 	public static native void testJniStringCreation(int numIters, boolean useUtf16Chars);
 
@@ -79,8 +79,10 @@ public class JniAssessments
 
 	public static void main(String[] args)
 	{
-		System.out.format("%nShow Java's string representations forced into C++"
-				+ " char types for the string \"%1$s\":%n", SHORT_TEST_STR);
+		System.out.format("""
+
+			Show Java's string representations forced into C++ char types for the string "%1$s":
+			""", SHORT_TEST_STR);
 		printJniStringAsHex(SHORT_TEST_STR);
 
 		System.out.format("%nTest memory management characteristics of JNI string API:%n");
@@ -88,10 +90,15 @@ public class JniAssessments
 		testStringMemMgmt("GetStringChars", false, true);
 		testStringMemMgmt("GetStringCritical", true, true);
 
-		System.out.format("%nString Performance Tests (Iterations per Millisecond)%n%n"
-				+ "Trial,Passing UTF-8 String,Passing UTF-16 String"
-				+ ",Passing UTF-16 String (Critical Section),Creating UTF-8 String"
-				+ ",Creating UTF-16 String%n");
+		System.out.format("""
+
+			String Performance Tests (Iterations per Millisecond)
+
+
+			Trial,Passing UTF-8 String,Passing UTF-16 String\
+			,Passing UTF-16 String (Critical Section),Creating UTF-8 String\
+			,Creating UTF-16 String
+			""");
 		runStringPerformanceTests("Warm-up", NUM_WARM_UP_ITERS);
 		for (int trial = 0; trial < NUM_TRIALS; ++trial)
 		{
@@ -99,9 +106,14 @@ public class JniAssessments
 			runStringPerformanceTests(trialLabel, NUM_STRING_TEST_ITERS);
 		}
 
-		System.out.format("%nMethod Call Performance Tests (Iterations per Millisecond)%n%n"
-				+ "Trial,Pull Pointer from Java Field,Pass Pointer via Helper Method"
-				+ ",Pointer via C++ Lookup Table%n");
+		System.out.format("""
+
+			Method Call Performance Tests (Iterations per Millisecond)
+
+
+			Trial,Pull Pointer from Java Field,Pass Pointer via Helper Method\
+			,Pointer via C++ Lookup Table
+			""");
 		runMethodCallPerformanceTests("Warm-up", NUM_WARM_UP_ITERS);
 		for (int trial = 0; trial < NUM_TRIALS; ++trial)
 		{
@@ -113,8 +125,8 @@ public class JniAssessments
 	private static void testStringMemMgmt(String apiName, boolean testCriticalStrFunctions, boolean testWideCharEncoding)
 	{
 		String fmt = testJniStringEncoding("Hello World!", testCriticalStrFunctions, testWideCharEncoding)
-				? "   %1$s returns a copy of the string%n"
-						: "   %1$s does not copy the string%n";
+			? "   %1$s returns a copy of the string%n"
+			: "   %1$s does not copy the string%n";
 		System.out.format(fmt, apiName);
 	}
 

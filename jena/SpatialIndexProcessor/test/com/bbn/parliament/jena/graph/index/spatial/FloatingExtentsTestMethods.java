@@ -25,40 +25,40 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 		super(factoryProperties);
 	}
 
-	private static final String NOTEST_QUERY = ""
-		+ "SELECT DISTINCT\n"
-		+ "	?building1 ?building2 ?building3 ?building4 ?building5\n"
-		+ "WHERE {\n"
-		+ "	?circle a gml:Circle ;\n"
-		+ "		gml:radius \"10000.0\"^^xsd:double .\n"
-		+ "	?building1 a example:SpatialThing ;\n"
-		+ "		georss:where ?sreg1 .\n"
-		+ "	?sreg1 rcc:part ?circle .\n"
-		+ "	?building2 a example:SpatialThing ;\n"
-		+ "		georss:where ?sreg2 .\n"
-		+ "	?sreg2	geo:representativeExtent ?reg2 .\n"
-		+ "	?sreg2 rcc:part ?circle .\n"
-		+ "	?building3 a example:SpatialThing ;\n"
-		+ "		georss:where ?sreg3 .\n"
-		+ "	?sreg3 rcc:part ?circle .\n"
-		+ "	?building4 a example:SpatialThing ;\n"
-		+ "		georss:where ?sreg4 .\n"
-		+ "	?sreg4 rcc:part ?circle .\n"
-		+ "	?building5 a example:SpatialThing ;\n"
-		+ "		georss:where ?sreg5 .\n"
-		+ "	?sreg5 rcc:part ?circle .\n"
-		+ "	FILTER (?building1 != ?building2 &&\n"
-		+ "		?building1 != ?building3 &&\n"
-		+ "		?building1 != ?building4 &&\n"
-		+ "		?building1 != ?building5 &&\n"
-		+ "		?building2 != ?building3 &&\n"
-		+ "		?building2 != ?building4 &&\n"
-		+ "		?building2 != ?building5 &&\n"
-		+ "		?building3 != ?building4 &&\n"
-		+ "		?building3 != ?building5 &&\n"
-		+ "		?building4 != ?building5\n"
-		+ "	)\n"
-		+ "}";
+	private static final String NOTEST_QUERY = """
+		SELECT DISTINCT
+			?building1 ?building2 ?building3 ?building4 ?building5
+		WHERE {
+			?circle a gml:Circle ;
+				gml:radius "10000.0"^^xsd:double .
+			?building1 a example:SpatialThing ;
+				georss:where ?sreg1 .
+			?sreg1 rcc:part ?circle .
+			?building2 a example:SpatialThing ;
+				georss:where ?sreg2 .
+			?sreg2	geo:representativeExtent ?reg2 .
+			?sreg2 rcc:part ?circle .
+			?building3 a example:SpatialThing ;
+				georss:where ?sreg3 .
+			?sreg3 rcc:part ?circle .
+			?building4 a example:SpatialThing ;
+				georss:where ?sreg4 .
+			?sreg4 rcc:part ?circle .
+			?building5 a example:SpatialThing ;
+				georss:where ?sreg5 .
+			?sreg5 rcc:part ?circle .
+			FILTER (?building1 != ?building2
+				&& ?building1 != ?building3
+				&& ?building1 != ?building4
+				&& ?building1 != ?building5
+				&& ?building2 != ?building3
+				&& ?building2 != ?building4
+				&& ?building2 != ?building5
+				&& ?building3 != ?building4
+				&& ?building3 != ?building5
+				&& ?building4 != ?building5)
+		}
+		""";
 
 	public void testNot() {
 		loadData("queries/BuildingExample1.ttl");
@@ -81,28 +81,27 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String THREE_EXTENTS_IN_CIRCLE_QUERY = ""
-		+ "SELECT DISTINCT\n"
-		+ "  ?building1 ?building2 ?building3\n"
-		+ "WHERE {\n"
-		+ " (?sreg1 ?sreg2 ?sreg3) rcc:part ?circle .\n"
-		+ "  ?building1 a example:SpatialThing ;\n"
-		+ "     georss:where ?sreg1 .\n"
-		+ "  ?building2 a example:SpatialThing ;\n"
-		+ "     georss:where ?sreg2 .\n"
-		+ "  ?building3 a example:SpatialThing ;\n"
-		+ "     georss:where ?sreg3 .\n"
-		+ "  ?circle a gml:Circle ;\n"
-		+ "     gml:radius \"0.1\"^^xsd:double .\n"
-		//+ "?circle ogc:covers ?sreg1 .\n"
-		//+ "  ?sreg1 rcc:part ?circle .\n"
-		//+ "  ?sreg2 rcc:part ?circle .\n"
-		//+ "  ?sreg3 rcc:part ?circle .\n"
-		+ "  FILTER (?building1 != ?building2 &&\n"
-		+ "     ?building1 != ?building3 &&\n"
-		+ "     ?building2 != ?building3\n"
-		+ "  )\n"
-		+ "}";
+	private static final String THREE_EXTENTS_IN_CIRCLE_QUERY = """
+		select distinct ?building1 ?building2 ?building3 where {
+			(?sreg1 ?sreg2 ?sreg3) rcc:part ?circle .
+			?building1 a example:SpatialThing ;
+				georss:where ?sreg1 .
+			?building2 a example:SpatialThing ;
+				georss:where ?sreg2 .
+			?building3 a example:SpatialThing ;
+				georss:where ?sreg3 .
+			?circle a gml:Circle ;
+				gml:radius "0.1"^^xsd:double .
+			# ?circle ogc:covers ?sreg1 .
+			# ?sreg1 rcc:part ?circle .
+			# ?sreg2 rcc:part ?circle .
+			# ?sreg3 rcc:part ?circle .
+			filter (?building1 != ?building2
+				&& ?building1 != ?building3
+				&& ?building2 != ?building3
+			)
+		}
+		""";
 
 	public void testThreeExtentsInCircle() {
 		loadData("queries/BuildingExample2.ttl");
@@ -156,16 +155,15 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String SINGLE_POINT_QUERY = ""
-		+ "SELECT DISTINCT\n"
-		+ "  ?building1\n"
-		+ "WHERE {\n"
-		+ "  ?circle a gml:Circle ;\n"
-		+ "     gml:radius \"5\"^^xsd:double .\n"
-		+ "  ?building1 a example:SpatialThing .\n"
-		+ "  ?building1 georss:where example1:point1 .\n"
-		+ "  example1:point1 rcc:part ?circle .\n"
-		+ "}";
+	private static final String SINGLE_POINT_QUERY = """
+		select distinct ?building1 where {
+			?circle a gml:Circle ;
+				gml:radius "5"^^xsd:double .
+			?building1 a example:SpatialThing ;
+				georss:where example1:point1 .
+			example1:point1 rcc:part ?circle .
+		}
+		""";
 
 	public void testSinglePoint() {
 		loadData("queries/BuildingExample1.ttl");
@@ -182,20 +180,19 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String CIRCLE_EXTENTS_KNOWN_QUERY = ""
-		+ "SELECT DISTINCT\n"
-		+ "  ?building1 ?building2\n"
-		+ "WHERE {\n"
-		+ "  ?circle a gml:Circle ;\n"
-		+ "     gml:radius \"280\"^^xsd:double .\n"
-		+ "  ?building1 a example:SpatialThing .\n"
-		+ "  ?building1 georss:where example1:point1 .\n"
-		//+ "  example1:point1 rcc:part ?circle .\n"
-		+ "  ?building2 a example:SpatialThing .\n"
-		+ "  ?building2 georss:where example1:point2 .\n"
-		+ "  (example1:point1 example1:point2) rcc:part ?circle .\n"
-		+ " FILTER(?building1 != ?building2)\n"
-		+ "}";
+	private static final String CIRCLE_EXTENTS_KNOWN_QUERY = """
+		select distinct ?building1 ?building2 where {
+			?circle a gml:Circle ;
+				gml:radius "280"^^xsd:double .
+			?building1 a example:SpatialThing ;
+				georss:where example1:point1 .
+			# example1:point1 rcc:part ?circle .
+			?building2 a example:SpatialThing ;
+				georss:where example1:point2 .
+			(example1:point1 example1:point2) rcc:part ?circle .
+			filter(?building1 != ?building2)
+		}
+		""";
 
 	public void testCircleExtentsKnown() {
 		loadData("queries/BuildingExample1.ttl");
@@ -216,20 +213,19 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String CIRCLE_RETURN_FLOATER_QUERY = ""
-		+ "SELECT DISTINCT\n"
-		+ "  ?building1 ?building2 ?circle\n"
-		+ "WHERE {\n"
-		+ "  ?circle a gml:Circle ;\n"
-		+ "     gml:radius \"280\"^^xsd:double .\n"
-		+ "  ?building1 a example:SpatialThing .\n"
-		+ "  ?building1 georss:where example1:point1 .\n"
-		//+ "  example1:point1 rcc:part ?circle .\n"
-		+ "  ?building2 a example:SpatialThing .\n"
-		+ "  ?building2 georss:where example1:point2 .\n"
-		+ "  (example1:point1 example1:point2) rcc:part ?circle .\n"
-		+ " FILTER(?building1 != ?building2)\n"
-		+ "}";
+	private static final String CIRCLE_RETURN_FLOATER_QUERY = """
+		select distinct ?building1 ?building2 ?circle where {
+			?circle a gml:Circle ;
+				gml:radius "280"^^xsd:double .
+			?building1 a example:SpatialThing ;
+				georss:where example1:point1 .
+			# example1:point1 rcc:part ?circle .
+			?building2 a example:SpatialThing ;
+				georss:where example1:point2 .
+			(example1:point1 example1:point2) rcc:part ?circle .
+			filter(?building1 != ?building2)
+		}
+		""";
 
 	public void testCircleReturnFloater() {
 		loadData("queries/BuildingExample1.ttl");
@@ -254,20 +250,19 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String CIRCLE_EXTENTS_UNKNOWN_QUERY = ""
-		+ "SELECT DISTINCT\n"
-		+ "  ?building1 ?building2\n"
-		+ "WHERE {\n"
-		+ "  ?circle a gml:Circle ;\n"
-		+ "     gml:radius \"280\"^^xsd:double .\n"
-		+ "  ?building1 a example:SpatialThing .\n"
-		+ "  ?building1 georss:where ?sreg1 .\n"
-		//+ "  ?sreg1 rcc:part ?circle .\n"
-		+ "  ?building2 a example:SpatialThing .\n"
-		+ "  ?building2 georss:where ?sreg2 .\n"
-		+ "  (?sreg1 ?sreg2) rcc:part ?circle .\n"
-		+ " FILTER(?building1 != ?building2)\n"
-		+ "}";
+	private static final String CIRCLE_EXTENTS_UNKNOWN_QUERY = """
+		select distinct ?building1 ?building2 where {
+			?circle a gml:Circle ;
+				gml:radius "280"^^xsd:double .
+			?building1 a example:SpatialThing ;
+				georss:where ?sreg1 .
+			# ?sreg1 rcc:part ?circle .
+			?building2 a example:SpatialThing ;
+				georss:where ?sreg2 .
+			(?sreg1 ?sreg2) rcc:part ?circle .
+			filter(?building1 != ?building2)
+		}
+		""";
 
 	public void testCircleExtentsUnknown() {
 		loadData("queries/BuildingExample1.ttl");
@@ -310,20 +305,19 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String EXTENTS_UNKNOWN_REORDERED_QUERY = ""
-		+ "SELECT DISTINCT\n"
-		+ "  ?building1 ?building2\n"
-		+ "WHERE {\n"
-		+ "  ?circle a gml:Circle ;\n"
-		+ "     gml:radius \"280\"^^xsd:double .\n"
-		+ "  (?sreg1 ?sreg2) rcc:part ?circle .\n"
-		//+ "  ?sreg2 rcc:part ?circle .\n"
-		+ "  ?building1 a example:SpatialThing .\n"
-		+ "  ?building1 georss:where ?sreg1 .\n"
-		+ "  ?building2 a example:SpatialThing .\n"
-		+ "  ?building2 georss:where ?sreg2 .\n"
-		+ " FILTER(?building1 != ?building2)\n"
-		+ "}";
+	private static final String EXTENTS_UNKNOWN_REORDERED_QUERY = """
+		select distinct ?building1 ?building2 where {
+			?circle a gml:Circle ;
+				gml:radius "280"^^xsd:double .
+			(?sreg1 ?sreg2) rcc:part ?circle .
+			# ?sreg2 rcc:part ?circle .
+			?building1 a example:SpatialThing ;
+				georss:where ?sreg1 .
+			?building2 a example:SpatialThing ;
+				georss:where ?sreg2 .
+			filter(?building1 != ?building2)
+		}
+		""";
 
 	public void testExtentsUnknownReorderedQuery() {
 		loadData("queries/BuildingExample1.ttl");
@@ -375,20 +369,19 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String EXTENTS_UNKNOWN_SIZE0_CIRCLE_QUERY = ""
-		+ "SELECT DISTINCT\n"
-		+ "  ?building1 ?building2\n"
-		+ "WHERE {\n"
-		+ "  ?circle a gml:Circle .\n"
-		+ "  ?circle gml:radius \"0.0\"^^xsd:double .\n"
-		+ "  ?building1 a example:SpatialThing .\n"
-		+ "  ?building1 georss:where ?sreg1 .\n"
-		//+ "  ?sreg1 rcc:part ?circle .\n"
-		+ "  ?building2 a example:SpatialThing .\n"
-		+ "  ?building2 georss:where ?sreg2 .\n"
-		+ "  (?sreg1 ?sreg2) rcc:part ?circle .\n"
-		+ " FILTER(?building1 != ?building2)\n"
-		+ "}";
+	private static final String EXTENTS_UNKNOWN_SIZE0_CIRCLE_QUERY = """
+		select distinct ?building1 ?building2 where {
+			?circle a gml:Circle ;
+				gml:radius "0.0"^^xsd:double .
+			?building1 a example:SpatialThing ;
+				georss:where ?sreg1 .
+			# ?sreg1 rcc:part ?circle .
+			?building2 a example:SpatialThing ;
+				georss:where ?sreg2 .
+			(?sreg1 ?sreg2) rcc:part ?circle .
+			filter(?building1 != ?building2)
+		}
+		""";
 
 	public void testExtentsUnknownSize0Circle() {
 		loadData("queries/BuildingExample1.ttl");
@@ -398,16 +391,15 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String EXTENTS_SMALL_CIRCLE_QUERY = ""
-		+ "SELECT DISTINCT\n"
-		+ "  ?reg1 ?reg2\n"
-		+ "WHERE {\n"
-		+ "  ?circle a gml:Circle .\n"
-		+ "  ?circle gml:radius \"0.000000000005\"^^xsd:double .\n"
-		+ "  (?reg1 ?reg2) rcc:part ?circle .\n"
-		//+ "  ?reg2 rcc:part ?circle .\n"
-		+ " FILTER(?reg1 != ?reg2)\n"
-		+ "}";
+	private static final String EXTENTS_SMALL_CIRCLE_QUERY = """
+		select distinct ?reg1 ?reg2 where {
+			?circle a gml:Circle ;
+				gml:radius "0.000000000005"^^xsd:double .
+			(?reg1 ?reg2) rcc:part ?circle .
+			# ?reg2 rcc:part ?circle .
+			filter(?reg1 != ?reg2)
+		}
+		""";
 
 	public void testExtentsSmallCircle() {
 		loadData("queries/BuildingExample1.ttl");
@@ -426,19 +418,18 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String EXTENTS_UNKNOWN_MULTIPLE_RESULTS_QUERY = ""
-		+ "SELECT DISTINCT\n"
-		+ "  ?building1 ?building2\n"
-		+ "WHERE {\n"
-		+ "  ?circle a gml:Circle .\n"
-		+ "  ?circle gml:radius \"500\"^^xsd:double .\n"
-		+ "  ?building1 a example:SpatialThing .\n"
-		+ "  ?building1 georss:where ?sreg1 .\n"
-		+ "  ?building2 a example:SpatialThing .\n"
-		+ "  ?building2 georss:where ?sreg2 .\n"
-		+ " FILTER(?building1 != ?building2)\n"
-		+ "  (?sreg1 ?sreg2) rcc:part ?circle .\n"
-		+ "}";
+	private static final String EXTENTS_UNKNOWN_MULTIPLE_RESULTS_QUERY = """
+		select distinct ?building1 ?building2 where {
+			?circle a gml:Circle ;
+				gml:radius "500"^^xsd:double .
+			?building1 a example:SpatialThing ;
+				georss:where ?sreg1 .
+			?building2 a example:SpatialThing ;
+				georss:where ?sreg2 .
+			filter(?building1 != ?building2)
+			(?sreg1 ?sreg2) rcc:part ?circle .
+		}
+		""";
 
 	public void testExtentsUnknownMultipleResults() {
 		loadData("queries/BuildingExample1.ttl");

@@ -99,11 +99,14 @@ public class KbGraphTest {
 			// graph.add(t);
 			// graph.add(t2);
 			// graph.add(t3);
-			String queryString = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
-				+ "SELECT ?q ?r "
-				+ "WHERE { "
-				+ "?q rdfs:subClassOf ?x . "
-				+ "?q rdfs:label \"Standard\" . " + "?q rdfs:comment ?r}";
+			String queryString = """
+				PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+				SELECT ?q ?r WHERE {
+					?q rdfs:subClassOf ?x .
+					?q rdfs:label "Standard" .
+					?q rdfs:comment ?r .
+				}
+				""";
 			Query query = QueryFactory.create(queryString);
 
 			QueryExecution executionFactory = QueryExecutionFactory.create(query,

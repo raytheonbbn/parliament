@@ -103,13 +103,14 @@ public class KbOpExecutorTest {
 		QueryTestUtil.loadResource("data/data-r2/triple-match/dawg-data-01.ttl", namedGraph);
 
 		// no filter
-		algebra = ""
-			+ "(distinct\n"
-			+ "  (project (?s ?name)\n"
-			+ "      (sequence\n"
-			+ "        (graph ?g (bgp (triple ?s <http://xmlns.com/foaf/0.1/name> ?name)))\n"
-			+ "        (graph ?g (bgp (triple ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>)))"
-			+ "      )))\n";
+		algebra = """
+			(distinct
+				(project (?s ?name)
+						(sequence
+							(graph ?g (bgp (triple ?s <http://xmlns.com/foaf/0.1/name> ?name)))
+							(graph ?g (bgp (triple ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>)))
+						)))
+			""";
 
 		op = SSE.parseOp(algebra);
 
@@ -122,14 +123,15 @@ public class KbOpExecutorTest {
 		assertEquals(3, count);
 
 		// filter name
-		algebra = ""
-			+ "(distinct\n"
-			+ "  (project (?s ?name)\n"
-			+ "    (filter (<http://www.w3.org/2005/xpath-functions#contains> (<http://www.w3.org/2005/xpath-functions#lower-case> ?name) (<http://www.w3.org/2005/xpath-functions#lower-case> \"bob\"))\n"
-			+ "      (sequence\n"
-			+ "        (graph ?g (bgp (triple ?s <http://xmlns.com/foaf/0.1/name> ?name)))\n"
-			+ "        (graph ?g (bgp (triple ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>)))"
-			+ "      ))))\n";
+		algebra = """
+			(distinct
+				(project (?s ?name)
+					(filter (<http://www.w3.org/2005/xpath-functions#contains> (<http://www.w3.org/2005/xpath-functions#lower-case> ?name) (<http://www.w3.org/2005/xpath-functions#lower-case> "bob"))
+						(sequence
+							(graph ?g (bgp (triple ?s <http://xmlns.com/foaf/0.1/name> ?name)))
+							(graph ?g (bgp (triple ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>)))
+						))))
+			""";
 
 		op = SSE.parseOp(algebra);
 		count = 0;
@@ -147,11 +149,11 @@ public class KbOpExecutorTest {
 		KbGraph defaultGraph = dataset.getDefaultGraph();
 		QueryTestUtil.loadResource("data/data-r2/sort/data-sort-numbers.ttl", defaultGraph);
 
-		String algebra = "";
-		algebra = ""
-			+ "(project (?s ?p ?o)\n"
-			+ "  (filter (&& (< ?o 200) (> ?o 5))\n"
-			+ "    (bgp (triple ?s ?p ?o))))";
+		String algebra = """
+			(project (?s ?p ?o)
+				(filter (&& (< ?o 200) (> ?o 5))
+					(bgp (triple ?s ?p ?o))))
+			""";
 
 		Op op = SSE.parseOp(algebra);
 		int count = 0;
@@ -175,14 +177,15 @@ public class KbOpExecutorTest {
 		QueryTestUtil.loadResource("data/data-r2/triple-match/dawg-data-01.ttl", defaultGraph);
 
 		// filter name
-		algebra = ""
-			+ "(distinct\n"
-			+ "  (project (?s ?name)\n"
-			+ "    (filter (<http://www.w3.org/2005/xpath-functions#contains> (<http://www.w3.org/2005/xpath-functions#lower-case> ?name) (<http://www.w3.org/2005/xpath-functions#lower-case> \"bob\"))\n"
-			+ "      (sequence\n"
-			+ "        (bgp (triple ?s <http://xmlns.com/foaf/0.1/name> ?name))\n"
-			+ "        (bgp (triple ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>))"
-			+ "      ))))\n";
+		algebra = """
+			(distinct
+				(project (?s ?name)
+					(filter (<http://www.w3.org/2005/xpath-functions#contains> (<http://www.w3.org/2005/xpath-functions#lower-case> ?name) (<http://www.w3.org/2005/xpath-functions#lower-case> "bob"))
+						(sequence
+							(bgp (triple ?s <http://xmlns.com/foaf/0.1/name> ?name))
+							(bgp (triple ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>))
+						))))
+			""";
 
 		op = SSE.parseOp(algebra);
 		count = 0;

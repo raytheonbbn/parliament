@@ -98,11 +98,12 @@ public class IndexExecutionTest {
 	@Test
 	public void testIndexPropertyFunction() {
 		//loadResource("com/bbn/parliament/jena/query/index/mock/mockdata.ttl", dataset.getDefaultGraph());
-		String algebra = ""
-			+ "(project (?x ?y)\n"
-			+ "  (bgp\n"
-			+ "    (triple ?x <" + MockPropertyFunction.URI + "> ?y)\n"
-			+ "))";
+		String algebra = """
+			(project (?x ?y)
+				(bgp
+					(triple ?x <%1$s> ?y)
+			))
+			""".formatted(MockPropertyFunction.URI);
 
 		Op op = SSE.parseOp(algebra);
 		op = optimizer.rewrite(op);
@@ -114,12 +115,12 @@ public class IndexExecutionTest {
 
 	@Test
 	public void testIndexPatternQuerier1() {
-		String algebra = ""
-			+ "(project (?x ?y)\n"
-			+ "  (bgp\n"
-			//+ "    (triple ?x <http://example.org/data/p> <http://example.org/data/v1>)\n"
-			+ "    (triple ?x <http://example.org/mock#object> ?y)\n"
-			+ "))";
+		String algebra = """
+			(project (?x ?y)
+				(bgp
+					(triple ?x <http://example.org/mock#object> ?y)
+			))
+			""";
 
 		Op op = SSE.parseOp(algebra);
 		op = optimizer.rewrite(op);
@@ -153,12 +154,13 @@ public class IndexExecutionTest {
 		KbGraph defaultGraph = dataset.getDefaultGraph();
 		QueryTestUtil.loadResource("data/data-r2/triple-match/data-01.ttl", defaultGraph);
 
-		String algebra = ""
-			+ "(project (?x ?y)\n"
-			+ "  (bgp\n"
-			+ "    (triple ?x <http://example.org/data/p> <http://example.org/data/v1>)\n"
-			+ "    (triple ?x <http://example.org/mock#mocked> ?y)\n"
-			+ "))";
+		String algebra = """
+			(project (?x ?y)
+				(bgp
+					(triple ?x <http://example.org/data/p> <http://example.org/data/v1>)
+					(triple ?x <http://example.org/mock#mocked> ?y)
+			))
+			""";
 
 		Op op = SSE.parseOp(algebra);
 		op = optimizer.rewrite(op);
@@ -187,14 +189,15 @@ public class IndexExecutionTest {
 		KbGraph defaultGraph = dataset.getDefaultGraph();
 		QueryTestUtil.loadResource("data/data-r2/triple-match/data-01.ttl", defaultGraph);
 
-		String algebra = ""
-			+ "(project (?x ?y)\n"
-			+ "  (bgp\n"
-			+ "    (triple <http://example.org/data/x> <" + MockPropertyFunction.URI + "> ?y)\n"
-			+ "    (triple <http://example.org/data/x> <http://example.org/data/p> <http://example.org/data/v1> )\n"
-			+ "    (triple ?x <http://example.org/data/p> <http://example.org/data/v1> )\n"
-			+ "  )\n"
-			+ ")";
+		String algebra = """
+			(project (?x ?y)
+				(bgp
+					(triple <http://example.org/data/x> <" + MockPropertyFunction.URI + "> ?y)
+					(triple <http://example.org/data/x> <http://example.org/data/p> <http://example.org/data/v1> )
+					(triple ?x <http://example.org/data/p> <http://example.org/data/v1> )
+				)
+			)
+			""";
 
 		Op op = SSE.parseOp(algebra);
 		op = optimizer.rewrite(op);
@@ -216,16 +219,16 @@ public class IndexExecutionTest {
 		KbGraph defaultGraph = dataset.getDefaultGraph();
 		QueryTestUtil.loadResource("com/bbn/parliament/jena/query/index/mock/mockdata.ttl", defaultGraph);
 
-		String algebra = ""
-			+ "(project (?x ?y)\n"
-			+ "  (filter (<= ?y 5)\n"
-			+ "    (bgp\n"
-			+ "      (triple ?x <http://example.org/mock#obj> ?y)\n"
-			//+ "      (triple <http://example.org/data/x> <http://example.org/data/p> <http://example.org/data/v1> )\n"
-			+ "      (triple ?x <http://example.org/data/p> <http://example.org/data/v1> )\n"
-			+ "    )\n"
-			+ "  )\n"
-			+ ")";
+		String algebra = """
+			(project (?x ?y)
+				(filter (<= ?y 5)
+					(bgp
+						(triple ?x <http://example.org/mock#obj> ?y)
+						(triple ?x <http://example.org/data/p> <http://example.org/data/v1> )
+					)
+				)
+			)
+			""";
 
 		Op op = SSE.parseOp(algebra);
 		op = optimizer.rewrite(op);

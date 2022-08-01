@@ -126,13 +126,14 @@ public class KbUnionGraphTest {
 		assertFalse(right.isClosed());
 	}
 
-	private static final String UNION_TEST_QUERY = ""
-		+ "prefix : <http://example.org/data/> "
-		+ "select * where { "
-		+ "  graph <%1$s%2$d> {"
-		+ "    :x %3$s ?o ."
-		+ "  }"
-		+ "}";
+	private static final String UNION_TEST_QUERY = """
+		prefix : <http://example.org/data/>
+		select * where {
+			graph <%1$s%2$d> {
+				:x %3$s ?o .
+			}
+		}
+		""";
 
 	@Test
 	public void testQueryUnionGraph() {

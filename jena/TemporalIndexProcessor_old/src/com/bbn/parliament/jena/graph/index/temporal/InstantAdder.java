@@ -27,13 +27,15 @@ public class InstantAdder extends TIPBuiltin {
 		Node instant = getArg(0, args, context);
 		Node time = getArg(1, args, context);
 		if (!(instant.isURI() || instant.isBlank())) {
-			throw new BuiltinException(this, context, "Builtin " + getName()
-				+ " must have a resource as its first argument.");
+			throw new BuiltinException(this, context,
+				"Builtin %1$s must have a resource as its 1st argument."
+				.formatted(getName()));
 		}
 
 		if (!time.isLiteral()) {
-			throw new BuiltinException(this, context, "Builtin " + getName()
-				+ " must have a literal xsdDateTime as its second and third arguments.");
+			throw new BuiltinException(this, context,
+				"Builtin %1$s must have a literal xsd:dateTime as its 2nd and 3rd arguments."
+				.formatted(getName()));
 		}
 		// TemporalInstant temporalInstant = new TemporalInstant(time);
 		// getTemporalIndexProcessor().addExtent(instant, temporalInstant);

@@ -30,15 +30,15 @@ public class QueryTestMethods extends SpatialTestDataset {
 		super(factoryProperties);
 	}
 
-	private static final String TANGENTIAL_PROPER_PART_POINTS_QUERY = ""
-		+ "SELECT DISTINCT ?a\n"
-		+ "WHERE {\n"
-		+ "?polygon a gml:Polygon .\n"
-		+ "?polygon gml:exterior ?ext .\n"
-		+ "?ext a gml:LinearRing .\n"
-		+ "?ext gml:posList \"-0.5 -0.5 -0.5 6 0.5 6 0.5 -0.5 -0.5 -0.5\" .\n"
-		+ "?a rcc:tangentialProperPart ?polygon .\n"
-		+ "}";
+	private static final String TANGENTIAL_PROPER_PART_POINTS_QUERY = """
+		select distinct ?a where {
+			?polygon a gml:Polygon ;
+				gml:exterior ?ext .
+			?ext a gml:LinearRing ;
+				gml:posList "-0.5 -0.5 -0.5 6 0.5 6 0.5 -0.5 -0.5 -0.5" .
+			?a rcc:tangentialProperPart ?polygon .
+		}
+		""";
 
 	public void testTangentialProperPartPoints() {
 		loadData("queries/BuildingExample1.ttl");
@@ -49,15 +49,15 @@ public class QueryTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String NON_TANGENTIAL_PROPER_PART_POINTS_QUERY = ""
-		+ "SELECT DISTINCT ?a\n"
-		+ "WHERE {\n"
-		+ "?polygon a gml:Polygon .\n"
-		+ "?polygon gml:exterior ?ext .\n"
-		+ "?ext a gml:LinearRing .\n"
-		+ "?ext gml:posList \"34.8448761696609 33 34.8448761696609 35.9148048779863 34.8448761696609 37 40 37 40 33 34.8448761696609 33\" .\n"
-		+ "?a rcc:nonTangentialProperPart ?polygon .\n"
-		+ "}";
+	private static final String NON_TANGENTIAL_PROPER_PART_POINTS_QUERY = """
+		select distinct ?a where {
+			?polygon a gml:Polygon ;
+				gml:exterior ?ext .
+			?ext a gml:LinearRing ;
+				gml:posList "34.8448761696609 33 34.8448761696609 35.9148048779863 34.8448761696609 37 40 37 40 33 34.8448761696609 33" .
+			?a rcc:nonTangentialProperPart ?polygon .
+		}
+		""";
 
 	public void testNonTangentialProperPartPoints() {
 		loadData("queries/BuildingExample1.ttl");
@@ -69,15 +69,15 @@ public class QueryTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String NON_TANGENTIAL_PROPER_PART_MULTIPLE_QUERY = ""
-		+ "SELECT DISTINCT ?a\n"
-		+ "WHERE {\n"
-		+ "?polygon a gml:Polygon .\n"
-		+ "?polygon gml:exterior ?ext .\n"
-		+ "?ext a gml:LinearRing .\n"
-		+ "?ext gml:posList \"-1 -1 -1 6 1 16 1 -1 -1 -1\" .\n"
-		+ "?a rcc:nonTangentialProperPart ?polygon .\n"
-		+ "}";
+	private static final String NON_TANGENTIAL_PROPER_PART_MULTIPLE_QUERY = """
+		select distinct ?a where {
+			?polygon a gml:Polygon ;
+				gml:exterior ?ext .
+			?ext a gml:LinearRing ;
+				gml:posList "-1 -1 -1 6 1 16 1 -1 -1 -1" .
+			?a rcc:nonTangentialProperPart ?polygon .
+		}
+		""";
 
 	public void testNonTangentialProperPartMultiple() {
 		loadData("queries/BuildingExample1.ttl");
@@ -88,15 +88,15 @@ public class QueryTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String PROPER_PART_MULTIPLE_RESULTS_QUERY = ""
-		+ "SELECT DISTINCT ?a\n"
-		+ "WHERE {\n"
-		+ "?polygon a gml:Polygon .\n"
-		+ "?polygon gml:exterior ?ext .\n"
-		+ "?ext a gml:LinearRing .\n"
-		+ "?ext gml:posList \"34.8448761696609 33 34.8448761696609 35.9148048779863 34.8448761696609 37 40 37 40 33 34.8448761696609 33\" .\n"
-		+ "?a rcc:properPart ?polygon .\n"
-		+ "}";
+	private static final String PROPER_PART_MULTIPLE_RESULTS_QUERY = """
+		select distinct ?a where {
+			?polygon a gml:Polygon ;
+				gml:exterior ?ext .
+			?ext a gml:LinearRing ;
+				gml:posList "34.8448761696609 33 34.8448761696609 35.9148048779863 34.8448761696609 37 40 37 40 33 34.8448761696609 33" .
+			?a rcc:properPart ?polygon .
+		}
+		""";
 
 	public void testProperPartMultipleResults() {
 		loadData("queries/BuildingExample1.ttl");
@@ -107,15 +107,15 @@ public class QueryTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String TANGENTIAL_PROPER_PART_REGION_QUERY = ""
-		+ "SELECT DISTINCT ?a\n"
-		+ "WHERE {\n"
-		+ "?polygon a gml:Polygon .\n"
-		+ "?polygon gml:exterior ?ext .\n"
-		+ "?ext a gml:LinearRing .\n"
-		+ "?ext gml:posList \"34.8448780 33 34.8448780 35.9148060 34.8448780 37 40 37 40 33 34.8448780 33\" .\n"
-		+ "?a rcc:tangentialProperPart ?polygon .\n"
-		+ "}";
+	private static final String TANGENTIAL_PROPER_PART_REGION_QUERY = """
+		select distinct ?a where {
+			?polygon a gml:Polygon ;
+				gml:exterior ?ext .
+			?ext a gml:LinearRing ;
+				gml:posList "34.8448780 33 34.8448780 35.9148060 34.8448780 37 40 37 40 33 34.8448780 33" .
+			?a rcc:tangentialProperPart ?polygon .
+		}
+		""";
 
 	public void testTangentialProperPartRegion() {
 		loadData("queries/BuildingExample1.ttl");
@@ -132,15 +132,15 @@ public class QueryTestMethods extends SpatialTestDataset {
 		// for the case in which ?a represents a gml:Point and not a gml:Polygon
 	}
 
-	private static final String A_QUERY_1 = ""
-		+ "SELECT DISTINCT ?a\n"
-		+ "WHERE {\n"
-		+ "?a a example:SpatialThing .\n"
-		+ "?a georss:where ?extent .\n"
-		+ "?extent a gml:Polygon .\n"
-		+ "?extent gml:exterior ?ext .\n"
-		+ "?ext a gml:LinearRing .\n"
-		+ "}";
+	private static final String A_QUERY_1 = """
+		select distinct ?a where {
+			?a a example:SpatialThing ;
+				georss:where ?extent .
+			?extent a gml:Polygon ;
+				gml:exterior ?ext .
+			?ext a gml:LinearRing .
+		}
+		""";
 
 	public void testQuery() {
 		loadData("queries/BuildingExample1.ttl");
@@ -152,37 +152,31 @@ public class QueryTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String BUILDING_QUERY = ""
-		+ "SELECT DISTINCT  ?building1 ?building2 ?building3 ?building4\n"
-		+ "WHERE {\n"
-		+ "?circle   rdf:type              gml:Circle ;\n"
-		+ "          gml:radius            \"50\"^^xsd:double .\n"
-		+ "?building1\n"
-		+ "          rdf:type              example:Building ;\n"
-		+ "          georss:where          ?sreg1 .\n"
-		+ "?building2\n"
-		+ "          rdf:type              example:Building ;\n"
-		+ "          georss:where          ?sreg2 .\n"
-		+ "?building3\n"
-		+ "          rdf:type              example:Building ;\n"
-		+ "          georss:where          ?sreg3 .\n"
-		+ "?building4\n"
-		+ "          rdf:type              example:Building ;\n"
-		+ "          georss:where          ?sreg4 .\n"
-		+ "(?sreg1 ?sreg2 ?sreg3 ?sreg4) rcc:part ?circle .\n"
-		//+ "?sreg1 rcc:part ?circle .\n"	FIXME: Something is wrong here
-		//+ "?sreg2 rcc:part ?circle .\n"	These four lines return a different result than the line above.
-		//+ "?sreg3 rcc:part ?circle .\n"	Also this test causes the ARQInternalErrorException
-		//+ "?sreg4 rcc:part ?circle .\n"	with the message "Attempt to reassign ?building1 to ?building1" etc.
-		+ "FILTER (( ?building1 != ?building2 )\n"
-		+ " &&\n"
-		+ "( ?building1 != ?building3 ) &&\n"
-		+ "( ?building1 != ?building4 ) &&\n"
-		+ "( ?building2 != ?building3 ) &&\n"
-		+ "( ?building2 != ?building4 ) &&\n"
-		+ "( ?building3 != ?building4 )\n"
-		+ ")\n"
-		+ "}";
+	private static final String BUILDING_QUERY = """
+		select distinct ?building1 ?building2 ?building3 ?building4 where {
+			?circle a gml:Circle ;
+				gml:radius "50"^^xsd:double .
+			?building1 a example:Building ;
+				georss:where ?sreg1 .
+			?building2 a example:Building ;
+				georss:where ?sreg2 .
+			?building3 a example:Building ;
+				georss:where ?sreg3 .
+			?building4 a example:Building ;
+				georss:where ?sreg4 .
+			(?sreg1 ?sreg2 ?sreg3 ?sreg4) rcc:part ?circle .
+			# ?sreg1 rcc:part ?circle .	# FIXME: Something is wrong here. These four lines
+			# ?sreg2 rcc:part ?circle .	# return a different result than the line above. Also,
+			# ?sreg3 rcc:part ?circle .	# this test causes the ARQInternalErrorException with
+			# ?sreg4 rcc:part ?circle .	# message "Attempt to reassign ?building1 to ?building1".
+			filter (( ?building1 != ?building2 )
+				&& ( ?building1 != ?building3 )
+				&& ( ?building1 != ?building4 )
+				&& ( ?building2 != ?building3 )
+				&& ( ?building2 != ?building4 )
+				&& ( ?building3 != ?building4 ))
+		}
+		""";
 
 	public void testBuildingQuery() {
 		loadData("queries/BuildingQueryExample.ttl");
@@ -199,15 +193,16 @@ public class QueryTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String A_QUERY_2 = ""
-		+ "SELECT DISTINCT ?a WHERE {\n"
-		+ "?circle a            gml:Circle ;\n"
-		+ "        gml:radius   \"10\"^^xsd:double ;\n"
-		+ "        gml:pos      \"34.85 35.91\" .\n"
-		+ "?a      a            example:SpatialThing ;\n"
-		+ "        georss:where ?sreg1 .\n"
-		+ "?sreg1  rcc:part     ?circle .\n"
-		+ "}";
+	private static final String A_QUERY_2 = """
+		select distinct ?a where {
+			?circle a gml:Circle ;
+				gml:radius "10"^^xsd:double ;
+				gml:pos "34.85 35.91" .
+			?a a example:SpatialThing ;
+				georss:where ?sreg1 .
+			?sreg1 rcc:part ?circle .
+		}
+		""";
 
 	public void testAQuery() {
 		loadData("queries/BuildingExample1.ttl");
@@ -218,16 +213,16 @@ public class QueryTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String CIRCLE_QUERY = ""
-		+ "SELECT DISTINCT  ?a\n"
-		+ "WHERE {\n"
-		+ "?circle a            gml:Circle ;\n"
-		+ "        gml:radius   \"50\"^^xsd:double ;\n"
-		+ "        gml:pos      \"35 36\" .\n"
-		+ "?a      a            example:Building ;\n"
-		+ "        georss:where ?sreg1 .\n"
-		+ "?sreg1  rcc:part     ?circle .\n"
-		+ "}";
+	private static final String CIRCLE_QUERY = """
+		select distinct ?a where {
+			?circle a gml:Circle ;
+				gml:radius "50"^^xsd:double ;
+				gml:pos "35 36" .
+			?a a example:Building ;
+				georss:where ?sreg1 .
+			?sreg1 rcc:part ?circle .
+		}
+		""";
 
 	public void testQueryCircle() {
 		loadData("queries/BuildingExample1.ttl");
@@ -238,15 +233,15 @@ public class QueryTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String COVERED_CAMPUS_QUERY = ""
-		+ "SELECT DISTINCT ?a ?c\n"
-		+ "WHERE {\n"
-		+ "?a a example:Building ;\n"
-		+ "	georss:where ?buildingLoc .\n"
-		+ "?c a example:Campus ;\n"
-		+ " georss:where ?campusLoc .\n"
-		+ "?campusLoc ogc:covers ?buildingLoc .\n"
-		+ "}";
+	private static final String COVERED_CAMPUS_QUERY = """
+		select distinct ?a ?c where {
+			?a a example:Building ;
+				georss:where ?buildingLoc .
+			?c a example:Campus ;
+				georss:where ?campusLoc .
+			?campusLoc ogc:covers ?buildingLoc .
+		}
+		""";
 
 	public void testQueryCoveredCampus() {
 		loadData("queries/BuildingExample1.ttl");
@@ -288,11 +283,11 @@ public class QueryTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String ONLY_PROPERTY_FUNCTION_QUERY = ""
-		+ "SELECT DISTINCT ?a\n"
-		+ "WHERE {\n"
-		+ "cities:polyLondon ogc:covers ?a .\n"
-		+ "}";
+	private static final String ONLY_PROPERTY_FUNCTION_QUERY = """
+		select distinct ?a where {
+			cities:polyLondon ogc:covers ?a .
+		}
+		""";
 
 	public void testOnlyPropertyFunctionQuery() {
 		loadData("queries/Cities.ttl");
@@ -301,12 +296,12 @@ public class QueryTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String ONLY_PROPERTY_FUNCTION_UNBOUND_QUERY = ""
-		+ "SELECT DISTINCT ?a\n"
-		+ "WHERE {\n"
-		+ "?a ogc:covers ?b .\n"
-		+ "FILTER (?a != ?b) .\n"
-		+ "}";
+	private static final String ONLY_PROPERTY_FUNCTION_UNBOUND_QUERY = """
+		select distinct ?a where {
+			?a ogc:covers ?b .
+			filter (?a != ?b) .
+		}
+		""";
 
 	public void testOnlyPropertyFunctionQueryUnbound() {
 		loadData("queries/Cities.ttl");
@@ -315,11 +310,11 @@ public class QueryTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String ONLY_PROPERTY_FUNCTION_NON_INDEXED_URI_QUERY = ""
-		+ "SELECT DISTINCT ?a\n"
-		+ "WHERE {\n"
-		+ "cities:polyNodnol ogc:covers ?a .\n"
-		+ "}";
+	private static final String ONLY_PROPERTY_FUNCTION_NON_INDEXED_URI_QUERY = """
+		select distinct ?a where {
+			cities:polyNodnol ogc:covers ?a .
+		}
+		""";
 
 	public void testOnlyPropertyFunctionQueryNonIndexedURI() {
 		loadData("queries/Cities.ttl");
@@ -328,16 +323,15 @@ public class QueryTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String SHARED_CONTEXT_QUERY = ""
-		+ "SELECT DISTINCT *\n"
-		+ "WHERE {\n"
-		//+ "?a ?b ?c .\n"
-		+ "?z a gml:Polygon .\n"
-		+ "?z rdfs:label ?cover .\n"
-		+ "?z ogc:covers ?a .\n"
-		+ "?z ogc:covers ?b .\n"
-		+ "FILTER (?a != ?b && ?z != ?a && ?z != ?b).\n"
-		+ "}";
+	private static final String SHARED_CONTEXT_QUERY = """
+		select distinct * where {
+			?z a gml:Polygon ;
+				rdfs:label ?cover ;
+				ogc:covers ?a ;
+				ogc:covers ?b .
+			filter (?a != ?b && ?z != ?a && ?z != ?b).
+		}
+		""";
 
 	public void testSharedContext() {
 		//loadData("queries/Cities.ttl");
@@ -360,26 +354,32 @@ public class QueryTestMethods extends SpatialTestDataset {
 		//triples.add(Triple.create(NodeCreateUtils.create("?place"),
 		//	NodeCreateUtils.create(StdConstants.GML_NS + "representativeExtent"),
 		//	NodeCreateUtils.create("?placeExtent")));
-		triples.add(Triple.create(NodeCreateUtils.create("?ext"),
+		triples.add(Triple.create(
+			NodeCreateUtils.create("?ext"),
 			NodeCreateUtils.create(StdConstants.RCC_EXT_NS + "invProperPart"),
 			NodeCreateUtils.create("?placeExtent")));
-		triples.add(Triple.create(NodeCreateUtils.create("?reg"),
+		triples.add(Triple.create(
+			NodeCreateUtils.create("?reg"),
 			NodeCreateUtils.create(RDF.type.getURI()),
 			NodeCreateUtils.create(StdConstants.BUFFER_NS + "Buffer")));
-		triples.add(Triple.create(NodeCreateUtils.create("?reg"),
+		triples.add(Triple.create(
+			NodeCreateUtils.create("?reg"),
 			NodeCreateUtils.create(StdConstants.BUFFER_NS + "distance"),
 			Node.createLiteral("\"580\"^^xsd:double")));
-		triples.add(Triple.create(NodeCreateUtils.create("?reg"),
+		triples.add(Triple.create(
+			NodeCreateUtils.create("?reg"),
 			NodeCreateUtils.create(StdConstants.BUFFER_NS + "extent"),
 			NodeCreateUtils.create("?ext")));
-		triples.add(Triple.create(NodeCreateUtils.create("?ext"),
+		triples.add(Triple.create(
+			NodeCreateUtils.create("?ext"),
 			NodeCreateUtils.create(RDF.type.getURI()),
 			NodeCreateUtils.create(StdConstants.GML_NS + "Point")));
-		triples.add(Triple.create(NodeCreateUtils.create("?ext"),
+		triples.add(Triple.create(
+			NodeCreateUtils.create("?ext"),
 			NodeCreateUtils.create(StdConstants.GML_NS + "pos"),
 			Node.createLiteral("0 0")));
 
-		String query = "SELECT ?placeExtent WHERE {\n";
+		String query = "select ?placeExtent where {\n";
 		for (Triple t : triples) {
 			query += t.getSubject() + " <" + t.getPredicate().getURI() + "> ";
 			if (t.getObject().isLiteral()) {

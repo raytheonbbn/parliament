@@ -49,8 +49,8 @@ public class SpatialGeometryFactory {
 	public static Coordinate[] getCoordinatesFromPosList(String posList) {
 		String[] degrees = posList.split(" ");
 		if (degrees.length % 2 != 0) {
-			throw new RuntimeException("'" + posList
-				+ "' does not contain an even number of values");
+			throw new IllegalArgumentException(
+				"'%1$s' does not contain an even number of values".formatted(posList));
 		}
 
 		List<Coordinate> coords = new ArrayList<>();

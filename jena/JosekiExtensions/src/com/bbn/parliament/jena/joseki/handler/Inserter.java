@@ -99,17 +99,17 @@ public class Inserter {
 			RDFFormat format = null;
 			if ("auto".equalsIgnoreCase(dataFormat)) {
 				if (null == filename || filename.length() == 0) {
-					throw new ServletErrorResponseException("The serialization format of "
-						+ "the RDF was specified to be determined by the filename "
-						+ "extension, but the filename was not availible.  Please "
-						+ "resubmit with the proper data format specified.");
+					throw new ServletErrorResponseException("""
+						The serialization format of the RDF was specified to be determined by \
+						the filename extension, but the filename was not available.  Please \
+						resubmit with the proper data format specified.""");
 				} else {
 					format = RDFFormat.parseFilename(filename);
 					if (RDFFormat.UNKNOWN == format) {
-						throw new ServletErrorResponseException("Unable to determine the "
-							+ "serialization format of the RDF document from the "
-							+ "filename extension.  Please resubmit with the "
-							+ "proper data format specified.");
+						throw new ServletErrorResponseException("""
+							Unable to determine the serialization format of the RDF document \
+							from the filename extension.  Please resubmit with the proper data \
+							format specified.""");
 					} else {
 						LOG.debug("Mapping input filename '{}' to {} format",
 							filename, format);
@@ -160,9 +160,9 @@ public class Inserter {
 				String zipEntryName = ze.getName();
 				FileNameDecomposition decomp = new FileNameDecomposition(zipEntryName);
 				if (RDFFormat.UNKNOWN == decomp.getFormat()) {
-					throw new ServletErrorResponseException("Unsupported file extension "
-						+ "on \"%1$s\" -- must be one of 'ttl', 'n3', 'nt', "
-						+ "'rdf', 'owl', or 'xml'", zipEntryName);
+					throw new ServletErrorResponseException("""
+						Unsupported file extension on "%1$s" -- must be one of 'ttl', 'n3', \
+						'nt', 'rdf', 'owl', or 'xml'""", zipEntryName);
 				}
 
 				IInputStreamProvider entryStrmProvider = getZipStrmProvider(zin);
@@ -205,8 +205,9 @@ public class Inserter {
 				String dirName = stmt.getObject().toString();
 
 				if (!dirNamesSeen.contains(dirName)) {
-					throw new ServletErrorResponseException("Master Graph contains a "
-						+ "directory name (%1$s) not present in the zip file", dirName);
+					throw new ServletErrorResponseException("""
+						Master Graph contains a directory name (%1$s) not present in \
+						the zip file""", dirName);
 				}
 
 				dirToGraphNameMap.put(dirName, graphNm);
@@ -231,8 +232,9 @@ public class Inserter {
 				}
 			}
 
-			throw new ServletErrorResponseException("Mismatch between the number of files "
-				+ "in the zip file and the number in the Master Graph.  There are extra directories in the zip file: " + sb.toString());
+			throw new ServletErrorResponseException("""
+				Mismatch between the number of files in the zip file and the number in \
+				the Master Graph.  There are extra directories in the zip file: %1$s""", sb);
 		}
 
 		// Now that we like the input, we can clear the old repo
