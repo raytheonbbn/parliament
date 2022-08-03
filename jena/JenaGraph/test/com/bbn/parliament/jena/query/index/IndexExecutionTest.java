@@ -192,12 +192,12 @@ public class IndexExecutionTest {
 		String algebra = """
 			(project (?x ?y)
 				(bgp
-					(triple <http://example.org/data/x> <" + MockPropertyFunction.URI + "> ?y)
+					(triple <http://example.org/data/x> <%1$s> ?y)
 					(triple <http://example.org/data/x> <http://example.org/data/p> <http://example.org/data/v1> )
 					(triple ?x <http://example.org/data/p> <http://example.org/data/v1> )
 				)
 			)
-			""";
+			""".formatted(MockPropertyFunction.URI);
 
 		Op op = SSE.parseOp(algebra);
 		op = optimizer.rewrite(op);

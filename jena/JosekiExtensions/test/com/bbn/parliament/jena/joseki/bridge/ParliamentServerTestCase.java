@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +14,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -60,6 +63,7 @@ public class ParliamentServerTestCase {
 	private static final String[] RSRCS_TO_LOAD = { "univ-bench.owl", "University15_20.owl.zip" };
 	private static final String CSV_QUOTE_TEST_INPUT = "csv-quote-test-input.ttl";
 	private static final String CSV_QUOTE_TEST_EXPECTED_RESULT = "csv-quote-test-expected-result.csv";
+	private static final String CSV_QUOTE_TEST_ACTUAL_CSV_RESULT = "../csv-quote-test-actual-result.csv";
 	private static final String CSV_QUOTE_TEST_ACTUAL_XML_RESULT = "../csv-quote-test-actual-result.xml";
 	private static final String TEST_SUBJECT = "http://example.org/#Test";
 	private static final String TEST_CLASS = "http://example.org/#TestClass";
@@ -431,7 +435,7 @@ public class ParliamentServerTestCase {
 
 		String actualResponse;
 		Map<String, Object> params = new HashMap<>();
-		params.put("query", String.format(CSV_QUOTING_TEST_QUERY));
+		params.put("query", CSV_QUOTING_TEST_QUERY);
 		params.put("stylesheet", "/xml-to-csv.xsl");
 		try (InputStream is = rm.sendRequest(params)) {
 			actualResponse = readStreamToEnd(is);
@@ -444,6 +448,9 @@ public class ParliamentServerTestCase {
 
 		// In case we are about to fail, record the XML result set to a file so we can diagnose:
 		if (!Objects.equals(expectedResponse, actualResponse)) {
+			Path actualCsvFile = new File(CSV_QUOTE_TEST_ACTUAL_CSV_RESULT).toPath();
+			Files.writeString(actualCsvFile, actualResponse, StandardCharsets.UTF_8);
+
 			params.remove("stylesheet");
 			try (
 				InputStream is = rm.sendRequest(params);
