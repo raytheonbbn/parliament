@@ -58,8 +58,8 @@ import test_util.RdfResourceLoader;
 public class ParliamentServerTestCase {
 	private static final String HOST = "localhost";
 	private static final String PORT = System.getProperty("jetty.port", "8586");
-	private static final String SPARQL_URL = String.format(RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL, HOST, PORT);
-	private static final String BULK_URL = String.format(RemoteModel.DEFAULT_BULK_ENDPOINT_URL, HOST, PORT);
+	private static final String SPARQL_URL = RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL.formatted(HOST, PORT);
+	private static final String BULK_URL = RemoteModel.DEFAULT_BULK_ENDPOINT_URL.formatted(HOST, PORT);
 	private static final String[] RSRCS_TO_LOAD = { "univ-bench.owl", "University15_20.owl.zip" };
 	private static final String CSV_QUOTE_TEST_INPUT = "csv-quote-test-input.ttl";
 	private static final String CSV_QUOTE_TEST_EXPECTED_RESULT = "csv-quote-test-expected-result.csv";
@@ -195,12 +195,12 @@ public class ParliamentServerTestCase {
 		testModel.add(testSubject, RDF.type, testClass);
 		rm.insertStatements(testModel);
 
-		String triples = String.format("<%1$s> <%2$s> \"%3$s\" .",
-			TEST_SUBJECT, RDFS.label, TEST_LITERAL);
+		String triples = "<%1$s> <%2$s> \"%3$s\" ."
+			.formatted(TEST_SUBJECT, RDFS.label, TEST_LITERAL);
 		rm.insertStatements(triples, RDFFormat.NTRIPLES, null, true);
 
-		String query = String.format("select * where { ?thing a <%1$s> ; <%2$s> ?label . }",
-			TEST_CLASS, RDFS.label);
+		String query = "select * where { ?thing a <%1$s> ; <%2$s> ?label . }"
+			.formatted(TEST_CLASS, RDFS.label);
 		ResultSet rs = rm.selectQuery(query);
 		boolean foundIt = false;
 		while (rs.hasNext()) {
@@ -226,8 +226,8 @@ public class ParliamentServerTestCase {
 	@SuppressWarnings("static-method")
 	@Test
 	public void remoteModelDeleteAndQueryTest() throws IOException {
-		String stmt = String.format("<http://example.org/foo> <%1$s> \"foo\" .", RDFS.label);
-		String query = String.format("ask where { %1$s }", stmt);
+		String stmt = "<http://example.org/foo> <%1$s> \"foo\" .".formatted(RDFS.label);
+		String query = "ask where { %1$s }".formatted(stmt);
 
 		assertFalse(rm.askQuery(query));
 		rm.insertStatements(stmt, RDFFormat.NTRIPLES, null, true);
@@ -242,10 +242,10 @@ public class ParliamentServerTestCase {
 	{
 		String d = "http://example.org/doughnut";
 		String y = "http://example.org/yummy";
-		String update = String.format("%%1$s data { <%1$s> a <%2$s> . }", d, y);
-		String query = String.format("select * where { ?thing a <%1$s> }", y);
+		String update = "%%1$s data { <%1$s> a <%2$s> . }".formatted(d, y);
+		String query = "select * where { ?thing a <%1$s> }".formatted(y);
 
-		rm.updateQuery(String.format(update, "insert"));
+		rm.updateQuery(update.formatted("insert"));
 
 		ResultSet rs = rm.selectQuery(query);
 		boolean foundIt = false;
@@ -257,7 +257,7 @@ public class ParliamentServerTestCase {
 		}
 		assertTrue(foundIt);
 
-		rm.updateQuery(String.format(update, "delete"));
+		rm.updateQuery(update.formatted("delete"));
 
 		rs = rm.selectQuery(query);
 		foundIt = false;
@@ -277,14 +277,14 @@ public class ParliamentServerTestCase {
 		String graphUri = "http://example.org/foo/bar/#Graph2";
 		String bs = "http://example.org/brusselsprouts";
 		String y = "http://example.org/yucky";
-		String updateQuery = String.format("%%1$s <%1$s> { <%2$s> a <%3$s> . }",
-			graphUri, bs, y);
-		String query = String.format("select * where { graph <%1$s> {?thing a <%2$s> } }",
-			graphUri, y);
+		String updateQuery = "%%1$s <%1$s> { <%2$s> a <%3$s> . }"
+			.formatted(graphUri, bs, y);
+		String query = "select * where { graph <%1$s> {?thing a <%2$s> } }"
+			.formatted(graphUri, y);
 
 		rm.createNamedGraph(graphUri);
 
-		rm.updateQuery(String.format(updateQuery, "insert data into"));
+		rm.updateQuery(updateQuery.formatted("insert data into"));
 
 		ResultSet rs = rm.selectQuery(query);
 		boolean foundIt = false;
@@ -296,7 +296,7 @@ public class ParliamentServerTestCase {
 		}
 		assertTrue(foundIt);
 
-		rm.updateQuery(String.format(updateQuery, "delete data from"));
+		rm.updateQuery(updateQuery.formatted("delete data from"));
 
 		rs = rm.selectQuery(query);
 		foundIt = false;
@@ -357,11 +357,10 @@ public class ParliamentServerTestCase {
 	@Test
 	public void remoteModelInsertQueryNamedGraphTest() throws IOException {
 		String graphUri = "http://example.org/foo/bar/#Graph3";
-		String triples = String.format("<%1$s> <%2$s> <%3$s> .",
-			TEST_SUBJECT, RDF.type, TEST_CLASS);
-		String query = String.format(
-			"select * where { ?x a <%1$s> . graph <%2$s> { ?x a <%1$s> } }",
-			TEST_CLASS, graphUri);
+		String triples = "<%1$s> <%2$s> <%3$s> ."
+			.formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
+		String query = "select * where { ?x a <%1$s> . graph <%2$s> { ?x a <%1$s> } }"
+			.formatted(TEST_CLASS, graphUri);
 
 		rm.createNamedGraph(graphUri);
 
@@ -386,13 +385,12 @@ public class ParliamentServerTestCase {
 		String graph1Uri = "http://example.org/foo/bar/#Graph4";
 		String graph2Uri = "http://example.org/foo/bar/#Graph5";
 		String unionGraphUri = "http://example.org/foo/bar/#UnionGraph";
-		String triple1 = String.format("<%1$s> <%2$s> <%3$s1> .",
-			TEST_SUBJECT, RDF.type, TEST_CLASS);
-		String triple2 = String.format("<%1$s> <%2$s> <%3$s2> .",
-			TEST_SUBJECT, RDF.type, TEST_CLASS);
-		String query = String.format(
-			"select * where { graph <%1$s> { ?x a <%2$s1> , <%2$s2> . } }",
-			unionGraphUri, TEST_CLASS);
+		String triple1 = "<%1$s> <%2$s> <%3$s1> ."
+			.formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
+		String triple2 = "<%1$s> <%2$s> <%3$s2> ."
+			.formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
+		String query = "select * where { graph <%1$s> { ?x a <%2$s1> , <%2$s2> . } }"
+			.formatted(unionGraphUri, TEST_CLASS);
 
 		rm.createNamedGraph(graph1Uri);
 		rm.insertStatements(triple1, RDFFormat.NTRIPLES, null, graph1Uri, true);
@@ -466,7 +464,7 @@ public class ParliamentServerTestCase {
 	private InputStream getResourceAsStream(String resourceName) {
 		InputStream result = getClass().getResourceAsStream(resourceName);
 		if (result == null) {
-			fail(String.format("Resource not found: '%1$s'", resourceName));
+			fail("Resource not found: '%1$s'".formatted(resourceName));
 		}
 		return result;
 	}
@@ -489,7 +487,7 @@ public class ParliamentServerTestCase {
 	}
 
 	private static ResultSet doQuery(String queryFmt, Object... args) {
-		try (CloseableQueryExec qe = new CloseableQueryExec(SPARQL_URL, String.format(queryFmt, args))) {
+		try (CloseableQueryExec qe = new CloseableQueryExec(SPARQL_URL, queryFmt.formatted(args))) {
 			return qe.execSelect();
 		}
 	}
@@ -525,7 +523,7 @@ public class ParliamentServerTestCase {
 	}
 
 	private static void doUpdate(String queryFmt, Object... args) {
-		UpdateRequest ur = UpdateFactory.create(String.format(queryFmt, args));
+		UpdateRequest ur = UpdateFactory.create(queryFmt.formatted(args));
 		UpdateProcessor exec = UpdateExecutionFactory.createRemote(ur, SPARQL_URL);
 		executeUpdate(exec);
 	}

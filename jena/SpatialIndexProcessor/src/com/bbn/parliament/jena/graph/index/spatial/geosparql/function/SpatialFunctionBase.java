@@ -35,7 +35,7 @@ public abstract class SpatialFunctionBase implements Function {
 		throws QueryExecException {
 		Node node = nv.asNode();
 		if (!node.isLiteral() || !(node.getLiteralDatatype() instanceof GeoSPARQLLiteral)) {
-			throw new QueryExecException(String.format("%s is not an %s or %s",
+			throw new QueryExecException("%s is not an %s or %s".formatted(
 				node.toString(), WKT.WKTLiteral.getURI(), GML.GMLLiteral.getURI()));
 		}
 	}
@@ -95,10 +95,8 @@ public abstract class SpatialFunctionBase implements Function {
 					message.append(", ");
 				}
 			}
-			throw new QueryBuildException(
-				String.format("%s requires %d arguments: %s",
-					uri, argTypes.length,
-					message));
+			throw new QueryBuildException("%s requires %d arguments: %s".formatted(
+				uri, argTypes.length, message));
 		}
 	}
 
@@ -117,10 +115,8 @@ public abstract class SpatialFunctionBase implements Function {
 			MathTransform transform = CACHE.getTransform(source, destination);
 			projected = JTS.transform(geometry, transform);
 		} catch (MismatchedDimensionException | FactoryException | TransformException ex) {
-			throw new QueryBuildException(
-				String.format("Error while project geometry from %1$s to %2$s",
-					geometry.getUserData().toString(), srsCode),
-				ex);
+			throw new QueryBuildException("Error while project geometry from %1$s to %2$s"
+				.formatted(geometry.getUserData(), srsCode), ex);
 		}
 		return projected;
 	}

@@ -68,9 +68,8 @@ public class QueryHandler {
 		} catch (TrackableException | DataFormatException | MissingGraphException | QueryExecutionException ex) {
 			throw new IOException("Error while executing query", ex);
 		} catch (QueryParseException ex) {
-			LOG.warn(LogUtil.fixEolsForLogging(String.format(
-				"Query parsing error:%n    %1$s%n%n%2$s",
-				ex.getMessage(), query)));
+			LOG.warn(LogUtil.fixEolsForLogging("Query parsing error:%n    %1$s%n%n%2$s"
+				.formatted(ex.getMessage(), query)));
 			throw ex;
 		}
 	}

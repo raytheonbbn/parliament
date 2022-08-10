@@ -87,8 +87,8 @@ public class RemoteExporter {
 				throw new CmdLineException("The port %1$d must be positive", port);
 			}
 
-			endPointUrl = String.format(RemoteModel.DEFAULT_BULK_ENDPOINT_URL, hostName,
-				Integer.toString(port) + "/export");
+			endPointUrl = RemoteModel.DEFAULT_BULK_ENDPOINT_URL.formatted(
+				hostName, Integer.toString(port)) + "/export";
 			saveDir = new File((args.length == 3) ? args[2] : ".");
 
 			if (saveDir.exists() && !saveDir.isDirectory()) {

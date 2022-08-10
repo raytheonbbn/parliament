@@ -17,7 +17,7 @@ public class InterruptedStmtIterationException extends RuntimeException {
 	}
 
 	public InterruptedStmtIterationException(String fmt, Object... args) {
-		super(String.format(fmt, args));
+		super(fmt.formatted(args));
 	}
 
 	public InterruptedStmtIterationException(Throwable cause) {
@@ -29,6 +29,6 @@ public class InterruptedStmtIterationException extends RuntimeException {
 	}
 
 	public InterruptedStmtIterationException(Throwable cause, String fmt, Object... args) {
-		super(String.format(fmt, args), cause);
+		super(fmt.formatted(args), cause);
 	}
 }

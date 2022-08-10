@@ -59,7 +59,7 @@ public class NumericIndexTestMethods extends QueryableIndexTestMethods<NumericIn
 	protected boolean checkDeleted(NumericIndex<Integer> index, Graph graph, Node graphName) {
 		String indexDir = IndexFactoryHelper.getIndexDirectory(graph, graphName);
 		String predicate = index.getQuerier().getPredicate();
-		String dirName = String.format("numeric_%1$s", FileUtil.encodeStringForFilename(predicate));
+		String dirName = "numeric_%1$s".formatted(FileUtil.encodeStringForFilename(predicate));
 		return !new File(indexDir, dirName).exists();
 	}
 

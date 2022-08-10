@@ -37,8 +37,8 @@ public class SQLOp {
 		this.store = store;
 		this.iteratorQuery = iteratorQuery;
 		this.inverseQuery = inverseQuery;
-		this.estimateSelectivityQuery = String.format(estimateSelectivity, tableName);
-		this.estimateSelectivityInverseQuery = String.format(estimateSelectivityInverse, tableName);
+		this.estimateSelectivityQuery = estimateSelectivity.formatted(tableName);
+		this.estimateSelectivityInverseQuery = estimateSelectivityInverse.formatted(tableName);
 		this.inverseOperation = inverseOperation;
 		this.operation = operation;
 	}

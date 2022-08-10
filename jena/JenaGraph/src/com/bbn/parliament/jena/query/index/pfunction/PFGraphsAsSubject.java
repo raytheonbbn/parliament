@@ -71,8 +71,8 @@ public abstract class PFGraphsAsSubject extends PropertyFunctionEval {
 		List<Node> objects = getNodeArguments(object);
 		for (Node o : objects) {
 			if (!checkObject(o)) {
-				throw new JenaException(String.format("'%s' is an invalid object for %s",
-					o, predicate));
+				throw new JenaException("'%s' is an invalid object for %s"
+					.formatted(o, predicate));
 			}
 		}
 

@@ -5,7 +5,6 @@ import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -31,9 +30,7 @@ public abstract class GeoSPARQLLiteral extends BaseDatatype {
 	static {
 		try {
 			DEFAULT_CRS = CRS.decode(Constants.DEFAULT_CRS);
-		} catch (NoSuchAuthorityCodeException e) {
-			throw new RuntimeException("Could not find CRS for default CRS");
-		} catch (FactoryException e) {
+		} catch (FactoryException ex) {
 			throw new RuntimeException("Could not find CRS for default CRS");
 		}
 	}
@@ -110,26 +107,9 @@ public abstract class GeoSPARQLLiteral extends BaseDatatype {
 		try {
 			MathTransform transform = CACHE.getTransform(source, destination);
 			return JTS.transform(geometry, transform);
-		} catch (MismatchedDimensionException e) {
-			throw new DatatypeFormatException(
-				String.format("Could not convert {0} to {1}",
-					source.getName(),
-					destination.getName()));
-		} catch (NoSuchAuthorityCodeException e) {
-			throw new DatatypeFormatException(
-				String.format("Could not convert {0} to {1}",
-					source.getName(),
-					destination.getName()));
-		} catch (FactoryException e) {
-			throw new DatatypeFormatException(
-				String.format("Could not convert {0} to {1}",
-					source.getName(),
-					destination.getName()));
-		} catch (TransformException e) {
-			throw new DatatypeFormatException(
-				String.format("Could not convert {0} to {1}",
-					source.getName(),
-					destination.getName()));
+		} catch (MismatchedDimensionException | FactoryException | TransformException ex) {
+			throw new DatatypeFormatException("Could not convert %1$s to %2$s".formatted(
+				source.getName(), destination.getName()));
 		}
 	}
 
@@ -199,12 +179,9 @@ public abstract class GeoSPARQLLiteral extends BaseDatatype {
 			destination = CRS.decode(crs);
 
 			return convert(value, source, destination);
-		} catch (NoSuchAuthorityCodeException e) {
-			throw new DatatypeFormatException(
-				String.format("Could not convert %s to %s", Constants.INTERNAL_CRS, crs));
-		} catch (FactoryException e) {
-			throw new DatatypeFormatException(
-				String.format("Could not convert %s to %s", Constants.INTERNAL_CRS, crs));
+		} catch (FactoryException ex) {
+			throw new DatatypeFormatException("Could not convert %s to %s"
+				.formatted(Constants.INTERNAL_CRS, crs));
 		}
 	}
 
@@ -226,12 +203,9 @@ public abstract class GeoSPARQLLiteral extends BaseDatatype {
 			source = CRS.decode(crs);
 			destination = CRS.decode(Constants.INTERNAL_CRS);
 			return convert(value, source, destination);
-		} catch (NoSuchAuthorityCodeException e) {
-			throw new DatatypeFormatException(
-				String.format("Could not convert %s to %s", crs, Constants.INTERNAL_CRS));
-		} catch (FactoryException e) {
-			throw new DatatypeFormatException(
-				String.format("Could not convert %s to %s", crs, Constants.INTERNAL_CRS));
+		} catch (FactoryException ex) {
+			throw new DatatypeFormatException("Could not convert %s to %s"
+				.formatted(crs, Constants.INTERNAL_CRS));
 		}
 	}
 }

@@ -8,8 +8,10 @@ package com.bbn.parliament.jena.graph.index.temporal;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalExtentIterator.InclusionDecider;
@@ -60,9 +62,8 @@ public abstract class TemporalPropertyFunction<I extends TemporalIndex>
 	public void build(PropFuncArg argSubject, Node predicate,
 		PropFuncArg argObject, ExecutionContext context) {
 		if (argSubject.isList() || argObject.isList()) {
-			throw new RuntimeException(
-				String.format("Predicate {0} does not support lists.",
-					predicate.getURI()));
+			throw new RuntimeException("Predicate {0} does not support lists."
+				.formatted(predicate.getURI()));
 		}
 		super.build(argSubject, predicate, argObject, context);
 	}

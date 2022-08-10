@@ -74,7 +74,7 @@ public class InsertionTester {
 			.collect(Collectors.joining("&"));
 
 		// Send data
-		URL url = new URL(String.format(RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL, "localhost", 8089));
+		URL url = new URL(RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL.formatted("localhost", 8089));
 		URLConnection conn = url.openConnection();
 		conn.setDoOutput(true);
 		try (

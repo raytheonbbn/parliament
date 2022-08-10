@@ -37,13 +37,13 @@ public class WKTLiteralTest implements LiteralTestCase {
 			g = literal.parse(wkt);
 			assertTrue(g instanceof Point);
 		} catch (DatatypeFormatException e) {
-			fail(String.format("%s is valid WKT", wkt));
+			fail("%s is valid WKT".formatted(wkt));
 			e.printStackTrace();
 			return;
 		}
 
 		distance = location.distance(g);
-		assertTrue(distance < threshold, String.format("%f >= %f", distance, threshold));
+		assertTrue(distance < threshold, "%f >= %f".formatted(distance, threshold));
 
 		// WGS84
 		wkt = "<http://www.opengis.net/def/crs/EPSG/0/4326> POINT (43.642567 -79.387139)";
@@ -51,13 +51,13 @@ public class WKTLiteralTest implements LiteralTestCase {
 			g = literal.parse(wkt);
 			assertTrue(g instanceof Point);
 		} catch (DatatypeFormatException e) {
-			fail(String.format("%s is valid WKT", wkt));
+			fail("%s is valid WKT".formatted(wkt));
 			e.printStackTrace();
 			return;
 		}
 
 		distance = location.distance(g);
-		assertTrue(distance < threshold, String.format("%f >= %f", distance, threshold));
+		assertTrue(distance < threshold, "%f >= %f".formatted(distance, threshold));
 	}
 
 	@Test
@@ -97,7 +97,7 @@ public class WKTLiteralTest implements LiteralTestCase {
 		try {
 			g = literal.parse(wkt);
 		} catch (DatatypeFormatException e) {
-			fail(String.format("%s is valid WKT", wkt));
+			fail("%s is valid WKT".formatted(wkt));
 			e.printStackTrace();
 			return;
 		}
@@ -122,7 +122,7 @@ public class WKTLiteralTest implements LiteralTestCase {
 		try {
 			g = literal.parse(wkt);
 		} catch (DatatypeFormatException e) {
-			fail(String.format("%s is valid WKT", wkt));
+			fail("%s is valid WKT".formatted(wkt));
 			e.printStackTrace();
 			return;
 		}
@@ -138,7 +138,7 @@ public class WKTLiteralTest implements LiteralTestCase {
 		try {
 			g1 = literal.parse(unparse);
 		} catch (DatatypeFormatException e) {
-			fail(String.format("%s is valid WKT", wkt));
+			fail("%s is valid WKT".formatted(wkt));
 			e.printStackTrace();
 			return;
 		}

@@ -4,11 +4,11 @@ public class MissingGraphException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	public MissingGraphException(String format, Object... args) {
-		super(String.format(format, args));
+		super(format.formatted(args));
 	}
 
 	public MissingGraphException(Throwable cause, String format, Object... args) {
-		super(String.format(format, args), cause);
+		super(format.formatted(args), cause);
 	}
 
 	public MissingGraphException(String message, Throwable cause, boolean enableSuppression,

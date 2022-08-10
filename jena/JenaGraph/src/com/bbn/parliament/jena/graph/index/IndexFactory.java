@@ -107,12 +107,10 @@ public abstract class IndexFactory<I extends Index<T>, T> {
 				dir = ".";
 			}
 
-			if (dir.endsWith(File.separator)) {
-				dir = dir + "indexes";
-			} else {
-				dir = String.format("%s%cindexes", dir, File.separatorChar,
-					"indexes");
+			if (!dir.endsWith(File.separator)) {
+				dir += File.separatorChar;
 			}
+			dir += "indexes";
 
 			return dir;
 		}

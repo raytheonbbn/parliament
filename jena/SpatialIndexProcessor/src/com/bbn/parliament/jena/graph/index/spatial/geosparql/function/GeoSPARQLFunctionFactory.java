@@ -104,14 +104,14 @@ public class GeoSPARQLFunctionFactory implements IterableFunctionFactory {
 	public Function create(String uri) {
 		Class<? extends SpatialFunctionBase> imp = functions.get(uri);
 		if (null == imp) {
-			throw new QueryExecException(String.format("%s is not a valid function", uri));
+			throw new QueryExecException("%s is not a valid function".formatted(uri));
 		}
 		try {
 			return imp.getDeclaredConstructor().newInstance();
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException | SecurityException ex) {
-			throw new QueryExecException(String.format(
-				"Could not instantiate function for %1$s", uri), ex);
+			throw new QueryExecException(
+				"Could not instantiate function for %1$s".formatted(uri), ex);
 		}
 	}
 

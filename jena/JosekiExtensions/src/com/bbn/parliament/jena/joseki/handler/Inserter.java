@@ -387,8 +387,8 @@ public class Inserter {
 
 			if (LOG.isInfoEnabled()) {
 				long end = Calendar.getInstance().getTimeInMillis();
-				LOG.info(String.format("Verified %1$d statements in %2$.3f seconds",
-					numStmts, (end - start) / 1000.0));
+				LOG.info("Verified %1$d statements in %2$.3f seconds"
+					.formatted(numStmts, (end - start) / 1000.0));
 			}
 		}
 		return numStmts;
@@ -407,8 +407,8 @@ public class Inserter {
 
 			if (LOG.isInfoEnabled()) {
 				long end = Calendar.getInstance().getTimeInMillis();
-				LOG.info(String.format("Added statements to \"%1$s\" in %2$.3f seconds",
-					graphLabel, (end - start) / 1000.0));
+				LOG.info("Added statements to \"%1$s\" in %2$.3f seconds"
+					.formatted(graphLabel, (end - start) / 1000.0));
 			}
 		}
 	}

@@ -36,14 +36,14 @@ public class GraphExportHandler {
 		this.graphName = (graphName == null || graphName.isEmpty())
 			? KbGraphStore.DEFAULT_GRAPH_BASENAME
 			: graphName;
-		this.fileName = String.format("%1$s-%2$s.%3$s",
+		this.fileName = "%1$s-%2$s.%3$s".formatted(
 			serverName,
 			FileUtil.encodeStringForFilename(this.graphName),
 			this.contentType.getRdfFormat().getExtension());
 	}
 
 	public String getContentDisposition() {
-		return String.format("inline; filename=\"%1$s\";", fileName);
+		return "inline; filename=\"%1$s\";".formatted(fileName);
 	}
 
 	public void handleRequest(OutputStream out) throws IOException {

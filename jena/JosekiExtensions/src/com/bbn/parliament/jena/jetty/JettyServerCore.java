@@ -105,7 +105,7 @@ public class JettyServerCore {
 			return null;
 		} else {
 			if (tmpDirs.size() > 1) {
-				String delimiter = String.format("%n   ");
+				String delimiter = "%n   ".formatted();
 				String tmpDirListing = tmpDirs.stream()
 					.map(File::getPath)
 					.collect(Collectors.joining(delimiter, delimiter, ""));

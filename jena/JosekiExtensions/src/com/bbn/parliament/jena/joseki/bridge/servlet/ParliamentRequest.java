@@ -167,7 +167,7 @@ public class ParliamentRequest extends Request {
 		String user = _httpReq.getRemoteUser();
 		return (user == null || user.isEmpty())
 			? host
-			: String.format("%1$s (%2$s)", host, user);
+			: "%1$s (%2$s)".formatted(host, user);
 	}
 
 	public boolean isSparqlQuery() {

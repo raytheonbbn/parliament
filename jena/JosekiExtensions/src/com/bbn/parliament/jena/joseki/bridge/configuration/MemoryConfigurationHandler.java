@@ -60,7 +60,7 @@ public class MemoryConfigurationHandler implements ConfigurationHandler {
 		if (handle.hasProperty(ConfigOnt.usageThreshold)) {
 			double threshold = handle.getProperty(ConfigOnt.usageThreshold).getDouble();
 			if (threshold < 0 || threshold > 1) {
-				_log.error(String.format("Threshold must be between 0 and 1. %f is invalid.", threshold));
+				_log.error("Threshold must be between 0 and 1. {} is invalid.", threshold);
 			}
 			setPercentageUsageThreshold(threshold);
 		} else {

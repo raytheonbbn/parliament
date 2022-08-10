@@ -588,7 +588,7 @@ public class RemoteModel {
 	 * and execution of the sequence of SPARQL/Update operations continues.
 	 */
 	public void createNamedGraph(String namedGraphURI, boolean silent) throws IOException {
-		String query = String.format("create %1$s graph <%2$s>", silent ? "silent" : "", namedGraphURI);
+		String query = "create %1$s graph <%2$s>".formatted(silent ? "silent" : "", namedGraphURI);
 		this.updateQuery(query);
 	}
 
@@ -610,7 +610,7 @@ public class RemoteModel {
 	 * and execution of a sequence of SPARQL/Update operations continues.
 	 */
 	public void dropNamedGraph(String namedGraphURI, boolean silent) throws IOException {
-		String query = String.format("drop %1$s graph <%2$s>", silent ? "silent" : "", namedGraphURI);
+		String query = "drop %1$s graph <%2$s>".formatted(silent ? "silent" : "", namedGraphURI);
 		this.updateQuery(query);
 	}
 

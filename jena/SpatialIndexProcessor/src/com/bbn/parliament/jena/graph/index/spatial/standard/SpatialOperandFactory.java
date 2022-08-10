@@ -220,8 +220,8 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 						usedTriples.add(t);
 					} else {
 						throw new RuntimeException(
-							String.format("Polygon bound to ring {0} that is not a linear ring",
-								object.getURI()));
+							"Polygon bound to ring %1$s that is not a linear ring"
+							.formatted(object.getURI()));
 					}
 				} else {
 					Operand<Geometry> ringOp = createOperand(object, pattern,

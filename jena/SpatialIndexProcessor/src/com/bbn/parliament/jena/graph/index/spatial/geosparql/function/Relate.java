@@ -20,9 +20,9 @@ public class Relate extends DoubleGeometrySpatialFunction {
 		String patternMatrix = evalArgs.get(2).getString();
 
 		if (patternMatrix.length() != 9) {
-			throw new QueryExecException(String.format(
-				"'%1$s' is an invalid DE-9IM pattern matrix.It must be 9 characters long",
-				patternMatrix));
+			throw new QueryExecException(
+				"'%1$s' is an invalid DE-9IM pattern matrix.It must be 9 characters long"
+				.formatted(patternMatrix));
 		}
 
 		return relate(g1, g2, patternMatrix);

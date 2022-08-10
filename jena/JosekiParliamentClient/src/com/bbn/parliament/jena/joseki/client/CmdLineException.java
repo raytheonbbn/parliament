@@ -11,7 +11,7 @@ public class CmdLineException extends Exception {
 	}
 
 	public CmdLineException(String format, Object... args) {
-		super(String.format(format, args));
+		super(format.formatted(args));
 	}
 
 	public CmdLineException(Throwable cause, String message) {
@@ -19,6 +19,6 @@ public class CmdLineException extends Exception {
 	}
 
 	public CmdLineException(Throwable cause, String format, Object... args) {
-		super(String.format(format, args), cause);
+		super(format.formatted(args), cause);
 	}
 }

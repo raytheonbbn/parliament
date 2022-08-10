@@ -216,7 +216,7 @@ public class SpatialTestDataset {
 			LOG.debug("Query time to first result: {} ms", (System.currentTimeMillis() - start));
 
 			StringBuilder message = new StringBuilder();
-			message.append(String.format("%nResult sets are not equal:%n%n"));
+			message.append("%nResult sets are not equal:%n%n".formatted());
 			boolean matches = QueryTestUtil.equals(expectedResultSet, actualResultSet, query, message);
 			LOG.debug("Query time to last result: {} ms", (System.currentTimeMillis() - start));
 			assertTrue(matches, message.toString());

@@ -103,6 +103,6 @@ public class FileBackedResultSet {
 	 * @return A String with the non-random looking instance identifier.
 	 */
 	private static String getUniqueId() {
-		return String.format("%1$08d", COUNTER.getAndIncrement());
+		return "%1$08d".formatted(COUNTER.getAndIncrement());
 	}
 }

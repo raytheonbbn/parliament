@@ -38,13 +38,13 @@ public class GMLLiteralTest implements LiteralTestCase {
 			g = literal.parse(gml);
 			assertTrue(g instanceof Point);
 		} catch (DatatypeFormatException e) {
-			fail(String.format("%s is valid GML", gml));
+			fail("%s is valid GML".formatted(gml));
 			e.printStackTrace();
 			return;
 		}
 
 		distance = location.distance(g);
-		assertTrue(distance < threshold, String.format("%f >= %f", distance, threshold));
+		assertTrue(distance < threshold, "%f >= %f".formatted(distance, threshold));
 
 		// WGS84
 		gml = "<gml:Point srsName=\"urn:x-ogc:def:crs:EPSG:4326\" xmlns:gml=\"http://www.opengis.net/gml\"><gml:pos >43.642567 -79.387139</gml:pos></gml:Point>";
@@ -52,13 +52,13 @@ public class GMLLiteralTest implements LiteralTestCase {
 			g = literal.parse(gml);
 			assertTrue(g instanceof Point);
 		} catch (DatatypeFormatException e) {
-			fail(String.format("%s is valid WKT", gml));
+			fail("%s is valid WKT".formatted(gml));
 			e.printStackTrace();
 			return;
 		}
 
 		distance = location.distance(g);
-		assertTrue(distance < threshold, String.format("%f >= %f", distance, threshold));
+		assertTrue(distance < threshold, "%f >= %f".formatted(distance, threshold));
 	}
 
 	@Test
@@ -98,7 +98,7 @@ public class GMLLiteralTest implements LiteralTestCase {
 		try {
 			g = literal.parse(gml);
 		} catch (DatatypeFormatException e) {
-			fail(String.format("%s is valid GML", gml));
+			fail("%s is valid GML".formatted(gml));
 			e.printStackTrace();
 			return;
 		}
@@ -120,7 +120,7 @@ public class GMLLiteralTest implements LiteralTestCase {
 		try {
 			g = literal.parse(gml);
 		} catch (DatatypeFormatException e) {
-			fail(String.format("%s is valid GML", gml));
+			fail("%s is valid GML".formatted(gml));
 			e.printStackTrace();
 			return;
 		}
@@ -136,7 +136,7 @@ public class GMLLiteralTest implements LiteralTestCase {
 		try {
 			g1 = literal.parse(unparse);
 		} catch (DatatypeFormatException e) {
-			fail(String.format("%s is valid GML", unparse));
+			fail("%s is valid GML".formatted(unparse));
 			e.printStackTrace();
 			return;
 		}

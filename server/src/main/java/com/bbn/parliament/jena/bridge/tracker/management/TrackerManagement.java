@@ -3,12 +3,11 @@ package com.bbn.parliament.jena.bridge.tracker.management;
 import java.lang.management.ManagementFactory;
 import java.util.Optional;
 
-import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
+import javax.management.JMException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 
 import org.slf4j.Logger;
@@ -51,8 +50,8 @@ public class TrackerManagement {
 		try {
 			LOG.debug("Registering MBean: " + objName);
 			mbs.get().registerMBean(bean, objName);
-		} catch (NotCompliantMBeanException | InstanceAlreadyExistsException | MBeanRegistrationException ex) {
-			String msg = String.format("Failed to register '%1$s': %2$s",
+		} catch (JMException ex) {
+			String msg = "Failed to register '%1$s': %2$s".formatted(
 				objName.getCanonicalName(), ex.getMessage());
 			LOG.warn(msg);
 			throw new ARQException(msg, ex);
@@ -73,7 +72,7 @@ public class TrackerManagement {
 		try {
 			return new ObjectName(name);
 		} catch (MalformedObjectNameException ex) {
-			throw new ARQException(String.format("Failed to create name '%1$s': %2$s",
+			throw new ARQException("Failed to create name '%1$s': %2$s".formatted(
 				name, ex.getMessage()), ex);
 		}
 	}

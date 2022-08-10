@@ -276,7 +276,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 			}
 
 			for (List<String> buildings : values.values()) {
-				assertEquals(0, buildings.size(), String.format("Still have %1$s", buildings));
+				assertEquals(0, buildings.size(), "Still have %1$s".formatted(buildings));
 			}
 
 			assertEquals(6, count);

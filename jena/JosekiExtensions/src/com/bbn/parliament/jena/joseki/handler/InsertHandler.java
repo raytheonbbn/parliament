@@ -156,11 +156,8 @@ public class InsertHandler extends AbstractHandler {
 		String msg = "Insert operation successful.";
 		if (numStatements == 1) {
 			msg = "Insert operation successful.  1 statement added.";
-		}
-		else if (numStatements >= 0) {
-			msg = String.format(
-				"Insert operation successful.  %1$d statements added.",
-				numStatements);
+		} else if (numStatements >= 0) {
+			msg = "Insert operation successful.  %1$d statements added.".formatted(numStatements);
 		}
 		sendSuccess(msg, resp);
 	}

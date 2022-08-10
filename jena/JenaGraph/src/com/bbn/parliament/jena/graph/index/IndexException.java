@@ -15,7 +15,7 @@ public class IndexException extends RuntimeException {
 
 	/** Constructs a new exception with the specified detail message */
 	public IndexException(Index<?> index, String message) {
-		super(String.format("%s: %s", index.toString(), message));
+		super("%s: %s".formatted(index.toString(), message));
 	}
 
 	/**
@@ -29,6 +29,6 @@ public class IndexException extends RuntimeException {
 
 	/** Constructs a new exception with the specified detail message and cause. */
 	public IndexException(Index<?> index, String message, Throwable cause) {
-		super(String.format("%s: %s", index.toString(), message), cause);
+		super("%s: %s".formatted(index.toString(), message), cause);
 	}
 }

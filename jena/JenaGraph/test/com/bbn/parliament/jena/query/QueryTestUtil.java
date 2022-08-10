@@ -50,8 +50,8 @@ public class QueryTestUtil {
 		if (!matches) {
 			expected.reset();
 			actual.reset();
-			message.append(String.format("Expected:%n%1$s%n", ResultSetFormatter.asText(expected)));
-			message.append(String.format("Actual:%n%1$s", ResultSetFormatter.asText(actual)));
+			message.append("Expected:%n%1$s%n".formatted(ResultSetFormatter.asText(expected)));
+			message.append("Actual:%n%1$s".formatted(ResultSetFormatter.asText(actual)));
 		}
 		return matches;
 	}
@@ -77,7 +77,7 @@ public class QueryTestUtil {
 		try (InputStream in = getResource(resource)) {
 			model.read(in, base, dataFormat.toString());
 		} catch (IOException ex) {
-			fail(String.format("Could not load resource '%1$s':  '%2$s'", resource, ex.getMessage()));
+			fail("Could not load resource '%1$s': '%2$s'".formatted(resource, ex.getMessage()));
 		}
 		return model;
 	}
@@ -94,7 +94,7 @@ public class QueryTestUtil {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		InputStream strm = cl.getResourceAsStream(resource);
 		if (strm == null) {
-			fail(String.format("Resource not found: '%1$s'", resource));
+			fail("Resource not found: '%1$s'".formatted(resource));
 		}
 		return strm;
 	}

@@ -4,11 +4,11 @@ public class QueryExecutionException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	public QueryExecutionException(String format, Object... args) {
-		super(String.format(format, args));
+		super(format.formatted(args));
 	}
 
 	public QueryExecutionException(Throwable cause, String format, Object... args) {
-		super(String.format(format, args), cause);
+		super(format.formatted(args), cause);
 	}
 
 	public QueryExecutionException(String message, Throwable cause,

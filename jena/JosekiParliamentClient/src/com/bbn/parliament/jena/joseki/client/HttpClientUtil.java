@@ -124,9 +124,8 @@ public final class HttpClientUtil {
 				String key = entry.getKey();
 				Object value = entry.getValue();
 
-				byte[] partHeader = String.format(
-					"Content-Disposition: form-data; name=\"%1$s\"%2$s%2$s",
-					key, CRLF).getBytes(encoding);
+				byte[] partHeader = "Content-Disposition: form-data; name=\"%1$s\"%2$s%2$s"
+					.formatted(key, CRLF).getBytes(encoding);
 
 				postStream.write(startBoundary);
 				postStream.write(partHeader);
@@ -213,9 +212,8 @@ public final class HttpClientUtil {
 			String key = entry.getKey();
 			Object value = entry.getValue();
 
-			byte[] partHeader = String.format(
-				"Content-Disposition: form-data; name=\"%1$s\"%2$s%2$s",
-				key, CRLF).getBytes(encoding);
+			byte[] partHeader = "Content-Disposition: form-data; name=\"%1$s\"%2$s%2$s"
+				.formatted(key, CRLF).getBytes(encoding);
 			byte[] partContents = (value instanceof byte[])
 				? (byte[]) value
 				: value.toString().getBytes(encoding);

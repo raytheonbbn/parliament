@@ -104,8 +104,8 @@ public class TransformationTest {
 			int index = indexes[i];
 			valid = valid && pattern.get(index).equals(reordered.get(i));
 			if (!valid) {
-				System.err.println(String.format("Invalid index: %d.  Expected %s but saw %s",
-					i, pattern.get(i), reordered.get(index)));
+				System.err.format("Invalid index: %d.  Expected %s but saw %s%n",
+					i, pattern.get(i), reordered.get(index));
 				return valid;
 			}
 		}

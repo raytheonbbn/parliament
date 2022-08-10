@@ -119,7 +119,7 @@ public class WKTLiteral extends GeoSPARQLLiteral {
 		String text = geometry.toText();
 		return (null == coordRefUri)
 			? text
-			: String.format("<%1$s> %2$s", coordRefUri, text);
+			: "<%1$s> %2$s".formatted(coordRefUri, text);
 	}
 
 	@Override

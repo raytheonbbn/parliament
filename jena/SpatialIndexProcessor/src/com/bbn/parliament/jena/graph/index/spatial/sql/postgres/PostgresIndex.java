@@ -194,7 +194,7 @@ public class PostgresIndex extends SQLGeometryIndex {
 		String query = Operation.Helper.isIntersection(operation)
 			? Queries.SimpleFeatures.INTERSECTS
 			: Queries.SimpleFeatures.DISJOINT;
-		query = String.format(query, tableName, "?", GEOMETRY_COLUMN);
+		query = query.formatted(tableName, "?", GEOMETRY_COLUMN);
 
 		Connection c = null;
 		try {
@@ -225,9 +225,9 @@ public class PostgresIndex extends SQLGeometryIndex {
 
 		// add bounding box to geometry for faster bounding box
 		// queries/filters
-		String sql = String.format(
-			"INSERT INTO %1$s (%2$s, %3$s) VALUES (ST_AddBBOX(ST_SetSRID(?, ?)), ?)",
-			tableName, GEOMETRY_COLUMN, NODE_COLUMN);
+		String sql =
+			"INSERT INTO %1$s (%2$s, %3$s) VALUES (ST_AddBBOX(ST_SetSRID(?, ?)), ?)"
+			.formatted(tableName, GEOMETRY_COLUMN, NODE_COLUMN);
 		try (
 			Connection c = store.getConnection();
 			PreparedStatement ps = c.prepareStatement(sql);
@@ -248,8 +248,8 @@ public class PostgresIndex extends SQLGeometryIndex {
 		Geometry extent = r.getValue();
 		extent.setSRID(Constants.WGS84_SRID);
 
-		String sql = String.format("UPDATE %1$s SET %2$s = ST_AddBBOX(ST_SetSRID(?, ?)) WHERE %3$s = ?",
-			tableName, GEOMETRY_COLUMN, NODE_COLUMN);
+		String sql = "UPDATE %1$s SET %2$s = ST_AddBBOX(ST_SetSRID(?, ?)) WHERE %3$s = ?"
+			.formatted(tableName, GEOMETRY_COLUMN, NODE_COLUMN);
 		try (
 			Connection c = store.getConnection();
 			PreparedStatement ps = c.prepareStatement(sql);
@@ -271,8 +271,8 @@ public class PostgresIndex extends SQLGeometryIndex {
 		boolean removed = false;
 		try (
 			Connection c = store.getConnection();
-			PreparedStatement ps = c.prepareStatement(String.format(Queries.DELETE, tableName));
-			) {
+			PreparedStatement ps = c.prepareStatement(Queries.DELETE.formatted(tableName));
+		) {
 			ps.setString(1, GeometryConverter.getStringRepresentation(node));
 			ps.execute();
 			removed = true;
@@ -296,8 +296,8 @@ public class PostgresIndex extends SQLGeometryIndex {
 			return new ResultSetIterator(c, geometryToNode.executeQuery(), NODE_COLUMN, GEOMETRY_COLUMN);
 		} catch (SQLException | PersistentStoreException ex) {
 			PersistentStore.close(c);
-			String msg = String.format("Could not lookup nodes for: %1$s in table '%2$s'",
-				GeometryConverter.convertGeometry(value).toString(), tableName);
+			String msg = "Could not lookup nodes for: %1$s in table '%2$s'"
+				.formatted(GeometryConverter.convertGeometry(value), tableName);
 			throw new SpatialIndexException(this, msg, ex);
 		}
 	}
@@ -314,7 +314,7 @@ public class PostgresIndex extends SQLGeometryIndex {
 			Connection c = store.getConnection();
 			Statement stmt = c.createStatement();
 		) {
-			stmt.execute(String.format(statementFormat, args));
+			stmt.execute(statementFormat.formatted(args));
 		}
 	}
 }

@@ -187,7 +187,7 @@ public class BuffersTestMethods extends SpatialTestDataset {
 		LOG.info("testThousandDistance: data = {}, city = {}, distance = {}",
 			testData, city, distance);
 		loadData(testData);
-		String query = String.format(THOUSAND_DISTANCE_QUERY, distance, city);
+		String query = THOUSAND_DISTANCE_QUERY.formatted(distance, city);
 		try (CloseableQueryExec qexec = performQuery(query)) {
 			checkResults(qexec, expectedResults);
 		}

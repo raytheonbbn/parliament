@@ -30,19 +30,19 @@ public class DatasetExportHandler {
 			@SuppressWarnings("unused") int intentionallyUnused = lock.hashCode();
 			LOG.info("Exporting entire repository to ZIP file in \"{}\" format.", contentType);
 
-			String zipFilename = String.format(ZIP_FILENAME_FORMAT, serverName, Instant.now());
+			String zipFilename = ZIP_FILENAME_FORMAT.formatted(serverName, Instant.now());
 			String extension = contentType.getRdfFormat().getExtension();
 
 			resp.setContentType("application/zip");
 			resp.setHeader("Content-Disposition",
-				String.format("inline; filename=\"%1$s\";", zipFilename));
+				"inline; filename=\"%1$s\";".formatted(zipFilename));
 
 			try (ZipOutputStream zout = new ZipOutputStream(resp.getOutputStream())) {
 				// Write the default graph first
 				{
 					Model model = ModelManager.inst().getDefaultModel();
 					String basename = KbGraphStore.DEFAULT_GRAPH_BASENAME;
-					String filename = String.format("%1$s.%2$s", basename, extension);
+					String filename = "%1$s.%2$s".formatted(basename, extension);
 					zout.putNextEntry(new ZipEntry(filename));
 					model.write(zout, contentType.getRdfFormat().toString());
 					zout.closeEntry();
@@ -53,7 +53,7 @@ public class DatasetExportHandler {
 					// Only export IKbGraphs (and not KbUnionGraphs)
 					if (model.getGraph() instanceof KbGraph) {
 						String basename = ((KbGraph) model.getGraph()).getRelativeDirectory();
-						String filename = String.format("%1$s.%2$s", basename, extension);
+						String filename = "%1$s.%2$s".formatted(basename, extension);
 						zout.putNextEntry(new ZipEntry(filename));
 						model.write(zout, contentType.getRdfFormat().toString());
 						zout.closeEntry();

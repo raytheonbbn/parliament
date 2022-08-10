@@ -21,10 +21,10 @@ public class CreateWKTPoint extends SpatialFunctionBase {
 		NodeValue v2 = evalArgs.get(1);
 
 		if (!v1.getNode().isLiteral() && v1.getNode().getLiteralValue() instanceof Number) {
-			throw new GeoSPARQLFunctionException(String.format("%s is not a number", v1.getNode().toString()));
+			throw new GeoSPARQLFunctionException("%s is not a number".formatted(v1.getNode()));
 		}
 		if (!v2.getNode().isLiteral() && v2.getNode().getLiteralValue() instanceof Number) {
-			throw new GeoSPARQLFunctionException(String.format("%s is not a number", v2.getNode().toString()));
+			throw new GeoSPARQLFunctionException("%s is not a number".formatted(v2.getNode()));
 		}
 
 		double lat = Double.parseDouble(v1.getNode().getLiteralValue().toString());

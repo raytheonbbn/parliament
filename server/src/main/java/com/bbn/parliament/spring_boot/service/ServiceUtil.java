@@ -35,9 +35,10 @@ final class ServiceUtil {
 			: hostAddr.getHostString();
 		int port = request.getRemotePort();
 		String user = request.getRemoteUser();
-		return (StringUtils.isBlank(user))
-			? String.format("%1$s:%2$d", host, port)
-			: String.format("%1$s:%2$d (%3$s)", host, port, user);
+		String fmt = (StringUtils.isBlank(user))
+			? "%1$s:%2$d"
+			: "%1$s:%2$d (%3$s)";
+		return fmt.formatted(host, port, user);
 	}
 
 	public static MediaType mediaTypeFromString(String mediaType) {
@@ -45,7 +46,7 @@ final class ServiceUtil {
 			.split("/", 2);
 		if (pieces.length == 0) {
 			throw new IllegalArgumentException(
-				String.format("'%1$s' is not a legal media type", mediaType));
+				"'%1$s' is not a legal media type".formatted(mediaType));
 		} else if (pieces.length == 1) {
 			return new MediaType(pieces[0]);
 		} else {

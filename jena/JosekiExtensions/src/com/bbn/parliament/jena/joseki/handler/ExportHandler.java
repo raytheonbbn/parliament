@@ -132,7 +132,7 @@ public class ExportHandler extends AbstractHandler {
 
 		String basename = encodeUriForFilename(graphLabel);
 		String extension = dataFormat.getExtension();
-		String filename = String.format("%1$s.%2$s", basename, extension);
+		String filename = "%1$s.%2$s".formatted(basename, extension);
 
 		String writerMimeType = "text/plain";
 		switch (dataFormat) {
@@ -155,8 +155,7 @@ public class ExportHandler extends AbstractHandler {
 		}
 
 		resp.setContentType(writerMimeType);
-		resp.setHeader("Content-Disposition",
-			String.format("inline; filename=\"%1$s\";", filename));
+		resp.setHeader("Content-Disposition", "inline; filename=\"%1$s\";".formatted(filename));
 
 		@SuppressWarnings("resource")
 		ServletOutputStream out = resp.getOutputStream();
@@ -175,20 +174,18 @@ public class ExportHandler extends AbstractHandler {
 		LOG.info("Exporting entire repository to ZIP file in \"{}\" format.", dataFormat);
 
 		String hostname = req.getServerName();
-		String zipFilename = String.format(ZIP_FILENAME_FORMAT, hostname,
-			Calendar.getInstance());
+		String zipFilename = ZIP_FILENAME_FORMAT.formatted(hostname, Calendar.getInstance());
 		String extension = dataFormat.getExtension();
 
 		resp.setContentType("application/zip");
-		resp.setHeader("Content-Disposition",
-			String.format("inline; filename=\"%1$s\";", zipFilename));
+		resp.setHeader("Content-Disposition", "inline; filename=\"%1$s\";".formatted(zipFilename));
 
 		try (ZipOutputStream zout = new ZipOutputStream(resp.getOutputStream())) {
 			// Write the default graph first
 			{
 				Model model = ModelManager.inst().getDefaultModel();
 				String basename = DEFAULT_GRAPH_BASENAME;
-				String filename = String.format("%1$s.%2$s", basename, extension);
+				String filename = "%1$s.%2$s".formatted(basename, extension);
 				zout.putNextEntry(new ZipEntry(filename));
 				writeModel(zout, model, dataFormat);
 				zout.closeEntry();
@@ -199,7 +196,7 @@ public class ExportHandler extends AbstractHandler {
 				// Only export IKbGraphs (and not KbUnionGraphs)
 				if (model.getGraph() instanceof KbGraph) {
 					String basename = ((KbGraph) model.getGraph()).getRelativeDirectory();
-					String filename = String.format("%1$s.%2$s", basename, extension);
+					String filename = "%1$s.%2$s".formatted(basename, extension);
 					zout.putNextEntry(new ZipEntry(filename));
 					writeModel(zout, model, dataFormat);
 					zout.closeEntry();

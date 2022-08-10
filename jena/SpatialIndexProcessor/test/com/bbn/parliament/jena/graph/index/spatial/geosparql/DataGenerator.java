@@ -25,14 +25,12 @@ public class DataGenerator {
 
 		List<Statement> triples = new ArrayList<>();
 		for (int i = 0; i < 100; i++) {
-			String resURI = String.format(RES_NS, i);
-			String geomURI = String.format(GEOM_NS, i);
 			Point p = createPoint(center, 0.2);
-
-			Node r = Node.createURI(resURI);
-			Node g = Node.createURI(geomURI);
+			Node r = Node.createURI(RES_NS.formatted(i));
+			Node g = Node.createURI(GEOM_NS.formatted(i));
 			triples.add(m.asStatement(Triple.create(r, Geo.Nodes.hasGeometry, g)));
-			triples.add(m.asStatement(Triple.create(g, Geo.Nodes.asWKT, Node.createLiteral(WKT.unparse(p), null, WKT))));
+			triples.add(m.asStatement(Triple.create(g, Geo.Nodes.asWKT,
+				Node.createLiteral(WKT.unparse(p), null, WKT))));
 		}
 
 		m.add(triples);

@@ -36,7 +36,7 @@ public class PostgresThreadTest {
 	@AfterEach
 	public void afterEach() {
 		PersistentStore ps = PersistentStore.getInstance();
-		System.out.println(String.format("%d active, %d idle", ps.getNumActive(), ps.getNumIdle()));
+		System.out.format("%d active, %d idle%n", ps.getNumActive(), ps.getNumIdle());
 
 		testMethods.removeIndex();
 	}

@@ -14,7 +14,7 @@ public class ParliamentClientException extends Exception {
 	}
 
 	public ParliamentClientException(String format, Object... args) {
-		super(String.format(format, args));
+		super(format.formatted(args));
 	}
 
 	public ParliamentClientException(Throwable cause, String message) {
@@ -22,6 +22,6 @@ public class ParliamentClientException extends Exception {
 	}
 
 	public ParliamentClientException(Throwable cause, String format, Object... args) {
-		super(String.format(format, args), cause);
+		super(format.formatted(args), cause);
 	}
 }

@@ -106,8 +106,8 @@ public class DumpKbAsNTriplesTest {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		InputStream result = cl.getResourceAsStream(rsrcPath.getPath());
 		if (result == null) {
-			throw new FileNotFoundException(String.format(
-				"Could not load resource: '%1$s'", rsrcPath.getPath()));
+			throw new FileNotFoundException("Could not load resource: '%1$s'"
+				.formatted(rsrcPath.getPath()));
 		}
 		return result;
 	}

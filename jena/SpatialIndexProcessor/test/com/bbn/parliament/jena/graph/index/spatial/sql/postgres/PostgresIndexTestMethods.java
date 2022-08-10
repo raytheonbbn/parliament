@@ -36,7 +36,8 @@ public class PostgresIndexTestMethods extends SpatialIndexTestMethods {
 		boolean contains = false;
 		try (Connection c = PersistentStore.getInstance().getConnection()) {
 			// check if spatial table exists
-			String sql1 = String.format("SELECT relname FROM pg_class WHERE relname = '%1$s'", tableName);
+			String sql1 = "SELECT relname FROM pg_class WHERE relname = '%1$s'"
+				.formatted(tableName);
 			try (
 				Statement stmt = c.createStatement();
 				ResultSet rs = stmt.executeQuery(sql1);
@@ -45,9 +46,10 @@ public class PostgresIndexTestMethods extends SpatialIndexTestMethods {
 			}
 
 			// check if node index exists
-			String sql2 = String.format(
-				"SELECT indexname from pg_indexes where tablename = '%1$s' AND indexname NOT IN ('%1$s', '%1$s_pkey')",
-				tableName);
+			String sql2 = """
+				SELECT indexname FROM pg_indexes
+				WHERE tablename = '%1$s' AND indexname NOT IN ('%1$s', '%1$s_pkey')"""
+				.formatted(tableName);
 			try (
 				Statement stmt = c.createStatement();
 				ResultSet rs = stmt.executeQuery(sql2);

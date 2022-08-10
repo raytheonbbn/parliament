@@ -222,19 +222,18 @@ public class KbOpExecutorDAWGTest {
 					StmtIterator sIter = resultsAsModel.listStatements(null, RDF.type,
 						ResultSetGraphVocab.ResultSet);
 					if (!sIter.hasNext()) {
-						fail(String.format("Could not find ASK result for '%1$s'", me.getName()));
+						fail("Could not find ASK result for '%1$s'".formatted(me.getName()));
 					}
 					Statement s = sIter.next();
 					if (sIter.hasNext()) {
-						fail(String.format("More than one ASK result for '%1$s'", me.getName()));
+						fail("More than one ASK result for '%1$s'".formatted(me.getName()));
 					}
 					answer = s.getSubject().getRequiredProperty(ResultSetGraphVocab.p_boolean).getBoolean();
 				}
 				runDAWGTest(q, answer, me);
 			}
 		} catch (QueryParseException ex) {
-			fail(String.format("'%1$s': query parse exception:  %2$s",
-				me.getCurrentTest(), ex.getMessage()));
+			fail("'%1$s': query parse exception:  %2$s".formatted(me.getCurrentTest(), ex.getMessage()));
 		}
 	}
 
@@ -246,7 +245,7 @@ public class KbOpExecutorDAWGTest {
 			ResultSetFactory.create(it, query.getResultVars()));
 
 		StringBuilder message = new StringBuilder();
-		message.append(String.format("%n'%1$s': Result sets are not equal:%n%n", me.getCurrentTest()));
+		message.append("%n'%1$s': Result sets are not equal:%n%n".formatted(me.getCurrentTest()));
 		boolean matches = QueryTestUtil.equals(expectedResultSet, actualResultSet, query, message);
 		assertTrue(matches, message.toString());
 	}
@@ -256,6 +255,6 @@ public class KbOpExecutorDAWGTest {
 		QueryIterator input = QueryIterRoot.create(execCxt);
 		QueryIterator it = opExecutor.executeOp(op, input);
 		assertTrue(answer == it.hasNext(),
-			String.format("'%1$s': result sets are not equal", me.getCurrentTest()));
+			"'%1$s': result sets are not equal".formatted(me.getCurrentTest()));
 	}
 }

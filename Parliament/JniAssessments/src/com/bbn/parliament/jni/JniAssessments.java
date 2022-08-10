@@ -102,7 +102,7 @@ public class JniAssessments
 		runStringPerformanceTests("Warm-up", NUM_WARM_UP_ITERS);
 		for (int trial = 0; trial < NUM_TRIALS; ++trial)
 		{
-			String trialLabel = String.format("Run %1$d", trial);
+			String trialLabel = "Run %1$d".formatted(trial);
 			runStringPerformanceTests(trialLabel, NUM_STRING_TEST_ITERS);
 		}
 
@@ -117,7 +117,7 @@ public class JniAssessments
 		runMethodCallPerformanceTests("Warm-up", NUM_WARM_UP_ITERS);
 		for (int trial = 0; trial < NUM_TRIALS; ++trial)
 		{
-			String trialLabel = String.format("Run %1$d", trial);
+			String trialLabel = "Run %1$d".formatted(trial);
 			runMethodCallPerformanceTests(trialLabel, NUM_METHOD_CALL_ITERS);
 		}
 	}

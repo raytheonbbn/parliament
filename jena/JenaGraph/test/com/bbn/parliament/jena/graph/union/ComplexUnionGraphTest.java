@@ -222,8 +222,8 @@ public class ComplexUnionGraphTest {
 	}
 
 	private static Model readUniversityData(int univNum) throws IOException {
-		Pattern pattern = Pattern.compile(
-			String.format("^.*/University%1$d_.*$", univNum), Pattern.CASE_INSENSITIVE);
+		Pattern pattern = Pattern.compile("^.*/University%1$d_.*$".formatted(univNum),
+			Pattern.CASE_INSENSITIVE);
 		Model result = ModelFactory.createDefaultModel();
 		try (ZipFile zipFile = new ZipFile(INPUT_DATA_FILE)) {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -252,8 +252,8 @@ public class ComplexUnionGraphTest {
 				++count;
 			}
 		} catch (QueryCancelledException ex) {
-			assertTrue(false, String.format(
-				"Query #%1$d against the %2$s model exceeded timeout limit", queryNum, modelName));
+			assertTrue(false, "Query #%1$d against the %2$s model exceeded timeout limit"
+				.formatted(queryNum, modelName));
 		}
 		long duration = System.currentTimeMillis() - start;
 		LOG.info("{} results from {} model in {} ms", count, modelName, duration);

@@ -88,11 +88,14 @@ public class PersistentPropertyFunctionFactory extends TemporalPropertyFunctionF
 
 		@Override
 		public Iterator<Record<TemporalExtent>> bindFirstVar(TemporalExtent boundExtent)	{
-			if (!range.isInstance(boundExtent))	{return Collections.emptyIterator();}
+			if (!range.isInstance(boundExtent))	{
+				return Collections.emptyIterator();
+			}
 			long[] constraints = getFirstVarConstraints(boundExtent);
 			if (constraints.length != 4)	{
-				throw new IllegalArgumentException(String.format("Exactly 4 longs are expected -- was %1$s.",
-					constraints.length));
+				throw new IllegalArgumentException(
+					"Exactly 4 longs are expected -- received %1$s."
+					.formatted(constraints.length));
 			}
 			return new PersistentTemporalExtentIterator(getIndex(),
 				constraints[0], constraints[1], constraints[2], constraints[3], domain);
@@ -103,8 +106,9 @@ public class PersistentPropertyFunctionFactory extends TemporalPropertyFunctionF
 			if (!domain.isInstance(boundExtent))	{return Collections.emptyIterator();}
 			long[] constraints = getSecondVarConstraints(boundExtent);
 			if (constraints.length != 4)	{
-				throw new IllegalArgumentException(String.format("Exactly 4 longs are expected -- was %1$s.",
-					constraints.length));
+				throw new IllegalArgumentException(
+					"Exactly 4 longs are expected -- received %1$s."
+					.formatted(constraints.length));
 			}
 			return new PersistentTemporalExtentIterator(getIndex(),
 				constraints[0], constraints[1], constraints[2], constraints[3], range);

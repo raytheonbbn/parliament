@@ -6,6 +6,6 @@ public class UnsupportedUnitsException extends GeoSPARQLFunctionException {
 	private static final long serialVersionUID = 1L;
 
 	public UnsupportedUnitsException(Node units) {
-		super(String.format("%s is not supported for this function", units));
+		super("%s is not supported for this function".formatted(units));
 	}
 }
