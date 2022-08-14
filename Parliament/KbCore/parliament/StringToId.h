@@ -50,7 +50,7 @@ public:
 	// destroyed.  In addition, these operations are guaranteed to be thread-safe.
 	static BDbEnvManager& getInstance()
 	{
-		static auto instance = BDbEnvManager{};
+		static BDbEnvManager instance;
 		return instance;
 	}
 

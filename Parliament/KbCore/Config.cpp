@@ -149,7 +149,8 @@ void pmnt::Config::readFromFile()
 		}
 		else if (!isBlankOrCommentLine(line))
 		{
-			string key, value;
+			string key;
+			string value;
 			splitAtFirstEquals(line, lineNum, key, value);
 
 			const auto& ceMap = getConfigEntryMap();

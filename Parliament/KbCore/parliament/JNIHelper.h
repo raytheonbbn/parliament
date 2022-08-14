@@ -183,7 +183,7 @@ public:
 		}
 	template<typename t_char>
 	static void setStringFld(JNIEnv* pEnv, jobject obj, const char* pFldName, const ::std::basic_string<t_char>& value)
-		{ return setStringFld(pEnv, obj, pFldName, value.c_str()); }
+		{ setStringFld(pEnv, obj, pFldName, value.c_str()); }
 	static ::std::string getTimeoutUnitFld(JNIEnv* pEnv, jobject obj);
 	template<typename t_char>
 	static void setTimeoutUnitFld(JNIEnv* pEnv, jobject obj, const t_char* pValue)
