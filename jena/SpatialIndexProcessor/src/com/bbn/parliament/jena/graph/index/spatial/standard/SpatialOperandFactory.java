@@ -211,11 +211,11 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 				if (object.isConcrete()) {
 					// load ring from index
 					Geometry objExtent = findRepresentation(object);
-					if (objExtent instanceof LinearRing) {
+					if (objExtent instanceof LinearRing ring) {
 						if (isExterior) {
-							exterior = (LinearRing) objExtent;
+							exterior = ring;
 						} else {
-							interior.add((LinearRing) objExtent);
+							interior.add(ring);
 						}
 						usedTriples.add(t);
 					} else {
@@ -226,11 +226,9 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 				} else {
 					Operand<Geometry> ringOp = createOperand(object, pattern,
 						binding, usedTriples);
-					if (null == ringOp
-						|| !(ringOp.getRepresentation() instanceof LinearRing)) {
+					if (null == ringOp || !(ringOp.getRepresentation() instanceof LinearRing)) {
 						throw new RuntimeException(
 							"Polygons not bound to linear rings are not supported.");
-
 					}
 					LinearRing ring = (LinearRing) ringOp.getRepresentation();
 					if (isExterior) {

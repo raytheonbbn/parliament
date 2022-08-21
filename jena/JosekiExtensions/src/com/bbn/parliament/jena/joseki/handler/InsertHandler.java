@@ -143,8 +143,8 @@ public class InsertHandler extends AbstractHandler {
 			numStatements = ti.getInserter().getNumStatements();
 		}
 		catch(TrackableException e) {
-			if (e.getCause() instanceof ServletErrorResponseException) {
-				throw (ServletErrorResponseException)e.getCause();
+			if (e.getCause() instanceof ServletErrorResponseException servletEx) {
+				throw servletEx;
 			} else {
 				throw new ServletErrorResponseException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e,
 					"Error while running insert\n\n" + LogUtil.getExceptionInfo(e));

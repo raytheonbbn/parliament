@@ -74,8 +74,8 @@ public abstract class AbstractCountTransformation extends AbstractKbGraphReorder
 			min = checkVar(min, tp.getSubject(), 1);
 			min = checkVar(min, tp.getPredicate(), 2);
 			min = checkVar(min, tp.getObject(), 3);
-			if (tp instanceof ReifiedTriple){
-				min = checkVar(min, ((ReifiedTriple) tp).getName(),3);
+			if (tp instanceof ReifiedTriple reifTriple) {
+				min = checkVar(min, reifTriple.getName(),3);
 			}
 		}else{
 			min = checkVar(min, tp.getSubject(), 3);
@@ -94,7 +94,7 @@ public abstract class AbstractCountTransformation extends AbstractKbGraphReorder
 	}
 
 	private static boolean isPartOfReification(Triple tp) {
-		if ((tp instanceof ReifiedTriple) || !tp.getPredicate().isConcrete()){
+		if ((tp instanceof ReifiedTriple) || !tp.getPredicate().isConcrete()) {
 			return false;
 		}
 		String pURI = tp.getPredicate().getURI();

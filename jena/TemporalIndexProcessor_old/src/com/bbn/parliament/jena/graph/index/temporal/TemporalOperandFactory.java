@@ -86,11 +86,11 @@ public class TemporalOperandFactory extends OperandFactoryBase<TemporalExtent> {
 					continue;
 				}
 				Object o = object.getLiteralValue();
-				if (!(o instanceof XSDDateTime)) {
+				if (o instanceof XSDDateTime dt) {
+					extent = new TemporalInstant(dt);
+				} else {
 					throw new RuntimeException("Instants must be typed with xsd:dateTime");
 				}
-				XSDDateTime time = (XSDDateTime) o;
-				extent = new TemporalInstant(time);
 			}
 		}
 		return extent;

@@ -9,8 +9,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.RecordFactory;
 import com.bbn.parliament.jena.graph.index.temporal.Constants;
@@ -230,11 +232,9 @@ public class TemporalRecordFactory implements RecordFactory<TemporalExtent> {
 		}
 		Object o = dateTime.getLiteralValue();
 
-		if (!(o instanceof XSDDateTime)) {
-			return null;
-		}
-
-		return new TemporalInstant((XSDDateTime) o);
+		return (o instanceof XSDDateTime dt)
+			? new TemporalInstant(dt)
+			: null;
 	}
 
 	@Override

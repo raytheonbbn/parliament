@@ -113,8 +113,7 @@ public class CompositeNumericIndex extends IndexBase<Number> implements Composit
 		return size;
 	}
 
-	private NumericIndex<? extends Number> createIndex(String predicate,
-		Number value) {
+	private NumericIndex<? extends Number> createIndex(String predicate, Number value) {
 		if (value instanceof Integer) {
 			return createIntegerIndex(predicate);
 		} else if (value instanceof Long) {

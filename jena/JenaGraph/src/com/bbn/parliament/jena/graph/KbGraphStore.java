@@ -150,12 +150,9 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 			toAdd = kbGraph;
 		}
 
-		if (toAdd instanceof KbGraph) {
-			@SuppressWarnings("resource")
-			KbGraph kbGraph = (KbGraph)toAdd;
+		if (toAdd instanceof KbGraph kbGraph) {
 			addGraph(graphName, kbGraph, kbGraph.getRelativeDirectory(), true);
-		} else if (toAdd instanceof KbUnionGraph) {
-			KbUnionGraph kbUnionGraph = (KbUnionGraph)toAdd;
+		} else if (toAdd instanceof KbUnionGraph kbUnionGraph) {
 			addUnionGraph(graphName, kbUnionGraph.getLeftGraphName(), kbUnionGraph.getRightGraphName(), true);
 		}
 	}
@@ -184,9 +181,8 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 			Graph rightGraph = getGraph(rightGraphName);
 
 			if (leftGraph != null && rightGraph != null) {
-				if (leftGraph instanceof KbUnionableGraph && rightGraph instanceof KbUnionableGraph) {
-					KbUnionableGraph leftKbUnionableGraph = (KbUnionableGraph) leftGraph;
-					KbUnionableGraph rightKbUnionableGraph = (KbUnionableGraph) rightGraph;
+				if (leftGraph instanceof KbUnionableGraph leftKbUnionableGraph
+					&& rightGraph instanceof KbUnionableGraph rightKbUnionableGraph) {
 
 					KbUnionGraph unionGraph = KbGraphFactory.createKbUnionGraph(leftKbUnionableGraph, leftGraphName, rightKbUnionableGraph, rightGraphName);
 
@@ -281,8 +277,7 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 			{
 				Node gName = iter.next();
 				Graph g = getGraph(gName);
-				if (g instanceof KbUnionGraph) {
-					KbUnionGraph unionGraph = (KbUnionGraph)g;
+				if (g instanceof KbUnionGraph unionGraph) {
 					if (graphName.equals(unionGraph.getLeftGraphName()) || graphName.equals(unionGraph.getRightGraphName())) {
 						throw new JenaException("""
 							Cannot delete a named graph while it is a member of a union. \
@@ -390,10 +385,10 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 	}
 
 	private KbGraph getInnerKbGraph(Graph graph) {
-		if (graph instanceof KbGraph) {
-			return (KbGraph) graph;
-		} else if (graph instanceof InfGraph) {
-			Graph rawGraph = ((InfGraph) graph).getRawGraph();
+		if (graph instanceof KbGraph kbGraph) {
+			return kbGraph;
+		} else if (graph instanceof InfGraph infGraph) {
+			Graph rawGraph = infGraph.getRawGraph();
 			return getInnerKbGraph(rawGraph);
 		} else {
 			return null;

@@ -75,23 +75,26 @@ public class TransformFilterPlacementWithOptional extends TransformFilterPlaceme
 		return op ;
 	}
 
-	private static Op transform(ExprList exprs, Set<Var> varsScope, Op x)
-	{
-		if ( x instanceof OpBGP )
-			return transformFilterBGP(exprs, varsScope, (OpBGP)x) ;
+	private static Op transform(ExprList exprs, Set<Var> varsScope, Op op) {
+		if (op instanceof OpBGP bgpOp) {
+			return transformFilterBGP(exprs, varsScope, bgpOp);
+		}
 
-		if ( x instanceof OpSequence )
-			return transformFilterSequence(exprs, varsScope, (OpSequence)x) ;
+		if (op instanceof OpSequence seqOp) {
+			return transformFilterSequence(exprs, varsScope, seqOp);
+		}
 
-		if ( x instanceof OpQuadPattern )
-			return transformFilterQuadPattern(exprs, varsScope, (OpQuadPattern)x) ;
+		if (op instanceof OpQuadPattern quadPatternOp) {
+			return transformFilterQuadPattern(exprs, varsScope, quadPatternOp);
+		}
 
-		// added conditional support
-		if ( x instanceof OpConditional )
-			return transformFilterConditional(exprs, varsScope, (OpConditional)x);
+		if (op instanceof OpConditional conditionalOp) {
+			return transformFilterConditional(exprs, varsScope, conditionalOp);
+		}
+
 		// Not special - advance the variable scope tracking.
-		OpVars.patternVars(x, varsScope) ;
-		return x ;
+		OpVars.patternVars(op, varsScope) ;
+		return op ;
 	}
 
 	private static Op transformFilterBGP(ExprList exprs, Set<Var> patternVarsScope, OpBGP x)
@@ -131,26 +134,23 @@ public class TransformFilterPlacementWithOptional extends TransformFilterPlaceme
 	}
 
 	/** Find the current OpBGP, or return null. */
-	private static OpBGP getBGP(Op op)
-	{
-		if ( op instanceof OpBGP )
-			return (OpBGP)op ;
+	private static OpBGP getBGP(Op op) {
+		if (op instanceof OpBGP bgpOp) {
+			return bgpOp;
+		}
 
-		if ( op instanceof OpSequence )
-		{
-			// Is last in OpSequence an BGP?
-			OpSequence opSeq = (OpSequence)op ;
-			List<Op> x = opSeq.getElements() ;
-			if ( x.size() > 0 )
-			{
+		if (op instanceof OpSequence seqOp) {
+			// Is last in OpSequence a BGP?
+			List<Op> x = seqOp.getElements();
+			if (x.size() > 0) {
 				Op opTop = x.get(x.size()-1) ;
-				if ( opTop instanceof OpBGP )
-					return (OpBGP)opTop ;
+				if (opTop instanceof OpBGP bgpOp) {
+					return bgpOp;
+				}
 				// Drop through
 			}
 		}
-		// Can't find.
-		return null ;
+		return null;	// Can't find
 	}
 
 	private static Op transformFilterQuadPattern(ExprList exprs, Set<Var> patternVarsScope, OpQuadPattern pattern)
@@ -189,26 +189,23 @@ public class TransformFilterPlacementWithOptional extends TransformFilterPlaceme
 	}
 
 	/** Find the current OpQuadPattern, or return null. */
-	private static OpQuadPattern getQuads(Op op)
-	{
-		if ( op instanceof OpQuadPattern )
-			return (OpQuadPattern)op ;
+	private static OpQuadPattern getQuads(Op op) {
+		if (op instanceof OpQuadPattern quadPatternOp) {
+			return quadPatternOp;
+		}
 
-		if ( op instanceof OpSequence )
-		{
+		if (op instanceof OpSequence seqOp) {
 			// Is last in OpSequence an BGP?
-			OpSequence opSeq = (OpSequence)op ;
-			List<Op> x = opSeq.getElements() ;
-			if ( x.size() > 0 )
-			{
+			List<Op> x = seqOp.getElements();
+			if (x.size() > 0) {
 				Op opTop = x.get(x.size()-1) ;
-				if ( opTop instanceof OpQuadPattern )
-					return (OpQuadPattern)opTop ;
+				if (opTop instanceof OpQuadPattern topQuadPatternOp) {
+					return topQuadPatternOp;
+				}
 				// Drop through
 			}
 		}
-		// Can't find.
-		return null ;
+		return null;	// Can't find
 	}
 
 	private static Op transformFilterSequence(ExprList exprs, Set<Var> varScope, OpSequence opSequence)

@@ -24,8 +24,8 @@ public class OptimizeUtil {
 		if (triple.getObject().isVariable()) {
 			vars.add(triple.getObject());
 		}
-		if ((triple instanceof ReifiedTriple) && ((ReifiedTriple)triple).getName().isVariable()){
-			vars.add(((ReifiedTriple)triple).getName());
+		if ((triple instanceof ReifiedTriple reifTriple) && reifTriple.getName().isVariable()) {
+			vars.add(reifTriple.getName());
 		}
 		return vars;
 	}

@@ -194,8 +194,8 @@ public class ExportHandler extends AbstractHandler {
 			for (String graphName : ModelManager.inst().getSortedModelNames()) {
 				Model model = ModelManager.inst().getModel(graphName);
 				// Only export IKbGraphs (and not KbUnionGraphs)
-				if (model.getGraph() instanceof KbGraph) {
-					String basename = ((KbGraph) model.getGraph()).getRelativeDirectory();
+				if (model.getGraph() instanceof KbGraph kbGraph) {
+					String basename = kbGraph.getRelativeDirectory();
 					String filename = "%1$s.%2$s".formatted(basename, extension);
 					zout.putNextEntry(new ZipEntry(filename));
 					writeModel(zout, model, dataFormat);

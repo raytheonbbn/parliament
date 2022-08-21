@@ -112,7 +112,7 @@ public class BufferedGeometry extends EphemeralGeometry {
 
 			Geometry buffered = extent instanceof Polygon
 				? projectAndBufferPoly(extent, distance, destCRS)
-					: projectAndBuffer(extent, distance, destCRS);
+				: projectAndBuffer(extent, distance, destCRS);
 
 			boolean canReproject = true;
 
@@ -123,8 +123,7 @@ public class BufferedGeometry extends EphemeralGeometry {
 				canReproject = false;
 			}
 			if (!canReproject) {
-				if (extent instanceof Point) {
-					Point point = (Point) extent;
+				if (extent instanceof Point point) {
 					GeodeticCalculator calc = new GeodeticCalculator(WGS84_CRS);
 					calc.setStartingGeographicPoint(point.getX(), point.getY());
 					List<Coordinate> coords = new ArrayList<>();

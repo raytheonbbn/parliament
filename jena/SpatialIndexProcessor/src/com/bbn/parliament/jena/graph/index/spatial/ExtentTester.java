@@ -94,8 +94,7 @@ public interface ExtentTester {
 				if (extent1 instanceof Point && extent2 instanceof Point) {
 					return extent1.equals(extent2);
 				} else {
-					return Helper.testRelation(extent1, extent2,
-						getIntersectionMatrix());
+					return Helper.testRelation(extent1, extent2, getIntersectionMatrix());
 				}
 			}
 

@@ -62,8 +62,8 @@ public class ParliamentServlet extends Servlet {
 			ServletContext ctx = config.getServletContext();
 			if (ctx != null) {
 				Object attrValue = ctx.getAttribute("javax.servlet.context.tempdir");
-				if (attrValue != null && attrValue instanceof File) {
-					result = (File) attrValue;
+				if (attrValue != null && attrValue instanceof File fileAttr) {
+					result = fileAttr;
 				}
 			}
 		}

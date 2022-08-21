@@ -214,8 +214,8 @@ public final class HttpClientUtil {
 
 			byte[] partHeader = "Content-Disposition: form-data; name=\"%1$s\"%2$s%2$s"
 				.formatted(key, CRLF).getBytes(encoding);
-			byte[] partContents = (value instanceof byte[])
-				? (byte[]) value
+			byte[] partContents = (value instanceof byte[] byteArrayValue)
+				? byteArrayValue
 				: value.toString().getBytes(encoding);
 
 			byte[] part = new byte[partHeader.length + partContents.length];

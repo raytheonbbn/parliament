@@ -29,10 +29,9 @@ public final class GraphSubPattern extends IndexSubPatternBGP {
 
 	@Override
 	public long estimate() {
-		if (graph instanceof KbGraph) {
-			return new DefaultCountTransformation((KbGraph)graph).estimateSelectivity(this);
-		} else if (graph instanceof KbUnionGraph) {
-			KbUnionGraph union = (KbUnionGraph)graph;
+		if (graph instanceof KbGraph kbGraph) {
+			return new DefaultCountTransformation(kbGraph).estimateSelectivity(this);
+		} else if (graph instanceof KbUnionGraph union) {
 			Graph l = (Graph)union.getL();
 			Graph r = (Graph)union.getR();
 			BasicPattern pattern = BasicPattern.wrap(getList());

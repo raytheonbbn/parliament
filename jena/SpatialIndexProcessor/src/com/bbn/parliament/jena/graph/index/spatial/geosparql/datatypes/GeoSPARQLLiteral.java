@@ -146,8 +146,8 @@ public abstract class GeoSPARQLLiteral extends BaseDatatype {
 	public final String unparse(Object value) {
 		if (null == value) {
 			return null;
-		} else if (value instanceof Geometry) {
-			Geometry g = denormalize((Geometry) value);
+		} else if (value instanceof Geometry geoValue) {
+			Geometry g = denormalize(geoValue);
 			return doUnparse(g);
 		}
 		return super.unparse(value);

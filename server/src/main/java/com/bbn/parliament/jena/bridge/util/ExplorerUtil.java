@@ -141,8 +141,8 @@ public class ExplorerUtil {
 			while (labelIter.hasNext()) {
 				// Value labelObj = labelIter.next().getObject();
 				RDFNode labelObj = labelIter.nextStatement().getObject();
-				if (labelObj instanceof Literal) {
-					label = ((Literal) labelObj).getString();
+				if (labelObj instanceof Literal labelLit) {
+					label = labelLit.getString();
 					break;
 				}
 			}

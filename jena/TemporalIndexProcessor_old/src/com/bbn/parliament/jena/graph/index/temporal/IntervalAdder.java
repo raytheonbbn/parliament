@@ -39,18 +39,20 @@ public class IntervalAdder extends TIPBuiltin {
 				"Builtin " + getName() + " must have a literal xsdDateTime as its second and third arguments.");
 		}
 
-		if (!(startTime.getLiteralValue() instanceof XSDDateTime && endTime.getLiteralValue() instanceof XSDDateTime)) {
-			throw new BuiltinException(this, context,
-				"Builtin " + getName() + " must have a literal xsdDateTime as its second and third arguments.");
+		if (!(startTime.getLiteralValue() instanceof XSDDateTime startLitVal
+			&& endTime.getLiteralValue() instanceof XSDDateTime endLitVal)) {
+			throw new BuiltinException(this, context, "Builtin " + getName()
+				+ " must have a literal xsdDateTime as its second and third arguments.");
+		} else {
+			long startValue = startLitVal.asCalendar().getTimeInMillis();
+			long endValue = endLitVal.asCalendar().getTimeInMillis();
+			TemporalInterval extent = new TemporalInterval();
+			TemporalInstant start = new TemporalInstant(startValue, extent, true);
+			TemporalInstant end = new TemporalInstant(endValue, extent, false);
+			extent.setStart(start);
+			extent.setEnd(end);
+			//getTemporalIndexProcessor().addExtent(interval, extent);
 		}
-		long startValue = ((XSDDateTime)startTime.getLiteralValue()).asCalendar().getTimeInMillis();
-		long endValue = ((XSDDateTime)endTime.getLiteralValue()).asCalendar().getTimeInMillis();
-		TemporalInterval extent = new TemporalInterval();
-		TemporalInstant start = new TemporalInstant(startValue, extent, true);
-		TemporalInstant end = new TemporalInstant(endValue, extent, false);
-		extent.setStart(start);
-		extent.setEnd(end);
-		//getTemporalIndexProcessor().addExtent(interval, extent);
 	}
 
 	@Override

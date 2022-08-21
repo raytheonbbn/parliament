@@ -93,13 +93,13 @@ public class KbUnionGraph extends Union implements KbUnionableGraph
 	public void setFiltering(boolean filtering)
 	{
 		this.filtering = filtering;
-		if (left instanceof KbUnionGraph)
+		if (left instanceof KbUnionGraph leftUnionGraph)
 		{
-			((KbUnionGraph) left).setFiltering(filtering);
+			leftUnionGraph.setFiltering(filtering);
 		}
-		if (right instanceof KbUnionGraph)
+		if (right instanceof KbUnionGraph rightUnionGraph)
 		{
-			((KbUnionGraph) right).setFiltering(filtering);
+			rightUnionGraph.setFiltering(filtering);
 		}
 	}
 }

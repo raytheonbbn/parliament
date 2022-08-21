@@ -48,8 +48,7 @@ public class GMLLiteral extends GeoSPARQLLiteral {
 		try (Reader input = new StringReader(lexicalForm)) {
 			Parser parser = new Parser(new GMLConfiguration());
 			Geometry g = (Geometry) parser.parse(input);
-			if (g.getUserData() instanceof AbstractCRS) {
-				AbstractCRS crs = (AbstractCRS) g.getUserData();
+			if (g.getUserData() instanceof AbstractCRS crs) {
 				Set<ReferenceIdentifier> identifiers = crs.getIdentifiers();
 				ReferenceIdentifier found = identifiers.stream()
 					.filter(id -> Citations.identifierMatches(Citations.EPSG, id.getAuthority())

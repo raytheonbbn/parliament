@@ -265,20 +265,16 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 	private long estimateSelectivity(Geometry op1obj, Geometry op2obj) {
 		if (op1obj instanceof FloatingCircle || op2obj instanceof FloatingCircle) {
 			// there is no easy way to estimate the count for a floating
-			// geometry without actually
-			// executing the query
+			// geometry without actually executing the query
 			try {
 				return index.size();
 			} catch (IndexException e) {
-
 				return Long.MAX_VALUE;
 			}
-		} else if (op1obj instanceof BufferedGeometry
-			|| op2obj instanceof BufferedGeometry) {
+		} else if (op1obj instanceof BufferedGeometry || op2obj instanceof BufferedGeometry) {
 			// estimate for buffered geometries depends on whether the distance
 			// is bound or not
-			if (op1obj instanceof BufferedGeometry) {
-				BufferedGeometry buffer = (BufferedGeometry) op1obj;
+			if (op1obj instanceof BufferedGeometry buffer) {
 				if (buffer.getDistance() == null) {
 					return Long.MAX_VALUE;
 				} else if (buffer.getDistance() <= 0.0d) {
@@ -288,8 +284,7 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 					return estimateSelectivity(extent, op2obj);
 				}
 			}
-			if (op2obj instanceof BufferedGeometry) {
-				BufferedGeometry buffer = (BufferedGeometry) op2obj;
+			if (op2obj instanceof BufferedGeometry buffer) {
 				if (buffer.getDistance() == null) {
 					return Long.MAX_VALUE;
 				} else if (buffer.getDistance() <= 0.0d) {
@@ -360,11 +355,9 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 		}
 		updateBinding(b, operands);
 		if (extent instanceof FloatingCircle) {
-			return processFloatingCircle(node, args, b, operands, isSubject,
-				context);
+			return processFloatingCircle(node, args, b, operands, isSubject, context);
 		} else if (null != extent && allBound) {
-			return processGeometries(Arrays.asList(node), args, b, operands,
-				isSubject, context);
+			return processGeometries(Arrays.asList(node), args, b, operands, isSubject, context);
 		} else {
 			return IterLib.noResults(context);
 		}
@@ -424,25 +417,21 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 
 		Geometry extent1 = op1.getRepresentation();
 		Geometry extent2 = op2.getRepresentation();
-		if (extent1 instanceof FloatingCircle
-			&& extent2 instanceof FloatingCircle) {
+		if (extent1 instanceof FloatingCircle && extent2 instanceof FloatingCircle) {
 			throw new RuntimeException(
-				"Cannot have a floating circle as subject and object for: "
-					+ getUri());
+				"Cannot have a floating circle as subject and object for: " + getUri());
 		}
 
 		BindingMap b = BindingFactory.create(binding);
-		if (extent1 instanceof BufferedGeometry) {
-			extent1 = ((BufferedGeometry) extent1).getBufferedGeometry();
-			if (null == extent1) {
-				// no buffer
+		if (extent1 instanceof BufferedGeometry buffer) {
+			extent1 = buffer.getBufferedGeometry();
+			if (null == extent1) {	// no buffer
 				return IterLib.noResults(context);
 			}
 		}
-		if (extent2 instanceof BufferedGeometry) {
-			extent2 = ((BufferedGeometry) extent2).getBufferedGeometry();
-			if (null == extent2) {
-				// no buffer
+		if (extent2 instanceof BufferedGeometry buffer) {
+			extent2 = buffer.getBufferedGeometry();
+			if (null == extent2) {	// no buffer
 				return IterLib.noResults(context);
 			}
 		}
@@ -456,9 +445,8 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 			return processFloatingCircle(object, Arrays.asList(subject), b,
 				operands, false, context);
 		} else if (null != extent1 && null != extent2) {
-			return processGeometries(Arrays.asList(subject),
-				Arrays.asList(object), b, operands, true,
-				context);
+			return processGeometries(Arrays.asList(subject), Arrays.asList(object),
+				b, operands, true, context);
 		}
 
 		// either extent1, extent2, or both are unbound
@@ -484,13 +472,13 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 		}
 		for (Node n1 : first) {
 			Geometry extent1 = operands.get(n1).getRepresentation();
-			if (extent1 instanceof BufferedGeometry) {
-				extent1 = ((BufferedGeometry) extent1).getBufferedGeometry();
+			if (extent1 instanceof BufferedGeometry buffer) {
+				extent1 = buffer.getBufferedGeometry();
 			}
 			for (Node n2 : second) {
 				Geometry extent2 = operands.get(n2).getRepresentation();
-				if (extent2 instanceof BufferedGeometry) {
-					extent2 = ((BufferedGeometry) extent2).getBufferedGeometry();
+				if (extent2 instanceof BufferedGeometry buffer) {
+					extent2 = buffer.getBufferedGeometry();
 				}
 				valid = valid && opToExecute.relate(extent1, extent2);
 			}
@@ -765,8 +753,8 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 		// check extent hasn't already been added
 		boolean contains = false;
 		for (Geometry extent : extents) {
-			if (extentToAdd instanceof Point && extent instanceof Point) {
-				contains = ((Point) extentToAdd).equals(extent);
+			if (extentToAdd instanceof Point extentToAddPt && extent instanceof Point) {
+				contains = extentToAddPt.equals(extent);
 			} else if ((extentToAdd instanceof Polygon && extent instanceof Polygon)
 				|| (extentToAdd instanceof LineString && extent instanceof LineString)) {
 				Polygon e1 = (Polygon) extentToAdd;

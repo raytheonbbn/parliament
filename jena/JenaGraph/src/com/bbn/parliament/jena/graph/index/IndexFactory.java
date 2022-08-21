@@ -91,8 +91,7 @@ public abstract class IndexFactory<I extends Index<T>, T> {
 		 */
 		public static String getIndexDirectory(Graph graph, Node graphName) {
 			String dir = null;
-			if (graph instanceof KbGraph) {
-				KbGraph kbg = (KbGraph) graph;
+			if (graph instanceof KbGraph kbg) {
 				//String relativeDir = kbg.getRelativeDirectory();
 				dir = kbg.getConfig().m_kbDirectoryPath; // m_kbDirectoryPath includes the relative directory...
 				//dir = kbg.getConfig().m_kbDirectoryPath + File.separator

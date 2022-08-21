@@ -45,9 +45,9 @@ public class JenaRuleConfigurationHandler implements ReasonerConfigurationHandle
 	public void configure(Reasoner reasoner) throws ConfigurationException {
 		if (_rules.size() == 0) {
 			LOG.warn("No rules were specified.");
-		} else if (reasoner instanceof GenericRuleReasoner) {
+		} else if (reasoner instanceof GenericRuleReasoner genericRuleReasoner) {
 			LOG.info("Adding rules to existing reasoner");
-			((GenericRuleReasoner) reasoner).addRules(_rules);
+			genericRuleReasoner.addRules(_rules);
 		} else {
 			LOG.info("Reasoner is type {}", reasoner.getClass());
 		}

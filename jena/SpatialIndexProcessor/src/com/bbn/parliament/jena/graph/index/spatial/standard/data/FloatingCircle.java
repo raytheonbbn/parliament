@@ -47,15 +47,12 @@ public class FloatingCircle extends EphemeralGeometry {
 		Set<Coordinate> pointSet = new HashSet<>();
 
 		for (Geometry extent : extents) {
-			if (extent instanceof Point) {
-				Point point = (Point) extent;
+			if (extent instanceof Point point) {
 				pointSet.add(point.getCoordinate());
-
-			} else if (extent instanceof LineString) {
-				LineString path = (LineString) extent;
+			} else if (extent instanceof LineString path) {
 				pointSet.addAll(Arrays.asList(path.getCoordinates()));
-			} else if (extent instanceof Polygon) {
-				pointSet.addAll(Arrays.asList(extent.getCoordinates()));
+			} else if (extent instanceof Polygon poly) {
+				pointSet.addAll(Arrays.asList(poly.getCoordinates()));
 			}
 		}
 

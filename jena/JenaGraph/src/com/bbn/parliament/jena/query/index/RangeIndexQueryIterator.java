@@ -97,8 +97,7 @@ public class RangeIndexQueryIterator<T extends Comparable<T>> extends QueryIterR
 			} else {
 				start = value;
 			}
-		} else if (expr instanceof E_GreaterThan
-			|| expr instanceof E_GreaterThanOrEqual) {
+		} else if (expr instanceof E_GreaterThan || expr instanceof E_GreaterThanOrEqual) {
 			if (varFirst) {
 				start = value;
 			} else {

@@ -77,10 +77,7 @@ public class KbGraphTest {
 		Node obj = iterator.next().getObject();
 
 		assertTrue(obj instanceof Node_Literal);
-		Node_Literal literalObj = (Node_Literal) obj;
-
-		//System.out.println(literalObj.getLiteralLanguage());
-		assertEquals("en", literalObj.getLiteralLanguage());
+		assertEquals("en", ((Node_Literal) obj).getLiteralLanguage());
 	}
 
 	public static void main(String[] args) {

@@ -63,7 +63,7 @@ public class ReorderQueryIterTriplePattern extends QueryIterRepeatApply {
 
 		List<Triple> triples = new ArrayList<>(pattern.size());
 		Graph graph = getExecContext().getActiveGraph();
-		if (graph instanceof KbGraph) {
+		if (graph instanceof KbGraph kbGraph) {
 			boolean optimize = false;
 			BasicPattern bound = substitute(pattern, binding);
 			for (Triple t : pattern.getList()) {
@@ -81,8 +81,7 @@ public class ReorderQueryIterTriplePattern extends QueryIterRepeatApply {
 			}
 			// only optimize triple order if a bound variable is in the pattern
 			if (optimize) {
-				bound = SolverUtil.optimizeTripleOrder(bound, (KbGraph) graph,
-					getExecContext());
+				bound = SolverUtil.optimizeTripleOrder(bound, kbGraph, getExecContext());
 			}
 			triples = bound.getList();
 		} else {
@@ -110,8 +109,8 @@ public class ReorderQueryIterTriplePattern extends QueryIterRepeatApply {
 
 		// create the return iterator
 		for (Triple t : triples) {
-			if (t instanceof ReifiedTriple){
-				ret = new QueryIterReifiedTriplePattern(ret, (ReifiedTriple)t, getExecContext());
+			if (t instanceof ReifiedTriple reifT){
+				ret = new QueryIterReifiedTriplePattern(ret, reifT, getExecContext());
 			}else{
 				ret = new QueryIterTriplePattern(ret, t, getExecContext());
 			}
@@ -141,7 +140,8 @@ public class ReorderQueryIterTriplePattern extends QueryIterRepeatApply {
 		if (isNotNeeded(binding))
 			return triple;
 
-		ReifiedTriple rTriple = (triple instanceof ReifiedTriple) ? (ReifiedTriple) triple : null;
+		ReifiedTriple rTriple = (triple instanceof ReifiedTriple reifTriple)
+			? reifTriple : null;
 
 
 		Node s = triple.getSubject();

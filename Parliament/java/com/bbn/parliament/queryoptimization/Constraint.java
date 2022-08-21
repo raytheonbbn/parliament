@@ -9,49 +9,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** @author dkolas */
-public class Constraint
-{
+public class Constraint {
 	private List<Integer> variables = new ArrayList<>();
 	private long          maximumProduct = 0;
 
-	public void addVariable(int x)
-	{
-		if (!variables.contains(x))
-		{
+	public void addVariable(int x) {
+		if (!variables.contains(x)) {
 			variables.add(x);
 		}
 	}
 
-	public boolean hasVariable(int x)
-	{
+	public boolean hasVariable(int x) {
 		return variables.contains(x);
 	}
 
-	public List<Integer> getVariables()
-	{
+	public List<Integer> getVariables() {
 		return variables;
 	}
 
-	public long getMaximumProduct()
-	{
+	public long getMaximumProduct() {
 		return maximumProduct;
 	}
 
-	public void setMaximumProduct(long maximumProduct)
-	{
+	public void setMaximumProduct(long maximumProduct) {
 		this.maximumProduct = maximumProduct;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("[");
-		for (int i = 0; i < variables.size(); i++)
-		{
+		for (int i = 0; i < variables.size(); i++) {
 			builder.append(" V" + variables.get(i) + " ");
-			if (i != variables.size() - 1)
-			{
+			if (i != variables.size() - 1) {
 				builder.append("*");
 			}
 		}
@@ -60,33 +50,22 @@ public class Constraint
 	}
 
 	@Override
-	public boolean equals(Object o)
-	{
-		if (!(o instanceof Constraint))
-		{
+	public boolean equals(Object o) {
+		if (!(o instanceof Constraint otherConstraint)) {
 			return false;
-		}
-		else
-		{
-			Constraint otherConstraint = (Constraint) o;
-			if (otherConstraint.maximumProduct != this.maximumProduct)
-			{
-				return false;
-			}
+		} else if (otherConstraint.maximumProduct != this.maximumProduct) {
+			return false;
+		} else {
 			return checkLists(otherConstraint.variables);
 		}
 	}
 
-	private boolean checkLists(List<Integer> otherVariables)
-	{
-		if (variables.size() != otherVariables.size())
-		{
+	private boolean checkLists(List<Integer> otherVariables) {
+		if (variables.size() != otherVariables.size()) {
 			return false;
 		}
-		for (Integer i : otherVariables)
-		{
-			if (!variables.contains(i))
-			{
+		for (Integer i : otherVariables) {
+			if (!variables.contains(i)) {
 				return false;
 			}
 		}
@@ -96,8 +75,7 @@ public class Constraint
 	@Override
 	public int hashCode() {
 		int result = Long.valueOf(maximumProduct).hashCode();
-		for (Integer i : variables)
-		{
+		for (Integer i : variables) {
 			result ^= i.hashCode();
 		}
 		return result;
