@@ -1,7 +1,6 @@
 package com.bbn.parliament.jena.graph.index.spatial;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -357,7 +356,7 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 		if (extent instanceof FloatingCircle) {
 			return processFloatingCircle(node, args, b, operands, isSubject, context);
 		} else if (null != extent && allBound) {
-			return processGeometries(Arrays.asList(node), args, b, operands, isSubject, context);
+			return processGeometries(List.of(node), args, b, operands, isSubject, context);
 		} else {
 			return IterLib.noResults(context);
 		}
@@ -439,14 +438,11 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 		updateBinding(b, op2.getRootNode(), extent2);
 		updateBinding(b, operands);
 		if (extent1 instanceof FloatingCircle) {
-			return processFloatingCircle(subject, Arrays.asList(object), b,
-				operands, true, context);
+			return processFloatingCircle(subject, List.of(object), b, operands, true, context);
 		} else if (extent2 instanceof FloatingCircle) {
-			return processFloatingCircle(object, Arrays.asList(subject), b,
-				operands, false, context);
+			return processFloatingCircle(object, List.of(subject), b, operands, false, context);
 		} else if (null != extent1 && null != extent2) {
-			return processGeometries(Arrays.asList(subject), Arrays.asList(object),
-				b, operands, true, context);
+			return processGeometries(List.of(subject), List.of(object), b, operands, true, context);
 		}
 
 		// either extent1, extent2, or both are unbound

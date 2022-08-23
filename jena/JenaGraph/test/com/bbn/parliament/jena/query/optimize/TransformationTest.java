@@ -3,7 +3,6 @@ package com.bbn.parliament.jena.query.optimize;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -31,7 +30,7 @@ public class TransformationTest {
 		dataset = new TestingDataset();
 		@SuppressWarnings("resource")
 		KbGraph defaultGraph = dataset.getDefaultGraph();
-		transformations = Arrays.asList(
+		transformations = List.of(
 			new DefaultCountTransformation(defaultGraph),
 			new UpdatedStaticCountTransformation(defaultGraph)
 		);

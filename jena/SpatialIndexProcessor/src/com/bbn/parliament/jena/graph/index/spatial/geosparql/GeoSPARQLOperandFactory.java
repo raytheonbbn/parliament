@@ -1,7 +1,6 @@
 package com.bbn.parliament.jena.graph.index.spatial.geosparql;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
@@ -98,7 +97,7 @@ public class GeoSPARQLOperandFactory extends OperandFactoryBase<Geometry> {
 
 					for (Triple gt : pattern) {
 						if (gt.getPredicate().equals(RDF.Nodes.type)) {
-							if (containsOGCType(Arrays.asList(new String[] { gt.getObject().getURI() }))) {
+							if (containsOGCType(List.of(gt.getObject().getURI()))) {
 								usedTriples.add(gt);
 							}
 						}
@@ -110,7 +109,7 @@ public class GeoSPARQLOperandFactory extends OperandFactoryBase<Geometry> {
 
 					for (Triple gt : pattern) {
 						if (gt.getPredicate().equals(RDF.Nodes.type)) {
-							if (containsOGCType(Arrays.asList(new String[] { gt.getObject().getURI() }))) {
+							if (containsOGCType(List.of(gt.getObject().getURI()))) {
 								usedTriples.add(gt);
 							}
 						}

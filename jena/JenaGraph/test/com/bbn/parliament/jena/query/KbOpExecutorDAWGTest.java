@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +76,7 @@ public class KbOpExecutorDAWGTest {
 		"triple-match",
 		"type-promotion",
 	};
-	private static final List<String> INVALID_TESTS = Arrays.asList(
+	private static final List<String> INVALID_TESTS = List.of(
 		// This test has data and query identical to that for
 		// "optional-filter/dawg-optional-filter-005-not-simplified", but
 		// different results.  Not sure how that's supposed to work.

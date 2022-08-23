@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -251,9 +250,9 @@ public class QueryTestMethods extends SpatialTestDataset {
 			ResultSet rs = qexec.execSelect();
 
 			Map<String, List<String>> values = new HashMap<>();
-			values.put("example3:campus3", Arrays.asList("example3:campus3building1", "example3:campus3building2"));
-			values.put("example3:campus2", Arrays.asList("example2:building3", "example2:building4", "example2:building5"));
-			values.put("example3:campus1", Arrays.asList("example1:building1"));
+			values.put("example3:campus3", List.of("example3:campus3building1", "example3:campus3building2"));
+			values.put("example3:campus2", List.of("example2:building3", "example2:building4", "example2:building5"));
+			values.put("example3:campus1", List.of("example1:building1"));
 
 			int count = 0;
 			while (rs.hasNext()) {

@@ -7,7 +7,6 @@
 package com.bbn.parliament.jena.graph.index.spatial.standard.data;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,9 +49,9 @@ public class FloatingCircle extends EphemeralGeometry {
 			if (extent instanceof Point point) {
 				pointSet.add(point.getCoordinate());
 			} else if (extent instanceof LineString path) {
-				pointSet.addAll(Arrays.asList(path.getCoordinates()));
+				pointSet.addAll(List.of(path.getCoordinates()));
 			} else if (extent instanceof Polygon poly) {
-				pointSet.addAll(Arrays.asList(poly.getCoordinates()));
+				pointSet.addAll(List.of(poly.getCoordinates()));
 			}
 		}
 

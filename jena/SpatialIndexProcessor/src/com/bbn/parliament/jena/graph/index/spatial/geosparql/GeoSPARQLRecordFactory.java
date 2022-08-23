@@ -1,6 +1,5 @@
 package com.bbn.parliament.jena.graph.index.spatial.geosparql;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
@@ -19,7 +18,7 @@ import com.hp.hpl.jena.graph.Triple;
 /** @author rbattle */
 public class GeoSPARQLRecordFactory implements GeometryRecordFactory {
 
-	private static final List<Triple> MATCHES = Arrays.asList(
+	private static final List<Triple> MATCHES = List.of(
 		Triple.create(Node.ANY, Geo.Nodes.asWKT, Node.ANY),
 		Triple.create(Node.ANY, Geo.Nodes.asGML, Node.ANY));
 
