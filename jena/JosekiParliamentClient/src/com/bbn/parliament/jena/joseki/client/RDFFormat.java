@@ -80,7 +80,7 @@ public enum RDFFormat {
 	 */
 	public static RDFFormat parse(String formatStr) {
 		RDFFormat result = UNKNOWN;
-		formatStr = formatStr.trim();
+		formatStr = formatStr.strip();
 		outerLoop:
 		for (RDFFormat f : RDFFormat.values()) {
 			for (String fStr : f.formatStrList) {
@@ -187,7 +187,7 @@ public enum RDFFormat {
 		if (mediaType != null) {
 			int semiIndex = mediaType.indexOf(';');
 			if (semiIndex != -1) {
-				mediaType = mediaType.substring(0, semiIndex).trim();
+				mediaType = mediaType.substring(0, semiIndex).strip();
 			}
 
 			outerLoop:

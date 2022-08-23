@@ -213,8 +213,8 @@ public class ExportHandler extends AbstractHandler {
 
 		// These DOS device names are not allowed
 		for (String dos : DOS_DEVICE_NAMES) {
-			if (uri.trim().equalsIgnoreCase(dos)) {
-				return "_" + uri.trim();
+			if (uri.strip().equalsIgnoreCase(dos)) {
+				return "_" + uri.strip();
 			}
 		}
 

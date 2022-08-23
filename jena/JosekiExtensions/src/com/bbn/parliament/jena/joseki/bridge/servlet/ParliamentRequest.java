@@ -145,7 +145,7 @@ public class ParliamentRequest extends Request {
 		if (ct != null) {
 			int semiIndex = ct.indexOf(';');
 			if (semiIndex != -1) {
-				ct = ct.substring(0, semiIndex).trim();
+				ct = ct.substring(0, semiIndex).strip();
 			}
 		}
 		return ct;

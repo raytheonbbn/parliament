@@ -20,12 +20,12 @@ public class PTInstant extends PTDatatype {
 	/** {@inheritDoc} */
 	@Override
 	public TemporalInstant parse(String lexicalForm) throws DatatypeFormatException {
-		String trimmedForm = lexicalForm.trim();
+		String strippedForm = lexicalForm.strip();
 		try {
-			XMLGregorianCalendar xgc = Constants.XML_DT_FACTORY.newXMLGregorianCalendar(trimmedForm);
+			XMLGregorianCalendar xgc = Constants.XML_DT_FACTORY.newXMLGregorianCalendar(strippedForm);
 			return new TemporalInstant(xgc.toGregorianCalendar());
 		} catch (IllegalArgumentException e) {
-			throw new DatatypeFormatException(trimmedForm, this, "Invalid PTInstant");
+			throw new DatatypeFormatException(strippedForm, this, "Invalid PTInstant");
 		}
 	}
 }

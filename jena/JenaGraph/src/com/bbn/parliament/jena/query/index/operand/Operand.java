@@ -67,6 +67,6 @@ public class Operand<T> {
 			}
 		}
 
-		return sb.toString().trim();
+		return sb.toString().strip();
 	}
 }

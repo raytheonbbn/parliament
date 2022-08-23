@@ -64,7 +64,7 @@ public class PTInterval extends PTDatatype {
 		}
 		//Process each member
 		for (int i = 0; i < DIMENSION; i++) {
-			items[i] = items[i].trim();
+			items[i] = items[i].strip();
 		}
 
 		XMLGregorianCalendar start;
@@ -141,10 +141,10 @@ public class PTInterval extends PTDatatype {
 			return null;
 		}
 		if (lexical.startsWith(PLUSMINUS)) {
-			lexical = lexical.substring(PLUSMINUS.length()).trim();
+			lexical = lexical.substring(PLUSMINUS.length()).strip();
 			isPlusMinus = true;
 		} else if (lexical.startsWith(PLUS)) {
-			lexical = lexical.substring(PLUS.length()).trim();
+			lexical = lexical.substring(PLUS.length()).strip();
 		} else if (!lexical.startsWith(MINUS)) {
 			return tryParse(lexical);
 		}

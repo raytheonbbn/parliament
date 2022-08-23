@@ -99,8 +99,8 @@ public enum AcceptableMediaType {
 
 	public boolean hasMediaType(String mediaType, String mediaSubType) {
 		String mediaTypeStr = "%1$s/%2$s".formatted(
-			Objects.requireNonNull(mediaType, "mediaType").trim(),
-			Objects.requireNonNull(mediaSubType, "mediaSubType").trim());
+			Objects.requireNonNull(mediaType, "mediaType").strip(),
+			Objects.requireNonNull(mediaSubType, "mediaSubType").strip());
 		return Arrays.stream(mediaTypes)
 			.anyMatch(mediaTypeStr::equalsIgnoreCase);
 	}

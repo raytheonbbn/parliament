@@ -39,7 +39,7 @@ public class CmdLineJettyServer {
 						break;
 					}
 					String consoleInput = new String(bytes, 0, count, StandardCharsets.UTF_8);
-					if ("exit".equalsIgnoreCase(consoleInput.trim())) {
+					if ("exit".equalsIgnoreCase(consoleInput.strip())) {
 						sendShutdownSignal();
 						break;
 					}

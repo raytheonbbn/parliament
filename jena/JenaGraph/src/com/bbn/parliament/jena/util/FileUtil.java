@@ -35,18 +35,18 @@ public class FileUtil {
 		// Some helpful comments here:
 		// http://stackoverflow.com/questions/62771/how-check-if-given-string-is-legal-allowed-file-name-under-windows
 
-		String trimmedStr = str.trim();
+		String strippedStr = str.strip();
 
 		// These DOS device names are not allowed
 		for (String dos : DOS_DEVICE_NAMES) {
-			if (trimmedStr.equalsIgnoreCase(dos)) {
-				return "_" + trimmedStr;
+			if (strippedStr.equalsIgnoreCase(dos)) {
+				return "_" + strippedStr;
 			}
 		}
 
-		StringBuilder sb = new StringBuilder(trimmedStr.length());
-		for (int i = 0; i < trimmedStr.length(); ++i) {
-			char c = trimmedStr.charAt(i);
+		StringBuilder sb = new StringBuilder(strippedStr.length());
+		for (int i = 0; i < strippedStr.length(); ++i) {
+			char c = strippedStr.charAt(i);
 			int cInt = c;
 			if ((cInt >= 0x0 && cInt <= 0x1F) || INVALID_URL_CHARS.indexOf(cInt) >= 0) {
 				sb.append('_');

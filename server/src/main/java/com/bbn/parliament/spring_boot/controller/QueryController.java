@@ -91,7 +91,7 @@ public class QueryController {
 	private File getTempDir() {
 		File result = null;
 		if (!StringUtils.isBlank(multipartLocation)) {
-			result = new File(multipartLocation.trim());
+			result = new File(multipartLocation.strip());
 			if (!result.exists() || !result.isDirectory()) {
 				result = null;
 			}

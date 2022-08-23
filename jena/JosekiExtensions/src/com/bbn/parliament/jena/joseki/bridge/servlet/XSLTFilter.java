@@ -78,7 +78,7 @@ public class XSLTFilter implements Filter {
 
 		URL styleURL = null;
 		String styleSheet = isTransformableQuery ? req.getParameter("stylesheet") : null;
-		if (isTransformableQuery && null != styleSheet && !styleSheet.trim().isEmpty()) {
+		if (isTransformableQuery && null != styleSheet && !styleSheet.isBlank()) {
 			try {
 				styleURL = _context.getResource(styleSheet);
 			} catch (MalformedURLException ex) {

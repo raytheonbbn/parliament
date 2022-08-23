@@ -100,7 +100,7 @@ public class HttpServerUtil {
 			result = defaultValue;
 		}
 		else {
-			result = result.trim();
+			result = result.strip();
 
 			if (result.length() == 0) {
 				result = defaultValue;
@@ -174,7 +174,7 @@ public class HttpServerUtil {
 		FileItem fileItem = fileItemMap.get(paramName);
 		if (fileItem != null) {
 			try {
-				result = fileItem.getString("UTF-8").trim();
+				result = fileItem.getString("UTF-8").strip();
 			}
 			catch (UnsupportedEncodingException e) {
 				// UTF-8 must be supported by all compliant JVM's,
