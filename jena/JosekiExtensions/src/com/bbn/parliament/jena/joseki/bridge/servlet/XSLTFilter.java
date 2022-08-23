@@ -188,19 +188,12 @@ public class XSLTFilter implements Filter {
 	}
 
 	private static String methodToContentType(String method) {
-		String contentType = null;
-		switch (method) {
-		case "xml":
-			contentType = "application/xml";
-			break;
-		case "html":
-			contentType = "text/html";
-			break;
-		case "text":
-			contentType = "text/csv";
-			break;
-		}
-		return contentType;
+		return switch (method) {
+			case "xml" -> "application/xml";
+			case "html" -> "text/html";
+			case "text" -> "text/csv";
+			default -> null;
+		};
 	}
 
 	private static String getTransformMethod(URL styleURL) {

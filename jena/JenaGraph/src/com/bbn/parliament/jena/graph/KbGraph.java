@@ -186,23 +186,17 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 
 	@Override
 	public long getNodeCountInPosition(Node node, int position) {
-		long count = Long.MAX_VALUE;
 		long id = getKbId(node, false);
 		if (id == -2) {
 			return 0;
 		}
-		switch (position) {
-		case 1:
-			count = kb.subjectCount(id);
-			break;
-		case 2:
-			count = kb.predicateCount(id);
-			break;
-		case 3:
-			count = kb.objectCount(id);
-			break;
-		}
-		return count;
+
+		return switch (position) {
+			case 1 -> kb.subjectCount(id);
+			case 2 -> kb.predicateCount(id);
+			case 3 -> kb.objectCount(id);
+			default -> Long.MAX_VALUE;
+		};
 	}
 
 	public void flush() {

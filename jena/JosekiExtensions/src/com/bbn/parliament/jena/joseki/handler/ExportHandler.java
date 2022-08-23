@@ -134,25 +134,13 @@ public class ExportHandler extends AbstractHandler {
 		String extension = dataFormat.getExtension();
 		String filename = "%1$s.%2$s".formatted(basename, extension);
 
-		String writerMimeType = "text/plain";
-		switch (dataFormat) {
-		case N3:
-			writerMimeType = Joseki.contentTypeN3;
-			break;
-		case TURTLE:
-			writerMimeType = Joseki.contentTypeTurtle;
-			break;
-		case NTRIPLES:
-			writerMimeType = Joseki.contentTypeNTriples;
-			break;
-		case RDFXML:
-			writerMimeType = Joseki.contentTypeRDFXML;
-			break;
-		case UNKNOWN:
-		default:
-			// Do nothing
-			break;
-		}
+		String writerMimeType = switch (dataFormat) {
+			case N3 -> Joseki.contentTypeN3;
+			case TURTLE -> Joseki.contentTypeTurtle;
+			case NTRIPLES -> Joseki.contentTypeNTriples;
+			case RDFXML -> Joseki.contentTypeRDFXML;
+			default -> "text/plain";
+		};
 
 		resp.setContentType(writerMimeType);
 		resp.setHeader("Content-Disposition", "inline; filename=\"%1$s\";".formatted(filename));
