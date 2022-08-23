@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
 
-	<info organisation="com.bbn.parliament" module="JenaParliament">
+	<info organisation="com.bbn.parliament" module="JenaGraph">
 		<description>Contains Parliament implementation of the Jena Graph to enable interfacing with Parliament using the Jena API</description>
 	</info>
 

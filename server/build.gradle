@@ -21,12 +21,14 @@ ext {
 dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-	implementation fileTree(dir: artifactsDir, include: ['JenaParliament.jar'])
-	implementation fileTree(dir: artifactsDir, include: ['JosekiParliamentClient.jar'])
-	implementation fileTree(dir: artifactsDir, include: ['NumericIndex.jar'])
-	implementation fileTree(dir: artifactsDir, include: ['Parliament.jar'])
-	implementation fileTree(dir: artifactsDir, include: ['SpatialIndexProcessor.jar'])
-	implementation fileTree(dir: artifactsDir, include: ['TemporalIndexProcessor.jar'])
+	implementation fileTree(dir: artifactsDir, include: [
+		'JenaGraph.jar',
+		'JosekiParliamentClient.jar',
+		'NumericIndex.jar',
+		'Parliament.jar',
+		'SpatialIndexProcessor.jar',
+		'TemporalIndexProcessor.jar'
+	])
 
 	implementation "$commonsFileUpload"
 	implementation "$commonsLangDependency"

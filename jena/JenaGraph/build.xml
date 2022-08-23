@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<project name="JenaParliament" default="jar">
+<project name="JenaGraph" default="jar">
 	<description>Builds the Jena Wrapper for Parliament</description>
 
 	<import file="${basedir}/../../build-common.xml"/>
