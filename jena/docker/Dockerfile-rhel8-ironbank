@@ -1,7 +1,8 @@
 # Docker Parliament triple store
 
 # Requires appropriate credentials and docker login to Ironbank repo:
-FROM registry1.dso.mil/ironbank/redhat/openjdk/openjdk8-devel:latest
+#FROM registry1.dso.mil/ironbank/redhat/openjdk/openjdk8-devel:latest
+FROM registry1.dso.mil/ironbank/redhat/openjdk/openjdk17-devel:latest
 
 USER root
 
