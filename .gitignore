@@ -1,8 +1,12 @@
 bin/
+build/
 indexes/
 lib/
 log/
-
+parliament-test.log
+/.gradle/
+/.project
+/.settings/
 /build.properties
 /dependencies/
 
@@ -37,5 +41,5 @@ log/
 /Parliament/Test/Debug_with_MacOSX GCC/
 /Parliament/Test/ParliamentKbConfig.txt
 /Parliament/Test/ParliamentLogConfig.txt
+/server/test-kb-data/
 /target/
-

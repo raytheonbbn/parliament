@@ -58,13 +58,13 @@ public class PTInterval extends PTDatatype {
 		throws DatatypeFormatException {
 		String[] items = lexicalForm.split(Pattern.quote(DELIMITER), -1);
 		if (items.length != DIMENSION) {
-			throw new DatatypeFormatException(String.format(
-				"Invalid interval syntax \"%2$s\" -- must have exactly %1$d comma(s)",
-				DIMENSION - 1, lexicalForm));
+			throw new DatatypeFormatException(
+				"Invalid interval syntax \"%2$s\" -- must have exactly %1$d comma(s)"
+				.formatted(DIMENSION - 1, lexicalForm));
 		}
 		//Process each member
 		for (int i = 0; i < DIMENSION; i++) {
-			items[i] = items[i].trim();
+			items[i] = items[i].strip();
 		}
 
 		XMLGregorianCalendar start;
@@ -113,7 +113,8 @@ public class PTInterval extends PTDatatype {
 			return Constants.XML_DT_FACTORY.newXMLGregorianCalendar(lexical);
 		}
 		catch (IllegalArgumentException e) {
-			throw new DatatypeFormatException(String.format("Invalid DateTime (%1$s) - check syntax", lexical));
+			throw new DatatypeFormatException("Invalid DateTime (%1$s) - check syntax"
+				.formatted(lexical));
 		}
 	}
 
@@ -140,17 +141,18 @@ public class PTInterval extends PTDatatype {
 			return null;
 		}
 		if (lexical.startsWith(PLUSMINUS)) {
-			lexical = lexical.substring(PLUSMINUS.length()).trim();
+			lexical = lexical.substring(PLUSMINUS.length()).strip();
 			isPlusMinus = true;
 		} else if (lexical.startsWith(PLUS)) {
-			lexical = lexical.substring(PLUS.length()).trim();
+			lexical = lexical.substring(PLUS.length()).strip();
 		} else if (!lexical.startsWith(MINUS)) {
 			return tryParse(lexical);
 		}
 		try {
 			d = Constants.XML_DT_FACTORY.newDuration(lexical);
 		} catch (IllegalArgumentException e) {
-			throw new DatatypeFormatException(String.format("'%1$s' is not a properly formatted XSDDuration literal", lexical));
+			throw new DatatypeFormatException(
+				"'%1$s' is not a properly formatted XSDDuration literal".formatted(lexical));
 		}
 		XMLGregorianCalendar secondref = (XMLGregorianCalendar) firstref.clone();
 
@@ -166,7 +168,8 @@ public class PTInterval extends PTDatatype {
 				otherptr.add(d.negate());
 			}
 		} else {
-			throw new DatatypeFormatException(String.format("Duration '%1$s' must be of length greater than 0", lexical));
+			throw new DatatypeFormatException(
+				"Duration '%1$s' must be of length greater than 0".formatted(lexical));
 		}
 		return secondref;
 	}

@@ -6,6 +6,8 @@
 package com.bbn.parliament.jena.graph.index.temporal.extent;
 
 import java.util.Calendar;
+import java.util.Objects;
+
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.graph.Node;
 
@@ -69,26 +71,21 @@ public class TemporalInstant extends TemporalExtent implements Comparable<Tempor
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof TemporalInstant) {
-			TemporalInstant ti = (TemporalInstant) obj;
-			return (instant == ti.instant
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof TemporalInstant ti) {
+			return instant == ti.instant
 				&& isStart == ti.isStart
 				&& isEnd == ti.isEnd
-				&& parentInterval == ti.parentInterval
-				);
+				&& parentInterval == ti.parentInterval;
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		int result = Long.valueOf(instant).hashCode();
-		result ^= Boolean.valueOf(isStart).hashCode();
-		result ^= Integer.rotateLeft(Boolean.valueOf(isEnd).hashCode(), 4);
-		if (parentInterval != null) {
-			result ^= parentInterval.hashCode();
-		}
-		return result;
+		return Objects.hash(instant, isStart, isEnd, parentInterval);
 	}
 
 	@Override

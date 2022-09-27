@@ -242,7 +242,7 @@
 			casesensitive="false"
 			defaultValue="${env.BOOST_VERSION}"/>
 		<property name="boostLibSuffix"
-			value="-clang-darwin13-mt${variantSuffix}${addrModelSuffix}-${boostVer}.dylib"/>
+			value="-clang-darwin14-mt${variantSuffix}${addrModelSuffix}-${boostVer}.dylib"/>
 
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>

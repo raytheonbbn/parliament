@@ -37,9 +37,9 @@ public class RdfLoader
 
 	public static void usage(String[] args)
 	{
-		System.err.println(
-			"Usage:  java com.bbn.parliament.utilities.RdfLoader  [--time] "
-				+ "{--suffix <suffix>} {--load file uri} {--batch dir uri} ...");
+		System.err.println("""
+			Usage:  java com.bbn.parliament.utilities.RdfLoader \
+			[--time] {--suffix <suffix>} {--load file uri} {--batch dir uri} ...""");
 		System.exit(EXIT_FAILURE);
 	}
 

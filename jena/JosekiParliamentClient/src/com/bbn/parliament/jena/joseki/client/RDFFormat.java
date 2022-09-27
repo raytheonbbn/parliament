@@ -80,7 +80,7 @@ public enum RDFFormat {
 	 */
 	public static RDFFormat parse(String formatStr) {
 		RDFFormat result = UNKNOWN;
-		formatStr = formatStr.trim();
+		formatStr = formatStr.strip();
 		outerLoop:
 		for (RDFFormat f : RDFFormat.values()) {
 			for (String fStr : f.formatStrList) {
@@ -187,7 +187,7 @@ public enum RDFFormat {
 		if (mediaType != null) {
 			int semiIndex = mediaType.indexOf(';');
 			if (semiIndex != -1) {
-				mediaType = mediaType.substring(0, semiIndex).trim();
+				mediaType = mediaType.substring(0, semiIndex).strip();
 			}
 
 			outerLoop:
@@ -209,6 +209,14 @@ public enum RDFFormat {
 	 */
 	public String getExtension() {
 		return (fileExtList.length == 0) ? null : fileExtList[0];
+	}
+
+	/**
+	 * Returns a filename extension string that matches this RDFFormat, or "txt" for
+	 * RDFFormat.UNKNOWN.
+	 */
+	public String[] getExtensions() {
+		return fileExtList.clone();
 	}
 
 	/** Returns media type string for this RDFFormat, or null for RDFFormat.UNKNOWN. */

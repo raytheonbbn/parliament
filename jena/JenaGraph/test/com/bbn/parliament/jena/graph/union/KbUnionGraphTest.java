@@ -126,13 +126,14 @@ public class KbUnionGraphTest {
 		assertFalse(right.isClosed());
 	}
 
-	private static final String UNION_TEST_QUERY = ""
-		+ "prefix : <http://example.org/data/> "
-		+ "select * where { "
-		+ "  graph <%1$s%2$d> {"
-		+ "    :x %3$s ?o ."
-		+ "  }"
-		+ "}";
+	private static final String UNION_TEST_QUERY = """
+		prefix : <http://example.org/data/>
+		select * where {
+			graph <%1$s%2$d> {
+				:x %3$s ?o .
+			}
+		}
+		""";
 
 	@Test
 	public void testQueryUnionGraph() {
@@ -152,13 +153,13 @@ public class KbUnionGraphTest {
 		int count;
 
 		rs = QueryExecutionFactory.create(
-			String.format(UNION_TEST_QUERY, UNION_BASE, counter, ":p"),
+			UNION_TEST_QUERY.formatted(UNION_BASE, counter, ":p"),
 			graphStore.toDataset()).execSelect();
 		count = printResultSet("Union graph query 1", rs);
 		assertEquals(2, count);
 
 		rs = QueryExecutionFactory.create(
-			String.format(UNION_TEST_QUERY, UNION_BASE, counter, "?p"),
+			UNION_TEST_QUERY.formatted(UNION_BASE, counter, "?p"),
 			graphStore.toDataset()).execSelect();
 		count = printResultSet("Union graph query 2", rs);
 		assertEquals(3, count);

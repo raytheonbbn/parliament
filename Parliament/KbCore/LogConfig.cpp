@@ -59,7 +59,8 @@ pmnt::LogConfig::LogConfig() :
 		{ c.m_logLevel = value; };
 	m_ceMap["logChannelLevel"] = [](const string& value, uint32 lineNum, LogConfig& c)
 		{
-			string channel, logLevel;
+			string channel;
+			string logLevel;
 			splitAtFirstEquals(value, lineNum, channel, logLevel);
 			c.addLogChannelLevel(channel, logLevel);
 		};

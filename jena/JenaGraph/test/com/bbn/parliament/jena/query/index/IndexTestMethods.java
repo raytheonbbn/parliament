@@ -55,11 +55,11 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 	// Call from @BeforeEach
 	public IndexTestMethods() {
 		if (KB_DIR.exists() && !KB_DIR.isDirectory()) {
-			throw new RuntimeException(String.format(
-				"%1$s exists but is not a directory", KB_DIR.getAbsolutePath()));
+			throw new RuntimeException("%1$s exists but is not a directory"
+				.formatted(KB_DIR.getAbsolutePath()));
 		} else if (KB_DIR.isDirectory() && KB_DIR.listFiles().length > 0) {
-			throw new RuntimeException(String.format(
-				"%1$s is a non-empty directory", KB_DIR.getAbsolutePath()));
+			throw new RuntimeException("%1$s is a non-empty directory"
+				.formatted(KB_DIR.getAbsolutePath()));
 		}
 
 		@SuppressWarnings("resource")

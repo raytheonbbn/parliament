@@ -3,7 +3,6 @@ package com.bbn.parliament.jena.query.optimize;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -14,6 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.bbn.parliament.jena.TestingDataset;
+import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.query.QueryTestUtil;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -28,9 +28,11 @@ public class TransformationTest {
 	@BeforeAll
 	public static void beforeAll() {
 		dataset = new TestingDataset();
-		transformations = Arrays.asList(
-			new DefaultCountTransformation(dataset.getDefaultGraph()),
-			new UpdatedStaticCountTransformation(dataset.getDefaultGraph())
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		transformations = List.of(
+			new DefaultCountTransformation(defaultGraph),
+			new UpdatedStaticCountTransformation(defaultGraph)
 		);
 	}
 
@@ -53,7 +55,9 @@ public class TransformationTest {
 	@ParameterizedTest
 	@MethodSource("generateReorderTransformations")
 	public void testNoTransformation(ReorderTransformation transformation) throws IOException {
-		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", dataset.getDefaultGraph());
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", defaultGraph);
 		BasicPattern pattern = new BasicPattern();
 		pattern.add(Triple.create(ResourceFactory
 			.createResource("http://example.org/data/x")
@@ -69,7 +73,9 @@ public class TransformationTest {
 	@ParameterizedTest
 	@MethodSource("generateReorderTransformations")
 	public void testSimpleTransformation(ReorderTransformation transformation) throws IOException {
-		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", dataset.getDefaultGraph());
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", defaultGraph);
 		BasicPattern pattern = new BasicPattern();
 		pattern.add(Triple.create(Var.alloc("s"), Var.alloc("p"),
 			Var.alloc("o")));
@@ -97,8 +103,8 @@ public class TransformationTest {
 			int index = indexes[i];
 			valid = valid && pattern.get(index).equals(reordered.get(i));
 			if (!valid) {
-				System.err.println(String.format("Invalid index: %d.  Expected %s but saw %s",
-					i, pattern.get(i), reordered.get(index)));
+				System.err.format("Invalid index: %d.  Expected %s but saw %s%n",
+					i, pattern.get(i), reordered.get(index));
 				return valid;
 			}
 		}

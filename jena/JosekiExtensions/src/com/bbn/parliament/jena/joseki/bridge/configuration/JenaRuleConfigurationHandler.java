@@ -45,9 +45,9 @@ public class JenaRuleConfigurationHandler implements ReasonerConfigurationHandle
 	public void configure(Reasoner reasoner) throws ConfigurationException {
 		if (_rules.size() == 0) {
 			LOG.warn("No rules were specified.");
-		} else if (reasoner instanceof GenericRuleReasoner) {
+		} else if (reasoner instanceof GenericRuleReasoner genericRuleReasoner) {
 			LOG.info("Adding rules to existing reasoner");
-			((GenericRuleReasoner) reasoner).addRules(_rules);
+			genericRuleReasoner.addRules(_rules);
 		} else {
 			LOG.info("Reasoner is type {}", reasoner.getClass());
 		}
@@ -65,7 +65,7 @@ public class JenaRuleConfigurationHandler implements ReasonerConfigurationHandle
 			StmtIterator si = handle.listProperties(ruleFile);
 			while (si.hasNext()) {
 				String uri = si.nextStatement().getResource().getURI();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				try (InputStream is = URI.create(uri).toURL().openStream()) {
 					for (int i = -1; -1 != (i = is.read());) {
 						sb.append((char) i);

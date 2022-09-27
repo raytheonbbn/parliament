@@ -14,7 +14,7 @@ public class TransformCache {
 	private LinkedHashMap<CoordinateReferenceSystem, LinkedHashMap<CoordinateReferenceSystem, MathTransform>> cache;
 
 	public TransformCache() {
-		this.cache = new LinkedHashMap<CoordinateReferenceSystem, LinkedHashMap<CoordinateReferenceSystem,MathTransform>>(CACHE_SIZE) {
+		this.cache = new LinkedHashMap<>(CACHE_SIZE) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -28,7 +28,7 @@ public class TransformCache {
 	public MathTransform getTransform(CoordinateReferenceSystem source, CoordinateReferenceSystem target) throws FactoryException {
 		LinkedHashMap<CoordinateReferenceSystem, MathTransform> transforms = cache.get(source);
 		if (null == transforms) {
-			transforms = new LinkedHashMap<CoordinateReferenceSystem, MathTransform>(CACHE_SIZE) {
+			transforms = new LinkedHashMap<>(CACHE_SIZE) {
 				private static final long serialVersionUID = 1L;
 
 				@Override

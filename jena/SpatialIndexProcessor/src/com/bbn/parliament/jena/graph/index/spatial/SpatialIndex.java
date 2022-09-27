@@ -50,14 +50,14 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 	private static final String DATA_DB = "data";
 	private static final String CATALOG_DB = "catalog";
 
-	private static final ThreadLocal<WKBWriter> WKB_WRITER = new ThreadLocal<WKBWriter>() {
+	private static final ThreadLocal<WKBWriter> WKB_WRITER = new ThreadLocal<>() {
 		@Override
 		protected WKBWriter initialValue() {
 			return new WKBWriter();
 		}
 	};
 
-	private static final ThreadLocal<WKBReader> WKB_READER = new ThreadLocal<WKBReader>() {
+	private static final ThreadLocal<WKBReader> WKB_READER = new ThreadLocal<>() {
 		@Override
 		protected WKBReader initialValue() {
 			return new WKBReader(SpatialGeometryFactory.GEOMETRY_FACTORY);
@@ -112,7 +112,7 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 		this.profile = profile;
 		this.configuration = configuration;
 
-		cache = new ThreadLocal<QueryCache<Geometry>>() {
+		cache = new ThreadLocal<>() {
 			@Override
 			protected QueryCache<Geometry> initialValue() {
 				return new QueryCache<>(Constants.QUERY_CACHE_SIZE);
@@ -435,7 +435,7 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 	public final Iterator<Record<Geometry>> doIterator() {
 		final Iterator<NodeData> iter = nodes.values().iterator();
 		final SpatialIndex index = this;
-		ClosableIterator<Record<Geometry>> it = new ClosableIterator<Record<Geometry>>() {
+		ClosableIterator<Record<Geometry>> it = new ClosableIterator<>() {
 			@Override
 			public void remove() {
 			}

@@ -106,7 +106,7 @@ public class NodeCreateUtils {
 		if (spelling.indexOf('\\') < 0) {
 			return spelling;
 		}
-		StringBuffer result = new StringBuffer(spelling.length());
+		StringBuilder result = new StringBuilder(spelling.length());
 		int start = 0;
 		while (true) {
 			int b = spelling.indexOf('\\', start);
@@ -122,20 +122,13 @@ public class NodeCreateUtils {
 	}
 
 	public static char unEscape(char ch) {
-		switch (ch) {
-		case '\\':
-		case '\"':
-		case '\'':
-			return ch;
-		case 'n':
-			return '\n';
-		case 's':
-			return ' ';
-		case 't':
-			return '\t';
-		default:
-			return 'Z';
-		}
+		return switch (ch) {
+			case '\\', '\"', '\'' -> ch;
+			case 'n' -> '\n';
+			case 's' -> ' ';
+			case 't' -> '\t';
+			default -> 'Z';
+		};
 	}
 
 	public static LiteralLabel literal(PrefixMapping pm, String spelling, String langOrType) {

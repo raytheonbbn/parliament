@@ -50,11 +50,10 @@ public class TemporalOperandFactory extends OperandFactoryBase<TemporalExtent> {
 				continue;
 			}
 			Object o = object.getLiteralValue();
-			if (o instanceof TemporalExtent)	{
-				return (TemporalExtent) o;
-			}
-			else if (o instanceof XSDDateTime)	{
-				return new TemporalInstant((XSDDateTime) o);
+			if (o instanceof TemporalExtent tempExt) {
+				return tempExt;
+			} else if (o instanceof XSDDateTime dt) {
+				return new TemporalInstant(dt);
 			}
 		}
 		return extent;

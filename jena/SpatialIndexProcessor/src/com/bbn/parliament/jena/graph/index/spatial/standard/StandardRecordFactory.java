@@ -1,7 +1,6 @@
 package com.bbn.parliament.jena.graph.index.spatial.standard;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,7 @@ public class StandardRecordFactory implements GeometryRecordFactory {
 
 	private Graph graph;
 	private Map<Node, String> nodesToProcess;
-	private List<String> validTypes = Arrays.asList(StdConstants.VALID_TYPES);
+	private List<String> validTypes = List.of(StdConstants.VALID_TYPES);
 
 	public StandardRecordFactory(Graph graph) {
 		this.graph = graph;
@@ -55,25 +54,25 @@ public class StandardRecordFactory implements GeometryRecordFactory {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof StandardRecordFactory)) {
-			return false;
-		}
-		StandardRecordFactory other = (StandardRecordFactory) obj;
-		if (graph == null) {
-			if (other.graph != null) {
+		if (obj instanceof StandardRecordFactory other) {
+			if (graph == null) {
+				if (other.graph != null) {
+					return false;
+				}
+			} else if (!graph.equals(other.graph)) {
 				return false;
 			}
-		} else if (!graph.equals(other.graph)) {
-			return false;
-		}
-		if (validTypes == null) {
-			if (other.validTypes != null) {
+			if (validTypes == null) {
+				if (other.validTypes != null) {
+					return false;
+				}
+			} else if (!validTypes.equals(other.validTypes)) {
 				return false;
 			}
-		} else if (!validTypes.equals(other.validTypes)) {
+			return true;
+		} else {
 			return false;
 		}
-		return true;
 	}
 
 	@Override

@@ -62,8 +62,8 @@ public class ParliamentServlet extends Servlet {
 			ServletContext ctx = config.getServletContext();
 			if (ctx != null) {
 				Object attrValue = ctx.getAttribute("javax.servlet.context.tempdir");
-				if (attrValue != null && attrValue instanceof File) {
-					result = (File) attrValue;
+				if (attrValue != null && attrValue instanceof File fileAttr) {
+					result = fileAttr;
 				}
 			}
 		}
@@ -84,7 +84,7 @@ public class ParliamentServlet extends Servlet {
 
 		if (LOG.isDebugEnabled()) {
 			String paramMap = httpRequest.getParameterMap().entrySet().stream()
-				.map(e -> String.format("      %1$s: %2$s%n", e.getKey(),
+				.map(e -> "      %1$s: %2$s%n".formatted(e.getKey(),
 					Arrays.stream(e.getValue()).collect(Collectors.joining("|"))))
 				.collect(Collectors.joining());
 			LOG.debug(
@@ -114,12 +114,12 @@ public class ParliamentServlet extends Servlet {
 			doCommon(httpRequest, httpResponse);
 		} else {
 			try {
-				String msg = String.format(
-					"Unrecognized request content type \"%1$s\".  Must be %2$s, %3$s, or %4$s",
-					ct,
-					ParliamentRequest.CONTENT_TYPE_FORM,
-					ParliamentRequest.CONTENT_TYPE_QUERY,
-					ParliamentRequest.CONTENT_TYPE_UPDATE);
+				String msg = """
+					Unrecognized request content type "%1$s". Must be %2$s, %3$s, or %4$s"""
+					.formatted(ct,
+						ParliamentRequest.CONTENT_TYPE_FORM,
+						ParliamentRequest.CONTENT_TYPE_QUERY,
+						ParliamentRequest.CONTENT_TYPE_UPDATE);
 				LOG.warn(msg);
 				httpResponse.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, msg);
 			} catch (IOException ex) {

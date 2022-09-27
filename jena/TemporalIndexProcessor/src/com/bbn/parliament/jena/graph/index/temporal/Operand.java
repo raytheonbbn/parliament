@@ -55,8 +55,7 @@ public enum Operand {
 				return op;
 			}
 		}
-		throw new IllegalArgumentException(String.format(
-			"'%1$s' is not a valid Operand URI", uri));
+		throw new IllegalArgumentException("'%1$s' is not a valid Operand URI".formatted(uri));
 	}
 }
 

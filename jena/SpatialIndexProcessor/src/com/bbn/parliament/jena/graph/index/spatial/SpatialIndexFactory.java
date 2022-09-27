@@ -73,15 +73,11 @@ public class SpatialIndexFactory extends IndexFactory<SpatialIndex, Geometry> {
 
 		if (Constants.GEOMETRY_INDEX_POSTGRESQL.equals(indexType)) {
 			String id = null;
-			if (graph instanceof KbGraph) {
-				KbGraph kbg = (KbGraph) graph;
+			if (graph instanceof KbGraph kbg) {
 				String dir = kbg.getRelativeDirectory();
-				if (null == dir || dir.isEmpty()) {
-					id = "s_default";
-				} else {
-					id = "s" + dir;
-				}
-				id = cleanDirName(id);
+				id = cleanDirName((null == dir || dir.isEmpty())
+					? "s_default"
+					: "s" + dir);
 			} else {
 				id = cleanGraphName(graphName);
 			}

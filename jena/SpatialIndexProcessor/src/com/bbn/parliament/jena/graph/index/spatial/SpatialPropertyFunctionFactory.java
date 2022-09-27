@@ -1,7 +1,7 @@
 package com.bbn.parliament.jena.graph.index.spatial;
 
-import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
 
@@ -23,7 +23,7 @@ public class SpatialPropertyFunctionFactory implements IndexPropertyFunctionFact
 	/** {@inheritDoc} */
 	@Override
 	public Iterator<String> iterator() {
-		return Arrays.asList(operationFactory.getURIs()).iterator();
+		return List.of(operationFactory.getURIs()).iterator();
 	}
 
 	/** {@inheritDoc} */

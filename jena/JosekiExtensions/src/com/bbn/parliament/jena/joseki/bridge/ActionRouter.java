@@ -84,21 +84,17 @@ public class ActionRouter implements Loadable, Processor {
 		} else {
 			for (Map.Entry<String, String[]> e : hsr.getParameterMap().entrySet()) {
 				for (String val : e.getValue()) {
-					params.append(String.format("%n      '%1$s' = '%2$s'", e.getKey(), val));
+					params.append("%n      '%1$s' = '%2$s'".formatted(e.getKey(), val));
 				}
 			}
 		}
-		return String.format(""
-			+ "%1$s  Request details:%n"
-			+ "   Method:        %2$s%n"
-			+ "   URL:           %3$s%n"
-			+ "   Content Type:  %4$s%n"
-			+ "   Parameters:    %5$s%n",
-			msg,
-			hsr.getMethod(),
-			hsr.getRequestURL(),
-			hsr.getContentType(),
-			params);
+		return """
+			%1$s Request details:
+				Method:        %2$s
+				URL:           %3$s
+				Content Type:  %4$s
+				Parameters:    %5$s
+			""".formatted(msg, hsr.getMethod(), hsr.getRequestURL(), hsr.getContentType(), params);
 	}
 
 	//resp.setHeader("Content-Type", "application/json");
@@ -115,10 +111,10 @@ public class ActionRouter implements Loadable, Processor {
 
 		// Some error checking:  Only one of QUERY and UPDATE is allowed.
 		if (!preq.isSparqlQuery() && !preq.isSparqlUpdate()) {
-			String msg = formatRequestParticulars(preq,
-				"Request is neither a SPARQL query nor a SPARQL update.  Ensure"
-					+ " that the request method, content type, and parameters are set"
-					+ " according to the SPARQL protocol.");
+			String msg = formatRequestParticulars(preq,"""
+				Request is neither a SPARQL query nor a SPARQL update.  Ensure \
+				that the request method, content type, and parameters are set \
+				according to the SPARQL protocol.""");
 			log.warn(msg);
 			throw new JosekiServerException(msg);
 		} else if (preq.isSparqlQuery() && preq.isSparqlUpdate()) {
@@ -162,9 +158,8 @@ public class ActionRouter implements Loadable, Processor {
 				}
 			}
 		} catch (QueryParseException ex) {
-			String msg = String.format(
-				"Encountered an error while parsing query:%n    %1$s%n%n%2$s",
-				ex.getMessage(), sparqlStmt);
+			String msg = "Encountered an error while parsing query:%n    %1$s%n%n%2$s"
+				.formatted(ex.getMessage(), sparqlStmt);
 			log.info(LogUtil.fixEolsForLogging(msg));
 			throw new QueryExecutionException(ReturnCodes.rcQueryParseFailure, msg);
 		}

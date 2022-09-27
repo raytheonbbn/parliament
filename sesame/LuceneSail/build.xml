@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<project name="LuceneSail" default="jar">
+	<description>Lucene Storage and Inference Layer (SAIL) for Sesame</description>
+
+	<import file="${basedir}/../../build-common.xml"/>
+
+	<property name="binDir" value="${targetDir}/bin/${ant.project.name}"/>
+	<property name="jarFile" value="${artifactsDir}/${ant.project.name}.jar"/>
+	<property file="${kbRootDir}/build.properties"/>
+
+	<target name="buildDependencies">
+		<ant dir="${kbRootDir}/Parliament" target="jar" inheritAll="false"/>
+		<ant dir="${kbRootDir}/sesame/ParliamentSail" target="jar" inheritAll="false"/>
+		<ant dir="${kbRootDir}/sesame/SameAsSail" target="jar" inheritAll="false"/>
+	</target>
+
+	<target name="compile" depends="buildDependencies,resolve">
+		<mkdir dir="${binDir}"/>
+		<javac srcdir="${basedir}/src" destdir="${binDir}" debug="on" deprecation="on"
+				includeAntRuntime="false">
+			<classpath>
+				<fileset dir="${basedir}/lib/default" includes="*.jar"/>
+				<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
+				<fileset dir="${artifactsDir}" includes="ParliamentSail.jar"/>
+				<fileset dir="${artifactsDir}" includes="SameAsSail.jar"/>
+			</classpath>
+			<compilerarg value="-Xlint:all"/>
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${artifactsDir}"/>
+		<jar destfile="${jarFile}" basedir="${binDir}"/>
+	</target>
+
+	<target name="install" depends="jar">
+		<ant dir="${kbRootDir}/sesame/ParliamentSail" target="install" inheritAll="false"/>
+		<ant dir="${kbRootDir}/sesame/SameAsSail" target="install" inheritAll="false"/>
+		<copy todir="${tomcat}/webapps/${sesameAppName}/WEB-INF/lib">
+			<fileset file="${jarFile}"/>
+		</copy>
+	</target>
+
+	<target name="clean">
+		<delete dir="${binDir}"/>
+		<delete dir="${baseDir}/lib"/>
+	</target>
+</project>

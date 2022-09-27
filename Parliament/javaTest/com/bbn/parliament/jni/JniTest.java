@@ -87,8 +87,9 @@ public class JniTest {
 
 			// Check that resources are inserted only once:
 			long rdfTypeRsrcId2 = kb.uriToRsrcId(RDF_TYPE, false, true);
-			assertEquals(rdfTypeRsrcId, rdfTypeRsrcId2, String.format(
-				"rdf:type double inserted (rsrc ids %1$d and %2$d)", rdfTypeRsrcId, rdfTypeRsrcId2));
+			assertEquals(rdfTypeRsrcId, rdfTypeRsrcId2,
+				"rdf:type double inserted (rsrc ids %1$d and %2$d)".formatted(
+					rdfTypeRsrcId, rdfTypeRsrcId2));
 
 			// Should be inferred:
 			// Human subClassOf Animal

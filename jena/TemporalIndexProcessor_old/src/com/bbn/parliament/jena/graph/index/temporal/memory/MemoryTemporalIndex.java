@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
+
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalIndex;
@@ -38,57 +39,57 @@ public class MemoryTemporalIndex extends TemporalIndex {
 	}
 
 	public Iterator<TemporalInstant> beforeFinishInclusive(TemporalExtent extent) {
-		if (extent instanceof TemporalInterval) {
-			extent = ((TemporalInterval) extent).getEnd().createLargerInstant();
+		if (extent instanceof TemporalInterval tempInt) {
+			extent = tempInt.getEnd().createLargerInstant();
 		}
 		return instants.headSet((TemporalInstant) extent).iterator();
 	}
 
 	public Iterator<TemporalInstant> beforeFinish(TemporalExtent extent) {
-		if (extent instanceof TemporalInterval) {
-			extent = ((TemporalInterval) extent).getEnd().createSmallerInstant();
+		if (extent instanceof TemporalInterval tempInt) {
+			extent = tempInt.getEnd().createSmallerInstant();
 		}
 		return instants.headSet((TemporalInstant) extent).iterator();
 	}
 
 	public Iterator<TemporalInstant> beforeStartInclusive(TemporalExtent extent) {
-		if (extent instanceof TemporalInterval) {
-			extent = ((TemporalInterval) extent).getStart().createLargerInstant();
+		if (extent instanceof TemporalInterval tempInt) {
+			extent = tempInt.getStart().createLargerInstant();
 		}
 		return instants.headSet((TemporalInstant) extent).iterator();
 	}
 
 	public Iterator<TemporalInstant> beforeStart(TemporalExtent extent) {
-		if (extent instanceof TemporalInterval) {
-			extent = ((TemporalInterval) extent).getStart().createSmallerInstant();
+		if (extent instanceof TemporalInterval tempInt) {
+			extent = tempInt.getStart().createSmallerInstant();
 		}
 		return instants.headSet((TemporalInstant) extent).iterator();
 	}
 
 	public Iterator<TemporalInstant> afterFinishInclusive(TemporalExtent extent) {
-		if (extent instanceof TemporalInterval) {
-			extent = ((TemporalInterval) extent).getEnd().createSmallerInstant();
+		if (extent instanceof TemporalInterval tempInt) {
+			extent = tempInt.getEnd().createSmallerInstant();
 		}
 		return instants.tailSet((TemporalInstant) extent).iterator();
 	}
 
 	public Iterator<TemporalInstant> afterFinish(TemporalExtent extent) {
-		if (extent instanceof TemporalInterval) {
-			extent = ((TemporalInterval) extent).getEnd().createLargerInstant();
+		if (extent instanceof TemporalInterval tempInt) {
+			extent = tempInt.getEnd().createLargerInstant();
 		}
 		return instants.tailSet((TemporalInstant) extent).iterator();
 	}
 
 	public Iterator<TemporalInstant> afterStart(TemporalExtent extent) {
-		if (extent instanceof TemporalInterval) {
-			extent = ((TemporalInterval) extent).getStart().createLargerInstant();
+		if (extent instanceof TemporalInterval tempInt) {
+			extent = tempInt.getStart().createLargerInstant();
 		}
 		return instants.tailSet((TemporalInstant) extent).iterator();
 	}
 
 	public Iterator<TemporalInstant> afterStartInclusive(TemporalExtent extent) {
-		if (extent instanceof TemporalInterval) {
-			extent = ((TemporalInterval) extent).getStart().createSmallerInstant();
+		if (extent instanceof TemporalInterval tempInt) {
+			extent = tempInt.getStart().createSmallerInstant();
 		}
 		return instants.tailSet((TemporalInstant) extent).iterator();
 	}
@@ -200,10 +201,9 @@ public class MemoryTemporalIndex extends TemporalIndex {
 			nodes.add(node);
 			if (extent instanceof TemporalInstant) {
 				instants.add((TemporalInstant) extent);
-			} else if (extent instanceof TemporalInterval) {
-				TemporalInterval temporalInterval = (TemporalInterval) extent;
-				instants.add(temporalInterval.getStart());
-				instants.add(temporalInterval.getEnd());
+			} else if (extent instanceof TemporalInterval tempInt) {
+				instants.add(tempInt.getStart());
+				instants.add(tempInt.getEnd());
 			}
 			return true;
 		}
@@ -248,7 +248,7 @@ public class MemoryTemporalIndex extends TemporalIndex {
 			nodes = Collections.emptyList();
 		}
 		final Iterator<Node> nit = nodes.iterator();
-		return new Iterator<Record<TemporalExtent>>() {
+		return new Iterator<>() {
 
 			@Override
 			public boolean hasNext() {

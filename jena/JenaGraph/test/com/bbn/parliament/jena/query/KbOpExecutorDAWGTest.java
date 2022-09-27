@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.TestingDataset;
+import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.joseki.client.QuerySolutionStream;
 import com.hp.hpl.jena.query.ARQ;
 import com.hp.hpl.jena.query.Query;
@@ -76,7 +76,7 @@ public class KbOpExecutorDAWGTest {
 		"triple-match",
 		"type-promotion",
 	};
-	private static final List<String> INVALID_TESTS = Arrays.asList(
+	private static final List<String> INVALID_TESTS = List.of(
 		// This test has data and query identical to that for
 		// "optional-filter/dawg-optional-filter-005-not-simplified", but
 		// different results.  Not sure how that's supposed to work.
@@ -98,20 +98,21 @@ public class KbOpExecutorDAWGTest {
 		"basic/Basic - Term 6",
 		"basic/Basic - Term 7"
 	);
-	private static final String MANIFEST_ENTRY_QUERY = ""
-		+ "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-		+ "prefix mf:  <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#>\n"
-		+ "prefix qt:  <http://www.w3.org/2001/sw/DataAccess/tests/test-query#>\n"
-		+ "select distinct ?entry ?name ?result ?query ?data ?graphData where {\n"
-		+ "	?manifest a mf:Manifest ;\n"
-		+ "		mf:entries/rdf:rest*/rdf:first ?entry .\n"
-		+ "	?entry mf:name ?name ;\n"
-		+ "		mf:result ?result ;\n"
-		+ "		mf:action ?action .\n"
-		+ "	?action qt:query ?query .\n"
-		+ "	optional { ?action qt:data ?data }\n"
-		+ "	optional { ?action qt:graphData ?graphData }\n"
-		+ "}";
+	private static final String MANIFEST_ENTRY_QUERY = """
+		prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+		prefix mf:  <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#>
+		prefix qt:  <http://www.w3.org/2001/sw/DataAccess/tests/test-query#>
+		select distinct ?entry ?name ?result ?query ?data ?graphData where {
+			?manifest a mf:Manifest ;
+				mf:entries/rdf:rest*/rdf:first ?entry .
+			?entry mf:name ?name ;
+				mf:result ?result ;
+				mf:action ?action .
+			?action qt:query ?query .
+			optional { ?action qt:data ?data }
+			optional { ?action qt:graphData ?graphData }
+		}
+		""";
 	private static final File DAWG_ROOT_DIR = new File("data/data-r2");
 	private static final Pattern FILE_URI_FIXER = Pattern.compile("^(file:/)([^/].*)$");
 	private static final Pattern FILE_URI_FIXER_2 = Pattern.compile("^(file:///[A-Za-z]):(.*)$");
@@ -140,7 +141,9 @@ public class KbOpExecutorDAWGTest {
 		log.debug("AbstractDAWGTestCase.setUp:  Set CheckerLiterals.WarnOnBadLiterals to false.");
 
 		Context params = ARQ.getContext();
-		execCxt = new ExecutionContext(params, dataset.getDefaultGraph(), dataset.getGraphStore(),
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		execCxt = new ExecutionContext(params, defaultGraph, dataset.getGraphStore(),
 			KbOpExecutor.KbOpExecutorFactory);
 		opExecutor = new KbOpExecutor(execCxt);
 	}
@@ -182,7 +185,9 @@ public class KbOpExecutorDAWGTest {
 			return;
 		}
 		for (File dataFile : me.getData()) {
-			QueryTestUtil.loadResource(dataFile.getPath(), dataset.getDefaultGraph());
+			@SuppressWarnings("resource")
+			KbGraph defaultGraph = dataset.getDefaultGraph();
+			QueryTestUtil.loadResource(dataFile.getPath(), defaultGraph);
 		}
 		for (File graphDataFile : me.getGraphData()) {
 			//String uri = graphDataFile.toURI().toString();
@@ -197,7 +202,9 @@ public class KbOpExecutorDAWGTest {
 				uri = m2.replaceAll("$1%3A$2");
 			}
 			log.debug("Graph URI for test '{}' is '{}'", me.getName(), uri);
-			QueryTestUtil.loadResource(graphDataFile.getPath(), dataset.getNamedGraph(uri));
+			@SuppressWarnings("resource")
+			KbGraph namedGraph = dataset.getNamedGraph(uri);
+			QueryTestUtil.loadResource(graphDataFile.getPath(), namedGraph);
 		}
 		try {
 			Query q = QueryFactory.read(me.getQuery().getPath());
@@ -214,19 +221,18 @@ public class KbOpExecutorDAWGTest {
 					StmtIterator sIter = resultsAsModel.listStatements(null, RDF.type,
 						ResultSetGraphVocab.ResultSet);
 					if (!sIter.hasNext()) {
-						fail(String.format("Could not find ASK result for '%1$s'", me.getName()));
+						fail("Could not find ASK result for '%1$s'".formatted(me.getName()));
 					}
 					Statement s = sIter.next();
 					if (sIter.hasNext()) {
-						fail(String.format("More than one ASK result for '%1$s'", me.getName()));
+						fail("More than one ASK result for '%1$s'".formatted(me.getName()));
 					}
 					answer = s.getSubject().getRequiredProperty(ResultSetGraphVocab.p_boolean).getBoolean();
 				}
 				runDAWGTest(q, answer, me);
 			}
 		} catch (QueryParseException ex) {
-			fail(String.format("'%1$s': query parse exception:  %2$s",
-				me.getCurrentTest(), ex.getMessage()));
+			fail("'%1$s': query parse exception:  %2$s".formatted(me.getCurrentTest(), ex.getMessage()));
 		}
 	}
 
@@ -238,7 +244,7 @@ public class KbOpExecutorDAWGTest {
 			ResultSetFactory.create(it, query.getResultVars()));
 
 		StringBuilder message = new StringBuilder();
-		message.append(String.format("%n'%1$s': Result sets are not equal:%n%n", me.getCurrentTest()));
+		message.append("%n'%1$s': Result sets are not equal:%n%n".formatted(me.getCurrentTest()));
 		boolean matches = QueryTestUtil.equals(expectedResultSet, actualResultSet, query, message);
 		assertTrue(matches, message.toString());
 	}
@@ -248,6 +254,6 @@ public class KbOpExecutorDAWGTest {
 		QueryIterator input = QueryIterRoot.create(execCxt);
 		QueryIterator it = opExecutor.executeOp(op, input);
 		assertTrue(answer == it.hasNext(),
-			String.format("'%1$s': result sets are not equal", me.getCurrentTest()));
+			"'%1$s': result sets are not equal".formatted(me.getCurrentTest()));
 	}
 }

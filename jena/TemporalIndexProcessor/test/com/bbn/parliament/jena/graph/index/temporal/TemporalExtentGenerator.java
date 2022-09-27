@@ -99,19 +99,20 @@ public class TemporalExtentGenerator {
 	}
 
 	public static void generateInstant(PrintWriter pw, int id, Date date) {
-		String res = String.format("<http://example.org/instant/%s>", id);
-		String timeassign = String.format("%1$s <%2$s> \"%3$s\"^^<%4$s> .", res, Constants.PT_AS_INSTANT.getURI(),
-				XSD_DATE_FORMAT.format(date), TemporalIndexField.INSTANT.getDatatype().getURI());
+		String res = "<http://example.org/instant/%s>".formatted(id);
+		String timeassign = "%1$s <%2$s> \"%3$s\"^^<%4$s> .".formatted(res,
+			Constants.PT_AS_INSTANT.getURI(), XSD_DATE_FORMAT.format(date),
+			TemporalIndexField.INSTANT.getDatatype().getURI());
 		LOG.debug("Generating {}", timeassign);
 		pw.println(timeassign);
 		pw.println();
 	}
 
 	public static void generateInterval(PrintWriter pw, int id, Date startDate, Date endDate) {
-		String res = String.format("<http://example.org/interval/%s>", id);
-		String timeassign = String.format("%1$s <%2$s> \"%3$s, %4$s\"^^<%5$s> .",
-				res, Constants.PT_AS_INTERVAL.getURI(), XSD_DATE_FORMAT.format(startDate), XSD_DATE_FORMAT.format(endDate),
-				TemporalIndexField.INTERVAL.getDatatype().getURI());
+		String res = "<http://example.org/interval/%s>".formatted(id);
+		String timeassign = "%1$s <%2$s> \"%3$s, %4$s\"^^<%5$s> .".formatted(res,
+			Constants.PT_AS_INTERVAL.getURI(), XSD_DATE_FORMAT.format(startDate),
+			XSD_DATE_FORMAT.format(endDate), TemporalIndexField.INTERVAL.getDatatype().getURI());
 		LOG.debug("Generating {}", timeassign);
 		pw.println(timeassign);
 		pw.println();

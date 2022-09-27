@@ -82,13 +82,13 @@ public class RemoteExporter {
 				throw new CmdLineException("Too many command line arguments");
 			}
 			String hostName = args[0];
-			int port = Integer.parseInt(args[1].trim());
+			int port = Integer.parseInt(args[1].strip());
 			if (port <= 0) {
 				throw new CmdLineException("The port %1$d must be positive", port);
 			}
 
-			endPointUrl = String.format(RemoteModel.DEFAULT_BULK_ENDPOINT_URL, hostName,
-				Integer.toString(port) + "/export");
+			endPointUrl = RemoteModel.DEFAULT_BULK_ENDPOINT_URL.formatted(
+				hostName, Integer.toString(port)) + "/export";
 			saveDir = new File((args.length == 3) ? args[2] : ".");
 
 			if (saveDir.exists() && !saveDir.isDirectory()) {
@@ -163,7 +163,7 @@ public class RemoteExporter {
 		String result = Arrays.stream(headers)
 			.map(header -> header.getValue().split(Pattern.quote(";")))
 			.flatMap(headerFragments -> Arrays.stream(headerFragments))
-			.map(headerFragment -> FILE_NAME_PATTERN.matcher(headerFragment.trim()))
+			.map(headerFragment -> FILE_NAME_PATTERN.matcher(headerFragment.strip()))
 			.filter(matcher -> matcher.matches())
 			.map(matcher -> matcher.group(1))
 			.findFirst()

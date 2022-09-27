@@ -91,7 +91,7 @@ implements IndexPatternQuerier {
 						&& o.isLiteral()
 						&& o.getLiteralValue() instanceof Number
 						&& index.getRecordFactory().getNumericClass()
-						.equals(o.getLiteralValue().getClass())) {
+							.equals(o.getLiteralValue().getClass())) {
 						T value = index.getRecordFactory().getNumericClass()
 							.cast(o.getLiteralValue());
 						// iterate over all subjects that are indexed against the

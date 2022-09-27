@@ -8,6 +8,7 @@ package com.bbn.parliament.jena.graph.index.spatial.sql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import com.bbn.parliament.jena.graph.index.spatial.Operation;
 
@@ -36,8 +37,8 @@ public class SQLOp {
 		this.store = store;
 		this.iteratorQuery = iteratorQuery;
 		this.inverseQuery = inverseQuery;
-		this.estimateSelectivityQuery = String.format(estimateSelectivity, tableName);
-		this.estimateSelectivityInverseQuery = String.format(estimateSelectivityInverse, tableName);
+		this.estimateSelectivityQuery = estimateSelectivity.formatted(tableName);
+		this.estimateSelectivityInverseQuery = estimateSelectivityInverse.formatted(tableName);
 		this.inverseOperation = inverseOperation;
 		this.operation = operation;
 	}
@@ -64,8 +65,11 @@ public class SQLOp {
 	}
 
 	public void runCommand(String command) throws PersistentStoreException, SQLException {
-		try (Connection c = store.getConnection()) {
-			c.createStatement().execute(command);
+		try (
+			Connection c = store.getConnection();
+			Statement stmt = c.createStatement();
+		) {
+			stmt.execute(command);
 		}
 	}
 

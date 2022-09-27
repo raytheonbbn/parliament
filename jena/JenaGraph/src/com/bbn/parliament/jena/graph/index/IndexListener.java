@@ -92,8 +92,8 @@ class IndexListener<T> implements GraphListener {
 		boolean added = false;
 		try {
 			added = index.add(r);
-		} catch (IndexException e) {
-			LOG.error(String.format("Error while adding %s to index", r), e);
+		} catch (IndexException ex) {
+			LOG.error("Error while adding %s to index".formatted(r), ex);
 		}
 		if (!added) {
 			// 99% of the time this means we tried to add a duplicate to the index.

@@ -1,0 +1,104 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.0'
+	id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+	id 'java'
+}
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
+defaultTasks 'bootRun'
+
+ext {
+	genJavaDir = file("$buildDir/generated/java")
+	artifactsDir = file("$rootDir/target/artifacts")
+	configVocabFile = "${projectDir}/src/main/resources/config-ont.ttl"
+	configVocabPackage = 'com.bbn.parliament.jena.bridge.configuration.vocab'
+	configVocabDir = configVocabPackage.replaceAll(/\./, '/')
+	configVocabClassNm = 'ConfigOnt'
+	configVocabSource = "${genJavaDir}/${configVocabDir}/${configVocabClassNm}.java"
+}
+
+dependencies {
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	implementation fileTree(dir: artifactsDir, include: [
+		'JenaGraph.jar',
+		'JosekiParliamentClient.jar',
+		'NumericIndex.jar',
+		'Parliament.jar',
+		'SpatialIndexProcessor.jar',
+		'TemporalIndexProcessor.jar'
+	])
+
+	implementation "$commonsFileUpload"
+	implementation "$commonsLangDependency"
+
+	implementation("$jenaArqDependency") {
+		exclude group: 'org.slf4j', module: 'jcl-over-slf4j'
+		exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+		exclude group: 'log4j', module: 'log4j'
+	}
+	implementation "$jsonLdDependency"
+	implementation "$slf4jApiDependency"
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+sourceSets {
+	main {
+		java { srcDir genJavaDir }
+	}
+}
+
+// See https://jena.apache.org/documentation/tools/schemagen.html
+task runSchemagen(type: JavaExec) {
+	inputs.file(configVocabFile)
+	outputs.file(configVocabSource)
+
+	classpath = sourceSets.main.compileClasspath
+	mainClass = 'jena.schemagen'
+	args = [
+		'-i', configVocabFile,
+		'-o', "${genJavaDir}",
+		'--owl',
+		'-n', configVocabClassNm,
+		'--package', configVocabPackage
+	]
+}
+
+compileJava.dependsOn runSchemagen
+
+test {
+	useJUnitPlatform()
+
+	def distroDir = tgtDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
+
+	systemProperty 'java.library.path', "${distroDir}/bin"
+	//systemProperty 'log4j.configuration', "file:///${rootDir}/log4j.junit.properties"
+	environment = [
+		'LD_LIBRARY_PATH' : "${distroDir}/bin",
+		'PARLIAMENT_KB_CONFIG_PATH' : "${rootDir}/target/test-bin/ParliamentKbConfig.txt",
+		'PARLIAMENT_LOG_CONFIG_PATH' : "${rootDir}/target/test-bin/ParliamentLogConfig.txt",
+	]
+}
+
+task copyTestResources(type: Copy) {
+	from '${projectDir}/src/test/resources'
+	into '${buildDir}/classes/java/test'
+}
+
+bootRun {
+	def distroDir = tgtDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
+
+	systemProperty 'java.library.path', "${distroDir}/bin"
+	environment = [
+		'LD_LIBRARY_PATH' : "${distroDir}/bin",
+		'PARLIAMENT_KB_CONFIG_PATH' : "${rootDir}/Parliament/KbCore/ParliamentKbConfig.txt",
+		'PARLIAMENT_LOG_CONFIG_PATH' : "${rootDir}/Parliament/KbCore/ParliamentLogConfig.txt",
+	]
+}
+
+subprojects {
+	junitPlatformTest.dependsOn copyTestResources
+}

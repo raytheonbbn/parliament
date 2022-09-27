@@ -27,19 +27,20 @@ public class DuplicateEntriesTest extends AbstractTemporalTestClass {
 	private static final String INSTANT_NS = "http://foo/Instant#";
 	private static final String INSTANT_1 = "2001-07-21T00:00:01";
 	private static final String INSTANT_2 = "2001-07-21T00:00:02";
-	private static final String QUERY = ""
-		+ "prefix foo: <%1$s>%n"
-		+ "prefix ins: <%2$s>%n"
-		+ "prefix time: <%3$s>%n"
-		+ "prefix xsd: <%4$s#>%n"
-		+ "select ?thing where {%n"
-		+ "	?thing foo:atTime ?temporal .%n"
-		+ "	?before a time:DateTimeInterval ;%n"
-		+ "		time:xsdDateTime \"2006-02-16T00:00:01\"^^xsd:dateTime .%n"
-		+ "	?temporal a time:DateTimeInterval ;%n"
-		+ "		time:xsdDateTime ?retired ;%n"
-		+ "		time:intervalBefore ?before .%n"
-		+ "}";
+	private static final String QUERY = """
+		prefix foo:  <%1$s>
+		prefix ins:  <%2$s>
+		prefix time: <%3$s>
+		prefix xsd:  <%4$s#>
+		select ?thing where {
+			?thing foo:atTime ?temporal .
+			?before a time:DateTimeInterval ;
+				time:xsdDateTime "2006-02-16T00:00:01"^^xsd:dateTime .
+			?temporal a time:DateTimeInterval ;
+				time:xsdDateTime ?retired ;
+				time:intervalBefore ?before .
+		}
+		""".formatted(NS, INSTANT_NS, Constants.TIME_NS, XSDDatatype.XSD);
 
 	private static final Resource dtInterval = ResourceFactory.createResource(
 		Constants.TIME_NS + "DateTimeInterval");
@@ -56,9 +57,8 @@ public class DuplicateEntriesTest extends AbstractTemporalTestClass {
 		addThingWithTime(model, INSTANT_2);
 		addThingWithTime(model, INSTANT_2);
 
-		String query = String.format(QUERY, NS, INSTANT_NS, Constants.TIME_NS, XSDDatatype.XSD);
-		LOG.debug("DuplicateEntriesTest query:\n{}", query);
-		QueryExecution qe = QueryExecutionFactory.create(query, model);
+		LOG.debug("DuplicateEntriesTest query:\n{}", QUERY);
+		QueryExecution qe = QueryExecutionFactory.create(QUERY, model);
 		try {
 			ResultSet resultSet = qe.execSelect();
 			int count = 0;

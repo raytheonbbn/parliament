@@ -6,6 +6,7 @@
 
 package com.bbn.parliament.jena.modify;
 
+import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.KbGraphFactory;
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.hp.hpl.jena.graph.Node;
@@ -17,15 +18,13 @@ import com.hp.hpl.jena.sparql.util.Context;
 
 /** @author sallen */
 public class KbUpdateEngineWorker extends UpdateEngineWorker {
-
 	public KbUpdateEngineWorker(KbGraphStore graphStore, Binding initialBinding, Context context) {
 		super(graphStore, initialBinding, context);
 	}
 
 	@Override
 	public void visit(UpdateCreate create) {
-
-		Node graphName = create.getGraph() ;
+		Node graphName = create.getGraph();
 
 		if (graphStore.containsGraph(graphName))
 		{
@@ -36,6 +35,8 @@ public class KbUpdateEngineWorker extends UpdateEngineWorker {
 			throw new AlreadyExists("Named graph: " + graphName);
 		}
 
-		graphStore.addGraph(graphName, KbGraphFactory.createNamedGraph());
+		@SuppressWarnings("resource")
+		KbGraph newGraph = KbGraphFactory.createNamedGraph();
+		graphStore.addGraph(graphName, newGraph);
 	}
 }

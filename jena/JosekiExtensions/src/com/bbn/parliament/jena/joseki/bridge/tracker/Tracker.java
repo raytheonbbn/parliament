@@ -206,14 +206,8 @@ public class Tracker implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if (!(o instanceof Trackable)) {
-			return;
-		}
-		Trackable t = (Trackable) o;
-		if (arg instanceof Status) {
-			Status s = (Status) arg;
-			if (Status.FINISHED.equals(s) || Status.CANCELLED.equals(s)
-				|| Status.ERROR.equals(s)) {
+		if (o instanceof Trackable t && arg instanceof Status s) {
+			if (s == Status.FINISHED || s == Status.CANCELLED || s == Status.ERROR) {
 				unregisterTrackable(t);
 			}
 		}

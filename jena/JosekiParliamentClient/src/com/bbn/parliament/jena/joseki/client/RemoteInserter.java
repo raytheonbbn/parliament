@@ -55,9 +55,9 @@ public class RemoteInserter {
 			if (port <= 0) {
 				throw new CmdLineException("The port %1$d must be positive", port);
 			}
-			sparqlEndPointUrl = String.format(RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL,
+			sparqlEndPointUrl = RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL.formatted(
 				hostName, Integer.toString(port));
-			bulkEndPointUrl = String.format(RemoteModel.DEFAULT_BULK_ENDPOINT_URL,
+			bulkEndPointUrl = RemoteModel.DEFAULT_BULK_ENDPOINT_URL.formatted(
 				hostName, Integer.toString(port));
 
 			inputFile = new File(args[2]);

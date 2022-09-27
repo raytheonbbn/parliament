@@ -96,9 +96,7 @@ public class ParliamentRequest extends Request {
 	/** Answers the question, "Is this request a SPARQL query of type SELECT or ASK?" */
 	public static boolean isSelectOrAskQuery(ServletRequest req) throws IOException {
 		boolean result = false;
-		if (req instanceof HttpServletRequest) {
-			HttpServletRequest httpReq = (HttpServletRequest) req;
-
+		if (req instanceof HttpServletRequest httpReq) {
 			String method = httpReq.getMethod().toUpperCase();
 			String contentType = getMediaType(httpReq);
 
@@ -137,8 +135,8 @@ public class ParliamentRequest extends Request {
 	}
 
 	public static String getMediaType(ServletRequest req) {
-		return (req instanceof HttpServletRequest)
-			? getMediaType((HttpServletRequest) req)
+		return (req instanceof HttpServletRequest httpReq)
+			? getMediaType(httpReq)
 			: null;
 	}
 
@@ -147,7 +145,7 @@ public class ParliamentRequest extends Request {
 		if (ct != null) {
 			int semiIndex = ct.indexOf(';');
 			if (semiIndex != -1) {
-				ct = ct.substring(0, semiIndex).trim();
+				ct = ct.substring(0, semiIndex).strip();
 			}
 		}
 		return ct;
@@ -167,7 +165,7 @@ public class ParliamentRequest extends Request {
 		String user = _httpReq.getRemoteUser();
 		return (user == null || user.isEmpty())
 			? host
-			: String.format("%1$s (%2$s)", host, user);
+			: "%1$s (%2$s)".formatted(host, user);
 	}
 
 	public boolean isSparqlQuery() {

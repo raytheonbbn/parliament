@@ -71,16 +71,17 @@ public abstract class PFGraphsAsSubject extends PropertyFunctionEval {
 		List<Node> objects = getNodeArguments(object);
 		for (Node o : objects) {
 			if (!checkObject(o)) {
-				throw new JenaException(String.format("'%s' is an invalid object for %s",
-					o, predicate));
+				throw new JenaException("'%s' is an invalid object for %s"
+					.formatted(o, predicate));
 			}
 		}
 
 		boolean success = false;
 		for (Node g : graphs) {
+			@SuppressWarnings("resource")
 			Graph graph = KbGraphStore.DEFAULT_GRAPH_NODE.equals(g)
 				? kbGraphStore.getDefaultGraph()
-					: kbGraphStore.getGraph(g);
+				: kbGraphStore.getGraph(g);
 				for (Node o : objects) {
 					success = processGraphObject(binding, g, graph, o, execCxt);
 					if (!success) {

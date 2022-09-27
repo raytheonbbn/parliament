@@ -1,6 +1,6 @@
 package com.bbn.parliament.jena.extensions;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
@@ -30,14 +30,14 @@ import com.hp.hpl.jena.sparql.function.FunctionEnv;
  *
  * PREFIX ext: &lt;java:com.bbn.parliament.jena.extensions.&gt;
  *
- * Then in the WHERE clause of your query, add a LET construct such as this:
+ * Then in the WHERE clause of your query, add a bind statement like so:
  *
- * LET ( ?newUri := ext:createHashUri("http://example.org/foo/", ?x, ?y, ?z) )
+ * bind (ext:createHashUri("http://example.org/foo#", ?x, ?y, ?z) as ?newUri)
  *
  * This will cause the variable ?newUri to be bound to a hash URI created
  * from ?x, ?y, and ?z.  The resulting URI will look like the following:
  *
- * http://example.org/foo/8a06dc0eda4a2e9ded49481c5e523945620ae5ef324c428f0630e5eaf36addfe
+ * http://example.org/foo#_8a06dc0eda4a2e9ded49481c5e523945620ae5ef324c428f0630e5eaf36addfe
  *
  * If an unbound variable is included in the list of items to hash, it will be
  * handled correctly, in the sense that a "null" placeholder will be inserted
@@ -59,8 +59,9 @@ import com.hp.hpl.jena.sparql.function.FunctionEnv;
  * @author iemmons
  */
 public class createHashUri implements Function {
+	private static final String ARGS_ERROR_MSG = "Function %1$s requires at least two arguments"
+		.formatted(createHashUri.class.getName());
 	private static final String ALGORITHM = "SHA-256"; // MD2, MD5, SHA-1, SHA-256, SHA-384, or SHA-512
-	private static final String CHAR_SET = "UTF-8";
 	private static final char[] HEX_CHAR = { '0', '1', '2', '3', '4', '5',
 		'6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 	private static final Logger LOG = LoggerFactory.getLogger(createHashUri.class);
@@ -69,7 +70,8 @@ public class createHashUri implements Function {
 	@Override
 	public void build(String uri, ExprList args) {
 		if (args.size() < 2) {
-			throw new QueryBuildException(getTooFewArgsErrorMsg());
+			LOG.error(ARGS_ERROR_MSG);
+			throw new QueryBuildException(ARGS_ERROR_MSG);
 		}
 	}
 
@@ -77,7 +79,8 @@ public class createHashUri implements Function {
 	@Override
 	public NodeValue exec(Binding binding, ExprList args, String uri, FunctionEnv env) {
 		if (args.size() < 2) {
-			throw new ExprEvalException(getTooFewArgsErrorMsg());
+			LOG.error(ARGS_ERROR_MSG);
+			throw new ExprEvalException(ARGS_ERROR_MSG);
 		}
 
 		try {
@@ -111,14 +114,6 @@ public class createHashUri implements Function {
 			LOG.error("Unable to create hash URI", ex);
 			throw ex;
 		}
-	}
-
-	private String getTooFewArgsErrorMsg() {
-		String msg = String.format(
-			"Function %1$s requires at least two arguments",
-			getClass().getName());
-		LOG.error(msg);
-		return msg;
 	}
 
 	/**
@@ -175,12 +170,8 @@ public class createHashUri implements Function {
 	private static String computeHash(String strToBeHashed) {
 		try {
 			MessageDigest msgDigest = MessageDigest.getInstance(ALGORITHM);
-
-			byte[] hash = msgDigest.digest(strToBeHashed.getBytes(CHAR_SET));
+			byte[] hash = msgDigest.digest(strToBeHashed.getBytes(StandardCharsets.UTF_8));
 			return toHexString(hash);
-		} catch (UnsupportedEncodingException ex) {
-			throw new IllegalArgumentException(
-				"Conversion to unsupported character set:  " + CHAR_SET, ex);
 		} catch (NoSuchAlgorithmException ex) {
 			throw new IllegalArgumentException(
 				"Unsupported message digest algorithm:  " + ALGORITHM, ex);
@@ -189,7 +180,8 @@ public class createHashUri implements Function {
 
 	/** Converts a byte array into a character string of hexadecimal digits. */
 	private static String toHexString(byte[] bytes) {
-		StringBuilder sb = new StringBuilder(bytes.length * 2);
+		StringBuilder sb = new StringBuilder(bytes.length * 2 + 1);
+		sb.append('_');	// ensure IRI fragment doesn't start with a digit
 		for (byte b : bytes) {
 			int hiNibble = (b >>> 4) & 0x0f;
 			int loNibble = b & 0x0f;

@@ -70,13 +70,13 @@ public class HttpServerUtil {
 	}
 
 	/**
-	 * Gets the trimmed value of a request parameter as a String. If the
+	 * Gets the stripped value of a request parameter as a String. If the
 	 * specified parameter does not exist or if it has a white-space-only value,
 	 * {@code null} will be returned.
 	 *
 	 * @param request The request object to get the parameter from.
 	 * @param paramName The name of the parameter.
-	 * @return The trimmed value, or {@code null} if the specified parameter
+	 * @return The stripped value, or {@code null} if the specified parameter
 	 * does not have a value.
 	 */
 	public static String getParameter(HttpServletRequest request, String paramName) {
@@ -84,7 +84,7 @@ public class HttpServerUtil {
 	}
 
 	/**
-	 * Gets the trimmed value of a request parameter as a String. If the
+	 * Gets the stripped value of a request parameter as a String. If the
 	 * specified parameter does not exist or if it has a white-space-only value,
 	 * the supplied {@code defaultValue} will be returned.
 	 *
@@ -92,7 +92,7 @@ public class HttpServerUtil {
 	 * @param paramName The name of the parameter.
 	 * @param defaultValue The value that should be returned when the specified
 	 * parameter did not have a value.
-	 * @return The trimmed value, or {@code defaultValue} if the specified
+	 * @return The stripped value, or {@code defaultValue} if the specified
 	 * parameter does not have a value.
 	 */
 	public static String getParameter(HttpServletRequest request, String paramName, String defaultValue) {
@@ -102,7 +102,7 @@ public class HttpServerUtil {
 			result = defaultValue;
 		}
 		else {
-			result = result.trim();
+			result = result.strip();
 
 			if (result.length() == 0) {
 				result = defaultValue;
@@ -139,7 +139,7 @@ public class HttpServerUtil {
 	}
 
 	/**
-	 * Gets the trimmed value of a request parameter from a Map of FileItem
+	 * Gets the stripped value of a request parameter from a Map of FileItem
 	 * objects, as returned by {@code parseMultipartFormRequest()}. If the
 	 * specified parameter does not exist or if it has a white-space-only value,
 	 * {@code null} will be returned. The values are assumed to be using the
@@ -148,7 +148,7 @@ public class HttpServerUtil {
 	 * @param fileItemMap A Map of FileItem objects, mapped using their field
 	 * name (Strings).
 	 * @param paramName The name of the parameter.
-	 * @return The trimmed value, or {@code null} if the specified parameter
+	 * @return The stripped value, or {@code null} if the specified parameter
 	 * does not have a value.
 	 */
 	public static String getParameter(Map<String, FileItem> fileItemMap, String paramName) {
@@ -156,7 +156,7 @@ public class HttpServerUtil {
 	}
 
 	/**
-	 * Gets the trimmed value of a request parameter from a Map of FileItem
+	 * Gets the stripped value of a request parameter from a Map of FileItem
 	 * objects, as returned by {@code parseMultipartFormRequest()}. If the
 	 * specified parameter does not exist or if it has a white-space-only value,
 	 * the supplied {@code defaultValue} will be returned. The values are
@@ -167,7 +167,7 @@ public class HttpServerUtil {
 	 * @param paramName The name of the parameter.
 	 * @param defaultValue The value that should be returned when the specified
 	 * parameter did not have a value.
-	 * @return The trimmed value, or {@code null} if the specified parameter
+	 * @return The stripped value, or {@code null} if the specified parameter
 	 * does not have a value.
 	 */
 	public static String getParameter(Map<String, FileItem> fileItemMap, String paramName, String defaultValue) {
@@ -176,7 +176,7 @@ public class HttpServerUtil {
 		FileItem fileItem = fileItemMap.get(paramName);
 		if (fileItem != null) {
 			try {
-				result = fileItem.getString("UTF-8").trim();
+				result = fileItem.getString("UTF-8").strip();
 			}
 			catch (UnsupportedEncodingException e) {
 				// UTF-8 must be supported by all compliant JVM's,

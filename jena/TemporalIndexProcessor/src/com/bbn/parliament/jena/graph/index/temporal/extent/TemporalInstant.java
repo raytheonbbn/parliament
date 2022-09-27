@@ -103,12 +103,13 @@ public class TemporalInstant implements TemporalExtent, Comparable<TemporalInsta
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof TemporalInstant) {
-			TemporalInstant ti = (TemporalInstant) obj;
-			return (instant == ti.instant
-					&& isStart == ti.isStart
-					&& Objects.equals(parentInterval, ti.parentInterval)
-					);
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof TemporalInstant ti) {
+			return instant == ti.instant
+				&& isStart == ti.isStart
+				&& Objects.equals(parentInterval, ti.parentInterval);
 		}
 		return false;
 	}

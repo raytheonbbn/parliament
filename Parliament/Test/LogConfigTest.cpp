@@ -78,6 +78,27 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultFileContainsDefaults)
 	BOOST_CHECK(equal(begin(defaults.logChannelLevels()), end(defaults.logChannelLevels()), begin(c.logChannelLevels())));
 }
 
+static auto k_validTestConfig = u8R"~~~(
+# Parameters file for the Parliament core DLL
+ 	 # Parameters file for the Parliament core DLL
+
+logToConsole             = yes
+logConsoleAsynchronous   = no
+logConsoleAutoFlush      = yes
+logToFile                = yes
+logFilePath              = log/ParliamentNative%3N_%Y-%m-%d_%H-%M-%S.log
+logFileAsynchronous      = no
+logFileAutoFlush         = yes
+logFileRotationSize      = 10485760
+logFileMaxAccumSize      = 157286400
+logFileMinFreeSpace      = 104857600
+logFileRotationTimePoint = 02:00:00
+
+logLevel                 = INFO
+logChannelLevel          = KbInstance=ALL
+logChannelLevel          = StringToId=ALL
+)~~~";
+
 BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 {
 	LogConfig c;
@@ -85,26 +106,10 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 	EnvVarReset envVarReset(k_envVar, k_fName);
 	FileDeleter filedeleter(k_fName);
 
-	ofstream s(k_fName);
-	s << "# Parameters file for the Parliament core DLL" << endl;
-	s << " \t # Parameters file for the Parliament core DLL" << endl;
-	s << endl;
-	s << "logToConsole             = yes" << endl;
-	s << "logConsoleAsynchronous   = no" << endl;
-	s << "logConsoleAutoFlush      = yes" << endl;
-	s << "logToFile                = yes" << endl;
-	s << "logFilePath              = log/ParliamentNative%3N_%Y-%m-%d_%H-%M-%S.log" << endl;
-	s << "logFileAsynchronous      = no" << endl;
-	s << "logFileAutoFlush         = yes" << endl;
-	s << "logFileRotationSize      = 10485760" << endl;
-	s << "logFileMaxAccumSize      = 157286400" << endl;
-	s << "logFileMinFreeSpace      = 104857600" << endl;
-	s << "logFileRotationTimePoint = 02:00:00" << endl;
-	s << endl;
-	s << "logLevel                 = INFO" << endl;
-	s << "logChannelLevel          = KbInstance=ALL" << endl;
-	s << "logChannelLevel          = StringToId=ALL" << endl;
-	s.close();
+	{
+		ofstream s(k_fName);
+		s << k_validTestConfig;
+	}
 
 	BOOST_REQUIRE_NO_THROW(c.readFromFile());
 
@@ -128,6 +133,27 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 	BOOST_CHECK(equal(begin(expected), end(expected), begin(c.logChannelLevels())));
 }
 
+// Note that the key 'logToFileMessedUp' is bad:
+static auto k_invalidTestConfig = u8R"~~~(
+# Parameters file for the Parliament core DLL
+
+logToConsole             = yes
+logConsoleAsynchronous   = no
+logConsoleAutoFlush      = yes
+logToFileMessedUp        = yes
+logFilePath              = log/ParliamentNative%3N_%Y-%m-%d_%H-%M-%S.log
+logFileAsynchronous      = no
+logFileAutoFlush         = yes
+logFileRotationSize      = 10485760
+logFileMaxAccumSize      = 157286400
+logFileMinFreeSpace      = 104857600
+logFileRotationTimePoint = 02:00:00
+
+logLevel                 = INFO
+logChannelLevel          = KbInstance=ALL
+logChannelLevel          = StringToId=ALL
+)~~~";
+
 BOOST_AUTO_TEST_CASE(testConfigReadFromBadFile)
 {
 	LogConfig c;
@@ -135,25 +161,10 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromBadFile)
 	EnvVarReset envVarReset(k_envVar, k_fName);
 	FileDeleter filedeleter(k_fName);
 
-	ofstream s(k_fName);
-	s << "# Parameters file for the Parliament core DLL" << endl;
-	s << endl;
-	s << "logToConsole             = yes" << endl;
-	s << "logConsoleAsynchronous   = no" << endl;
-	s << "logConsoleAutoFlush      = yes" << endl;
-	s << "logToFileMessedUp        = yes" << endl;	// this key is bad
-	s << "logFilePath              = log/ParliamentNative%3N_%Y-%m-%d_%H-%M-%S.log" << endl;
-	s << "logFileAsynchronous      = no" << endl;
-	s << "logFileAutoFlush         = yes" << endl;
-	s << "logFileRotationSize      = 10485760" << endl;
-	s << "logFileMaxAccumSize      = 157286400" << endl;
-	s << "logFileMinFreeSpace      = 104857600" << endl;
-	s << "logFileRotationTimePoint = 02:00:00" << endl;
-	s << endl;
-	s << "logLevel                 = INFO" << endl;
-	s << "logChannelLevel          = KbInstance=ALL" << endl;
-	s << "logChannelLevel          = StringToId=ALL" << endl;
-	s.close();
+	{
+		ofstream s(k_fName);
+		s << k_invalidTestConfig;
+	}
 
 	BOOST_CHECK_THROW(c.readFromFile(), Exception);
 }

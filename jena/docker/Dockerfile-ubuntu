@@ -6,8 +6,8 @@ FROM ubuntu:focal
 USER root
 
 RUN apt-get -qq -y update
-RUN apt-get install --fix-missing -y --allow-downgrades openjdk-8-jre-headless
-#RUN apt-get install --fix-missing -y --allow-downgrades openjdk-11-jre-headless
+#RUN apt-get install --fix-missing -y --allow-downgrades openjdk-8-jre-headless
+RUN apt-get install --fix-missing -y --allow-downgrades openjdk-17-jre-headless
 
 RUN adduser --system --group --uid 501 tenant
 

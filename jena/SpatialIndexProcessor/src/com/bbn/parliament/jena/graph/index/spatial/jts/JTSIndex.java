@@ -115,7 +115,7 @@ public class JTSIndex extends com.bbn.parliament.jena.graph.index.spatial.Spatia
 		List<Geometry> i = index.query(geometry.getEnvelopeInternal());
 		final Iterator<Geometry> items = i.iterator();
 
-		Iterator<Record<Geometry>> it = new Iterator<Record<Geometry>>() {
+		Iterator<Record<Geometry>> it = new Iterator<>() {
 			private Iterator<Node> nit = null;
 			private Geometry current = null;
 			private boolean hasBeenNexted = true;
@@ -178,7 +178,7 @@ public class JTSIndex extends com.bbn.parliament.jena.graph.index.spatial.Spatia
 
 		final Iterator<Node> nit = nodesForExtent.iterator();
 
-		Iterator<Record<Geometry>> it = new Iterator<Record<Geometry>>() {
+		Iterator<Record<Geometry>> it = new Iterator<>() {
 			@Override
 			public boolean hasNext() {
 				return nit.hasNext();

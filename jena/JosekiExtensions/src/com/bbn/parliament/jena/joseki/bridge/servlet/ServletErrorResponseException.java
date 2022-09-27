@@ -19,7 +19,7 @@ public class ServletErrorResponseException extends Exception {
 	}
 
 	public ServletErrorResponseException(String format, Object... args) {
-		this(HttpServletResponse.SC_BAD_REQUEST, String.format(format, args));
+		this(HttpServletResponse.SC_BAD_REQUEST, format.formatted(args));
 	}
 
 	public ServletErrorResponseException(Throwable cause, String message) {
@@ -27,7 +27,7 @@ public class ServletErrorResponseException extends Exception {
 	}
 
 	public ServletErrorResponseException(Throwable cause, String format, Object... args) {
-		this(HttpServletResponse.SC_BAD_REQUEST, String.format(format, args), cause);
+		this(HttpServletResponse.SC_BAD_REQUEST, format.formatted(args), cause);
 	}
 
 	public ServletErrorResponseException(int statusCode, String message) {
@@ -44,7 +44,7 @@ public class ServletErrorResponseException extends Exception {
 	}
 
 	public ServletErrorResponseException(int statusCode, Throwable cause, String format, Object... args) {
-		super(String.format(format, args), cause);
+		super(format.formatted(args), cause);
 		_statusCode = statusCode;
 	}
 

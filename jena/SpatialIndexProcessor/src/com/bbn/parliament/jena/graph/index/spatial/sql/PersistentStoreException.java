@@ -12,18 +12,18 @@ public class PersistentStoreException extends Exception {
 	private static final long serialVersionUID = 1887660080864194263L;
 
 	public PersistentStoreException(String tableName) {
-		super(String.format("Table: %s", tableName));
+		super("Table: %s".formatted(tableName));
 	}
 
 	public PersistentStoreException(String tableName, String message) {
-		super(String.format("Table: %s, %s", tableName, message));
+		super("Table: %s, %s".formatted(tableName, message));
 	}
 
 	public PersistentStoreException(String tableName, Throwable cause) {
-		super(String.format("Table: %s", tableName), cause);
+		super("Table: %s".formatted(tableName), cause);
 	}
 
 	public PersistentStoreException(String tableName, String message, Throwable cause) {
-		super(String.format("Table: %s, %s", tableName, message), cause);
+		super("Table: %s, %s".formatted(tableName, message), cause);
 	}
 }

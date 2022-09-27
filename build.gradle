@@ -1,0 +1,41 @@
+ext {
+	//commonsCsvDependency = 'org.apache.commons:commons-csv:1.6'
+	commonsFileUpload = 'commons-fileupload:commons-fileupload:1.4'
+	commonsLangDependency = 'org.apache.commons:commons-lang3:3.12.0'
+	//gsonDependency = 'com.google.code.gson:gson:2.6.2'
+	//httpClientDependency = 'org.apache.httpcomponents:httpclient:4.5.9'
+	jclOverSlf4j = 'org.slf4j:jcl-over-slf4j:1.7.36'
+	jenaArqDependency = 'org.apache.jena:jena-arq:2.9.4'
+	jsonLdDependency = 'com.github.jsonld-java:jsonld-java:0.8.3'
+	slf4jApiDependency = 'org.slf4j:slf4j-api:1.7.36'
+	//slf4jLog4j12Dependency = 'org.slf4j:slf4j-log4j12:1.7.36'
+	//sparqlQueryAssemblyDependency = 'com.bbn.ix:SparqlQueryAssembly:1.0.0'
+	//springBootDevToolsDependency = 'org.springframework.boot:spring-boot-devtools:2.1.6.RELEASE'
+	//springBootGradlePluginDependency = 'org.springframework.boot:spring-boot-gradle-plugin:2.1.6.RELEASE'
+	//springBootThymeleafDependency = 'org.springframework.boot:spring-boot-starter-thymeleaf:2.1.6.RELEASE'
+	//springBootWebDependency = 'org.springframework.boot:spring-boot-starter-web:2.1.6.RELEASE'
+
+	tgtDir = file("${rootDir}/target")
+}
+
+allprojects {
+	apply plugin: 'eclipse'
+
+	group = 'com.bbn.parliament'
+	version = '2.8.2-SNAPSHOT'
+
+	tasks.withType(JavaCompile).all {
+		options.compilerArgs.add("-Xlint:all")
+	}
+}
+
+subprojects {
+	repositories {
+		maven {
+			name = 'BbnMavenUsOnly'
+			url = uri('https://artifacts.bbn.com/artifactory/bbn-maven-us-only/')
+			credentials(PasswordCredentials)
+		}
+		mavenCentral()
+	}
+}

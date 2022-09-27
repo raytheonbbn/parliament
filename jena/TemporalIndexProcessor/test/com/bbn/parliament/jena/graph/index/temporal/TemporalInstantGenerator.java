@@ -41,7 +41,7 @@ public class TemporalInstantGenerator {
 	}
 
 	@SuppressWarnings("unused")
-	private static StringBuffer generateTestStream(int count) throws IOException {
+	private static String generateTestStream(int count) throws IOException {
 		try (
 			StringWriter writer = new StringWriter();
 			PrintWriter pw = new PrintWriter(writer);
@@ -54,7 +54,7 @@ public class TemporalInstantGenerator {
 				c.setTimeInMillis(ms + (1000 * 60 * 60 * i));
 				generateInstant(pw, i, c.getTime());
 			}
-			return writer.getBuffer();
+			return writer.toString();
 		}
 	}
 

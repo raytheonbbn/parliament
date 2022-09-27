@@ -46,11 +46,9 @@ public class createUnionGraph extends PFuncSimpleAndList {
 	public QueryIterator execEvaluated(Binding binding, Node subject, Node predicate, PropFuncArg object, ExecutionContext execCxt) {
 		DatasetGraph dsg = execCxt.getDataset();
 
-		if (!(dsg instanceof KbGraphStore)) {
+		if (!(dsg instanceof KbGraphStore kbGraphStore)) {
 			throw new JenaException("createUnionGraph property function may only be run against Parliament KBs.");
 		} else {
-			KbGraphStore kbGraphStore = (KbGraphStore)dsg;
-
 			if (null == subject) {
 				throw new JenaException("The subject must contain a URI for the new KbUnionGraph");
 			}

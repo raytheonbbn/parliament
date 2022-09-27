@@ -1,0 +1,34 @@
+s,p,o
+b0,http://example.org/#comment,
+b0,http://example.org/#comment,"	A comment that starts with a tab."
+b0,http://example.org/#comment,"
+President Trump on Thursday backed down from his controversial push
+to add a citizenship question to the 2020 Census, effectively conceding
+defeat in a battle he had revived just last week and promised to continue
+despite a recent string of legal defeats.
+
+Trump announced that he instead plans to order every federal agency to give
+records to the Commerce Department that detail the numbers of citizens and
+noncitizens in the United States.
+
+""I'm proud to be a citizen, you're proud to be a citizen,"" Trump said at
+the late afternoon event in the White House Rose Garden. ""The only people
+that are not proud to be citizens are the ones who are fighting us all the
+way about the word 'citizen.'""
+
+The announcement marked the end of a 19-month push by the administration to
+ask about citizenship status on the decennial survey, which opponents
+decried as an effort to systematically undercount Latinos and scare
+immigrant communities from participating in a survey that helps determine
+congressional districts and the disbursement of some federal funds.
+"
+b0,http://example.org/#comment," A comment that starts with a space."
+b0,http://example.org/#comment,"A comment
+with a newline."
+b0,http://example.org/#comment,"A comment
+with a carriage return."
+b0,http://example.org/#comment,"A comment that ends with a space "
+b0,http://example.org/#comment,"A comment that ends with a tab	"
+b0,http://example.org/#comment,"A comment with ""quotes""."
+b0,http://example.org/#comment,"A comment, with a comma."
+b0,http://example.org/#comment,A simple comment.

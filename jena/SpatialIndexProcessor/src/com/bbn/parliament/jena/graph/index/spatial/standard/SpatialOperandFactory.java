@@ -211,26 +211,24 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 				if (object.isConcrete()) {
 					// load ring from index
 					Geometry objExtent = findRepresentation(object);
-					if (objExtent instanceof LinearRing) {
+					if (objExtent instanceof LinearRing ring) {
 						if (isExterior) {
-							exterior = (LinearRing) objExtent;
+							exterior = ring;
 						} else {
-							interior.add((LinearRing) objExtent);
+							interior.add(ring);
 						}
 						usedTriples.add(t);
 					} else {
 						throw new RuntimeException(
-							String.format("Polygon bound to ring {0} that is not a linear ring",
-								object.getURI()));
+							"Polygon bound to ring %1$s that is not a linear ring"
+							.formatted(object.getURI()));
 					}
 				} else {
 					Operand<Geometry> ringOp = createOperand(object, pattern,
 						binding, usedTriples);
-					if (null == ringOp
-						|| !(ringOp.getRepresentation() instanceof LinearRing)) {
+					if (null == ringOp || !(ringOp.getRepresentation() instanceof LinearRing)) {
 						throw new RuntimeException(
 							"Polygons not bound to linear rings are not supported.");
-
 					}
 					LinearRing ring = (LinearRing) ringOp.getRepresentation();
 					if (isExterior) {

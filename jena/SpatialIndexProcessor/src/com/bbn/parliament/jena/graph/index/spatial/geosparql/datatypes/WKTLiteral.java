@@ -47,7 +47,7 @@ public class WKTLiteral extends GeoSPARQLLiteral {
 	/** {@inheritDoc} */
 	@Override
 	public Geometry doParse(String lexForm) throws DatatypeFormatException {
-		String lexicalForm = lexForm.trim();
+		String lexicalForm = lexForm.strip();
 		Matcher m = pattern.matcher(lexicalForm);
 		if (!m.matches()) {
 			throw new DatatypeFormatException(lexicalForm, this,
@@ -119,7 +119,7 @@ public class WKTLiteral extends GeoSPARQLLiteral {
 		String text = geometry.toText();
 		return (null == coordRefUri)
 			? text
-			: String.format("<%1$s> %2$s", coordRefUri, text);
+			: "<%1$s> %2$s".formatted(coordRefUri, text);
 	}
 
 	@Override

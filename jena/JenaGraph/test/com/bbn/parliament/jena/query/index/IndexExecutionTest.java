@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import com.bbn.parliament.jena.Kb;
 import com.bbn.parliament.jena.TestingDataset;
+import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.query.KbOpExecutor;
@@ -75,29 +76,34 @@ public class IndexExecutionTest {
 	@BeforeEach
 	public void beforeEach() {
 		Context params = ARQ.getContext();
-		execCxt = new ExecutionContext(params, dataset.getDefaultGraph(), dataset.getGraphStore(),
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		execCxt = new ExecutionContext(params, defaultGraph, dataset.getGraphStore(),
 			KbOpExecutor.KbOpExecutorFactory);
 		opExecutor = KbOpExecutor.KbOpExecutorFactory.create(execCxt);
 
-		index = IndexManager.getInstance().createAndRegister(dataset.getDefaultGraph(), null, factory);
+		index = IndexManager.getInstance().createAndRegister(defaultGraph, null, factory);
 		querier = new MockPatternQuerier(NUM_MOCKED_ITEMS);
 	}
 
 	@AfterEach
 	public void afterEach() {
 		dataset.reset();
-		IndexManager.getInstance().unregister(dataset.getDefaultGraph(), null, index);
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		IndexManager.getInstance().unregister(defaultGraph, null, index);
 		IndexPatternQuerierManager.getInstance().unregister(index);
 	}
 
 	@Test
 	public void testIndexPropertyFunction() {
 		//loadResource("com/bbn/parliament/jena/query/index/mock/mockdata.ttl", dataset.getDefaultGraph());
-		String algebra = ""
-			+ "(project (?x ?y)\n"
-			+ "  (bgp\n"
-			+ "    (triple ?x <" + MockPropertyFunction.URI + "> ?y)\n"
-			+ "))";
+		String algebra = """
+			(project (?x ?y)
+				(bgp
+					(triple ?x <%1$s> ?y)
+			))
+			""".formatted(MockPropertyFunction.URI);
 
 		Op op = SSE.parseOp(algebra);
 		op = optimizer.rewrite(op);
@@ -109,12 +115,12 @@ public class IndexExecutionTest {
 
 	@Test
 	public void testIndexPatternQuerier1() {
-		String algebra = ""
-			+ "(project (?x ?y)\n"
-			+ "  (bgp\n"
-			//+ "    (triple ?x <http://example.org/data/p> <http://example.org/data/v1>)\n"
-			+ "    (triple ?x <http://example.org/mock#object> ?y)\n"
-			+ "))";
+		String algebra = """
+			(project (?x ?y)
+				(bgp
+					(triple ?x <http://example.org/mock#object> ?y)
+			))
+			""";
 
 		Op op = SSE.parseOp(algebra);
 		op = optimizer.rewrite(op);
@@ -144,14 +150,17 @@ public class IndexExecutionTest {
 
 	@Test
 	public void testIndexPatternQuerier2() throws IOException {
-		QueryTestUtil.loadResource("data/data-r2/triple-match/data-01.ttl", dataset.getDefaultGraph());
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		QueryTestUtil.loadResource("data/data-r2/triple-match/data-01.ttl", defaultGraph);
 
-		String algebra = ""
-			+ "(project (?x ?y)\n"
-			+ "  (bgp\n"
-			+ "    (triple ?x <http://example.org/data/p> <http://example.org/data/v1>)\n"
-			+ "    (triple ?x <http://example.org/mock#mocked> ?y)\n"
-			+ "))";
+		String algebra = """
+			(project (?x ?y)
+				(bgp
+					(triple ?x <http://example.org/data/p> <http://example.org/data/v1>)
+					(triple ?x <http://example.org/mock#mocked> ?y)
+			))
+			""";
 
 		Op op = SSE.parseOp(algebra);
 		op = optimizer.rewrite(op);
@@ -176,16 +185,19 @@ public class IndexExecutionTest {
 
 	@Test
 	public void testIndexPatternQuerier3() throws IOException {
-		QueryTestUtil.loadResource("data/data-r2/triple-match/data-01.ttl", dataset.getDefaultGraph());
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		QueryTestUtil.loadResource("data/data-r2/triple-match/data-01.ttl", defaultGraph);
 
-		String algebra = ""
-			+ "(project (?x ?y)\n"
-			+ "  (bgp\n"
-			+ "    (triple <http://example.org/data/x> <" + MockPropertyFunction.URI + "> ?y)\n"
-			+ "    (triple <http://example.org/data/x> <http://example.org/data/p> <http://example.org/data/v1> )\n"
-			+ "    (triple ?x <http://example.org/data/p> <http://example.org/data/v1> )\n"
-			+ "  )\n"
-			+ ")";
+		String algebra = """
+			(project (?x ?y)
+				(bgp
+					(triple <http://example.org/data/x> <%1$s> ?y)
+					(triple <http://example.org/data/x> <http://example.org/data/p> <http://example.org/data/v1> )
+					(triple ?x <http://example.org/data/p> <http://example.org/data/v1> )
+				)
+			)
+			""".formatted(MockPropertyFunction.URI);
 
 		Op op = SSE.parseOp(algebra);
 		op = optimizer.rewrite(op);
@@ -203,18 +215,20 @@ public class IndexExecutionTest {
 
 	@Test
 	public void testFilterableIndex() throws IOException {
-		QueryTestUtil.loadResource("com/bbn/parliament/jena/query/index/mock/mockdata.ttl", dataset.getDefaultGraph());
+		@SuppressWarnings("resource")
+		KbGraph defaultGraph = dataset.getDefaultGraph();
+		QueryTestUtil.loadResource("com/bbn/parliament/jena/query/index/mock/mockdata.ttl", defaultGraph);
 
-		String algebra = ""
-			+ "(project (?x ?y)\n"
-			+ "  (filter (<= ?y 5)\n"
-			+ "    (bgp\n"
-			+ "      (triple ?x <http://example.org/mock#obj> ?y)\n"
-			//+ "      (triple <http://example.org/data/x> <http://example.org/data/p> <http://example.org/data/v1> )\n"
-			+ "      (triple ?x <http://example.org/data/p> <http://example.org/data/v1> )\n"
-			+ "    )\n"
-			+ "  )\n"
-			+ ")";
+		String algebra = """
+			(project (?x ?y)
+				(filter (<= ?y 5)
+					(bgp
+						(triple ?x <http://example.org/mock#obj> ?y)
+						(triple ?x <http://example.org/data/p> <http://example.org/data/v1> )
+					)
+				)
+			)
+			""";
 
 		Op op = SSE.parseOp(algebra);
 		op = optimizer.rewrite(op);

@@ -81,13 +81,12 @@ public class KbOpExecutor extends OpExecutor {
 	/** {@inheritDoc} */
 	@Override
 	protected QueryIterator execute(OpExt opExt, QueryIterator input) {
-		if (opExt instanceof OpIndexPropFunc) {
-			OpIndexPropFunc opIndexPropFunc = (OpIndexPropFunc) opExt;
+		if (opExt instanceof OpIndexPropFunc opIndexPropFunc) {
 			Op subOp = opIndexPropFunc.getSubOp();
 			QueryIterator it = input;
-			if (subOp instanceof OpBGP) {
+			if (subOp instanceof OpBGP bgpSubOp) {
 				// add pattern to index so that execution can get optimized
-				opIndexPropFunc.getPattern().addAll(((OpBGP)subOp).getPattern());
+				opIndexPropFunc.getPattern().addAll(bgpSubOp.getPattern());
 			} else {
 				it = executeOp(subOp, input);
 			}
@@ -100,14 +99,13 @@ public class KbOpExecutor extends OpExecutor {
 	/** {@inheritDoc} */
 	@Override
 	protected QueryIterator execute(OpFilter opFilter, QueryIterator input) {
-		if (opFilter.getSubOp() instanceof OpBGP) {
-			return processFilter(opFilter, (OpBGP) opFilter.getSubOp(), input);
-		} else if (opFilter.getSubOp() instanceof OpSequence) {
-			OpSequence opSeq = (OpSequence) opFilter.getSubOp();
+		if (opFilter.getSubOp() instanceof OpBGP bgpSubOp) {
+			return processFilter(opFilter, bgpSubOp, input);
+		} else if (opFilter.getSubOp() instanceof OpSequence opSeq) {
 			QueryIterator ret = input;
 			for (Op op : opSeq.getElements()) {
-				if (op instanceof OpBGP) {
-					ret = processFilter(opFilter, (OpBGP) op, ret);
+				if (op instanceof OpBGP bgpOp) {
+					ret = processFilter(opFilter, bgpOp, ret);
 				} else {
 					ret = executeOp(op, ret);
 				}

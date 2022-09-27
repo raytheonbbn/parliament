@@ -19,18 +19,19 @@ public class BuffersTestMethods extends SpatialTestDataset {
 		super(factoryProperties);
 	}
 
-	private static final String POINT_QUERY = ""
-		+ "SELECT DISTINCT ?a WHERE {\n"
-		+ "?a a example:Building ;\n"
-		+ "georss:where ?where .\n"
-		+ "?buffer  a spatial:Buffer ;\n"
-		+ "  spatial:distance \"280\"^^xsd:double;\n"
-		+ "  spatial:extent [\n"
-		+ "    a gml:Point ;\n"
-		+ "    gml:pos \"2.5 0\"\n"
-		+ "  ] .\n"
-		+ "?buffer ogc:covers ?where .\n"
-		+ "}";
+	private static final String POINT_QUERY = """
+		select distinct ?a where {
+			?a a example:Building ;
+				georss:where ?where .
+			?buffer a spatial:Buffer ;
+				spatial:distance "280"^^xsd:double ;
+				spatial:extent [
+					a gml:Point ;
+					gml:pos "2.5 0"
+				] .
+			?buffer ogc:covers ?where .
+		}
+		""";
 
 	public void testBufferPoint() {
 		loadData("queries/BuildingExample1.ttl");
@@ -42,18 +43,19 @@ public class BuffersTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String POINT_REVERSE_QUERY = ""
-		+ "SELECT DISTINCT ?a WHERE {\n"
-		+ "?a a example:Building ;\n"
-		+ "  georss:where ?where .\n"
-		+ "?buffer  a spatial:Buffer ;\n"
-		+ "  spatial:distance \"280\"^^xsd:double;\n"
-		+ "  spatial:extent [\n"
-		+ "    a gml:Point ;\n"
-		+ "    gml:pos \"2.5 0\";\n"
-		+ " ] .\n"
-		+ "?buffer ogc:covers ?where .\n"
-		+ "}";
+	private static final String POINT_REVERSE_QUERY = """
+		select distinct ?a where {
+			?a a example:Building ;
+				georss:where ?where .
+			?buffer a spatial:Buffer ;
+				spatial:distance "280"^^xsd:double ;
+				spatial:extent [
+					a gml:Point ;
+					gml:pos "2.5 0" ;
+				] .
+			?buffer ogc:covers ?where .
+		}
+		""";
 
 	public void testBufferPointReverse() {
 		loadData("queries/BuildingExample1.ttl");
@@ -64,21 +66,22 @@ public class BuffersTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String REGION_QUERY = ""
-		+ "SELECT DISTINCT ?a WHERE {\n"
-		+ "?a a example:SpatialThing ;\n"
-		+ "georss:where ?where .\n"
-		+ "	?buffer	a spatial:Buffer ;\n"
-		+ "		spatial:distance \"0.09\"^^xsd:double;\n"
-		+ "		spatial:extent [\n"
-		+ "			a gml:Polygon ;\n"
-		+ "			gml:exterior [\n"
-		+ "				a gml:LinearRing ;\n"
-		+ "				gml:posList \"34.90 36.0 34.845 36.0 34.845 35.8 34.9 35.8 34.9 36.0\"\n"
-		+ "			]\n"
-		+ "		] .\n"
-		+ "  ?where rcc:part ?buffer .\n"
-		+ "}";
+	private static final String REGION_QUERY = """
+		select distinct ?a where {
+			?a a example:SpatialThing ;
+				georss:where ?where .
+			?buffer a spatial:Buffer ;
+				spatial:distance "0.09"^^xsd:double ;
+				spatial:extent [
+					a gml:Polygon ;
+					gml:exterior [
+						a gml:LinearRing ;
+						gml:posList "34.90 36.0 34.845 36.0 34.845 35.8 34.9 35.8 34.9 36.0"
+					]
+				] .
+			?where rcc:part ?buffer .
+		}
+		""";
 
 	public void testBufferRegion() {
 		loadData("queries/BuildingExample1.ttl");
@@ -90,19 +93,20 @@ public class BuffersTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String VARIABLE_DISTANCE_QUERY = ""
-		+ "SELECT DISTINCT ?a WHERE {\n"
-		+ "  ?x a example:Car ;\n"
-		+ "    georss:where ?carloc ;\n"
-		+ "    example:range ?distance .\n"
-		+ "  ?buffer a spatial:Buffer ;\n"
-		+ "    spatial:distance ?distance ;\n"
-		+ "    spatial:extent ?carloc .\n"
-		+ "  ?a a example:Building ;\n"
-		+ "    georss:where [\n"
-		+ "      rcc:part ?buffer\n"
-		+ "    ] .\n"
-		+ "}";
+	private static final String VARIABLE_DISTANCE_QUERY = """
+		select distinct ?a where {
+			?x a example:Car ;
+				georss:where ?carloc ;
+				example:range ?distance .
+			?buffer a spatial:Buffer ;
+				spatial:distance ?distance ;
+				spatial:extent ?carloc .
+			?a a example:Building ;
+				georss:where [
+					rcc:part ?buffer
+				] .
+		}
+		""";
 
 	public void testBufferVariableDistance() {
 		loadData("queries/BuildingExample1.ttl");
@@ -114,19 +118,20 @@ public class BuffersTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String BOUND_VARIABLE_EXTENT_QUERY = ""
-		+ "SELECT DISTINCT ?a WHERE {\n"
-		+ "  ?extent a gml:Point ;\n"
-		+ "    gml:pos \"34 36\" .\n"
-		+ "  ?buffer a spatial:Buffer ;\n"
-		+ "    spatial:distance 500 ;\n"
-		+ "    spatial:extent ?extent .\n"
-		+ "  ?a a example:Building ;\n"
-		+ "    georss:where ?point ;\n"
-		+ "    georss:where [\n"
-		+ "      rcc:part ?buffer\n"
-		+ "    ] .\n"
-		+ "}";
+	private static final String BOUND_VARIABLE_EXTENT_QUERY = """
+		select distinct ?a where {
+			?extent a gml:Point ;
+				gml:pos "34 36" .
+			?buffer a spatial:Buffer ;
+				spatial:distance 500 ;
+				spatial:extent ?extent .
+			?a a example:Building ;
+				georss:where ?point ;
+				georss:where [
+					rcc:part ?buffer
+				] .
+		}
+		""";
 
 	public void testBufferBoundVariableExtent() {
 		loadData("queries/BuildingExample1.ttl");
@@ -137,23 +142,24 @@ public class BuffersTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String ZERO_DISTANCE_QUERY = ""
-		+ "SELECT ?a WHERE {\n"
-		+ "  ?buffer a spatial:Buffer ;\n"
-		+ "    spatial:distance \"0.0\"^^xsd:double;\n"
-		+ "    spatial:extent [\n"
-		+ "      a gml:Polygon ;\n"
-		+ "      gml:exterior [\n"
-		+ "        a gml:LinearRing ;\n"
-		+ "        gml:posList \"39.0 125.0 39.0 126.0 40.0 126.0 40.0 125.0\"\n"
-		+ "      ]\n"
-		+ "    ] .\n"
-		+ "  ?a a example:SpatialThing ;\n"
-		+ "    georss:where ?point ;\n"
-		+ "    georss:where [\n"
-		+ "      rcc:part ?buffer\n"
-		+ "    ] .\n"
-		+ "}";
+	private static final String ZERO_DISTANCE_QUERY = """
+		select ?a where {
+			?buffer a spatial:Buffer ;
+				spatial:distance "0.0"^^xsd:double ;
+				spatial:extent [
+					a gml:Polygon ;
+					gml:exterior [
+						a gml:LinearRing ;
+						gml:posList "39.0 125.0 39.0 126.0 40.0 126.0 40.0 125.0"
+					]
+				] .
+			?a a example:SpatialThing ;
+				georss:where ?point ;
+				georss:where [
+					rcc:part ?buffer
+				] .
+		}
+		""";
 
 	public void testBufferZeroDistance() {
 		loadData("queries/BuildingExample2.ttl");
@@ -163,24 +169,25 @@ public class BuffersTestMethods extends SpatialTestDataset {
 		}
 	}
 
-	private static final String THOUSAND_DISTANCE_QUERY = ""
-		+ "SELECT DISTINCT ?a WHERE {\n"
-		+ "  ?buffer a spatial:Buffer ;\n"
-		+ "    spatial:distance \"%1$f\"^^xsd:double;\n"
-		+ "    spatial:extent cities:%2$s .\n"
-		+ "  ?a a example:SpatialThing ;\n"
-		+ "    georss:where ?point ;\n"
-		+ "    georss:where [\n"
-		+ "      rcc:part ?buffer\n"
-		+ "    ] .\n"
-		+ "}";
+	private static final String THOUSAND_DISTANCE_QUERY = """
+		select distinct ?a where {
+			?buffer a spatial:Buffer ;
+				spatial:distance "%1$f"^^xsd:double ;
+				spatial:extent cities:%2$s .
+			?a a example:SpatialThing ;
+				georss:where ?point ;
+				georss:where [
+					rcc:part ?buffer
+				] .
+		}
+		""";
 
 	public void testThousandDistance(String testData, String city, double distance,
 			String... expectedResults) {
 		LOG.info("testThousandDistance: data = {}, city = {}, distance = {}",
 			testData, city, distance);
 		loadData(testData);
-		String query = String.format(THOUSAND_DISTANCE_QUERY, distance, city);
+		String query = THOUSAND_DISTANCE_QUERY.formatted(distance, city);
 		try (CloseableQueryExec qexec = performQuery(query)) {
 			checkResults(qexec, expectedResults);
 		}

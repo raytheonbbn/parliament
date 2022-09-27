@@ -176,10 +176,9 @@ public class IndexTransformation extends AbstractGraphReorderTransformation {
 
 					long selectivity;
 					if (tmpSel == null) {
-						selectivity = (subPattern instanceof EstimablePattern)
-							? ((EstimablePattern) subPattern).estimate()
-								: Long.MAX_VALUE;
-							indexSelectivity.put(subPattern, selectivity);
+						selectivity = (subPattern instanceof EstimablePattern estSubPattern)
+							? estSubPattern.estimate() : Long.MAX_VALUE;
+						indexSelectivity.put(subPattern, selectivity);
 					} else {
 						selectivity = tmpSel.longValue();
 					}

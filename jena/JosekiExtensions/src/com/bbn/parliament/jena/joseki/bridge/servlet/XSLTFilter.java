@@ -39,13 +39,15 @@ import org.slf4j.LoggerFactory;
  * @author sallen
  */
 public class XSLTFilter implements Filter {
-	private static final String METHOD_XFORM = "<?xml version=\"1.0\"?>"
-		+ "<xsl:transform version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
-		+ "	<xsl:output method=\"text\" encoding=\"utf-8\"/>"
-		+ "	<xsl:template match=\"/xsl:transform|/xsl:stylesheet\">"
-		+ "		<xsl:value-of select=\"xsl:output/@method\"/>"
-		+ "	</xsl:template>"
-		+ "</xsl:transform>";
+	private static final String METHOD_XFORM = """
+		<?xml version="1.0"?>
+		<xsl:transform version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+			<xsl:output method="text" encoding="utf-8"/>
+			<xsl:template match="/xsl:transform|/xsl:stylesheet">
+				<xsl:value-of select="xsl:output/@method"/>
+			</xsl:template>
+		</xsl:transform>
+		""";
 
 	private static final Logger LOG = LoggerFactory.getLogger(XSLTFilter.class);
 
@@ -76,7 +78,7 @@ public class XSLTFilter implements Filter {
 
 		URL styleURL = null;
 		String styleSheet = isTransformableQuery ? req.getParameter("stylesheet") : null;
-		if (isTransformableQuery && null != styleSheet && !styleSheet.trim().isEmpty()) {
+		if (isTransformableQuery && null != styleSheet && !styleSheet.isBlank()) {
 			try {
 				styleURL = _context.getResource(styleSheet);
 			} catch (MalformedURLException ex) {
@@ -89,7 +91,7 @@ public class XSLTFilter implements Filter {
 						styleURL = null;
 					}
 				} catch (MalformedURLException ex) {
-					LOG.warn("Malformed stylesheet parameter \"{}\":  {}", styleSheet, ex.getMessage());
+					LOG.warn("Malformed stylesheet parameter '{}':  {}", styleSheet, ex.getMessage());
 				}
 			}
 		}
@@ -103,7 +105,7 @@ public class XSLTFilter implements Filter {
 			wrapper.run(new Runnable() {
 				@Override
 				public void run() {
-					try (OutputStream os = wrapper.getOutputStream()) {
+					try (OutputStream toClose = wrapper.getOutputStream()) {
 						chain.doFilter(req, wrapper);
 
 						if ("application/xml".equals(resp.getContentType()) && contentType != null) {
@@ -140,7 +142,8 @@ public class XSLTFilter implements Filter {
 				try (InputStream in = wrapper.getInputStream()) {
 					StreamSource xmlSource = new StreamSource(in);
 					@SuppressWarnings("resource")
-					StreamResult result = new StreamResult(resp.getOutputStream());
+					OutputStream os = resp.getOutputStream();
+					StreamResult result = new StreamResult(os);
 					transformer.transform(xmlSource, result);
 					LOG.trace("Transformed source");
 				}
@@ -185,19 +188,12 @@ public class XSLTFilter implements Filter {
 	}
 
 	private static String methodToContentType(String method) {
-		String contentType = null;
-		switch (method) {
-		case "xml":
-			contentType = "application/xml";
-			break;
-		case "html":
-			contentType = "text/html";
-			break;
-		case "text":
-			contentType = "text/csv";
-			break;
-		}
-		return contentType;
+		return switch (method) {
+			case "xml" -> "application/xml";
+			case "html" -> "text/html";
+			case "text" -> "text/csv";
+			default -> null;
+		};
 	}
 
 	private static String getTransformMethod(URL styleURL) {

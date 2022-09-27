@@ -41,9 +41,6 @@ public class IndexProcessorConfigurationHandler implements ConfigurationHandler 
 			Statement indexClass = index.getProperty(ConfigOnt.processorFactoryClass);
 			String className = indexClass.getString();
 			Class<?> uclass;
-			@SuppressWarnings("rawtypes")
-			Class<? extends IndexFactory> factoryClass;
-			IndexFactory<?, ?> factory = null;
 			log.info("Loading {}", className);
 			try {
 				uclass = Class.forName(className);
@@ -58,14 +55,13 @@ public class IndexProcessorConfigurationHandler implements ConfigurationHandler 
 				log.warn("{} is not a valid IndexProcessor", className);
 				continue;
 			}
-			factoryClass = uclass.asSubclass(IndexFactory.class);
+			@SuppressWarnings("rawtypes")
+			Class<? extends IndexFactory> factoryClass = uclass.asSubclass(IndexFactory.class);
+			IndexFactory<?, ?> factory = null;
 			try {
-				factory = factoryClass.newInstance();
-			} catch (InstantiationException e) {
-				log.error("Error while instantiating " + className, e);
-				continue;
-			} catch (IllegalAccessException e) {
-				log.error("Error while accessing " + className, e);
+				factory = factoryClass.getDeclaredConstructor().newInstance();
+			} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException ex) {
+				log.error("Error while instantiating " + className, ex);
 				continue;
 			}
 			Properties properties = createProperties(index);

@@ -61,7 +61,7 @@ public class Record<T> {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return String.format("%1$s: %2$s", key, value);
+		return "%1$s: %2$s".formatted(key, value);
 	}
 
 	/** {@inheritDoc} */
@@ -152,8 +152,8 @@ public class Record<T> {
 		/** {@inheritDoc} */
 		@Override
 		public String toString() {
-			return String.format("TripleRecord [triple=%1$s, key=%2$s, value=%3$s]",
-				triple, getKey(), getValue());
+			return "TripleRecord [triple=%1$s, key=%2$s, value=%3$s]"
+				.formatted(triple, getKey(), getValue());
 		}
 
 		/** {@inheritDoc} */

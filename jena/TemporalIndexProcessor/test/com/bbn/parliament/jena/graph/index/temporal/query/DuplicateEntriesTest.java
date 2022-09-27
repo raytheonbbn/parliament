@@ -25,32 +25,29 @@ import com.hp.hpl.jena.vocabulary.XSD;
 
 /** @author dkolas */
 public class DuplicateEntriesTest {
-	private static final String TRIPLES = ""
-		+ "@prefix ex:  <http://example.org/example#> .\n"
-		+ "@prefix pt:  <" + Constants.PT_NS + "> .\n"
-		+ "@prefix xsd: <" + XSD.getURI() + "> .\n"
-		+ "\n"
-		+ "ex:thing0 pt:temporalExtent ex:instant0 .\n"
-		+ "ex:instant0 pt:asInstant \"2001-07-21T00:00:01\"^^xsd:dateTime .\n"
-		+ "\n"
-		+ "ex:thing1 pt:temporalExtent ex:instant1 .\n"
-		+ "ex:instant1 pt:asInstant \"2001-07-21T00:00:01\"^^xsd:dateTime .\n"
-		+ "\n"
-		+ "ex:thing2 pt:temporalExtent ex:instant2 .\n"
-		+ "ex:instant2 pt:asInstant \"2001-07-21T00:00:02\"^^xsd:dateTime .\n"
-		+ "\n"
-		+ "ex:thing3 pt:temporalExtent ex:instant3 .\n"
-		+ "ex:instant3 pt:asInstant \"2001-07-21T00:00:02\"^^xsd:dateTime .";
-	private static final String QUERY = ""
-		+ "prefix time: <" + Constants.OT_NS + ">\n"
-		+ "prefix pt:   <" + Constants.PT_NS + ">\n"
-		+ "prefix xsd:  <" + XSD.getURI() + ">\n"
-		+ "\n"
-		+ "select distinct ?thing where {\n"
-		+ "	?latestTime pt:asInstant \"2006-02-16T00:00:01\"^^xsd:dateTime .\n"
-		+ "	?thing pt:temporalExtent ?instant .\n"
-		+ "	?instant time:before ?latestTime .\n"
-		+ "}";
+	private static final String TRIPLES = """
+		@prefix ex:  <http://example.org/example#> .
+		@prefix pt:  <%1$s> .
+		@prefix xsd: <%2$s> .
+		ex:thing0 pt:temporalExtent ex:instant0 .
+		ex:instant0 pt:asInstant "2001-07-21T00:00:01"^^xsd:dateTime .
+		ex:thing1 pt:temporalExtent ex:instant1 .
+		ex:instant1 pt:asInstant "2001-07-21T00:00:01"^^xsd:dateTime .
+		ex:thing2 pt:temporalExtent ex:instant2 .
+		ex:instant2 pt:asInstant "2001-07-21T00:00:02"^^xsd:dateTime .
+		ex:thing3 pt:temporalExtent ex:instant3 .
+		ex:instant3 pt:asInstant "2001-07-21T00:00:02"^^xsd:dateTime .
+		""".formatted(Constants.PT_NS, XSD.getURI());
+	private static final String QUERY = """
+		prefix time: <%1$s>
+		prefix pt:   <%2$s>
+		prefix xsd:  <%3$s>
+		select distinct ?thing where {
+			?latestTime pt:asInstant "2006-02-16T00:00:01"^^xsd:dateTime .
+			?thing pt:temporalExtent ?instant .
+			?instant time:before ?latestTime .
+		}
+		""".formatted(Constants.OT_NS, Constants.PT_NS, XSD.getURI());
 
 	private static TemporalTestServer testServer;
 

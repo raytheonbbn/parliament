@@ -54,8 +54,9 @@ public class IntervalFinishedBy extends MemoryOperatorImplementation {
 
 	@Override
 	public boolean testExtents(TemporalExtent extent1, TemporalExtent extent2) {
-		if (extent1 instanceof TemporalInterval && extent2 instanceof TemporalInterval) {
-			return ((TemporalInterval) extent1).finishedBy((TemporalInterval) extent2);
+		if (extent1 instanceof TemporalInterval interval1
+			&& extent2 instanceof TemporalInterval interval2) {
+			return interval1.finishedBy(interval2);
 		}
 		return false;
 	}

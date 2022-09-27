@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.net.URL;
 
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,8 +52,8 @@ public class JsonLdRdfReader implements RDFReader {
 
 	@Override
 	public void read(Model model, String url) {
-		try {
-			Object jsonObj = JsonUtils.fromURL(new URL(url), JsonUtils.getDefaultHttpClient());
+		try (CloseableHttpClient httpClient = JsonUtils.getDefaultHttpClient()) {
+			Object jsonObj = JsonUtils.fromURL(new URL(url), httpClient);
 			insertJsonIntoModel(model, url, jsonObj);
 		} catch (IOException | JsonLdError ex) {
 			error(ex);

@@ -12,6 +12,7 @@ import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.SecondaryCursor;
+import com.sleepycat.je.SecondaryDatabase;
 
 /**
  * Iterator for data stored in a {@link NumericIndex}. The iterator iterates over the
@@ -57,8 +58,9 @@ implements ClosableIterator<Record<T>> {
 
 		this.preparedForNext = false;
 		try {
-			cursor = index.getNumbersDatabase()
-				.openCursor(null, CursorConfig.READ_UNCOMMITTED);
+			@SuppressWarnings("resource")
+			SecondaryDatabase secDb = index.getNumbersDatabase();
+			cursor = secDb.openCursor(null, CursorConfig.READ_UNCOMMITTED);
 
 			entry = new DatabaseEntry(index.getRecordFactory()
 				.getBytesForNumber(start));

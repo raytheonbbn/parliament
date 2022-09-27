@@ -1,0 +1,96 @@
+pd test-kb-data ; env PARLIAMENT_KB_CONFIG_PATH=../../target/test-bin/ParliamentKbConfig.txt PARLIAMENT_LOG_CONFIG_PATH=../../target/test-bin/ParliamentLogConfig.txt ../../target/Parliament-v2.7.14-clang/bin/ParliamentAdmin -ds ; popd
+
+
+
+Notify Spring Boot to load a file instead of (or in addition to?) application.properties on startup:
+
+java -jar my-spring-boot-app.jar -Dspring.config.additional-location="external_file_location"
+
+Alternately, specify a custom property file by using command line arg:
+--spring.config.name=my-application
+
+Or this:
+-Dspring.config.location = C:\application.properties
+
+
+
+
+
+
+
+Testing Information
+
+Suggested API for testing REST resources:
+Rest-Assured - Works on top of Junit, simple and easy to use.
+https://github.com/rest-assured/rest-assured
+
+Optionally, AssertJ for better assertion checks
+
+
+
+15 Endpoints, 5 SPARQL protocol, 10 SPARQL graph store protocol
+
+SPARQL protocol
+
+	sparqlGET
+	sparqlURLEncodeQueryPOST
+	sparqlDirectQueryPOST
+	sparqlURLEncodeUpdatePOST
+	sparqlDirectUpdatePOST
+
+SPARQL graph store protocol
+
+	sparqlGraphGET
+	sparqlGraphDefaultGET
+	sparqlGraphPUT
+	sparqlGraphDefaultPUT
+	sparqlGraphDELETE
+	sparqlGraphDefaultDELETE
+	sparqlGraphPOST
+	sparqlGraphDefaultPOST
+	sparqlGraphPATCH
+	sparqlGraphDefaultPATCH
+
+
+
+Testing Ideas:
+
+Header Content:
+- correct header passed
+- missing header parameters (Content-type, Content-Length, Host, etc...)
+
+Request Content Type:
+- Correct content type passed
+- Incorrect content type passed
+- Invalid content type passed
+- No content type passed
+
+Result Content Type:
+- Returns valid content type
+- Content type is correct with payload returned
+
+Query string Parameter existence:
+- Required parameters passed
+- Required parameters not passed
+- Unused parameters passed
+
+Query string Parameter optionals:
+- Optional parameters passed
+- Optional parameters not passed
+- Optional parameters contain content
+
+Query string Parameter count (for parameters which can be a list):
+- Pass one value for one value parameter
+- Pass no value for one value parameter
+- Pass multiple values for one value parameter
+- Pass no value for multiple value parameter
+- Pass one value for multiple value parameter
+- Pass multiple value for multiple value parameter
+
+(Following 3 are same as above 3)
+Query Message Body Parameter existence:
+Query Message Body Parameter optionals:
+Query Message Body Parameter count (for parameters which can be a list):
+
+General:
+- Test every endpoint given valid request (already covered?)

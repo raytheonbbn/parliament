@@ -89,10 +89,8 @@ public class SolverUtil {
 
 		BasicPattern remaining = remainingPattern;
 		if (remainingPattern.getList().size() > 1) {
-			boolean isKbGraph = graph instanceof KbGraph;
-			if (isKbGraph) {
-				KbGraph kb = (KbGraph) graph;
-				remaining = optimizeTripleOrder(remaining, kb, context);
+			if (graph instanceof KbGraph kbGraph) {
+				remaining = optimizeTripleOrder(remaining, kbGraph, context);
 			}
 		}
 		List<Index<?>> indexes = IndexManager.getInstance().getIndexes(graph);
@@ -127,17 +125,15 @@ public class SolverUtil {
 
 	public static QueryIterator solve(BasicPattern pattern, QueryIterator input,
 		ExecutionContext execCxt, Graph graph, BasicGraphSolverExecutor handler) {
-		boolean isKbGraph = graph instanceof KbGraph;
 
 		if (pattern instanceof GraphSubPattern) {
 			return processPattern(pattern, input, execCxt, handler);
 		}
 
 		BasicPattern toProcess = pattern;
-		if (isKbGraph && toProcess.size() > 1) {
-			KbGraph kg = (KbGraph) graph;
+		if (graph instanceof KbGraph kbGraph && toProcess.size() > 1) {
 			toProcess = collapseReifications(toProcess);
-			toProcess = optimizeTripleOrder(toProcess, kg, execCxt);
+			toProcess = optimizeTripleOrder(toProcess, kbGraph, execCxt);
 		}
 
 		List<Index<?>> indexes = IndexManager.getInstance().getIndexes(graph);
@@ -218,9 +214,8 @@ public class SolverUtil {
 		QueryIterator input, ExecutionContext execCxt,
 		BasicGraphSolverExecutor handler) {
 		QueryIterator result = input;
-		if (pattern instanceof IndexPattern) {
-			result = new IndexPatternIterator((IndexPattern) pattern, result,
-				execCxt);
+		if (pattern instanceof IndexPattern indexPattern) {
+			result = new IndexPatternIterator(indexPattern, result, execCxt);
 		} else {
 			result = handler.handle(pattern, input, execCxt);
 		}

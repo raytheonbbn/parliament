@@ -51,8 +51,8 @@ public class IndexSubPatternPropertyFunction<T> extends IndexSubPattern {
 
 	@Override
 	public String toString() {
-		return "IndexSubPatternPropertyFunction [subjects=" + subjects + ", predicate=" + predicate
-			+ ", objects=" + objects + "]";
+		return "IndexSubPatternPropertyFunction [subjects=%1$s, predicate=%2$s, objects=%3$s]"
+			.formatted(subjects, predicate, objects);
 	}
 
 	@Override

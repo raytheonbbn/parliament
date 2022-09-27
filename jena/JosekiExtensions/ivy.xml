@@ -87,6 +87,7 @@
 			conf="test->default"/>
 
 		<exclude org="commons-logging"/>
+		<exclude org="xml-apis"/>
 		<override org="org.apache.httpcomponents" module="httpclient-cache"
 			rev="${httpclient-cache.version}"/>
 		<override org="org.apache.httpcomponents" module="httpclient"

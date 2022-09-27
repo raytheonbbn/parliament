@@ -59,7 +59,7 @@ public class NumericIndexTestMethods extends QueryableIndexTestMethods<NumericIn
 	protected boolean checkDeleted(NumericIndex<Integer> index, Graph graph, Node graphName) {
 		String indexDir = IndexFactoryHelper.getIndexDirectory(graph, graphName);
 		String predicate = index.getQuerier().getPredicate();
-		String dirName = String.format("numeric_%1$s", FileUtil.encodeStringForFilename(predicate));
+		String dirName = "numeric_%1$s".formatted(FileUtil.encodeStringForFilename(predicate));
 		return !new File(indexDir, dirName).exists();
 	}
 
@@ -68,11 +68,11 @@ public class NumericIndexTestMethods extends QueryableIndexTestMethods<NumericIn
 	public void testFilter(NumericIndex<Integer> index, Model model) {
 		// String example = "http://example.org/";
 		Node p = Node.createURI(AGE_URI);
-		Node o20 = ResourceFactory.createTypedLiteral(new Integer(20)).asNode();
-		Node o25 = ResourceFactory.createTypedLiteral(new Integer(25)).asNode();
-		Node o29 = ResourceFactory.createTypedLiteral(new Integer(29)).asNode();
-		Node o32 = ResourceFactory.createTypedLiteral(new Integer(32)).asNode();
-		Node o53 = ResourceFactory.createTypedLiteral(new Integer(53)).asNode();
+		Node o20 = ResourceFactory.createTypedLiteral(20).asNode();
+		Node o25 = ResourceFactory.createTypedLiteral(25).asNode();
+		Node o29 = ResourceFactory.createTypedLiteral(29).asNode();
+		Node o32 = ResourceFactory.createTypedLiteral(32).asNode();
+		Node o53 = ResourceFactory.createTypedLiteral(53).asNode();
 		List<Statement> statements = new ArrayList<>();
 		statements.add(model.asStatement(Triple.create(createRecord(1).getKey(),
 			p, o20)));
@@ -90,21 +90,23 @@ public class NumericIndexTestMethods extends QueryableIndexTestMethods<NumericIn
 		// );
 		// model.add(ResourceFactory.createResource(example + "2"),
 		// ResourceFactory.createProperty(AGE_URI),
-		// ResourceFactory.createTypedLiteral(new Integer(25)));
+		// ResourceFactory.createTypedLiteral(25));
 		// model.add(ResourceFactory.createResource(example + "3"),
 		// ResourceFactory.createProperty(AGE_URI),
-		// ResourceFactory.createTypedLiteral(new Integer(29)));
+		// ResourceFactory.createTypedLiteral(29));
 		// model.add(ResourceFactory.createResource(example + "4"),
 		// ResourceFactory.createProperty(AGE_URI),
-		// ResourceFactory.createTypedLiteral(new Integer(32)));
+		// ResourceFactory.createTypedLiteral(32));
 		// model.add(ResourceFactory.createResource(example + "5"),
 		// ResourceFactory.createProperty(AGE_URI),
-		// ResourceFactory.createTypedLiteral(new Integer(53)));
-		String query = "PREFIX xsd: <"
-			+ XSD.getURI()
-			+ ">\nSELECT ?x WHERE { ?x <"
-			+ AGE_URI
-			+ "> ?z . FILTER (?z < \"30\"^^xsd:integer && ?z >= \"25\"^^xsd:integer)  }";
+		// ResourceFactory.createTypedLiteral(53));
+		String query = """
+			PREFIX xsd: <%1$s>
+			SELECT ?x WHERE {
+				?x <%2$s> ?z .
+				FILTER (?z < "30"^^xsd:integer && ?z >= "25"^^xsd:integer)
+			}
+			""".formatted(XSD.getURI(), AGE_URI);
 
 		try {
 			assertEquals(5L, index.size());
@@ -137,35 +139,41 @@ public class NumericIndexTestMethods extends QueryableIndexTestMethods<NumericIn
 		Resource five = ResourceFactory.createResource(example + "5");
 
 		model.add(one, ageProp,
-			ResourceFactory.createTypedLiteral(new Integer(20)));
+			ResourceFactory.createTypedLiteral(20));
 		model.add(one, nameProp, ResourceFactory.createTypedLiteral("One"));
 		model.add(one, friendProp, two);
 
 		model.add(two, ageProp,
-			ResourceFactory.createTypedLiteral(new Integer(25)));
+			ResourceFactory.createTypedLiteral(25));
 		model.add(two, nameProp, ResourceFactory.createTypedLiteral("Two"));
 		model.add(two, friendProp, one);
 		model.add(two, friendProp, five);
 
 		model.add(three, ageProp,
-			ResourceFactory.createTypedLiteral(new Integer(29)));
+			ResourceFactory.createTypedLiteral(29));
 		model.add(three, nameProp, ResourceFactory.createTypedLiteral("Three"));
 		model.add(three, friendProp, five);
 
 		model.add(four, ageProp,
-			ResourceFactory.createTypedLiteral(new Integer(32)));
+			ResourceFactory.createTypedLiteral(32));
 		model.add(four, nameProp, ResourceFactory.createTypedLiteral("Four"));
 
 		model.add(five, ageProp,
-			ResourceFactory.createTypedLiteral(new Integer(53)));
+			ResourceFactory.createTypedLiteral(53));
 		model.add(five, nameProp, ResourceFactory.createTypedLiteral("Five"));
 		model.add(five, friendProp, two);
 		model.add(five, friendProp, three);
-		String query = "SELECT ?x ?name ?y WHERE { "
-			+ "?x <http://example.org#age> ?age . "
-			+ "?x <http://example.org#name> ?name ."
-			+ "OPTIONAL { " + "  ?x <http://example.org#friend> ?y ." + "}"
-			+ "FILTER (!bound(?y)) " + "FILTER (?age > 25.0)  " + "}";
+		String query = """
+			SELECT ?x ?name ?y WHERE {
+				?x <http://example.org#age> ?age .
+				?x <http://example.org#name> ?name .
+				OPTIONAL {
+					?x <http://example.org#friend> ?y .
+				}
+				FILTER (!bound(?y))
+				FILTER (?age > 25.0)
+			}
+			""";
 
 		try {
 			assertEquals(5L, index.size());

@@ -2,6 +2,7 @@ package com.bbn.parliament.jena.graph.index.numeric.composite;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.bbn.parliament.jena.graph.index.Index;
 import com.bbn.parliament.jena.graph.index.Record.TripleRecord;
 import com.bbn.parliament.jena.graph.index.RecordFactory;
@@ -34,12 +35,9 @@ public class CompositeNumericRecordFactory implements RecordFactory<Number> {
 		if (!obj.isLiteral()) {
 			return null;
 		}
-		if (!(obj.getLiteralValue() instanceof Number)) {
-			return null;
-		}
-		Number num = (Number) obj.getLiteralValue();
-
-		return TripleRecord.create(triple.getSubject(), num, triple);
+		return (obj.getLiteralValue() instanceof Number numberValue)
+			? TripleRecord.create(triple.getSubject(), numberValue, triple)
+			: null;
 	}
 
 	@Override

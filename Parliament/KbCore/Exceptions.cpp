@@ -30,7 +30,9 @@ using ::std::exception;
 using ::std::string;
 using ::std::strncpy;
 
+#if defined(PARLIAMENT_WINDOWS)
 static auto g_log(pmnt::log::getSource("Exceptions"));
+#endif
 
 
 

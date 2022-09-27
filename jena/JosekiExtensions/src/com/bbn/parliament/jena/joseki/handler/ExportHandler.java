@@ -76,8 +76,8 @@ public class ExportHandler extends AbstractHandler {
 	@Override
 	public void handleMultipartFormRequest(HttpServletRequest req,
 		HttpServletResponse resp) throws ServletErrorResponseException {
-		throw new ServletErrorResponseException("'multipart/form data' requests are not "
-			+ "supported by this handler.");
+		throw new ServletErrorResponseException(
+			"'multipart/form data' requests are not supported by this handler.");
 	}
 
 	protected void handleRequest(HttpServletRequest req, HttpServletResponse resp,
@@ -132,31 +132,18 @@ public class ExportHandler extends AbstractHandler {
 
 		String basename = encodeUriForFilename(graphLabel);
 		String extension = dataFormat.getExtension();
-		String filename = String.format("%1$s.%2$s", basename, extension);
+		String filename = "%1$s.%2$s".formatted(basename, extension);
 
-		String writerMimeType = "text/plain";
-		switch (dataFormat) {
-		case N3:
-			writerMimeType = Joseki.contentTypeN3;
-			break;
-		case TURTLE:
-			writerMimeType = Joseki.contentTypeTurtle;
-			break;
-		case NTRIPLES:
-			writerMimeType = Joseki.contentTypeNTriples;
-			break;
-		case RDFXML:
-			writerMimeType = Joseki.contentTypeRDFXML;
-			break;
-		case UNKNOWN:
-		default:
-			// Do nothing
-			break;
-		}
+		String writerMimeType = switch (dataFormat) {
+			case N3 -> Joseki.contentTypeN3;
+			case TURTLE -> Joseki.contentTypeTurtle;
+			case NTRIPLES -> Joseki.contentTypeNTriples;
+			case RDFXML -> Joseki.contentTypeRDFXML;
+			default -> "text/plain";
+		};
 
 		resp.setContentType(writerMimeType);
-		resp.setHeader("Content-Disposition",
-			String.format("inline; filename=\"%1$s\";", filename));
+		resp.setHeader("Content-Disposition", "inline; filename=\"%1$s\";".formatted(filename));
 
 		@SuppressWarnings("resource")
 		ServletOutputStream out = resp.getOutputStream();
@@ -175,20 +162,18 @@ public class ExportHandler extends AbstractHandler {
 		LOG.info("Exporting entire repository to ZIP file in \"{}\" format.", dataFormat);
 
 		String hostname = req.getServerName();
-		String zipFilename = String.format(ZIP_FILENAME_FORMAT, hostname,
-			Calendar.getInstance());
+		String zipFilename = ZIP_FILENAME_FORMAT.formatted(hostname, Calendar.getInstance());
 		String extension = dataFormat.getExtension();
 
 		resp.setContentType("application/zip");
-		resp.setHeader("Content-Disposition",
-			String.format("inline; filename=\"%1$s\";", zipFilename));
+		resp.setHeader("Content-Disposition", "inline; filename=\"%1$s\";".formatted(zipFilename));
 
 		try (ZipOutputStream zout = new ZipOutputStream(resp.getOutputStream())) {
 			// Write the default graph first
 			{
 				Model model = ModelManager.inst().getDefaultModel();
 				String basename = DEFAULT_GRAPH_BASENAME;
-				String filename = String.format("%1$s.%2$s", basename, extension);
+				String filename = "%1$s.%2$s".formatted(basename, extension);
 				zout.putNextEntry(new ZipEntry(filename));
 				writeModel(zout, model, dataFormat);
 				zout.closeEntry();
@@ -197,9 +182,9 @@ public class ExportHandler extends AbstractHandler {
 			for (String graphName : ModelManager.inst().getSortedModelNames()) {
 				Model model = ModelManager.inst().getModel(graphName);
 				// Only export IKbGraphs (and not KbUnionGraphs)
-				if (model.getGraph() instanceof KbGraph) {
-					String basename = ((KbGraph) model.getGraph()).getRelativeDirectory();
-					String filename = String.format("%1$s.%2$s", basename, extension);
+				if (model.getGraph() instanceof KbGraph kbGraph) {
+					String basename = kbGraph.getRelativeDirectory();
+					String filename = "%1$s.%2$s".formatted(basename, extension);
 					zout.putNextEntry(new ZipEntry(filename));
 					writeModel(zout, model, dataFormat);
 					zout.closeEntry();
@@ -228,12 +213,12 @@ public class ExportHandler extends AbstractHandler {
 
 		// These DOS device names are not allowed
 		for (String dos : DOS_DEVICE_NAMES) {
-			if (uri.trim().equalsIgnoreCase(dos)) {
-				return "_" + uri.trim();
+			if (uri.strip().equalsIgnoreCase(dos)) {
+				return "_" + uri.strip();
 			}
 		}
 
-		StringBuffer sb = new StringBuffer(uri.length());
+		StringBuilder sb = new StringBuilder(uri.length());
 		for (int i = 0; i < uri.length(); ++i) {
 			char c = uri.charAt(i);
 

@@ -113,8 +113,7 @@ public class CompositeNumericIndex extends IndexBase<Number> implements Composit
 		return size;
 	}
 
-	private NumericIndex<? extends Number> createIndex(String predicate,
-		Number value) {
+	private NumericIndex<? extends Number> createIndex(String predicate, Number value) {
 		if (value instanceof Integer) {
 			return createIntegerIndex(predicate);
 		} else if (value instanceof Long) {
@@ -124,8 +123,8 @@ public class CompositeNumericIndex extends IndexBase<Number> implements Composit
 		} else if (value instanceof Float) {
 			return createFloatIndex(predicate);
 		}
-		throw new RuntimeException(value.getClass().getName()
-			+ " is in invalid type for the numeric index");
+		throw new RuntimeException(
+			value.getClass().getName() + " is an invalid type for the numeric index");
 	}
 
 	private NumericIndex<Integer> createIntegerIndex(String predicate) {
@@ -230,7 +229,7 @@ public class CompositeNumericIndex extends IndexBase<Number> implements Composit
 	public Iterator<Record<Number>> doIterator() {
 		final Iterator<Map.Entry<String, NumericIndex<? extends Number>>> nit = subIndexes.entrySet().iterator();
 
-		Iterator<Record<Number>> it = new ClosableIterator<Record<Number>>() {
+		Iterator<Record<Number>> it = new ClosableIterator<>() {
 			private Iterator<?> current = null;
 			private boolean hasNext = false;
 			private boolean hasBeenNexted = true;

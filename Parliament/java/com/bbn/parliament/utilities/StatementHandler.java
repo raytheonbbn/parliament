@@ -9,10 +9,12 @@ package com.bbn.parliament.utilities;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jni.KbInstance;
+import com.bbn.parliament.queryoptimization.TreeWidthEstimator;
 import com.hp.hpl.jena.rdf.arp.ALiteral;
 import com.hp.hpl.jena.rdf.arp.AResource;
 
@@ -23,7 +25,7 @@ public class StatementHandler implements com.hp.hpl.jena.rdf.arp.StatementHandle
 	private static final File URIS_FILE       = new File("uris.mem");
 	private static final File URI_2_ID_FILE   = new File("u2i.db");
 
-	private static Logger     _logger         = Logger.getLogger(StatementHandler.class.getName());
+	private static Logger     _logger = LoggerFactory.getLogger(TreeWidthEstimator.class);
 	private static boolean    _useCache       = true;
 	private static long       _stmtCount;
 	private static long       _startTime      = System.currentTimeMillis();
@@ -78,7 +80,7 @@ public class StatementHandler implements com.hp.hpl.jena.rdf.arp.StatementHandle
 		if (value == null)
 		{
 			retval = _kb.uriToRsrcId(pred.toString(), false, true);
-			_predCache.put(pred.toString(), new Long(retval));
+			_predCache.put(pred.toString(), retval);
 		}
 		else
 		{
@@ -100,7 +102,7 @@ public class StatementHandler implements com.hp.hpl.jena.rdf.arp.StatementHandle
 			if (userData == null)
 			{
 				retval = _kb.createAnonymousRsrc();
-				res.setUserData(new Long(retval));
+				res.setUserData(retval);
 			}
 			else
 			{
@@ -133,19 +135,19 @@ public class StatementHandler implements com.hp.hpl.jena.rdf.arp.StatementHandle
 		// sanity checks
 		if (subj == null)
 		{
-			_logger.warning("RDF parser - null subject");
+			_logger.warn("RDF parser - null subject");
 			return;
 		}
 
 		if (pred == null)
 		{
-			_logger.warning("RDF parser - null predicate");
+			_logger.warn("RDF parser - null predicate");
 			return;
 		}
 
 		if (obj == null)
 		{
-			_logger.warning("RDF parser - null object");
+			_logger.warn("RDF parser - null object");
 			return;
 		}
 
@@ -160,7 +162,7 @@ public class StatementHandler implements com.hp.hpl.jena.rdf.arp.StatementHandle
 				getResourceIndex(obj), false);
 		}
 
-		if ((_stmtCount % 5000 == 0) && _logger.isLoggable(Level.INFO))
+		if ((_stmtCount % 5000 == 0) && _logger.isInfoEnabled())
 		{
 			logStatistics();
 		}
@@ -179,19 +181,19 @@ public class StatementHandler implements com.hp.hpl.jena.rdf.arp.StatementHandle
 		// sanity checks
 		if (subj == null)
 		{
-			_logger.warning("RDF parser - null subject");
+			_logger.warn("RDF parser - null subject");
 			return;
 		}
 
 		if (pred == null)
 		{
-			_logger.warning("RDF parser - null predicate");
+			_logger.warn("RDF parser - null predicate");
 			return;
 		}
 
 		if (lit == null)
 		{
-			_logger.warning("RDF parser - null object");
+			_logger.warn("RDF parser - null object");
 			return;
 		}
 
@@ -206,7 +208,7 @@ public class StatementHandler implements com.hp.hpl.jena.rdf.arp.StatementHandle
 				getLiteralIndex(lit), false);
 		}
 
-		if ((_stmtCount % 5000 == 0) && _logger.isLoggable(Level.INFO))
+		if ((_stmtCount % 5000 == 0) && _logger.isInfoEnabled())
 		{
 			logStatistics();
 		}
@@ -246,9 +248,10 @@ public class StatementHandler implements com.hp.hpl.jena.rdf.arp.StatementHandle
 		long u2iBytes = size(URI_2_ID_FILE);
 		long totalBytes = statementBytes + resourceBytes + uriBytes + u2iBytes;
 
-		_logger.info("RDF Statements [count: " + _stmtCount + " time: " + rate
-			+ "]\n" + "File Sizes [ statements: " + statementBytes
-			+ " resources: " + resourceBytes + " uris: " + uriBytes + " u2i: "
-			+ u2iBytes + " total: " + totalBytes + "]");
+		_logger.info("""
+			RDF Statements [count: {} time: {}]
+			File Sizes [statements: {} resources: {} uris: {} u2i: {} total: {}]
+			""",
+			_stmtCount, rate, statementBytes, resourceBytes, uriBytes, u2iBytes, totalBytes);
 	}
 }

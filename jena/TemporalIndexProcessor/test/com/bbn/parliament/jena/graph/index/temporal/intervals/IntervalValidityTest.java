@@ -115,13 +115,13 @@ public class IntervalValidityTest {
 			exMsg = ex.getMessage();
 		}
 		if (isValid) {
-			assertFalse(parseThrewException, String.format(
-				"Failed to parse '%1$s' into TemporalInterval.  %2$s:  %3$s", lex, exType, exMsg));
+			assertFalse(parseThrewException,
+				"Failed to parse '%1$s' into TemporalInterval.  %2$s:  %3$s"
+				.formatted(lex, exType, exMsg));
 			assertNotNull(literal);
 		} else {
-			String msg = String.format(
-				"Parsed '%1$s' into TemporalInterval '%2$s', but parse should have failed",
-				lex, literal);
+			String msg = "Parsed '%1$s' into TemporalInterval '%2$s', but parse should have failed"
+				.formatted(lex, literal);
 			assertNull(literal, msg);
 			assertTrue(parseThrewException, msg);
 		}

@@ -83,8 +83,7 @@ public class EnableIndexing extends PFGraphsAsSubject {
 		} else {
 			IndexManager.getInstance().unregisterAll(graph, graphName);
 		}
-		if (context.getDataset() instanceof KbGraphStore) {
-			KbGraphStore graphStore = (KbGraphStore) context.getDataset();
+		if (context.getDataset() instanceof KbGraphStore graphStore) {
 			graphStore.setIndexingEnabled(graphName, enabled);
 		}
 		return true;

@@ -15,10 +15,12 @@
 		https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/latest
 		https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/latest
 	-->
-	<property name="javaBaseUrl"
+	<!--property name="javaBaseUrl"
 		value="https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/"/>
 	<property name="javaUrl"
-		value="${javaBaseUrl}jdk8u312-b07/OpenJDK8U-jre_x64_windows_8u312b07.zip"/>
+		value="${javaBaseUrl}jdk8u312-b07/OpenJDK8U-jre_x64_windows_8u312b07.zip"/-->
+	<property name="javaUrl"
+		value="https://download.oracle.com/java/17/latest/jdk-17_windows-x64_bin.zip"/>
 
 	<target name="clean" description="Removes build products and temporary files">
 		<delete dir="${binDir}" includeEmptyDirs="true"/>
@@ -28,11 +30,17 @@
 	<target name="fetchJavaForWindows" depends="clean">
 		<mkdir dir="${binDir}"/>
 		<get src="${javaUrl}" dest="${binDir}" verbose="true"/>
-		<fileset id="javaFiles" dir="${binDir}" includes="OpenJDK*.zip"/>
+		<fileset id="javaFiles" dir="${binDir}">
+			<include name="OpenJDK*.zip"/>
+			<include name="jdk-*_windows-*.zip"/>
+		</fileset>
 		<property name="javaZipFileName" refid="javaFiles"/>
 		<echo message="javaZipFileName: ${javaZipFileName}"/>
 		<unzip src="${binDir}/${javaZipFileName}" dest="${binDir}"/>
-		<dirset id="javaDirs" dir="${binDir}" includes="openjdk*"/>
+		<dirset id="javaDirs" dir="${binDir}">
+			<include name="openjdk*"/>
+			<include name="jdk-*"/>
+		</dirset>
 		<property name="unzippedJavaDir" refid="javaDirs"/>
 	</target>
 

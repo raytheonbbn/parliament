@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.locationtech.jts.geom.Geometry;
 
@@ -35,16 +36,24 @@ public class PostgresIndexTestMethods extends SpatialIndexTestMethods {
 		boolean contains = false;
 		try (Connection c = PersistentStore.getInstance().getConnection()) {
 			// check if spatial table exists
-			String sql1 = String.format("SELECT relname FROM pg_class WHERE relname = '%1$s'", tableName);
-			try (ResultSet rs = c.createStatement().executeQuery(sql1)) {
+			String sql1 = "SELECT relname FROM pg_class WHERE relname = '%1$s'"
+				.formatted(tableName);
+			try (
+				Statement stmt = c.createStatement();
+				ResultSet rs = stmt.executeQuery(sql1);
+			) {
 				contains |= rs.next();
 			}
 
 			// check if node index exists
-			String sql2 = String.format(
-				"SELECT indexname from pg_indexes where tablename = '%1$s' AND indexname NOT IN ('%1$s', '%1$s_pkey')",
-				tableName);
-			try (ResultSet rs = c.createStatement().executeQuery(sql2)) {
+			String sql2 = """
+				SELECT indexname FROM pg_indexes
+				WHERE tablename = '%1$s' AND indexname NOT IN ('%1$s', '%1$s_pkey')"""
+				.formatted(tableName);
+			try (
+				Statement stmt = c.createStatement();
+				ResultSet rs = stmt.executeQuery(sql2);
+			) {
 				contains |= rs.next();
 			}
 		} catch (PersistentStoreException | SQLException ex) {

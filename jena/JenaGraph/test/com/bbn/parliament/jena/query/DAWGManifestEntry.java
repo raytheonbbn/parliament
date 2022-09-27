@@ -85,7 +85,7 @@ public class DAWGManifestEntry {
 	}
 
 	public String getCurrentTest() {
-		return String.format("%1$s/%2$s", testDir.getName(), name);
+		return "%1$s/%2$s".formatted(testDir.getName(), name);
 	}
 
 	public String getName() {
@@ -110,6 +110,6 @@ public class DAWGManifestEntry {
 
 	@Override
 	public String toString() {
-		return String.format("DAWG test '%1$s' (%2$s)", name, entry.getLocalName());
+		return "DAWG test '%1$s' (%2$s)".formatted(name, entry.getLocalName());
 	}
 }

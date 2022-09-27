@@ -108,8 +108,8 @@ public class QueryHandler extends SPARQL {
 			log.error("QueryStageException", e);
 			//if (e.getCause() instanceof CancelledException) {
 			//	log.error("Cause: CancelledException");
-			//	throw new QueryExecutionException(
-			//		ReturnCodes.rcInternalError, String.format("Query cancelled: %d\n%s", trackable.getId(), trackable.getQuery().toString()));
+			//	throw new QueryExecutionException(ReturnCodes.rcInternalError,
+			//		"Query cancelled: %d\n%s".formatted(trackable.getId(), trackable.getQuery()));
 			//} else {
 			throw new QueryExecutionException(ReturnCodes.rcInternalError, LogUtil.getExceptionInfo(e));
 			//}
@@ -119,8 +119,8 @@ public class QueryHandler extends SPARQL {
 				ReturnCodes.rcArgumentUnreadable, LogUtil.getExceptionInfo(e));
 		} catch (CancellationException e) {
 			log.error("CancelledException", e);
-			throw new QueryExecutionException(
-				ReturnCodes.rcInternalError, String.format("Query cancelled: %d\n%s", trackable.getId(), trackable.getQuery().toString()));
+			throw new QueryExecutionException(ReturnCodes.rcInternalError,
+				"Query cancelled: %d\n%s".formatted(trackable.getId(), trackable.getQuery()));
 		} catch (RuntimeException e) { // Parse exceptions
 			log.error("RuntimeException",e);
 			throw new QueryExecutionException(

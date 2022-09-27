@@ -70,7 +70,8 @@ public class RdfResourceLoader {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		try (InputStream is = cl.getResourceAsStream(rsrcName)) {
 			if (is == null) {
-				throw new FileNotFoundException(String.format("Unable to find resource '%1$s'", rsrcName));
+				throw new FileNotFoundException("Unable to find resource '%1$s'"
+					.formatted(rsrcName));
 			}
 			RDFFormat rdfFmt = RDFFormat.parseFilename(rsrcName);
 			if (rdfFmt.isJenaReadable()) {

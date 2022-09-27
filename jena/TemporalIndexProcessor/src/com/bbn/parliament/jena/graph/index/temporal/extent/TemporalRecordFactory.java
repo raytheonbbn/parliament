@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.bbn.parliament.jena.graph.index.temporal.extent;
 
 import java.util.ArrayList;
@@ -73,14 +70,10 @@ public class TemporalRecordFactory implements RecordFactory<TemporalExtent> {
 		if (t.getObject().isLiteral()) {
 			Node dateTime = t.getObject();
 			Object o = dateTime.getLiteralValue();
-			if (o instanceof TemporalExtent)	{
-				return (TemporalExtent) o;
-			}
-			else	{
-				//Wrap an XSDDateTime inside a TemporalInstant
-				if (o instanceof XSDDateTime)	{
-					return new TemporalInstant((XSDDateTime) o);
-				}
+			if (o instanceof TemporalExtent tempExt)	{
+				return tempExt;
+			} else if (o instanceof XSDDateTime dt)	{
+				return new TemporalInstant(dt);	// Wrap XSDDateTime in a TemporalInstant
 			}
 		}
 		LOG.debug("No objects of valid literals could be found triple '{}'", t);

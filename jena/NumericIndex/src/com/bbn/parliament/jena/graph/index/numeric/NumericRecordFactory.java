@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import com.bbn.parliament.jena.graph.index.Record;
@@ -69,7 +68,7 @@ implements RecordFactory<T> {
 	/** {@inheritDoc} */
 	@Override
 	public List<Triple> getTripleMatchers() {
-		return Arrays.asList(Triple.create(Node.ANY, Node.createURI(predicate), Node.ANY));
+		return List.of(Triple.create(Node.ANY, Node.createURI(predicate), Node.ANY));
 	}
 
 	/**

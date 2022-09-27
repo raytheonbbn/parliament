@@ -6,14 +6,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,12 +31,12 @@ import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.joseki.bridge.tracker.Tracker;
 import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
+import com.bbn.parliament.jena.joseki.client.HttpClientUtil;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.joseki.client.RemoteModel;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -52,55 +58,55 @@ import test_util.RdfResourceLoader;
 public class ParliamentServerTestCase {
 	private static final String HOST = "localhost";
 	private static final String PORT = System.getProperty("jetty.port", "8586");
-	private static final String SPARQL_URL = String.format(RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL, HOST, PORT);
-	private static final String BULK_URL = String.format(RemoteModel.DEFAULT_BULK_ENDPOINT_URL, HOST, PORT);
+	private static final String SPARQL_URL = RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL.formatted(HOST, PORT);
+	private static final String BULK_URL = RemoteModel.DEFAULT_BULK_ENDPOINT_URL.formatted(HOST, PORT);
 	private static final String[] RSRCS_TO_LOAD = { "univ-bench.owl", "University15_20.owl.zip" };
 	private static final String CSV_QUOTE_TEST_INPUT = "csv-quote-test-input.ttl";
 	private static final String CSV_QUOTE_TEST_EXPECTED_RESULT = "csv-quote-test-expected-result.csv";
+	private static final String CSV_QUOTE_TEST_ACTUAL_CSV_RESULT = "../csv-quote-test-actual-result.csv";
+	private static final String CSV_QUOTE_TEST_ACTUAL_XML_RESULT = "../csv-quote-test-actual-result.xml";
 	private static final String TEST_SUBJECT = "http://example.org/#Test";
 	private static final String TEST_CLASS = "http://example.org/#TestClass";
 	private static final String TEST_LITERAL = "Test";
-	private static final String EVERYTHING_QUERY = ""
-		+ "select ?s ?o ?p ?g where {%n"
-		+ "	{ ?s ?p ?o }%n"
-		+ "	union%n"
-		+ "	{ graph ?g { ?s ?p ?o } }%n"
-		+ "}";
-	private static final String CLASS_QUERY = ""
-		+ "prefix owl: <http://www.w3.org/2002/07/owl#>%n"
-		+ "%n"
-		+ "select distinct ?class where {%n"
-		+ "	?class a owl:Class .%n"
-		+ "	filter (!isblank(?class))%n"
-		+ "}";
-	private static final String THING_QUERY = ""
-		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>%n"
-		+ "prefix ex:   <http://www.example.org/>%n"
-		+ "%n"
-		+ "select ?a where {%n"
-		+ "	bind ( ex:Test as ?a )%n"
-		+ "	?a a owl:Thing .%n"
-		+ "}";
-	private static final String THING_INSERT = ""
-		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>%n"
-		+ "prefix ex:   <http://www.example.org/>%n"
-		+ "%n"
-		+ "insert data {%n"
-		+ "	ex:Test a owl:Thing .%n"
-		+ "}";
-	private static final String THING_DELETE = ""
-		+ "prefix owl:  <http://www.w3.org/2002/07/owl#>%n"
-		+ "prefix ex:   <http://www.example.org/>%n"
-		+ "%n"
-		+ "delete data {%n"
-		+ "	ex:Test a owl:Thing .%n"
-		+ "}";
-	private static final String CSV_QUOTING_TEST_QUERY = ""
-		+ "prefix ex: <http://example.org/#>%n"
-		+ "select ?s ?p ?o where {%n"
-		+ "	bind( ex:comment as ?p )%n"
-		+ "	?s ?p ?o .%n"
-		+ "} order by ?o";
+	private static final String PREFIXES = """
+		prefix owl: <http://www.w3.org/2002/07/owl#>
+		prefix ex:  <http://www.example.org/>
+		""";
+	private static final String EVERYTHING_QUERY = PREFIXES + """
+		select ?s ?o ?p ?g where {
+			{ ?s ?p ?o }
+			union
+			{ graph ?g { ?s ?p ?o } }
+		}
+		""";
+	private static final String CLASS_QUERY = PREFIXES + """
+		select distinct ?class where {
+			?class a owl:Class .
+			filter (!isblank(?class))
+		}
+		""";
+	private static final String THING_QUERY = PREFIXES + """
+		select ?a where {
+			bind ( ex:Test as ?a )
+			?a a owl:Thing .
+		}
+		""";
+	private static final String THING_INSERT = PREFIXES + """
+		insert data {
+			ex:Test a owl:Thing .
+		}
+		""";
+	private static final String THING_DELETE = PREFIXES + """
+		delete data {
+			ex:Test a owl:Thing .
+		}
+		""";
+	private static final String CSV_QUOTING_TEST_QUERY = PREFIXES + """
+		select ?s ?p ?o where {
+			bind( ex:comment as ?p )
+			?s ?p ?o .
+		} order by ?o
+		""";
 	private static final RemoteModel rm = new RemoteModel(SPARQL_URL, BULK_URL);
 	private static final Logger log = LoggerFactory.getLogger(ParliamentServerTestCase.class);
 
@@ -189,12 +195,12 @@ public class ParliamentServerTestCase {
 		testModel.add(testSubject, RDF.type, testClass);
 		rm.insertStatements(testModel);
 
-		String triples = String.format("<%1$s> <%2$s> \"%3$s\" .",
-			TEST_SUBJECT, RDFS.label, TEST_LITERAL);
+		String triples = "<%1$s> <%2$s> \"%3$s\" ."
+			.formatted(TEST_SUBJECT, RDFS.label, TEST_LITERAL);
 		rm.insertStatements(triples, RDFFormat.NTRIPLES, null, true);
 
-		String query = String.format("select * where { ?thing a <%1$s> ; <%2$s> ?label . }",
-			TEST_CLASS, RDFS.label);
+		String query = "select * where { ?thing a <%1$s> ; <%2$s> ?label . }"
+			.formatted(TEST_CLASS, RDFS.label);
 		ResultSet rs = rm.selectQuery(query);
 		boolean foundIt = false;
 		while (rs.hasNext()) {
@@ -220,8 +226,8 @@ public class ParliamentServerTestCase {
 	@SuppressWarnings("static-method")
 	@Test
 	public void remoteModelDeleteAndQueryTest() throws IOException {
-		String stmt = String.format("<http://example.org/foo> <%1$s> \"foo\" .", RDFS.label);
-		String query = String.format("ask where { %1$s }", stmt);
+		String stmt = "<http://example.org/foo> <%1$s> \"foo\" .".formatted(RDFS.label);
+		String query = "ask where { %1$s }".formatted(stmt);
 
 		assertFalse(rm.askQuery(query));
 		rm.insertStatements(stmt, RDFFormat.NTRIPLES, null, true);
@@ -236,10 +242,10 @@ public class ParliamentServerTestCase {
 	{
 		String d = "http://example.org/doughnut";
 		String y = "http://example.org/yummy";
-		String update = String.format("%%1$s data { <%1$s> a <%2$s> . }", d, y);
-		String query = String.format("select * where { ?thing a <%1$s> }", y);
+		String update = "%%1$s data { <%1$s> a <%2$s> . }".formatted(d, y);
+		String query = "select * where { ?thing a <%1$s> }".formatted(y);
 
-		rm.updateQuery(String.format(update, "insert"));
+		rm.updateQuery(update.formatted("insert"));
 
 		ResultSet rs = rm.selectQuery(query);
 		boolean foundIt = false;
@@ -251,7 +257,7 @@ public class ParliamentServerTestCase {
 		}
 		assertTrue(foundIt);
 
-		rm.updateQuery(String.format(update, "delete"));
+		rm.updateQuery(update.formatted("delete"));
 
 		rs = rm.selectQuery(query);
 		foundIt = false;
@@ -271,14 +277,14 @@ public class ParliamentServerTestCase {
 		String graphUri = "http://example.org/foo/bar/#Graph2";
 		String bs = "http://example.org/brusselsprouts";
 		String y = "http://example.org/yucky";
-		String updateQuery = String.format("%%1$s <%1$s> { <%2$s> a <%3$s> . }",
-			graphUri, bs, y);
-		String query = String.format("select * where { graph <%1$s> {?thing a <%2$s> } }",
-			graphUri, y);
+		String updateQuery = "%%1$s <%1$s> { <%2$s> a <%3$s> . }"
+			.formatted(graphUri, bs, y);
+		String query = "select * where { graph <%1$s> {?thing a <%2$s> } }"
+			.formatted(graphUri, y);
 
 		rm.createNamedGraph(graphUri);
 
-		rm.updateQuery(String.format(updateQuery, "insert data into"));
+		rm.updateQuery(updateQuery.formatted("insert data into"));
 
 		ResultSet rs = rm.selectQuery(query);
 		boolean foundIt = false;
@@ -290,7 +296,7 @@ public class ParliamentServerTestCase {
 		}
 		assertTrue(foundIt);
 
-		rm.updateQuery(String.format(updateQuery, "delete data from"));
+		rm.updateQuery(updateQuery.formatted("delete data from"));
 
 		rs = rm.selectQuery(query);
 		foundIt = false;
@@ -351,11 +357,10 @@ public class ParliamentServerTestCase {
 	@Test
 	public void remoteModelInsertQueryNamedGraphTest() throws IOException {
 		String graphUri = "http://example.org/foo/bar/#Graph3";
-		String triples = String.format("<%1$s> <%2$s> <%3$s> .",
-			TEST_SUBJECT, RDF.type, TEST_CLASS);
-		String query = String.format(
-			"select * where { ?x a <%1$s> . graph <%2$s> { ?x a <%1$s> } }",
-			TEST_CLASS, graphUri);
+		String triples = "<%1$s> <%2$s> <%3$s> ."
+			.formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
+		String query = "select * where { ?x a <%1$s> . graph <%2$s> { ?x a <%1$s> } }"
+			.formatted(TEST_CLASS, graphUri);
 
 		rm.createNamedGraph(graphUri);
 
@@ -380,13 +385,12 @@ public class ParliamentServerTestCase {
 		String graph1Uri = "http://example.org/foo/bar/#Graph4";
 		String graph2Uri = "http://example.org/foo/bar/#Graph5";
 		String unionGraphUri = "http://example.org/foo/bar/#UnionGraph";
-		String triple1 = String.format("<%1$s> <%2$s> <%3$s1> .",
-			TEST_SUBJECT, RDF.type, TEST_CLASS);
-		String triple2 = String.format("<%1$s> <%2$s> <%3$s2> .",
-			TEST_SUBJECT, RDF.type, TEST_CLASS);
-		String query = String.format(
-			"select * where { graph <%1$s> { ?x a <%2$s1> , <%2$s2> . } }",
-			unionGraphUri, TEST_CLASS);
+		String triple1 = "<%1$s> <%2$s> <%3$s1> ."
+			.formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
+		String triple2 = "<%1$s> <%2$s> <%3$s2> ."
+			.formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
+		String query = "select * where { graph <%1$s> { ?x a <%2$s1> , <%2$s2> . } }"
+			.formatted(unionGraphUri, TEST_CLASS);
 
 		rm.createNamedGraph(graph1Uri);
 		rm.insertStatements(triple1, RDFFormat.NTRIPLES, null, graph1Uri, true);
@@ -423,49 +427,57 @@ public class ParliamentServerTestCase {
 
 	@Test
 	public void csvQuotingTest() throws IOException {
-		try (InputStream is = getClass().getResourceAsStream(CSV_QUOTE_TEST_INPUT)) {
-			if (is == null) {
-				fail(String.format("Unable to find resource '%1$s'", CSV_QUOTE_TEST_INPUT));
-			}
+		try (InputStream is = getResourceAsStream(CSV_QUOTE_TEST_INPUT)) {
 			rm.insertStatements(is, RDFFormat.parseFilename(CSV_QUOTE_TEST_INPUT), null, true);
-		}
-
-		log.info("CSV quote test results:");
-		try (CloseableQueryExec qe = new CloseableQueryExec(SPARQL_URL, String.format(CSV_QUOTING_TEST_QUERY))) {
-			ResultSet rs = qe.execSelect();
-			while (rs.hasNext()) {
-				QuerySolution qs = rs.next();
-				Resource s = qs.getResource("s");
-				Resource p = qs.getResource("p");
-				Literal o = qs.getLiteral("o");
-				String sStr = s.isAnon()
-					? s.getId().getLabelString()
-					: s.getURI();
-				log.info("   {} {} \"{}\"", sStr, p.getURI(), o.getLexicalForm());
-			}
 		}
 
 		String actualResponse;
 		Map<String, Object> params = new HashMap<>();
-		params.put("query", String.format(CSV_QUOTING_TEST_QUERY));
+		params.put("query", CSV_QUOTING_TEST_QUERY);
 		params.put("stylesheet", "/xml-to-csv.xsl");
 		try (InputStream is = rm.sendRequest(params)) {
-			actualResponse = readStreamToEnd(is, "RemoteModel.sendRequest() returned null");
+			actualResponse = readStreamToEnd(is);
 		}
-		log.info("CSV quote result as CSV:{}{}", System.lineSeparator(), actualResponse);
 
 		String expectedResponse;
-		try (InputStream is = getClass().getResourceAsStream(CSV_QUOTE_TEST_EXPECTED_RESULT)) {
-			expectedResponse = readStreamToEnd(is, "Unable to find resource '%1$s'", CSV_QUOTE_TEST_EXPECTED_RESULT);
+		try (InputStream is = getResourceAsStream(CSV_QUOTE_TEST_EXPECTED_RESULT)) {
+			expectedResponse = readStreamToEnd(is);
 		}
 
+		// In case we are about to fail, record the XML result set to a file so we can diagnose:
+		if (!Objects.equals(expectedResponse, actualResponse)) {
+			Path actualCsvFile = new File(CSV_QUOTE_TEST_ACTUAL_CSV_RESULT).toPath();
+			Files.writeString(actualCsvFile, actualResponse, StandardCharsets.UTF_8);
+
+			params.remove("stylesheet");
+			try (
+				InputStream is = rm.sendRequest(params);
+				OutputStream os = new FileOutputStream(CSV_QUOTE_TEST_ACTUAL_XML_RESULT);
+			) {
+				HttpClientUtil.transfer(is, os);
+			}
+			log.error("CSV quote actual result as XML written to {}", CSV_QUOTE_TEST_ACTUAL_XML_RESULT);
+		}
 		assertEquals(expectedResponse, actualResponse);
 	}
 
-	private static String readStreamToEnd(InputStream is, String errorMsg, Object... args) throws IOException {
-		if (is == null) {
-			fail(String.format(errorMsg, args));
+	private InputStream getResourceAsStream(String resourceName) {
+		InputStream result = getClass().getResourceAsStream(resourceName);
+		if (result == null) {
+			fail("Resource not found: '%1$s'".formatted(resourceName));
 		}
+		return result;
+	}
+
+	/**
+	 * Reads stream to its end and returns the results as a string. All end-of-line
+	 * situations are converted to the platform's native EOL format.
+	 *
+	 * @param is The stream to read
+	 * @return The stream contents as a string
+	 * @throws IOException on error
+	 */
+	private static String readStreamToEnd(InputStream is) throws IOException {
 		try (
 			Reader rdr = new InputStreamReader(is, StandardCharsets.UTF_8);
 			BufferedReader brdr = new BufferedReader(rdr);
@@ -475,7 +487,7 @@ public class ParliamentServerTestCase {
 	}
 
 	private static ResultSet doQuery(String queryFmt, Object... args) {
-		try (CloseableQueryExec qe = new CloseableQueryExec(SPARQL_URL, String.format(queryFmt, args))) {
+		try (CloseableQueryExec qe = new CloseableQueryExec(SPARQL_URL, queryFmt.formatted(args))) {
 			return qe.execSelect();
 		}
 	}
@@ -511,7 +523,7 @@ public class ParliamentServerTestCase {
 	}
 
 	private static void doUpdate(String queryFmt, Object... args) {
-		UpdateRequest ur = UpdateFactory.create(String.format(queryFmt, args));
+		UpdateRequest ur = UpdateFactory.create(queryFmt.formatted(args));
 		UpdateProcessor exec = UpdateExecutionFactory.createRemote(ur, SPARQL_URL);
 		executeUpdate(exec);
 	}

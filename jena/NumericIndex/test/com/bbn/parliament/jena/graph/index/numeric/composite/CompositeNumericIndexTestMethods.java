@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.bbn.parliament.jena.graph.index.Index;
@@ -39,10 +38,10 @@ public class CompositeNumericIndexTestMethods extends IndexTestMethods<Composite
 		Number value = null;
 		String predicate = null;
 		if (seed % 2 == 0) {
-			value = new Double(DOUBLE_VALUES[seed / 2]);
+			value = DOUBLE_VALUES[seed / 2];
 			predicate = DOUBLE_URI;
 		} else {
-			value = new Integer(INT_VALUES[(seed - 1) / 2]);
+			value = INT_VALUES[(seed - 1) / 2];
 			predicate = INT_URI;
 		}
 		Triple triple = Triple.create(key, Node.createURI(predicate),
@@ -79,7 +78,7 @@ public class CompositeNumericIndexTestMethods extends IndexTestMethods<Composite
 		indexes = new ArrayList<>(index.getSubIndexes());
 
 		List<?> classes = new ArrayList<Class<? extends NumericIndex<?>>>(
-			Arrays.asList(NumericIndex.DoubleIndex.class, NumericIndex.IntegerIndex.class));
+			List.of(NumericIndex.DoubleIndex.class, NumericIndex.IntegerIndex.class));
 		Index<Number> intIndex = null;
 		for (Index<Number> subIndex : indexes) {
 			assertEquals(1, subIndex.size());

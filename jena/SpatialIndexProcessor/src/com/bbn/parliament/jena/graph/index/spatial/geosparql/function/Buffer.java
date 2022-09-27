@@ -33,7 +33,7 @@ public class Buffer extends SingleGeometrySpatialFunction {
 		checkUnits(units);
 		Node rNode = radius.getNode();
 		if (!rNode.isLiteral() || !(rNode.getLiteralValue() instanceof Number)) {
-			throw new QueryExecException(String.format("%s is not a number", rNode));
+			throw new QueryExecException("%s is not a number".formatted(rNode));
 		}
 		double distance = ((Number) rNode.getLiteralValue()).doubleValue();
 		Node unitsNode = units.getNode();
@@ -64,12 +64,13 @@ public class Buffer extends SingleGeometrySpatialFunction {
 					valid = buffered.isValid();
 				}
 				if (!valid) {
-					throw new GeoSPARQLFunctionException(String.format(
-						"Invalid geometry when buffering: %1$s by %2$f", g.toText(), distance));
+					throw new GeoSPARQLFunctionException(
+						"Invalid geometry when buffering: %1$s by %2$f"
+						.formatted(g.toText(), distance));
 				}
 			} catch (MismatchedDimensionException | FactoryException | TransformException ex) {
-				throw new GeoSPARQLFunctionException(String.format(
-					"Error while buffering: %1$s by %2$f", g.toText(), distance), ex);
+				throw new GeoSPARQLFunctionException("Error while buffering: %1$s by %2$f"
+					.formatted(g.toText(), distance), ex);
 			}
 		} else {
 			throw new UnsupportedUnitsException(unitsNode);

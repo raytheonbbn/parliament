@@ -21,7 +21,6 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -45,6 +44,8 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 public class RemoteModel {
 	/** %1 is the host name, %2 is the port */
 	public static final String DEFAULT_SPARQL_ENDPOINT_URL = "http://%1$s:%2$s/parliament/sparql";
+	/** %1 is the host name, %2 is the port */
+	public static final String DEFAULT_UPDATE_ENDPOINT_URL = "http://%1$s:%2$s/parliament/update";
 	/** %1 is the host name, %2 is the port */
 	public static final String DEFAULT_BULK_ENDPOINT_URL = "http://%1$s:%2$s/parliament/bulk";
 
@@ -104,7 +105,9 @@ public class RemoteModel {
 		Map<String, Object> params = new HashMap<>();
 		params.putAll(_defaultParams);
 		params.put("update", updateQuery);
-		sendRequest(params);
+		try (InputStream respStrm = sendRequest(params)) {
+			// Do nothing -- there is no response
+		}
 	}
 
 	/**
@@ -190,7 +193,9 @@ public class RemoteModel {
 		params.putAll(_defaultParams);
 		params.put("query", constructQuery);
 		Model model = ModelFactory.createDefaultModel();
-		model.read(sendRequest(params), "");
+		try (InputStream respStrm = sendRequest(params)) {
+			model.read(respStrm, "");
+		}
 		return model;
 	}
 
@@ -560,9 +565,9 @@ public class RemoteModel {
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("update", wtr.toString());
-		sendRequest(params);
-		//InputStream results = sendRequest(params);
-		//ResultSet rs = ResultSetFactory.fromXML(results);
+		try (InputStream respStrm = sendRequest(params)) {
+			// Do nothing -- there is no response
+		}
 	}
 
 	/**
@@ -583,7 +588,7 @@ public class RemoteModel {
 	 * and execution of the sequence of SPARQL/Update operations continues.
 	 */
 	public void createNamedGraph(String namedGraphURI, boolean silent) throws IOException {
-		String query = String.format("create %1$s graph <%2$s>", silent ? "silent" : "", namedGraphURI);
+		String query = "create %1$s graph <%2$s>".formatted(silent ? "silent" : "", namedGraphURI);
 		this.updateQuery(query);
 	}
 
@@ -605,7 +610,7 @@ public class RemoteModel {
 	 * and execution of a sequence of SPARQL/Update operations continues.
 	 */
 	public void dropNamedGraph(String namedGraphURI, boolean silent) throws IOException {
-		String query = String.format("drop %1$s graph <%2$s>", silent ? "silent" : "", namedGraphURI);
+		String query = "drop %1$s graph <%2$s>".formatted(silent ? "silent" : "", namedGraphURI);
 		this.updateQuery(query);
 	}
 
@@ -619,16 +624,12 @@ public class RemoteModel {
 	public void createNamedUnionGraph(String namedUnionGraphURI,
 		String leftGraphURI, String rightGraphURI) throws IOException {
 
-		String query = String.format(
-			"PREFIX parPF: <java:com.bbn.parliament.jena.pfunction.> \n" +
-				"INSERT { } \n" +
-				"WHERE \n" +
-				"{ \n" +
-				"   <%1$s> parPF:createUnionGraph ( <%2$s> <%3$s> ) . \n" +
-				"} \n",
-				namedUnionGraphURI, leftGraphURI, rightGraphURI
-			);
-
+		String query = """
+			prefix parPF: <java:com.bbn.parliament.jena.pfunction.>
+			insert {} where {
+				<%1$s> parPF:createUnionGraph ( <%2$s> <%3$s> ) .
+			}
+			""".formatted(namedUnionGraphURI, leftGraphURI, rightGraphURI);
 		this.updateQuery(query);
 	}
 
@@ -655,7 +656,9 @@ public class RemoteModel {
 		params.put(P_GRAPH, namedGraphURI);
 		params.put(P_PERFORM_CLEAR, "yes");
 
-		sendBulkRequest(params, "clear", false);
+		try (InputStream respStrm = sendBulkRequest(params, "clear", false)) {
+			// Do nothing -- there is no response
+		}
 	}
 
 	/** Clears the entire repository. */
@@ -664,7 +667,9 @@ public class RemoteModel {
 		params.put(P_CLEAR_ALL, "yes");
 		params.put(P_PERFORM_CLEAR, "yes");
 
-		sendBulkRequest(params, "clear", false);
+		try (InputStream respStrm = sendBulkRequest(params, "clear", false)) {
+			// Do nothing -- there is no response
+		}
 	}
 
 	/**
@@ -802,12 +807,7 @@ public class RemoteModel {
 		HttpClientUtil.setAcceptGZIPEncoding(conn);
 
 		if (multipart) {
-			try {
-				HttpClientUtil.prepareMultipartPostRequestInputStreamAware(conn, params, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				// UTF-8 must be supported by all compliant JVM's, this exception should never be thrown.
-				throw new RuntimeException("UTF-8 character encoding not supported on this platform");
-			}
+			HttpClientUtil.prepareMultipartPostRequestInputStreamAware(conn, params, "UTF-8");
 		} else {
 			HttpClientUtil.preparePostRequest(conn, params);
 		}
@@ -824,10 +824,8 @@ public class RemoteModel {
 
 	private static void checkResponse(HttpURLConnection conn) throws IOException {
 		int responseCode = conn.getResponseCode();
-
 		if (responseCode != HttpURLConnection.HTTP_OK) {
 			String responseMsg = conn.getResponseMessage();
-			//System.out.println("HTTP Error: " + responseCode + " -- " + responseMsg);
 			throw new IOException(responseMsg);
 		}
 	}

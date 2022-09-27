@@ -17,14 +17,14 @@ public class LogUtil {
 		return msgPrefix + tmp;
 	}
 
-	public static String getExceptionInfo(Exception e) {
+	public static String getExceptionInfo(Exception ex) {
 		StringBuilder st = new StringBuilder();
-		for (StackTraceElement ste : e.getStackTrace()) {
+		for (StackTraceElement ste : ex.getStackTrace()) {
 			st.append(ste.toString());
 			st.append("\n");
 		}
-		return String.format("Exception Class:\n%s\nMessage:\n%s\nStackTrace:\n%s",
-			e.getClass().getName(), e.getMessage(), st.toString());
+		return "Exception Class:\n%s\nMessage:\n%s\nStackTrace:\n%s"
+			.formatted(ex.getClass().getName(), ex.getMessage(), st.toString());
 	}
 
 	public static String fixEolsForLogging(String s) {

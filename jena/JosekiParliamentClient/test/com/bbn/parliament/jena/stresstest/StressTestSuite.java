@@ -99,11 +99,10 @@ public class StressTestSuite
 				{
 					try
 					{
-						// This will throw an exception if the string isn't just
-						// digits
-						Integer num = new Integer(args[j]);
-						// ...throw it anyway if it came back negative
-						if (num.intValue() <= 0)
+						// This throws if the string isn't just digits:
+						int num = Integer.parseInt(args[j]);
+						// ...throw it anyway if it came back negative:
+						if (num <= 0)
 						{
 							usage("Positive numbers only!");
 						}
@@ -134,11 +133,10 @@ public class StressTestSuite
 				{
 					try
 					{
-						// This will throw an exception if the string isn't just
-						// digits
-						Integer num = new Integer(args[j]);
-						// ...throw it anyway if it came back negative
-						if (num.intValue() < 0)
+						// This throws if the string isn't just digits:
+						int num = Integer.parseInt(args[j]);
+						// ...throw it anyway if it came back negative:
+						if (num < 0)
 						{
 							usage("NonNegative numbers only!");
 						}
@@ -169,11 +167,10 @@ public class StressTestSuite
 				{
 					try
 					{
-						// This will throw an exception if the string isn't just
-						// digits
-						Integer num = new Integer(args[j]);
-						// ...throw it anyway if it came back negative
-						if (num.intValue() <= 0)
+						// This throws if the string isn't just digits:
+						int num = Integer.parseInt(args[j]);
+						// ...throw it anyway if it came back negative:
+						if (num <= 0)
 						{
 							usage("Positive numbers only!");
 						}

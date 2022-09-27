@@ -66,11 +66,11 @@ public class StmtIterator implements Iterator<StmtIterator.Statement>, Closeable
 
 		@Override
 		public String toString() {
-			return String.format("[%1$d,%2$d,%3$d]", subject, predicate, object);
+			return "[%1$d,%2$d,%3$d]".formatted(subject, predicate, object);
 		}
 
 		public String toString(KbInstance kb) {
-			return String.format("[(%1$d) %2$s,(%3$d) %4$s,(%5$d) %6$s]",
+			return "[(%1$d) %2$s,(%3$d) %4$s,(%5$d) %6$s]".formatted(
 				subject, kb.rsrcIdToUri(subject),
 				predicate, kb.rsrcIdToUri(predicate),
 				object, kb.rsrcIdToUri(object));
@@ -78,7 +78,7 @@ public class StmtIterator implements Iterator<StmtIterator.Statement>, Closeable
 	}
 
 	private static final ThreadLocal<AtomicBoolean> m_isQueryCanceled =
-		new ThreadLocal<AtomicBoolean>() {
+		new ThreadLocal<>() {
 			@Override protected AtomicBoolean initialValue() {
 				return new AtomicBoolean(false);
 			}

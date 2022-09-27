@@ -87,8 +87,8 @@ public abstract class NumericIndex<T extends Number & Comparable<T>>
 	public NumericIndex(String predicate, String indexDir,
 		NumericRecordFactory<T> recordFactory) {
 		this.recordFactory = recordFactory;
-		this.dirName = String.format("%s%cnumeric_%s", indexDir, File.separatorChar,
-			FileUtil.encodeStringForFilename(predicate));
+		this.dirName = "%s%cnumeric_%s".formatted(
+			indexDir, File.separatorChar, FileUtil.encodeStringForFilename(predicate));
 		this.queryCache = new QueryCache<>(100);
 		this.querier = new NumericIndexPatternQuerier<>(predicate, this);
 	}
