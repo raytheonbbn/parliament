@@ -11,6 +11,7 @@
 #include <boost/test/data/monomorphic.hpp>
 #include <boost/test/data/test_case.hpp>
 #include <fstream>
+#include <regex>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -19,7 +20,6 @@
 #include "parliament/KbConfig.h"
 #include "parliament/KbInstance.h"
 #include "parliament/Log.h"
-#include "parliament/RegEx.h"
 #include "parliament/UnicodeIterator.h"
 #include "parliament/Util.h"
 #include "TestUtils.h"
@@ -32,7 +32,9 @@ using namespace ::bbn::parliament;
 using ::boost::algorithm::iends_with;
 using ::std::getline;
 using ::std::ifstream;
+using ::std::regex;
 using ::std::runtime_error;
+using ::std::smatch;
 using ::std::string;
 
 using BlankNodeMap = ::std::unordered_map<::std::string, ResourceId>;
@@ -131,8 +133,8 @@ BOOST_DATA_TEST_CASE(
 	KbInstance kb(config);
 
 	BlankNodeMap bnodeMap;
-	RegEx blankOrCommentRex = compileRegEx(k_blankOrCommentRegExStr);
-	RegEx tripleRex = compileRegEx(k_nTripleRegExStr);
+	auto blankOrCommentRex = regex{k_blankOrCommentRegExStr};
+	auto tripleRex = regex{k_nTripleRegExStr};
 	for (bfs::ifstream in(dataFile, ::std::ios::in); !in.eof();)
 	{
 		if (!in)
@@ -143,13 +145,13 @@ BOOST_DATA_TEST_CASE(
 		{
 			string line;
 			getline(in, line);
-			SMatch blankOrCommentCaptures;
-			SMatch tripleCaptures;
-			if (regExMatch(line, blankOrCommentCaptures, blankOrCommentRex))
+			smatch blankOrCommentCaptures;
+			smatch tripleCaptures;
+			if (regex_match(line, blankOrCommentCaptures, blankOrCommentRex))
 			{
 				// Do nothing
 			}
-			else if (regExMatch(line, tripleCaptures, tripleRex))
+			else if (regex_match(line, tripleCaptures, tripleRex))
 			{
 				string uriSubj = tripleCaptures[1].str();
 				string blankSubj = tripleCaptures[2].str();

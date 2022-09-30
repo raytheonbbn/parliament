@@ -33,6 +33,7 @@ using ::std::exception;
 using ::std::ios_base;
 using ::std::setw;
 using ::std::string;
+using ::std::string_view;
 using ::boost::algorithm::to_lower_copy;
 using ::boost::format;
 
@@ -78,7 +79,7 @@ void pmnt::KbAdmin::printVersion()
 		"Parliament Core Library version:         " << getKbVersion() << endl;
 }
 
-void pmnt::KbAdmin::printUsage(const string& msg)
+void pmnt::KbAdmin::printUsage(string_view msg)
 {
 	printVersion();
 
@@ -320,7 +321,7 @@ pmnt::KbAdmin::KbAdmin(uint32 numArgs, const char*const* argList) :
 	}
 }
 
-string pmnt::KbAdmin::stripOptionIntroducer(const string& fullArg,
+string pmnt::KbAdmin::stripOptionIntroducer(string_view fullArg,
 	bool& isShortIntroducer, bool& isLongIntroducer)
 {
 	string result;

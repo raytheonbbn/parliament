@@ -7,15 +7,18 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/test/unit_test.hpp>
 #include <iterator>
+#include <regex>
 #include <string>
 #include <vector>
 
-#include "parliament/RegEx.h"
+#include "parliament/Types.h"
 #include "parliament/Version.h"
 
 using namespace ::bbn::parliament;
 using ::boost::lexical_cast;
 using ::std::equal;
+using ::std::regex;
+using ::std::smatch;
 using ::std::string;
 using ::std::vector;
 
@@ -25,22 +28,22 @@ BOOST_AUTO_TEST_SUITE(VersionTestSuite)
 
 BOOST_AUTO_TEST_CASE(testVersionNumber)
 {
-	auto verArray = vector<int>{ PARLIAMENT_VERSION_NUMERIC };
+	auto verArray = vector<int>{PARLIAMENT_VERSION_NUMERIC};
 
 	BOOST_CHECK_EQUAL(4u, verArray.size());
 	BOOST_CHECK_EQUAL(0, verArray.back());
 
-	auto verStr = string{ PARLIAMENT_VERSION_STRING };
+	auto verStr = string{PARLIAMENT_VERSION_STRING};
 
-	RegEx rex = compileRegEx(k_verNumRegEx);
-	SMatch captures;
-	BOOST_CHECK(regExMatch(verStr, captures, rex));
+	auto rex = regex{k_verNumRegEx};
+	smatch captures;
+	BOOST_CHECK(regex_match(verStr, captures, rex));
 
 	// We start at i == 1 because i == 0 is the whole-pattern match.
 	// Also, i is declared an int because although size() returns
 	// size_t, operator[] takes an int parameter.
 	auto parsedVersions = vector<int>{};
-	for (int i = 1; static_cast<SMatch::size_type>(i) < captures.size(); ++i)
+	for (size_t i = 1; i < captures.size(); ++i)
 	{
 		parsedVersions.push_back(lexical_cast<int>(captures[i].str()));
 	}

@@ -12,6 +12,7 @@
 #include <iterator>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <type_traits>
 
 #if defined(PARLIAMENT_SOLARIS)
@@ -46,19 +47,9 @@ class StringJoinOp
 {
 public:
 	StringJoinOp() : m_separator() {}
-	StringJoinOp(const char* pSep) : m_separator(pSep) {}
-	StringJoinOp(const ::std::string& sep) : m_separator(sep) {}
+	StringJoinOp(::std::string_view sep) : m_separator(sep) {}
 
-	::std::string operator()(::std::string lhs, const char* pRhs)
-	{
-		if (!lhs.empty())
-		{
-			lhs += m_separator;
-		}
-		return lhs += pRhs;
-	}
-
-	::std::string operator()(::std::string lhs, const ::std::string& rhs)
+	::std::string operator()(::std::string lhs, ::std::string_view rhs) const
 	{
 		if (!lhs.empty())
 		{

@@ -9,7 +9,6 @@
 #include "parliament/StringToId.h"
 #include "parliament/Exceptions.h"
 #include "parliament/Log.h"
-#include "parliament/RegEx.h"
 #include "parliament/UnicodeIterator.h"
 #include "parliament/Util.h"
 
@@ -19,6 +18,7 @@
 #include <boost/lexical_cast.hpp>
 #include <db.h>
 #include <mutex>
+#include <regex>
 
 namespace pmnt = ::bbn::parliament;
 
@@ -31,6 +31,8 @@ using ::boost::lexical_cast;
 using ::std::char_traits;
 using ::std::copy;
 using ::std::make_pair;
+using ::std::regex;
+using ::std::smatch;
 using ::std::string;
 
 static constexpr char k_bdbErrorPrefix[] = "Berkeley DB";
@@ -64,9 +66,9 @@ pmnt::BerkeleyDbEnvOptions::BerkeleyDbEnvOptions(const string& optionStr) :
 	m_cacheBytes(0),
 	m_numCacheSegments(0)
 {
-	RegEx rex = compileRegEx(k_optionRegExStr);
-	SMatch captures;
-	if (regExMatch(optionStr, captures, rex))
+	auto rex = regex{k_optionRegExStr};
+	smatch captures;
+	if (regex_match(optionStr, captures, rex))
 	{
 		try
 		{

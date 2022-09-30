@@ -8,7 +8,6 @@
 #include "parliament/LogConfig.h"
 #include "parliament/ArrayLength.h"
 #include "parliament/Exceptions.h"
-#include "parliament/RegEx.h"
 #include "parliament/Util.h"
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -22,6 +21,7 @@
 #include <boost/log/support/date_time.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/phoenix/bind.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <boost/range/numeric.hpp>
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/thread/once.hpp>
@@ -33,6 +33,7 @@
 #include <iterator>
 #include <map>
 #include <ostream>
+#include <regex>
 
 namespace ba = ::boost::algorithm;
 namespace bl = ::boost::log;
@@ -50,8 +51,11 @@ using ::std::begin;
 using ::std::cerr;
 using ::std::end;
 using ::std::endl;
+using ::std::regex;
 using ::std::size_t;
+using ::std::smatch;
 using ::std::string;
+using ::std::string_view;
 
 using ChannelToLevelMap = ::std::map<string, ::bbn::parliament::log::Level>;
 using RotationAtTimePoint = bl::sinks::file::rotation_at_time_point;
@@ -124,9 +128,9 @@ static bool isInBounds(uint16 actualValue, uint16 maxValue, const char* pName)
 
 static RotationAtTimePoint rotTimeFromString(const string& rotTime)
 {
-	auto rex = compileRegEx(k_optionRegExStr);
-	SMatch captures;
-	if (regExMatch(rotTime, captures, rex))
+	auto rex = regex{k_optionRegExStr};
+	smatch captures;
+	if (regex_match(rotTime, captures, rex))
 	{
 		try
 		{
@@ -304,16 +308,10 @@ static void init()
 	call_once(g_onceInitFlag, &unsynchronizedInit);
 }
 
-Source getSource(const char* pChannelName)
+Source getSource(string_view channelName)
 {
 	init();
-	return Source(keywd::channel = pChannelName);
-}
-
-Source getSource(const string& channelName)
-{
-	init();
-	return Source(keywd::channel = channelName);
+	return Source(keywd::channel = string{channelName});
 }
 
 } PARLIAMENT_NAMESPACE_END

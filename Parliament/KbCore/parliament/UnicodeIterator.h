@@ -16,6 +16,7 @@
 #include <iterator>
 #include <memory>
 #include <string>
+#include <string_view>
 
 PARLIAMENT_NAMESPACE_BEGIN
 
@@ -422,8 +423,8 @@ protected:
 	PARLIAMENT_EXPORT void postError(const char* pMsg);
 
 	::std::unique_ptr<UnicodeException>	m_pError;
-	size_t											m_distanceToEnd;
-	Utf32Char										m_char;
+	size_t										m_distanceToEnd;
+	Utf32Char									m_char;
 	uint8											m_charLen;
 	bool											m_conversionIsStrict;
 	bool											m_isByteOrderSwitched;
@@ -517,35 +518,25 @@ template<typename Char>
 class UnicodeIteratorFactory
 {
 public:
-	using TString = ::std::basic_string<Char>;
-	using TStringIter = typename TString::const_iterator;
+	using TStringView = ::std::basic_string_view<Char>;
+	using TStringViewIter = typename TStringView::const_iterator;
 
-	static UnicodeIterator<Char, const Char*> begin(const Char* pStr)
+	static UnicodeIterator<Char, TStringViewIter> begin(TStringView str)
 	{
-		size_t len = ::std::char_traits<Char>::length(pStr);
-		return UnicodeIterator<Char, const Char*>::begin(pStr, pStr + len);
+		return UnicodeIterator<Char, TStringViewIter>::begin(
+			::std::begin(str), ::std::end(str));
 	}
 
-	static UnicodeIterator<Char, const Char*> begin(const Char* pStr, const ::std::nothrow_t&)
+	static UnicodeIterator<Char, TStringViewIter> begin(TStringView str, const ::std::nothrow_t&)
 	{
-		size_t len = ::std::char_traits<Char>::length(pStr);
-		return UnicodeIterator<Char, const Char*>::begin(pStr, pStr + len, ::std::nothrow);
+		return UnicodeIterator<Char, TStringViewIter>::begin(
+			::std::begin(str), ::std::end(str), ::std::nothrow);
 	}
 
-	static UnicodeIterator<Char, const Char*> end(const Char* pStr)
+	static UnicodeIterator<Char, TStringViewIter> end(TStringView str)
 	{
-		size_t len = ::std::char_traits<Char>::length(pStr);
-		return UnicodeIterator<Char, const Char*>::end(pStr + len);
+		return UnicodeIterator<Char, TStringViewIter>::end(::std::end(str));
 	}
-
-	static UnicodeIterator<Char, TStringIter> begin(const TString& str)
-		{ return UnicodeIterator<Char, TStringIter>::begin(::std::begin(str), ::std::end(str)); }
-
-	static UnicodeIterator<Char, TStringIter> begin(const TString& str, const ::std::nothrow_t&)
-		{ return UnicodeIterator<Char, TStringIter>::begin(::std::begin(str), ::std::end(str), ::std::nothrow); }
-
-	static UnicodeIterator<Char, TStringIter> end(const TString& str)
-		{ return UnicodeIterator<Char, TStringIter>::end(::std::end(str)); }
 };
 
 
@@ -677,85 +668,49 @@ Utf16String convertUtf32ToUtf16(FwdIter srcBegin, FwdIter srcEnd,
 	return result;
 }
 
-inline ::std::string convertToUtf8(const Utf16Char* pSrc, bool conversionIsStrict = true)
-{
-	return convertUtf32ToUtf8(UnicodeIteratorFactory<Utf16Char>::begin(pSrc),
-		UnicodeIteratorFactory<Utf16Char>::end(pSrc), conversionIsStrict);
-}
-
-inline ::std::string convertToUtf8(const Utf16String& src, bool conversionIsStrict = true)
+inline ::std::string convertToUtf8(Utf16StringView src, bool conversionIsStrict = true)
 {
 	return convertUtf32ToUtf8(UnicodeIteratorFactory<Utf16Char>::begin(src),
 		UnicodeIteratorFactory<Utf16Char>::end(src), conversionIsStrict);
 }
 
-inline ::std::string convertTCharToUtf8(const TChar* pSrc, bool conversionIsStrict = true)
+inline ::std::string convertTCharToUtf8(TStringView src, bool conversionIsStrict = true)
 {
 #if defined(PARLIAMENT_WINDOWS) && defined(UNICODE)
 	static_assert(sizeof(TChar) == sizeof(Utf16Char), "Unexpected size for type alias TChar");
-	auto pTSrc = reinterpret_cast<const Utf16Char*>(pSrc);
-	return convertUtf32ToUtf8(UnicodeIteratorFactory<Utf16Char>::begin(pTSrc),
-		UnicodeIteratorFactory<Utf16Char>::end(pTSrc), conversionIsStrict);
+	auto pUtf16Src = reinterpret_cast<const Utf16Char*>(src.data());
+	auto utf16Src = Utf16StringView(pUtf16Src, src.size());
+	return convertUtf32ToUtf8(UnicodeIteratorFactory<Utf16Char>::begin(utf16Src),
+		UnicodeIteratorFactory<Utf16Char>::end(utf16Src), conversionIsStrict);
 #else
 	static_assert(sizeof(TChar) == sizeof(::std::string::value_type), "Unexpected size for type alias TChar");
-	return pSrc;
+	return ::std::string{src};
 #endif
 }
 
-inline ::std::string convertTCharToUtf8(const TString& src, bool conversionIsStrict = true)
-{
-	return convertTCharToUtf8(src.c_str(), conversionIsStrict);
-}
-
-inline ::std::string convertFromRsrcChar(const RsrcChar* pSrc, bool conversionIsStrict = true)
-{
-#if defined(PARLIAMENT_RSRC_AS_UTF16)
-	return convertUtf32ToUtf8(UnicodeIteratorFactory<Utf16Char>::begin(pSrc),
-		UnicodeIteratorFactory<Utf16Char>::end(pSrc), conversionIsStrict);
-#else
-	return pSrc;
-#endif
-}
-
-inline ::std::string convertFromRsrcChar(const RsrcString& src, bool conversionIsStrict = true)
+inline ::std::string convertFromRsrcChar(RsrcStringView src, bool conversionIsStrict = true)
 {
 #if defined(PARLIAMENT_RSRC_AS_UTF16)
 	return convertUtf32ToUtf8(UnicodeIteratorFactory<Utf16Char>::begin(src),
 		UnicodeIteratorFactory<Utf16Char>::end(src), conversionIsStrict);
 #else
-	return src;
+	return ::std::string{src};
 #endif
 }
 
-inline Utf16String convertToUtf16(const char* pSrc, bool conversionIsStrict = true)
-{
-	return convertUtf32ToUtf16(UnicodeIteratorFactory<char>::begin(pSrc),
-		UnicodeIteratorFactory<char>::end(pSrc), conversionIsStrict);
-}
-
-inline Utf16String convertToUtf16(const ::std::string& src, bool conversionIsStrict = true)
+inline Utf16String convertToUtf16(::std::string_view src, bool conversionIsStrict = true)
 {
 	return convertUtf32ToUtf16(UnicodeIteratorFactory<char>::begin(src),
 		UnicodeIteratorFactory<char>::end(src), conversionIsStrict);
 }
 
-inline RsrcString convertToRsrcChar(const char* pSrc, bool conversionIsStrict = true)
-{
-#if defined(PARLIAMENT_RSRC_AS_UTF16)
-	return convertUtf32ToUtf16(UnicodeIteratorFactory<char>::begin(pSrc),
-		UnicodeIteratorFactory<char>::end(pSrc), conversionIsStrict);
-#else
-	return pSrc;
-#endif
-}
-
-inline RsrcString convertToRsrcChar(const ::std::string& src, bool conversionIsStrict = true)
+inline RsrcString convertToRsrcChar(::std::string_view src, bool conversionIsStrict = true)
 {
 #if defined(PARLIAMENT_RSRC_AS_UTF16)
 	return convertUtf32ToUtf16(UnicodeIteratorFactory<char>::begin(src),
 		UnicodeIteratorFactory<char>::end(src), conversionIsStrict);
 #else
-	return src;
+	return RsrcString{src};
 #endif
 }
 
@@ -766,26 +721,13 @@ inline ::std::string pathAsUtf8(const ::boost::filesystem::path& p, bool convers
 		"Unexpected size for path characters");
 	const auto pathStr = p.wstring();
 	auto pPathStr = reinterpret_cast<const Utf16Char*>(pathStr.c_str());
-	return convertUtf32ToUtf8(UnicodeIteratorFactory<Utf16Char>::begin(pPathStr),
-		UnicodeIteratorFactory<Utf16Char>::end(pPathStr), conversionIsStrict);
+	return convertToUtf8(pPathStr, conversionIsStrict);
 #else
 	return p.string();
 #endif
 }
 
-inline ::boost::filesystem::path convertUtf8ToPath(const char* pSrc, bool conversionIsStrict = true)
-{
-#if defined(PARLIAMENT_WINDOWS)
-	static_assert(sizeof(::boost::filesystem::path::value_type) == sizeof(Utf16Char),
-		"Unexpected size for path characters");
-	auto pathStr = convertToUtf16(pSrc, conversionIsStrict);
-	return reinterpret_cast<const ::boost::filesystem::path::value_type*>(pathStr.c_str());
-#else
-	return pSrc;
-#endif
-}
-
-inline ::boost::filesystem::path convertUtf8ToPath(const ::std::string& src, bool conversionIsStrict = true)
+inline ::boost::filesystem::path convertUtf8ToPath(::std::string_view src, bool conversionIsStrict = true)
 {
 #if defined(PARLIAMENT_WINDOWS)
 	static_assert(sizeof(::boost::filesystem::path::value_type) == sizeof(Utf16Char),
@@ -793,7 +735,7 @@ inline ::boost::filesystem::path convertUtf8ToPath(const ::std::string& src, boo
 	auto pathStr = convertToUtf16(src, conversionIsStrict);
 	return reinterpret_cast<const ::boost::filesystem::path::value_type*>(pathStr.c_str());
 #else
-	return src;
+	return ::boost::filesystem::path{::std::begin(src), ::std::end(src)};
 #endif
 }
 
@@ -801,12 +743,7 @@ inline ::boost::filesystem::path convertUtf8ToPath(const ::std::string& src, boo
 extern Utf16String convertMultiByteToUtf16(const char* pMBStr);
 #endif
 
-inline ::std::ostream& operator<<(::std::ostream& s, const Utf16Char* pSrc)
-{
-	return s << convertToUtf8(pSrc);
-}
-
-inline ::std::ostream& operator<<(::std::ostream& s, const Utf16String& src)
+inline ::std::ostream& operator<<(::std::ostream& s, Utf16StringView src)
 {
 	return s << convertToUtf8(src);
 }

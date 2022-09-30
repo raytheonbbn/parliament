@@ -11,8 +11,9 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <string>
 #include <limits>
+#include <string>
+#include <string_view>
 #include <type_traits>
 
 PARLIAMENT_NAMESPACE_BEGIN
@@ -48,6 +49,9 @@ using uintPtr	= ::std::uintptr_t;
 using Utf16Char = uint16;
 using Utf32Char = uint32;
 
+using Utf16StringView = ::std::basic_string_view<Utf16Char>;
+using Utf32StringView = ::std::basic_string_view<Utf32Char>;
+
 using Utf16String = ::std::basic_string<Utf16Char>;
 using Utf32String = ::std::basic_string<Utf32Char>;
 
@@ -58,11 +62,13 @@ using Utf32String = ::std::basic_string<Utf32Char>;
 // ===========================================================================
 
 #if defined(PARLIAMENT_WINDOWS) && defined(UNICODE)
-using TChar		= wchar_t;
-using TString	= ::std::wstring;
+using TChar			= wchar_t;
+using TStringView	= ::std::wstring_view;
+using TString		= ::std::wstring;
 #else
-using TChar		= char;
-using TString	= ::std::string;
+using TChar			= char;
+using TStringView	= ::std::string_view;
+using TString		= ::std::string;
 #endif
 
 
@@ -72,11 +78,13 @@ using TString	= ::std::string;
 // ===========================================================================
 
 #if defined(PARLIAMENT_RSRC_AS_UTF16)
-using RsrcChar		= Utf16Char;
-using RsrcString	= Utf16String;
+using RsrcChar			= Utf16Char;
+using RsrcStringView	= Utf16StringView;
+using RsrcString		= Utf16String;
 #else
-using RsrcChar		= char;
-using RsrcString	= ::std::string;
+using RsrcChar			= char;
+using RsrcStringView	= ::std::string_view;
+using RsrcString		= ::std::string;
 #endif
 
 

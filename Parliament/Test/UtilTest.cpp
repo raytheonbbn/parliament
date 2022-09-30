@@ -5,6 +5,8 @@
 // All rights reserved.
 
 #include <boost/filesystem.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <boost/range/numeric.hpp>
 #include <boost/test/unit_test.hpp>
 #include <algorithm>
 #include <iterator>
@@ -23,6 +25,7 @@
 using namespace ::bbn::parliament;
 using ::boost::filesystem::current_path;
 using ::boost::filesystem::path;
+using ::boost::make_iterator_range;
 using ::std::count;
 using ::std::string;
 
@@ -35,6 +38,22 @@ BOOST_AUTO_TEST_CASE(testArrayLen)
 	BOOST_CHECK_EQUAL(
 		sizeof(k_testData) / sizeof(k_testData[0]),
 		arrayLen(k_testData));
+}
+
+static const char*const k_levelStrings[] =
+{
+	"TRACE",
+	"DEBUG",
+	"INFO",
+	"WARN",
+	"ERROR"
+};
+static const char* k_levelList = "TRACE, DEBUG, INFO, WARN, ERROR";
+
+BOOST_AUTO_TEST_CASE(testStringJoinOp)
+{
+	auto levelList = accumulate(make_iterator_range(k_levelStrings), string(), StringJoinOp(", "));
+	BOOST_CHECK_EQUAL(k_levelList, levelList);
 }
 
 BOOST_AUTO_TEST_CASE(testHiResTimer)

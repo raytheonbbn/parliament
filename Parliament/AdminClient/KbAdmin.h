@@ -12,6 +12,7 @@
 
 #include <boost/filesystem/path.hpp>
 #include <string>
+#include <string_view>
 
 PARLIAMENT_NAMESPACE_BEGIN
 
@@ -27,7 +28,7 @@ public:
 	KbAdmin& operator=(KbAdmin&&) = delete;
 
 	static void printVersion();
-	static void printUsage(const ::std::string& msg);
+	static void printUsage(::std::string_view msg);
 	void run();
 
 private:
@@ -59,7 +60,7 @@ private:
 	DumpFormat						m_rsrcDumpOpt;			// Format in which to dump resources
 	DumpFormat						m_stmtDumpOpt;			// Format in which to dump statements
 
-	static ::std::string stripOptionIntroducer(const ::std::string& fullArg,
+	static ::std::string stripOptionIntroducer(::std::string_view fullArg,
 		bool& isShortIntroducer, bool& isLongIntroducer);
 	void listClasses(KbInstance& kb, bool printClassListings);
 	size_t listClasses(KbInstance& kb, bool printClassListings, ResourceId rdfsClass,
