@@ -25,17 +25,15 @@
 #	else
 #		error Clang C++ is not supported on this platform.
 #	endif
-#	if defined(__x86_64__) || defined(__amd64__) || defined(__ppc64__) || defined(__sparcv9)
+#	if defined(__x86_64__) || defined(__arm64__) || defined(__amd64__) || defined(__ppc64__) || defined(__sparcv9)
 #		define PARLIAMENT_64BITS
-#	elif defined(__i386__) || defined(__ppc__) || defined(__sparc__)
+#	elif defined(__i386__) || defined(__arm__) || defined(__ppc__) || defined(__sparc__)
 #		define PARLIAMENT_32BITS
 #	else
 #		error Clang C++ is not supported on this hardware architecture.
 #	endif
 #elif defined(__GNUC__)
-#	if defined(__APPLE__)
-#		define PARLIAMENT_MACOS
-#	elif defined(__linux__)
+#	if defined(__linux__)
 #		define PARLIAMENT_LINUX
 #	elif defined (__sun__)
 #		define PARLIAMENT_SOLARIS

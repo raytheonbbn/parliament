@@ -111,7 +111,9 @@
 				<property name="addrModelSuffix" value="-x64"/>
 			</case>
 			<default>
-				<property name="addrModelSuffix" value="-x32_64"/>
+				<!-- property name="addrModelSuffix" value="-x32_64"/ -->
+				<property name="addrModelSuffix" value="-x64"/>
+				<!-- property name="addrModelSuffix" value="-a64"/ -->
 			</default>
 		</switch>
 		<echo message="addrModel:        '${addrModel}'"/>

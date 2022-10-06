@@ -14,7 +14,11 @@ constant BoostVersionAbbrvAlternatives : [ MATCH "([0-9]+_[0-9]+)_0" "([0-9]+_[0
 constant BoostVersionAbbrv : $(BoostVersionAbbrvAlternatives[1]) ;
 constant BdbVersion : [ os.environ BDB_VERSION ] ;
 
-constant Compiler : clang-darwin12 ;
+constant Compiler : clang-darwin14 ;
+
+#constant Arch : x32_64 ;
+#constant Arch : a64 ;
+constant Arch : x64 ;
 
 constant BoostPfx : <source>$(BoostDir)/stage-clang/lib/libboost_ ;
 
@@ -23,10 +27,10 @@ constant BoostDyRlsLibPfx : <variant>release,<link>shared\:$(BoostPfx) ;
 constant BoostStDbgLibPfx : <variant>debug,<link>static\:$(BoostPfx) ;
 constant BoostStRlsLibPfx : <variant>release,<link>static\:$(BoostPfx) ;
 
-constant BoostDyDbgLibSfx : -$(Compiler)-mt-d-x32_64-$(BoostVersionAbbrv).dylib ;
-constant BoostDyRlsLibSfx : -$(Compiler)-mt-x32_64-$(BoostVersionAbbrv).dylib ;
-constant BoostStDbgLibSfx : -$(Compiler)-mt-d-x32_64-$(BoostVersionAbbrv).a ;
-constant BoostStRlsLibSfx : -$(Compiler)-mt-x32_64-$(BoostVersionAbbrv).a ;
+constant BoostDyDbgLibSfx : -$(Compiler)-mt-d-$(Arch)-$(BoostVersionAbbrv).dylib ;
+constant BoostDyRlsLibSfx : -$(Compiler)-mt-$(Arch)-$(BoostVersionAbbrv).dylib ;
+constant BoostStDbgLibSfx : -$(Compiler)-mt-d-$(Arch)-$(BoostVersionAbbrv).a ;
+constant BoostStRlsLibSfx : -$(Compiler)-mt-$(Arch)-$(BoostVersionAbbrv).a ;
 
 alias BoostHeaderOnlyLibraries
 	:	# no sources
