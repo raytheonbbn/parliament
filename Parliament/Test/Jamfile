@@ -12,21 +12,6 @@ project /KB/Test ;
 path-constant TestDir : . ;
 path-constant KbCoreDir : ../KbCore ;
 
-# This run target is the recommended Boost.Build mechanism for running tests, but
-# it doesn't quite work as desired on Windows.  On Windows, Parliament needs
-# ParliamentKbConfig.txt and ParliamentLogConfig.txt to be present in the same
-# directory as the test executable.  The copy target below attempts to satisfy this
-# requirement.  However, the run target puts the test executable in this directory:
-#
-# target/bin/native/Parliament/Test/ParliamentTest.test/msvc-14.1/debug/address-model-64/threading-multi
-#
-# but the copy target puts the configuration file in this one:
-#
-# target/bin/native/Parliament/Test/msvc-14.1/debug/address-model-64/threading-multi
-#
-# The launcher script fixes this discrepancy by doing the copy immediately before
-# running the test executable.
-
 run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 		[ glob $(KbCoreDir)/*.cpp : $(KbCoreDir)/*JNI*.cpp $(KbCoreDir)/DllMain.cpp $(KbCoreDir)/Utf8StaticInitGen.cpp ]
 		/site-config//BerkeleyDB
@@ -51,29 +36,13 @@ run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 		<define>PARLIAMENT_UNIT_TEST
 		<visibility>hidden
 		<threading>multi
-		<dependency>ParliamentKbConfig.txt
-		<dependency>ParliamentLogConfig.txt
+		<os>LINUX:<source>/KB//DynamicLinkLib
 		<dependency>$(TestDir)/ParliamentKbConfig.txt
 		<dependency>$(TestDir)/ParliamentLogConfig.txt
-		<os>NT:<testing.launcher>$(TestDir)\\TestLaunch.bat
 	:	ParliamentTest
 	:	# default build
 	;
 
-# These two are for Windows:
-explicit ParliamentKbConfig.txt ParliamentLogConfig.txt ;
-make ParliamentKbConfig.txt
-	: $(KbCoreDir)/ParliamentKbConfig.txt
-	: @common.copy
-	: <relevant>toolset <relevant>variant <relevant>address-model <relevant>threading
-	;
-make ParliamentLogConfig.txt
-	: $(KbCoreDir)/ParliamentLogConfig.txt
-	: @common.copy
-	: <relevant>toolset <relevant>variant <relevant>address-model <relevant>threading
-	;
-
-# And these two are for UNIX-like platforms:
 explicit $(TestDir)/ParliamentKbConfig.txt $(TestDir)/ParliamentLogConfig.txt ;
 make $(TestDir)/ParliamentKbConfig.txt : $(KbCoreDir)/ParliamentKbConfig.txt : @common.copy ;
 make $(TestDir)/ParliamentLogConfig.txt : $(KbCoreDir)/ParliamentLogConfig.txt : @common.copy ;

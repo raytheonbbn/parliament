@@ -75,6 +75,7 @@ private:
 void readFileContents(const ::boost::filesystem::path& fileName, ::std::vector<uint8>& content);
 void writeBytesToFile(const ::boost::filesystem::path& fileName, const ::std::vector<uint8>& content);
 void copyFile(const ::boost::filesystem::path& srcFile, const ::boost::filesystem::path& dstFile);
+void touchFile(const ::boost::filesystem::path& fileName);
 
 PARLIAMENT_NAMESPACE_END
 

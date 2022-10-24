@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <iterator>
 #include <string>
+#include <string_view>
 #include "parliament/Exceptions.h"
 #include "parliament/CharacterLiteral.h"
 #include "parliament/Util.h"
@@ -28,19 +29,18 @@ using ::boost::filesystem::path;
 using ::boost::make_iterator_range;
 using ::std::count;
 using ::std::string;
+using ::std::string_view;
 
 BOOST_AUTO_TEST_SUITE(UtilTestSuite)
 
+static constexpr uint8 k_arrayLenTestData[] = { 0x01, 0x02, 0x03 };
+
 BOOST_AUTO_TEST_CASE(testArrayLen)
 {
-	static const uint8 k_testData[] = { 0x01, 0x02, 0x03 };
-
-	BOOST_CHECK_EQUAL(
-		sizeof(k_testData) / sizeof(k_testData[0]),
-		arrayLen(k_testData));
+	BOOST_CHECK_EQUAL(3u, arrayLen(k_arrayLenTestData));
 }
 
-static const char*const k_levelStrings[] =
+static constexpr string_view k_levelStrings[] =
 {
 	"TRACE",
 	"DEBUG",
@@ -48,7 +48,7 @@ static const char*const k_levelStrings[] =
 	"WARN",
 	"ERROR"
 };
-static const char* k_levelList = "TRACE, DEBUG, INFO, WARN, ERROR";
+static constexpr char k_levelList[] = "TRACE, DEBUG, INFO, WARN, ERROR";
 
 BOOST_AUTO_TEST_CASE(testStringJoinOp)
 {

@@ -11,10 +11,10 @@
 #include <iterator>
 #include <ostream>
 #include <string>
+#include <string_view>
 #include <stdexcept>
 #include <db.h>
 #include "parliament/StringToId.h"
-#include "parliament/ArrayLength.h"
 #include "parliament/CharacterLiteral.h"
 #include "parliament/Exceptions.h"
 #include "parliament/UnicodeIterator.h"
@@ -29,6 +29,8 @@ using ::std::cend;
 using ::std::char_traits;
 using ::std::exception;
 using ::std::ostream;
+using ::std::string;
+using ::std::string_view;
 
 struct ParseTestCase
 {
@@ -38,11 +40,11 @@ struct ParseTestCase
 	const char*	m_pOptions;
 };
 
-static const RsrcString		k_testKey1		= convertToRsrcChar("Hello World!");
-static const RsrcString		k_testKey2		= convertToRsrcChar("Goodbye World!");
-static const ResourceId		k_testValue1	= 37;
-static const ResourceId		k_testValue2	= 43;
-static const ParseTestCase	k_parseSuccessTests[]	=
+static const RsrcString				k_testKey1		= convertToRsrcChar("Hello World!");
+static const RsrcString				k_testKey2		= convertToRsrcChar("Goodbye World!");
+static constexpr ResourceId		k_testValue1	= 37;
+static constexpr ResourceId		k_testValue2	= 43;
+static constexpr ParseTestCase	k_parseSuccessTests[] =
 	{
 		{ 0, 32 * 1024 * 1024, 1, "32m,1" },
 		{ 0, 32 * 1024 * 1024, 1, " 32 M , 1 " },
@@ -52,7 +54,7 @@ static const ParseTestCase	k_parseSuccessTests[]	=
 		{ 2, 254490624, 0, "2345678k,0" },
 		{ 3, 318526464, 128, " \t 3456789 \t K \t , \t 128 \t " },
 	};
-static const char*const		k_parseFailureTests[]	=
+static constexpr string_view		k_parseFailureTests[] =
 {
 	"32m 1",
 	"32,1",
@@ -62,8 +64,8 @@ static const char*const		k_parseFailureTests[]	=
 	"23456789010123456789K, 32",
 	"32m,5234567890",
 };
-static const TChar k_fName[] = _T("tempFile.db");
-static const char k_options[] = "32m,1";
+static constexpr TChar k_fName[] = _T("tempFile.db");
+static constexpr char k_options[] = "32m,1";
 
 
 // Required to make BOOST_DATA_TEST_CASE happy:

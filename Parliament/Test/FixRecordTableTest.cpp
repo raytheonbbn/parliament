@@ -4,6 +4,7 @@
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
 
+#include <array>
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/monomorphic.hpp>
 #include <boost/test/data/test_case.hpp>
@@ -20,6 +21,7 @@
 namespace bdata = ::boost::unit_test::data;
 
 using namespace ::bbn::parliament;
+using ::std::array;
 using ::std::numeric_limits;
 using ::std::string;
 using ::std::vector;
@@ -30,21 +32,19 @@ struct TestRecord
 	uint16	m_field1;
 };
 
-static const TestRecord k_testData1[] =
-	{
-		{ 0x01, 0x0101 },
-		{ 0x02, 0x0202 },
-		{ 0x03, 0x0303 },
-		{ 0x04, 0x0404 }
+static constexpr array<TestRecord, 4> k_testData1{
+		TestRecord{ 0x01, 0x0101 },
+		TestRecord{ 0x02, 0x0202 },
+		TestRecord{ 0x03, 0x0303 },
+		TestRecord{ 0x04, 0x0404 }
 	};
-static const TestRecord k_testData2[] =
-	{
-		{ 0x05, 0x0505 },
-		{ 0x06, 0x0606 },
-		{ 0x07, 0x0707 },
-		{ 0x08, 0x0808 }
+static constexpr array<TestRecord, 4> k_testData2{
+		TestRecord{ 0x05, 0x0505 },
+		TestRecord{ 0x06, 0x0606 },
+		TestRecord{ 0x07, 0x0707 },
+		TestRecord{ 0x08, 0x0808 }
 	};
-static const uint8 k_expectedResult[] =
+static constexpr uint8 k_expectedResult[] =
 	{
 		'P', 'a', 'r', 'l', 'i', 'a', 'm', 'e', 'n', 't', '\0', '\0',	// magic file format id
 		0x04, 0x00,					// major version
@@ -77,10 +77,10 @@ static const uint8 k_expectedResult[] =
 		0x06, 0x00, 0x06, 0x06,	// data
 		0x07, 0x00, 0x07, 0x07	// data
 	};
-static const TChar k_fName[] = _T("tempFile");
+static constexpr TChar k_fName[] = _T("tempFile");
 
-static const size_t k_growthIncrements[] = { 30u, 0u };
-static const double k_growthFactors[] = { 0.0, 2.0 };
+static constexpr size_t k_growthIncrements[] = { 30u, 0u };
+static constexpr double k_growthFactors[] = { 0.0, 2.0 };
 
 static auto g_log(log::getSource("FixRecordTableTest"));
 
@@ -124,7 +124,7 @@ BOOST_DATA_TEST_CASE(
 		BOOST_CHECK_EQUAL(0u, frt.recordCount());
 		BOOST_CHECK_EQUAL(4u, frt.capacity());
 
-		for (size_t i = 0; i < arrayLen(k_testData1); ++i)
+		for (size_t i = 0; i < k_testData1.size(); ++i)
 		{
 			BOOST_CHECK_NO_THROW(frt.pushBack(k_testData1[i]));
 			BOOST_CHECK(!frt.isEmpty());
@@ -132,17 +132,17 @@ BOOST_DATA_TEST_CASE(
 			BOOST_CHECK_EQUAL(4u, frt.capacity());
 		}
 
-		BOOST_CHECK_NO_THROW(frt.pushBack(k_testData2, arrayLen(k_testData2)));
-		BOOST_CHECK_EQUAL(arrayLen(k_testData1) + arrayLen(k_testData2), frt.recordCount());
+		BOOST_CHECK_NO_THROW(frt.pushBack(k_testData2.data(), k_testData2.size()));
+		BOOST_CHECK_EQUAL(k_testData1.size() + k_testData2.size(), frt.recordCount());
 		const size_t finalCapacity = frt.capacity();
-		BOOST_CHECK(finalCapacity >= arrayLen(k_testData1) + arrayLen(k_testData2));
+		BOOST_CHECK(finalCapacity >= k_testData1.size() + k_testData2.size());
 
 		BOOST_CHECK_NO_THROW(frt.popBack());
-		BOOST_CHECK_EQUAL(arrayLen(k_testData1) + arrayLen(k_testData2) - 1, frt.recordCount());
+		BOOST_CHECK_EQUAL(k_testData1.size() + k_testData2.size() - 1, frt.recordCount());
 		BOOST_CHECK_EQUAL(finalCapacity, frt.capacity());
 
 		BOOST_CHECK_NO_THROW(frt.releaseExcessCapacity());
-		BOOST_CHECK_EQUAL(arrayLen(k_testData1) + arrayLen(k_testData2) - 1, frt.recordCount());
+		BOOST_CHECK_EQUAL(k_testData1.size() + k_testData2.size() - 1, frt.recordCount());
 		BOOST_CHECK_EQUAL(frt.recordCount(), frt.capacity());
 
 		BOOST_CHECK_NO_THROW(frt.sync());
@@ -151,24 +151,24 @@ BOOST_DATA_TEST_CASE(
 	{
 		FixRecordTable<TestRecord> frt(k_fName, true, 4, growthIncrement, growthFactor);
 		BOOST_CHECK(!frt.isEmpty());
-		BOOST_CHECK_EQUAL(arrayLen(k_testData1) + arrayLen(k_testData2) - 1, frt.recordCount());
+		BOOST_CHECK_EQUAL(k_testData1.size() + k_testData2.size() - 1, frt.recordCount());
 		BOOST_CHECK_EQUAL(frt.recordCount(), frt.capacity());
 
-		for (size_t i = 0; i < arrayLen(k_testData1); ++i)
+		for (size_t i = 0; i < k_testData1.size(); ++i)
 		{
 			TestRecord& current = frt.getRecordAt(i);
 			BOOST_CHECK_EQUAL(k_testData1[i].m_field0, current.m_field0);
 			BOOST_CHECK_EQUAL(k_testData1[i].m_field1, current.m_field1);
 		}
 
-		for (size_t i = 0; i < arrayLen(k_testData2) - 1; ++i)
+		for (size_t i = 0; i < k_testData2.size() - 1; ++i)
 		{
-			TestRecord& current = frt.getRecordAt(arrayLen(k_testData1) + i);
+			TestRecord& current = frt.getRecordAt(k_testData1.size() + i);
 			BOOST_CHECK_EQUAL(k_testData2[i].m_field0, current.m_field0);
 			BOOST_CHECK_EQUAL(k_testData2[i].m_field1, current.m_field1);
 		}
 
-		BOOST_CHECK_THROW(frt.getRecordAt(arrayLen(k_testData1) + arrayLen(k_testData2) - 1), Exception);
+		BOOST_CHECK_THROW(frt.getRecordAt(k_testData1.size() + k_testData2.size() - 1), Exception);
 	}
 
 	vector<uint8> fileContent;

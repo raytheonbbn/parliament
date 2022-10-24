@@ -5,6 +5,8 @@
 // All rights reserved.
 
 #include <algorithm>
+#include <array>
+#include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/test_case.hpp>
@@ -14,18 +16,22 @@
 #include <ostream>
 #include <string>
 #include <system_error>
-#include "parliament/Config.h"
+#include "parliament/ConfigFileReader.h"
 #include "parliament/Exceptions.h"
 #include "parliament/Windows.h"
-#include "parliament/ArrayLength.h"
 #include "parliament/CharacterLiteral.h"
 #include "parliament/UnicodeIterator.h"
 #include "TestUtils.h"
+
+#if !defined(PARLIAMENT_WINDOWS)
+#	include <dlfcn.h>
+#endif
 
 namespace bdata = ::boost::unit_test::data;
 namespace bfs = ::boost::filesystem;
 
 using namespace ::bbn::parliament;
+using ::std::array;
 using ::std::endl;
 using ::std::equal;
 using ::std::ofstream;
@@ -34,64 +40,67 @@ using ::std::string;
 
 // =========================================================================
 
-static bfs::path getConfigFilePath(const TChar* pFileName)
+static bfs::path getRunningDllFilePath()
 {
 #if defined(PARLIAMENT_WINDOWS)
-	TChar buffer[1024];
-	DWORD errCode = ::GetModuleFileName(0, buffer, static_cast<DWORD>(arrayLen(buffer)));
-	if (errCode <= 0 || errCode >= arrayLen(buffer))
+	array<TChar, 8192> buffer;
+	DWORD errCode = ::GetModuleFileName(0, buffer.data(), static_cast<DWORD>(buffer.size()));
+	if (errCode <= 0 || errCode >= buffer.size())
 	{
 		throw ::std::system_error(::GetLastError(), ::std::system_category(),
 			"GetModuleFileName failed in unit test");
 	}
-
-	auto modulePath = bfs::path{buffer};
-	return modulePath.parent_path() / pFileName;
+	return buffer.data();
 #else
-	return pFileName;
-#endif
-}
-
-BOOST_AUTO_TEST_SUITE(ConfigTestSuite)
-
-struct GetConfigFilePathTestCase
-{
-	const TChar*		m_pEnvVar;
-	const bfs::path&	m_expectedResult;
-};
-
-static ostream& operator<<(ostream& os, const GetConfigFilePathTestCase& tc)
-{
-	os << "Env var '" << convertTCharToUtf8(tc.m_pEnvVar) << "'";
-	return os;
-}
-
-static constexpr TChar k_defaultConfigFileName[] = _T("ParliamentKbConfig.txt");
-static const GetConfigFilePathTestCase k_getConfigFilePathTestCases[] =
+	::Dl_info info;
+	if (::dladdr(reinterpret_cast<const void*>(getRunningDllFilePath), &info) == 0)
 	{
-#if defined(PARLIAMENT_WINDOWS)
-		{ _T("PARLIAMENT_KB_CONFIG_PATH=C:\\Config.txt"),	bfs::path{_T("C:\\Config.txt")} },
-#else
-		{ _T("PARLIAMENT_KB_CONFIG_PATH=/config.txt"),		bfs::path{_T("/config.txt")} },
+		throw ::std::system_error(errno, ::std::system_category(),
+			"dladdr failed in unit test");
+	}
+	return info.dli_fname;
 #endif
-		{ _T("PARLIAMENT_KB_CONFIG_PATH="),						getConfigFilePath(k_defaultConfigFileName) },
-	};
+}
 
-BOOST_DATA_TEST_CASE(
-	testConfigGetConfigFilePath,
-	bdata::make(k_getConfigFilePathTestCases),
-	tc)
+BOOST_AUTO_TEST_SUITE(ConfigFileReaderTestSuite)
+
+static constexpr TChar k_testEnvVarName[] = _T("TEST_CONFIG_PATH");
+static constexpr TChar k_testConfigFileName[] = _T("test-config.txt");
+
+BOOST_AUTO_TEST_CASE(getConfigFilePathTest)
 {
-	TString envVar{tc.m_pEnvVar};
-	TString::size_type i = envVar.find(_T('='));
-	BOOST_CHECK(i != TString::npos);
-	TString envVarName{tc.m_pEnvVar, 0, i};
-	TString envVarValue{tc.m_pEnvVar, i + 1, envVar.size()};
+	{	// Check the fallback, where the config file is in the current working directory:
+		EnvVarReset envVarReset(k_testEnvVarName, _T(""));
+		BOOST_CHECK_EQUAL(k_testConfigFileName,
+			ConfigFileReader::testGetConfigFilePath(k_testEnvVarName, k_testConfigFileName));
+	}
+	{	// Check that setting the env var works:
+		auto envVarValue = bfs::current_path();
+		envVarValue /= _T("..");
+		envVarValue /= _T("KbCore");
+		envVarValue /= k_testConfigFileName;
 
-	EnvVarReset envVarReset(envVarName, envVarValue);
+		FileDeleter deleter(envVarValue);
+		touchFile(envVarValue);
 
-	BOOST_CHECK_EQUAL(tc.m_expectedResult,
-		Config::testGetConfigFilePath(envVarName.c_str(), k_defaultConfigFileName));
+		envVarValue = canonical(envVarValue);
+		EnvVarReset envVarReset(k_testEnvVarName, envVarValue.native());
+
+		BOOST_CHECK_EQUAL(envVarValue, canonical(
+			ConfigFileReader::testGetConfigFilePath(k_testEnvVarName, k_testConfigFileName)));
+	}
+	{	// Check that loading from the same directory as the DLL works:
+		auto configPath = getRunningDllFilePath().parent_path();
+		configPath /= k_testConfigFileName;
+
+		FileDeleter deleter(configPath);
+		touchFile(configPath);
+
+		configPath = canonical(configPath);
+
+		BOOST_CHECK_EQUAL(configPath, canonical(
+			ConfigFileReader::testGetConfigFilePath(k_testEnvVarName, k_testConfigFileName)));
+	}
 }
 
 // =========================================================================
@@ -117,11 +126,11 @@ static const IsBlankOrCommentLineTestCase k_isBlankOrCommentLineTestCases[] =
 	};
 
 BOOST_DATA_TEST_CASE(
-	testConfigIsBlankOrCommentLine,
+	isBlankOrCommentLineTest,
 	bdata::make(k_isBlankOrCommentLineTestCases),
 	tc)
 {
-	BOOST_CHECK(Config::testIsBlankOrCommentLine(tc.m_pInputStr) == tc.m_expectedResult);
+	BOOST_CHECK(ConfigFileReader::testIsBlankOrCommentLine(tc.m_pInputStr) == tc.m_expectedResult);
 }
 
 // =========================================================================
@@ -148,17 +157,17 @@ static const ParseUnsignedTestCase k_parseUnsignedTestCases[] =
 	};
 
 BOOST_DATA_TEST_CASE(
-	testConfigParseUnsigned,
+	parseUnsignedTest,
 	bdata::make(k_parseUnsignedTestCases),
 	tc)
 {
 	if (tc.m_shouldThrow)
 	{
-		BOOST_CHECK_THROW(Config::testParseUnsigned(tc.m_pInputStr, 1), Exception);
+		BOOST_CHECK_THROW(ConfigFileReader::parseUnsigned(tc.m_pInputStr, 1), Exception);
 	}
 	else
 	{
-		BOOST_CHECK_EQUAL(tc.m_expectedResult, Config::testParseUnsigned(tc.m_pInputStr, 1));
+		BOOST_CHECK_EQUAL(tc.m_expectedResult, ConfigFileReader::parseUnsigned(tc.m_pInputStr, 1));
 	}
 }
 
@@ -186,17 +195,17 @@ static const ParseDoubleTestCase k_parseDoubleTestCases[] =
 	};
 
 BOOST_DATA_TEST_CASE(
-	testConfigParseDouble,
+	parseDoubleTest,
 	bdata::make(k_parseDoubleTestCases),
 	tc)
 {
 	if (tc.m_shouldThrow)
 	{
-		BOOST_CHECK_THROW(Config::testParseDouble(tc.m_pInputStr, 1), Exception);
+		BOOST_CHECK_THROW(ConfigFileReader::parseDouble(tc.m_pInputStr, 1), Exception);
 	}
 	else
 	{
-		BOOST_CHECK_EQUAL(tc.m_expectedResult, Config::testParseDouble(tc.m_pInputStr, 1));
+		BOOST_CHECK_EQUAL(tc.m_expectedResult, ConfigFileReader::parseDouble(tc.m_pInputStr, 1));
 	}
 }
 
@@ -242,17 +251,17 @@ static const ParseBoolTestCase k_parseBoolTestCases[] =
 	};
 
 BOOST_DATA_TEST_CASE(
-	testConfigParseBool,
+	parseBoolTest,
 	bdata::make(k_parseBoolTestCases),
 	tc)
 {
 	if (tc.m_shouldThrow)
 	{
-		BOOST_CHECK_THROW(Config::testParseBool(tc.m_pInputStr, 1), Exception);
+		BOOST_CHECK_THROW(ConfigFileReader::parseBool(tc.m_pInputStr, 1), Exception);
 	}
 	else
 	{
-		BOOST_CHECK_EQUAL(tc.m_expectedResult, Config::testParseBool(tc.m_pInputStr, 1));
+		BOOST_CHECK_EQUAL(tc.m_expectedResult, ConfigFileReader::parseBool(tc.m_pInputStr, 1));
 	}
 }
 

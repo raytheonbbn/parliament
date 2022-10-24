@@ -26,11 +26,11 @@
 		<delete file="${basedir}/Parliament/Test/ParliamentLogConfig.txt"/>
 		<delete dir="${basedir}/Parliament/Test/kb-data"/>
 		<delete dir="${basedir}/indexes"/>
-		<delete dir="${basedir}/log"/>
-		<delete dir="${basedir}/Parliament/log"/>
-		<delete dir="${basedir}/Parliament/Test/log"/>
-		<delete dir="${basedir}/jena/JenaGraph/log"/>
+		<delete dir="${basedir}/jena/JenaGraph/kb-data"/>
+		<delete dir="${basedir}/jena/JenaGraph" includes="parliament-test.log*"/>
 		<delete dir="${basedir}/jena/TemporalIndexProcessor/log"/>
+		<delete dir="${basedir}/kb-data"/>
+		<delete dir="${basedir}" includes="parliament-test.log*"/>
 
 		<delete dir="${basedir}/jena/JenaGraph/lib"/>
 		<delete dir="${basedir}/jena/JenaGraph/union-test-kb-data"/>

@@ -78,8 +78,7 @@ test {
 	//systemProperty 'log4j.configuration', "file:///${rootDir}/log4j.junit.properties"
 	environment = [
 		'LD_LIBRARY_PATH' : "${distroDir}/bin",
-		'PARLIAMENT_KB_CONFIG_PATH' : "${rootDir}/target/test-bin/ParliamentKbConfig.txt",
-		'PARLIAMENT_LOG_CONFIG_PATH' : "${rootDir}/target/test-bin/ParliamentLogConfig.txt",
+		'Path' : "${distroDir}/bin;${System.env.Path}"
 	]
 }
 
@@ -94,8 +93,7 @@ bootRun {
 	systemProperty 'java.library.path', "${distroDir}/bin"
 	environment = [
 		'LD_LIBRARY_PATH' : "${distroDir}/bin",
-		'PARLIAMENT_KB_CONFIG_PATH' : "${rootDir}/Parliament/KbCore/ParliamentKbConfig.txt",
-		'PARLIAMENT_LOG_CONFIG_PATH' : "${rootDir}/Parliament/KbCore/ParliamentLogConfig.txt",
+		'Path' : "${distroDir}/bin;${System.env.Path}"
 	]
 }
 

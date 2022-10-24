@@ -9,6 +9,7 @@
 
 #include "parliament/Types.h"
 
+#include <boost/filesystem/path.hpp>
 #include <iterator>
 #include <memory>
 #include <string>
@@ -21,21 +22,9 @@
 
 PARLIAMENT_NAMESPACE_BEGIN
 
-
-
-// ===========================================================================
-// Access to the Parliament version number
-// ===========================================================================
-
-PARLIAMENT_EXPORT ::std::string getKbVersion();
-
-
-
-// ===========================================================================
-// Access to environment variables
-// ===========================================================================
-
+PARLIAMENT_EXPORT ::std::string getKbVersion();	// Parliament version number
 PARLIAMENT_EXPORT TString tGetEnvVar(const TChar* pVarName);
+PARLIAMENT_EXPORT ::boost::filesystem::path getCurrentDllFilePath();
 
 
 

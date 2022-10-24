@@ -32,9 +32,6 @@ $jettyHost = 'localhost'
 $jettyPort = '8089'
 $defaultJavaHeapSize = '512'	# must be in MB
 
-$env:PARLIAMENT_KB_CONFIG_PATH = [System.IO.Path]::Combine($pmntDir, 'ParliamentKbConfig.txt')
-$env:PARLIAMENT_LOG_CONFIG_PATH = [System.IO.Path]::Combine($pmntDir, 'ParliamentLogConfig.txt')
-
 $debugArgs = '-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n'
 $remoteMgmt = '-Dcom.sun.management.jmxremote'
 
@@ -77,19 +74,12 @@ if (isMissing('webapps\parliament.war') -or isMissing('lib\ParliamentServer.jar'
 	echo "$pmntDir does not appear to be a valid Parliament installation"
 	exit 1
 }
-if (!(test-path -pathtype leaf $env:PARLIAMENT_KB_CONFIG_PATH)) {
-	echo 'Unable to find Parliament configuration file'
-	exit 1
-}
-if (!(test-path -pathtype leaf $env:PARLIAMENT_LOG_CONFIG_PATH)) {
-	echo 'Unable to find Parliament log configuration file'
-	exit 1
-}
 
 
 ######### Get the data directory location: #########
 
-$kbDir = cat $env:PARLIAMENT_KB_CONFIG_PATH `
+$parliamentKbConfigPath = [System.IO.Path]::Combine($pmntDir, 'ParliamentKbConfig.txt')
+$kbDir = cat $parliamentKbConfigPath `
 	| ?{$_ -notmatch '^[ \\t]*#'} `
 	| ?{$_ -match 'kbDirectoryPath'} `
 	| %{$_ -replace 'kbDirectoryPath[ \\t]*=(.*)$', '$1'} `
@@ -101,8 +91,6 @@ $kbDirFwdSlash = echo $kbDir | %{$_ -replace '\\', '/'}
 
 
 ######### Set env vars: #########
-$env:PARLIAMENT_LOG_PATH_BASE = $kbDir
-
 # The Java property "java.library.path" below is supposed to take care
 # of this, but sometimes it doesn't work, so set up the Path as well:
 $env:Path += ";$pmntDir\bin"
@@ -165,10 +153,7 @@ if ($foreground) {
 			'--StdOutput', 'auto',
 			'--StdError', 'auto',
 			'--LogLevel', 'Info',	# Error, Info, Warn, or Debug
-			'--LogPath', """$kbDir\log""",
-			'++Environment', """PARLIAMENT_KB_CONFIG_PATH=$env:PARLIAMENT_KB_CONFIG_PATH""",
-			'++Environment', """PARLIAMENT_LOG_CONFIG_PATH=$env:PARLIAMENT_LOG_CONFIG_PATH""",
-			'++Environment', """PARLIAMENT_LOG_PATH_BASE=$env:PARLIAMENT_LOG_PATH_BASE"""
+			'--LogPath', """$kbDir\log"""
 		)
 	} elseif ($uninstall) {
 		$argList = @('//DS//Parliament')

@@ -6,7 +6,6 @@
 
 #include "parliament/Log.h"
 #include "parliament/LogConfig.h"
-#include "parliament/ArrayLength.h"
 #include "parliament/Exceptions.h"
 #include "parliament/Util.h"
 
@@ -26,6 +25,7 @@
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/thread/once.hpp>
 
+#include <array>
 #include <algorithm>
 #include <cstddef>
 #include <iostream>
@@ -46,6 +46,7 @@ using ::boost::make_iterator_range;
 using ::boost::make_shared;
 using ::boost::posix_time::ptime;
 using ::boost::shared_ptr;
+using ::std::array;
 using ::std::basic_ostream;
 using ::std::begin;
 using ::std::cerr;
@@ -60,12 +61,12 @@ using ::std::string_view;
 using ChannelToLevelMap = ::std::map<string, ::bbn::parliament::log::Level>;
 using RotationAtTimePoint = bl::sinks::file::rotation_at_time_point;
 
-PARLIAMENT_NAMESPACE_BEGIN namespace log {
+namespace bbn::parliament::log
+{
 
 static ::boost::once_flag g_onceInitFlag = BOOST_ONCE_INIT;
-static const char k_optionRegExStr[] = "^[ \t]*([0-9][0-9]?):([0-9][0-9]?):([0-9][0-9]?)[ \t]*$";
-static const char*const k_levelStrings[] =
-{
+static constexpr char k_optionRegExStr[] = "^[ \t]*([0-9][0-9]?):([0-9][0-9]?):([0-9][0-9]?)[ \t]*$";
+static constexpr array<string_view, 5> k_levelStrings{
 	"TRACE",
 	"DEBUG",
 	"INFO",
@@ -92,7 +93,7 @@ static Level levelFromString(const string& level, bool& wasRecognized)
 	wasRecognized = false;
 	auto trimmedLevel = ba::trim_copy(level);
 	auto it = ::std::find_if(begin(k_levelStrings), end(k_levelStrings),
-		[&trimmedLevel](const string& str) { return ba::iequals(trimmedLevel, str); });
+		[&trimmedLevel](string_view str) { return ba::iequals(trimmedLevel, str); });
 	if (it != end(k_levelStrings))
 	{
 		result = static_cast<Level>(::std::distance(begin(k_levelStrings), it));
@@ -168,7 +169,7 @@ static basic_ostream<CharT, TraitsT>& operator<<(
 	if (strm.good())
 	{
 		auto levelInt = static_cast<size_t>(level);
-		if (levelInt < arrayLen(k_levelStrings))
+		if (levelInt < k_levelStrings.size())
 		{
 			strm << k_levelStrings[levelInt];
 		}
@@ -314,4 +315,4 @@ Source getSource(string_view channelName)
 	return Source(keywd::channel = string{channelName});
 }
 
-} PARLIAMENT_NAMESPACE_END
+}	// namespace end

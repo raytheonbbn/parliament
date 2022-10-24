@@ -12,18 +12,32 @@
 #include "parliament/Version.h"
 #include "parliament/Windows.h"
 
-#include <cstdlib>
+#include <memory>
 #include <string>
 #include <vector>
+
+#if !defined(PARLIAMENT_WINDOWS)
+#	if defined(PARLIAMENT_LINUX) && !defined(_GNU_SOURCE)
+#		define _GNU_SOURCE
+#	endif
+#	include <dlfcn.h>
+#endif
+
+#if defined(PARLIAMENT_MACOS)
+#	define _DARWIN_BETTER_REALPATH
+#endif
+#include <stdlib.h>
 
 #if !defined(PARLIAMENT_WINDOWS) && !defined(PARLIAMENT_SOLARIS)
 #	include <sys/time.h>
 #endif
 
+namespace bfs = ::boost::filesystem;
 namespace pmnt = ::bbn::parliament;
 
 using ::boost::format;
 using ::std::string;
+using ::std::unique_ptr;
 
 static auto g_log(pmnt::log::getSource("Util"));
 
@@ -81,6 +95,56 @@ pmnt::TString pmnt::tGetEnvVar(const TChar* pVarName)
 #else
 	const TChar* pEnvVarValue = ::getenv(pVarName);
 	return (pEnvVarValue == nullptr) ? TString() : TString(pEnvVarValue);
+#endif
+}
+
+bfs::path pmnt::getCurrentDllFilePath()
+{
+#if defined(PARLIAMENT_WINDOWS)
+	HMODULE hModule = 0;
+	if (!::GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
+		reinterpret_cast<LPCTSTR>(getCurrentDllFilePath), &hModule))
+	{
+		SysErrCode errCode = Exception::getSysErrCode();
+		throw Exception(format("Unable to retrieve the module handle:  %1% (%2%)")
+			% Exception::getSysErrMsg(errCode) % errCode);
+	}
+
+	for (DWORD bufferLen = 256;; bufferLen += 256)
+	{
+		::std::vector<TChar> buffer(bufferLen, '\0');
+		DWORD retVal = ::GetModuleFileName(hModule, &buffer[0], bufferLen);
+		if (retVal == 0)
+		{
+			SysErrCode errCode = Exception::getSysErrCode();
+			throw Exception(format("Unable to retrieve the module file name:  %1% (%2%)")
+				% Exception::getSysErrMsg(errCode) % errCode);
+		}
+		else if (retVal < bufferLen)
+		{
+			return &buffer[0];
+			break;
+		}
+	}
+#else
+	::Dl_info info;
+	if (::dladdr(reinterpret_cast<const void*>(getCurrentDllFilePath), &info) == 0)
+	{
+		SysErrCode errCode = Exception::getSysErrCode();
+		throw Exception(format("Unable to retrieve the shared library file name:  %1% (%2%)")
+			% Exception::getSysErrMsg(errCode) % errCode);
+	}
+
+	auto deleter = [](char* p){ ::free(p); };
+	char* pRawPtr = ::realpath(info.dli_fname, nullptr);
+	if (pRawPtr == nullptr)
+	{
+		SysErrCode errCode = Exception::getSysErrCode();
+		throw Exception(format("Error calling realpath:  %1% (%2%)")
+			% Exception::getSysErrMsg(errCode) % errCode);
+	}
+	unique_ptr<char, decltype(deleter)> pPath(pRawPtr, deleter);
+	return pPath.get();
 #endif
 }
 

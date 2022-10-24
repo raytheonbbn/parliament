@@ -10,6 +10,7 @@
 #include "parliament/Platform.h"
 #include "parliament/Types.h"
 
+#include <array>
 #include <exception>
 #include <string>
 
@@ -42,7 +43,7 @@ public:
 	PARLIAMENT_EXPORT Exception& operator=(const Exception& rhs) noexcept;
 	PARLIAMENT_EXPORT ~Exception() override;
 
-	const char* what() const noexcept override { return m_msg; }
+	const char* what() const noexcept override { return m_msg.data(); }
 
 	PARLIAMENT_EXPORT static SysErrCode getSysErrCode() noexcept;
 	PARLIAMENT_EXPORT static ::std::string getSysErrMsg(SysErrCode errCode);
@@ -50,7 +51,7 @@ public:
 private:
 	inline void copyMsg(const char* pMsg) noexcept;
 
-	char m_msg[384];
+	::std::array<char, 384> m_msg;
 };
 
 class NON_WINDOWS_PARLIAMENT_EXPORT UnicodeException : public Exception

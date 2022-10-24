@@ -1,5 +1,9 @@
 Version 2.8.2:
 
+* Established conventions that make the use of the environment variables
+  PARLIAMENT_KB_CONFIG_PATH and PARLIAMENT_LOG_CONFIG_PATH unnecessary
+  in most cases.
+
 * Updated to Boost 1.80.0
 
 

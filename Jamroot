@@ -15,3 +15,6 @@ use-project /KB/KbCore : $(JamRootDir)/Parliament/KbCore ;
 use-project /KB/AdminClient : $(JamRootDir)/Parliament/AdminClient ;
 use-project /KB/Test : $(JamRootDir)/Parliament/Test ;
 use-project /KB/JniAssessments : $(JamRootDir)/Parliament/JniAssessments ;
+
+# Used only on Linux:
+lib DynamicLinkLib : : <name>dl ;

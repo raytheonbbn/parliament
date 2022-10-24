@@ -17,7 +17,6 @@
 #include "parliament/KbConfig.h"
 #include "parliament/Exceptions.h"
 #include "parliament/Windows.h"
-#include "parliament/ArrayLength.h"
 #include "parliament/CharacterLiteral.h"
 #include "parliament/UnicodeIterator.h"
 #include "TestUtils.h"
@@ -132,7 +131,7 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultFileContainsDefaults)
 	BOOST_CHECK_EQUAL(defaults.inferOwlThing(), c.inferOwlThing());
 }
 
-static auto k_validTestConfig = u8R"~~~(
+static constexpr auto k_validTestConfig = u8R"~~~(
 # Parameters file for the Parliament core DLL
  	 # Parameters file for the Parliament core DLL
 
@@ -235,7 +234,7 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 }
 
 // Note that the key 'stmtFileNameMessedUp' is bad:
-static auto k_invalidTestConfig = u8R"~~~(
+static constexpr auto k_invalidTestConfig = u8R"~~~(
 # Parameters file for the Parliament core DLL
 
 kbDirectoryPath      = ./subdir

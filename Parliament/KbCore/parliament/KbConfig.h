@@ -9,7 +9,11 @@
 
 #include "parliament/Platform.h"
 #include "parliament/Types.h"
-#include "parliament/Config.h"
+
+#include <boost/filesystem/path.hpp>
+#include <functional>
+#include <map>
+#include <string>
 
 PARLIAMENT_NAMESPACE_BEGIN
 
@@ -19,15 +23,19 @@ enum class TimeUnit
 	k_nanoSec, k_microSec, k_milliSec, k_sec, k_min, k_hour, k_day
 };
 
-class KbConfig : public Config
+class KbConfig
 {
 public:
+	using Path = ::boost::filesystem::path;
+
 	PARLIAMENT_EXPORT KbConfig();
 	PARLIAMENT_EXPORT KbConfig(const KbConfig&);
 	PARLIAMENT_EXPORT KbConfig& operator=(const KbConfig&);
 	PARLIAMENT_EXPORT KbConfig(KbConfig&&);
 	PARLIAMENT_EXPORT KbConfig& operator=(KbConfig&&);
-	PARLIAMENT_EXPORT ~KbConfig() override;
+	PARLIAMENT_EXPORT ~KbConfig();
+
+	PARLIAMENT_EXPORT void readFromFile();
 
 	// Directory containing the Parliament KB files
 	Path kbDirectoryPath() const
@@ -257,10 +265,6 @@ private:
 
 	static bool initConfigEntryMap();
 	static void unsynchronizedInitConfigEntryMap();
-
-	const TChar* getEnvVarName() const override;
-	const TChar* getDefaultConfigFileName() const override;
-	const Config::ConfigEntryMap& getConfigEntryMap() const override;
 
 	static ConfigEntryMap g_ceMap;
 	static bool g_isConfigEntryMapInitialized;

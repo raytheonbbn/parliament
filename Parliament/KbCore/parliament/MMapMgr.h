@@ -52,11 +52,11 @@ public:
 #endif
 
 		char			m_magic[12];
-		uint16			m_majorVersion;
-		uint16			m_minorVersion;
-		uint32			m_byteOrderMark;
+		uint16		m_majorVersion;
+		uint16		m_minorVersion;
+		uint32		m_byteOrderMark;
 		FlagValues	m_flags;
-		size_t			m_recordCount;
+		size_t		m_recordCount;
 
 		static void initHeader(TblHeader* pHdr);
 		void checkCompatibility(const ::boost::filesystem::path& filePath) const;

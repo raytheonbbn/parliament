@@ -142,13 +142,13 @@ void pmnt::FileHandle::checkWritable() const
 	}
 }
 
-pmnt::uint32 pmnt::FileHandle::write(const uint8* pBuffer, uint32 bytesToWrite)
+pmnt::FileHandle::FileSize pmnt::FileHandle::write(const uint8* pBuffer, FileSize bytesToWrite)
 {
 	checkWritable();
 
 #	if defined(PARLIAMENT_WINDOWS)
 	DWORD bytesWritten;
-	if (!::WriteFile(m_hFile, pBuffer, bytesToWrite, &bytesWritten, nullptr))
+	if (!::WriteFile(m_hFile, pBuffer, static_cast<DWORD>(bytesToWrite), &bytesWritten, nullptr))
 #	else
 	ssize_t bytesWritten = ::write(m_hFile, pBuffer, bytesToWrite);
 	if (bytesWritten <= 0)
@@ -176,13 +176,13 @@ void pmnt::FileHandle::truncate(FileSize newFileSize)
 		{
 			seek(oldFileSize, SeekMethod::k_start);
 
-			const uint32 k_chunkSize = 16 * 1024;
+			const FileSize k_chunkSize = 16 * 1024;
 			vector<uint8> buffer(k_chunkSize, 0);
 
-			uint32 written;
+			FileSize written;
 			for (FileSize toWrite = newFileSize - oldFileSize; toWrite > 0; toWrite -= written)
 			{
-				uint32 bytesToWrite = static_cast<uint32>(min(toWrite, static_cast<FileSize>(k_chunkSize)));
+				FileSize bytesToWrite = min(toWrite, k_chunkSize);
 				written = write(&(buffer[0]), bytesToWrite);
 			}
 		}

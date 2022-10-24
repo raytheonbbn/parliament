@@ -269,8 +269,6 @@
 					<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
 					<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
 					<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
-					<env key="PARLIAMENT_KB_CONFIG_PATH" value="${testKbConfigFile}"/>
-					<env key="PARLIAMENT_LOG_CONFIG_PATH" value="${testLogConfigFile}"/>
 				</fork>
 			</test>
 			<testclasses>
@@ -281,8 +279,6 @@
 					<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
 					<env key="LD_LIBRARY_PATH" path="${nativeArtifactsDir}/bin;${env.LD_LIBRARY_PATH}"/>
 					<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
-					<env key="PARLIAMENT_KB_CONFIG_PATH" value="${testKbConfigFile}"/>
-					<env key="PARLIAMENT_LOG_CONFIG_PATH" value="${testLogConfigFile}"/>
 				</fork>
 			</testclasses>
 		</junitlauncher>

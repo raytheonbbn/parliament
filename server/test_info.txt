@@ -1,4 +1,4 @@
-pd test-kb-data ; env PARLIAMENT_KB_CONFIG_PATH=../../target/test-bin/ParliamentKbConfig.txt PARLIAMENT_LOG_CONFIG_PATH=../../target/test-bin/ParliamentLogConfig.txt ../../target/Parliament-v2.7.14-clang/bin/ParliamentAdmin -ds ; popd
+pd test-kb-data ; ../../target/Parliament-v2.8.2-clang/bin/ParliamentAdmin -ds ; popd
 
 
 

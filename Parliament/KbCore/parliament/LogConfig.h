@@ -9,22 +9,30 @@
 
 #include "parliament/Platform.h"
 #include "parliament/Types.h"
-#include "parliament/Config.h"
+
+#include <boost/filesystem/path.hpp>
+#include <functional>
+#include <map>
+#include <string>
 
 PARLIAMENT_NAMESPACE_BEGIN
 
-class LogConfig : public Config
+class LogConfig
 {
 public:
+	using Path = ::boost::filesystem::path;
+
 	// key = channel, value = log level
 	using LogChannelMap = ::std::map< ::std::string, ::std::string >;
 
-	LogConfig();
-	LogConfig(const LogConfig&) = default;
-	LogConfig& operator=(const LogConfig&) = default;
-	LogConfig(LogConfig&&) = default;
-	LogConfig& operator=(LogConfig&&) = default;
-	~LogConfig() override = default;
+	PARLIAMENT_EXPORT LogConfig();
+	PARLIAMENT_EXPORT LogConfig(const LogConfig&);
+	PARLIAMENT_EXPORT LogConfig& operator=(const LogConfig&);
+	PARLIAMENT_EXPORT LogConfig(LogConfig&&);
+	PARLIAMENT_EXPORT LogConfig& operator=(LogConfig&&);
+	PARLIAMENT_EXPORT ~LogConfig();
+
+	PARLIAMENT_EXPORT void readFromFile();
 
 	// Enables logging to the console
 	bool logToConsole() const
@@ -110,9 +118,6 @@ private:
 	using EntryHandler = ::std::function<void(const ::std::string&, uint32, LogConfig&)>;
 	using ConfigEntryMap = ::std::map<::std::string, EntryHandler>;	// Maps key to handler
 
-	const TChar* getEnvVarName() const override;
-	const TChar* getDefaultConfigFileName() const override;
-	const Config::ConfigEntryMap& getConfigEntryMap() const override;
 	static Path convertUtf8ToLogPath(const ::std::string& value);
 
 	// Implementation note:  It may strike you as odd that this is an instance member

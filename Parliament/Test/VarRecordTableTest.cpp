@@ -31,12 +31,12 @@ using ::std::vector;
 #	define C(x) x,
 #endif
 
-static const TChar k_fName[] = _T("tempFile.mem");
+static constexpr TChar k_fName[] = _T("tempFile.mem");
 
 static const RsrcString	k_testData1 = convertToRsrcChar("Hello World!");
 static const RsrcString	k_testData2 = convertToRsrcChar("Goodbye World!");
 
-static const uint8 k_expectedResult[] =
+static constexpr uint8 k_expectedResult[] =
 {
 	'P', 'a', 'r', 'l', 'i', 'a', 'm', 'e', 'n', 't', '\0', '\0',	// magic file format id
 	0x04, 0x00,					// major version
@@ -66,8 +66,8 @@ static const uint8 k_expectedResult[] =
 	C('G')C('o')C('o')C('d')C('b')C('y')C('e')C(' ')C('W')C('o')C('r')C('l')C('d')C('!')C('\0')
 };
 
-static const size_t k_growthIncrements[] = { 30u, 0u };
-static const double k_growthFactors[] = { 0.0, 2.0 };
+static constexpr size_t k_growthIncrements[] = { 30u, 0u };
+static constexpr double k_growthFactors[] = { 0.0, 2.0 };
 
 BOOST_AUTO_TEST_SUITE(VarRecordTableTestSuite)
 

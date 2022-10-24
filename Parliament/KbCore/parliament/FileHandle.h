@@ -51,7 +51,7 @@ public:
 
 	FileSize getFileSize() const;
 	FileSize seek(FileSize offset, SeekMethod method);			// returns absolute file position after seek
-	uint32 write(const uint8* pBuffer, uint32 bytesToWrite);	// returns # bytes written
+	FileSize write(const uint8* pBuffer, FileSize bytesToWrite);	// returns # bytes written
 	void truncate(FileSize newFileSize);
 	void sync();
 	void close() noexcept;

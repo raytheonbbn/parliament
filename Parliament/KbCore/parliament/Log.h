@@ -15,19 +15,17 @@
 #include <string>
 #include <string_view>
 
-PARLIAMENT_NAMESPACE_BEGIN
-
-namespace log
+namespace bbn::parliament::log
 {
-	enum class Level { trace, debug, info, warn, error };
 
-	using Source = ::boost::log::sources::severity_channel_logger_mt<Level, ::std::string>;
+enum class Level { trace, debug, info, warn, error };
 
-	Source getSource(::std::string_view channelName);
-}
+using Source = ::boost::log::sources::severity_channel_logger_mt<Level, ::std::string>;
+
+Source getSource(::std::string_view channelName);
 
 #define PMNT_LOG(logger, lvl) BOOST_LOG_STREAM_SEV(logger, lvl)
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_LOG_H_INCLUDED

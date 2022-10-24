@@ -32,6 +32,7 @@ lib Parliament
 		<visibility>hidden
 		<threading>multi
 		<os>NT:<source>Version.rc
+		<os>LINUX:<source>/KB//DynamicLinkLib
 		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_KbConfig.h
 		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_KbInstance.h
 		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_StmtIterator.h

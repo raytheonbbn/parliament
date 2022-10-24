@@ -5,7 +5,6 @@
 // All rights reserved.
 
 #include "parliament/Exceptions.h"
-#include "parliament/ArrayLength.h"
 #if defined(PARLIAMENT_WINDOWS)
 #	include "parliament/UnicodeIterator.h"
 #endif
@@ -38,8 +37,8 @@ static auto g_log(pmnt::log::getSource("Exceptions"));
 
 void pmnt::Exception::copyMsg(const char* pMsg) noexcept
 {
-	strncpy(m_msg, pMsg, arrayLen(m_msg));
-	m_msg[arrayLen(m_msg) - 1] = '\0';
+	strncpy(m_msg.data(), pMsg, m_msg.size());
+	m_msg.back() = '\0';
 }
 
 pmnt::Exception::Exception(const char* pMsg) noexcept :
@@ -67,12 +66,12 @@ pmnt::Exception::Exception(const Exception& rhs) noexcept :
 	exception(),
 	m_msg()
 {
-	copyMsg(rhs.m_msg);
+	copyMsg(rhs.m_msg.data());
 }
 
 pmnt::Exception& pmnt::Exception::operator=(const Exception& rhs) noexcept
 {
-	copyMsg(rhs.m_msg);
+	copyMsg(rhs.m_msg.data());
 	return *this;
 }
 

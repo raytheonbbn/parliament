@@ -4,6 +4,7 @@
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
 
+#include <array>
 #include <boost/test/unit_test.hpp>
 #include <string>
 #include <vector>
@@ -13,12 +14,13 @@
 #include "TestUtils.h"
 
 using namespace ::bbn::parliament;
+using ::std::array;
 using ::std::string;
 using ::std::vector;
 
-static const uint8 k_testData1[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 };
-static const uint8 k_testData2[] = { 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10 };
-static const uint8 k_expectedResult[] =
+static constexpr array<uint8, 8> k_testData1 = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 };
+static constexpr array<uint8, 8> k_testData2 = { 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10 };
+static constexpr uint8 k_expectedResult[] =
 {
 	'P', 'a', 'r', 'l', 'i', 'a', 'm', 'e', 'n', 't', '\0', '\0',	// magic file format id
 	0x04, 0x00,					// major version
@@ -46,18 +48,18 @@ static const uint8 k_expectedResult[] =
 	0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,	// data
 	0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10	// data
 };
-static const TChar k_fName[] = _T("tempFile");
+static constexpr TChar k_fName[] = _T("tempFile");
 
 struct TblAlignmentGuide1
 {
 	MMapMgr::TblHeader	m_header;
-	uint8						m_recordArray[arrayLen(k_testData1)];
+	uint8						m_recordArray[k_testData1.size()];
 };
 
 struct TblAlignmentGuide2
 {
 	MMapMgr::TblHeader	m_header;
-	uint8						m_recordArray[arrayLen(k_testData1) + arrayLen(k_testData2)];
+	uint8						m_recordArray[k_testData1.size() + k_testData2.size()];
 };
 
 BOOST_AUTO_TEST_SUITE(MMapMgrTestSuite)
@@ -97,16 +99,16 @@ BOOST_AUTO_TEST_CASE(testMMapMgr)
 
 		BOOST_CHECK_NO_THROW(memcpy(
 			reinterpret_cast<TblAlignmentGuide1*>(mmap.baseAddr())->m_recordArray,
-			k_testData1, sizeof(k_testData1)));
-		BOOST_CHECK_NO_THROW(mmap.header().m_recordCount += sizeof(k_testData1));
+			k_testData1.data(), k_testData1.size()));
+		BOOST_CHECK_NO_THROW(mmap.header().m_recordCount += k_testData1.size());
 
 		BOOST_CHECK_NO_THROW(mmap.reallocate(sizeof(TblAlignmentGuide2)));
 		BOOST_CHECK_EQUAL(static_cast<FileHandle::FileSize>(sizeof(TblAlignmentGuide2)), mmap.fileSize());
 
 		BOOST_CHECK_NO_THROW(memcpy(
-			reinterpret_cast<TblAlignmentGuide2*>(mmap.baseAddr())->m_recordArray + sizeof(k_testData1),
-			k_testData2, sizeof(k_testData2)));
-		BOOST_CHECK_NO_THROW(mmap.header().m_recordCount += sizeof(k_testData2));
+			reinterpret_cast<TblAlignmentGuide2*>(mmap.baseAddr())->m_recordArray + k_testData1.size(),
+			k_testData2.data(), k_testData2.size()));
+		BOOST_CHECK_NO_THROW(mmap.header().m_recordCount += k_testData2.size());
 
 		BOOST_CHECK_NO_THROW(mmap.sync());
 	} // force the file mapping to be closed before we read it

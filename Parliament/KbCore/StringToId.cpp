@@ -32,8 +32,9 @@ using ::std::char_traits;
 using ::std::copy;
 using ::std::make_pair;
 using ::std::regex;
-using ::std::smatch;
 using ::std::string;
+using ::std::string_view;
+using svmatch = ::std::match_results<::std::string_view::const_iterator>;
 
 static constexpr char k_bdbErrorPrefix[] = "Berkeley DB";
 static constexpr char k_optionRegExStr[] = "^[ \t]*([0-9]+)[ \t]*([kKmMgG])[ \t]*,[ \t]*([0-9]+)[ \t]*$";
@@ -61,14 +62,14 @@ static auto initOutputDbt(DBT& dbt, DataElement* pBuffer, size_t numElements) ->
 
 // ======================================================================
 
-pmnt::BerkeleyDbEnvOptions::BerkeleyDbEnvOptions(const string& optionStr) :
+pmnt::BerkeleyDbEnvOptions::BerkeleyDbEnvOptions(string_view optionStr) :
 	m_cacheGBytes(0),
 	m_cacheBytes(0),
 	m_numCacheSegments(0)
 {
 	auto rex = regex{k_optionRegExStr};
-	smatch captures;
-	if (regex_match(optionStr, captures, rex))
+	svmatch captures;
+	if (regex_match(begin(optionStr), end(optionStr), captures, rex))
 	{
 		try
 		{

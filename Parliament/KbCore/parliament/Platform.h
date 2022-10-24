@@ -142,8 +142,8 @@
 //  Define the namespace:
 //  ===========================================================================
 
-#define PARLIAMENT_NAMESPACE_BEGIN namespace bbn { namespace parliament {
-#define PARLIAMENT_NAMESPACE_END } }
+#define PARLIAMENT_NAMESPACE_BEGIN namespace bbn::parliament {
+#define PARLIAMENT_NAMESPACE_END }
 
 
 

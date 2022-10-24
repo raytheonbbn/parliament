@@ -559,7 +559,9 @@ If you are running the server as a Windows service, you must re-run the startup 
 \begin{enumerate}
 	\item If the environment variable \verb|PARLIAMENT_KB_CONFIG_PATH| is set, its value is assumed to be the configuration file's absolute path.  Note that using this option, you can rename the file to anything you wish.
 
-	\item \emph{On Windows only:}  If this environment variable is not set, then \ac{pmnt} looks for a file named \path|ParliamentKbConfig.txt| in the same directory as the \ac{pmnt} \ac{dll}.
+	\item If this environment variable is not set, then \ac{pmnt} looks for a file named \path|ParliamentKbConfig.txt| in the same directory as the \ac{pmnt} \ac{dll} (on Windows) or shared library (on other platforms).
+
+	\item If that file is not found, then \ac{pmnt} looks for a file of the same name in the parent directory of the \ac{pmnt} \ac{dll} or shared library.  In practice, this is typically how the configuration file is found.
 
 	\item Otherwise, \ac{pmnt} looks for a file named \path|ParliamentKbConfig.txt| in the current working directory of the server process.
 \end{enumerate}
@@ -694,7 +696,7 @@ These files configure logging for \acp{pmnt} Java code:
 \end{quote}
 They are standard Log4J configuration files.  The first applies when running \ac{pmnt} from the command line, and the second is used when running as a daemon or service.
 
-The file \path|ParliamentLogConfig.txt| controls native code logging.  Its format is similar to \path|ParliamentKbConfig.txt|, and it is located in a similar way, using file name \path|ParliamentLogConfig.txt| and the environment variable \verb|PARLIAMENT_LOG_CONFIG_PATH|.  The recognized settings are:
+The file \path|ParliamentLogConfig.txt| controls native code logging.  Its format is similar to \path|ParliamentKbConfig.txt|, and it is located in a similar way (see Section~\ref{section-main-config}), using file name \path|ParliamentLogConfig.txt| and the environment variable \verb|PARLIAMENT_LOG_CONFIG_PATH|.  The recognized settings are:
 \begin{description}
 	\item[logToConsole] Indicates whether to log to the console. \emph{Default: ``no''}
 
@@ -801,13 +803,15 @@ The most common way to deploy \ac{pmnt} uses the Jetty servlet container.  This 
 \begin{enumerate}
 	\item First acquire and install Apache Tomcat\urlcite{http://tomcat.apache.org/} according to its own installation instructions.  This will result in a directory containing your Tomcat installation, which, in keeping with the customary nomenclature of Tomcat, we will call \path|CATALINA_HOME| here.
 
-	\item Create a directory for the native \ac{pmnt} binaries.  This can reside anywhere on your machine, but just to be concrete we will call this directory \path|CATALINA_HOME/bin/parliament|.
+	\item Create a directory for the native \ac{pmnt} binaries.  This can reside anywhere on your machine, but the directory \path|CATALINA_HOME/bin/parliament| is a good choice.
 
 	\item Copy the native binaries into this directory from the \path|bin| directory of the \ac{pmnt} binary distribution.
 
-	\item On Windows only, install the run-time libraries by running the installer in the \path|RedistributablePackages| subdirectory of your \ac{pmnt} distribution.
+	\item Copy \acp{pmnt} configuration files \path|ParliamentKbConfig.txt| and \path|ParliamentLogConfig.txt| from the root of the \ac{pmnt} distribution into the \path|CATALINA_HOME/bin/parliament| directory.
 
-	\item Once you have chosen your build directory, copy all of the files from it into the \path|CATALINA_HOME/bin/parliament| directory.
+	\item Copy \path|parliament.war| from the \path|webapps| directory of the \ac{pmnt} distribution into Tomcat's \path|webapps| directory, which by default is the directory \path|CATALINA_HOME/webapps|.
+
+	\item On Windows only, install the run-time libraries by running the installer in the \path|RedistributablePackages| subdirectory of your \ac{pmnt} distribution.
 
 	\item In your favorite text editor, open the file
 {\small\begin{quote}
@@ -817,7 +821,7 @@ The most common way to deploy \ac{pmnt} uses the Jetty servlet container.  This 
 \begin{quote}
 \texttt{kbDirectoryPath = kb-data}
 \end{quote}
-	to point to a directory suitable for storing your knowledge base.  In an operational deployment of \ac{pmnt}, this is often set to a large drive dedicated to the storage of the knowledge base, such as a \ac{raid}, \ac{nas}, or \ac{san}.  For testing purposes, the default is fine.  This will store the knowledge base in \path|CATALINA_HOME/bin/kb-data|.
+	to point to a directory suitable for storing your knowledge base.  In an operational deployment of \ac{pmnt}, this is often set to a large drive dedicated to the storage of the knowledge base, such as a \ac{raid}, \ac{nas}, or \ac{san}.  For testing purposes, the default is fine.  This will store the knowledge base in \path|CATALINA_HOME/bin/parliament/kb-data|.
 
 	\item If you have not already done so while installing Tomcat, create a file called \path|setenv.sh| in \path|CATALINA_HOME/bin| and within it set the environment variable \path|CATALINA_OPTS| like so:
 {\footnotesize\begin{verbatim}
@@ -825,8 +829,6 @@ JAVA_HEAP_SIZE=512m
 PMNT_BIN="$CATALINA_HOME/bin/parliament"
 export CATALINA_OPTS=-Djava.library.path=$PMNT_BIN
 export CATALINA_OPTS="$CATALINA_OPTS -Xmx$JAVA_HEAP_SIZE"
-export PARLIAMENT_KB_CONFIG_PATH=$PMNT_BIN/ParliamentKbConfig.txt
-export PARLIAMENT_LOG_CONFIG_PATH=$PMNT_BIN/ParliamentLogConfig.txt
 export LD_LIBRARY_PATH=$PMNT_BIN
 \end{verbatim}}
 	On Windows, the file name should be \path|setenv.bat| and its content should look like this:
@@ -834,17 +836,11 @@ export LD_LIBRARY_PATH=$PMNT_BIN
 set JAVA_HEAP_SIZE=512m
 set PMNT_BIN=%CATALINA_HOME%\bin\parliament
 set CATALINA_OPTS=-Xmx%JAVA_HEAP_SIZE%
-set PARLIAMENT_KB_CONFIG_PATH=%PMNT_BIN%\ParliamentKbConfig.txt
-set PARLIAMENT_LOG_CONFIG_PATH=%PMNT_BIN%\ParliamentLogConfig.txt
 set PATH=%PMNT_BIN%;%PATH%
 \end{verbatim}}
 	Note that you can control the amount of memory set aside for the Java virtual machine by changing \verb|JAVA_HEAP_SIZE| in the scripts above.  While it is important to allow the \ac{jvm} sufficient memory, it is also important to realize that \ac{pmnt} is native code, and therefore does not use the Java heap.  Java programmers are often inclined to set \verb|JAVA_HEAP_SIZE| close to the total memory of the machine, but this will starve \ac{pmnt} of the memory it needs to achieve good performance.  The default values given above, 128 MB and 512 MB, are reasonable values for machines with 4 to 8 GB of total memory.
 
-	\item Copy \path|parliament.war| from the \ac{pmnt} distribution into Tomcat's appbase directory, which defaults to \path|CATALINA_HOME/webapps|.
-
-	\item Start Tomcat according to its documentation.  For instructions on using your \ac{pmnt} server, see Section~\ref{section-std-server-usage}.
-
-	\item If you redeploy \ac{pmnt} into a running Tomcat instance, the server will need to be restarted.
+	\item Start Tomcat according to its documentation.  If you redeploy \ac{pmnt} into a running Tomcat instance, the server will need to be restarted.  For instructions on using your \ac{pmnt} server, see Section~\ref{section-std-server-usage}.
 
 	\item\emph{Please note:}  When you want to shut down the \ac{kb}, it is important to shut it down gracefully.  Otherwise, the \ac{pmnt} files may not be flushed to disk before they are closed, and they may be badly corrupted.  If you run Tomcat as a Windows service or UNIX Daemon, this is generally not a problem, because the operating system sends a shut-down message at the appropriate time.  If, however, you run Tomcat explicitly via its startup script, you will need to shut it down yourself with Tomcat's stop script.
 \end{enumerate}
@@ -939,8 +935,6 @@ Naturally, there is some setup required to make this work:
 	\item On Windows only, install the run-time libraries by running the installer in the \path|RedistributablePackages| subdirectory of your \ac{pmnt} distribution.
 
 	\item Customize the configuration \path|ParliamentKbConfig.txt| as desired.  In particular, the \texttt{kbDirectoryPath} setting defaults to \path|./kb-data|.  To place your \ac{pmnt} \ac{kb} files in a different location, change this setting to the directory of your choice.  This is especially useful for placing the \ac{kb} files on a drive array or for maintaining several \acp{kb} and switching between them.
-
-	\item Set the environment variables \verb|PARLIAMENT_KB_CONFIG_PATH| and its companion \verb|PARLIAMENT_LOG_CONFIG_PATH| to the paths of the corresponding configuration files.  On Windows, if these are not set the files will be loaded from the same directory as the \ac{pmnt} \ac{dll}.  On other platforms these environment variables are required.
 \end{enumerate}
 
 If you do not wish to use the \ac{pmnt} configuration file to configure your application, you can replace the first line of the method in Figure~\ref{figure-creating-jena-model}, \verb|createParliamentModel|, with a line that creates a Config instance using the default constructor and then set the Config fields yourself.  This may be useful for centralizing your application's configuration in a single file.

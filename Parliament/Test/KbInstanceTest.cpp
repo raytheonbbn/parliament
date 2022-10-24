@@ -4,6 +4,7 @@
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
 
+#include <array>
 #include <boost/format.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/monomorphic.hpp>
@@ -15,7 +16,7 @@
 #include <set>
 #include <sstream>
 #include <string>
-#include "parliament/ArrayLength.h"
+#include <string_view>
 #include "parliament/CharacterLiteral.h"
 #include "parliament/KbConfig.h"
 #include "parliament/KbInstance.h"
@@ -28,13 +29,15 @@ namespace bdata = ::boost::unit_test::data;
 
 using namespace ::bbn::parliament;
 using ::boost::format;
+using ::std::array;
 using ::std::exception;
 using ::std::numeric_limits;
 using ::std::string;
+using ::std::string_view;
 
 using RsrcList = ::std::set<ResourceId>;
 
-static const TChar		k_dirName[]	= _T("test-kb-data");
+static constexpr TChar		k_dirName[]	= _T("test-kb-data");
 static const RsrcString	k_humanUri	= convertToRsrcChar("http://example.org/#Human");
 static const RsrcString	k_dogUri		= convertToRsrcChar("http://example.org/#Dog");
 static const RsrcString	k_catUri		= convertToRsrcChar("http://example.org/#Cat");
@@ -52,7 +55,7 @@ static const RsrcString	k_langText1	= convertToRsrcChar("\"Mike Dean\"@en-us");
 static const RsrcString	k_langText2	= convertToRsrcChar("\"Mike Dean\"@en-US");
 static const RsrcString	k_integer	= convertToRsrcChar("\"1\"^^http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
 
-static const char*const k_expectedDumpLines[] =
+static constexpr array<string_view, 8> k_expectedDumpLines =
 {
 	"<http://example.org/#Mike> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/#Human> .",
 	"<http://example.org/#Mike> <http://www.w3.org/2000/01/rdf-schema#label> \"Mike Dean\" .",
@@ -399,15 +402,18 @@ BOOST_AUTO_TEST_CASE(testDumpKbAsNTriples)
 	}
 
 	::std::set<string> expectedLineSet;
-	for (auto i = 0u; i < arrayLen(k_expectedDumpLines); ++i)
+	for (auto it = begin(k_expectedDumpLines); it != end(k_expectedDumpLines); ++it)
 	{
-		string expectedDumpLine{k_expectedDumpLines[i]};
-		format expectedDumpLineFmt{expectedDumpLine};
-		if (expectedDumpLine.find("%|1$") != string::npos)
+		if (it->find("%|1$") != string::npos)
 		{
+			format expectedDumpLineFmt{string{*it}};
 			expectedDumpLineFmt % restrictionRsrcId;
+			expectedLineSet.insert(str(expectedDumpLineFmt));
 		}
-		expectedLineSet.insert(str(expectedDumpLineFmt));
+		else
+		{
+			expectedLineSet.insert(string{*it});
+		}
 	}
 
 	checkSetsEqual(expectedLineSet, actualLineSet);

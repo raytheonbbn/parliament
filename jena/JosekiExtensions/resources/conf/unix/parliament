@@ -13,9 +13,6 @@ JETTY_PORT=8089
 DEFAULT_JAVA_HEAP_SIZE=512m
 #DAEMON_USER=iemmons
 
-export PARLIAMENT_KB_CONFIG_PATH=$PMNT_DIR/ParliamentKbConfig.txt
-export PARLIAMENT_LOG_CONFIG_PATH=$PMNT_DIR/ParliamentLogConfig.txt
-
 # Uncomment this line to enable remote debugging:
 #DEBUG_ARG=-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n -Dcom.sun.management.jmxremote
 
@@ -74,19 +71,9 @@ if [ ! -f "$PMNT_DIR/lib/ParliamentServer.jar" -o ! -f "$PMNT_DIR/webapps/parlia
 	exit 1
 fi
 
-if [ ! -f "$PARLIAMENT_KB_CONFIG_PATH" ]; then
-	echo "Unable to find Parliament configuration file."
-	exit 1
-fi
-
-if [ ! -f "$PARLIAMENT_LOG_CONFIG_PATH" ]; then
-	echo "Unable to find Parliament log configuration file."
-	exit 1
-fi
-
 
 ######### Compute the PID file location: #########
-KB_DIR=`grep -v '^[ \t]*#' $PARLIAMENT_KB_CONFIG_PATH | sed -n 's/kbDirectoryPath[ \t]*=\(.*\)$/\1/p' | tail -n 1 | tr -d '[:space:]'`
+KB_DIR=`grep -v '^[ \t]*#' $PMNT_DIR/ParliamentKbConfig.txt | sed -n 's/kbDirectoryPath[ \t]*=\(.*\)$/\1/p' | tail -n 1 | tr -d '[:space:]'`
 SAVED_DIR=`pwd`
 cd "$PMNT_DIR"
 if [ ! -d "$KB_DIR" ]; then
@@ -127,7 +114,6 @@ else
 	#EXEC="$EXEC -debug"
 fi
 
-#EXEC="$EXEC -Xms${PARLIAMENT_JAVA_HEAP_SIZE:=$DEFAULT_JAVA_HEAP_SIZE}"
 EXEC="$EXEC -Xmx${PARLIAMENT_JAVA_HEAP_SIZE:=$DEFAULT_JAVA_HEAP_SIZE}"
 EXEC="$EXEC -cp $CLASSPATH:$PMNT_DIR/lib/* -Dlog.path.base=$KB_DIR"
 EXEC="$EXEC -Dlog4j.configuration=file:$PMNT_DIR/conf/log4j.$LOG4J_CONFIG.properties"
@@ -156,7 +142,6 @@ function setSharedLibPath {
 			export LD_LIBRARY_PATH=$PMNT_DIR/bin:$LD_LIBRARY_PATH
 			;;
 	esac
-	export PARLIAMENT_LOG_PATH_BASE=$KB_DIR
 }
 
 
@@ -184,11 +169,7 @@ function createSystemDServiceFile {
 	#echo 'RestartSec=30' >> $1
 	#echo 'SuccessExitStatus=143' >> $1
 	echo '' >> $1
-	echo "Environment= \\" >> $1
-	echo "   LD_LIBRARY_PATH=$PMNT_DIR/bin:$LD_LIBRARY_PATH \\" >> $1
-	echo "   PARLIAMENT_KB_CONFIG_PATH=$PMNT_DIR/ParliamentKbConfig.txt \\" >> $1
-	echo "   PARLIAMENT_LOG_CONFIG_PATH=$PMNT_DIR/ParliamentLogConfig.txt \\" >> $1
-	echo "   PARLIAMENT_LOG_PATH_BASE=$KB_DIR" >> $1
+	echo "Environment=LD_LIBRARY_PATH=$PMNT_DIR/bin:$LD_LIBRARY_PATH" >> $1
 	echo '' >> $1
 	echo "ExecStart=$EXEC $MAIN_CLASS" >> $1
 	echo '' >> $1

@@ -81,16 +81,18 @@ pmnt::EnvVarReset::~EnvVarReset()
 	}
 }
 
+#if defined(UNICODE)
+#	define PUT_ENV _wputenv_s
+#else
+#	define PUT_ENV _putenv_s
+#endif
+
 void pmnt::EnvVarReset::tSetEnvVar(const TString& envVarName, const TString& newEnvVarValue)
 {
 #if defined(PARLIAMENT_WINDOWS)
-#	if defined(UNICODE)
-	if (_wputenv_s(envVarName.c_str(), newEnvVarValue.c_str()) != 0)
-#	else
-	if (_putenv_s(envVarName.c_str(), newEnvVarValue.c_str()) != 0)
-#	endif
+	if (PUT_ENV(envVarName.c_str(), newEnvVarValue.c_str()) != 0)
 	{
-		throw runtime_error("_putenv_s failed in unit test");
+		throw runtime_error("_wputenv_s / _putenv_s failed in unit test");
 	}
 #else
 	if (newEnvVarValue.empty())
@@ -186,4 +188,10 @@ void pmnt::copyFile(const bfs::path& srcFile, const bfs::path& dstFile)
 	vector<uint8> fileContent;
 	readFileContents(srcFile, fileContent);
 	writeBytesToFile(dstFile, fileContent);
+}
+
+void pmnt::touchFile(const bfs::path& fileName)
+{
+	vector<uint8> emptyContent;
+	writeBytesToFile(fileName, emptyContent);
 }

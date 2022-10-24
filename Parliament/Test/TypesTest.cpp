@@ -11,12 +11,8 @@ using namespace ::bbn::parliament;
 
 // Compile-time tests for arrayLen:
 
-char testArray1[37];
-double testArray2[73];
+char testArray1[7];
+double testArray2[3];
 
-static_assert(
-	sizeof(testArray1) / sizeof((testArray1)[0]) == arrayLen(testArray1),
-	"Unexpected size for testArray1");
-static_assert(
-	sizeof(testArray2) / sizeof((testArray2)[0]) == arrayLen(testArray2),
-	"Unexpected size for testArray2");
+static_assert(7u == arrayLen(testArray1), "Unexpected size for testArray1");
+static_assert(3u == arrayLen(testArray2), "Unexpected size for testArray2");

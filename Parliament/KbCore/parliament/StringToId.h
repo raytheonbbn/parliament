@@ -14,6 +14,7 @@
 #include <iterator>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -33,7 +34,7 @@ struct BerkeleyDbEnvOptions
 		m_cacheBytes(0),
 		m_numCacheSegments(0)
 	{}
-	BerkeleyDbEnvOptions(const ::std::string& optionStr);
+	BerkeleyDbEnvOptions(::std::string_view optionStr);
 
 	uint32 m_cacheGBytes;
 	uint32 m_cacheBytes;

@@ -200,32 +200,20 @@ select ?feature1 ?feature2 ?distance where {
 On Linux:
 
 \begin{verbatim}
-   env LD_LIBRARY_PATH=../bin
-      PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt
-      PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt
-      ../bin/ParliamentAdmin -s
-   env LD_LIBRARY_PATH=../bin
-      PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt
-      PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt
-      ../bin/ParliamentAdmin -t -e foo.nt
+   env LD_LIBRARY_PATH=../bin ../bin/ParliamentAdmin -s
+   env LD_LIBRARY_PATH=../bin ../bin/ParliamentAdmin -t -e foo.nt
 \end{verbatim}
 
 On Mac:
 
 \begin{verbatim}
-   env PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt
-      PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt
-      ../bin/ParliamentAdmin -s
-   env PARLIAMENT_KB_CONFIG_PATH=../ParliamentKbConfig.txt
-      PARLIAMENT_LOG_CONFIG_PATH=../ParliamentLogConfig.txt
-      ../bin/ParliamentAdmin -t -e foo.nt
+   ../bin/ParliamentAdmin -s
+   ../bin/ParliamentAdmin -t -e foo.nt
 \end{verbatim}
 
 On Windows:
 
 \begin{verbatim}
-   set PARLIAMENT_KB_CONFIG_PATH=..\ParliamentKbConfig.txt
-   set PARLIAMENT_LOG_CONFIG_PATH=..\ParliamentLogConfig.txt
    ..\bin\ParliamentAdmin /s
    ..\bin\ParliamentAdmin /t /e foo.nt
 \end{verbatim}

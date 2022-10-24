@@ -5,6 +5,7 @@
 // All rights reserved.
 
 #include <algorithm>
+#include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/test_case.hpp>
@@ -17,7 +18,6 @@
 #include "parliament/LogConfig.h"
 #include "parliament/Exceptions.h"
 #include "parliament/Windows.h"
-#include "parliament/ArrayLength.h"
 #include "parliament/CharacterLiteral.h"
 #include "parliament/UnicodeIterator.h"
 #include "TestUtils.h"
@@ -45,7 +45,9 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultCtor)
 	BOOST_CHECK_EQUAL(false, c.logConsoleAsynchronous());
 	BOOST_CHECK_EQUAL(true, c.logConsoleAutoFlush());
 	BOOST_CHECK_EQUAL(true, c.logToFile());
-	BOOST_CHECK_EQUAL(string("log/ParliamentNative%3N_%Y-%m-%d_%H-%M-%S.log"), c.logFilePath());
+	BOOST_CHECK_EQUAL(
+		absolute(LogConfig::Path("kb-data/log/ParliamentNative%3N_%Y-%m-%d_%H-%M-%S.log")),
+		c.logFilePath());
 	BOOST_CHECK_EQUAL(false, c.logFileAsynchronous());
 	BOOST_CHECK_EQUAL(true, c.logFileAutoFlush());
 	BOOST_CHECK_EQUAL(10u * 1024u * 1024u, c.logFileRotationSize());
@@ -78,7 +80,7 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultFileContainsDefaults)
 	BOOST_CHECK(equal(begin(defaults.logChannelLevels()), end(defaults.logChannelLevels()), begin(c.logChannelLevels())));
 }
 
-static auto k_validTestConfig = u8R"~~~(
+static constexpr auto k_validTestConfig = u8R"~~~(
 # Parameters file for the Parliament core DLL
  	 # Parameters file for the Parliament core DLL
 
@@ -117,7 +119,9 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 	BOOST_CHECK_EQUAL(false, c.logConsoleAsynchronous());
 	BOOST_CHECK_EQUAL(true, c.logConsoleAutoFlush());
 	BOOST_CHECK_EQUAL(true, c.logToFile());
-	BOOST_CHECK_EQUAL(string("log/ParliamentNative%3N_%Y-%m-%d_%H-%M-%S.log"), c.logFilePath());
+	BOOST_CHECK_EQUAL(
+		absolute(LogConfig::Path("kb-data/log/ParliamentNative%3N_%Y-%m-%d_%H-%M-%S.log")),
+		c.logFilePath());
 	BOOST_CHECK_EQUAL(false, c.logFileAsynchronous());
 	BOOST_CHECK_EQUAL(true, c.logFileAutoFlush());
 	BOOST_CHECK_EQUAL(10u * 1024u * 1024u, c.logFileRotationSize());
@@ -134,7 +138,7 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 }
 
 // Note that the key 'logToFileMessedUp' is bad:
-static auto k_invalidTestConfig = u8R"~~~(
+static constexpr auto k_invalidTestConfig = u8R"~~~(
 # Parameters file for the Parliament core DLL
 
 logToConsole             = yes
