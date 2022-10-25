@@ -10,7 +10,8 @@
 #include "parliament/Platform.h"
 #include "parliament/RuleEngine.h"
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class SymmetricPropRule : public Rule
 {
@@ -21,6 +22,6 @@ public:
 		{ return true; }
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_SYMMETRICPROPRULE_H_INCLUDED

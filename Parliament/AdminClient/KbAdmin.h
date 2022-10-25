@@ -14,7 +14,8 @@
 #include <string>
 #include <string_view>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class KbInstance;
 
@@ -70,6 +71,6 @@ private:
 	static KbDisposition determineDisposition();
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_KBADMIN_H_INCLUDED

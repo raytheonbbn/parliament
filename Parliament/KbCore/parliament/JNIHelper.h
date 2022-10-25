@@ -16,7 +16,8 @@
 #include <vector>
 #include <jni.h>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 // This exception indicates that a JNI API call (i.e., one of the JNIEnv methods) has
 // failed.  This means that a Java exception is active in the JVM, so the C++ code
@@ -297,7 +298,7 @@ private:
 	JByteArray						m_javaBuffer;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 
 

@@ -18,7 +18,8 @@
 #include <string>
 #include <string_view>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 // Forward-declaration:
 template<typename Char, typename FwdIter> class UnicodeIterator;
@@ -748,6 +749,6 @@ inline ::std::ostream& operator<<(::std::ostream& s, Utf16StringView src)
 	return s << convertToUtf8(src);
 }
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_UNICODEITERATOR_H_INCLUDED

@@ -11,7 +11,8 @@
 
 #include "parliament/Platform.h"
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 // Windows wide character and wide string literals:
 #if !defined(_T)
@@ -29,6 +30,6 @@ PARLIAMENT_NAMESPACE_BEGIN
 //#	define RC(x) u8 ##x
 //#endif
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_CHARACTERLITERAL_H_INCLUDED

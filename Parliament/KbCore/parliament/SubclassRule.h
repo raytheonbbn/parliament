@@ -10,7 +10,8 @@
 #include "parliament/Platform.h"
 #include "parliament/RuleEngine.h"
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class SubclassRule : public Rule
 {
@@ -36,6 +37,6 @@ private:
 	ResourceId m_superClsRsrcId;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_SUBCLASSRULE_H_INCLUDED

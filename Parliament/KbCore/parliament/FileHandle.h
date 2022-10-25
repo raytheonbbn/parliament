@@ -14,7 +14,8 @@
 
 #include <boost/filesystem/path.hpp>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 enum class SeekMethod { k_start, k_current, k_end };
 
@@ -69,6 +70,6 @@ private:
 	HFile								m_hFile;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_FILEHANDLE_H_INCLUDED

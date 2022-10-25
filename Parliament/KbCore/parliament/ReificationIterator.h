@@ -12,7 +12,8 @@
 
 #include <iterator>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class KbInstance;
 
@@ -107,6 +108,6 @@ PARLIAMENT_EXPORT bool operator==(const ReificationIterator& lhs, const Reificat
 PARLIAMENT_EXPORT inline bool operator!=(const ReificationIterator& lhs, const ReificationIterator& rhs)
 	{ return !(lhs == rhs); }
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_REIFICATIONITERATOR_H_INCLUDED

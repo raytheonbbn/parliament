@@ -10,7 +10,8 @@
 #include "parliament/Platform.h"
 #include "parliament/RuleEngine.h"
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class EquivalentClassRule : public StandardRule
 {
@@ -18,6 +19,6 @@ public:
 	EquivalentClassRule(KbInstance* pKB, RuleEngine* pRE);
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_EQUIVALENTCLASSRULE_H_INCLUDED

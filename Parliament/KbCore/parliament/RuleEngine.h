@@ -23,7 +23,8 @@
 #include <unordered_map>
 #include <vector>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class RuleEngine;
 
@@ -391,6 +392,6 @@ inline const UriLib& Rule::uriLib() const
 	return m_pRE->uriLib();
 }
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_RULES_H_INCLUDED

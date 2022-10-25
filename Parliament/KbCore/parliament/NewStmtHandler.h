@@ -11,7 +11,8 @@
 #include "parliament/Types.h"
 #include "parliament/Statement.h"
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class KbInstance;
 
@@ -22,6 +23,6 @@ public:
 	virtual void onNewStmt(KbInstance* pKB, const Statement& stmt) = 0;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_NEWSTMTHANDLER_H_INCLUDED

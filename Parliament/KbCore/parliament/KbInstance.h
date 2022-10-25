@@ -17,7 +17,8 @@
 #include <memory>
 #include <string>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class KbConfig;
 struct KbRsrc;
@@ -195,6 +196,6 @@ private:
 	::std::unique_ptr<Impl> m_pi;	// pointer to implementation
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_KBINSTANCE_H_INCLUDED

@@ -12,7 +12,8 @@
 
 #include <iterator>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class KbInstance;
 
@@ -128,6 +129,6 @@ PARLIAMENT_EXPORT bool operator==(const PhysicalStmtIterator& lhs, const Physica
 PARLIAMENT_EXPORT inline bool operator!=(const PhysicalStmtIterator& lhs, const PhysicalStmtIterator& rhs)
 	{ return !(lhs == rhs); }
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_PHYSICALSTMTITERATOR_H_INCLUDED

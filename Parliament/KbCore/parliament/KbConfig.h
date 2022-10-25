@@ -15,7 +15,8 @@
 #include <map>
 #include <string>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 // Corresponds to Java's java.util.concurrent.TimeUnit
 enum class TimeUnit
@@ -312,6 +313,6 @@ private:
 	bool				m_inferOwlThing;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_KB_CONFIG_H_INCLUDED

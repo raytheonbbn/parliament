@@ -10,7 +10,8 @@
 #include "parliament/Platform.h"
 #include "parliament/RuleEngine.h"
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class FuncPropRule : public Rule
 {
@@ -28,6 +29,6 @@ public:
 	void applyRuleHead(BindingList &bindingList) override;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_FUNCPROPRULE_H_INCLUDED

@@ -10,7 +10,8 @@
 #include "parliament/Types.h"
 #include "parliament/Util.h"
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 struct KbStmt
 {
@@ -58,6 +59,6 @@ struct KbStmt
 		{ return testFlag(StatementFlags::k_stmtFlagInferred); }
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_KBSTMT_H_INCLUDED

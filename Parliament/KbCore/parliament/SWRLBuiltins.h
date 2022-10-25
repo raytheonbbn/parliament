@@ -11,7 +11,8 @@
 #include "parliament/Types.h"
 #include "parliament/RuleEngine.h"
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 struct AddBuiltinRuleAtom : public SWRLBuiltinRuleAtom
 {
@@ -244,6 +245,6 @@ struct SubtractDateTimesYieldingDayTimeDurationBuiltinRuleAtom : public SWRLBuil
 	bool evalImpl(KbInstance* pKB, BindingList& bindingList) const override;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif

@@ -14,7 +14,8 @@
 #include <map>
 #include <tuple>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 // Contains lexical form, datatype IRI, and language.  For plain literals,
 // both datatype and language will be empty.  For language strings, the
@@ -64,6 +65,6 @@ private:
 	static const bool k_ensureMapInit;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif

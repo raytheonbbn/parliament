@@ -13,7 +13,8 @@
 
 #include <boost/filesystem/path.hpp>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class MMapMgr
 {
@@ -88,6 +89,6 @@ private:
 	FileHandle::FileSize	m_fileSize;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_MMAPMGR_H_INCLUDED

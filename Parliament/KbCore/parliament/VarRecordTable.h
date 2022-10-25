@@ -12,7 +12,8 @@
 
 #include <boost/filesystem/path.hpp>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class VarRecordTable
 {
@@ -47,6 +48,6 @@ private:
 	FixRecordTable<RsrcChar> m_fixRecTbl;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_VARRECORDTABLE_H_INCLUDED

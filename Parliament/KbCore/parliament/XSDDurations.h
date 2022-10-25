@@ -12,7 +12,8 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class XSDDayTimeDuration
 {
@@ -175,6 +176,6 @@ inline XSDYearMonthDuration operator+(XSDYearMonthDuration lhs, const XSDYearMon
 inline XSDYearMonthDuration operator-(XSDYearMonthDuration lhs, const XSDYearMonthDuration& rhs)
 	{ return lhs -= rhs; }
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif /* XSDDURATIONS_H_ */

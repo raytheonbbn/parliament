@@ -13,7 +13,8 @@
 #include <boost/filesystem/path.hpp>
 #include <vector>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class FileDeleter
 {
@@ -77,6 +78,6 @@ void writeBytesToFile(const ::boost::filesystem::path& fileName, const ::std::ve
 void copyFile(const ::boost::filesystem::path& srcFile, const ::boost::filesystem::path& dstFile);
 void touchFile(const ::boost::filesystem::path& fileName);
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_TESTUTILS_H_INCLUDED

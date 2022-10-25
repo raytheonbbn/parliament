@@ -20,7 +20,8 @@
 #include <limits>
 #include <type_traits>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 template<typename RT>
 class FixRecordTable
@@ -165,6 +166,6 @@ private:
 	const double	m_growthFactor;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_FIXRECORDTABLE_H_INCLUDED

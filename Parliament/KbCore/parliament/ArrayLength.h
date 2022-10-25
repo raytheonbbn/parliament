@@ -6,10 +6,15 @@
 
 #include <cstddef>
 
+namespace bbn::parliament
+{
+
 template<typename T, ::std::size_t N>
 constexpr ::std::size_t arrayLen(T(&)[N]) noexcept
 {
 	return N;
 }
+
+}	// namespace end
 
 #endif // !PARLIAMENT_ARRAYLENGTH_H_INCLUDED

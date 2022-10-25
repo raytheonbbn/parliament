@@ -14,7 +14,8 @@
 
 #include <iterator>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class KbInstance;
 
@@ -145,6 +146,6 @@ PARLIAMENT_EXPORT bool operator==(const StmtIterator& lhs, const StmtIterator& r
 PARLIAMENT_EXPORT inline bool operator!=(const StmtIterator& lhs, const StmtIterator& rhs)
 	{ return !(lhs == rhs); }
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_STMTITERATOR_H_INCLUDED

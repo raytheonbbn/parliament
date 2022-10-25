@@ -13,7 +13,8 @@
 #include <memory>
 #include <vector>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class KbInstance;
 class UriLib;
@@ -48,6 +49,6 @@ private:
 	const KbInstance*	m_pKB;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif

@@ -16,7 +16,8 @@
 #include <string_view>
 #include <type_traits>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 // ===========================================================================
 // Platform-invariant integral types
@@ -197,6 +198,6 @@ static_assert(sizeof(RsrcChar) == 1u, "Unexpected size for type alias RsrcChar")
 static_assert(sizeof(RsrcString::value_type) == 1u, "Unexpected size for type alias RsrcString::value_type");
 #endif
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_TYPES_H_INCLUDED

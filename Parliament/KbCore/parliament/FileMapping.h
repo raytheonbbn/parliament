@@ -20,7 +20,8 @@
 #	include <map>
 #endif
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class FileMapping
 {
@@ -65,6 +66,6 @@ private:
 	uint8*					m_pBaseAddress;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_FILEMAPPING_H_INCLUDED

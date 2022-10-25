@@ -10,7 +10,8 @@
 #include "parliament/Platform.h"
 #include "parliament/Types.h"
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class KbInstance;
 
@@ -253,6 +254,6 @@ public:
 	const LazyRsrc m_xsdYearMonthDuration;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_URILIB_H_INCLUDED

@@ -25,7 +25,8 @@
 #define NON_WINDOWS_PARLIAMENT_EXPORT PARLIAMENT_EXPORT
 #endif
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 #if defined(PARLIAMENT_WINDOWS)
 using SysErrCode = uint32;
@@ -78,6 +79,6 @@ public:
 	UsageException(const ::boost::format& fmt) : Exception(fmt) {}
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_EXCEPTIONS_H_INCLUDED

@@ -24,7 +24,8 @@
 #include <unordered_map>
 #include <vector>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 struct PartialReification
 {
@@ -123,6 +124,6 @@ struct KbInstance::Impl
 	RuleEngine				m_re;					// Implements SWRL-style rule inferencing
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_KBINSTANCEIMPL_H_INCLUDED

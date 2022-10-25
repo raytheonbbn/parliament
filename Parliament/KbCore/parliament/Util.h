@@ -20,7 +20,8 @@
 #	include <sys/time.h>
 #endif
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 PARLIAMENT_EXPORT ::std::string getKbVersion();	// Parliament version number
 PARLIAMENT_EXPORT TString tGetEnvVar(const TChar* pVarName);
@@ -156,6 +157,6 @@ private:
 	HiResTime	m_stop;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_UTIL_H_INCLUDED

@@ -10,7 +10,8 @@
 #include "parliament/Types.h"
 #include "parliament/Util.h"
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 struct KbRsrc
 {
@@ -63,6 +64,6 @@ struct KbRsrc
 		{ return testFlag(ResourceFlags::k_rsrcFlagStatementTag); }
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_KBRSRC_H_INCLUDED

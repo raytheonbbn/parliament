@@ -10,7 +10,8 @@
 #include "parliament/Platform.h"
 #include "parliament/Types.h"
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class KbInstance;
 
@@ -64,6 +65,6 @@ private:
 	VirtualStmtMode	m_virtualMode;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_STATEMENT_H_INCLUDED

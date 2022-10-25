@@ -15,7 +15,8 @@
 #include <map>
 #include <string>
 
-PARLIAMENT_NAMESPACE_BEGIN
+namespace bbn::parliament
+{
 
 class LogConfig
 {
@@ -144,6 +145,6 @@ private:
 	LogChannelMap	m_logChannelLevel;
 };
 
-PARLIAMENT_NAMESPACE_END
+}	// namespace end
 
 #endif // !PARLIAMENT_LOG_CONFIG_H_INCLUDED
