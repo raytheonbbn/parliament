@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +39,8 @@ import com.bbn.parliament.spring_boot.service.QueryService;
 @RestController
 public class QueryController {
 	private static final String ENDPOINT = "/parliament/sparql";
-	private static final String URL_ENCODED = "application/x-www-form-urlencoded";
-	private static final String SPARQL_QUERY = "application/sparql-query";
+	public static final String URL_ENCODED = "application/x-www-form-urlencoded";
+	public static final String SPARQL_QUERY = "application/sparql-query";
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryController.class);
 
@@ -54,6 +55,7 @@ public class QueryController {
 	@Value("${parliament.bridge.config}")
 	private String parliamentBridgeConfigFile;
 
+	@Autowired
 	public QueryController(QueryService service) {
 		queryService = Objects.requireNonNull(service, "service");
 	}

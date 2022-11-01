@@ -19,9 +19,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -32,13 +29,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.bbn.parliament.jena.bridge.tracker.Tracker;
 import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
 import com.bbn.parliament.jena.joseki.client.QuerySolutionStream;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.joseki.client.RemoteModel;
+import com.bbn.parliament.spring_boot.controller.QueryController;
 import com.bbn.parliament.test_util.RdfResourceLoader;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
@@ -63,10 +65,11 @@ import com.hp.hpl.jena.update.UpdateRequest;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
+import reactor.core.publisher.Mono;
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
-@Disabled
 public class ParliamentServerTests {
 	private static final String HOST = "localhost";
 	private static final String[] RSRCS_TO_LOAD = { "univ-bench.owl", "University15_20.owl.zip" };
@@ -133,16 +136,6 @@ public class ParliamentServerTests {
 	private String bulkUrl;
 	private RemoteModel rm;
 
-	@BeforeAll
-	public static void beforeAll() {
-		//ParliamentTestServer.createServer();
-	}
-
-	@AfterAll
-	public static void afterAll() {
-		//ParliamentTestServer.stopServer();
-	}
-
 	@BeforeEach
 	public void beforeEach() {
 		sparqlUrl = RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL.formatted(HOST, serverPort);
@@ -150,11 +143,8 @@ public class ParliamentServerTests {
 		rm = new RemoteModel(sparqlUrl, bulkUrl);
 	}
 
-	@AfterEach
-	public void afterEach() {
-	}
-
 	@Test
+	@Disabled
 	public void generalKBFunctionalityTest() throws IOException {
 		rm.clearAll();
 
@@ -203,6 +193,13 @@ public class ParliamentServerTests {
 	public void remoteModelGetNamedGraphsTest() throws IOException {
 		String graphUri = "http://example.org/foo/bar/#Graph1";
 
+		var output = getAvailableNamedGraphsNoJena();
+		System.out.println("C================================================");
+		System.out.println(output);
+		System.out.println("C================================================");
+
+		assertTrue(getAvailableNamedGraphs().isEmpty());
+
 		rm.createNamedGraph(graphUri);
 		assertTrue(getAvailableNamedGraphs().equals(Collections.singleton(graphUri)));
 
@@ -219,7 +216,31 @@ public class ParliamentServerTests {
 		}
 	}
 
+	private String getAvailableNamedGraphsNoJena() {
+		return WebClient.create(sparqlUrl)
+			.post()
+			.uri("")
+			.bodyValue(NG_QUERY)
+			.header(HttpHeaders.CONTENT_TYPE, QueryController.SPARQL_QUERY)
+			.accept(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML)
+			.acceptCharset(StandardCharsets.UTF_8)
+			.exchangeToMono(response -> {
+				System.out.format("HTTP response status code: %1$d%n", response.rawStatusCode());
+				System.out.format("HTTP response headers: %1$s%n", response.headers().asHttpHeaders());
+				if (response.statusCode().equals(HttpStatus.OK)) {
+					return response.bodyToMono(String.class);
+				} else if (response.statusCode().is4xxClientError()) {
+					return Mono.just("Error response");
+				} else {
+					return response.createException().flatMap(Mono::error);
+				}
+			})
+			.block()
+			.toString();
+	}
+
 	@Test
+	@Disabled
 	public void insertAndQueryTest() {
 		insert(TEST_SUBJECT, RDF.type.getURI(), Node.createURI(TEST_CLASS), null);
 		insert(TEST_SUBJECT, RDFS.label.getURI(), Node.createLiteral(TEST_LITERAL), null);
@@ -243,6 +264,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+	@Disabled
 	public void deleteAndQueryTest() {
 		String queryFmt = "ask where { <%1$s> <%2$s> \"%3$s\" . }";
 
@@ -254,6 +276,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+	@Disabled
 	public void remoteModelSimpleSPARQLUpdateTest() {
 		String d = "http://example.org/doughnut";
 		String y = "http://example.org/yummy";
@@ -267,6 +290,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+	@Disabled
 	public void remoteModelNGSPARQLUpdateTest() throws IOException
 	{
 		String graphUri = "http://example.org/foo/bar/#Graph2";
@@ -305,6 +329,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+	@Disabled
 	public void remoteModelQueryErrorTest() {
 		String invalidQuery = "select * where { ?thing oogetyboogetyboo! }";
 		boolean caughtException = false;
@@ -318,6 +343,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+	@Disabled
 	public void remoteModelInsertErrorTest() {
 		boolean caughtException = false;
 		try {
@@ -331,6 +357,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+	@Disabled
 	public void remoteModelDeleteErrorTest() {
 		boolean caughtException = false;
 		try {
@@ -344,6 +371,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+	@Disabled
 	public void remoteModelInsertQueryNamedGraphTest() throws IOException {
 		String graphUri = "http://example.org/foo/bar/#Graph3";
 		String query = "select * where { ?x a <%1$s> . graph <%2$s> { ?x a <%1$s> } }"
@@ -367,6 +395,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+	@Disabled
 	public void remoteModelNamedGraphUnionTest() throws IOException {
 		String graph1Uri = "http://example.org/foo/bar/#Graph4";
 		String graph2Uri = "http://example.org/foo/bar/#Graph5";
@@ -397,6 +426,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+	@Disabled
 	public void remoteModelConstructQueryTest() throws IOException {
 		Resource testSubject = ResourceFactory.createResource(TEST_SUBJECT);
 		Model testModel = ModelFactory.createDefaultModel();
@@ -409,6 +439,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+	@Disabled
 	public void csvQuotingTest() throws IOException {
 		try (InputStream is = getClass().getClassLoader().getResourceAsStream(CSV_QUOTE_TEST_INPUT)) {
 			if (is == null) {

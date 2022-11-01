@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +31,7 @@ public class UpdateController {
 
 	private final UpdateService updateService;
 
+	@Autowired
 	public UpdateController(UpdateService service) {
 		updateService = Objects.requireNonNull(service, "service");
 	}

@@ -13,6 +13,7 @@ import java.io.InputStream;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -40,6 +41,7 @@ import com.bbn.parliament.test_util.RdfResourceLoader;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @TestInstance(Lifecycle.PER_CLASS)
+@Disabled
 class ApplicationTests {
 	private static final String QUERY_ENDPOINT = "/parliament/sparql";
 	private static final String UPDATE_ENDPOINT = "/parliament/update";
@@ -94,7 +96,7 @@ class ApplicationTests {
 	private MockMvc mvc;
 
 	@Autowired
-	private QueryController controller;
+	private QueryController queryController;
 
 	@BeforeAll
 	public static void setup() {
@@ -110,7 +112,7 @@ class ApplicationTests {
 	public void testApplicationContextAndLogging() {
 		LOG.info("Executing test method testApplicationContextAndLogging()");
 
-		assertThat(controller).isNotNull();
+		assertThat(queryController).isNotNull();
 
 		LOG.error("Test message at the error level");
 		LOG.warn("Test message at the warn level");

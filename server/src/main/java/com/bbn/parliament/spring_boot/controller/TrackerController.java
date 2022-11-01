@@ -2,6 +2,7 @@ package com.bbn.parliament.spring_boot.controller;
 
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +18,7 @@ public class TrackerController {
 
 	private final TrackerService trackerService;
 
+	@Autowired
 	public TrackerController(TrackerService service) {
 		trackerService = Objects.requireNonNull(service, "service");
 	}
