@@ -829,7 +829,6 @@ JAVA_HEAP_SIZE=512m
 PMNT_BIN="$CATALINA_HOME/bin/parliament"
 export CATALINA_OPTS=-Djava.library.path=$PMNT_BIN
 export CATALINA_OPTS="$CATALINA_OPTS -Xmx$JAVA_HEAP_SIZE"
-export LD_LIBRARY_PATH=$PMNT_BIN
 \end{verbatim}}
 	On Windows, the file name should be \path|setenv.bat| and its content should look like this:
 {\footnotesize\begin{verbatim}
@@ -930,7 +929,7 @@ Naturally, there is some setup required to make this work:
 		\item \path|ParliamentLogConfig.txt|
 	\end{itemize}
 
-	\item Ensure that the \ac{jvm} can find the \acp{dll} or shared libraries at run-time.  For Mac OS X, add their directory to the Java system property \verb|java.library.path|.  On Windows, add the directory to the \verb|Path| environment variable.  On Linux, it's \verb|LD_LIBRARY_PATH|.  Many flavors of UNIX also use \verb|LD_LIBRARY_PATH|, though some differ.  Consult your operating system documentation to find the correct variable name.
+	\item Ensure that the \ac{jvm} can find the \acp{dll} or shared libraries at run-time.  For Mac OS Xand Linux, add their directory to the Java system property \verb|java.library.path|.  On Windows, add the directory to the \verb|Path| environment variable.
 
 	\item On Windows only, install the run-time libraries by running the installer in the \path|RedistributablePackages| subdirectory of your \ac{pmnt} distribution.
 
@@ -1003,9 +1002,7 @@ Note that placing \acp{dll} in the Windows or Windows system directories is stro
 
 Both the graphical tool Dependency Walker\urlcite{http://dependencywalker.com/} and the command-line tool \path|dumpbin| (part of the Visual Studio installation) show from where Windows is trying to load subsidiary \acp{dll}.  (Note that some operating system \acp{dll} themselves load many other libraries, some by magic.  This can confuse Dependency Walker, causing it to report missing \acp{dll}.  These error messages are, however, red herrings and should be ignored.)
 
-	\item On Mac OS X, the \ac{jvm} finds the \ac{pmnt} shared library by consulting the Java system property \verb|java.library.path|, and the operating system looks for its dependencies in the same directory.  The command ``\path|otool -L|'' will show from where the operating system is trying to load subsidiary shared libraries.
-
-	\item Other UNIX-like systems find shared libraries by searching the directories in the library search path environment variable.  The name of this variable differs by system:  On Linux and several others it is \verb|LD_LIBRARY_PATH|, though some differ.  On most UNIX-like systems the command \path|ldd| will show from where the operating system is trying to load subsidiary shared libraries.
+	\item On Mac OS X and Linux, the \ac{jvm} finds the \ac{pmnt} shared library by consulting the Java system property \verb|java.library.path|, and the operating system looks for its dependencies in the same directory.  The command ``\path|otool -L|'' (on Mac) or \path|ldd| (on Linux) will show from where the operating system is trying to load subsidiary shared libraries.
 
 	\item A debug build of \ac{pmnt} will not work on Windows unless the corresponding version of Visual Studio is installed.  This is because the debug versions of the C and C++ run-time libraries are included only with Visual Studio.
 

@@ -208,6 +208,9 @@
 		<antcall target="fixMacOSInstallNames">
 			<param name="dylibDir" value="${targetDir}/${deployableSvrDir}/bin"/>
 		</antcall>
+		<antcall target="fixLinuxRunPath">
+			<param name="dylibDir" value="${targetDir}/${deployableSvrDir}/bin"/>
+		</antcall>
 		<if>
 			<isset property="skipNativeUnitTest"/>
 			<then>
@@ -237,126 +240,157 @@
 
 	<!-- Expects dylibDir to be set -->
 	<target name="fixMacOSInstallNames" depends="testWhetherIsMacOS" if="isOsMacintosh">
-		<propertyregex property="boostVer"
-			input="${env.BOOST_VERSION}"
-			regexp="_0$$"
-			replace=""
-			casesensitive="false"
-			defaultValue="${env.BOOST_VERSION}"/>
-		<property name="boostLibSuffix"
-			value="-clang-darwin14-mt${variantSuffix}${addrModelSuffix}-${boostVer}.dylib"/>
-
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="ParliamentAdmin"/>
-			<param name="calledBinary" value="libboost_filesystem${boostLibSuffix}"/>
+			<param name="callingBinaryPrefix" value="ParliamentAdmin"/>
+			<param name="calledBinaryPrefix" value="libboost_filesystem-"/>
 		</antcall>
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="ParliamentAdmin"/>
-			<param name="calledBinary" value="libParliament.dylib"/>
+			<param name="callingBinaryPrefix" value="ParliamentAdmin"/>
+			<param name="calledBinaryPrefix" value="libParliament"/>
 		</antcall>
 
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libParliament.dylib"/>
-			<param name="calledBinary" value="libdb-${env.BDB_VERSION}.dylib"/>
+			<param name="callingBinaryPrefix" value="libParliament"/>
+			<param name="calledBinaryPrefix" value="libdb-"/>
 			<param name="oldCalledBinaryDir" value="${env.BDB_HOME}/lib"/>
 		</antcall>
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libParliament.dylib"/>
-			<param name="calledBinary" value="libboost_atomic${boostLibSuffix}"/>
+			<param name="callingBinaryPrefix" value="libParliament"/>
+			<param name="calledBinaryPrefix" value="libboost_atomic-"/>
 		</antcall>
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libParliament.dylib"/>
-			<param name="calledBinary" value="libboost_chrono${boostLibSuffix}"/>
+			<param name="callingBinaryPrefix" value="libParliament"/>
+			<param name="calledBinaryPrefix" value="libboost_chrono-"/>
 		</antcall>
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libParliament.dylib"/>
-			<param name="calledBinary" value="libboost_filesystem${boostLibSuffix}"/>
+			<param name="callingBinaryPrefix" value="libParliament"/>
+			<param name="calledBinaryPrefix" value="libboost_filesystem-"/>
 		</antcall>
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libParliament.dylib"/>
-			<param name="calledBinary" value="libboost_log${boostLibSuffix}"/>
+			<param name="callingBinaryPrefix" value="libParliament"/>
+			<param name="calledBinaryPrefix" value="libboost_log-"/>
 		</antcall>
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libParliament.dylib"/>
-			<param name="calledBinary" value="libboost_log_setup${boostLibSuffix}"/>
+			<param name="callingBinaryPrefix" value="libParliament"/>
+			<param name="calledBinaryPrefix" value="libboost_log_setup-"/>
 		</antcall>
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libParliament.dylib"/>
-			<param name="calledBinary" value="libboost_thread${boostLibSuffix}"/>
-		</antcall>
-
-		<antcall target="changeInstallName">
-			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
-			<param name="calledBinary" value="libboost_atomic${boostLibSuffix}"/>
-		</antcall>
-		<antcall target="changeInstallName">
-			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
-			<param name="calledBinary" value="libboost_chrono${boostLibSuffix}"/>
-		</antcall>
-		<antcall target="changeInstallName">
-			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
-			<param name="calledBinary" value="libboost_filesystem${boostLibSuffix}"/>
-		</antcall>
-		<antcall target="changeInstallName">
-			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
-			<param name="calledBinary" value="libboost_log${boostLibSuffix}"/>
-		</antcall>
-		<antcall target="changeInstallName">
-			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libboost_log_setup${boostLibSuffix}"/>
-			<param name="calledBinary" value="libboost_thread${boostLibSuffix}"/>
+			<param name="callingBinaryPrefix" value="libParliament"/>
+			<param name="calledBinaryPrefix" value="libboost_thread-"/>
 		</antcall>
 
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libboost_log${boostLibSuffix}"/>
-			<param name="calledBinary" value="libboost_atomic${boostLibSuffix}"/>
+			<param name="callingBinaryPrefix" value="libboost_log_setup-"/>
+			<param name="calledBinaryPrefix" value="libboost_atomic-"/>
 		</antcall>
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libboost_log${boostLibSuffix}"/>
-			<param name="calledBinary" value="libboost_chrono${boostLibSuffix}"/>
+			<param name="callingBinaryPrefix" value="libboost_log_setup-"/>
+			<param name="calledBinaryPrefix" value="libboost_chrono-"/>
 		</antcall>
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libboost_log${boostLibSuffix}"/>
-			<param name="calledBinary" value="libboost_filesystem${boostLibSuffix}"/>
+			<param name="callingBinaryPrefix" value="libboost_log_setup-"/>
+			<param name="calledBinaryPrefix" value="libboost_filesystem-"/>
 		</antcall>
 		<antcall target="changeInstallName">
 			<param name="dylibDir" value="${dylibDir}"/>
-			<param name="callingBinary" value="libboost_log${boostLibSuffix}"/>
-			<param name="calledBinary" value="libboost_thread${boostLibSuffix}"/>
+			<param name="callingBinaryPrefix" value="libboost_log_setup-"/>
+			<param name="calledBinaryPrefix" value="libboost_log-"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinaryPrefix" value="libboost_log_setup-"/>
+			<param name="calledBinaryPrefix" value="libboost_thread-"/>
+		</antcall>
+
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinaryPrefix" value="libboost_log-"/>
+			<param name="calledBinaryPrefix" value="libboost_atomic-"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinaryPrefix" value="libboost_log-"/>
+			<param name="calledBinaryPrefix" value="libboost_chrono-"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinaryPrefix" value="libboost_log-"/>
+			<param name="calledBinaryPrefix" value="libboost_filesystem-"/>
+		</antcall>
+		<antcall target="changeInstallName">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinaryPrefix" value="libboost_log-"/>
+			<param name="calledBinaryPrefix" value="libboost_thread-"/>
 		</antcall>
 	</target>
 
-	<!-- Expects dylibDir, callingBinary, calledBinary, and oldCalledBinaryDir to be set -->
+	<!-- Expects dylibDir, callingBinaryPrefix, calledBinaryPrefix, and oldCalledBinaryDir to be set -->
 	<target name="changeInstallName">
 		<condition property="oldCalledBinaryDir" value="${oldCalledBinaryDir}" else="@rpath">
 			<isset property="oldCalledBinaryDir"/>
 		</condition>
-		<!--
-		<echo message="   ${oldCalledBinaryDir}/${calledBinary}"/>
-		<echo message="   @loader_path/${calledBinary}"/>
-		<echo message="   ${callingBinary}"/>
-		-->
-		<exec executable="install_name_tool" dir="${dylibDir}" failonerror="true" osfamily="mac">
+		<fileset id="callingBinary" dir="${dylibDir}" includes="${callingBinaryPrefix}*"/>
+		<fileset id="calledBinary" dir="${dylibDir}" includes="${calledBinaryPrefix}*"/>
+		<exec executable="install_name_tool" dir="${dylibDir}" failonerror="true">
 			<arg value="-change"/>
-			<arg value="${oldCalledBinaryDir}/${calledBinary}"/>
-			<arg value="@loader_path/${calledBinary}"/>
-			<arg value="${callingBinary}"/>
+			<arg value="${oldCalledBinaryDir}/${toString:calledBinary}"/>
+			<arg value="@loader_path/${toString:calledBinary}"/>
+			<arg value="${toString:callingBinary}"/>
+		</exec>
+	</target>
+
+	<target name="testWhetherIsLinux">
+		<condition property="isOsLinux">
+			<and>
+				<os family="unix"/>
+				<not><os family="mac"/></not>
+			</and>
+		</condition>
+	</target>
+
+	<!-- Expects dylibDir to be set -->
+	<target name="fixLinuxRunPath" depends="testWhetherIsLinux" if="isOsLinux">
+		<antcall target="changeRunPath">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinaryPrefix" value="ParliamentAdmin"/>
+		</antcall>
+		<antcall target="changeRunPath">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinaryPrefix" value="libParliament"/>
+		</antcall>
+		<antcall target="changeRunPath">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinaryPrefix" value="libboost_log_setup-"/>
+		</antcall>
+		<antcall target="changeRunPath">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinaryPrefix" value="libboost_log-"/>
+		</antcall>
+		<antcall target="changeRunPath">
+			<param name="dylibDir" value="${dylibDir}"/>
+			<param name="callingBinaryPrefix" value="libboost_filesystem-"/>
+		</antcall>
+	</target>
+
+	<!-- Expects dylibDir and callingBinaryPrefix to be set -->
+	<target name="changeRunPath">
+		<fileset id="callingBinary" dir="${dylibDir}" includes="${callingBinaryPrefix}*"/>
+		<exec executable="patchelf" dir="${dylibDir}" failonerror="true">
+			<arg value="--set-rpath"/>
+			<arg value="$ORIGIN"/>
+			<arg value="${toString:callingBinary}"/>
 		</exec>
 	</target>
 
@@ -418,7 +452,6 @@
 			<testclasses>
 				<fileset dir="${testBinDir}" includes="**/*Test.class"/>
 				<fork>
-					<env key="LD_LIBRARY_PATH" path="${targetDir}/${deployableSvrDir}/bin;${env.LD_LIBRARY_PATH}"/>
 					<env key="PATH" path="${targetDir}/${deployableSvrDir}/bin;${env.PATH}"/>
 
 					<!-- These env vars are for running under clang's 'santizer' options: -->

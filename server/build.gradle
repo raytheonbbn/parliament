@@ -78,7 +78,6 @@ test {
 	systemProperty 'java.library.path', "${distroDir}/bin"
 	//systemProperty 'log4j.configuration', "file:///${rootDir}/log4j.junit.properties"
 	environment = [
-		'LD_LIBRARY_PATH' : "${distroDir}/bin",
 		'Path' : "${distroDir}/bin;${System.env.Path}"
 	]
 }
@@ -93,7 +92,6 @@ bootRun {
 
 	systemProperty 'java.library.path', "${distroDir}/bin"
 	environment = [
-		'LD_LIBRARY_PATH' : "${distroDir}/bin",
 		'Path' : "${distroDir}/bin;${System.env.Path}"
 	]
 }

@@ -126,23 +126,7 @@ fi
 
 ######### Debugging statements: #########
 # echo EXEC = $EXEC [-stop] $MAIN_CLASS
-# echo LD_LIBRARY_PATH = $LD_LIBRARY_PATH
 # echo PID_FILE = $PID_FILE
-
-
-######### Set the shared lib path: #########
-function setSharedLibPath {
-	# The Java property "java.library.path" is supposed to take care of this,
-	# but sometimes it doesn't work, so set up the shared lib path as well:
-	case "`uname -s`" in
-		Darwin)
-			# Do nothing -- on Macintosh java.library.path is all that's needed.
-			;;
-		*)
-			export LD_LIBRARY_PATH=$PMNT_DIR/bin:$LD_LIBRARY_PATH
-			;;
-	esac
-}
 
 
 ######### Create systemd service file: #########
@@ -169,7 +153,6 @@ function createSystemDServiceFile {
 	#echo 'RestartSec=30' >> $1
 	#echo 'SuccessExitStatus=143' >> $1
 	echo '' >> $1
-	echo "Environment=LD_LIBRARY_PATH=$PMNT_DIR/bin:$LD_LIBRARY_PATH" >> $1
 	echo '' >> $1
 	echo "ExecStart=$EXEC $MAIN_CLASS" >> $1
 	echo '' >> $1
@@ -196,18 +179,15 @@ function installSystemDService {
 
 ######### Execute: #########
 if [ "$1" = "start" -o "$1" = "foreground" -o "$1" = "container" ]; then
-	setSharedLibPath
 	exec $EXEC $MAIN_CLASS
 elif [ "$1" = "stop" ]; then
 	if [ -f "$PID_FILE" ]; then
-		setSharedLibPath
 		exec $EXEC -stop $MAIN_CLASS
 	else
 		echo 'The Parliament daemon is not running.'
 		exit 1
 	fi
 elif [ "$1" = "restart" ]; then
-	setSharedLibPath
 	if [ -f "$PID_FILE" ]; then
 		$EXEC -stop $MAIN_CLASS
 	fi
