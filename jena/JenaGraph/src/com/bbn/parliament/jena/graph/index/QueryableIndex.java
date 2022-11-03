@@ -1,11 +1,13 @@
 package com.bbn.parliament.jena.graph.index;
 
 import java.util.Iterator;
+
+import org.apache.jena.graph.Node;
+
 import com.bbn.parliament.jena.query.index.IndexPatternQuerier;
 import com.bbn.parliament.jena.query.index.IndexPatternQuerierManager;
 import com.bbn.parliament.jena.query.index.QueryCache;
 import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunction;
-import com.hp.hpl.jena.graph.Node;
 
 /**
  * An extension of <code>Index</code> that adds methods for accessing data.

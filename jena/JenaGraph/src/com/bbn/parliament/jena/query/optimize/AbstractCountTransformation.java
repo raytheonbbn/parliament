@@ -3,15 +3,15 @@ package com.bbn.parliament.jena.query.optimize;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.query.ReifiedTriple;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 public abstract class AbstractCountTransformation extends AbstractKbGraphReorderTransformation {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractCountTransformation.class);

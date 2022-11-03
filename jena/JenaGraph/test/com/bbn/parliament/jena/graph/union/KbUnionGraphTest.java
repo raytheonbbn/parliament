@@ -12,6 +12,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.util.FileManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,14 +30,6 @@ import org.slf4j.LoggerFactory;
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.KbGraphFactory;
 import com.bbn.parliament.jena.graph.KbGraphStore;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.util.FileManager;
 
 public class KbUnionGraphTest {
 	private static final String LEFT_BASE = "http://example.org/left";
@@ -46,9 +47,9 @@ public class KbUnionGraphTest {
 
 	@BeforeEach
 	public void beforeEach() {
-		Node leftName = Node.createURI(LEFT_BASE + counter);
-		Node rightName = Node.createURI(RIGHT_BASE + counter);
-		Node unionName = Node.createURI(UNION_BASE + counter);
+		Node leftName = NodeFactory.createURI(LEFT_BASE + counter);
+		Node rightName = NodeFactory.createURI(RIGHT_BASE + counter);
+		Node unionName = NodeFactory.createURI(UNION_BASE + counter);
 
 		defaultGraph = KbGraphFactory.createDefaultGraph();
 		leftGraph = KbGraphFactory.createNamedGraph();

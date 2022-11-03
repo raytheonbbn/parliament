@@ -26,14 +26,16 @@ package com.bbn.parliament.jena;
 
 import java.util.StringTokenizer;
 
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.graph.impl.LiteralLabel;
-import com.hp.hpl.jena.graph.impl.LiteralLabelFactory;
-import com.hp.hpl.jena.rdf.model.AnonId;
-import com.hp.hpl.jena.shared.JenaException;
-import com.hp.hpl.jena.shared.PrefixMapping;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.BlankNodeId;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.graph.impl.LiteralLabelFactory;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.PrefixMapping;
+
 
 /** Creating nodes from string specifications. Taken from Jena's test code. */
 public class NodeCreateUtils {
@@ -84,21 +86,21 @@ public class NodeCreateUtils {
 		}
 		char first = x.charAt(0);
 		if (first == '\'' || first == '\"') {
-			return Node.createLiteral(newString(pm, first, x));
+			return NodeFactory.createLiteral(newString(pm, first, x));
 		} else if (Character.isDigit(first)) {
-			return Node.createLiteral(x, "", XSDDatatype.XSDinteger);
+			return NodeFactory.createLiteral(x, "", XSDDatatype.XSDinteger);
 		} else if (first == '_') {
-			return Node.createAnon(new AnonId(x));
+			return NodeFactory.createBlankNode(new BlankNodeId(x));
 		} else if (x.equals("??")) {
 			return Node.ANY;
 		} else if (first == '?') {
-			return Node.createVariable(x.substring(1));
+			return NodeFactory.createVariable(x.substring(1));
 		} else if (first == '&') {
-			return Node.createURI("q:" + x.substring(1));
+			return NodeFactory.createURI("q:" + x.substring(1));
 		} else {
 			int colon = x.indexOf(':');
 			String d = pm.getNsPrefixURI("");
-			return colon < 0 ? Node.createURI((d == null ? "eh:/" : d) + x) : Node.createURI(pm.expandPrefix(x));
+			return colon < 0 ? NodeFactory.createURI((d == null ? "eh:/" : d) + x) : NodeFactory.createURI(pm.expandPrefix(x));
 		}
 	}
 
@@ -136,7 +138,7 @@ public class NodeCreateUtils {
 		int colon = langOrType.indexOf(':');
 		return colon < 0
 			? LiteralLabelFactory.create(content, langOrType, false)
-			: LiteralLabelFactory.createLiteralLabel(content, "", Node.getType(pm.expandPrefix(langOrType)));
+			: LiteralLabelFactory.createLiteralLabel(content, "", NodeFactory.getType(pm.expandPrefix(langOrType)));
 	}
 
 	public static LiteralLabel newString(PrefixMapping pm, char quote, String nodeString) {

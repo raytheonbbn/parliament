@@ -12,6 +12,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,17 +31,12 @@ import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.joseki.client.StreamUtil;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoCloseable {
 	public enum IndexUnderTest { DEFAULT_GRAPH, NAMED_GRAPH }
 
 	private static final Logger LOG = LoggerFactory.getLogger(IndexTestMethods.class);
-	private static final Node NAMED_GRAPH_NAME = Node.createURI("http://example.org/testGraph");
+	private static final Node NAMED_GRAPH_NAME = NodeFactory.createURI("http://example.org/testGraph");
 	private static final File KB_DIR = new File("test-kb-data");
 
 	private KbGraphStore store;

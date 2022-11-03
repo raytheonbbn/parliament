@@ -1,14 +1,15 @@
 package com.bbn.parliament.jena.query;
 
+import org.apache.jena.query.Query;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.core.Substitute;
+import org.apache.jena.sparql.engine.QueryEngineRegistry;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.engine.main.QueryEngineMain;
+import org.apache.jena.sparql.util.Context;
+
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.query.optimize.KbOptimize;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.core.Substitute;
-import com.hp.hpl.jena.sparql.engine.QueryEngineRegistry;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.engine.main.QueryEngineMain;
-import com.hp.hpl.jena.sparql.util.Context;
 
 /**
  * A query engine for Parliament. The <code>KbQueryEngine</code> is a simple

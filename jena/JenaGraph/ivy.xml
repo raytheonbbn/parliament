@@ -15,7 +15,7 @@
 	</configurations>
 
 	<dependencies>
-		<dependency org="org.apache.jena" name="jena-arq" rev="2.9.4"
+		<dependency org="org.apache.jena" name="jena-arq" rev="${jena.version}"
 			conf="default->default"/>
 		<dependency org="com.github.jsonld-java" name="jsonld-java" rev="${jsonld-java.version}"
 			conf="default->default"/>

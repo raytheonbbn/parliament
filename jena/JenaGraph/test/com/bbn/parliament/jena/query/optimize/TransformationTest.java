@@ -6,6 +6,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.optimizer.reorder.ReorderTransformation;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,11 +20,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import com.bbn.parliament.jena.TestingDataset;
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.query.QueryTestUtil;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.optimizer.reorder.ReorderTransformation;
 
 public class TransformationTest {
 	private static TestingDataset dataset;

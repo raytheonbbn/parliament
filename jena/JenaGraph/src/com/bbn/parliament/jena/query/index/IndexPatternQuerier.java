@@ -1,8 +1,8 @@
 package com.bbn.parliament.jena.query.index;
 
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
 
 /**
  * A handler for querying an index for a given pattern. The

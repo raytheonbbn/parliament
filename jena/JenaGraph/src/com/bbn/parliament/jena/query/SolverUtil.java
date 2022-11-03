@@ -5,6 +5,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.engine.iterator.QueryIterFilterExpr;
+import org.apache.jena.sparql.engine.optimizer.reorder.ReorderTransformation;
+import org.apache.jena.sparql.expr.E_GreaterThan;
+import org.apache.jena.sparql.expr.E_GreaterThanOrEqual;
+import org.apache.jena.sparql.expr.E_LessThan;
+import org.apache.jena.sparql.expr.E_LessThanOrEqual;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction2;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.ExprVar;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.util.IterLib;
+import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,27 +46,6 @@ import com.bbn.parliament.jena.query.optimize.IndexTransformation;
 import com.bbn.parliament.jena.query.optimize.ReorderQueryIterTriplePattern;
 import com.bbn.parliament.jena.query.optimize.UpdatedStaticCountTransformation;
 import com.bbn.parliament.jena.query.optimize.pattern.IndexSubPatternPropertyFunction;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.engine.iterator.QueryIterFilterExpr;
-import com.hp.hpl.jena.sparql.engine.optimizer.reorder.ReorderTransformation;
-import com.hp.hpl.jena.sparql.expr.E_GreaterThan;
-import com.hp.hpl.jena.sparql.expr.E_GreaterThanOrEqual;
-import com.hp.hpl.jena.sparql.expr.E_LessThan;
-import com.hp.hpl.jena.sparql.expr.E_LessThanOrEqual;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction2;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.util.IterLib;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
  * Utility class for solving queries. The methods for answering BasicPatterns,
@@ -76,11 +77,11 @@ public class SolverUtil {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SolverUtil.class);
 
-	private static final Node rdfSubject = Node.createURI(RDF.subject.getURI());
-	private static final Node rdfPredicate = Node.createURI(RDF.predicate.getURI());
-	private static final Node rdfObject = Node.createURI(RDF.object.getURI());
-	private static final Node rdfType = Node.createURI(RDF.type.getURI());
-	private static final Node rdfStatement = Node.createURI(RDF.Statement.getURI());
+	private static final Node rdfSubject = NodeFactory.createURI(RDF.subject.getURI());
+	private static final Node rdfPredicate = NodeFactory.createURI(RDF.predicate.getURI());
+	private static final Node rdfObject = NodeFactory.createURI(RDF.object.getURI());
+	private static final Node rdfType = NodeFactory.createURI(RDF.type.getURI());
+	private static final Node rdfStatement = NodeFactory.createURI(RDF.Statement.getURI());
 
 	public static QueryIterator solve(
 		IndexSubPatternPropertyFunction<?> indexPattern,

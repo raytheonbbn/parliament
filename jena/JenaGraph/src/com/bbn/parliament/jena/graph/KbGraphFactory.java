@@ -8,11 +8,12 @@ package com.bbn.parliament.jena.graph;
 
 import java.io.File;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.shared.uuid.JenaUUID;
+
 import com.bbn.parliament.jena.graph.union.KbUnionGraph;
 import com.bbn.parliament.jena.graph.union.KbUnionableGraph;
 import com.bbn.parliament.jni.KbConfig;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.shared.uuid.JenaUUID;
 
 /** @author sallen */
 public class KbGraphFactory {

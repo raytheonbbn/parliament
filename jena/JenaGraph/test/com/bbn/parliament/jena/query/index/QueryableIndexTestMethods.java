@@ -9,11 +9,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.Iterator;
 import java.util.stream.IntStream;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.util.iterator.NiceIterator;
+
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.QueryableIndex;
 import com.bbn.parliament.jena.graph.index.Record;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 public abstract class QueryableIndexTestMethods<T extends QueryableIndex<I>, I> extends IndexTestMethods<T, I> {
 	// Test method

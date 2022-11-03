@@ -6,6 +6,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.query.ARQ;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.op.Op1;
+import org.apache.jena.sparql.algebra.op.OpBGP;
+import org.apache.jena.sparql.algebra.optimize.Rewrite;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.engine.main.OpExecutor;
+import org.apache.jena.sparql.sse.SSE;
+import org.apache.jena.sparql.util.Context;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,19 +37,6 @@ import com.bbn.parliament.jena.query.index.mock.MockIndexFactory;
 import com.bbn.parliament.jena.query.index.mock.MockPatternQuerier;
 import com.bbn.parliament.jena.query.index.mock.MockPropertyFunction;
 import com.bbn.parliament.jena.query.optimize.KbOptimize;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.ARQ;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.algebra.op.Op1;
-import com.hp.hpl.jena.sparql.algebra.op.OpBGP;
-import com.hp.hpl.jena.sparql.algebra.optimize.Rewrite;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.engine.main.OpExecutor;
-import com.hp.hpl.jena.sparql.sse.SSE;
-import com.hp.hpl.jena.sparql.util.Context;
 
 public class IndexExecutionTest {
 	private static final int NUM_MOCKED_ITEMS = 5;

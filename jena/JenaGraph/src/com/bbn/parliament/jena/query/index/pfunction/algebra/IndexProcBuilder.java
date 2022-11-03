@@ -1,21 +1,21 @@
 package com.bbn.parliament.jena.query.index.pfunction.algebra;
 
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.pfunction.PropFuncArg;
+import org.apache.jena.sparql.pfunction.PropertyFunctionRegistry;
+import org.apache.jena.sparql.procedure.Procedure;
+import org.apache.jena.sparql.serializer.SerializationContext;
+import org.apache.jena.sparql.util.Context;
+import org.apache.jena.sparql.util.FmtUtils;
+import org.apache.jena.sparql.util.PrintSerializableBase;
 
 import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunction;
 import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunctionFactory;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.pfunction.PropFuncArg;
-import com.hp.hpl.jena.sparql.pfunction.PropertyFunctionRegistry;
-import com.hp.hpl.jena.sparql.procedure.Procedure;
-import com.hp.hpl.jena.sparql.serializer.SerializationContext;
-import com.hp.hpl.jena.sparql.util.Context;
-import com.hp.hpl.jena.sparql.util.FmtUtils;
-import com.hp.hpl.jena.sparql.util.PrintSerializableBase;
 
 /**
  * A procedure builder.  This is modeled on ARQ's

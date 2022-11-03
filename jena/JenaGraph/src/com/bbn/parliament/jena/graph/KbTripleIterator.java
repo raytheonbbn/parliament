@@ -6,11 +6,12 @@
 
 package com.bbn.parliament.jena.graph;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.NiceIterator;
+
 import com.bbn.parliament.jni.StmtIterator;
 import com.bbn.parliament.jni.StmtIterator.Statement;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 public class KbTripleIterator extends NiceIterator<Triple> {
 	private StmtIterator si;

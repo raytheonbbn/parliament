@@ -2,6 +2,11 @@ package com.bbn.parliament.jena.query.index.pfunction;
 
 import java.util.List;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.pfunction.PropFuncArgType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,11 +15,6 @@ import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.graph.index.Index;
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.IndexManager;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.pfunction.PropFuncArgType;
 
 /**
  * A property function that enables or disables indexes. Enabling indexes

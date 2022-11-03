@@ -6,29 +6,30 @@
 
 package com.bbn.parliament.jena.query;
 
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.op.OpBGP;
+import org.apache.jena.sparql.algebra.op.OpExt;
+import org.apache.jena.sparql.algebra.op.OpFilter;
+import org.apache.jena.sparql.algebra.op.OpJoin;
+import org.apache.jena.sparql.algebra.op.OpLeftJoin;
+import org.apache.jena.sparql.algebra.op.OpSequence;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.engine.iterator.QueryIterFilterExpr;
+import org.apache.jena.sparql.engine.main.JoinClassifier;
+import org.apache.jena.sparql.engine.main.LeftJoinClassifier;
+import org.apache.jena.sparql.engine.main.OpExecutor;
+import org.apache.jena.sparql.engine.main.OpExecutorFactory;
+import org.apache.jena.sparql.engine.main.iterator.QueryIterJoin;
+import org.apache.jena.sparql.engine.main.iterator.QueryIterLeftJoin;
+import org.apache.jena.sparql.engine.main.iterator.QueryIterOptionalIndex;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprList;
+
 import com.bbn.parliament.jena.Kb;
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.query.index.pfunction.algebra.OpIndexPropFunc;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.algebra.op.OpBGP;
-import com.hp.hpl.jena.sparql.algebra.op.OpExt;
-import com.hp.hpl.jena.sparql.algebra.op.OpFilter;
-import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
-import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
-import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.engine.iterator.QueryIterFilterExpr;
-import com.hp.hpl.jena.sparql.engine.main.JoinClassifier;
-import com.hp.hpl.jena.sparql.engine.main.LeftJoinClassifier;
-import com.hp.hpl.jena.sparql.engine.main.OpExecutor;
-import com.hp.hpl.jena.sparql.engine.main.OpExecutorFactory;
-import com.hp.hpl.jena.sparql.engine.main.iterator.QueryIterJoin;
-import com.hp.hpl.jena.sparql.engine.main.iterator.QueryIterLeftJoin;
-import com.hp.hpl.jena.sparql.engine.main.iterator.QueryIterOptionalIndex;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprList;
 
 /**
  * An algebra executor for Parliament. The <code>KbOpExecutor</code> processes

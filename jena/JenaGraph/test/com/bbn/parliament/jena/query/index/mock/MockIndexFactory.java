@@ -2,9 +2,10 @@ package com.bbn.parliament.jena.query.index.mock;
 
 import java.util.Properties;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+
 import com.bbn.parliament.jena.graph.index.IndexFactory;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
 
 public class MockIndexFactory extends IndexFactory<MockIndex, Integer> {
 	public MockIndexFactory() {

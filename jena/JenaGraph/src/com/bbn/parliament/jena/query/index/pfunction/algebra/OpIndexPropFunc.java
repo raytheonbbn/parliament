@@ -1,19 +1,19 @@
 package com.bbn.parliament.jena.query.index.pfunction.algebra;
 
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.op.OpExt;
+import org.apache.jena.sparql.algebra.op.OpPropFunc;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.pfunction.PropFuncArg;
+import org.apache.jena.sparql.procedure.Procedure;
+import org.apache.jena.sparql.serializer.SerializationContext;
+import org.apache.jena.sparql.util.NodeIsomorphismMap;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.algebra.op.OpExt;
-import com.hp.hpl.jena.sparql.algebra.op.OpPropFunc;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.pfunction.PropFuncArg;
-import com.hp.hpl.jena.sparql.procedure.Procedure;
-import com.hp.hpl.jena.sparql.serializer.SerializationContext;
-import com.hp.hpl.jena.sparql.util.NodeIsomorphismMap;
 
 /** @author rbattle */
 public class OpIndexPropFunc extends OpExt {
@@ -55,7 +55,7 @@ public class OpIndexPropFunc extends OpExt {
 
 		subjectArgs.output(out, sCxt);
 		out.print(' ');
-		out.print(uri);
+		out.print(uri.toString());
 		out.print(' ');
 		objectArgs.output(out, sCxt);
 

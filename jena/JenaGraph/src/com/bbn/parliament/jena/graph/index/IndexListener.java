@@ -1,23 +1,23 @@
 package com.bbn.parliament.jena.graph.index;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphListener;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NiceIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.GraphListener;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.util.iterator.ArrayIterator;
-import com.hp.hpl.jena.util.iterator.ClosableIterator;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 /**
  * A wrapper for an {@link Index}. The <code>IndexListener</code> wraps an
  * <code>Index</code> with a <code>GraphListener</code> and passes all add and delete
- * events to the <code>Index</code>.
+ * events to the <code>Index</code>. d
  *
  * @param <T> The type of object to index
  * @author rbattle
@@ -103,7 +103,7 @@ class IndexListener<T> implements GraphListener {
 
 	@Override
 	public void notifyAddArray(Graph g, Triple[] triples) {
-		notifyAddIterator(g, new ArrayIterator<>(triples));
+		notifyAddIterator(g, Arrays.asList(triples).iterator());
 	}
 
 	@Override
@@ -137,7 +137,7 @@ class IndexListener<T> implements GraphListener {
 
 	@Override
 	public void notifyDeleteArray(Graph g, Triple[] triples) {
-		notifyDeleteIterator(g, new ArrayIterator<>(triples));
+		notifyDeleteIterator(g, Arrays.asList(triples).iterator());
 	}
 
 	@Override

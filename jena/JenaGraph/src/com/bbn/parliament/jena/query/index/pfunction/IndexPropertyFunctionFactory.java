@@ -1,6 +1,6 @@
 package com.bbn.parliament.jena.query.index.pfunction;
 
-import com.hp.hpl.jena.sparql.pfunction.PropertyFunctionFactory;
+import org.apache.jena.sparql.pfunction.PropertyFunctionFactory;
 
 /** @author rbattle */
 public interface IndexPropertyFunctionFactory<T> extends PropertyFunctionFactory {

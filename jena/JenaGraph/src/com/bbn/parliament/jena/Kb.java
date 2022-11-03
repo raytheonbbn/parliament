@@ -1,15 +1,16 @@
 package com.bbn.parliament.jena;
 
+import org.apache.jena.query.ARQ;
+import org.apache.jena.sparql.engine.main.QC;
+import org.apache.jena.sparql.engine.main.StageBuilder;
+import org.apache.jena.sparql.engine.main.StageGenerator;
+import org.apache.jena.sparql.pfunction.PropertyFunctionRegistry;
+
 import com.bbn.parliament.jena.query.KbOpExecutor;
 import com.bbn.parliament.jena.query.KbQueryEngine;
 import com.bbn.parliament.jena.query.KbStageGenerator;
 import com.bbn.parliament.jena.query.index.pfunction.EnableIndexing;
 import com.bbn.parliament.jena.query.optimize.KbOptimize;
-import com.hp.hpl.jena.query.ARQ;
-import com.hp.hpl.jena.sparql.engine.main.QC;
-import com.hp.hpl.jena.sparql.engine.main.StageBuilder;
-import com.hp.hpl.jena.sparql.engine.main.StageGenerator;
-import com.hp.hpl.jena.sparql.pfunction.PropertyFunctionRegistry;
 
 public class Kb {
 	private static boolean initialized = false;

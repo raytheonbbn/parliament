@@ -1,8 +1,8 @@
 package com.bbn.parliament.jena.query;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.shared.PrefixMapping;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.shared.PrefixMapping;
 
 /** @author dkolas */
 public class ReifiedTriple extends Triple {

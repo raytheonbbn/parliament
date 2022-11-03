@@ -3,15 +3,18 @@ package com.bbn.parliament.jena.query.index.mock;
 import java.util.Collections;
 import java.util.Iterator;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.sparql.pfunction.PropertyFunctionRegistry;
+
 import com.bbn.parliament.jena.graph.index.IndexBase;
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.RangeIndex;
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.RecordFactory;
 import com.bbn.parliament.jena.query.index.QueryCache;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.pfunction.PropertyFunctionRegistry;
+
 
 public class MockIndex extends IndexBase<Integer> implements RangeIndex<Integer> {
 	public static final String NAMESPACE = "http://mock.example.org/";
@@ -127,7 +130,7 @@ public class MockIndex extends IndexBase<Integer> implements RangeIndex<Integer>
 	@Override
 	public Iterator<Record<Integer>> query(Integer value) {
 		return Collections
-			.singletonList(Record.create(Node.createURI("http://example.org/node"), value))
+			.singletonList(Record.create(NodeFactory.createURI("http://example.org/node"), value))
 			.iterator();
 	}
 
@@ -140,7 +143,7 @@ public class MockIndex extends IndexBase<Integer> implements RangeIndex<Integer>
 	public Iterator<Record<Integer>> iterator(Integer start, Integer end) {
 		rangeIteratorCalled = true;
 		return Collections
-			.singletonList(Record.create(Node
+			.singletonList(Record.create(NodeFactory
 				.createURI("http://example.org/node"), end))
 			.iterator();
 	}

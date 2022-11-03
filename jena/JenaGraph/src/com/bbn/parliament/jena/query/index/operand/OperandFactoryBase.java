@@ -3,15 +3,16 @@ package com.bbn.parliament.jena.query.index.operand;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.graph.index.QueryableIndex;
 import com.bbn.parliament.jena.graph.index.Record;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 public abstract class OperandFactoryBase<T> implements OperandFactory<T> {
 	private static Logger log = LoggerFactory.getLogger(OperandFactoryBase.class);
@@ -49,7 +50,7 @@ public abstract class OperandFactoryBase<T> implements OperandFactory<T> {
 	}
 
 	protected static void addTypeTriple(String type, Node rootNode, List<Triple> triples) {
-		triples.add(Triple.create(rootNode, RDF.type.asNode(), Node.createURI(type)));
+		triples.add(Triple.create(rootNode, RDF.type.asNode(), NodeFactory.createURI(type)));
 	}
 
 	protected QueryableIndex<T> index;

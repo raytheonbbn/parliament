@@ -1,14 +1,15 @@
 package com.bbn.parliament.jena.query.index;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.union.KbUnionGraph;
 import com.bbn.parliament.jena.query.SolverUtil;
 import com.bbn.parliament.jena.query.optimize.DefaultCountTransformation;
 import com.bbn.parliament.jena.query.optimize.pattern.IndexSubPatternBGP;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
 
 public final class GraphSubPattern extends IndexSubPatternBGP {
 	private Graph graph;

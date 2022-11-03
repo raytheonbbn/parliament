@@ -4,7 +4,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.jena.iri.IRI;
-import org.openjena.riot.system.PrefixMap;
+import org.apache.jena.riot.system.PrefixMap;
+import org.apache.jena.riot.system.PrefixMapStd;
 
 public class PrefixRegistry {
 	private static final PrefixRegistry INSTANCE = new PrefixRegistry();
@@ -18,7 +19,7 @@ public class PrefixRegistry {
 
 	private PrefixRegistry() {
 		lock = new Object();
-		prefixes = new PrefixMap();
+		prefixes = new PrefixMapStd();
 	}
 
 	public void registerPrefix(String prefix, String uri) {

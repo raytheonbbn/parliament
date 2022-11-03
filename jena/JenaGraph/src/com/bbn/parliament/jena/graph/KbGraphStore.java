@@ -13,6 +13,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphUtil;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.sparql.core.DatasetGraphMap;
+import org.apache.jena.sparql.core.DatasetImpl;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.update.UpdateRequest;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,23 +36,9 @@ import com.bbn.parliament.jena.graph.union.KbUnionGraph;
 import com.bbn.parliament.jena.graph.union.KbUnionableGraph;
 import com.bbn.parliament.jena.joseki.client.StreamUtil;
 import com.bbn.parliament.jni.KbConfig;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.reasoner.InfGraph;
-import com.hp.hpl.jena.shared.JenaException;
-import com.hp.hpl.jena.sparql.core.DatasetGraphMap;
-import com.hp.hpl.jena.sparql.core.DatasetImpl;
-import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.update.GraphStore;
-import com.hp.hpl.jena.update.UpdateRequest;
-import com.hp.hpl.jena.util.iterator.ClosableIterator;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 /** @author sallen */
-public class KbGraphStore extends DatasetGraphMap implements GraphStore {
+public class KbGraphStore extends DatasetGraphMap {
 	public static final String PARLIAMENT_NS          = "http://parliament.semwebcentral.org/parliament#";
 	public static final String MASTER_GRAPH           = PARLIAMENT_NS + "MasterGraph";
 	public static final String GRAPH_CLASS            = PARLIAMENT_NS + "NamedGraph";
@@ -63,7 +64,7 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 	public void initialize() {
 		@SuppressWarnings("resource")
 		Graph masterGraph = KbGraphFactory.createMasterGraph();
-		addGraph(Node.createURI(MASTER_GRAPH), masterGraph, MASTER_GRAPH_DIR, false);
+		addGraph(NodeFactory.createURI(MASTER_GRAPH), masterGraph, MASTER_GRAPH_DIR, false);
 
 		if (isIndexingEnabled(DEFAULT_GRAPH_NODE)) {
 			@SuppressWarnings("resource")
@@ -74,7 +75,7 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 			}
 		}
 		// Load all of the existing named graphs
-		ExtendedIterator<Triple> it = masterGraph.find(null, RDF.Nodes.type, Node.createURI(GRAPH_CLASS));
+		ExtendedIterator<Triple> it = masterGraph.find(null, RDF.Nodes.type, NodeFactory.createURI(GRAPH_CLASS));
 		try {
 			while (it.hasNext()) {
 				Triple triple = it.next();
@@ -95,14 +96,14 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 		}
 
 		// Load any existing union graphs
-		it = masterGraph.find(null, RDF.Nodes.type, Node.createURI(UNION_GRAPH_CLASS));
+		it = masterGraph.find(null, RDF.Nodes.type, NodeFactory.createURI(UNION_GRAPH_CLASS));
 		try {
 			while (it.hasNext()) {
 				Triple triple = it.next();
 
 				Node graphName = triple.getSubject();
-				Node leftGraphName = getOneTriple(masterGraph, graphName, Node.createURI(LEFT_GRAPH_PROPERTY), null).getObject();
-				Node rightGraphName = getOneTriple(masterGraph, graphName, Node.createURI(RIGHT_GRAPH_PROPERTY), null).getObject();
+				Node leftGraphName = getOneTriple(masterGraph, graphName, NodeFactory.createURI(LEFT_GRAPH_PROPERTY), null).getObject();
+				Node rightGraphName = getOneTriple(masterGraph, graphName, NodeFactory.createURI(RIGHT_GRAPH_PROPERTY), null).getObject();
 
 				addUnionGraph(graphName, leftGraphName, rightGraphName, false);
 			}
@@ -125,7 +126,7 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 
 	/** Get the master graph, which contains references to all named graphs. */
 	public Graph getMasterGraph() {
-		return getGraph(Node.createURI(MASTER_GRAPH));
+		return getGraph(NodeFactory.createURI(MASTER_GRAPH));
 	}
 
 	/** {@inheritDoc} */
@@ -146,8 +147,9 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 		// If we are passed a non-Parliament graph, then create a new KbGraph and copy all the statements into it
 		if (!((toAdd instanceof KbGraph) || (toAdd instanceof KbUnionGraph))) {
 			Graph kbGraph = getGraphCreate();
-			kbGraph.getBulkUpdateHandler().add(toAdd);
-			toAdd = kbGraph;
+//			kbGraph.getBulkUpdateHandler().add(toAdd);
+//			toAdd = kbGraph;
+			GraphUtil.addInto(kbGraph, toAdd);
 		}
 
 		if (toAdd instanceof KbGraph kbGraph) {
@@ -164,8 +166,8 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 			super.addGraph(graphName, graph);
 			if (addStatementsToMasterGraph) {
 				Graph masterGraph = getMasterGraph();
-				masterGraph.add(Triple.create(graphName, RDF.Nodes.type, Node.createURI(GRAPH_CLASS)));
-				masterGraph.add(Triple.create(graphName, Node.createURI(GRAPH_DIR_PROPERTY), Node.createLiteral(graphDir)));
+				masterGraph.add(Triple.create(graphName, RDF.Nodes.type, NodeFactory.createURI(GRAPH_CLASS)));
+				masterGraph.add(Triple.create(graphName, NodeFactory.createURI(GRAPH_DIR_PROPERTY), NodeFactory.createLiteral(graphDir)));
 			}
 		}
 	}
@@ -191,9 +193,9 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 
 					if (addStatementsToMasterGraph) {
 						Graph masterGraph = getMasterGraph();
-						masterGraph.add(Triple.create(graphName, RDF.Nodes.type, Node.createURI(UNION_GRAPH_CLASS)));
-						masterGraph.add(Triple.create(graphName, Node.createURI(LEFT_GRAPH_PROPERTY), leftGraphName));
-						masterGraph.add(Triple.create(graphName, Node.createURI(RIGHT_GRAPH_PROPERTY), rightGraphName));
+						masterGraph.add(Triple.create(graphName, RDF.Nodes.type, NodeFactory.createURI(UNION_GRAPH_CLASS)));
+						masterGraph.add(Triple.create(graphName, NodeFactory.createURI(LEFT_GRAPH_PROPERTY), leftGraphName));
+						masterGraph.add(Triple.create(graphName, NodeFactory.createURI(RIGHT_GRAPH_PROPERTY), rightGraphName));
 					}
 
 					addGraph(graphName, unionGraph, null, false);
@@ -206,6 +208,7 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 	}
 
 	/** Clear the store and remove all graphs. */
+	@Override
 	public void clear() {
 		clear(false);
 	}
@@ -234,7 +237,7 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 		removeGraph(null);
 
 		// Finally, delete the master graph:
-		removeGraph(Node.createURI(MASTER_GRAPH));
+		removeGraph(NodeFactory.createURI(MASTER_GRAPH));
 
 		if (deleteContainingDirectory) {
 			deleteDirectory(containingDir);
@@ -368,7 +371,7 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 	public String getGraphDir(Node graphName) {
 		return !isDefaultGraphName(graphName) && MASTER_GRAPH.equals(graphName.getURI())
 			? MASTER_GRAPH_DIR
-			: getOneTriple(getMasterGraph(), graphName, Node.createURI(GRAPH_DIR_PROPERTY), null)
+			: getOneTriple(getMasterGraph(), graphName, NodeFactory.createURI(GRAPH_DIR_PROPERTY), null)
 				.getObject().getLiteralLexicalForm();
 	}
 
@@ -417,11 +420,11 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 	public void setIndexingEnabled(Node graphName, boolean enabled) {
 		Node name = graphName;
 		if (isDefaultGraphName(name)) {
-			name = Node.createURI(DEFAULT_GRAPH_URI);
+			name = NodeFactory.createURI(DEFAULT_GRAPH_URI);
 		}
 
 		Graph masterGraph = getMasterGraph();
-		Triple t = Triple.create(name, RDF.Nodes.type, Node.createURI(INDEXED_GRAPH));
+		Triple t = Triple.create(name, RDF.Nodes.type, NodeFactory.createURI(INDEXED_GRAPH));
 		if (enabled) {
 			masterGraph.add(t);
 		} else {
@@ -432,10 +435,10 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 	private boolean isIndexingEnabled(Node graphName) {
 		Node name = graphName;
 		if (isDefaultGraphName(name)) {
-			name = Node.createURI(DEFAULT_GRAPH_URI);
+			name = NodeFactory.createURI(DEFAULT_GRAPH_URI);
 		}
 		Graph masterGraph = getMasterGraph();
-		ExtendedIterator<Triple> it = masterGraph.find(name, RDF.Nodes.type, Node.createURI(INDEXED_GRAPH));
+		ExtendedIterator<Triple> it = masterGraph.find(name, RDF.Nodes.type, NodeFactory.createURI(INDEXED_GRAPH));
 		try {
 			return it.hasNext();
 		} finally {

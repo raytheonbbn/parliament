@@ -1,6 +1,6 @@
 package com.bbn.parliament.jena;
 
-import com.hp.hpl.jena.sparql.util.Symbol;
+import org.apache.jena.sparql.util.Symbol;
 
 public class Constants {
 	public static final String NAMESPACE = "http://parliament.semwebcentral.org/";

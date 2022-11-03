@@ -8,14 +8,13 @@ package com.bbn.parliament.jena.graph.union;
 
 import java.util.Set;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.graph.TripleMatch;
-import com.hp.hpl.jena.graph.compose.Union;
-import com.hp.hpl.jena.graph.query.QueryHandler;
-import com.hp.hpl.jena.graph.query.SimpleQueryHandler;
-import com.hp.hpl.jena.util.CollectionFactory;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.compose.Union;
+import org.apache.jena.sparql.engine.iterator.QueryIter;
+import org.apache.jena.util.CollectionFactory;
+import org.apache.jena.util.iterator.ExtendedIterator;
+
 
 /** @author dkolas */
 public class KbUnionGraph extends Union implements KbUnionableGraph
@@ -58,7 +57,7 @@ public class KbUnionGraph extends Union implements KbUnionableGraph
 	}
 
 	@Override
-	public QueryHandler queryHandler()
+	public QueryIter queryHandler()
 	{
 		if (queryHandler == null)
 		{
@@ -75,7 +74,7 @@ public class KbUnionGraph extends Union implements KbUnionableGraph
 	}
 
 	@Override
-	public ExtendedIterator<Triple> graphBaseFind(TripleMatch t)
+	public ExtendedIterator<Triple> graphBaseFind(Triple t)
 	{
 		if (filtering)
 		{

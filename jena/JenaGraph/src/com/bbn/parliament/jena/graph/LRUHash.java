@@ -9,7 +9,7 @@ package com.bbn.parliament.jena.graph;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.graph.Node;
 
 public class LRUHash extends LinkedHashMap<Node, Long> {
 	private static final long serialVersionUID = 1L;

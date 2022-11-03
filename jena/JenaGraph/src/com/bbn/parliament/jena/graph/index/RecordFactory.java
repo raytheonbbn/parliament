@@ -1,7 +1,8 @@
 package com.bbn.parliament.jena.graph.index;
 
 import java.util.List;
-import com.hp.hpl.jena.graph.Triple;
+
+import org.apache.jena.graph.Triple;
 
 /**
  * A factory for creating {@link Record}s. Each {@link Index} must provide a

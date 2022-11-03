@@ -19,6 +19,14 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.query.QueryCancelledException;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,13 +41,6 @@ import com.bbn.parliament.jena.graph.OptimizationMethod;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jni.KbConfig;
 import com.bbn.parliament.jni.KbInstance;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.QueryCancelledException;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class ComplexUnionGraphTest {
 	private static final String ONT_RSRC = "univ-bench.owl";
@@ -92,10 +93,10 @@ public class ComplexUnionGraphTest {
 		QUERY3
 	};
 
-	private static final Node graph0Name = Node.createURI("http://example.org/graph0");
-	private static final Node graph1Name = Node.createURI("http://example.org/graph1");
-	private static final Node graph2Name = Node.createURI("http://example.org/graph2");
-	private static final Node innerUnionName = Node.createURI("http://example.org/innner-union-graph");
+	private static final Node graph0Name = NodeFactory.createURI("http://example.org/graph0");
+	private static final Node graph1Name = NodeFactory.createURI("http://example.org/graph1");
+	private static final Node graph2Name = NodeFactory.createURI("http://example.org/graph2");
+	private static final Node innerUnionName = NodeFactory.createURI("http://example.org/innner-union-graph");
 
 	private static final Logger LOG = LoggerFactory.getLogger(ComplexUnionGraphTest.class);
 

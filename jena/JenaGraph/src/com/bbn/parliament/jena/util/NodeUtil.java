@@ -1,8 +1,10 @@
 package com.bbn.parliament.jena.util;
 
+import org.apache.jena.graph.BlankNodeId;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+
 import com.bbn.parliament.jena.graph.KbGraph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdf.model.AnonId;
 
 public class NodeUtil {
 	/**
@@ -31,10 +33,11 @@ public class NodeUtil {
 	public static final Node getNodeRepresentation(String representation) {
 		Node result = null;
 		if (representation.startsWith(KbGraph.MAGICAL_BNODE_PREFIX)) {
-			result = Node.createAnon(AnonId.create(
+			// The equivalent concept for the (BlankNodeId) API is AnonId. Historically, that has been in the org.apache.jena.rdf.model package.
+			result = NodeFactory.createBlankNode(BlankNodeId.create(
 				representation.substring(KbGraph.MAGICAL_BNODE_PREFIX.length())));
 		} else {
-			result = Node.createURI(representation);
+			result = NodeFactory.createURI(representation);
 		}
 		return result;
 	}

@@ -1,26 +1,27 @@
 package com.bbn.parliament.jena.query.optimize;
 
+import org.apache.jena.query.ARQ;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.OpWalker;
+import org.apache.jena.sparql.algebra.Transform;
+import org.apache.jena.sparql.algebra.Transformer;
+import org.apache.jena.sparql.algebra.op.OpPropFunc;
+import org.apache.jena.sparql.algebra.optimize.OpVisitorExprPrepare;
+import org.apache.jena.sparql.algebra.optimize.Optimize;
+import org.apache.jena.sparql.algebra.optimize.Rewrite;
+import org.apache.jena.sparql.algebra.optimize.TransformExpandOneOf;
+import org.apache.jena.sparql.algebra.optimize.TransformFilterConjunction;
+import org.apache.jena.sparql.algebra.optimize.TransformFilterDisjunction;
+import org.apache.jena.sparql.algebra.optimize.TransformFilterEquality;
+import org.apache.jena.sparql.algebra.optimize.TransformJoinStrategy;
+import org.apache.jena.sparql.algebra.optimize.TransformPathFlattern;
+import org.apache.jena.sparql.algebra.optimize.TransformPropertyFunction;
+import org.apache.jena.sparql.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.query.index.pfunction.algebra.OpIndexPropFunc;
-import com.hp.hpl.jena.query.ARQ;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.algebra.OpWalker;
-import com.hp.hpl.jena.sparql.algebra.Transform;
-import com.hp.hpl.jena.sparql.algebra.Transformer;
-import com.hp.hpl.jena.sparql.algebra.op.OpPropFunc;
-import com.hp.hpl.jena.sparql.algebra.optimize.OpVisitorExprPrepare;
-import com.hp.hpl.jena.sparql.algebra.optimize.Optimize;
-import com.hp.hpl.jena.sparql.algebra.optimize.Rewrite;
-import com.hp.hpl.jena.sparql.algebra.optimize.TransformExpandOneOf;
-import com.hp.hpl.jena.sparql.algebra.optimize.TransformFilterConjunction;
-import com.hp.hpl.jena.sparql.algebra.optimize.TransformFilterDisjunction;
-import com.hp.hpl.jena.sparql.algebra.optimize.TransformFilterEquality;
-import com.hp.hpl.jena.sparql.algebra.optimize.TransformJoinStrategy;
-import com.hp.hpl.jena.sparql.algebra.optimize.TransformPathFlattern;
-import com.hp.hpl.jena.sparql.algebra.optimize.TransformPropertyFunction;
-import com.hp.hpl.jena.sparql.util.Context;
 
 /**
  * An algebra optimizer for Parliament. The <code>KbOptimize</code> is an

@@ -6,8 +6,8 @@
 
 package com.bbn.parliament.jena.graph.union;
 
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
 
 /** @author dkolas */
 public interface KbUnionableGraph extends Graph

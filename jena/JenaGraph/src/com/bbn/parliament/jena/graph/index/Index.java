@@ -1,9 +1,11 @@
 package com.bbn.parliament.jena.graph.index;
 
 import java.util.Iterator;
+
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+
 import com.bbn.parliament.jena.query.index.QueryCache;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
 
 /**
  * The interface that defines an external collection of {@link Record}s. This

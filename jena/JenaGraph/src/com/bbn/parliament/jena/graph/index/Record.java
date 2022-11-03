@@ -1,7 +1,7 @@
 package com.bbn.parliament.jena.graph.index;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
 
 /**
  * A representation of data that is indexed. The record is a single piece of indexed data.

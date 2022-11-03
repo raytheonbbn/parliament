@@ -5,6 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.ResultSet;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,25 +27,18 @@ import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.query.index.mock.MockIndex;
 import com.bbn.parliament.jena.query.index.mock.MockIndexFactory;
 import com.bbn.parliament.jena.query.index.mock.MockPropertyFunction;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.ResultSet;
 
 public class IndexTest {
 	private static TestingDataset dataset;
 	private static MockIndexFactory factory;
 	private static final Triple t = Triple.create(
-		Node.createAnon(),
-		Node.createURI("http://mock.example.org/asdf"),
-		Node.createURI("http://example.org/object"));
+		NodeFactory.createBlankNode(),
+		NodeFactory.createURI("http://mock.example.org/asdf"),
+		NodeFactory.createURI("http://example.org/object"));
 	private static final Triple nonIndexed = Triple.create(
-		Node.createAnon(),
-		Node.createURI("http://example.org/foo"),
-		Node.createURI("http://example.org/object"));
+		NodeFactory.createBlankNode(),
+		NodeFactory.createURI("http://example.org/foo"),
+		NodeFactory.createURI("http://example.org/object"));
 
 	@BeforeAll
 	public static void beforeAll() {

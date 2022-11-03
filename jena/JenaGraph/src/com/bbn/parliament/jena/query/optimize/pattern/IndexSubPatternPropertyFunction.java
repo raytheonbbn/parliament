@@ -5,15 +5,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.engine.iterator.QueryIterRepeatApply;
+
 import com.bbn.parliament.jena.query.index.operand.Operand;
 import com.bbn.parliament.jena.query.index.operand.OperandFactoryHelper;
 import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunction;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.engine.iterator.QueryIterRepeatApply;
 
 public class IndexSubPatternPropertyFunction<T> extends IndexSubPattern {
 	protected IndexPropertyFunction<T> function;

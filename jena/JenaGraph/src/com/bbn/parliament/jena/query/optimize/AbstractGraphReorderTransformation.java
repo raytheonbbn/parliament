@@ -1,8 +1,8 @@
 package com.bbn.parliament.jena.query.optimize;
 
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.engine.optimizer.reorder.ReorderTransformation;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.engine.optimizer.reorder.ReorderTransformation;
 
 public abstract class AbstractGraphReorderTransformation implements ReorderTransformation {
 	protected Graph graph;

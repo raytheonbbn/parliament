@@ -5,19 +5,19 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.query.QueryBuildException;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprEvalException;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.VariableNotBoundException;
+import org.apache.jena.sparql.function.Function;
+import org.apache.jena.sparql.function.FunctionEnv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.QueryBuildException;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprEvalException;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.expr.VariableNotBoundException;
-import com.hp.hpl.jena.sparql.function.Function;
-import com.hp.hpl.jena.sparql.function.FunctionEnv;
 
 /**
  * The createHashUri class implements a custom filter function for ARQ that
@@ -109,7 +109,7 @@ public class createHashUri implements Function {
 			String csvRow = createCsvRowFromStringArray(stringsToBeHashed);
 			LOG.trace("CSV row used to create hashed URI:  {}", csvRow);
 			String result = baseUri + computeHash(csvRow);
-			return NodeValue.makeNode(Node.createURI(result));
+			return NodeValue.makeNode(NodeFactory.createURI(result));
 		} catch (RuntimeException ex) {
 			LOG.error("Unable to create hash URI", ex);
 			throw ex;

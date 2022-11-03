@@ -10,9 +10,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.graph.impl.SimpleBulkUpdateHandler;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.NiceIterator;
+
+//import com.hp.hpl.jena.graph.Triple;
+//import com.hp.hpl.jena.graph.impl.SimpleBulkUpdateHandler;
+//import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 /**
  * @author sallen

@@ -3,11 +3,12 @@ package com.bbn.parliament.jena.graph.index;
 import java.io.File;
 import java.util.Properties;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.util.FileUtil;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
 
 /**
  * A factory for creating {@link Index}es. The <code>IndexFactory</code> is used

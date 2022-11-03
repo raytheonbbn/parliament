@@ -7,6 +7,9 @@ import java.io.StringReader;
 import java.net.URL;
 
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFErrorHandler;
+import org.apache.jena.rdf.model.RDFReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,9 +18,6 @@ import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.impl.TurtleTripleCallback;
 import com.github.jsonldjava.utils.JsonUtils;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFErrorHandler;
-import com.hp.hpl.jena.rdf.model.RDFReader;
 
 public class JsonLdRdfReader implements RDFReader {
 	/** Mime type for JSON-LD */

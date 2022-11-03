@@ -3,11 +3,12 @@ package com.bbn.parliament.jena.query.index.pfunction;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.pfunction.PropFuncArgType;
+
 import com.bbn.parliament.jena.graph.index.QueryableIndex;
 import com.bbn.parliament.jena.query.index.operand.Operand;
 import com.bbn.parliament.jena.query.index.operand.OperandFactory;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.pfunction.PropFuncArgType;
 
 /**
  * An {@link IndexPropertyFunction} that estimate how many results it will

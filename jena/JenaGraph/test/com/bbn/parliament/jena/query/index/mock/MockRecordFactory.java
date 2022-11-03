@@ -2,9 +2,10 @@ package com.bbn.parliament.jena.query.index.mock;
 
 import java.util.List;
 
+import org.apache.jena.graph.Triple;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.RecordFactory;
-import com.hp.hpl.jena.graph.Triple;
 
 public class MockRecordFactory implements RecordFactory<Integer> {
 	@Override

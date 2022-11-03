@@ -2,12 +2,14 @@ package com.bbn.parliament.jena.query.optimize.pattern;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+
 import com.bbn.parliament.jena.query.index.IndexPatternQuerier;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
 
 public class IndexSubPatternBGP extends IndexSubPattern implements EstimablePattern {
 	private IndexPatternQuerier querier;

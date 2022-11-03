@@ -6,15 +6,16 @@
 
 package com.bbn.parliament.jena.modify;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.AlreadyExists;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.modify.UpdateEngineWorker;
+import org.apache.jena.sparql.modify.request.UpdateCreate;
+import org.apache.jena.sparql.util.Context;
+
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.KbGraphFactory;
 import com.bbn.parliament.jena.graph.KbGraphStore;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.AlreadyExists;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.modify.UpdateEngineWorker;
-import com.hp.hpl.jena.sparql.modify.request.UpdateCreate;
-import com.hp.hpl.jena.sparql.util.Context;
 
 /** @author sallen */
 public class KbUpdateEngineWorker extends UpdateEngineWorker {

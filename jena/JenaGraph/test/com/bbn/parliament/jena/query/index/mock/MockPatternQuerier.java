@@ -3,21 +3,23 @@ package com.bbn.parliament.jena.query.index.mock;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.jena.graph.BlankNodeId;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.core.Substitute;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.engine.binding.BindingFactory;
+import org.apache.jena.sparql.engine.binding.BindingMap;
+import org.apache.jena.sparql.engine.iterator.QueryIterPlainWrapper;
+import org.apache.jena.sparql.engine.iterator.QueryIterRepeatApply;
+import org.apache.jena.sparql.util.IterLib;
+
 import com.bbn.parliament.jena.query.index.IndexPatternQuerier;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.AnonId;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.core.Substitute;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.engine.binding.BindingFactory;
-import com.hp.hpl.jena.sparql.engine.binding.BindingMap;
-import com.hp.hpl.jena.sparql.engine.iterator.QueryIterPlainWrapper;
-import com.hp.hpl.jena.sparql.engine.iterator.QueryIterRepeatApply;
-import com.hp.hpl.jena.sparql.util.IterLib;
 
 public class MockPatternQuerier implements IndexPatternQuerier {
 	public static String NAMESPACE = "http://example.org/mock#";
@@ -58,11 +60,11 @@ public class MockPatternQuerier implements IndexPatternQuerier {
 					boolean changed = false;
 					for (Triple t : bgp) {
 						if (t.getSubject().isVariable()) {
-							b.add(Var.alloc(t.getSubject()), Node.createAnon(AnonId.create("node" + (counter++))));
+							b.add(Var.alloc(t.getSubject()), NodeFactory.createBlankNode(BlankNodeId.create("node" + (counter++))));
 							changed = true;
 						}
 						if (t.getObject().isVariable()) {
-							b.add(Var.alloc(t.getObject()), Node.createAnon(AnonId.create("node" + (counter++))));
+							b.add(Var.alloc(t.getObject()), NodeFactory.createBlankNode(BlankNodeId.create("node" + (counter++))));
 							changed = true;
 						}
 					}

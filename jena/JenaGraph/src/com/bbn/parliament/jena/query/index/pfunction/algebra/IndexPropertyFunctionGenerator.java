@@ -10,25 +10,26 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.op.OpBGP;
+import org.apache.jena.sparql.algebra.op.OpSequence;
+import org.apache.jena.sparql.algebra.op.OpTable;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.engine.binding.BindingRoot;
+import org.apache.jena.sparql.pfunction.PropFuncArg;
+import org.apache.jena.sparql.pfunction.PropertyFunctionFactory;
+import org.apache.jena.sparql.pfunction.PropertyFunctionRegistry;
+import org.apache.jena.sparql.util.Context;
+import org.apache.jena.sparql.util.graph.GNode;
+import org.apache.jena.sparql.util.graph.GraphList;
+
 import com.bbn.parliament.jena.query.index.operand.Operand;
 import com.bbn.parliament.jena.query.index.operand.OperandFactoryHelper;
 import com.bbn.parliament.jena.query.index.pfunction.EstimableIndexPropertyFunction;
 import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunction;
 import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunctionFactory;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.algebra.op.OpBGP;
-import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
-import com.hp.hpl.jena.sparql.algebra.op.OpTable;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.engine.binding.BindingRoot;
-import com.hp.hpl.jena.sparql.pfunction.PropFuncArg;
-import com.hp.hpl.jena.sparql.pfunction.PropertyFunctionFactory;
-import com.hp.hpl.jena.sparql.pfunction.PropertyFunctionRegistry;
-import com.hp.hpl.jena.sparql.util.Context;
-import com.hp.hpl.jena.sparql.util.graph.GNode;
-import com.hp.hpl.jena.sparql.util.graph.GraphList;
 
 /**
  * A generator for {@link IndexPropertyFunction}s. This is modeled on ARQ's

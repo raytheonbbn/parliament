@@ -12,6 +12,14 @@ import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.jena.graph.BlankNodeId;
+import org.apache.jena.graph.Capabilities;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.GraphBase;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NiceIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,15 +35,10 @@ import com.bbn.parliament.jni.KbInstance.GetExcessCapacityResult;
 import com.bbn.parliament.jni.ReificationIterator;
 import com.bbn.parliament.jni.StmtIterator;
 import com.bbn.parliament.jni.StmtIterator.Statement;
-import com.hp.hpl.jena.graph.BulkUpdateHandler;
-import com.hp.hpl.jena.graph.Capabilities;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.graph.TripleMatch;
-import com.hp.hpl.jena.graph.impl.GraphBase;
-import com.hp.hpl.jena.rdf.model.AnonId;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
+//import com.hp.hpl.jena.graph.BulkUpdateHandler;
+//import com.hp.hpl.jena.graph.Node;
+//import com.hp.hpl.jena.graph.Triple;
+//import com.hp.hpl.jena.graph.TripleMatch;
 
 public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 	public static final String MAGICAL_BNODE_PREFIX = "~@#$BNODE";
@@ -152,7 +155,7 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 	 */
 	@SuppressWarnings("resource")
 	@Override
-	public ExtendedIterator<Triple> graphBaseFind(TripleMatch m) {
+	public ExtendedIterator<Triple> graphBaseFind(Triple m) {
 		try {
 			long subjId, predId, objId;
 			subjId = getKbId(m.getMatchSubject(), false);
@@ -323,14 +326,15 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 		// return queryHandler;
 	// }
 
-	@Override
-	public BulkUpdateHandler getBulkUpdateHandler() {
-		if (updateHandler == null) {
-			updateHandler = new KbBulkUpdateHandler(this);
-		}
-		return updateHandler;
-	}
+//	@Override
+//	public BulkUpdateHandler getBulkUpdateHandler() {
+//		if (updateHandler == null) {
+//			updateHandler = new KbBulkUpdateHandler(this);
+//		}
+//		return updateHandler;
+//	}
 
+	@Override
 	public void clear() {
 		kb.finalize();
 		kb = null;
@@ -358,10 +362,11 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 		String representation = kb.rsrcIdToUri(resourceId);
 		Node result = null;
 		if (representation.startsWith(MAGICAL_BNODE_PREFIX)) {
-			result = Node.createAnon(AnonId.create(representation
+			// The equivalent concept for the (BlankNodeId) API is AnonId. Historically, that has been in the org.apache.jena.rdf.model package.
+			result = NodeFactory.createBlankNode(BlankNodeId.create(representation
 				.substring(MAGICAL_BNODE_PREFIX.length())));
 		} else {
-			result = Node.createURI(representation);
+			result = NodeFactory.createURI(representation);
 		}
 		return result;
 	}
@@ -394,11 +399,11 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 			lexicalForm = literal.substring(1, quoteIndex);
 		}
 		if (!datatype.equals("")) {
-			result = Node.createLiteral(lexicalForm, lang, Node.getType(datatype));
+			result = NodeFactory.createLiteral(lexicalForm, lang, NodeFactory.getType(datatype));
 		} else if (!lang.equals("")) {
-			result = Node.createLiteral(lexicalForm, lang, null);
+			result = NodeFactory.createLiteral(lexicalForm, lang, null);
 		} else {
-			result = Node.createLiteral(lexicalForm);
+			result = NodeFactory.createLiteral(lexicalForm);
 		}
 		return result;
 	}

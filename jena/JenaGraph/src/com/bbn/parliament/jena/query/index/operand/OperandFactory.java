@@ -1,9 +1,10 @@
 package com.bbn.parliament.jena.query.index.operand;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.engine.binding.Binding;
+
 import com.bbn.parliament.jena.graph.index.QueryableIndex;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
 
 public interface OperandFactory<T> {
 	public void setIndex(QueryableIndex<T> index);

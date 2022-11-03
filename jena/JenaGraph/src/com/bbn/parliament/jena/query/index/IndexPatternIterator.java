@@ -2,10 +2,11 @@ package com.bbn.parliament.jena.query.index;
 
 import java.util.List;
 
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+
 import com.bbn.parliament.jena.query.optimize.pattern.IndexSubPattern;
 import com.bbn.parliament.jena.util.AbstractIteratorWithChildren;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
 
 /**
  * QueryIterator for Subqueries. Each subquery is iterated over. The binding

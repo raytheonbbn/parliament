@@ -1,11 +1,12 @@
 package com.bbn.parliament.jena.query;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.engine.main.StageGenerator;
+
 import com.bbn.parliament.jena.query.SolverUtil.BasicGraphSolverExecutor;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.engine.main.StageGenerator;
 
 public class KbStageGenerator implements StageGenerator {
 	// Using OpExecutor is preferred.

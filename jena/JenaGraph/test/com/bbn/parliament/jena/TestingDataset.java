@@ -3,14 +3,16 @@ package com.bbn.parliament.jena;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.KbGraphFactory;
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.joseki.client.StreamUtil;
-import com.hp.hpl.jena.graph.Node;
 
 public class TestingDataset {
-	public static final Node NAMED_GRAPH_URI = Node.createURI("http://example.org/testgraph");
+	public static final Node NAMED_GRAPH_URI = NodeFactory.createURI("http://example.org/testgraph");
 
 	private KbGraph defaultGraph;
 	private KbGraph namedGraph;
@@ -64,6 +66,6 @@ public class TestingDataset {
 	}
 
 	public KbGraph getNamedGraph(String graphUri) {
-		return getNamedGraph(Node.createURI(graphUri));
+		return getNamedGraph(NodeFactory.createURI(graphUri));
 	}
 }

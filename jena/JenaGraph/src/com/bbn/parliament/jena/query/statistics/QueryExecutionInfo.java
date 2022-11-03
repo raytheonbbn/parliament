@@ -1,6 +1,6 @@
 package com.bbn.parliament.jena.query.statistics;
 
-import com.hp.hpl.jena.query.Query;
+import org.apache.jena.query.Query;
 
 public class QueryExecutionInfo {
 	private long creationTime;

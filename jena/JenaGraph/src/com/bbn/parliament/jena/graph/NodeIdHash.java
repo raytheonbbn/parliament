@@ -6,10 +6,10 @@
 
 package com.bbn.parliament.jena.graph;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.mem.HashCommon;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
+import org.apache.jena.graph.Node;
+import org.apache.jena.mem.HashCommon;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NiceIterator;
 
 /** @author dkolas */
 public class NodeIdHash extends HashCommon<Node>

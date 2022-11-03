@@ -1,13 +1,14 @@
 package com.bbn.parliament.jena.query.optimize;
 
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.TransformCopy;
+import org.apache.jena.sparql.algebra.op.OpBGP;
+import org.apache.jena.sparql.algebra.op.OpTriple;
+import org.apache.jena.sparql.pfunction.PropertyFunctionRegistry;
+import org.apache.jena.sparql.util.Context;
+
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.query.index.pfunction.algebra.IndexPropertyFunctionGenerator;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.algebra.TransformCopy;
-import com.hp.hpl.jena.sparql.algebra.op.OpBGP;
-import com.hp.hpl.jena.sparql.algebra.op.OpTriple;
-import com.hp.hpl.jena.sparql.pfunction.PropertyFunctionRegistry;
-import com.hp.hpl.jena.sparql.util.Context;
 
 public class TransformIndexPropertyFunction extends TransformCopy {
 	private Context context;

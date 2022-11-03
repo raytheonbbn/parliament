@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.engine.optimizer.reorder.ReorderProc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +24,6 @@ import com.bbn.parliament.jena.query.optimize.pattern.IndexSubPattern;
 import com.bbn.parliament.jena.query.optimize.pattern.IndexSubPatternBGP;
 import com.bbn.parliament.jena.query.optimize.pattern.IndexSubPatternFactory;
 import com.bbn.parliament.jena.query.optimize.pattern.IndexSubPatternPropertyFunction;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.engine.optimizer.reorder.ReorderProc;
 
 public class IndexTransformation extends AbstractGraphReorderTransformation {
 	static Logger log = LoggerFactory.getLogger(IndexTransformation.class);

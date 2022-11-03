@@ -6,9 +6,6 @@
 
 package com.bbn.parliament.jena.graph;
 
-import com.hp.hpl.jena.graph.query.Domain;
-import com.hp.hpl.jena.graph.query.QueryNode;
-import com.hp.hpl.jena.graph.query.QueryTriple;
 
 /** @author dkolas */
 public final class VariableBindingInfo {

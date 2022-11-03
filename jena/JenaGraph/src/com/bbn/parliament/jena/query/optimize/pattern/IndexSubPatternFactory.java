@@ -2,14 +2,16 @@ package com.bbn.parliament.jena.query.optimize.pattern;
 
 import java.util.List;
 import java.util.Map;
+
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.BasicPattern;
+
 import com.bbn.parliament.jena.query.index.GraphSubPattern;
 import com.bbn.parliament.jena.query.index.IndexPatternQuerier;
 import com.bbn.parliament.jena.query.index.operand.Operand;
 import com.bbn.parliament.jena.query.index.pfunction.EstimableIndexPropertyFunction;
 import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunction;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
 
 public class IndexSubPatternFactory {
 	public static <T> IndexSubPatternPropertyFunction<T> create(IndexPropertyFunction<T> pf,
