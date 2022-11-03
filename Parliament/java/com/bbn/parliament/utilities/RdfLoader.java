@@ -12,9 +12,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.jena.rdfxml.xmlinput.ARP;
+
 import com.bbn.parliament.jni.KbConfig;
 import com.bbn.parliament.jni.KbInstance;
-import com.hp.hpl.jena.rdf.arp.ARP;
 
 /** @author Paul Neves Created on Oct 29, 2002. */
 public class RdfLoader

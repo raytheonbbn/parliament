@@ -11,11 +11,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdfxml.xmlinput.ARP;
 import org.xml.sax.SAXException;
 
-import com.hp.hpl.jena.rdf.arp.ARP;
-import com.hp.hpl.jena.rdf.arp.StatementHandler;
-import com.hp.hpl.jena.rdf.model.Model;
 
 /**
  * Class or Interface Description

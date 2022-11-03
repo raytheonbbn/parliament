@@ -10,15 +10,15 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.jena.rdfxml.xmlinput.ALiteral;
+import org.apache.jena.rdfxml.xmlinput.AResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jni.KbInstance;
 import com.bbn.parliament.queryoptimization.TreeWidthEstimator;
-import com.hp.hpl.jena.rdf.arp.ALiteral;
-import com.hp.hpl.jena.rdf.arp.AResource;
 
-public class StatementHandler implements com.hp.hpl.jena.rdf.arp.StatementHandler
+public class StatementHandler implements org.apache.jena.rdfxml.xmlinput.StatementHandler
 {
 	private static final File STATEMENTS_FILE = new File("statements.mem");
 	private static final File RESOURCES_FILE  = new File("resources.mem");
