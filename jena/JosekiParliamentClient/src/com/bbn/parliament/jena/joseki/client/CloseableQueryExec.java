@@ -3,16 +3,16 @@ package com.bbn.parliament.jena.joseki.client;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.sparql.util.Context;
-import com.hp.hpl.jena.util.FileManager;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.sparql.util.Context;
+
 
 public class CloseableQueryExec implements AutoCloseable, QueryExecution {
 	private QueryExecution qe;
@@ -53,10 +53,10 @@ public class CloseableQueryExec implements AutoCloseable, QueryExecution {
 		}
 	}
 
-	@Override
-	public void setFileManager(FileManager fm) {
-		qe.setFileManager(fm);
-	}
+//	@Override
+//	public void setFileManager(FileManager fm) {
+//		qe.setFileManager(fm);
+//	}
 
 	@Override
 	public void setInitialBinding(QuerySolution binding) {
@@ -141,5 +141,23 @@ public class CloseableQueryExec implements AutoCloseable, QueryExecution {
 	@Override
 	public void setTimeout(long timeout1, long timeout2) {
 		qe.setTimeout(timeout1, timeout2);
+	}
+
+	@Override
+	public boolean isClosed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public long getTimeout1() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public long getTimeout2() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

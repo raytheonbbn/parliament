@@ -7,8 +7,9 @@
 package com.bbn.parliament.jena.joseki.client;
 
 import java.util.Iterator;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Resource;
+
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Resource;
 
 /** @author dkolas */
 public class NamedGraphResults implements Iterator<String> {
