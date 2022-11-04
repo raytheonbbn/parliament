@@ -19,10 +19,8 @@ import org.apache.jena.graph.GraphUtil;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Node_Literal;
 import org.apache.jena.graph.Triple;
-import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -89,14 +87,7 @@ public class KbGraphTest {
 			model.read(
 				"file:///c:/jfpactd/ontology/ont/ontology/domain/src/capability.ttl", "N3");
 
-			// Triple t = new Triple(Node.create("x"), Node.create("y"), Node.create("z"));
-			// Triple t2 = new Triple(Node.create("z"), Node.create("a"), Node.create("b"));
-			// Triple t3 = new Triple(Node.create("b"), Node.create("c"), Node.create("d"));
-
-			// graph.add(t);
-			// graph.add(t2);
-			// graph.add(t3);
-			String queryString = """
+			final String query = """
 				PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 				SELECT ?q ?r WHERE {
 					?q rdfs:subClassOf ?x .
@@ -104,30 +95,13 @@ public class KbGraphTest {
 					?q rdfs:comment ?r .
 				}
 				""";
-			Query query = QueryFactory.create(queryString);
 
-			QueryExecution executionFactory = QueryExecutionFactory.create(query,
-				model);
-
-			ResultSet result = executionFactory.execSelect();
-			while (result.hasNext()) {
-				System.out.println(result.nextSolution());
+			try (QueryExecution qExec = QueryExecutionFactory.create(query, model)) {
+				ResultSet result = qExec.execSelect();
+				while (result.hasNext()) {
+					System.out.println(result.nextSolution());
+				}
 			}
-
-			//System.out.println(graph.size());
-			//Triple t = new Triple(Node.create("x"), Node.create("y"), Node.create("z"));
-			//graph.add(t);
-			//System.out.println(graph.size());
-			//Iterator i = graph.find(Node.ANY, Node.ANY, Node.ANY);
-			//while (i.hasNext()) {
-			//	System.out.println("triple: " + i.next());
-			//}
-			//graph.delete(t);
-			//System.out.println(graph.size());
-			//i = graph.find(Node.ANY, Node.ANY, Node.ANY);
-			//while (i.hasNext()) {
-			//	System.out.println("triple: " + i.next());
-			//}
 		}
 	}
 
@@ -173,7 +147,7 @@ public class KbGraphTest {
 		graphAdd(content, addStr);
 		Triple remove = NodeCreateUtils.createTriple(removeStr);
 		Graph expected = graphWith(resultStr == null ? "" : resultStr);
-		content.getBulkUpdateHandler().remove(remove.getSubject(), remove.getPredicate(), remove.getObject());
+		GraphUtil.remove(content, remove.getSubject(), remove.getPredicate(), remove.getObject());
 		Graph finalContent = remove(copy(content), baseContent);
 		assertIsomorphic(removeStr, expected, finalContent);
 	}
@@ -208,13 +182,13 @@ public class KbGraphTest {
 	}
 
 	private static Graph remove(Graph toUpdate, Graph toRemove) {
-		toUpdate.getBulkUpdateHandler().delete(toRemove);
+		GraphUtil.deleteFrom(toUpdate, toRemove);
 		return toUpdate;
 	}
 
 	private static Graph copy(Graph g) {
 		Graph result = Factory.createDefaultGraph();
-		result.getBulkUpdateHandler().add(g);
+		GraphUtil.addInto(result, g);
 		return result;
 	}
 

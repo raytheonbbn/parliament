@@ -51,6 +51,7 @@ public class QuerySolutionStream implements Stream<QuerySolution> {
 	 * @param queryStr The query to execute
 	 * @param service The service against which to execute the query
 	 */
+	@SuppressWarnings("resource")
 	public QuerySolutionStream(String queryStr, String service) {
 		this(QueryExecutionFactory.sparqlService(service, queryStr));
 	}
@@ -62,6 +63,7 @@ public class QuerySolutionStream implements Stream<QuerySolution> {
 	 * @param query The query to execute
 	 * @param service The service against which to execute the query
 	 */
+	@SuppressWarnings("resource")
 	public QuerySolutionStream(Query query, String service) {
 		this(QueryExecutionFactory.sparqlService(service, query));
 	}
@@ -73,6 +75,7 @@ public class QuerySolutionStream implements Stream<QuerySolution> {
 	 * @param queryStr The query to execute
 	 * @param dataset The dataset against which to execute the query
 	 */
+	@SuppressWarnings("resource")
 	public QuerySolutionStream(String queryStr, Dataset dataset) {
 		this(QueryExecutionFactory.create(queryStr, dataset));
 	}
@@ -84,6 +87,7 @@ public class QuerySolutionStream implements Stream<QuerySolution> {
 	 * @param query The query to execute
 	 * @param dataset The dataset against which to execute the query
 	 */
+	@SuppressWarnings("resource")
 	public QuerySolutionStream(Query query, Dataset dataset) {
 		this(QueryExecutionFactory.create(query, dataset));
 	}
@@ -95,6 +99,7 @@ public class QuerySolutionStream implements Stream<QuerySolution> {
 	 * @param queryStr The query to execute
 	 * @param model The model against which to execute the query
 	 */
+	@SuppressWarnings("resource")
 	public QuerySolutionStream(String queryStr, Model model) {
 		this(QueryExecutionFactory.create(queryStr, model));
 	}
@@ -106,6 +111,7 @@ public class QuerySolutionStream implements Stream<QuerySolution> {
 	 * @param query The query to execute
 	 * @param model The model against which to execute the query
 	 */
+	@SuppressWarnings("resource")
 	public QuerySolutionStream(Query query, Model model) {
 		this(QueryExecutionFactory.create(query, model));
 	}

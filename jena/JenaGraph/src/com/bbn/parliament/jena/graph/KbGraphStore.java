@@ -24,7 +24,6 @@ import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.core.DatasetGraphMap;
 import org.apache.jena.sparql.core.DatasetImpl;
 import org.apache.jena.sparql.core.Quad;
-import org.apache.jena.update.UpdateRequest;
 import org.apache.jena.util.iterator.ClosableIterator;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.vocabulary.RDF;
@@ -131,7 +130,7 @@ public class KbGraphStore extends DatasetGraphMap {
 
 	/** {@inheritDoc} */
 	@Override
-	protected Graph getGraphCreate() {
+	protected KbGraph getGraphCreate() {
 		return KbGraphFactory.createNamedGraph();
 	}
 
@@ -146,10 +145,10 @@ public class KbGraphStore extends DatasetGraphMap {
 
 		// If we are passed a non-Parliament graph, then create a new KbGraph and copy all the statements into it
 		if (!((toAdd instanceof KbGraph) || (toAdd instanceof KbUnionGraph))) {
-			Graph kbGraph = getGraphCreate();
-//			kbGraph.getBulkUpdateHandler().add(toAdd);
-//			toAdd = kbGraph;
+			@SuppressWarnings("resource")
+			KbGraph kbGraph = getGraphCreate();
 			GraphUtil.addInto(kbGraph, toAdd);
+			toAdd = kbGraph;
 		}
 
 		if (toAdd instanceof KbGraph kbGraph) {
@@ -496,23 +495,8 @@ public class KbGraphStore extends DatasetGraphMap {
 		}
 	}
 
-
-	// Note: the implementation of the following 4 methods comes from GraphStoreBasic
-
-	/** {@inheritDoc} */
-	@Override
 	public Dataset toDataset() {
 		return DatasetImpl.wrap(this);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void startRequest(UpdateRequest request) {
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void finishRequest(UpdateRequest request) {
 	}
 
 	/** {@inheritDoc} */

@@ -62,7 +62,8 @@ public class TransformFilterPlacementWithOptional extends TransformFilterPlaceme
 			return super.transform(opFilter, x) ;
 
 		// Destructive use of exprs - copy it.
-		ExprList exprs = new ExprList(opFilter.getExprs()) ;
+		ExprList exprs = new ExprList();
+		exprs.addAll(opFilter.getExprs());
 		Set<Var> varsScope = new HashSet<>() ;
 
 		Op op = transform(exprs, varsScope, x) ;
@@ -93,7 +94,7 @@ public class TransformFilterPlacementWithOptional extends TransformFilterPlaceme
 		}
 
 		// Not special - advance the variable scope tracking.
-		OpVars.patternVars(op, varsScope) ;
+		OpVars.visibleVars(op, varsScope) ;
 		return op ;
 	}
 

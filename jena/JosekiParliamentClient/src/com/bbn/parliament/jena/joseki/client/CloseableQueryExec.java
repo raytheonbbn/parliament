@@ -13,8 +13,16 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.util.Context;
 
-
-public class CloseableQueryExec implements AutoCloseable, QueryExecution {
+/**
+ * Prior to Jena 3.0.0, the QueryExecution class was not AutoCloseable, and so
+ * this wrapper class made QueryExecution compatible with Java's try-finally
+ * statement.
+ *
+ * @deprecated Starting with Jena 3.0.0, simply use QueryExecution instead,
+ *             obtaining it directly from QueryExecutionFactory.
+ */
+@Deprecated(forRemoval = true)
+public class CloseableQueryExec implements QueryExecution {
 	private QueryExecution qe;
 
 	public CloseableQueryExec(String sparqlService, String query) {

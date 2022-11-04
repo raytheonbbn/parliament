@@ -113,23 +113,18 @@ public class DumpKbAsNTriplesTest {
 	}
 
 	private long countNamedEntities() {
-		QueryExecution qe = null;
-		try {
-			qe = QueryExecutionFactory.create("""
-				select (count(distinct *) as ?count) where {
-					?x a <http://example.org/#NamedEntity> .
-				}
-				""", model);
+		final String query = """
+			select (count(distinct *) as ?count) where {
+			?x a <http://example.org/#NamedEntity> .
+		}
+		""";
+		try (QueryExecution qe = QueryExecutionFactory.create(query, model)) {
 			ResultSet rs = qe.execSelect();
 			if (rs.hasNext()) {
 				QuerySolution qs = rs.next();
 				return qs.getLiteral("count").getLong();
 			} else {
 				throw new IllegalStateException("This should never happen");
-			}
-		} finally {
-			if (qe != null) {
-				qe.close();
 			}
 		}
 	}

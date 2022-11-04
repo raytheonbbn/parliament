@@ -135,10 +135,11 @@ public class IndexTest {
 		defaultGraph.add(t);
 		defaultGraph.add(nonIndexed);
 		Query q = QueryFactory.create("SELECT * WHERE { ?s <" + MockPropertyFunction.URI + "> ?o }");
-		QueryExecution exec = QueryExecutionFactory.create(q, dataset.getGraphStore().toDataset());
-		ResultSet rs = exec.execSelect();
-		while (rs.hasNext()) {
-			rs.next();
+		try (QueryExecution exec = QueryExecutionFactory.create(q, dataset.getGraphStore().toDataset())) {
+			ResultSet rs = exec.execSelect();
+			while (rs.hasNext()) {
+				rs.next();
+			}
 		}
 		assertTrue(MockPropertyFunction.isCalled());
 	}
@@ -151,10 +152,11 @@ public class IndexTest {
 		defaultGraph.add(t);
 		defaultGraph.add(nonIndexed);
 		Query q = QueryFactory.create("SELECT * WHERE { ?s <" + MockPropertyFunction.URI + "> ?o . ?s <http://example.org/foo> ?y . }");
-		QueryExecution exec = QueryExecutionFactory.create(q, dataset.getGraphStore().toDataset());
-		ResultSet rs = exec.execSelect();
-		while (rs.hasNext()) {
-			rs.next();
+		try (QueryExecution exec = QueryExecutionFactory.create(q, dataset.getGraphStore().toDataset())) {
+			ResultSet rs = exec.execSelect();
+			while (rs.hasNext()) {
+				rs.next();
+			}
 		}
 		assertTrue(MockPropertyFunction.isCalled());
 	}

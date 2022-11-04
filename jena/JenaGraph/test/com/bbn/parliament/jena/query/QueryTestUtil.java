@@ -21,6 +21,7 @@ import org.apache.jena.sparql.engine.ResultSetStream;
 import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.engine.iterator.QueryIterPlainWrapper;
 import org.apache.jena.sparql.resultset.ResultSetCompare;
+import org.apache.jena.sparql.resultset.ResultsFormat;
 
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 
@@ -65,7 +66,20 @@ public class QueryTestUtil {
 				throw new UncheckedIOException(ex);
 			}
 		} else {
-			return ResultSetFactory.makeRewindable(ResultSetFactory.fromRDF(loadModel(resultSet, null)));
+			return ResultSetFactory.makeRewindable(loadResultSetResource(resultSet));
+		}
+	}
+
+	private static ResultSet loadResultSetResource(String resource) {
+		ResultsFormat format = ResultsFormat.guessSyntax(resource);
+		if (ResultsFormat.FMT_UNKNOWN.equals(format) && resource.toLowerCase().endsWith("rq")) {
+			format = ResultsFormat.FMT_RDF_TTL;
+		}
+		try (InputStream in = getResource(resource)) {
+			return ResultSetFactory.load(in, format);
+		} catch (IOException ex) {
+			fail("Could not load resource '%1$s': '%2$s'".formatted(resource, ex.getMessage()));
+			return null;
 		}
 	}
 

@@ -150,20 +150,19 @@ public class KbUnionGraphTest {
 
 		rightModel.add(loadModel("data/data-r2/triple-match/data-02.ttl"));
 
-		ResultSet rs;
-		int count;
+		try (var qe = QueryExecutionFactory.create(
+			UNION_TEST_QUERY.formatted(UNION_BASE, counter, ":p"), graphStore.toDataset())) {
+			var rs = qe.execSelect();
+			int count = printResultSet("Union graph query 1", rs);
+			assertEquals(2, count);
+		}
 
-		rs = QueryExecutionFactory.create(
-			UNION_TEST_QUERY.formatted(UNION_BASE, counter, ":p"),
-			graphStore.toDataset()).execSelect();
-		count = printResultSet("Union graph query 1", rs);
-		assertEquals(2, count);
-
-		rs = QueryExecutionFactory.create(
-			UNION_TEST_QUERY.formatted(UNION_BASE, counter, "?p"),
-			graphStore.toDataset()).execSelect();
-		count = printResultSet("Union graph query 2", rs);
-		assertEquals(3, count);
+		try (var qe = QueryExecutionFactory.create(
+			UNION_TEST_QUERY.formatted(UNION_BASE, counter, "?p"), graphStore.toDataset())) {
+			var rs = qe.execSelect();
+			int count = printResultSet("Union graph query 2", rs);
+			assertEquals(3, count);
+		}
 	}
 
 	private static int printResultSet(String queryLabel, ResultSet rs) {

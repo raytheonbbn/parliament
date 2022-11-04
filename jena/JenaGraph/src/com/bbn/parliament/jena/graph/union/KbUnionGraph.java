@@ -11,24 +11,21 @@ import java.util.Set;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.graph.compose.Union;
-import org.apache.jena.sparql.engine.iterator.QueryIter;
 import org.apache.jena.util.CollectionFactory;
 import org.apache.jena.util.iterator.ExtendedIterator;
 
 
 /** @author dkolas */
-public class KbUnionGraph extends Union implements KbUnionableGraph
-{
+public class KbUnionGraph extends Union implements KbUnionableGraph {
 	private KbUnionableGraph left;
 	private KbUnionableGraph right;
-	private boolean          filtering = true;
+	private boolean filtering = true;
 
 	private Node leftGraphName;
 	private Node rightGraphName;
 	protected boolean isClosed = false;
 
-	public KbUnionGraph(KbUnionableGraph L, Node leftGraphName, KbUnionableGraph R, Node rightGraphName)
-	{
+	public KbUnionGraph(KbUnionableGraph L, Node leftGraphName, KbUnionableGraph R, Node rightGraphName) {
 		super(L, R);
 		left = L;
 		right = R;
@@ -45,8 +42,7 @@ public class KbUnionGraph extends Union implements KbUnionableGraph
 	}
 
 	@Override
-	public void close()
-	{
+	public void close() {
 		isClosed = true;
 	}
 
@@ -57,47 +53,30 @@ public class KbUnionGraph extends Union implements KbUnionableGraph
 	}
 
 	@Override
-	public QueryIter queryHandler()
-	{
-		if (queryHandler == null)
-		{
-			queryHandler = new SimpleQueryHandler(this);//, left, right);
-		}
-		return queryHandler;
-	}
-
-	@Override
-	public long getNodeCountInPosition(Node node, int position)
-	{
+	public long getNodeCountInPosition(Node node, int position) {
 		return left.getNodeCountInPosition(node, position)
 			+ right.getNodeCountInPosition(node, position);
 	}
 
 	@Override
-	public ExtendedIterator<Triple> graphBaseFind(Triple t)
-	{
-		if (filtering)
-		{
+	public ExtendedIterator<Triple> _graphBaseFind(Triple t) {
+		if (filtering) {
 			Set<Triple> seen = CollectionFactory.createHashedSet();
 			return recording(L.find(t), seen).andThen(rejecting(R.find(t), seen));
 		}
 		return L.find(t).andThen(R.find(t));
 	}
 
-	public boolean isFiltering()
-	{
+	public boolean isFiltering() {
 		return filtering;
 	}
 
-	public void setFiltering(boolean filtering)
-	{
+	public void setFiltering(boolean filtering) {
 		this.filtering = filtering;
-		if (left instanceof KbUnionGraph leftUnionGraph)
-		{
+		if (left instanceof KbUnionGraph leftUnionGraph) {
 			leftUnionGraph.setFiltering(filtering);
 		}
-		if (right instanceof KbUnionGraph rightUnionGraph)
-		{
+		if (right instanceof KbUnionGraph rightUnionGraph) {
 			rightUnionGraph.setFiltering(filtering);
 		}
 	}

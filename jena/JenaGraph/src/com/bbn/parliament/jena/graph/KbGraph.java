@@ -35,10 +35,6 @@ import com.bbn.parliament.jni.KbInstance.GetExcessCapacityResult;
 import com.bbn.parliament.jni.ReificationIterator;
 import com.bbn.parliament.jni.StmtIterator;
 import com.bbn.parliament.jni.StmtIterator.Statement;
-//import com.hp.hpl.jena.graph.BulkUpdateHandler;
-//import com.hp.hpl.jena.graph.Node;
-//import com.hp.hpl.jena.graph.Triple;
-//import com.hp.hpl.jena.graph.TripleMatch;
 
 public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 	public static final String MAGICAL_BNODE_PREFIX = "~@#$BNODE";
@@ -49,7 +45,6 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 	private boolean isClosed;
 	// private NodeIdHash nodeIdHash;
 	private Map<Node, Long> nodeIdHash;
-	private KbBulkUpdateHandler updateHandler;
 	private OptimizationMethod optimizationMethod;
 
 	private String relativeDirectory;
@@ -83,7 +78,6 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 		isClosed = false;
 		// nodeIdHash = new NodeIdHash(100);
 		nodeIdHash = Collections.synchronizedMap(new LRUHash(1000));
-		updateHandler = null;
 		this.optimizationMethod = optMethod;
 	}
 
@@ -97,15 +91,13 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 
 	@Override
 	public void performDelete(Triple t) {
-		if (!getReifier().handledRemove(t)){
-			long subjId, predId, objId;
+		long subjId, predId, objId;
 
-			subjId = getKbId(t.getSubject(), false);
-			predId = getKbId(t.getPredicate(), false);
-			objId = getKbId(t.getObject(), false);
-			if (subjId != -2 && predId != -2 && objId != -2) {
-				kb.deleteStmt(subjId, predId, objId);
-			}
+		subjId = getKbId(t.getSubject(), false);
+		predId = getKbId(t.getPredicate(), false);
+		objId = getKbId(t.getObject(), false);
+		if (subjId != -2 && predId != -2 && objId != -2) {
+			kb.deleteStmt(subjId, predId, objId);
 		}
 	}
 
@@ -316,23 +308,6 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 			return true;
 		}
 	}
-
-	//
-	// @Override
-	// public QueryHandler queryHandler() {
-		// if (queryHandler == null) {
-			// queryHandler = new KbQueryHandler(this);
-			// }
-		// return queryHandler;
-	// }
-
-//	@Override
-//	public BulkUpdateHandler getBulkUpdateHandler() {
-//		if (updateHandler == null) {
-//			updateHandler = new KbBulkUpdateHandler(this);
-//		}
-//		return updateHandler;
-//	}
 
 	@Override
 	public void clear() {

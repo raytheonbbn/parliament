@@ -27,7 +27,7 @@ public class KbUpdateEngineWorker extends UpdateEngineWorker {
 	public void visit(UpdateCreate create) {
 		Node graphName = create.getGraph();
 
-		if (graphStore.containsGraph(graphName))
+		if (datasetGraph.containsGraph(graphName))
 		{
 			if (create.isSilent())
 			{
@@ -38,6 +38,6 @@ public class KbUpdateEngineWorker extends UpdateEngineWorker {
 
 		@SuppressWarnings("resource")
 		KbGraph newGraph = KbGraphFactory.createNamedGraph();
-		graphStore.addGraph(graphName, newGraph);
+		datasetGraph.addGraph(graphName, newGraph);
 	}
 }

@@ -271,13 +271,15 @@ public class ReificationTest {
 		defaultGraphModel.read(new StringReader(INPUT_DATA), "", "TURTLE");
 		jenaDefaultModel.read(new StringReader(INPUT_DATA), "", "TURTLE");
 
-		QueryExecution execution = QueryExecutionFactory.create(query, dataset.getGraphStore().toDataset());
-		ResultSetRewindable resultSet = ResultSetFactory.copyResults(execution.execSelect());
-		execution.close();
+		ResultSetRewindable resultSet;
+		try (QueryExecution execution = QueryExecutionFactory.create(query, dataset.getGraphStore().toDataset())) {
+			resultSet = ResultSetFactory.copyResults(execution.execSelect());
+		}
 
-		QueryExecution execution2 = QueryExecutionFactory.create(query, jenaDefaultModel);
-		ResultSetRewindable jenaResultSet = ResultSetFactory.copyResults(execution2.execSelect());
-		execution2.close();
+		ResultSetRewindable jenaResultSet;
+		try (QueryExecution execution2 = QueryExecutionFactory.create(query, jenaDefaultModel)) {
+			jenaResultSet = ResultSetFactory.copyResults(execution2.execSelect());
+		}
 
 		assertTrue(equals(jenaResultSet, resultSet, QueryFactory.create(query)), "Result sets did not match.");
 	}
