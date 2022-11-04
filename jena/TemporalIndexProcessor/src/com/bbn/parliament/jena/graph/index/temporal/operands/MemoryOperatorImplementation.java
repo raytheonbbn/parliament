@@ -9,15 +9,16 @@ package com.bbn.parliament.jena.graph.index.temporal.operands;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.NiceIterator;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.ExtentTester;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalPropertyFunction;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.memory.MemoryTemporalIndex;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.util.iterator.ClosableIterator;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 /** @author dkolas */
 public abstract class MemoryOperatorImplementation extends TemporalPropertyFunction<MemoryTemporalIndex> {

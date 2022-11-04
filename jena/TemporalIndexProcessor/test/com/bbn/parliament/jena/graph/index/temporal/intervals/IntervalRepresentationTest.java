@@ -6,6 +6,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.shared.impl.JenaParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,9 +16,6 @@ import com.bbn.parliament.jena.graph.index.temporal.Constants;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInterval;
 import com.bbn.parliament.jena.graph.index.temporal.pt.TemporalIndexField;
-import com.hp.hpl.jena.datatypes.DatatypeFormatException;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.shared.impl.JenaParameters;
 
 /** @author mhale */
 public class IntervalRepresentationTest {

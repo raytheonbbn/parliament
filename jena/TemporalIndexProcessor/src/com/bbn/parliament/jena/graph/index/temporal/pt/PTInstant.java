@@ -2,9 +2,10 @@ package com.bbn.parliament.jena.graph.index.temporal.pt;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.jena.datatypes.DatatypeFormatException;
+
 import com.bbn.parliament.jena.graph.index.temporal.Constants;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
-import com.hp.hpl.jena.datatypes.DatatypeFormatException;
 
 /** @deprecated
  * The implementation of the Parliament Time instant data type.

@@ -1,8 +1,9 @@
 package com.bbn.parliament.jena.graph.index.temporal.pt;
 
+import org.apache.jena.datatypes.BaseDatatype;
+import org.apache.jena.datatypes.DatatypeFormatException;
+
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
-import com.hp.hpl.jena.datatypes.BaseDatatype;
-import com.hp.hpl.jena.datatypes.DatatypeFormatException;
 
 /**
  * Base literal type for those within the Parliament Time namespace.

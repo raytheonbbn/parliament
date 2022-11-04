@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,11 +16,6 @@ import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.RecordFactory;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalIndex;
 import com.bbn.parliament.jena.graph.index.temporal.pt.TemporalIndexField;
-import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
 
 /** @author rbattle */
 public class TemporalRecordFactory implements RecordFactory<TemporalExtent> {

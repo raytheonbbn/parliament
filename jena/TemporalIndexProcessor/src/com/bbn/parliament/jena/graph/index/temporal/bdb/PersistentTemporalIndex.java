@@ -10,6 +10,10 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.apache.jena.graph.BlankNodeId;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +25,6 @@ import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInterval;
 import com.bbn.parliament.jena.util.FileUtil;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdf.model.AnonId;
 import com.sleepycat.je.CursorConfig;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
@@ -179,10 +180,10 @@ public class PersistentTemporalIndex extends TemporalIndex {
 	public static Node getNodeRepresentation(String representation) {
 		Node result = null;
 		if (representation.startsWith(KbGraph.MAGICAL_BNODE_PREFIX)) {
-			result = Node.createAnon(AnonId.create(representation
+			result = NodeFactory.createBlankNode(BlankNodeId.create(representation
 					.substring(KbGraph.MAGICAL_BNODE_PREFIX.length())));
 		} else {
-			result = Node.createURI(representation);
+			result = NodeFactory.createURI(representation);
 		}
 		return result;
 	}

@@ -11,6 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.Reader;
 import java.io.StringReader;
 
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.vocabulary.XSD;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,8 +22,6 @@ import org.junit.jupiter.api.Test;
 import com.bbn.parliament.jena.graph.index.temporal.Constants;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalTestServer;
 import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 /** @author dkolas */
 public class DuplicateEntriesTest {

@@ -2,12 +2,13 @@ package com.bbn.parliament.jena.graph.index.temporal.pt;
 
 import java.util.List;
 
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.vocabulary.RDF;
+
 import com.bbn.parliament.jena.graph.index.temporal.Constants;
-import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
  * This enum is the index of the index, i.e., it holds all necessary fields for

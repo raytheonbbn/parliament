@@ -2,6 +2,19 @@ package com.bbn.parliament.jena.graph.index.temporal;
 
 import java.util.Properties;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.shared.impl.JenaParameters;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.XSD;
+
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.KbGraphFactory;
 import com.bbn.parliament.jena.graph.KbGraphStore;
@@ -9,18 +22,6 @@ import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalRecordFactory;
 import com.bbn.parliament.jena.joseki.client.StreamUtil;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.shared.impl.JenaParameters;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 public class TemporalTestServer implements AutoCloseable {
 	public static final Property INSTANT_PF = ResourceFactory.createProperty(Constants.PT_AS_INSTANT.getURI());

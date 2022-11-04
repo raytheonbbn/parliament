@@ -9,10 +9,11 @@ package com.bbn.parliament.jena.graph.index.temporal;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.apache.jena.util.iterator.ClosableIterator;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
-import com.hp.hpl.jena.util.iterator.ClosableIterator;
 
 /** @author dkolas */
 public class TemporalExtentIterator implements ClosableIterator<Record<TemporalExtent>> {

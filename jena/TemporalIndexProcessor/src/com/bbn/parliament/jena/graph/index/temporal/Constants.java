@@ -3,7 +3,8 @@ package com.bbn.parliament.jena.graph.index.temporal;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 
 public class Constants {
 	public static final String XSD_NS = "http://www.w3.org/2001/XMLSchema#";
@@ -46,6 +47,6 @@ public class Constants {
 	}
 
 	private static Node createNode(String ns, String localName) {
-		return Node.createURI(ns + localName);
+		return NodeFactory.createURI(ns + localName);
 	}
 }

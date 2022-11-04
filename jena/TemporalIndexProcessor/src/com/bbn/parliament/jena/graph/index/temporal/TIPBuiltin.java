@@ -6,7 +6,7 @@
 
 package com.bbn.parliament.jena.graph.index.temporal;
 
-import com.hp.hpl.jena.reasoner.rulesys.builtins.BaseBuiltin;
+import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 
 /** @author dkolas */
 public abstract class TIPBuiltin extends BaseBuiltin {
