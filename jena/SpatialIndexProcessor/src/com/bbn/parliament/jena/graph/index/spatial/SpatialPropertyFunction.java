@@ -6,6 +6,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.engine.binding.BindingFactory;
+import org.apache.jena.sparql.engine.binding.BindingMap;
+import org.apache.jena.sparql.engine.iterator.QueryIter;
+import org.apache.jena.sparql.engine.iterator.QueryIterCommonParent;
+import org.apache.jena.sparql.engine.iterator.QueryIterRepeatApply;
+import org.apache.jena.sparql.util.IterLib;
+import org.apache.jena.util.iterator.NiceIterator;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
@@ -23,18 +36,6 @@ import com.bbn.parliament.jena.query.index.QueryCache;
 import com.bbn.parliament.jena.query.index.operand.Operand;
 import com.bbn.parliament.jena.query.index.operand.OperandFactory;
 import com.bbn.parliament.jena.query.index.pfunction.EstimableIndexPropertyFunction;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.engine.binding.BindingFactory;
-import com.hp.hpl.jena.sparql.engine.binding.BindingMap;
-import com.hp.hpl.jena.sparql.engine.iterator.QueryIter;
-import com.hp.hpl.jena.sparql.engine.iterator.QueryIterCommonParent;
-import com.hp.hpl.jena.sparql.engine.iterator.QueryIterRepeatApply;
-import com.hp.hpl.jena.sparql.util.IterLib;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geometry> {
 	private static final Logger LOG = LoggerFactory.getLogger(SpatialPropertyFunction.class);
@@ -374,7 +375,7 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 			}
 			Node blank = index.getQueryCache().getBlankNodeMap().get(v);
 			if (null == blank) {
-				blank = Node.createAnon();
+				blank = NodeFactory.createBlankNode();
 				index.getQueryCache().getBlankNodeMap().put(v, blank);
 			}
 			binding.add(v, blank);
@@ -515,7 +516,7 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 			if (null == b) {
 				b = index.getQueryCache().getBlankNodeMap().get(v);
 				if (null == b) {
-					b = Node.createAnon();
+					b = NodeFactory.createBlankNode();
 					index.getQueryCache().getBlankNodeMap().put(v, b);
 				}
 				results.add(v, b);

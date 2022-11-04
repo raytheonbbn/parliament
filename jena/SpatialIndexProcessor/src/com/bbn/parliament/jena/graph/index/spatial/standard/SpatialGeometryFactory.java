@@ -3,6 +3,10 @@ package com.bbn.parliament.jena.graph.index.spatial.standard;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.ExtendedIterator;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -14,10 +18,6 @@ import org.locationtech.jts.geom.PrecisionModel;
 
 import com.bbn.parliament.jena.graph.index.spatial.standard.data.BufferedGeometry;
 import com.bbn.parliament.jena.graph.index.spatial.standard.data.FloatingCircle;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 public class SpatialGeometryFactory {
 	private static final PrecisionModel PRECISION_MODEL = new PrecisionModel(

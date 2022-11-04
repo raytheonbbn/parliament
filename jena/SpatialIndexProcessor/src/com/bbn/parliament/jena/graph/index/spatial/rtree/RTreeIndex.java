@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.util.iterator.ClosableIterator;
 import org.deegree.io.rtree.HyperBoundingBox;
 import org.deegree.io.rtree.HyperPoint;
 import org.deegree.io.rtree.RTree;
@@ -25,8 +27,6 @@ import com.bbn.parliament.jena.graph.index.spatial.persistence.NodeData;
 import com.bbn.parliament.jena.graph.index.spatial.persistence.NodeKey;
 import com.bbn.parliament.jena.util.FileUtil;
 import com.bbn.parliament.jena.util.NodeUtil;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.util.iterator.ClosableIterator;
 
 public class RTreeIndex extends SpatialIndex {
 	private static final Logger LOG = LoggerFactory.getLogger(RTreeIndex.class);

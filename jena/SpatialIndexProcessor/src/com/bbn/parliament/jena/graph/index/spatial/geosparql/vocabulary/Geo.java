@@ -1,9 +1,9 @@
 package com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 
 public class Geo {
 	public static final String uri = "http://www.opengis.net/ont/geosparql#";

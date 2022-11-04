@@ -1,7 +1,7 @@
 package com.bbn.parliament.jena.graph.index.spatial.sql.postgres;
 
+import org.apache.jena.riot.system.PrefixMap;
 import org.locationtech.jts.geom.Geometry;
-import org.openjena.riot.system.PrefixMap;
 
 import com.bbn.parliament.jena.graph.index.spatial.GeometryRecordFactory;
 import com.bbn.parliament.jena.graph.index.spatial.IterableFunctionFactory;

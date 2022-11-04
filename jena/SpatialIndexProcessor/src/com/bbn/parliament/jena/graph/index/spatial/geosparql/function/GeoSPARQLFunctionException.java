@@ -1,6 +1,6 @@
 package com.bbn.parliament.jena.graph.index.spatial.geosparql.function;
 
-import com.hp.hpl.jena.query.QueryExecException;
+import org.apache.jena.query.QueryExecException;
 
 /** @author rbattle */
 public class GeoSPARQLFunctionException extends QueryExecException {

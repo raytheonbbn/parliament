@@ -2,9 +2,10 @@ package com.bbn.parliament.jena.graph.index.spatial;
 
 import java.util.Properties;
 
+import org.apache.jena.graph.Graph;
+
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.GeoSPARQLProfile;
 import com.bbn.parliament.jena.graph.index.spatial.standard.StandardProfile;
-import com.hp.hpl.jena.graph.Graph;
 
 public class ProfileFactory {
 	public static Profile createProfile(Properties props, Graph graph) {

@@ -5,15 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.vocabulary.RDF;
 import org.locationtech.jts.geom.Geometry;
 
 import com.bbn.parliament.jena.graph.index.spatial.GeometryRecord;
 import com.bbn.parliament.jena.graph.index.spatial.GeometryRecordFactory;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 public class StandardRecordFactory implements GeometryRecordFactory {
 	private static List<Triple> MATCHES;
@@ -21,7 +22,7 @@ public class StandardRecordFactory implements GeometryRecordFactory {
 	static {
 		MATCHES = new ArrayList<>(StdConstants.VALID_TYPES.length);
 		for (String type : StdConstants.VALID_TYPES) {
-			MATCHES.add(Triple.create(Node.ANY, RDF.Nodes.type, Node.createURI(type)));
+			MATCHES.add(Triple.create(Node.ANY, RDF.Nodes.type, NodeFactory.createURI(type)));
 		}
 	}
 

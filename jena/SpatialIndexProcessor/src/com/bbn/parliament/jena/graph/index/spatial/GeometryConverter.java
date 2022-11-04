@@ -9,6 +9,9 @@ package com.bbn.parliament.jena.graph.index.spatial;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.jena.graph.BlankNodeId;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
@@ -23,8 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.index.spatial.standard.SpatialGeometryFactory;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdf.model.AnonId;
 
 /** @author Robert Battle */
 public class GeometryConverter {
@@ -87,10 +88,10 @@ public class GeometryConverter {
 	public static Node getNodeRepresentation(String representation) {
 		Node result = null;
 		if (representation.startsWith(KbGraph.MAGICAL_BNODE_PREFIX)) {
-			result = Node.createAnon(AnonId.create(representation.substring(
+			result = NodeFactory.createBlankNode(BlankNodeId.create(representation.substring(
 				KbGraph.MAGICAL_BNODE_PREFIX.length())));
 		} else {
-			result = Node.createURI(representation);
+			result = NodeFactory.createURI(representation);
 		}
 		return result;
 	}

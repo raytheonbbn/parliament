@@ -4,12 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import org.apache.jena.datatypes.DatatypeFormatException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
-
-import com.hp.hpl.jena.datatypes.DatatypeFormatException;
 
 public class GMLLiteralTest implements LiteralTestCase {
 	private GMLLiteral literal;

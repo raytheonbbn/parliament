@@ -2,6 +2,12 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql.function;
 
 import java.util.List;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.query.QueryExecException;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.function.FunctionEnv;
+import org.apache.jena.vocabulary.XSD;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
@@ -15,12 +21,6 @@ import org.opengis.referencing.operation.TransformException;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.GeoSPARQLLiteral;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.UOM;
 import com.bbn.parliament.jena.graph.index.spatial.standard.SpatialGeometryFactory;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.QueryExecException;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.function.FunctionEnv;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 public class Buffer extends SingleGeometrySpatialFunction {
 	/** {@inheritDoc} */

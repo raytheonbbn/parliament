@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,11 +21,6 @@ import com.bbn.parliament.jena.NodeCreateUtils;
 import com.bbn.parliament.jena.graph.index.spatial.sql.postgres.PostgresIndex;
 import com.bbn.parliament.jena.graph.index.spatial.standard.StdConstants;
 import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 public class QueryTestMethods extends SpatialTestDataset {
 	private static final Logger LOG = LoggerFactory.getLogger(QueryTestMethods.class);
@@ -364,7 +364,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 		triples.add(Triple.create(
 			NodeCreateUtils.create("?reg"),
 			NodeCreateUtils.create(StdConstants.BUFFER_NS + "distance"),
-			Node.createLiteral("\"580\"^^xsd:double")));
+			NodeFactory.createLiteral("\"580\"^^xsd:double")));
 		triples.add(Triple.create(
 			NodeCreateUtils.create("?reg"),
 			NodeCreateUtils.create(StdConstants.BUFFER_NS + "extent"),
@@ -376,7 +376,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 		triples.add(Triple.create(
 			NodeCreateUtils.create("?ext"),
 			NodeCreateUtils.create(StdConstants.GML_NS + "pos"),
-			Node.createLiteral("0 0")));
+			NodeFactory.createLiteral("0 0")));
 
 		String query = "select ?placeExtent where {\n";
 		for (Triple t : triples) {

@@ -1,5 +1,7 @@
 package com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes;
 
+import org.apache.jena.datatypes.BaseDatatype;
+import org.apache.jena.datatypes.DatatypeFormatException;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
@@ -12,8 +14,6 @@ import org.opengis.referencing.operation.TransformException;
 import com.bbn.parliament.jena.graph.index.spatial.Constants;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.TransformCache;
 import com.bbn.parliament.jena.graph.index.spatial.standard.StdConstants;
-import com.hp.hpl.jena.datatypes.BaseDatatype;
-import com.hp.hpl.jena.datatypes.DatatypeFormatException;
 
 /**
  * Base literal type. The lexical form is parsed. All geometries are normalized to WGS84

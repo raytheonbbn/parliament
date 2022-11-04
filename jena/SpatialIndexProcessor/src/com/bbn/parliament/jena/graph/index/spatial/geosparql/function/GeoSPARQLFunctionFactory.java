@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.jena.query.QueryExecException;
+import org.apache.jena.sparql.function.Function;
+
 import com.bbn.parliament.jena.graph.index.spatial.Constants;
 import com.bbn.parliament.jena.graph.index.spatial.IterableFunctionFactory;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.GMLLiteral;
@@ -39,8 +42,6 @@ import com.bbn.parliament.jena.graph.index.spatial.geosparql.function.util.Trans
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.GML;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Geof;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.WKT;
-import com.hp.hpl.jena.query.QueryExecException;
-import com.hp.hpl.jena.sparql.function.Function;
 
 public class GeoSPARQLFunctionFactory implements IterableFunctionFactory {
 	public Map<String, Class<? extends SpatialFunctionBase>> functions;

@@ -2,13 +2,13 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql.function;
 
 import java.util.List;
 
+import org.apache.jena.query.QueryExecException;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.function.FunctionEnv;
 import org.locationtech.jts.geom.Geometry;
 
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.GeoSPARQLLiteral;
-import com.hp.hpl.jena.query.QueryExecException;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.function.FunctionEnv;
 
 /** @author rbattle */
 public class Relate extends DoubleGeometrySpatialFunction {

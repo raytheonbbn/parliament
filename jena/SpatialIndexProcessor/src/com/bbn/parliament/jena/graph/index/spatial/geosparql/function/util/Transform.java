@@ -2,14 +2,14 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql.function.util;
 
 import java.util.List;
 
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.function.FunctionEnv;
+import org.apache.jena.vocabulary.XSD;
 import org.locationtech.jts.geom.Geometry;
 
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.GeoSPARQLLiteral;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.function.SingleGeometrySpatialFunction;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.function.FunctionEnv;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 public class Transform extends SingleGeometrySpatialFunction {
 	/** {@inheritDoc} */

@@ -13,20 +13,21 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 
 import com.bbn.parliament.jena.graph.index.IndexFactory.IndexFactoryHelper;
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.query.index.QueryableIndexTestMethods;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
 
 public abstract class SpatialIndexTestMethods extends QueryableIndexTestMethods<SpatialIndex, Geometry> {
 	@Override
 	protected Record<Geometry> createRecord(int seed) {
 		Geometry extent = GeometryConverter.createPoint(new double[] { 53.2 + seed, 23.1 });
-		Node n = Node.createURI("http://example.org/" + seed);
+		Node n = NodeFactory.createURI("http://example.org/" + seed);
 		return GeometryRecord.create(n, extent);
 	}
 
@@ -44,7 +45,7 @@ public abstract class SpatialIndexTestMethods extends QueryableIndexTestMethods<
 	// Test method
 	@SuppressWarnings("static-method")
 	public void testAddGeometry(SpatialIndex index) {
-		Node n = Node.createURI("http://test.org#test");
+		Node n = NodeFactory.createURI("http://test.org#test");
 		Geometry extent = GeometryConverter
 			.createPoint(new double[] { 1.0, 1.0 });
 		// test add node
@@ -56,7 +57,7 @@ public abstract class SpatialIndexTestMethods extends QueryableIndexTestMethods<
 		assertEquals(1, index.size());
 
 		// test add another node
-		n = Node.createURI("http://test.org#test2");
+		n = NodeFactory.createURI("http://test.org#test2");
 		extent = GeometryConverter.createPoint(new double[] { 1.0, 2.0 });
 		try {
 			index.add(Record.create(n, extent));
@@ -70,7 +71,7 @@ public abstract class SpatialIndexTestMethods extends QueryableIndexTestMethods<
 	@SuppressWarnings("static-method")
 	public void testAddSameNode(SpatialIndex index) {
 		// test add another node
-		Node n = Node.createURI("http://test.org#test2");
+		Node n = NodeFactory.createURI("http://test.org#test2");
 		Geometry extent = GeometryConverter
 			.createPoint(new double[] { 1.0, 2.0 });
 
