@@ -7,6 +7,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.NiceIterator;
+
 import com.bbn.parliament.jena.graph.index.CompositeIndex;
 import com.bbn.parliament.jena.graph.index.Index;
 import com.bbn.parliament.jena.graph.index.IndexBase;
@@ -19,12 +27,6 @@ import com.bbn.parliament.jena.graph.index.numeric.NumericIndex;
 import com.bbn.parliament.jena.graph.index.numeric.NumericIndexFactory;
 import com.bbn.parliament.jena.query.index.IndexPatternQuerierManager;
 import com.bbn.parliament.jena.util.FileUtil;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.util.iterator.ClosableIterator;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 /**
  * A composite index that dynamically generates a {@link NumericIndex} for
@@ -276,7 +278,7 @@ public class CompositeNumericIndex extends IndexBase<Number> implements Composit
 				Record<Number> r = (Record<Number>) current.next();
 
 				// need to create a TripleRecord from the sub record in order to match what was added to this index
-				Triple t = Triple.create(r.getKey(), Node.createURI(predicate), ResourceFactory.createTypedLiteral(r.getValue()).asNode());
+				Triple t = Triple.create(r.getKey(), NodeFactory.createURI(predicate), ResourceFactory.createTypedLiteral(r.getValue()).asNode());
 				TripleRecord<Number> ret = TripleRecord.create(r.getKey(), r.getValue(), t);
 				hasBeenNexted = true;
 				return ret;

@@ -3,6 +3,9 @@ package com.bbn.parliament.jena.graph.index.numeric;
 import java.io.File;
 import java.util.Iterator;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+
 import com.bbn.parliament.jena.graph.index.IndexBase;
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.RangeIndex;
@@ -11,8 +14,6 @@ import com.bbn.parliament.jena.query.index.IndexPatternQuerierManager;
 import com.bbn.parliament.jena.query.index.QueryCache;
 import com.bbn.parliament.jena.util.FileUtil;
 import com.bbn.parliament.jena.util.NodeUtil;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
 import com.sleepycat.je.CursorConfig;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;

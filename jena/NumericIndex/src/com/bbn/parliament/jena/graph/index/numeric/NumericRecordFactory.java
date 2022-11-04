@@ -7,10 +7,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.RecordFactory;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
 
 /**
  * A record factory that creates numeric records. The factory contains abstract methods
@@ -68,7 +70,7 @@ implements RecordFactory<T> {
 	/** {@inheritDoc} */
 	@Override
 	public List<Triple> getTripleMatchers() {
-		return List.of(Triple.create(Node.ANY, Node.createURI(predicate), Node.ANY));
+		return List.of(Triple.create(Node.ANY, NodeFactory.createURI(predicate), Node.ANY));
 	}
 
 	/**
