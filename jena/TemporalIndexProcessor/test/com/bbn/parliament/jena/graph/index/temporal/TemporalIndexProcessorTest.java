@@ -59,7 +59,6 @@ public class TemporalIndexProcessorTest {
 		testServer.removeIndex();
 	}
 
-	/** Test method for {@link com.bbn.parliament.jena.graph.index.temporal.TemporalIndexProcessor#tripleAdded(com.hp.hpl.jena.graph.Triple, com.hp.hpl.jena.graph.Graph)} */
 	@SuppressWarnings("static-method")
 	@Test
 	public void testTripleAdded() {

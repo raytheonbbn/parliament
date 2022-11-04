@@ -11,6 +11,7 @@ package com.bbn.parliament.jena.joseki.graph;
 
 import org.apache.jena.graph.Triple;
 import org.apache.jena.graph.impl.GraphBase;
+import org.apache.jena.shared.NotFoundException;
 import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
@@ -23,25 +24,16 @@ import org.apache.jena.util.iterator.ExtendedIterator;
 public class ForgetfulGraph extends GraphBase {
 	protected int _numStatements = 0;
 
-	/* (non-Javadoc)
-	 * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseFind(com.hp.hpl.jena.graph.TripleMatch)
-	 */
 	@Override
-	protected ExtendedIterator<Triple> graphBaseFind(TripleMatch m) {
-		throw new com.hp.hpl.jena.shared.NotFoundException("ForgetfulGraph::graphBaseFind");
+	protected ExtendedIterator<Triple> graphBaseFind(Triple triplePattern) {
+		throw new NotFoundException("ForgetfulGraph::graphBaseFind");
 	}
 
-	/* (non-Javadoc)
-	 * @see com.hp.hpl.jena.graph.impl.GraphBase#performAdd(com.hp.hpl.jena.graph.Triple)
-	 */
 	@Override
 	public void performAdd(Triple t) {
 		_numStatements++;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseSize()
-	 */
 	@Override
 	protected int graphBaseSize() {
 		return _numStatements;

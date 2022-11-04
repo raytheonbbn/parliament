@@ -33,11 +33,11 @@ import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunctionFactor
 
 /**
  * A generator for {@link IndexPropertyFunction}s. This is modeled on ARQ's
- * <code>com.hp.hpl.jena.sparql.algebra.PropertyFunctionGenerator</code>.
+ * <code>org.apache.jena.sparql.algebra.PropertyFunctionGenerator</code>.
  *
  * @author rbattle
  *
- * @see com.hp.hpl.jena.sparql.algebra.PropertyFunctionGenerator
+ * @see org.apache.jena.sparql.algebra.PropertyFunctionGenerator
  */
 public class IndexPropertyFunctionGenerator {
 
