@@ -11,10 +11,10 @@ import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 
+import org.apache.jena.sparql.ARQException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.sparql.ARQException;
 
 public class TrackerManagement {
 	static private Logger LOG = LoggerFactory.getLogger(TrackerManagement.class);

@@ -12,7 +12,15 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openjena.riot.system.PrefixMap;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFList;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.ResIterator;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.riot.system.PrefixMap;
+import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,15 +29,6 @@ import com.bbn.parliament.jena.joseki.bridge.configuration.ConfigurationHandler;
 import com.bbn.parliament.jena.joseki.bridge.configuration.IndexProcessorConfigurationHandler;
 import com.bbn.parliament.jena.joseki.bridge.configuration.vocab.ConfigOnt;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.RDFList;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 public class ParliamentBridgeConfiguration {
 	/** Default threshold above which DeferredFileOutputStream stores to disk. Set to 10 MB. */

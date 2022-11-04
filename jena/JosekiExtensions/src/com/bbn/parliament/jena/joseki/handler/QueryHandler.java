@@ -9,6 +9,13 @@ package com.bbn.parliament.jena.joseki.handler;
 import java.io.File;
 import java.util.concurrent.CancellationException;
 
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryException;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.NotFoundException;
 import org.joseki.QueryExecutionException;
 import org.joseki.Request;
 import org.joseki.Response;
@@ -23,14 +30,6 @@ import com.bbn.parliament.jena.joseki.bridge.tracker.TrackableException;
 import com.bbn.parliament.jena.joseki.bridge.tracker.TrackableQuery;
 import com.bbn.parliament.jena.joseki.bridge.util.LogUtil;
 import com.bbn.parliament.jena.util.JsonLdRdfWriter;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryException;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.shared.JenaException;
-import com.hp.hpl.jena.shared.NotFoundException;
-import com.hp.hpl.jena.shared.QueryStageException;
 
 /** @author ebenson@bbn.com */
 public class QueryHandler extends SPARQL {

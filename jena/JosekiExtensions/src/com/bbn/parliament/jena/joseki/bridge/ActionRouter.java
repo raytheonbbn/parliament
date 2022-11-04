@@ -1,4 +1,3 @@
-// Parliament is licensed under the BSD License from the Open Source
 // Initiative, http://www.opensource.org/licenses/bsd-license.php
 //
 // Copyright (c) 2001-2009, 2014-2015, BBN Technologies, Inc.
@@ -12,6 +11,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.jena.query.QueryParseException;
+import org.apache.jena.rdf.model.Resource;
 import org.joseki.DatasetDesc;
 import org.joseki.JosekiServerException;
 import org.joseki.Processor;
@@ -30,8 +31,6 @@ import com.bbn.parliament.jena.joseki.bridge.tracker.Tracker;
 import com.bbn.parliament.jena.joseki.bridge.util.LogUtil;
 import com.bbn.parliament.jena.joseki.handler.QueryHandler;
 import com.bbn.parliament.jena.joseki.handler.UpdateHandler;
-import com.hp.hpl.jena.query.QueryParseException;
-import com.hp.hpl.jena.rdf.model.Resource;
 
 /**
  * Outer Joseki processor to route the request to the right handler.

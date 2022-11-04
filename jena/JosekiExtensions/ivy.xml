@@ -48,7 +48,7 @@
 
 		<dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0"
 			conf="bridge->default"/>
-		<dependency org="org.apache.jena" name="jena-arq" rev="2.9.4"
+		<dependency org="org.apache.jena" name="jena-arq" rev="${jena.version}"
 			conf="bridge->default"/>
 		<dependency org="commons-fileupload" name="commons-fileupload" rev="1.4"
 			conf="bridge->default"/>

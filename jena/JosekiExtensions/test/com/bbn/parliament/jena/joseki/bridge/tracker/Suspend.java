@@ -1,12 +1,12 @@
 package com.bbn.parliament.jena.joseki.bridge.tracker;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.pfunction.PropFuncArg;
-import com.hp.hpl.jena.sparql.pfunction.PropertyFunctionBase;
-import com.hp.hpl.jena.sparql.util.IterLib;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.pfunction.PropFuncArg;
+import org.apache.jena.sparql.pfunction.PropertyFunctionBase;
+import org.apache.jena.sparql.util.IterLib;
 
 public class Suspend extends PropertyFunctionBase {
 	@Override

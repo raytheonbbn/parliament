@@ -11,6 +11,7 @@ import javax.management.Notification;
 import javax.management.NotificationEmitter;
 import javax.management.NotificationListener;
 
+import org.apache.jena.rdf.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,6 @@ import com.bbn.parliament.jena.joseki.bridge.tracker.Trackable;
 import com.bbn.parliament.jena.joseki.bridge.tracker.TrackableException;
 import com.bbn.parliament.jena.joseki.bridge.tracker.Tracker;
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
-import com.hp.hpl.jena.rdf.model.Resource;
 
 public class MemoryConfigurationHandler implements ConfigurationHandler {
 	private static final MemoryPoolMXBean tenuredGenPool = findTenuredGenPool();

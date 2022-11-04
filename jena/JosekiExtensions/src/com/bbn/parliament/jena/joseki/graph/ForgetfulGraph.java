@@ -9,10 +9,9 @@
 
 package com.bbn.parliament.jena.joseki.graph;
 
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.graph.TripleMatch;
-import com.hp.hpl.jena.graph.impl.GraphBase;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.GraphBase;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
  * This is a graph that keeps track of the number of statements added,

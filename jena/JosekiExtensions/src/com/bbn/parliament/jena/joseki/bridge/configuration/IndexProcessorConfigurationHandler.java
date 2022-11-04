@@ -9,6 +9,7 @@ package com.bbn.parliament.jena.joseki.bridge.configuration;
 import java.net.URI;
 import java.util.Properties;
 
+import org.apache.jena.rdf.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +18,6 @@ import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.jena.joseki.bridge.ParliamentBridge;
 import com.bbn.parliament.jena.joseki.bridge.configuration.vocab.ConfigOnt;
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 /**
  * A {@link ConfigurationHandler} that registers a list of {@link IndexFactory}s

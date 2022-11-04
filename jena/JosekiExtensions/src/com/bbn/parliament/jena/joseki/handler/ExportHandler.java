@@ -16,6 +16,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.jena.rdf.model.Model;
 import org.joseki.Joseki;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,6 @@ import com.bbn.parliament.jena.joseki.bridge.servlet.ServletErrorResponseExcepti
 import com.bbn.parliament.jena.joseki.bridge.util.HttpServerUtil;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
-import com.hp.hpl.jena.rdf.model.Model;
 
 /** @author sallen */
 public class ExportHandler extends AbstractHandler {
