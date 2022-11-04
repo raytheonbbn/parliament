@@ -13,7 +13,7 @@
 	</configurations>
 
 	<dependencies>
-		<dependency org="org.apache.jena" name="jena-arq" rev="2.9.4"
+		<dependency org="org.apache.jena" name="jena-arq" rev="${jena.version}"
 			conf="default->default"/>
 		<dependency org="com.sleepycat" name="je" rev="${berkeleydb-je.version}"
 			conf="default->default"/>

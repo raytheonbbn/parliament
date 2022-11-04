@@ -14,15 +14,13 @@ import java.util.stream.Collectors;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryParseException;
+import org.apache.jena.query.Syntax;
 import org.joseki.Joseki;
 import org.joseki.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.QueryParseException;
-import com.hp.hpl.jena.query.Syntax;
 
 public class ParliamentRequest extends Request {
 	private static enum RequestType { QUERY, UPDATE, OTHER }

@@ -3,6 +3,8 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.graph.impl.LiteralLabel;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.CoordinateSequenceFactory;
 import org.locationtech.jts.geom.Geometry;
@@ -18,8 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.WKT;
-import com.hp.hpl.jena.datatypes.DatatypeFormatException;
-import com.hp.hpl.jena.graph.impl.LiteralLabel;
 
 /** @author rbattle */
 public class WKTLiteral extends GeoSPARQLLiteral {

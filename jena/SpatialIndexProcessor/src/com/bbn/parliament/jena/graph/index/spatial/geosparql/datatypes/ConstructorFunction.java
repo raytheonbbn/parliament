@@ -2,13 +2,13 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes;
 
 import java.util.List;
 
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.function.FunctionEnv;
+import org.apache.jena.vocabulary.XSD;
 import org.locationtech.jts.geom.Geometry;
 
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.function.SpatialFunctionBase;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.function.FunctionEnv;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 public abstract class ConstructorFunction<T extends GeoSPARQLLiteral> extends SpatialFunctionBase {
 	private T datatype;

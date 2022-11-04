@@ -7,13 +7,13 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.jena.datatypes.DatatypeFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.graph.index.temporal.Constants;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInterval;
-import com.hp.hpl.jena.datatypes.DatatypeFormatException;
 
 /**
  * Implementation for the Parliament Time interval data type

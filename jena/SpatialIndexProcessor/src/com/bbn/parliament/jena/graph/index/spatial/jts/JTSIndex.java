@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.jena.graph.Node;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.quadtree.Quadtree;
@@ -24,7 +25,6 @@ import com.bbn.parliament.jena.graph.index.spatial.GeometryRecord;
 import com.bbn.parliament.jena.graph.index.spatial.Operation;
 import com.bbn.parliament.jena.graph.index.spatial.Profile;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialIndexException;
-import com.hp.hpl.jena.graph.Node;
 
 /** @author Robert Battle */
 public class JTSIndex extends com.bbn.parliament.jena.graph.index.spatial.SpatialIndex {

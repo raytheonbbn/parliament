@@ -2,6 +2,12 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql.function.util;
 
 import java.util.List;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.query.QueryException;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.function.FunctionEnv;
 import org.geotools.geometry.jts.MultiCurve;
 import org.geotools.gml3.MultiSurface;
 import org.locationtech.jts.geom.Geometry;
@@ -25,11 +31,6 @@ import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.WKTLitera
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.function.SpatialFunctionBase;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.WKT;
 import com.bbn.parliament.jena.graph.index.spatial.standard.StdConstants;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.QueryException;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.function.FunctionEnv;
 
 /** @author rbattle */
 public class LiteralToGeometryType extends SpatialFunctionBase {
@@ -80,7 +81,7 @@ public class LiteralToGeometryType extends SpatialFunctionBase {
 			}
 
 			type = WKT.DATATYPE_URI + type;
-			Node n = Node.createURI(type);
+			Node n = NodeFactory.createURI(type);
 			return NodeValue.makeNode(n);
 		} else if (lit instanceof GMLLiteral) {
 		}

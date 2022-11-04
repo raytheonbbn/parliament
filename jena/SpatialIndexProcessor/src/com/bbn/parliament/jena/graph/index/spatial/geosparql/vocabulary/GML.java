@@ -1,7 +1,7 @@
 package com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 
 public class GML {
 	public static final String DATATYPE_URI = "http://www.opengis.net/ont/gml#";

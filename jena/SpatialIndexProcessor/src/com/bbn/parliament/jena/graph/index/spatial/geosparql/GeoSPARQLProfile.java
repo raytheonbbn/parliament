@@ -2,8 +2,9 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql;
 
 import java.util.Properties;
 
+import org.apache.jena.riot.system.PrefixMap;
+import org.apache.jena.riot.system.PrefixMapStd;
 import org.locationtech.jts.geom.Geometry;
-import org.openjena.riot.system.PrefixMap;
 
 import com.bbn.parliament.jena.graph.index.spatial.GeometryRecordFactory;
 import com.bbn.parliament.jena.graph.index.spatial.IterableFunctionFactory;
@@ -48,7 +49,7 @@ public class GeoSPARQLProfile implements Profile {
 	/** {@inheritDoc} */
 	@Override
 	public PrefixMap getPrefixes() {
-		PrefixMap prefixes = new PrefixMap();
+		PrefixMap prefixes = new PrefixMapStd();
 
 		prefixes.add("geo", Geo.uri);
 		prefixes.add("geof", Geof.uri);

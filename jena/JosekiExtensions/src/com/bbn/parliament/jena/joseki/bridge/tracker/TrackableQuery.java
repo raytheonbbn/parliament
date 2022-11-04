@@ -3,20 +3,19 @@ package com.bbn.parliament.jena.joseki.bridge.tracker;
 import java.beans.ConstructorProperties;
 import java.util.List;
 
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.Syntax;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.sparql.engine.binding.Binding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
 import com.bbn.parliament.jni.KbConfig;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.Syntax;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
 
 /**
  * A trackable query. Currently the only cancellable Trackable object.

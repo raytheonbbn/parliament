@@ -6,9 +6,10 @@
 
 package com.bbn.parliament.jena.joseki.bridge.configuration;
 
+import org.apache.jena.rdf.model.Resource;
+
 import com.bbn.parliament.jena.joseki.bridge.ParliamentBridge;
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
-import com.hp.hpl.jena.rdf.model.Resource;
 
 /**
  * A handler that processes a configuration.

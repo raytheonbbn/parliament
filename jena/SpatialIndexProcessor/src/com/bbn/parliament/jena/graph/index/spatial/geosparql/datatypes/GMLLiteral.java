@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import org.apache.jena.datatypes.DatatypeFormatException;
 import org.geotools.gml3.GMLConfiguration;
 import org.geotools.metadata.iso.citation.Citations;
 import org.geotools.referencing.crs.AbstractCRS;
@@ -22,7 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.graph.index.spatial.Constants;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.GML;
-import com.hp.hpl.jena.datatypes.DatatypeFormatException;
 
 /** @author rbattle */
 public class GMLLiteral extends GeoSPARQLLiteral {

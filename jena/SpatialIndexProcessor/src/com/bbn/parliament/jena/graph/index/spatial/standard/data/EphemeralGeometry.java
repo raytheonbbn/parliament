@@ -6,6 +6,8 @@
 
 package com.bbn.parliament.jena.graph.index.spatial.standard.data;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateFilter;
 import org.locationtech.jts.geom.CoordinateSequenceComparator;
@@ -16,8 +18,6 @@ import org.locationtech.jts.geom.GeometryComponentFilter;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.GeometryFilter;
 
-import com.hp.hpl.jena.graph.Node;
-
 /** @author Robert Battle */
 public abstract class EphemeralGeometry extends Geometry {
 	private static final long serialVersionUID = 1L;
@@ -26,7 +26,7 @@ public abstract class EphemeralGeometry extends Geometry {
 
 	public EphemeralGeometry(GeometryFactory factory) {
 		super(factory);
-		_blankNode = Node.createAnon();
+		_blankNode = NodeFactory.createBlankNode();
 	}
 
 	public Node getExtentBlankNode() {

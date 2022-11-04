@@ -4,6 +4,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.query.QueryBuildException;
+import org.apache.jena.query.QueryExecException;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.function.Function;
+import org.apache.jena.sparql.function.FunctionEnv;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
@@ -18,15 +27,6 @@ import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.GeoSPARQL
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.GML;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.UOM;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.WKT;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.QueryBuildException;
-import com.hp.hpl.jena.query.QueryExecException;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.function.Function;
-import com.hp.hpl.jena.sparql.function.FunctionEnv;
 
 public abstract class SpatialFunctionBase implements Function {
 	protected static final TransformCache CACHE = new TransformCache();

@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
 import org.locationtech.jts.geom.Geometry;
 
 import com.bbn.parliament.jena.graph.index.IndexFactory;
@@ -15,8 +17,6 @@ import com.bbn.parliament.jena.graph.index.spatial.SpatialIndexFactory;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialIndexTestMethods;
 import com.bbn.parliament.jena.graph.index.spatial.sql.PersistentStore;
 import com.bbn.parliament.jena.graph.index.spatial.sql.PersistentStoreException;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
 
 public class PostgresIndexTestMethods extends SpatialIndexTestMethods {
 	@Override

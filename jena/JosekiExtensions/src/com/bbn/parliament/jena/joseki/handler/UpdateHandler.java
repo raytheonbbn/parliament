@@ -6,6 +6,7 @@
 
 package com.bbn.parliament.jena.joseki.handler;
 
+import org.apache.jena.rdf.model.Resource;
 import org.joseki.QueryExecutionException;
 import org.joseki.Response;
 import org.joseki.ReturnCodes;
@@ -16,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import com.bbn.parliament.jena.joseki.bridge.servlet.ParliamentRequest;
 import com.bbn.parliament.jena.joseki.bridge.tracker.TrackableException;
 import com.bbn.parliament.jena.joseki.bridge.tracker.TrackableUpdate;
-import com.hp.hpl.jena.rdf.model.Resource;
 
 /**
  * @author dreid@bbn.com

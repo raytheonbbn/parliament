@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Resource;
 
 public class FloatingExtentsTestMethods extends SpatialTestDataset {
 	private static final Logger LOG = LoggerFactory.getLogger(FloatingExtentsTestMethods.class);

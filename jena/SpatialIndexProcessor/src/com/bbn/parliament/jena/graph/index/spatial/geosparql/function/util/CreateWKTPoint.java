@@ -2,15 +2,16 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql.function.util;
 
 import java.util.List;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.function.FunctionEnv;
+import org.apache.jena.vocabulary.XSD;
+
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.WKTLiteral;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.function.GeoSPARQLFunctionException;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.function.SpatialFunctionBase;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.function.FunctionEnv;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 /** @author rbattle */
 public class CreateWKTPoint extends SpatialFunctionBase {

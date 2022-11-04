@@ -2,8 +2,10 @@ package com.bbn.parliament.jena.graph.index.spatial.standard;
 
 import java.util.Properties;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.riot.system.PrefixMap;
+import org.apache.jena.riot.system.PrefixMapStd;
 import org.locationtech.jts.geom.Geometry;
-import org.openjena.riot.system.PrefixMap;
 
 import com.bbn.parliament.jena.graph.index.spatial.GeometryRecordFactory;
 import com.bbn.parliament.jena.graph.index.spatial.IterableFunctionFactory;
@@ -12,7 +14,6 @@ import com.bbn.parliament.jena.graph.index.spatial.OperationFactory;
 import com.bbn.parliament.jena.graph.index.spatial.Profile;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialPropertyFunctionFactory;
 import com.bbn.parliament.jena.query.index.operand.OperandFactory;
-import com.hp.hpl.jena.graph.Graph;
 
 public class StandardProfile implements Profile {
 	private GeometryRecordFactory recordFactory;
@@ -40,7 +41,7 @@ public class StandardProfile implements Profile {
 	/** {@inheritDoc} */
 	@Override
 	public PrefixMap getPrefixes() {
-		PrefixMap prefixes = new PrefixMap();
+		PrefixMap prefixes = new PrefixMapStd();
 
 		prefixes.add("gml", StdConstants.GML_NS);
 		prefixes.add("gmlh", StdConstants.GML_NS_H);

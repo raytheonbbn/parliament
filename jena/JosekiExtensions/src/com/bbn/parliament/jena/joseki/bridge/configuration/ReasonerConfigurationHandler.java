@@ -6,7 +6,7 @@
 
 package com.bbn.parliament.jena.joseki.bridge.configuration;
 
-import com.hp.hpl.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.Reasoner;
 
 /** @author rbattle */
 public interface ReasonerConfigurationHandler extends ConfigurationHandler {

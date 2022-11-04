@@ -6,12 +6,13 @@
 
 package com.bbn.parliament.jena.graph.index.temporal;
 
+import org.apache.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.rulesys.BuiltinException;
+import org.apache.jena.reasoner.rulesys.RuleContext;
+
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInterval;
-import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.reasoner.rulesys.BuiltinException;
-import com.hp.hpl.jena.reasoner.rulesys.RuleContext;
 
 /** @author dkolas */
 public class IntervalAdder extends TIPBuiltin {

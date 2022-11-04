@@ -1,7 +1,7 @@
 package com.bbn.parliament.jena.graph.index.spatial.standard;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.ResourceFactory;
 
 public class StdConstants {
 	public static final int SEGMENTS_PER_QUADRANT = 24;

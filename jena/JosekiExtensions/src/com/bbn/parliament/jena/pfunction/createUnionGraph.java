@@ -9,18 +9,19 @@ package com.bbn.parliament.jena.pfunction;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.sparql.core.DatasetGraph;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.pfunction.PFuncSimpleAndList;
+import org.apache.jena.sparql.pfunction.PropFuncArg;
+import org.apache.jena.sparql.util.IterLib;
+
 import com.bbn.parliament.jena.graph.KbGraphStore;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.shared.JenaException;
-import com.hp.hpl.jena.sparql.core.DatasetGraph;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.pfunction.PFuncSimpleAndList;
-import com.hp.hpl.jena.sparql.pfunction.PropFuncArg;
-import com.hp.hpl.jena.sparql.util.IterLib;
 
 /**
  * This property function allows you to create KbUnionGraphs (you can delete

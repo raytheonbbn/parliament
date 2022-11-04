@@ -16,6 +16,11 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.TimeZone;
 
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.util.iterator.NiceIterator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,11 +32,6 @@ import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.pt.TemporalIndexField;
-import com.hp.hpl.jena.datatypes.DatatypeFormatException;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 /** @author rbattle */
 public class TemporalIndexProcessorTest {

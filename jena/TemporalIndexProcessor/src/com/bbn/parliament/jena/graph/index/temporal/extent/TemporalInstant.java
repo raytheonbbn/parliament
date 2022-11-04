@@ -8,8 +8,9 @@ package com.bbn.parliament.jena.graph.index.temporal.extent;
 import java.util.Calendar;
 import java.util.Objects;
 
-import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 
 /**
  * Implementation of an instant in time. Similar to {@link TemporalInterval}s in that
@@ -30,7 +31,7 @@ public class TemporalInstant implements TemporalExtent, Comparable<TemporalInsta
 
 	public Node getAnonymousNode() {
 		if (anonymousNode == null) {
-			anonymousNode = Node.createAnon();
+			anonymousNode = NodeFactory.createBlankNode();
 		}
 		return anonymousNode;
 	}

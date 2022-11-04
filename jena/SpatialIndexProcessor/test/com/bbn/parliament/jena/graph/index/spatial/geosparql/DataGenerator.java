@@ -3,15 +3,16 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Statement;
 import org.locationtech.jts.geom.Point;
 
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.WKTLiteral;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Geo;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Statement;
 
 public class DataGenerator {
 	private static final WKTLiteral WKT = new WKTLiteral();
@@ -26,11 +27,11 @@ public class DataGenerator {
 		List<Statement> triples = new ArrayList<>();
 		for (int i = 0; i < 100; i++) {
 			Point p = createPoint(center, 0.2);
-			Node r = Node.createURI(RES_NS.formatted(i));
-			Node g = Node.createURI(GEOM_NS.formatted(i));
+			Node r = NodeFactory.createURI(RES_NS.formatted(i));
+			Node g = NodeFactory.createURI(GEOM_NS.formatted(i));
 			triples.add(m.asStatement(Triple.create(r, Geo.Nodes.hasGeometry, g)));
 			triples.add(m.asStatement(Triple.create(g, Geo.Nodes.asWKT,
-				Node.createLiteral(WKT.unparse(p), null, WKT))));
+				NodeFactory.createLiteral(WKT.unparse(p), null, WKT))));
 		}
 
 		m.add(triples);

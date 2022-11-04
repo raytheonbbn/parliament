@@ -2,6 +2,11 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql;
 
 import java.util.List;
 
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.datatypes.xsd.impl.XSDBaseStringType;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
 import org.locationtech.jts.geom.Geometry;
 
 import com.bbn.parliament.jena.graph.index.spatial.GeometryRecord;
@@ -9,11 +14,6 @@ import com.bbn.parliament.jena.graph.index.spatial.GeometryRecordFactory;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.GMLLiteral;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.WKTLiteral;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Geo;
-import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.datatypes.xsd.impl.XSDBaseStringType;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
 
 /** @author rbattle */
 public class GeoSPARQLRecordFactory implements GeometryRecordFactory {

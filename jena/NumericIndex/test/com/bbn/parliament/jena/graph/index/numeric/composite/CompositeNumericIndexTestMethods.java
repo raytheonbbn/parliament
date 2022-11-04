@@ -7,6 +7,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.ResourceFactory;
+
 import com.bbn.parliament.jena.graph.index.Index;
 import com.bbn.parliament.jena.graph.index.IndexFactory;
 import com.bbn.parliament.jena.graph.index.IndexFactory.IndexFactoryHelper;
@@ -14,10 +20,6 @@ import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.Record.TripleRecord;
 import com.bbn.parliament.jena.graph.index.numeric.NumericIndex;
 import com.bbn.parliament.jena.query.index.IndexTestMethods;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 public class CompositeNumericIndexTestMethods extends IndexTestMethods<CompositeNumericIndex, Number> {
 	private static final String INT_URI = "http://example.org#int";
@@ -34,7 +36,7 @@ public class CompositeNumericIndexTestMethods extends IndexTestMethods<Composite
 
 	@Override
 	protected Record<Number> createRecord(int seed) {
-		Node key = Node.createURI(EXAMPLE_URI + seed);
+		Node key = NodeFactory.createURI(EXAMPLE_URI + seed);
 		Number value = null;
 		String predicate = null;
 		if (seed % 2 == 0) {
@@ -44,7 +46,7 @@ public class CompositeNumericIndexTestMethods extends IndexTestMethods<Composite
 			value = INT_VALUES[(seed - 1) / 2];
 			predicate = INT_URI;
 		}
-		Triple triple = Triple.create(key, Node.createURI(predicate),
+		Triple triple = Triple.create(key, NodeFactory.createURI(predicate),
 			ResourceFactory.createTypedLiteral(value).asNode());
 		return TripleRecord.create(key, value, triple);
 	}

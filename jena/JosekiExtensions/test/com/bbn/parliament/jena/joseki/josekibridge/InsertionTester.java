@@ -22,9 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.jena.vocabulary.RDF;
+
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.joseki.client.RemoteModel;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 /** @author dkolas */
 public class InsertionTester {

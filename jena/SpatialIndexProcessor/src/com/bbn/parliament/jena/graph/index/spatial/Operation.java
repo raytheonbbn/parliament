@@ -4,13 +4,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.NiceIterator;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.IntersectionMatrix;
 import org.locationtech.jts.geom.Point;
 
 import com.bbn.parliament.jena.graph.index.Record;
-import com.hp.hpl.jena.util.iterator.ClosableIterator;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 public abstract class Operation {
 	public final boolean relate(Geometry a, Geometry b) {

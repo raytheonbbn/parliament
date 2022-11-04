@@ -2,16 +2,16 @@ package com.bbn.parliament.jena.graph.index.spatial.geosparql.function.util;
 
 import java.util.List;
 
+import org.apache.jena.query.QueryBuildException;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.function.FunctionBase;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.datatypes.WKTLiteral;
-import com.hp.hpl.jena.query.QueryBuildException;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.function.FunctionBase;
 
 /** @author rbattle */
 public class ToWKT extends FunctionBase {

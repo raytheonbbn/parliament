@@ -6,6 +6,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.pfunction.PropFuncArg;
+import org.apache.jena.sparql.util.IterLib;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import org.slf4j.Logger;
@@ -22,11 +27,6 @@ import com.bbn.parliament.jena.graph.index.spatial.sql.PersistentStoreException;
 import com.bbn.parliament.jena.graph.index.spatial.sql.ResultSetIterator;
 import com.bbn.parliament.jena.graph.index.spatial.sql.SQLOp;
 import com.bbn.parliament.jena.query.index.operand.OperandFactory;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.pfunction.PropFuncArg;
-import com.hp.hpl.jena.sparql.util.IterLib;
 
 public class PostgresPropertyFunction extends SpatialPropertyFunction {
 	private final static Logger LOG = LoggerFactory.getLogger(PostgresPropertyFunction.class);

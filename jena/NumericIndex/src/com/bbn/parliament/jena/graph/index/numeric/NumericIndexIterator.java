@@ -2,10 +2,11 @@ package com.bbn.parliament.jena.graph.index.numeric;
 
 import java.util.NoSuchElementException;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.util.iterator.ClosableIterator;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.util.NodeUtil;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.util.iterator.ClosableIterator;
 import com.sleepycat.je.CursorConfig;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;

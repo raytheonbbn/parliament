@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
-import com.hp.hpl.jena.update.UpdateAction;
 
 public class TrackableUpdate extends Trackable {
 	private static Logger _log = LoggerFactory.getLogger(TrackableUpdate.class);

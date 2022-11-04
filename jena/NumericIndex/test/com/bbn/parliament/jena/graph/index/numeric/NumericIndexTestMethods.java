@@ -11,6 +11,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.vocabulary.XSD;
+
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.IndexFactory;
 import com.bbn.parliament.jena.graph.index.IndexFactory.IndexFactoryHelper;
@@ -18,18 +32,6 @@ import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.numeric.Constants.NumberType;
 import com.bbn.parliament.jena.query.index.QueryableIndexTestMethods;
 import com.bbn.parliament.jena.util.FileUtil;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 public class NumericIndexTestMethods extends QueryableIndexTestMethods<NumericIndex<Integer>, Integer> {
 	public static final String AGE_URI = "http://example.org#age";
@@ -46,7 +48,7 @@ public class NumericIndexTestMethods extends QueryableIndexTestMethods<NumericIn
 
 	@Override
 	protected Record<Integer> createRecord(int seed) {
-		Node key = Node.createURI(AGE_URI + seed);
+		Node key = NodeFactory.createURI(AGE_URI + seed);
 		Record<Integer> record = Record.create(key, seed);
 		return record;
 	}
@@ -67,7 +69,7 @@ public class NumericIndexTestMethods extends QueryableIndexTestMethods<NumericIn
 
 	public void testFilter(NumericIndex<Integer> index, Model model) {
 		// String example = "http://example.org/";
-		Node p = Node.createURI(AGE_URI);
+		Node p = NodeFactory.createURI(AGE_URI);
 		Node o20 = ResourceFactory.createTypedLiteral(20).asNode();
 		Node o25 = ResourceFactory.createTypedLiteral(25).asNode();
 		Node o29 = ResourceFactory.createTypedLiteral(29).asNode();

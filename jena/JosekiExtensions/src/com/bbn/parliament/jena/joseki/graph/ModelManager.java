@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,10 +33,6 @@ import com.bbn.parliament.jena.joseki.bridge.configuration.ReasonerConfiguration
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.modify.KbUpdateEngine;
 import com.bbn.parliament.jni.KbConfig;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class ModelManager {
 	private static class ModelManagerHolder {
