@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
@@ -48,7 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.joseki.bridge.tracker.Tracker;
-import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
 import com.bbn.parliament.jena.joseki.client.HttpClientUtil;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.joseki.client.RemoteModel;
@@ -173,7 +173,7 @@ public class ParliamentServerTestCase {
 	private static Set<String> getAvailableNamedGraphs() {
 		Set<String> result = new HashSet<>();
 		String q = "select distinct ?g where { graph ?g { } }";
-		try (CloseableQueryExec qe = new CloseableQueryExec(SPARQL_URL, q)) {
+		try (var qe = QueryExecutionFactory.sparqlService(SPARQL_URL, q)) {
 			ResultSet rs = qe.execSelect();
 			while (rs.hasNext()) {
 				QuerySolution qs = rs.next();
@@ -487,7 +487,7 @@ public class ParliamentServerTestCase {
 	}
 
 	private static ResultSet doQuery(String queryFmt, Object... args) {
-		try (CloseableQueryExec qe = new CloseableQueryExec(SPARQL_URL, queryFmt.formatted(args))) {
+		try (var qe = QueryExecutionFactory.sparqlService(SPARQL_URL, queryFmt.formatted(args))) {
 			return qe.execSelect();
 		}
 	}

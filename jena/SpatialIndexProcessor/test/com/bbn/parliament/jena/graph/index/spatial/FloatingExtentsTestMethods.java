@@ -16,8 +16,6 @@ import org.apache.jena.rdf.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
-
 public class FloatingExtentsTestMethods extends SpatialTestDataset {
 	private static final Logger LOG = LoggerFactory.getLogger(FloatingExtentsTestMethods.class);
 
@@ -63,7 +61,7 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 	public void testNot() {
 		loadData("queries/BuildingExample1.ttl");
 		loadData("queries/BuildingExample2.ttl");
-		try (CloseableQueryExec qexec = performQuery(NOTEST_QUERY)) {
+		try (var qexec = performQuery(NOTEST_QUERY)) {
 			ResultSet result = qexec.execSelect();
 			assertTrue(result.hasNext());
 
@@ -105,7 +103,7 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 
 	public void testThreeExtentsInCircle() {
 		loadData("queries/BuildingExample2.ttl");
-		try (CloseableQueryExec qexec = performQuery(THREE_EXTENTS_IN_CIRCLE_QUERY)) {
+		try (var qexec = performQuery(THREE_EXTENTS_IN_CIRCLE_QUERY)) {
 			ResultSet result = qexec.execSelect();
 			assertTrue(result.hasNext());
 
@@ -167,7 +165,7 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 
 	public void testSinglePoint() {
 		loadData("queries/BuildingExample1.ttl");
-		try (CloseableQueryExec qexec = performQuery(SINGLE_POINT_QUERY)) {
+		try (var qexec = performQuery(SINGLE_POINT_QUERY)) {
 			ResultSet result = qexec.execSelect();
 			assertTrue(result.hasNext());
 
@@ -196,7 +194,7 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 
 	public void testCircleExtentsKnown() {
 		loadData("queries/BuildingExample1.ttl");
-		try (CloseableQueryExec qexec = performQuery(CIRCLE_EXTENTS_KNOWN_QUERY)) {
+		try (var qexec = performQuery(CIRCLE_EXTENTS_KNOWN_QUERY)) {
 			ResultSet result = qexec.execSelect();
 			assertTrue(result.hasNext());
 
@@ -229,7 +227,7 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 
 	public void testCircleReturnFloater() {
 		loadData("queries/BuildingExample1.ttl");
-		try (CloseableQueryExec qexec = performQuery(CIRCLE_RETURN_FLOATER_QUERY)) {
+		try (var qexec = performQuery(CIRCLE_RETURN_FLOATER_QUERY)) {
 			ResultSet result = qexec.execSelect();
 			assertTrue(result.hasNext());
 
@@ -266,7 +264,7 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 
 	public void testCircleExtentsUnknown() {
 		loadData("queries/BuildingExample1.ttl");
-		try (CloseableQueryExec qexec = performQuery(CIRCLE_EXTENTS_UNKNOWN_QUERY)) {
+		try (var qexec = performQuery(CIRCLE_EXTENTS_UNKNOWN_QUERY)) {
 			ResultSet result = qexec.execSelect();
 			assertTrue(result.hasNext());
 
@@ -322,7 +320,7 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 	public void testExtentsUnknownReorderedQuery() {
 		loadData("queries/BuildingExample1.ttl");
 
-		try (CloseableQueryExec qexec = performQuery(EXTENTS_UNKNOWN_REORDERED_QUERY)) {
+		try (var qexec = performQuery(EXTENTS_UNKNOWN_REORDERED_QUERY)) {
 			ResultSet result = qexec.execSelect();
 			assertTrue(result.hasNext());
 
@@ -386,7 +384,7 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 	public void testExtentsUnknownSize0Circle() {
 		loadData("queries/BuildingExample1.ttl");
 		loadData("queries/BuildingExample2.ttl");
-		try (CloseableQueryExec qexec = performQuery(EXTENTS_UNKNOWN_SIZE0_CIRCLE_QUERY)) {
+		try (var qexec = performQuery(EXTENTS_UNKNOWN_SIZE0_CIRCLE_QUERY)) {
 			assertFalse(qexec.execSelect().hasNext());
 		}
 	}
@@ -404,7 +402,7 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 	public void testExtentsSmallCircle() {
 		loadData("queries/BuildingExample1.ttl");
 		loadData("queries/BuildingExample2.ttl");
-		try (CloseableQueryExec qexec = performQuery(EXTENTS_SMALL_CIRCLE_QUERY)) {
+		try (var qexec = performQuery(EXTENTS_SMALL_CIRCLE_QUERY)) {
 			ResultSet result = qexec.execSelect();
 			while (result.hasNext()) {
 				QuerySolution solution = result.next();
@@ -434,7 +432,7 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 	public void testExtentsUnknownMultipleResults() {
 		loadData("queries/BuildingExample1.ttl");
 		loadData("queries/BuildingExample2.ttl");
-		try (CloseableQueryExec qexec = performQuery(EXTENTS_UNKNOWN_MULTIPLE_RESULTS_QUERY)) {
+		try (var qexec = performQuery(EXTENTS_UNKNOWN_MULTIPLE_RESULTS_QUERY)) {
 			ResultSet result = qexec.execSelect();
 			assertTrue(result.hasNext());
 

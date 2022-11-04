@@ -20,8 +20,6 @@ import org.apache.jena.query.ResultSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
-
 public class ThreadTestMethods extends SpatialTestDataset {
 	private static final Logger LOG = LoggerFactory.getLogger(ThreadTestMethods.class);
 
@@ -175,7 +173,7 @@ public class ThreadTestMethods extends SpatialTestDataset {
 			id = new AtomicLong(Thread.currentThread().getId());
 			LOG.debug("{} Start", getThreadId());
 
-			try (CloseableQueryExec qExec = SpatialTestDataset.performQuery(ds, queryStr)) {
+			try (var qExec = SpatialTestDataset.performQuery(ds, queryStr)) {
 				ResultSet rs = qExec.execSelect();
 				assertTrue(rs.hasNext());
 				while (rs.hasNext()) {

@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import com.bbn.parliament.jena.NodeCreateUtils;
 import com.bbn.parliament.jena.graph.index.spatial.sql.postgres.PostgresIndex;
 import com.bbn.parliament.jena.graph.index.spatial.standard.StdConstants;
-import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
 
 public class QueryTestMethods extends SpatialTestDataset {
 	private static final Logger LOG = LoggerFactory.getLogger(QueryTestMethods.class);
@@ -43,7 +42,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 		loadData("queries/BuildingExample1.ttl");
 		loadData("queries/BuildingExample2.ttl");
 		loadData("queries/BuildingExample3.ttl");
-		try (CloseableQueryExec qexec = performQuery(TANGENTIAL_PROPER_PART_POINTS_QUERY)) {
+		try (var qexec = performQuery(TANGENTIAL_PROPER_PART_POINTS_QUERY)) {
 			checkResults(qexec, "example3:region1");
 		}
 	}
@@ -63,7 +62,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 		loadData("queries/BuildingExample2.ttl");
 		loadData("queries/BuildingExample3.ttl");
 
-		try (CloseableQueryExec qexec = performQuery(NON_TANGENTIAL_PROPER_PART_POINTS_QUERY)) {
+		try (var qexec = performQuery(NON_TANGENTIAL_PROPER_PART_POINTS_QUERY)) {
 			checkResults(qexec, "example2:point3", "example2:point4", "example2:point5", "example3:region2");
 		}
 	}
@@ -82,7 +81,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 		loadData("queries/BuildingExample1.ttl");
 		loadData("queries/BuildingExample2.ttl");
 		loadData("queries/BuildingExample3.ttl");
-		try (CloseableQueryExec qexec = performQuery(NON_TANGENTIAL_PROPER_PART_MULTIPLE_QUERY)) {
+		try (var qexec = performQuery(NON_TANGENTIAL_PROPER_PART_MULTIPLE_QUERY)) {
 			checkResults(qexec, "example3:region1", "example1:point1");
 		}
 	}
@@ -101,7 +100,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 		loadData("queries/BuildingExample1.ttl");
 		loadData("queries/BuildingExample2.ttl");
 		loadData("queries/BuildingExample3.ttl");
-		try (CloseableQueryExec qexec = performQuery(PROPER_PART_MULTIPLE_RESULTS_QUERY)) {
+		try (var qexec = performQuery(PROPER_PART_MULTIPLE_RESULTS_QUERY)) {
 			checkResults(qexec, "example2:point3", "example2:point4", "example2:point5", "example3:region2");
 		}
 	}
@@ -120,7 +119,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 		loadData("queries/BuildingExample1.ttl");
 		loadData("queries/BuildingExample2.ttl");
 		loadData("queries/BuildingExample3.ttl");
-		try (CloseableQueryExec qexec = performQuery(TANGENTIAL_PROPER_PART_REGION_QUERY)) {
+		try (var qexec = performQuery(TANGENTIAL_PROPER_PART_REGION_QUERY)) {
 			// I deemed the second expected result to be invalid on the assumption
 			// that a point cannot be a TPP of any polygon, since no point can touch
 			// both the border of a polygon and the interior of a polygon simultaneously.
@@ -146,7 +145,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 		loadData("queries/BuildingExample2.ttl");
 		loadData("queries/BuildingExample3.ttl");
 
-		try (CloseableQueryExec qexec = performQuery(A_QUERY_1)) {
+		try (var qexec = performQuery(A_QUERY_1)) {
 			checkResults(qexec, "example3:campus1", "example3:campus2", "example3:campus3");
 		}
 	}
@@ -179,7 +178,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 
 	public void testBuildingQuery() {
 		loadData("queries/BuildingQueryExample.ttl");
-		try (CloseableQueryExec qexec = performQuery(BUILDING_QUERY)) {
+		try (var qexec = performQuery(BUILDING_QUERY)) {
 			ResultSet rs = qexec.execSelect();
 			assertTrue(rs.hasNext());
 
@@ -207,7 +206,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 		loadData("queries/BuildingExample1.ttl");
 		loadData("queries/BuildingExample2.ttl");
 		loadData("queries/BuildingExample3.ttl");
-		try (CloseableQueryExec qexec = performQuery(A_QUERY_2)) {
+		try (var qexec = performQuery(A_QUERY_2)) {
 			checkResults(qexec, "example2:building3", "example2:building4", "example2:building5", "example3:campus2");
 		}
 	}
@@ -227,7 +226,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 		loadData("queries/BuildingExample1.ttl");
 		loadData("queries/BuildingExample2.ttl");
 		loadData("queries/BuildingExample3.ttl");
-		try (CloseableQueryExec qexec = performQuery(CIRCLE_QUERY)) {
+		try (var qexec = performQuery(CIRCLE_QUERY)) {
 			checkResults(qexec, "example2:building3", "example2:building4", "example2:building5");
 		}
 	}
@@ -246,7 +245,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 		loadData("queries/BuildingExample1.ttl");
 		loadData("queries/BuildingExample2.ttl");
 		loadData("queries/BuildingExample3.ttl");
-		try (CloseableQueryExec qexec = performQuery(COVERED_CAMPUS_QUERY)) {
+		try (var qexec = performQuery(COVERED_CAMPUS_QUERY)) {
 			ResultSet rs = qexec.execSelect();
 
 			Map<String, List<String>> values = new HashMap<>();
@@ -290,7 +289,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 
 	public void testOnlyPropertyFunctionQuery() {
 		loadData("queries/Cities.ttl");
-		try (CloseableQueryExec qexec = performQuery(ONLY_PROPERTY_FUNCTION_QUERY)) {
+		try (var qexec = performQuery(ONLY_PROPERTY_FUNCTION_QUERY)) {
 			checkResults(qexec, "cities:pointLondon", "cities:polyLondon");
 		}
 	}
@@ -304,7 +303,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 
 	public void testOnlyPropertyFunctionQueryUnbound() {
 		loadData("queries/Cities.ttl");
-		try (CloseableQueryExec qexec = performQuery(ONLY_PROPERTY_FUNCTION_UNBOUND_QUERY)) {
+		try (var qexec = performQuery(ONLY_PROPERTY_FUNCTION_UNBOUND_QUERY)) {
 			checkResults(qexec, "cities:polyLondon");
 		}
 	}
@@ -317,7 +316,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 
 	public void testOnlyPropertyFunctionQueryNonIndexedURI() {
 		loadData("queries/Cities.ttl");
-		try (CloseableQueryExec qexec = performQuery(ONLY_PROPERTY_FUNCTION_NON_INDEXED_URI_QUERY)) {
+		try (var qexec = performQuery(ONLY_PROPERTY_FUNCTION_NON_INDEXED_URI_QUERY)) {
 			checkResults(qexec);
 		}
 	}
@@ -335,7 +334,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 	public void testSharedContext() {
 		//loadData("queries/Cities.ttl");
 		loadData("queries/ExtraLondon.ttl");
-		try (CloseableQueryExec qexec = performQuery(SHARED_CONTEXT_QUERY)) {
+		try (var qexec = performQuery(SHARED_CONTEXT_QUERY)) {
 			checkResults(qexec, "cities:pointVictoriaMemorial", "cities:pointBuckinghamPalace");
 		}
 	}
@@ -395,7 +394,7 @@ public class QueryTestMethods extends SpatialTestDataset {
 		}
 		query += "}";
 		LOG.info(query);
-		try (CloseableQueryExec qexec = performQuery(query)) {
+		try (var qexec = performQuery(query)) {
 			ResultSet rs = qexec.execSelect();
 			int count = 0;
 			while (rs.hasNext()) {

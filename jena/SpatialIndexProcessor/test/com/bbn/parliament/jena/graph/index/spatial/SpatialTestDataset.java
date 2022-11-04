@@ -17,6 +17,8 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ParameterizedSparqlString;
 import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSetFactory;
@@ -43,7 +45,6 @@ import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Geo;
 import com.bbn.parliament.jena.graph.index.spatial.standard.StdConstants;
-import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.joseki.client.StreamUtil;
 import com.bbn.parliament.jena.query.QueryTestUtil;
@@ -160,16 +161,16 @@ public class SpatialTestDataset {
 		}
 	}
 
-	public CloseableQueryExec performQuery(String queryWithoutPrefixes) {
+	public QueryExecution performQuery(String queryWithoutPrefixes) {
 		return performQuery(getDataset(), queryWithoutPrefixes);
 	}
 
-	public static CloseableQueryExec performQuery(Dataset dataset, String queryWithoutPrefixes) {
+	public static QueryExecution performQuery(Dataset dataset, String queryWithoutPrefixes) {
 		ParameterizedSparqlString pss = new ParameterizedSparqlString(queryWithoutPrefixes, PFX_MAP);
-		return new CloseableQueryExec(dataset, pss.asQuery());
+		return QueryExecutionFactory.create(pss.asQuery(), dataset);
 	}
 
-	public static void checkResults(CloseableQueryExec qexec, String... expectedResultQNames) {
+	public static void checkResults(QueryExecution qexec, String... expectedResultQNames) {
 		Set<String> expectedResults = Arrays.stream(expectedResultQNames)
 			.map(PFX_MAP::expandPrefix)
 			.collect(Collectors.toCollection(TreeSet::new));
@@ -211,7 +212,7 @@ public class SpatialTestDataset {
 		Query query = QueryFactory.read(queryFile, Syntax.syntaxARQ);
 
 		long start = System.currentTimeMillis();
-		try (CloseableQueryExec qexec = new CloseableQueryExec(getDataset(), query)) {
+		try (var qexec = QueryExecutionFactory.create(query, getDataset())) {
 			ResultSetRewindable actualResultSet = ResultSetFactory.makeRewindable(qexec.execSelect());
 			LOG.debug("Query time to first result: {} ms", (System.currentTimeMillis() - start));
 

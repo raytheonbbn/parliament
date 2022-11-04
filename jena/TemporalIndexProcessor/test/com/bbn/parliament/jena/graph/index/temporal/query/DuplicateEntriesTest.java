@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.Reader;
 import java.io.StringReader;
 
+import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.vocabulary.XSD;
 import org.junit.jupiter.api.AfterAll;
@@ -21,7 +22,6 @@ import org.junit.jupiter.api.Test;
 
 import com.bbn.parliament.jena.graph.index.temporal.Constants;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalTestServer;
-import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
 
 /** @author dkolas */
 public class DuplicateEntriesTest {
@@ -79,7 +79,7 @@ public class DuplicateEntriesTest {
 		try (Reader rdr = new StringReader(TRIPLES)) {
 			testServer.getModel().read(rdr, null, "TURTLE");
 		}
-		try (CloseableQueryExec qe = new CloseableQueryExec(testServer.getDataset(), QUERY)) {
+		try (var qe = QueryExecutionFactory.create(QUERY, testServer.getDataset())) {
 			ResultSet resultSet = qe.execSelect();
 			int count = 0;
 			while (resultSet.hasNext()){

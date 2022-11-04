@@ -10,8 +10,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
-
 public class BuffersTestMethods extends SpatialTestDataset {
 	private static final Logger LOG = LoggerFactory.getLogger(BuffersTestMethods.class);
 
@@ -38,7 +36,7 @@ public class BuffersTestMethods extends SpatialTestDataset {
 		loadData("queries/BuildingExample2.ttl");
 
 		assertTrue(getIndex().size() > 0);
-		try (CloseableQueryExec qexec = performQuery(POINT_QUERY)) {
+		try (var qexec = performQuery(POINT_QUERY)) {
 			checkResults(qexec, "example1:building1", "example1:building2");
 		}
 	}
@@ -61,7 +59,7 @@ public class BuffersTestMethods extends SpatialTestDataset {
 		loadData("queries/BuildingExample1.ttl");
 		loadData("queries/BuildingExample2.ttl");
 
-		try (CloseableQueryExec qexec = performQuery(POINT_REVERSE_QUERY)) {
+		try (var qexec = performQuery(POINT_REVERSE_QUERY)) {
 			checkResults(qexec, "example1:building1", "example1:building2");
 		}
 	}
@@ -88,7 +86,7 @@ public class BuffersTestMethods extends SpatialTestDataset {
 		loadData("queries/BuildingExample2.ttl");
 		loadData("queries/BuildingExample3.ttl");
 
-		try (CloseableQueryExec qexec = performQuery(REGION_QUERY)) {
+		try (var qexec = performQuery(REGION_QUERY)) {
 			checkResults(qexec, "example2:building3", "example2:building4", "example2:building5", "example3:campus2");
 		}
 	}
@@ -113,7 +111,7 @@ public class BuffersTestMethods extends SpatialTestDataset {
 		loadData("queries/BuildingExample2.ttl");
 		loadData("queries/CarExample.ttl");
 
-		try (CloseableQueryExec qexec = performQuery(VARIABLE_DISTANCE_QUERY)) {
+		try (var qexec = performQuery(VARIABLE_DISTANCE_QUERY)) {
 			checkResults(qexec, "example2:building3", "example2:building4", "example2:building5");
 		}
 	}
@@ -137,7 +135,7 @@ public class BuffersTestMethods extends SpatialTestDataset {
 		loadData("queries/BuildingExample1.ttl");
 		loadData("queries/BuildingExample2.ttl");
 
-		try (CloseableQueryExec qexec = performQuery(BOUND_VARIABLE_EXTENT_QUERY)) {
+		try (var qexec = performQuery(BOUND_VARIABLE_EXTENT_QUERY)) {
 			checkResults(qexec, "example2:building3", "example2:building4", "example2:building5");
 		}
 	}
@@ -164,7 +162,7 @@ public class BuffersTestMethods extends SpatialTestDataset {
 	public void testBufferZeroDistance() {
 		loadData("queries/BuildingExample2.ttl");
 
-		try (CloseableQueryExec qexec = performQuery(ZERO_DISTANCE_QUERY)) {
+		try (var qexec = performQuery(ZERO_DISTANCE_QUERY)) {
 			assertFalse(qexec.execSelect().hasNext());
 		}
 	}
@@ -188,7 +186,7 @@ public class BuffersTestMethods extends SpatialTestDataset {
 			testData, city, distance);
 		loadData(testData);
 		String query = THOUSAND_DISTANCE_QUERY.formatted(distance, city);
-		try (CloseableQueryExec qexec = performQuery(query)) {
+		try (var qexec = performQuery(query)) {
 			checkResults(qexec, expectedResults);
 		}
 	}

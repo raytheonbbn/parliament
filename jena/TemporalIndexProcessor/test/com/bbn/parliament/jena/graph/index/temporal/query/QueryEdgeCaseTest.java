@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
@@ -32,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import com.bbn.parliament.jena.graph.index.temporal.Constants;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalTestServer;
 import com.bbn.parliament.jena.graph.index.temporal.pt.TemporalIndexField;
-import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
 
 /** @author dkolas */
 public class QueryEdgeCaseTest {
@@ -89,7 +89,7 @@ public class QueryEdgeCaseTest {
 					?temporal time:before ?before .
 				}
 				""";
-		try (CloseableQueryExec qExec = new CloseableQueryExec(testServer.getDataset(), query)) {
+		try (var qExec = QueryExecutionFactory.create(query, testServer.getDataset())) {
 			ResultSet resultSet = qExec.execSelect();
 			checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8");
 		}
@@ -108,7 +108,7 @@ public class QueryEdgeCaseTest {
 						time:before ?before .
 				}
 				""";
-		try (CloseableQueryExec qExec = new CloseableQueryExec(testServer.getDataset(), query)) {
+		try (var qExec = QueryExecutionFactory.create(query, testServer.getDataset())) {
 			ResultSet resultSet = qExec.execSelect();
 			checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8");
 		}
@@ -128,7 +128,7 @@ public class QueryEdgeCaseTest {
 						time:before ?before .
 				}
 				""";
-		try (CloseableQueryExec qExec = new CloseableQueryExec(testServer.getDataset(), query)) {
+		try (var qExec = QueryExecutionFactory.create(query, testServer.getDataset())) {
 			ResultSet resultSet = qExec.execSelect();
 			checkResults(resultSet);
 		}
@@ -144,7 +144,7 @@ public class QueryEdgeCaseTest {
 						pt:asInstant "2006-02-16T00:00:01Z"^^xsd:dateTime ] .
 				}
 				""";
-		try (CloseableQueryExec qExec = new CloseableQueryExec(testServer.getDataset(), query)) {
+		try (var qExec = QueryExecutionFactory.create(query, testServer.getDataset())) {
 			ResultSet resultSet = qExec.execSelect();
 			checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8");
 		}
@@ -160,7 +160,7 @@ public class QueryEdgeCaseTest {
 					?interval time:inside ?temporal .
 				}
 				""";
-		try (CloseableQueryExec qExec = new CloseableQueryExec(testServer.getDataset(), query)) {
+		try (var qExec = QueryExecutionFactory.create(query, testServer.getDataset())) {
 			ResultSet resultSet = qExec.execSelect();
 			checkResults(resultSet, NS+"0", NS+"2", NS+"4", NS+"6", NS+"8", NS+"10");
 		}

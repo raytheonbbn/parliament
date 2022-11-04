@@ -21,7 +21,7 @@ import org.apache.jena.sparql.util.Context;
  * @deprecated Starting with Jena 3.0.0, simply use QueryExecution instead,
  *             obtaining it directly from QueryExecutionFactory.
  */
-@Deprecated(forRemoval = true)
+@Deprecated(forRemoval = true, since = "2.8.2")
 public class CloseableQueryExec implements QueryExecution {
 	private QueryExecution qe;
 
