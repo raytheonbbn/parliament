@@ -20,6 +20,7 @@ import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.engine.ResultSetStream;
 import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.engine.iterator.QueryIterPlainWrapper;
+import org.apache.jena.sparql.resultset.RDFInput;
 import org.apache.jena.sparql.resultset.ResultSetCompare;
 
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
@@ -65,7 +66,7 @@ public class QueryTestUtil {
 				throw new UncheckedIOException(ex);
 			}
 		} else {
-			return ResultSetFactory.makeRewindable(ResultSetFactory.fromRDF(loadModel(resultSet, null)));
+			return ResultSetFactory.makeRewindable(RDFInput.fromRDF(loadModel(resultSet, null)));
 		}
 	}
 

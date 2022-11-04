@@ -173,7 +173,7 @@ public class KbGraphTest {
 		graphAdd(content, addStr);
 		Triple remove = NodeCreateUtils.createTriple(removeStr);
 		Graph expected = graphWith(resultStr == null ? "" : resultStr);
-		content.getBulkUpdateHandler().remove(remove.getSubject(), remove.getPredicate(), remove.getObject());
+		GraphUtil.remove(content, remove.getSubject(), remove.getPredicate(), remove.getObject());
 		Graph finalContent = remove(copy(content), baseContent);
 		assertIsomorphic(removeStr, expected, finalContent);
 	}
@@ -208,13 +208,13 @@ public class KbGraphTest {
 	}
 
 	private static Graph remove(Graph toUpdate, Graph toRemove) {
-		toUpdate.getBulkUpdateHandler().delete(toRemove);
+		GraphUtil.deleteFrom(toUpdate, toRemove);
 		return toUpdate;
 	}
 
 	private static Graph copy(Graph g) {
 		Graph result = Factory.createDefaultGraph();
-		result.getBulkUpdateHandler().add(g);
+		GraphUtil.addInto(result, g);
 		return result;
 	}
 
