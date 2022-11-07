@@ -25,7 +25,7 @@ public class ForgetfulGraph extends GraphBase {
 	protected int _numStatements = 0;
 
 	/* (non-Javadoc)
-	 * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseFind(com.hp.hpl.jena.graph.TripleMatch)
+	 * @see org.apache.jena.graph.impl.GraphBase#graphBaseFind(org.apache.jena.graph.Triple)
 	 */
 	@Override
 	protected ExtendedIterator<Triple> graphBaseFind(Triple m) {
@@ -33,7 +33,7 @@ public class ForgetfulGraph extends GraphBase {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.hp.hpl.jena.graph.impl.GraphBase#performAdd(com.hp.hpl.jena.graph.Triple)
+	 * @see org.apache.jena.graph.impl.GraphBase#performAdd(org.apache.jena.graph.Triple)
 	 */
 	@Override
 	public void performAdd(Triple t) {
@@ -41,7 +41,7 @@ public class ForgetfulGraph extends GraphBase {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseSize()
+	 * @see org.apache.jena.graph.impl.GraphBase#graphBaseSize()
 	 */
 	@Override
 	protected int graphBaseSize() {

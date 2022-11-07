@@ -16,7 +16,7 @@ public class InstantAdder extends TIPBuiltin {
 		super(index);
 	}
 
-	/** @see com.hp.hpl.jena.reasoner.rulesys.Builtin#getName() */
+	/** @see org.apache.jena.reasoner.rulesys.Builtin#getName() */
 	@Override
 	public String getName() {
 		return "instant";

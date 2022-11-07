@@ -23,6 +23,7 @@ import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
+import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Literal;
@@ -59,7 +60,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.bbn.parliament.jena.bridge.tracker.Tracker;
-import com.bbn.parliament.jena.joseki.client.CloseableQueryExec;
 import com.bbn.parliament.jena.joseki.client.QuerySolutionStream;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.joseki.client.RemoteModel;
@@ -451,7 +451,7 @@ public class ParliamentServerTests {
 		}
 
 		LOG.info("CSV quote test results:");
-		try (CloseableQueryExec qe = new CloseableQueryExec(sparqlUrl, CSV_QUOTING_TEST_QUERY)) {
+		try (var qe = QueryExecutionFactory.sparqlService(sparqlUrl, CSV_QUOTING_TEST_QUERY)) {
 			ResultSet rs = qe.execSelect();
 			while (rs.hasNext()) {
 				QuerySolution qs = rs.next();
@@ -500,7 +500,7 @@ public class ParliamentServerTests {
 
 	private boolean doAskQuery(String queryFmt, Object... args) {
 		String query = queryFmt.formatted(args);
-		try (CloseableQueryExec qe = new CloseableQueryExec(sparqlUrl, query)) {
+		try (var qe = QueryExecutionFactory.sparqlService(sparqlUrl, query)) {
 			return qe.execAsk();
 		}
 	}

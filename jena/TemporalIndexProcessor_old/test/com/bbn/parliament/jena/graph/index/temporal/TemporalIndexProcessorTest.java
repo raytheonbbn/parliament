@@ -31,7 +31,6 @@ public class TemporalIndexProcessorTest extends AbstractTemporalTestClass {
 	private static final Resource DATE_TIME_INTERVAL_TYPE = ResourceFactory.createResource(
 		Constants.DATE_TIME_INTERVAL.getURI());
 
-	/** Test method for {@link com.bbn.parliament.jena.graph.index.temporal.TemporalIndexProcessor#tripleAdded(com.hp.hpl.jena.graph.Triple, com.hp.hpl.jena.graph.Graph)} */
 	public void testTripleAdded() {
 		Resource interval = ResourceFactory.createResource("http://test#dt");
 		Literal date = ResourceFactory.createTypedLiteral(
