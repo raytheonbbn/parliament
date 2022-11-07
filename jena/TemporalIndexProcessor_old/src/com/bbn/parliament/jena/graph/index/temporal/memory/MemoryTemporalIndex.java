@@ -15,6 +15,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalIndex;
@@ -22,8 +25,6 @@ import com.bbn.parliament.jena.graph.index.temporal.TemporalPropertyFunctionFact
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInterval;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
 
 /** @author dkolas */
 public class MemoryTemporalIndex extends TemporalIndex {

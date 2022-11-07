@@ -8,15 +8,16 @@ package com.bbn.parliament.jena.graph.index.temporal;
 
 import java.util.Properties;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.pfunction.PropertyFunctionRegistry;
+
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.QueryableIndex;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalRecordFactory;
 import com.bbn.parliament.jena.query.index.QueryCache;
 import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunctionFactory;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.pfunction.PropertyFunctionRegistry;
 
 public abstract class TemporalIndex implements QueryableIndex<TemporalExtent> {
 	protected TemporalRecordFactory recordFactory;

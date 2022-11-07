@@ -7,10 +7,11 @@ package com.bbn.parliament.jena.graph.index.temporal.bdb;
 
 import java.util.NoSuchElementException;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.util.iterator.ClosableIterator;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.util.iterator.ClosableIterator;
 import com.sleepycat.je.CursorConfig;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;

@@ -8,8 +8,9 @@ package com.bbn.parliament.jena.graph.index.temporal.extent;
 import java.util.Calendar;
 import java.util.Objects;
 
-import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 
 /** @author dkolas */
 public class TemporalInstant extends TemporalExtent implements Comparable<TemporalInstant> {
@@ -21,7 +22,7 @@ public class TemporalInstant extends TemporalExtent implements Comparable<Tempor
 
 	public Node getAnonymousNode() {
 		if (anonymousNode == null) {
-			anonymousNode = Node.createAnon();
+			anonymousNode = NodeFactory.createBlankNode();
 		}
 		return anonymousNode;
 	}

@@ -8,8 +8,9 @@ package com.bbn.parliament.jena.graph.index.temporal;
 
 import java.util.Properties;
 
+import org.apache.jena.graph.Graph;
+
 import com.bbn.parliament.jena.graph.index.temporal.memory.MemoryTemporalIndex;
-import com.hp.hpl.jena.graph.Graph;
 
 /** @author rbattle */
 public class MockTemporalIndex extends MemoryTemporalIndex {

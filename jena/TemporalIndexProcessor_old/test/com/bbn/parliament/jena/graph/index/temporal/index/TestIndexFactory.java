@@ -6,6 +6,12 @@
 
 package com.bbn.parliament.jena.graph.index.temporal.index;
 
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.sparql.graph.GraphFactory;
+
 import com.bbn.parliament.jena.graph.index.IndexException;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.graph.index.Record;
@@ -17,10 +23,6 @@ import com.bbn.parliament.jena.graph.index.temporal.bdb.PersistentTemporalIndex;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInterval;
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.graph.GraphFactory;
 
 public class TestIndexFactory {
 	private static TemporalPropertyFunctionFactory<PersistentTemporalIndex> factory;
@@ -50,13 +52,13 @@ public class TestIndexFactory {
 	 */
 
 	static {
-		Jan01 = Node.createLiteral("2005-01-01T05:00:00", null, XSDDatatype.XSDdateTime);
-		Jan02 = Node.createLiteral("2005-01-02T05:00:00", null, XSDDatatype.XSDdateTime);
-		Jan03 = Node.createLiteral("2005-01-03T05:00:00", null, XSDDatatype.XSDdateTime);
-		Jan04 = Node.createLiteral("2005-01-04T05:00:00", null, XSDDatatype.XSDdateTime);
-		Jan05 = Node.createLiteral("2005-01-05T05:00:00", null, XSDDatatype.XSDdateTime);
-		Jan06 = Node.createLiteral("2005-01-06T05:00:00", null, XSDDatatype.XSDdateTime);
-		Jan07 = Node.createLiteral("2005-01-07T05:00:00", null, XSDDatatype.XSDdateTime);
+		Jan01 = NodeFactory.createLiteral("2005-01-01T05:00:00", null, XSDDatatype.XSDdateTime);
+		Jan02 = NodeFactory.createLiteral("2005-01-02T05:00:00", null, XSDDatatype.XSDdateTime);
+		Jan03 = NodeFactory.createLiteral("2005-01-03T05:00:00", null, XSDDatatype.XSDdateTime);
+		Jan04 = NodeFactory.createLiteral("2005-01-04T05:00:00", null, XSDDatatype.XSDdateTime);
+		Jan05 = NodeFactory.createLiteral("2005-01-05T05:00:00", null, XSDDatatype.XSDdateTime);
+		Jan06 = NodeFactory.createLiteral("2005-01-06T05:00:00", null, XSDDatatype.XSDdateTime);
+		Jan07 = NodeFactory.createLiteral("2005-01-07T05:00:00", null, XSDDatatype.XSDdateTime);
 
 		ONE = createTestInterval(Jan01, Jan02);
 		TWO = createTestInterval(Jan03, Jan04);
@@ -88,7 +90,7 @@ public class TestIndexFactory {
 	}
 
 	private static TemporalIndex addTestInterval(TemporalIndex index, TemporalInterval ti, String label) throws IndexException {
-		Record<TemporalExtent> record = Record.create(Node.createURI(label), (TemporalExtent)ti);
+		Record<TemporalExtent> record = Record.create(NodeFactory.createURI(label), (TemporalExtent)ti);
 		index.add(record);
 		return index;
 	}

@@ -3,6 +3,8 @@ package com.bbn.parliament.jena.graph.index.temporal;
 import java.io.File;
 import java.util.Properties;
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,8 +13,6 @@ import com.bbn.parliament.jena.graph.OptimizationMethod;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.util.FileUtil;
 import com.bbn.parliament.jni.KbConfig;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import junit.framework.TestCase;
 

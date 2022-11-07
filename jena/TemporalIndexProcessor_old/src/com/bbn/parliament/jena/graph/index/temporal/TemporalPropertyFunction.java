@@ -9,6 +9,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.engine.binding.BindingFactory;
+import org.apache.jena.sparql.engine.binding.BindingMap;
+import org.apache.jena.sparql.engine.iterator.QueryIter;
+import org.apache.jena.sparql.engine.iterator.QueryIterCommonParent;
+import org.apache.jena.sparql.pfunction.PropFuncArg;
+import org.apache.jena.sparql.util.IterLib;
+import org.apache.jena.util.iterator.NiceIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,18 +33,6 @@ import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInterval;
 import com.bbn.parliament.jena.query.index.QueryCache;
 import com.bbn.parliament.jena.query.index.operand.Operand;
 import com.bbn.parliament.jena.query.index.pfunction.EstimableIndexPropertyFunction;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.engine.binding.BindingFactory;
-import com.hp.hpl.jena.sparql.engine.binding.BindingMap;
-import com.hp.hpl.jena.sparql.engine.iterator.QueryIter;
-import com.hp.hpl.jena.sparql.engine.iterator.QueryIterCommonParent;
-import com.hp.hpl.jena.sparql.pfunction.PropFuncArg;
-import com.hp.hpl.jena.sparql.util.IterLib;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 /** @author dkolas */
 public abstract class TemporalPropertyFunction<I extends TemporalIndex>

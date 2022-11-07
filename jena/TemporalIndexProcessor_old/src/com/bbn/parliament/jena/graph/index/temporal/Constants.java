@@ -1,6 +1,7 @@
 package com.bbn.parliament.jena.graph.index.temporal;
 
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 
 public class Constants {
 	public static final String TIME_NS = "http://www.w3.org/2006/time#";
@@ -12,7 +13,7 @@ public class Constants {
 	public static final Node INTERVAL_FINISHED_BY = createURI("intervalFinishedBy");
 
 	private static Node createURI(String name) {
-		return Node.createURI(TIME_NS + name);
+		return NodeFactory.createURI(TIME_NS + name);
 	}
 
 	public static final Node[] VALID_TYPES = { PROPER_INTERVAL, DATE_TIME_INTERVAL };

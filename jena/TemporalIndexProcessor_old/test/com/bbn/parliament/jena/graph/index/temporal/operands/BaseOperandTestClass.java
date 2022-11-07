@@ -11,6 +11,13 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.query.ARQ;
+import org.apache.jena.sparql.core.DatasetGraphFactory;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.pfunction.PropFuncArg;
+
 import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.Operand;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalIndex;
@@ -21,11 +28,6 @@ import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.index.TestIndexFactory;
 import com.bbn.parliament.jena.query.KbOpExecutor;
 import com.bbn.parliament.jena.util.FileUtil;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.ARQ;
-import com.hp.hpl.jena.sparql.core.DatasetGraphFactory;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.pfunction.PropFuncArg;
 
 import junit.framework.TestCase;
 
@@ -63,9 +65,9 @@ public abstract class BaseOperandTestClass extends TestCase {
 		ExecutionContext context = new ExecutionContext(ARQ.getContext(), index.getGraph(),
 			DatasetGraphFactory.create(index.getGraph()), KbOpExecutor.KbOpExecutorFactory);
 
-		PropFuncArg argSubject = new PropFuncArg(Node.createVariable("s"));
-		PropFuncArg argObject = new PropFuncArg(Node.createVariable("o"));
-		Node predicate = Node.createURI(op.getUri());
+		PropFuncArg argSubject = new PropFuncArg(NodeFactory.createVariable("s"));
+		PropFuncArg argObject = new PropFuncArg(NodeFactory.createVariable("o"));
+		Node predicate = NodeFactory.createURI(op.getUri());
 		pf.build(argSubject, predicate, argObject, context);
 	}
 
