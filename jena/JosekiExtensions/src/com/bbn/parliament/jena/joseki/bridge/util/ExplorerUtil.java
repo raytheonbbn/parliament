@@ -12,14 +12,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.util.iterator.ExtendedIterator;
-import org.apache.jena.util.iterator.Map1;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.joseki.util.Convert;
@@ -252,17 +255,17 @@ public class ExplorerUtil {
 			}
 
 			@Override
-			public ExtendedIterator<Statement> filterDrop(Filter<Statement> f) {
+			public ExtendedIterator<Statement> filterDrop(Predicate<Statement> f) {
 				return null;
 			}
 
 			@Override
-			public ExtendedIterator<Statement> filterKeep(Filter<Statement> f) {
+			public ExtendedIterator<Statement> filterKeep(Predicate<Statement> f) {
 				return null;
 			}
 
 			@Override
-			public <U> ExtendedIterator<U> mapWith(Map1<Statement, U> map) {
+			public <U> ExtendedIterator<U> mapWith(Function<Statement, U> map) {
 				return null;
 			}
 

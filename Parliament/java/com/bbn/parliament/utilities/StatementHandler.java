@@ -75,7 +75,7 @@ public class StatementHandler implements org.apache.jena.rdfxml.xmlinput.Stateme
 	long getPredicateIndex(AResource pred)
 	{
 		long retval;
-		Long value = _predCache.get(pred.toString()); // com.hp.hpl.jena.rdf.arp.URIReference
+		Long value = _predCache.get(pred.toString());
 		// doesn't implement hashCode()
 		if (value == null)
 		{
@@ -123,7 +123,7 @@ public class StatementHandler implements org.apache.jena.rdfxml.xmlinput.Stateme
 	}
 
 	/**
-	 * @see com.hp.hpl.jena.rdf.arp.StatementHandler#statement(AResource,
+	 * @see org.apache.jena.rdfxml.xmlinput.StatementHandler#statement(AResource,
 	 *      AResource, AResource)
 	 */
 	@Override
@@ -169,7 +169,7 @@ public class StatementHandler implements org.apache.jena.rdfxml.xmlinput.Stateme
 	}
 
 	/**
-	 * @see com.hp.hpl.jena.rdf.arp.StatementHandler#statement(AResource,
+	 * @see org.apache.jena.rdfxml.xmlinput.StatementHandler#statement(AResource,
 	 *      AResource, ALiteral)
 	 */
 	@Override

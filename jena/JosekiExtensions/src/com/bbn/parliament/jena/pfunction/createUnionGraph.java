@@ -40,9 +40,6 @@ import com.bbn.parliament.jena.graph.KbGraphStore;
  * @author sallen
  */
 public class createUnionGraph extends PFuncSimpleAndList {
-	/* (non-Javadoc)
-	 * @see com.hp.hpl.jena.sparql.pfunction.PFuncSimpleAndList#execEvaluated(com.hp.hpl.jena.sparql.engine.binding.Binding, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.sparql.pfunction.PropFuncArg, com.hp.hpl.jena.sparql.engine.ExecutionContext)
-	 */
 	@Override
 	public QueryIterator execEvaluated(Binding binding, Node subject, Node predicate, PropFuncArg object, ExecutionContext execCxt) {
 		DatasetGraph dsg = execCxt.getDataset();

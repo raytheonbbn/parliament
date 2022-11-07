@@ -249,7 +249,7 @@ public class LoadRDFCommand
 	}
 
 	/**
-	 * @see com.hp.hpl.jena.rdf.arp.ARPOptions#setDefaultErrorMode()
+	 * @see org.apache.jena.rdfxml.xmlinput.ARPOptions#setDefaultErrorMode()
 	 */
 	public void setDefaultErrorMode()
 	{
@@ -257,7 +257,7 @@ public class LoadRDFCommand
 	}
 
 	/**
-	 * @see com.hp.hpl.jena.rdf.arp.ARPOptions#setLaxErrorMode()
+	 * @see org.apache.jena.rdfxml.xmlinput.ARPOptions#setLaxErrorMode()
 	 */
 	public void setLaxErrorMode()
 	{
@@ -265,7 +265,7 @@ public class LoadRDFCommand
 	}
 
 	/**
-	 * @see com.hp.hpl.jena.rdf.arp.ARPOptions#setStrictErrorMode()
+	 * @see org.apache.jena.rdfxml.xmlinput.ARPOptions#setStrictErrorMode()
 	 */
 	public void setStrictErrorMode()
 	{
@@ -273,7 +273,7 @@ public class LoadRDFCommand
 	}
 
 	/**
-	 * @see com.hp.hpl.jena.rdf.arp.ARPOptions#setStrictErrorMode(int)
+	 * @see org.apache.jena.rdfxml.xmlinput.ARPOptions#setStrictErrorMode(int)
 	 */
 	public void setStrictErrorMode(int nonErrorMode)
 	{

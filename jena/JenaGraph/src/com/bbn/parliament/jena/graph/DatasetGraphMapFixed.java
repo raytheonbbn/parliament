@@ -18,7 +18,7 @@ import org.apache.jena.sparql.core.DatasetGraphCollection;
 
 /**
  * This is basically a copy of
- * {@link com.hp.hpl.jena.sparql.core.DatasetGraphMap}, but it contains the fix
+ * {@link org.apache.jena.sparql.core.DatasetGraphMap}, but it contains the fix
  * from JENA-116. This class should be removed when ARQ is updated.
  */
 public class DatasetGraphMapFixed extends DatasetGraphCollection

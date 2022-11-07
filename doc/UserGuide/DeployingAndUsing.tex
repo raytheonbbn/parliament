@@ -289,43 +289,24 @@ You can use the \ac{pmnt} server interactively by pointing a web browser at the 
 
 \subsubsection{Using \ac{pmnt} Programmatically}
 
-In order to issue queries programmatically, you will need to write some code to send \ac{sparql}-compliant \ac{http} requests.  One library that can send such requests on your behalf is Jena itself.  Figure~\ref{figure-sparql-select-query-with-jena2} shows sample code for issuing a \ac{sparql} select query.
-\begin{figure}[htbp]
-	\footnotesize
-	\VerbatimInput{includes/jena2-select.java}
-	\caption{Issuing a \acs*{sparql} select query with Jena 2}
-	\label{figure-sparql-select-query-with-jena2}
-\end{figure}
-Note that this code uses the \ac{sparql} endpoint \ac{url} from Table~\ref{table-pmnt-connect-urls}.
-
-Similarly, we can also update the content of \ac{pmnt} programmatically using the Jena library to send \ac{sparql}-Update requests.  Figure~\ref{figure-sparql-update-with-jena-2} shows sample code for issuing a \ac{sparql} select query.  Note that in both these examples there is an unusual catch block to ignore a spurious null pointer exception.  This is a correct work-around for a bug in Jena that is fixed in subsequent versions.
-\begin{figure}[htbp]
-	\footnotesize
-	\VerbatimInput{includes/jena2-update.java}
-	\caption{Issuing a \acs*{sparql}-Update request with Jena 2}
-	\label{figure-sparql-update-with-jena-2}
-\end{figure}
-A common update operation is inserting a body of \ac{rdf} into \ac{pmnt}, shown in Figure~\ref{figure-sparql-insert-with-jena-2}.
-\begin{figure}[htbp]
-	\footnotesize
-	\VerbatimInput{includes/jena2-insert.java}
-	\caption{Inserting \acs*{rdf} with Jena 2}
-	\label{figure-sparql-insert-with-jena-2}
-\end{figure}
-
-If you are using \acp{pmnt} client-side library, and in particular the RemoteModel class (see below), then you will need to use Jena version 2 (specifically, Jena ARQ 2.9.4), as shown in the preceding examples.  However, there is no need to use RemoteModel, and in this case you likely will want to use a more recent version of Jena.  Figures~\ref{figure-sparql-select-query-with-jena3}, \ref{figure-sparql-update-with-jena-3}, and~\ref{figure-sparql-insert-with-jena-3} show the same query, update, and insert operations using Jena 3.
+In order to issue queries programmatically, you will need to write some code to send \ac{sparql}-compliant \ac{http} requests.  One library that can send such requests on your behalf is Jena itself.  Figure~\ref{figure-sparql-select-query-with-jena3} shows sample code for issuing a \ac{sparql} select query.
 \begin{figure}[htbp]
 	\footnotesize
 	\VerbatimInput{includes/jena3-select.java}
 	\caption{Issuing a \acs*{sparql} select query with Jena 3}
 	\label{figure-sparql-select-query-with-jena3}
 \end{figure}
+Note that this code uses the \ac{sparql} endpoint \ac{url} from Table~\ref{table-pmnt-connect-urls}.
+
+Similarly, we can also update the content of \ac{pmnt} programmatically using the Jena library to send \ac{sparql}-Update requests.  Figure~\ref{figure-sparql-update-with-jena-3} shows sample code for issuing an update.
 \begin{figure}[htbp]
 	\footnotesize
 	\VerbatimInput{includes/jena3-update.java}
 	\caption{Issuing a \acs*{sparql}-Update request with Jena 3}
 	\label{figure-sparql-update-with-jena-3}
 \end{figure}
+
+Another common update operation is inserting a body of \ac{rdf} into \ac{pmnt}, shown in Figure~\ref{figure-sparql-insert-with-jena-3}.
 \begin{figure}[htbp]
 	\footnotesize
 	\VerbatimInput{includes/jena3-insert.java}

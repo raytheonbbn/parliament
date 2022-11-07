@@ -37,7 +37,7 @@ import com.bbn.parliament.jena.query.optimize.pattern.IndexSubPatternPropertyFun
  * class to allow the index to interact with the query operands.
  * <br><br>
  * Instances need to be registered with the
- * <code>com.hp.hpl.jena.sparql.pfunction.PropertyFunctionRegistry</code>. This
+ * <code>org.apache.jena.sparql.pfunction.PropertyFunctionRegistry</code>. This
  * is typically done by the {@link Index#register(Graph, Node)} method when the
  * {@link IndexManager} registers the <code>Index</code>
  * <br><br>

@@ -34,16 +34,16 @@ import com.bbn.parliament.jena.graph.index.Record;
  * <br><br>
  * The iterator handles the following expressions:
  * <ul>
- * <li><code>com.hp.hpl.jena.sparql.expr.E_GreaterThan</code></li>
- * <li><code>com.hp.hpl.jena.sparql.expr.E_GreaterThanOrEqual</code></li>
- * <li><code>com.hp.hpl.jena.sparql.expr.E_LessThan</code></li>
- * <li><code>com.hp.hpl.jena.sparql.expr.E_LessThanOrEqual</code></li>
+ * <li><code>org.apache.jena.sparql.expr.E_GreaterThan</code></li>
+ * <li><code>org.apache.jena.sparql.expr.E_GreaterThanOrEqual</code></li>
+ * <li><code>org.apache.jena.sparql.expr.E_LessThan</code></li>
+ * <li><code>org.apache.jena.sparql.expr.E_LessThanOrEqual</code></li>
  * </ul>
  *
  * @author rbattle
  * @param <T> The type of object that is indexed.
- * @see com.bbn.parliament.jena.query.SolverUtil#solve(com.hp.hpl.jena.sparql.expr.ExprList,
- *      com.hp.hpl.jena.sparql.core.BasicPattern, QueryIterator, ExecutionContext)
+ * @see com.bbn.parliament.jena.query.SolverUtil#solve(org.apache.jena.sparql.expr.ExprList,
+ *      org.apache.jena.sparql.core.BasicPattern, QueryIterator, ExecutionContext)
  */
 public class RangeIndexQueryIterator<T extends Comparable<T>> extends QueryIterRepeatApply {
 	ExprFunction2 expr;
