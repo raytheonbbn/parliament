@@ -7,6 +7,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,6 @@ import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.graph.ModelManager;
 import com.bbn.parliament.spring_boot.service.AcceptableMediaType;
-import com.hp.hpl.jena.rdf.model.Model;
 
 public class DatasetExportHandler {
 	private static final String ZIP_FILENAME_FORMAT = "parliament-export-%1$s-%2$s.zip";

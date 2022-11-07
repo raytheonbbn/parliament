@@ -12,22 +12,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 
 //import org.joseki.util.Convert;
 
 import com.bbn.parliament.jena.graph.KbGraphStore;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.util.iterator.Filter;
-import com.hp.hpl.jena.util.iterator.Map1;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
 
 /** @author sallen */
 public class ExplorerUtil {
@@ -260,18 +261,18 @@ public class ExplorerUtil {
 				return null;
 			}
 
-			@Override
-			public ExtendedIterator<Statement> filterDrop(Filter<Statement> f) {
-				return null;
-			}
+//			@Override
+//			public ExtendedIterator<Statement> filterDrop(Filter<Statement> f) {
+//				return null;
+//			}
+//
+//			@Override
+//			public ExtendedIterator<Statement> filterKeep(Filter<Statement> f) {
+//				return null;
+//			}
 
 			@Override
-			public ExtendedIterator<Statement> filterKeep(Filter<Statement> f) {
-				return null;
-			}
-
-			@Override
-			public <U> ExtendedIterator<U> mapWith(Map1<Statement, U> map) {
+			public <U> ExtendedIterator<U> mapWith(Function<Statement, U> map) {
 				return null;
 			}
 
@@ -306,6 +307,18 @@ public class ExplorerUtil {
 
 			@Override
 			public void remove() {
+			}
+
+			@Override
+			public ExtendedIterator<Statement> filterKeep(Predicate<Statement> f) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public ExtendedIterator<Statement> filterDrop(Predicate<Statement> f) {
+				// TODO Auto-generated method stub
+				return null;
 			}
 		};
 		return toReturn;

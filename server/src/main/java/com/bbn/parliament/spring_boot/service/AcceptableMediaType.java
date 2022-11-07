@@ -6,9 +6,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFormatter;
+
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
 
 public enum AcceptableMediaType {
 	/** Turtle format */

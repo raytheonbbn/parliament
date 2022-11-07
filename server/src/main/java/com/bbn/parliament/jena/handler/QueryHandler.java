@@ -11,6 +11,8 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.jena.query.QueryParseException;
+import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +30,6 @@ import com.bbn.parliament.jena.exception.QueryExecutionException;
 import com.bbn.parliament.jena.util.JsonLdRdfWriter;
 import com.bbn.parliament.spring_boot.service.AcceptableMediaType;
 import com.bbn.parliament.spring_boot.service.QueryResultCategory;
-import com.hp.hpl.jena.query.QueryParseException;
-import com.hp.hpl.jena.rdf.model.Model;
 
 public class QueryHandler {
 	private static Logger LOG = LoggerFactory.getLogger(QueryHandler.class);

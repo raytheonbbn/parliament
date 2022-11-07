@@ -2,11 +2,11 @@ package com.bbn.parliament.jena.bridge.tracker;
 
 import java.beans.ConstructorProperties;
 
+import org.apache.jena.update.UpdateAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.graph.ModelManager;
-import com.hp.hpl.jena.update.UpdateAction;
 
 public class TrackableUpdate extends Trackable {
 	private static Logger _log = LoggerFactory.getLogger(TrackableUpdate.class);

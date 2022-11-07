@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.jena.query.QueryParseException;
+import org.apache.jena.shared.JenaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -22,8 +24,6 @@ import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.exception.NoAcceptableException;
 import com.bbn.parliament.jena.exception.QueryExecutionException;
 import com.bbn.parliament.jena.exception.UnsupportedEndpointException;
-import com.hp.hpl.jena.query.QueryParseException;
-import com.hp.hpl.jena.shared.JenaException;
 
 //TODO: HttpStatus.REQUEST_TIMEOUT
 

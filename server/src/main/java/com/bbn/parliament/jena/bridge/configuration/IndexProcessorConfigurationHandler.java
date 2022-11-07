@@ -10,6 +10,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Properties;
 
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,10 +22,6 @@ import com.bbn.parliament.jena.bridge.configuration.vocab.ConfigOnt;
 import com.bbn.parliament.jena.graph.ModelManager;
 import com.bbn.parliament.jena.graph.index.IndexFactory;
 import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 /**
  * A {@link ConfigurationHandler} that registers a list of {@link IndexFactory}s

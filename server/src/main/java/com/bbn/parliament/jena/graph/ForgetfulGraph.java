@@ -9,10 +9,10 @@
 
 package com.bbn.parliament.jena.graph;
 
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.graph.TripleMatch;
-import com.hp.hpl.jena.graph.impl.GraphBase;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.GraphBase;
+import org.apache.jena.shared.NotFoundException;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
  * This is a graph that keeps track of the number of statements added,
@@ -28,8 +28,8 @@ public class ForgetfulGraph extends GraphBase {
 	 * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseFind(com.hp.hpl.jena.graph.TripleMatch)
 	 */
 	@Override
-	protected ExtendedIterator<Triple> graphBaseFind(TripleMatch m) {
-		throw new com.hp.hpl.jena.shared.NotFoundException("ForgetfulGraph::graphBaseFind");
+	protected ExtendedIterator<Triple> graphBaseFind(Triple m) {
+		throw new NotFoundException("ForgetfulGraph::graphBaseFind");
 	}
 
 	/* (non-Javadoc)

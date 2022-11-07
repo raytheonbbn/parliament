@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Objects;
 
+import org.apache.jena.rdf.model.Model;
 //import org.joseki.Joseki;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,6 @@ import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.graph.ModelManager;
 import com.bbn.parliament.jena.util.FileUtil;
 import com.bbn.parliament.spring_boot.service.AcceptableMediaType;
-import com.hp.hpl.jena.rdf.model.Model;
 
 /** @author sallen */
 public class GraphExportHandler {

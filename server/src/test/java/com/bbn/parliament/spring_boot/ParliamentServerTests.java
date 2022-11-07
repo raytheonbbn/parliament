@@ -19,6 +19,29 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.modify.request.QuadDataAcc;
+import org.apache.jena.sparql.modify.request.UpdateDataDelete;
+import org.apache.jena.sparql.modify.request.UpdateDataInsert;
+import org.apache.jena.update.UpdateExecutionFactory;
+import org.apache.jena.update.UpdateFactory;
+import org.apache.jena.update.UpdateProcessor;
+import org.apache.jena.update.UpdateRequest;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -42,28 +65,6 @@ import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.joseki.client.RemoteModel;
 import com.bbn.parliament.spring_boot.controller.QueryController;
 import com.bbn.parliament.test_util.RdfResourceLoader;
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.sparql.modify.request.QuadDataAcc;
-import com.hp.hpl.jena.sparql.modify.request.UpdateDataDelete;
-import com.hp.hpl.jena.sparql.modify.request.UpdateDataInsert;
-import com.hp.hpl.jena.update.UpdateExecutionFactory;
-import com.hp.hpl.jena.update.UpdateFactory;
-import com.hp.hpl.jena.update.UpdateProcessor;
-import com.hp.hpl.jena.update.UpdateRequest;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
 
 import reactor.core.publisher.Mono;
 
@@ -212,6 +213,7 @@ public class ParliamentServerTests {
 			return stream
 				.map(qs -> qs.getResource("g"))
 				.map(Resource::getURI)
+				.filter(uri -> !"http://parliament.semwebcentral.org/parliament#MasterGraph".equals(uri))
 				.collect(Collectors.toSet());
 		}
 	}
@@ -242,8 +244,8 @@ public class ParliamentServerTests {
 	@Test
 	@Disabled
 	public void insertAndQueryTest() {
-		insert(TEST_SUBJECT, RDF.type.getURI(), Node.createURI(TEST_CLASS), null);
-		insert(TEST_SUBJECT, RDFS.label.getURI(), Node.createLiteral(TEST_LITERAL), null);
+		insert(TEST_SUBJECT, RDF.type.getURI(), NodeFactory.createURI(TEST_CLASS), null);
+		insert(TEST_SUBJECT, RDFS.label.getURI(), NodeFactory.createLiteral(TEST_LITERAL), null);
 
 		String query = "select * where { ?thing a <%1$s> ; <%2$s> ?label . }";
 		try (QuerySolutionStream stream = doSelectQuery(query, TEST_CLASS, RDFS.label)) {
@@ -269,9 +271,9 @@ public class ParliamentServerTests {
 		String queryFmt = "ask where { <%1$s> <%2$s> \"%3$s\" . }";
 
 		assertFalse(doAskQuery(queryFmt, TEST_SUBJECT, RDFS.label, TEST_LITERAL));
-		insert(TEST_SUBJECT, RDFS.label.getURI(), Node.createLiteral(TEST_LITERAL), null);
+		insert(TEST_SUBJECT, RDFS.label.getURI(), NodeFactory.createLiteral(TEST_LITERAL), null);
 		assertTrue(doAskQuery(queryFmt, TEST_SUBJECT, RDFS.label, TEST_LITERAL));
-		delete(TEST_SUBJECT, RDFS.label.getURI(), Node.createLiteral(TEST_LITERAL), null);
+		delete(TEST_SUBJECT, RDFS.label.getURI(), NodeFactory.createLiteral(TEST_LITERAL), null);
 		assertFalse(doAskQuery(queryFmt, TEST_SUBJECT, RDFS.label, TEST_LITERAL));
 	}
 
@@ -282,10 +284,10 @@ public class ParliamentServerTests {
 		String y = "http://example.org/yummy";
 		String queryFmt = "ask where { <%1$s> a <%2$s> }";
 
-		insert(d, RDF.type.getURI(), Node.createURI(y), null);
+		insert(d, RDF.type.getURI(), NodeFactory.createURI(y), null);
 		assertTrue(doAskQuery(queryFmt, d, y));
 
-		delete(d, RDF.type.getURI(), Node.createURI(y), null);
+		delete(d, RDF.type.getURI(), NodeFactory.createURI(y), null);
 		assertFalse(doAskQuery(queryFmt, d, y));
 	}
 
@@ -379,8 +381,8 @@ public class ParliamentServerTests {
 
 		rm.createNamedGraph(graphUri);
 
-		insert(TEST_SUBJECT, RDF.type.getURI(), Node.createURI(TEST_CLASS), null);
-		insert(TEST_SUBJECT, RDF.type.getURI(), Node.createURI(TEST_CLASS), graphUri);
+		insert(TEST_SUBJECT, RDF.type.getURI(), NodeFactory.createURI(TEST_CLASS), null);
+		insert(TEST_SUBJECT, RDF.type.getURI(), NodeFactory.createURI(TEST_CLASS), graphUri);
 
 		ResultSet rs = rm.selectQuery(query);
 		boolean foundIt = false;
@@ -516,13 +518,13 @@ public class ParliamentServerTests {
 	}
 
 	private static QuadDataAcc createQuadData(String sub, String pred, Node obj, String graphName) {
-		Node s = Node.createURI(sub);
-		Node p = Node.createURI(pred);
+		Node s = NodeFactory.createURI(sub);
+		Node p = NodeFactory.createURI(pred);
 		QuadDataAcc qd = new QuadDataAcc();
 		if (StringUtils.isBlank(graphName)) {
 			qd.addTriple(new Triple(s, p, obj));
 		} else {
-			qd.addQuad(new Quad(Node.createURI(graphName), s, p, obj));
+			qd.addQuad(new Quad(NodeFactory.createURI(graphName), s, p, obj));
 		}
 		return qd;
 	}

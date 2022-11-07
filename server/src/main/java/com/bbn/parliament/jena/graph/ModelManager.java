@@ -16,6 +16,11 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,10 +33,6 @@ import com.bbn.parliament.jena.graph.union.KbUnionableGraph;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.modify.KbUpdateEngine;
 import com.bbn.parliament.jni.KbConfig;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class ModelManager {
 	private static class ModelManagerHolder {
@@ -86,7 +87,7 @@ public class ModelManager {
 	}
 
 	public String getGraphDir(String namedGraphUri) {
-		return _kbGraphStore.getGraphDir(Node.createURI(namedGraphUri));
+		return _kbGraphStore.getGraphDir(NodeFactory.createURI(namedGraphUri));
 	}
 
 	/** Get the default graph's configuration. */
@@ -101,7 +102,7 @@ public class ModelManager {
 		if (indexEnabled) {
 			Node graphNode = null;
 			if (null != graphName) {
-				graphNode = Node.createURI(graphName);
+				graphNode = NodeFactory.createURI(graphName);
 			}
 
 			IndexManager.getInstance().createAndRegisterAll(graph, graphNode);
@@ -114,15 +115,15 @@ public class ModelManager {
 	public Model createAndAddKbUnionGraph(String graphName,
 		String leftGraphName, String rightGraphName) {
 		KbUnionableGraph leftKbUnionableGraph = (KbUnionableGraph) _kbGraphStore
-			.getGraph(Node.createURI(leftGraphName));
+			.getGraph(NodeFactory.createURI(leftGraphName));
 		KbUnionableGraph rightKbUnionableGraph = (KbUnionableGraph) _kbGraphStore
-			.getGraph(Node.createURI(rightGraphName));
+			.getGraph(NodeFactory.createURI(rightGraphName));
 
 		Model toReturn = ModelFactory.createModelForGraph(KbGraphFactory
 			.createKbUnionGraph(leftKbUnionableGraph,
-				Node.createURI(leftGraphName),
+				NodeFactory.createURI(leftGraphName),
 				rightKbUnionableGraph,
-				Node.createURI(rightGraphName)));
+				NodeFactory.createURI(rightGraphName)));
 
 		this.addNamedModel(graphName, toReturn);
 		return toReturn;

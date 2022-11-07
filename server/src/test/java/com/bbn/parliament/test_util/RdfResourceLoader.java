@@ -8,8 +8,9 @@ import java.util.MissingResourceException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.jena.rdf.model.Model;
+
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
-import com.hp.hpl.jena.rdf.model.Model;
 
 public class RdfResourceLoader {
 	@FunctionalInterface
