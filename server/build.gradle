@@ -53,12 +53,20 @@ sourceSets {
 	}
 }
 
+configurations {
+	schemagen
+}
+
+dependencies {
+	schemagen "$jenaArqDependency"
+}
+
 // See https://jena.apache.org/documentation/tools/schemagen.html
 task runSchemagen(type: JavaExec) {
 	inputs.file(configVocabFile)
 	outputs.file(configVocabSource)
 
-	classpath = sourceSets.main.compileClasspath
+	classpath = configurations.schemagen
 	mainClass = 'jena.schemagen'
 	args = [
 		'-i', configVocabFile,
@@ -69,7 +77,7 @@ task runSchemagen(type: JavaExec) {
 	]
 }
 
-//compileJava.dependsOn runSchemagen
+compileJava.dependsOn runSchemagen
 
 test {
 	useJUnitPlatform()
