@@ -39,7 +39,6 @@ import org.apache.jena.sparql.modify.request.UpdateDataDelete;
 import org.apache.jena.sparql.modify.request.UpdateDataInsert;
 import org.apache.jena.update.UpdateExecutionFactory;
 import org.apache.jena.update.UpdateFactory;
-import org.apache.jena.update.UpdateProcessor;
 import org.apache.jena.update.UpdateRequest;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
@@ -134,13 +133,16 @@ public class ParliamentServerTests {
 	private int serverPort;
 
 	private String sparqlUrl;
-	private String bulkUrl;
+	private String updateUrl;
+	private String graphStoreUrl;
 	private RemoteModel rm;
 
 	@BeforeEach
 	public void beforeEach() {
-		sparqlUrl = RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL.formatted(HOST, serverPort);
-		bulkUrl = RemoteModel.DEFAULT_BULK_ENDPOINT_URL.formatted(HOST, serverPort);
+		sparqlUrl = "http://%1$s:%2$s/parliament/sparql".formatted(HOST, serverPort);
+		updateUrl = "http://%1$s:%2$s/parliament/update".formatted(HOST, serverPort);
+		graphStoreUrl = "http://%1$s:%2$s/parliament/graphstore".formatted(HOST, serverPort);
+		var bulkUrl = RemoteModel.DEFAULT_BULK_ENDPOINT_URL.formatted(HOST, serverPort);
 		rm = new RemoteModel(sparqlUrl, bulkUrl);
 	}
 
@@ -191,7 +193,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	public void remoteModelGetNamedGraphsTest() throws IOException {
+	public void namedGraphsTest() {
 		String graphUri = "http://example.org/foo/bar/#Graph1";
 
 		var output = getAvailableNamedGraphsNoJena();
@@ -201,10 +203,10 @@ public class ParliamentServerTests {
 
 		assertTrue(getAvailableNamedGraphs().isEmpty());
 
-		rm.createNamedGraph(graphUri);
+		doUpdate("create graph <%1$s>", graphUri);
 		assertTrue(getAvailableNamedGraphs().equals(Collections.singleton(graphUri)));
 
-		rm.dropNamedGraph(graphUri);
+		doUpdate("drop silent graph <%1$s>", graphUri);
 		assertTrue(getAvailableNamedGraphs().isEmpty());
 	}
 
@@ -508,13 +510,13 @@ public class ParliamentServerTests {
 	private void insert(String sub, String pred, Node obj, String graphName) {
 		QuadDataAcc qd = createQuadData(sub, pred, obj, graphName);
 		UpdateDataInsert update = new UpdateDataInsert(qd);
-		UpdateExecutionFactory.createRemote(update, sparqlUrl).execute();
+		UpdateExecutionFactory.createRemote(update, updateUrl).execute();
 	}
 
 	private void delete(String sub, String pred, Node obj, String graphName) {
 		QuadDataAcc qd = createQuadData(sub, pred, obj, graphName);
 		UpdateDataDelete update = new UpdateDataDelete(qd);
-		UpdateExecutionFactory.createRemote(update, sparqlUrl).execute();
+		UpdateExecutionFactory.createRemote(update, updateUrl).execute();
 	}
 
 	private static QuadDataAcc createQuadData(String sub, String pred, Node obj, String graphName) {
@@ -542,8 +544,7 @@ public class ParliamentServerTests {
 					qd.addTriple(stmt.asTriple());
 				}
 				UpdateDataInsert update = new UpdateDataInsert(qd);
-				UpdateProcessor exec = UpdateExecutionFactory.createRemote(update, sparqlUrl);
-				executeUpdate(exec);
+				UpdateExecutionFactory.createRemote(update, updateUrl).execute();
 			}
 		} catch (Exception ex) {
 			fail(ex.getMessage());
@@ -552,23 +553,6 @@ public class ParliamentServerTests {
 
 	private void doUpdate(String queryFmt, Object... args) {
 		UpdateRequest ur = UpdateFactory.create(queryFmt.formatted(args));
-		UpdateProcessor exec = UpdateExecutionFactory.createRemote(ur, sparqlUrl);
-		executeUpdate(exec);
-	}
-
-	private static void executeUpdate(UpdateProcessor exec) {
-		try {
-			exec.execute();
-		} catch (NullPointerException ex) {
-			StackTraceElement ste = ex.getStackTrace()[0];
-			if ("org.openjena.riot.web.HttpOp".equals(ste.getClassName())
-				&& "httpResponse".equals(ste.getMethodName())
-				&& "HttpOp.java".equals(ste.getFileName())
-				&& 345 == ste.getLineNumber()) {
-				LOG.info("Encountered known bug in Jena 2.7.4/ARQ 2.9.4.  Ignoring NPE.");
-			} else {
-				throw new RuntimeException("Encountered NPE", ex);
-			}
-		}
+		UpdateExecutionFactory.createRemote(ur, updateUrl).execute();
 	}
 }
