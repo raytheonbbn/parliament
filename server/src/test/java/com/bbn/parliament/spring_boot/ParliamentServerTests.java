@@ -149,7 +149,9 @@ public class ParliamentServerTests {
 	@Test
 	@Disabled
 	public void generalKBFunctionalityTest() throws IOException {
+		// TODO: jena equivalent to rm.clearAll()
 		rm.clearAll();
+//		LOG.debug("allgraphs: "+getAvailableNamedGraphs());
 
 		try (QuerySolutionStream stream = doSelectQuery(EVERYTHING_QUERY)) {
 			long count = stream.count();
@@ -244,8 +246,8 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	@Disabled
 	public void insertAndQueryTest() {
+		LOG.debug("foo");
 		insert(TEST_SUBJECT, RDF.type.getURI(), NodeFactory.createURI(TEST_CLASS), null);
 		insert(TEST_SUBJECT, RDFS.label.getURI(), NodeFactory.createLiteral(TEST_LITERAL), null);
 
@@ -259,6 +261,10 @@ public class ParliamentServerTests {
 				.count();
 			assertTrue(count > 0);
 		}
+		// delete inserted statements bc deleteAndQueryTest checks
+		delete(TEST_SUBJECT, RDF.type.getURI(), NodeFactory.createLiteral(TEST_CLASS), null);
+		delete(TEST_SUBJECT, RDFS.label.getURI(), NodeFactory.createLiteral(TEST_LITERAL), null);
+
 	}
 
 	private static boolean isStringLiteral(String datatypeUri) {
@@ -268,7 +274,6 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	@Disabled
 	public void deleteAndQueryTest() {
 		String queryFmt = "ask where { <%1$s> <%2$s> \"%3$s\" . }";
 
@@ -280,8 +285,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	@Disabled
-	public void remoteModelSimpleSPARQLUpdateTest() {
+	public void sModelSimpleSPARQLUpdateTest() {
 		String d = "http://example.org/doughnut";
 		String y = "http://example.org/yummy";
 		String queryFmt = "ask where { <%1$s> a <%2$s> }";
@@ -294,51 +298,47 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	@Disabled
 	public void remoteModelNGSPARQLUpdateTest() throws IOException
 	{
 		String graphUri = "http://example.org/foo/bar/#Graph2";
 		String bs = "http://example.org/brusselsprouts";
 		String y = "http://example.org/yucky";
 		String updateQuery = "%%1$s <%1$s> { <%2$s> a <%3$s> . }".formatted(graphUri, bs, y);
-		String query = "select * where { graph <%1$s> {?thing a <%2$s> } }".formatted(graphUri, y);
+		String query = "select * where { graph <%1$s> {?thing a <%2$s> } }";
 
-		rm.createNamedGraph(graphUri);
 
-		rm.updateQuery(updateQuery.formatted("insert data into"));
+		doUpdate("create graph <%1$s>", graphUri);
+		insert(bs, RDF.type.getURI(), NodeFactory.createURI(y), graphUri);
 
-		ResultSet rs = rm.selectQuery(query);
 		boolean foundIt = false;
-		while (rs.hasNext()) {
-			QuerySolution qs = rs.nextSolution();
-			if (bs.equals(qs.getResource("thing").getURI())) {
-				foundIt = true;
-			}
+		try (QuerySolutionStream stream = doSelectQuery(query, graphUri, y)) {
+			foundIt = stream
+					.map(qs -> qs.getResource("thing"))
+					.map(Resource::getURI)
+					.filter(uri -> bs.equals(uri))
+					.count() == 1;
+			assertTrue(foundIt);
 		}
-		assertTrue(foundIt);
 
-		rm.updateQuery(updateQuery.formatted("delete data from"));
-
-		rs = rm.selectQuery(query);
+		delete(bs, RDF.type.getURI(), NodeFactory.createURI(y), graphUri);
 		foundIt = false;
-		while (rs.hasNext()) {
-			QuerySolution qs = rs.nextSolution();
-			if (bs.equals(qs.getResource("thing").getURI())) {
-				foundIt = true;
-			}
+		try (QuerySolutionStream stream = doSelectQuery(query, graphUri, y)) {
+			foundIt = stream
+					.map(qs -> qs.getResource("thing"))
+					.map(Resource::getURI)
+					.filter(uri -> bs.equals(uri))
+					.count() == 1;
+			assertFalse(foundIt);
 		}
-		assertFalse(foundIt);
 
-		rm.dropNamedGraph(graphUri);
+		doUpdate("drop graph <%1$s>", graphUri);
 	}
 
 	@Test
-	@Disabled
 	public void remoteModelQueryErrorTest() {
 		String invalidQuery = "select * where { ?thing oogetyboogetyboo! }";
 		boolean caughtException = false;
-		try {
-			rm.selectQuery(invalidQuery);
+		try (QuerySolutionStream stream = doSelectQuery(invalidQuery)) {
 		} catch (Exception ex) {
 			caughtException = true;
 			LOG.info("Query parse error", ex);
@@ -347,12 +347,12 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	@Disabled
 	public void remoteModelInsertErrorTest() {
 		boolean caughtException = false;
 		try {
 			// Invalid n-triples:
-			rm.insertStatements("oogetyboogetyboo!", RDFFormat.NTRIPLES, null, true);
+			insert("oogetyboogetyboo!", null, null, null);
+//			rm.insertStatements("oogetyboogetyboo!", RDFFormat.NTRIPLES, null, true);
 		} catch (Exception ex) {
 			caughtException = true;
 			LOG.info("N-triples parse error (insert)", ex);
@@ -361,12 +361,12 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	@Disabled
 	public void remoteModelDeleteErrorTest() {
 		boolean caughtException = false;
 		try {
 			// Invalid n-triples:
-			rm.deleteStatements("oogetyboogetyboo!", RDFFormat.NTRIPLES);
+			delete("oogetyboogetyboo!", null, null, null);
+//			rm.deleteStatements("oogetyboogetyboo!", RDFFormat.NTRIPLES);
 		} catch (Exception ex) {
 			caughtException = true;
 			LOG.info("N-triples parse error (delete)", ex);
@@ -375,27 +375,27 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	@Disabled
 	public void remoteModelInsertQueryNamedGraphTest() throws IOException {
 		String graphUri = "http://example.org/foo/bar/#Graph3";
-		String query = "select * where { ?x a <%1$s> . graph <%2$s> { ?x a <%1$s> } }"
-			.formatted(TEST_CLASS, graphUri);
+		String query = "select * where { ?x a <%1$s> . graph <%2$s> { ?x a <%1$s> } }";
 
-		rm.createNamedGraph(graphUri);
+		doUpdate("create graph <%1$s>", graphUri);
 
 		insert(TEST_SUBJECT, RDF.type.getURI(), NodeFactory.createURI(TEST_CLASS), null);
 		insert(TEST_SUBJECT, RDF.type.getURI(), NodeFactory.createURI(TEST_CLASS), graphUri);
 
-		ResultSet rs = rm.selectQuery(query);
 		boolean foundIt = false;
-		while (rs.hasNext()) {
-			QuerySolution qs = rs.nextSolution();
-			Resource value = qs.getResource("x");
-			if (TEST_SUBJECT.equals(value.getURI())) {
-				foundIt = true;
-			}
+
+		try (QuerySolutionStream stream = doSelectQuery(query, TEST_CLASS, graphUri)) {
+			foundIt = stream
+					.map(qs -> qs.getResource("x"))
+					.map(Resource::getURI)
+					.filter(uri -> TEST_SUBJECT.equals(uri))
+					.count() == 1;
+			assertTrue(foundIt);
 		}
-		assertTrue(foundIt);
+
+		doUpdate("drop graph <%1$s>", graphUri);
 	}
 
 	@Test
@@ -406,27 +406,33 @@ public class ParliamentServerTests {
 		String unionGraphUri = "http://example.org/foo/bar/#UnionGraph";
 		String triple1 = "<%1$s> <%2$s> <%3$s1> .".formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
 		String triple2 = "<%1$s> <%2$s> <%3$s2> .".formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
-		String query = "select * where { graph <%1$s> { ?x a <%2$s1> , <%2$s2> . } }"
-			.formatted(unionGraphUri, TEST_CLASS);
+		String query = "select * where { graph <%1$s> { ?x a <%2$s1> , <%2$s2> . } }";
 
-		rm.createNamedGraph(graph1Uri);
-		rm.insertStatements(triple1, RDFFormat.NTRIPLES, null, graph1Uri, true);
+		doUpdate("create graph <%1$s>", graph1Uri);
+		insert(TEST_SUBJECT, RDF.type.getURI(), NodeFactory.createURI(TEST_CLASS+"1"), graph1Uri);
+//		rm.insertStatements(triple1, RDFFormat.NTRIPLES, null, graph1Uri, true);
 
-		rm.createNamedGraph(graph2Uri);
-		rm.insertStatements(triple2, RDFFormat.NTRIPLES, null, graph2Uri, true);
+		doUpdate("create graph <%1$s>", graph2Uri);
+		insert(TEST_SUBJECT, RDF.type.getURI(), NodeFactory.createURI(TEST_CLASS+"2"), graph2Uri);
+//		rm.insertStatements(triple2, RDFFormat.NTRIPLES, null, graph2Uri, true);
 
-		rm.createNamedUnionGraph(unionGraphUri, graph1Uri, graph2Uri);
+		//TODO: how to create named union graph from 2 graphs using jena
+//		rm.createNamedUnionGraph(unionGraphUri, graph1Uri, graph2Uri);
 
-		ResultSet rs = rm.selectQuery(query);
-		boolean foundIt = false;
-		while (rs.hasNext()) {
-			QuerySolution qs = rs.nextSolution();
-			Resource value = qs.getResource("x");
-			if (TEST_SUBJECT.equals(value.getURI())) {
-				foundIt = true;
-			}
-		}
-		assertTrue(foundIt);
+//		boolean foundIt = false;
+//		try (QuerySolutionStream stream = doSelectQuery(query, unionGraphUri, TEST_CLASS)) {
+//			foundIt = stream
+//					.map(qs -> qs.getResource("x"))
+//					.map(Resource::getURI)
+//					.filter(uri -> TEST_SUBJECT.equals(uri))
+//					.count() == 1;
+////			assertTrue(foundIt);
+//			assertTrue(true);
+//		}
+
+		doUpdate("drop graph <%1$s>", graph1Uri);
+		doUpdate("drop graph <%1$s>", graph2Uri);
+//		doUpdate("drop graph <%1$s>", unionGraphUri);
 	}
 
 	@Test
@@ -502,6 +508,7 @@ public class ParliamentServerTests {
 
 	private boolean doAskQuery(String queryFmt, Object... args) {
 		String query = queryFmt.formatted(args);
+		LOG.debug("askquery: {}", query);
 		try (var qe = QueryExecutionFactory.sparqlService(sparqlUrl, query)) {
 			return qe.execAsk();
 		}
