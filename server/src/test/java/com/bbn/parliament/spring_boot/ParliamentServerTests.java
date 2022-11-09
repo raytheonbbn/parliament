@@ -264,7 +264,6 @@ public class ParliamentServerTests {
 		// delete inserted statements bc deleteAndQueryTest checks
 		delete(TEST_SUBJECT, RDF.type.getURI(), NodeFactory.createLiteral(TEST_CLASS), null);
 		delete(TEST_SUBJECT, RDFS.label.getURI(), NodeFactory.createLiteral(TEST_LITERAL), null);
-
 	}
 
 	private static boolean isStringLiteral(String datatypeUri) {
@@ -285,7 +284,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	public void sModelSimpleSPARQLUpdateTest() {
+	public void simpleSPARQLUpdateTest() {
 		String d = "http://example.org/doughnut";
 		String y = "http://example.org/yummy";
 		String queryFmt = "ask where { <%1$s> a <%2$s> }";
@@ -298,14 +297,13 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	public void remoteModelNGSPARQLUpdateTest() throws IOException
+	public void ngSparqlUpdateTest()
 	{
 		String graphUri = "http://example.org/foo/bar/#Graph2";
 		String bs = "http://example.org/brusselsprouts";
 		String y = "http://example.org/yucky";
 		String updateQuery = "%%1$s <%1$s> { <%2$s> a <%3$s> . }".formatted(graphUri, bs, y);
 		String query = "select * where { graph <%1$s> {?thing a <%2$s> } }";
-
 
 		doUpdate("create graph <%1$s>", graphUri);
 		insert(bs, RDF.type.getURI(), NodeFactory.createURI(y), graphUri);
@@ -335,7 +333,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	public void remoteModelQueryErrorTest() {
+	public void queryErrorTest() {
 		String invalidQuery = "select * where { ?thing oogetyboogetyboo! }";
 		boolean caughtException = false;
 		try (QuerySolutionStream stream = doSelectQuery(invalidQuery)) {
@@ -347,7 +345,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	public void remoteModelInsertErrorTest() {
+	public void insertErrorTest() {
 		boolean caughtException = false;
 		try {
 			// Invalid n-triples:
@@ -361,7 +359,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	public void remoteModelDeleteErrorTest() {
+	public void deleteErrorTest() {
 		boolean caughtException = false;
 		try {
 			// Invalid n-triples:
@@ -375,7 +373,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	public void remoteModelInsertQueryNamedGraphTest() throws IOException {
+	public void insertQueryNamedGraphTest() {
 		String graphUri = "http://example.org/foo/bar/#Graph3";
 		String query = "select * where { ?x a <%1$s> . graph <%2$s> { ?x a <%1$s> } }";
 
@@ -400,7 +398,7 @@ public class ParliamentServerTests {
 
 	@Test
 	@Disabled
-	public void remoteModelNamedGraphUnionTest() throws IOException {
+	public void namedGraphUnionTest() {
 		String graph1Uri = "http://example.org/foo/bar/#Graph4";
 		String graph2Uri = "http://example.org/foo/bar/#Graph5";
 		String unionGraphUri = "http://example.org/foo/bar/#UnionGraph";
@@ -437,7 +435,7 @@ public class ParliamentServerTests {
 
 	@Test
 	@Disabled
-	public void remoteModelConstructQueryTest() throws IOException {
+	public void constructQueryTest() throws IOException {
 		Resource testSubject = ResourceFactory.createResource(TEST_SUBJECT);
 		Model testModel = ModelFactory.createDefaultModel();
 		testModel.add(testSubject, RDFS.range, "sdfjklsdfj");

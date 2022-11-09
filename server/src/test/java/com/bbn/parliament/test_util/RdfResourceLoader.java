@@ -3,6 +3,7 @@ package com.bbn.parliament.test_util;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.MissingResourceException;
 import java.util.zip.ZipEntry;
@@ -15,7 +16,7 @@ import com.bbn.parliament.jena.joseki.client.RDFFormat;
 public class RdfResourceLoader {
 	@FunctionalInterface
 	public static interface SampleDataConsumer {
-		void accept(String rsrcName, RDFFormat rdfFormat, InputStream input) throws Exception;
+		void accept(String rsrcName, RDFFormat rdfFormat, InputStream input);
 	}
 
 	// This class is used to circumvent Jena closing the zip input stream prematurely:
@@ -77,7 +78,7 @@ public class RdfResourceLoader {
 			(name, rdfFormat, input) -> model.read(input, null, rdfFormat.toString()));
 	}
 
-	public static void load(String rsrcName, SampleDataConsumer consumer) throws Exception {
+	public static void load(String rsrcName, SampleDataConsumer consumer) {
 		try (InputStream is = getResourceAsStream(rsrcName)) {
 			RDFFormat rdfFmt = RDFFormat.parseFilename(rsrcName);
 			if (rdfFmt.isJenaReadable()) {
@@ -95,6 +96,8 @@ public class RdfResourceLoader {
 					}
 				}
 			}
+		} catch (IOException ex) {
+			throw new UncheckedIOException(ex);
 		}
 	}
 
