@@ -29,7 +29,7 @@ BEGIN
 			VALUE "FileDescription",	"Core Parliament Dynamic Link Library"
 			VALUE "FileVersion",			PARLIAMENT_VERSION_STRING
 			VALUE "InternalName",		"Parliament"
-			VALUE "LegalCopyright",		"Copyright \xa9 2001-2009 by BBN Technologies, Inc.  All rights reserved."
+			VALUE "LegalCopyright",		"Copyright \xa9 2001-2022 by BBN Technologies, Inc.  All rights reserved."
 			VALUE "LegalTrademarks",	"BBN\xae is a registered trademark of BBN Technologies, Inc.  Parliament\x99 is a trademark of BBN Technologies, Inc."
 			VALUE "OriginalFilename",	"Parliament.dll"
 #if !defined(NDEBUG)

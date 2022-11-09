@@ -182,13 +182,12 @@
 		<javadoc
 			destdir="${javadocDir}"
 			defaultexcludes="yes"
-			author="true"
-			version="true"
-			use="true"
+			Author="false"
+			Version="true"
+			Use="true"
 			windowtitle="Parliament API Documentation"
 			doctitle="Parliament&amp;trade; API Documentation"
 			header="Parliament&amp;trade;"
-			footer="Parliament&amp;trade;"
 			encoding="UTF-8"
 			charset="UTF-8"
 			docencoding="UTF-8"
@@ -197,7 +196,7 @@
 			noqualifier="java.lang:java.util:java.io"
 			useexternalfile="yes">
 			<bottom>
-				Copyright &amp;copy; 2001-2009 by BBN Technologies, Inc.&amp;nbsp;
+				Copyright &amp;copy; 2001-2022 by BBN Technologies, Inc.&amp;nbsp;
 				All rights reserved.&amp;nbsp;
 				Use is subject to &lt;a
 					href=&quot;http://opensource.org/licenses/bsd-license.php&quot;
