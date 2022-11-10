@@ -4,7 +4,6 @@ import javax.servlet.ServletContextListener;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
@@ -27,16 +26,5 @@ public class Application {
 			new ServletListenerRegistrationBean<>();
 		srb.setListener(new ParliamentServletContextListener());
 		return srb;
-	}
-
-	@SuppressWarnings("static-method")
-	@Bean
-	public TomcatServletWebServerFactory containerFactory() {
-		var factory = new TomcatServletWebServerFactory();
-		factory.addConnectorCustomizers(
-			connector -> {
-				connector.setProperty("sendReasonPhrase", "true");
-			});
-		return factory;
 	}
 }

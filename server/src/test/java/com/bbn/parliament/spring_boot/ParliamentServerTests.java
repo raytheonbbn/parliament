@@ -337,6 +337,8 @@ public class ParliamentServerTests {
 		String invalidQuery = "select * where { ?thing oogetyboogetyboo! }";
 		boolean caughtException = false;
 		try (QuerySolutionStream stream = doSelectQuery(invalidQuery)) {
+			@SuppressWarnings("unused")
+			long count = stream.count();
 		} catch (Exception ex) {
 			caughtException = true;
 			LOG.info("Query parse error", ex);

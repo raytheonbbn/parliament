@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -81,13 +80,6 @@ public class QueryController {
 		HttpServerUtil.init(
 			bridgeConfig.getTmpDir(),
 			bridgeConfig.getDeferredFileOutputStreamThreshold());
-	}
-
-	@SuppressWarnings("static-method")
-	@PreDestroy
-	public void destroy() {
-		LOG.info("Shutting down parliament servlet from QueryController");
-		ParliamentBridge.getInstance().stop();
 	}
 
 	private File getTempDir() {
