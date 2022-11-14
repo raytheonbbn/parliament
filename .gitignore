@@ -43,3 +43,4 @@ parliament-test.log
 /Parliament/Test/ParliamentLogConfig.txt
 /server/test-kb-data/
 /target/
+.DS_Store
