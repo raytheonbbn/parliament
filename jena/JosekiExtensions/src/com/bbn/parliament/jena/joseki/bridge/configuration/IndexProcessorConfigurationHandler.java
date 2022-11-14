@@ -9,7 +9,10 @@ package com.bbn.parliament.jena.joseki.bridge.configuration;
 import java.net.URI;
 import java.util.Properties;
 
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

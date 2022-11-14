@@ -19,7 +19,9 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.riot.system.PrefixMap;
+import org.apache.jena.riot.system.PrefixMapFactory;
 import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +96,7 @@ public class ParliamentBridgeConfiguration {
 	}
 
 	private static PrefixMap readPrefixes(Model m) throws ParliamentBridgeException {
-		PrefixMap map = new PrefixMap();
+		PrefixMap map = PrefixMapFactory.create();
 		Resource conf = getConfigResource(m);
 		StmtIterator si = conf.listProperties(ConfigOnt.prefixes);
 		while (si.hasNext()) {

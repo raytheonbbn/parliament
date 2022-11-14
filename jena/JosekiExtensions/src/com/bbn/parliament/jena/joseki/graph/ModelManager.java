@@ -17,6 +17,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
@@ -87,7 +89,7 @@ public class ModelManager {
 	}
 
 	public String getGraphDir(String namedGraphUri) {
-		return _kbGraphStore.getGraphDir(Node.createURI(namedGraphUri));
+		return _kbGraphStore.getGraphDir(NodeFactory.createURI(namedGraphUri));
 	}
 
 	/** Get the default graph's configuration. */
@@ -102,7 +104,7 @@ public class ModelManager {
 		if (indexEnabled) {
 			Node graphNode = null;
 			if (null != graphName) {
-				graphNode = Node.createURI(graphName);
+				graphNode = NodeFactory.createURI(graphName);
 			}
 
 			IndexManager.getInstance().createAndRegisterAll(graph, graphNode);
@@ -115,15 +117,15 @@ public class ModelManager {
 	public Model createAndAddKbUnionGraph(String graphName,
 		String leftGraphName, String rightGraphName) {
 		KbUnionableGraph leftKbUnionableGraph = (KbUnionableGraph) _kbGraphStore
-			.getGraph(Node.createURI(leftGraphName));
+			.getGraph(NodeFactory.createURI(leftGraphName));
 		KbUnionableGraph rightKbUnionableGraph = (KbUnionableGraph) _kbGraphStore
-			.getGraph(Node.createURI(rightGraphName));
+			.getGraph(NodeFactory.createURI(rightGraphName));
 
 		Model toReturn = ModelFactory.createModelForGraph(KbGraphFactory
 			.createKbUnionGraph(leftKbUnionableGraph,
-				Node.createURI(leftGraphName),
+				NodeFactory.createURI(leftGraphName),
 				rightKbUnionableGraph,
-				Node.createURI(rightGraphName)));
+				NodeFactory.createURI(rightGraphName)));
 
 		this.addNamedModel(graphName, toReturn);
 		return toReturn;

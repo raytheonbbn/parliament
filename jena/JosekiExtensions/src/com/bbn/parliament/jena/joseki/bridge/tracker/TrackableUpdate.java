@@ -2,6 +2,7 @@ package com.bbn.parliament.jena.joseki.bridge.tracker;
 
 import java.beans.ConstructorProperties;
 
+import org.apache.jena.update.UpdateAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -102,16 +102,6 @@ public class QueryHandler extends SPARQL {
 			log.error("NotFoundException: ", e);
 			throw new QueryExecutionException(
 				ReturnCodes.rcResourceNotFound, LogUtil.getExceptionInfo(e));
-		} catch (QueryStageException e) {
-			// special handling for stage exception caused by canceling a query
-			log.error("QueryStageException", e);
-			//if (e.getCause() instanceof CancelledException) {
-			//	log.error("Cause: CancelledException");
-			//	throw new QueryExecutionException(ReturnCodes.rcInternalError,
-			//		"Query cancelled: %d\n%s".formatted(trackable.getId(), trackable.getQuery()));
-			//} else {
-			throw new QueryExecutionException(ReturnCodes.rcInternalError, LogUtil.getExceptionInfo(e));
-			//}
 		} catch (JenaException e) { // Parse exceptions
 			log.error("JenaException", e);
 			throw new QueryExecutionException(
