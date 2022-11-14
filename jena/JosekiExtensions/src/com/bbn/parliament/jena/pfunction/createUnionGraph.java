@@ -40,8 +40,11 @@ import com.bbn.parliament.jena.graph.KbGraphStore;
  * @author sallen
  */
 public class createUnionGraph extends PFuncSimpleAndList {
+//	private static final Logger LOG = LoggerFactory.getLogger(createUnionGraph.class);
+
 	@Override
 	public QueryIterator execEvaluated(Binding binding, Node subject, Node predicate, PropFuncArg object, ExecutionContext execCxt) {
+//		LOG.debug("insidecreateUnionGraph");
 		DatasetGraph dsg = execCxt.getDataset();
 
 		if (!(dsg instanceof KbGraphStore kbGraphStore)) {
@@ -56,7 +59,7 @@ public class createUnionGraph extends PFuncSimpleAndList {
 			if (args.size() != 2) {
 				throw new JenaException("This property function requires exactly two arguments that correspond to the left and right graphs");
 			}
-
+//			LOG.debug("insidecreateUnionGraph");
 			Node graphName = subject;
 			Node leftGraphName = args.get(0);
 			Node rightGraphName = args.get(1);
@@ -88,6 +91,8 @@ public class createUnionGraph extends PFuncSimpleAndList {
 	 */
 	private final static List<Node> getNodeArguments(PropFuncArg pfArg)
 	{
+//		LOG.debug("insidecreateUnionGraph");
+
 		List<Node> toReturn = Collections.emptyList();
 
 		// This function is necessary to handle both
