@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,6 +20,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -152,10 +155,9 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	@Disabled
+//@Disabled
 	public void generalKBFunctionalityTest() throws IOException {
-		// TODO: jena equivalent to rm.clearAll()
-		rm.clearAll();
+		clearAll();
 
 		try (QuerySolutionStream stream = doSelectQuery(EVERYTHING_QUERY)) {
 			long count = stream.count();
@@ -190,7 +192,7 @@ public class ParliamentServerTests {
 			assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 		}
 
-		rm.clearAll();
+		clearAll();
 
 		try (QuerySolutionStream stream = doSelectQuery(CLASS_QUERY)) {
 			long count = stream.count();
@@ -199,13 +201,14 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+//@Disabled
 	public void namedGraphsTest() {
 		String graphUri = "http://example.org/foo/bar/#Graph1";
 
-		var output = getAvailableNamedGraphsNoJena();
-		System.out.println("C================================================");
-		System.out.println(output);
-		System.out.println("C================================================");
+//		var output = getAvailableNamedGraphsNoJena();
+//		System.out.println("C================================================");
+//		System.out.println(output);
+//		System.out.println("C================================================");
 
 		assertTrue(getAvailableNamedGraphs().isEmpty());
 
@@ -250,6 +253,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+//@Disabled
 	public void insertAndQueryTest() {
 		LOG.debug("foo");
 		insert(TEST_SUBJECT, RDF.type.getURI(), NodeFactory.createURI(TEST_CLASS), null);
@@ -277,6 +281,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+//@Disabled
 	public void deleteAndQueryTest() {
 		String queryFmt = "ask where { <%1$s> <%2$s> \"%3$s\" . }";
 
@@ -288,6 +293,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+//@Disabled
 	public void simpleSPARQLUpdateTest() {
 		String d = "http://example.org/doughnut";
 		String y = "http://example.org/yummy";
@@ -301,6 +307,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+//@Disabled
 	public void ngSparqlUpdateTest()
 	{
 		String graphUri = "http://example.org/foo/bar/#Graph2";
@@ -337,6 +344,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+//@Disabled
 	public void queryErrorTest() {
 		String invalidQuery = "select * where { ?thing oogetyboogetyboo! }";
 		boolean caughtException = false;
@@ -351,6 +359,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+//@Disabled
 	public void insertErrorTest() {
 		boolean caughtException = false;
 		try {
@@ -365,6 +374,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+//@Disabled
 	public void deleteErrorTest() {
 		boolean caughtException = false;
 		try {
@@ -379,6 +389,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+//@Disabled
 	public void insertQueryNamedGraphTest() {
 		String graphUri = "http://example.org/foo/bar/#Graph3";
 		String query = "select * where { ?x a <%1$s> . graph <%2$s> { ?x a <%1$s> } }";
@@ -403,6 +414,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
+//@Disabled
 	public void namedGraphUnionTest() {
 		String graph1Uri = "http://example.org/foo/bar/#Graph4";
 		String graph2Uri = "http://example.org/foo/bar/#Graph5";
@@ -462,15 +474,21 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	@Disabled
+//@Disabled
 	public void constructQueryTest() throws IOException {
 		Resource testSubject = ResourceFactory.createResource(TEST_SUBJECT);
 		Model testModel = ModelFactory.createDefaultModel();
 		testModel.add(testSubject, RDFS.range, "sdfjklsdfj");
 		testModel.add(testSubject, RDFS.seeAlso, "klsdfj");
-		rm.insertStatements(testModel);
+		String query = "construct { ?s ?p ?o } where { ?s ?p ?o }";
 
-		Model resultModel = rm.constructQuery("construct { ?s ?p ?o } where { ?s ?p ?o }");
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+//		testModel.write(os, RDFFormat.NTRIPLES.getMediaType(), null);
+		testModel.write(os, "N-TRIPLE", null);
+//		LOG.debug("byte array: "+ os.toString());
+		insertStatements(os.toString(), RDFFormat.NTRIPLES, null);
+
+		Model resultModel = doConstructQuery(query);
 		assertTrue(testModel.difference(resultModel).isEmpty());
 	}
 
@@ -499,21 +517,21 @@ public class ParliamentServerTests {
 			}
 		}
 
-//		String actualResponse;
-//		Map<String, Object> params = new HashMap<>();
-//		params.put("query", CSV_QUOTING_TEST_QUERY);
-//		params.put("stylesheet", "/xml-to-csv.xsl");
-//		try (InputStream is = rm.sendRequest(params)) {
-//			actualResponse = readStreamToEnd(is, "RemoteModel.sendRequest() returned null");
-//		}
-//		LOG.info("CSV quote result as CSV:{}{}", System.lineSeparator(), actualResponse);
-//
-//		String expectedResponse;
-//		try (InputStream is = getClass().getResourceAsStream(CSV_QUOTE_TEST_EXPECTED_RESULT)) {
-//			expectedResponse = readStreamToEnd(is, "Unable to find resource '%1$s'", CSV_QUOTE_TEST_EXPECTED_RESULT);
-//		}
-//
-//		assertEquals(expectedResponse, actualResponse);
+		String actualResponse;
+		Map<String, Object> params = new HashMap<>();
+		params.put("query", CSV_QUOTING_TEST_QUERY);
+		params.put("stylesheet", "/xml-to-csv.xsl");
+		try (InputStream is = rm.sendRequest(params)) {
+			actualResponse = readStreamToEnd(is, "RemoteModel.sendRequest() returned null");
+		}
+		LOG.info("CSV quote result as CSV:{}{}", System.lineSeparator(), actualResponse);
+
+		String expectedResponse;
+		try (InputStream is = getClass().getResourceAsStream(CSV_QUOTE_TEST_EXPECTED_RESULT)) {
+			expectedResponse = readStreamToEnd(is, "Unable to find resource '%1$s'", CSV_QUOTE_TEST_EXPECTED_RESULT);
+		}
+
+		assertEquals(expectedResponse, actualResponse);
 	}
 
 	private static String readStreamToEnd(InputStream is, String errorMsg, Object... args) throws IOException {
@@ -540,6 +558,18 @@ public class ParliamentServerTests {
 		}
 	}
 
+	public Model doConstructQuery(String queryFmt, Object... args) throws IOException {
+		String query = queryFmt.formatted(args);
+		try (var qe = QueryExecutionFactory.sparqlService(sparqlUrl, query)) {
+			return qe.execConstruct();
+		}
+	}
+
+	private void doUpdate(String queryFmt, Object... args) {
+		UpdateRequest ur = UpdateFactory.create(queryFmt.formatted(args));
+		UpdateExecutionFactory.createRemote(ur, updateUrl).execute();
+	}
+
 	private void insert(String sub, String pred, Node obj, String graphName) {
 		QuadDataAcc qd = createQuadData(sub, pred, obj, graphName);
 		UpdateDataInsert update = new UpdateDataInsert(qd);
@@ -547,13 +577,28 @@ public class ParliamentServerTests {
 	}
 
 	private int insertStatements(String stmt, RDFFormat format, String graphUri) {
-		ByteArrayInputStream bstrm = new ByteArrayInputStream(stmt.getBytes());
+		ByteArrayInputStream bstrm = new ByteArrayInputStream(stmt.getBytes(StandardCharsets.UTF_8));
 		return loadRdf(bstrm, format.getMediaType(), graphUri);
 	}
 	private int insertStatements(InputStream in, RDFFormat format, String graphUri) {
 		return loadRdf(in, format.getMediaType(), graphUri);
 	}
 
+	private void clearAll() {
+		Set<String> allGraphs = getAvailableNamedGraphs();
+		allGraphs.add("?default");
+		for (String uri : allGraphs) {
+			if (uri != "?default")
+				uri = "?graph=" + uri;
+			var request = HttpRequest.newBuilder()
+					.uri(URI.create(graphStoreUrl + uri))
+					.DELETE()
+					.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
+					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
+					.build();
+			sendRequest(request);
+		}
+	}
 
 	private int loadRdf(InputStream in, String mediaType, String graphUri) {
 		if (graphUri != null )
@@ -561,21 +606,23 @@ public class ParliamentServerTests {
 		else
 			graphUri = "?default";
 		var request = HttpRequest.newBuilder()
-//			.uri(URI.create(graphStoreUrl + "?default"))
-			.uri(URI.create(graphStoreUrl + graphUri))
-			.POST(HttpRequest.BodyPublishers.ofInputStream(() -> in))
-			.header(HttpHeaders.CONTENT_TYPE, mediaType)
-			.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
-			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
-			.build();
+					.uri(URI.create(graphStoreUrl + graphUri))
+					.POST(HttpRequest.BodyPublishers.ofInputStream(() -> in))
+					.header(HttpHeaders.CONTENT_TYPE, mediaType)
+					.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
+					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
+					.build();
+		return sendRequest(request);
+	}
+
+	private static int sendRequest(HttpRequest request) {
 		HttpResponse<String> response = HttpClient
-			.newHttpClient()
-			.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-			.join();
+									.newHttpClient()
+									.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+									.join();
 		LOG.info("Response body:%n%1$s%n".formatted(response.body()));
 		return response.statusCode();
 	}
-
 
 	private void delete(String sub, String pred, Node obj, String graphName) {
 		QuadDataAcc qd = createQuadData(sub, pred, obj, graphName);
@@ -615,8 +662,4 @@ public class ParliamentServerTests {
 		}
 	}
 
-	private void doUpdate(String queryFmt, Object... args) {
-		UpdateRequest ur = UpdateFactory.create(queryFmt.formatted(args));
-		UpdateExecutionFactory.createRemote(ur, updateUrl).execute();
-	}
 }
