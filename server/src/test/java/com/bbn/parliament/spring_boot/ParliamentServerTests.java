@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -20,11 +21,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
@@ -32,9 +35,6 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -69,7 +69,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.bbn.parliament.jena.bridge.tracker.Tracker;
 import com.bbn.parliament.jena.joseki.client.QuerySolutionStream;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
-import com.bbn.parliament.jena.joseki.client.RemoteModel;
 import com.bbn.parliament.spring_boot.controller.QueryController;
 import com.bbn.parliament.test_util.RdfResourceLoader;
 
@@ -143,19 +142,15 @@ public class ParliamentServerTests {
 	private String sparqlUrl;
 	private String updateUrl;
 	private String graphStoreUrl;
-	private RemoteModel rm;
 
 	@BeforeEach
 	public void beforeEach() {
 		sparqlUrl = "http://%1$s:%2$s/parliament/sparql".formatted(HOST, serverPort);
 		updateUrl = "http://%1$s:%2$s/parliament/update".formatted(HOST, serverPort);
 		graphStoreUrl = "http://%1$s:%2$s/parliament/graphstore".formatted(HOST, serverPort);
-		var bulkUrl = RemoteModel.DEFAULT_BULK_ENDPOINT_URL.formatted(HOST, serverPort);
-//		rm = new RemoteModel(sparqlUrl, bulkUrl);
 	}
 
 	@Test
-//@Disabled
 	public void generalKBFunctionalityTest() throws IOException {
 		clearAll();
 
@@ -201,14 +196,8 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-//@Disabled
 	public void namedGraphsTest() {
 		String graphUri = "http://example.org/foo/bar/#Graph1";
-
-//		var output = getAvailableNamedGraphsNoJena();
-//		System.out.println("C================================================");
-//		System.out.println(output);
-//		System.out.println("C================================================");
 
 		assertTrue(getAvailableNamedGraphs().isEmpty());
 
@@ -253,9 +242,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-//@Disabled
 	public void insertAndQueryTest() {
-		LOG.debug("foo");
 		insert(TEST_SUBJECT, RDF.type.getURI(), NodeFactory.createURI(TEST_CLASS), null);
 		insert(TEST_SUBJECT, RDFS.label.getURI(), NodeFactory.createLiteral(TEST_LITERAL), null);
 
@@ -281,7 +268,6 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-//@Disabled
 	public void deleteAndQueryTest() {
 		String queryFmt = "ask where { <%1$s> <%2$s> \"%3$s\" . }";
 
@@ -293,7 +279,6 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-//@Disabled
 	public void simpleSPARQLUpdateTest() {
 		String d = "http://example.org/doughnut";
 		String y = "http://example.org/yummy";
@@ -307,13 +292,11 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-//@Disabled
 	public void ngSparqlUpdateTest()
 	{
 		String graphUri = "http://example.org/foo/bar/#Graph2";
 		String bs = "http://example.org/brusselsprouts";
 		String y = "http://example.org/yucky";
-		String updateQuery = "%%1$s <%1$s> { <%2$s> a <%3$s> . }".formatted(graphUri, bs, y);
 		String query = "select * where { graph <%1$s> {?thing a <%2$s> } }";
 
 		doUpdate("create graph <%1$s>", graphUri);
@@ -344,7 +327,6 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-//@Disabled
 	public void queryErrorTest() {
 		String invalidQuery = "select * where { ?thing oogetyboogetyboo! }";
 		boolean caughtException = false;
@@ -359,13 +341,11 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-//@Disabled
 	public void insertErrorTest() {
 		boolean caughtException = false;
 		try {
 			// Invalid n-triples:
 			insert("oogetyboogetyboo!", null, null, null);
-//			rm.insertStatements("oogetyboogetyboo!", RDFFormat.NTRIPLES, null, true);
 		} catch (Exception ex) {
 			caughtException = true;
 			LOG.info("N-triples parse error (insert)", ex);
@@ -374,13 +354,11 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-//@Disabled
 	public void deleteErrorTest() {
 		boolean caughtException = false;
 		try {
 			// Invalid n-triples:
 			delete("oogetyboogetyboo!", null, null, null);
-//			rm.deleteStatements("oogetyboogetyboo!", RDFFormat.NTRIPLES);
 		} catch (Exception ex) {
 			caughtException = true;
 			LOG.info("N-triples parse error (delete)", ex);
@@ -389,7 +367,6 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-//@Disabled
 	public void insertQueryNamedGraphTest() {
 		String graphUri = "http://example.org/foo/bar/#Graph3";
 		String query = "select * where { ?x a <%1$s> . graph <%2$s> { ?x a <%1$s> } }";
@@ -414,7 +391,6 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-//@Disabled
 	public void namedGraphUnionTest() {
 		String graph1Uri = "http://example.org/foo/bar/#Graph4";
 		String graph2Uri = "http://example.org/foo/bar/#Graph5";
@@ -437,13 +413,6 @@ public class ParliamentServerTests {
 			e.printStackTrace();
 		}
 
-		//TODO: union graph shortcut causes 400 error- jena subs ??0 for blank nodes then whines about it...
-//		doUpdate("""
-//			prefix parPF: <java:com.bbn.parliament.jena.pfunction.>
-//			insert {} where {
-//				<%1$s> parPF:createUnionGraph ( <%2$s> <%3$s> ) .
-//			}
-//			""",unionGraphUri,  graph1Uri, graph2Uri);
 		doUpdate("""
 			prefix parPF: <java:com.bbn.parliament.jena.pfunction.>
 			prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -474,7 +443,6 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-//@Disabled
 	public void constructQueryTest() throws IOException {
 		Resource testSubject = ResourceFactory.createResource(TEST_SUBJECT);
 		Model testModel = ModelFactory.createDefaultModel();
@@ -483,9 +451,7 @@ public class ParliamentServerTests {
 		String query = "construct { ?s ?p ?o } where { ?s ?p ?o }";
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-//		testModel.write(os, RDFFormat.NTRIPLES.getMediaType(), null);
 		testModel.write(os, "N-TRIPLE", null);
-//		LOG.debug("byte array: "+ os.toString());
 		insertStatements(os.toString(), RDFFormat.NTRIPLES, null);
 
 		Model resultModel = doConstructQuery(query);
@@ -499,40 +465,40 @@ public class ParliamentServerTests {
 			if (is == null) {
 				fail("Unable to find resource '%1$s'".formatted(CSV_QUOTE_TEST_INPUT));
 			}
+			LOG.debug("rdf format: "+RDFFormat.parseFilename(CSV_QUOTE_TEST_INPUT));
 			insertStatements(is, RDFFormat.parseFilename(CSV_QUOTE_TEST_INPUT), null);
 		}
 
-		LOG.info("CSV quote test results:");
-		try (var qe = QueryExecutionFactory.sparqlService(sparqlUrl, CSV_QUOTING_TEST_QUERY)) {
-			ResultSet rs = qe.execSelect();
-			while (rs.hasNext()) {
-				QuerySolution qs = rs.next();
-				Resource s = qs.getResource("s");
-				Resource p = qs.getResource("p");
-				Literal o = qs.getLiteral("o");
-				String sStr = s.isAnon()
-					? s.getId().getLabelString()
-					: s.getURI();
-				LOG.info("   {} {} \"{}\"", sStr, p.getURI(), o.getLexicalForm());
+		String actualResponse = doSelectToCsv(CSV_QUOTING_TEST_QUERY);
+		Reader actualRdr = new StringReader(actualResponse);
+
+		String expectedResponse;
+		try (InputStream is = getClass().getClassLoader().getResourceAsStream(CSV_QUOTE_TEST_EXPECTED_RESULT)) {
+			expectedResponse = readStreamToEnd(is, "Unable to find resource '%1$s'", CSV_QUOTE_TEST_EXPECTED_RESULT);
+		}
+		Reader expectedRdr = new StringReader(expectedResponse);
+		List<CSVRecord> expectedRecords;
+		try (CSVParser parser = CSVFormat.EXCEL.parse(expectedRdr)) {
+			expectedRecords = parser.getRecords();
+		}
+
+		try (CSVParser parser = CSVFormat.EXCEL.parse(actualRdr)) {
+			List<CSVRecord> actualRecords = parser.getRecords();
+			for (int i=0; i<actualRecords.size(); i++) {
+				String actual = actualRecords.get(i).get(2);
+				String expected = expectedRecords.get(i).get(2);
+				if (!actual.equals(expected)) {
+					// TODO: double quote is not being escaped..
+					LOG.debug("actual:\n"+actual);
+					LOG.debug("expected:\n"+expected);
+				}
+				assertEquals(expected, actual);
 			}
 		}
 
-		String actualResponse;
-		Map<String, Object> params = new HashMap<>();
-		params.put("query", CSV_QUOTING_TEST_QUERY);
-		params.put("stylesheet", "/xml-to-csv.xsl");
-		try (InputStream is = rm.sendRequest(params)) {
-			actualResponse = readStreamToEnd(is, "RemoteModel.sendRequest() returned null");
-		}
-		LOG.info("CSV quote result as CSV:{}{}", System.lineSeparator(), actualResponse);
-
-		String expectedResponse;
-		try (InputStream is = getClass().getResourceAsStream(CSV_QUOTE_TEST_EXPECTED_RESULT)) {
-			expectedResponse = readStreamToEnd(is, "Unable to find resource '%1$s'", CSV_QUOTE_TEST_EXPECTED_RESULT);
-		}
-
-		assertEquals(expectedResponse, actualResponse);
+		clearAll();
 	}
+
 
 	private static String readStreamToEnd(InputStream is, String errorMsg, Object... args) throws IOException {
 		if (is == null) {
@@ -580,8 +546,44 @@ public class ParliamentServerTests {
 		ByteArrayInputStream bstrm = new ByteArrayInputStream(stmt.getBytes(StandardCharsets.UTF_8));
 		return loadRdf(bstrm, format.getMediaType(), graphUri);
 	}
+
 	private int insertStatements(InputStream in, RDFFormat format, String graphUri) {
 		return loadRdf(in, format.getMediaType(), graphUri);
+	}
+
+	private int loadRdf(InputStream in, String mediaType, String graphUri) {
+		if (graphUri != null )
+			graphUri = "?graph="+graphUri;
+		else
+			graphUri = "?default";
+		var request = HttpRequest.newBuilder()
+					.uri(URI.create(graphStoreUrl + graphUri))
+					.POST(HttpRequest.BodyPublishers.ofInputStream(() -> in))
+					.header(HttpHeaders.CONTENT_TYPE, mediaType)
+					.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
+					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
+					.build();
+		return sendRequest(request).statusCode();
+	}
+
+	private String doSelectToCsv(String query) {
+		var request = HttpRequest.newBuilder()
+					.uri(URI.create(sparqlUrl))
+					.POST(HttpRequest.BodyPublishers.ofString(query))
+					.header(HttpHeaders.CONTENT_TYPE, "application/sparql-query")
+					.header(HttpHeaders.ACCEPT, "text/csv")
+					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
+					.build();
+		return sendRequest(request).body();
+	}
+
+	private static HttpResponse<String> sendRequest(HttpRequest request) {
+		HttpResponse<String> response = HttpClient
+									.newHttpClient()
+									.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+									.join();
+		LOG.info("Response body:%n%1$s%n".formatted(response.body()));
+		return response;
 	}
 
 	private void clearAll() {
@@ -598,30 +600,6 @@ public class ParliamentServerTests {
 					.build();
 			sendRequest(request);
 		}
-	}
-
-	private int loadRdf(InputStream in, String mediaType, String graphUri) {
-		if (graphUri != null )
-			graphUri = "?graph="+graphUri;
-		else
-			graphUri = "?default";
-		var request = HttpRequest.newBuilder()
-					.uri(URI.create(graphStoreUrl + graphUri))
-					.POST(HttpRequest.BodyPublishers.ofInputStream(() -> in))
-					.header(HttpHeaders.CONTENT_TYPE, mediaType)
-					.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
-					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
-					.build();
-		return sendRequest(request);
-	}
-
-	private static int sendRequest(HttpRequest request) {
-		HttpResponse<String> response = HttpClient
-									.newHttpClient()
-									.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-									.join();
-		LOG.info("Response body:%n%1$s%n".formatted(response.body()));
-		return response.statusCode();
 	}
 
 	private void delete(String sub, String pred, Node obj, String graphName) {

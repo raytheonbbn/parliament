@@ -1,7 +1,7 @@
 s,p,o
-b0,http://example.org/#comment,
-b0,http://example.org/#comment,"	A comment that starts with a tab."
-b0,http://example.org/#comment,"
+http://example.org/#testSubject,http://example.org/#comment,""
+http://example.org/#testSubject,http://example.org/#comment,"	A comment that starts with a tab."
+http://example.org/#testSubject,http://example.org/#comment,"
 President Trump on Thursday backed down from his controversial push
 to add a citizenship question to the 2020 Census, effectively conceding
 defeat in a battle he had revived just last week and promised to continue
@@ -22,13 +22,13 @@ decried as an effort to systematically undercount Latinos and scare
 immigrant communities from participating in a survey that helps determine
 congressional districts and the disbursement of some federal funds.
 "
-b0,http://example.org/#comment," A comment that starts with a space."
-b0,http://example.org/#comment,"A comment
+http://example.org/#testSubject,http://example.org/#comment," A comment that starts with a space."
+http://example.org/#testSubject,http://example.org/#comment,"A comment
 with a newline."
-b0,http://example.org/#comment,"A comment
+http://example.org/#testSubject,http://example.org/#comment,"A comment
 with a carriage return."
-b0,http://example.org/#comment,"A comment that ends with a space "
-b0,http://example.org/#comment,"A comment that ends with a tab	"
-b0,http://example.org/#comment,"A comment with ""quotes""."
-b0,http://example.org/#comment,"A comment, with a comma."
-b0,http://example.org/#comment,A simple comment.
+http://example.org/#testSubject,http://example.org/#comment,"A comment that ends with a space "
+http://example.org/#testSubject,http://example.org/#comment,"A comment that ends with a tab	"
+http://example.org/#testSubject,http://example.org/#comment,"A comment with ""quotes""."
+http://example.org/#testSubject,http://example.org/#comment,"A comment, with a comma."
+http://example.org/#testSubject,http://example.org/#comment,"A simple comment."
