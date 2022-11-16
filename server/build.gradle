@@ -20,7 +20,7 @@ ext {
 
 dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
+	implementation 'org.apache.commons:commons-csv:1.9.0'
 	implementation fileTree(dir: artifactsDir, include: [
 		'JenaGraph.jar',
 		'JosekiParliamentClient.jar',
@@ -29,7 +29,7 @@ dependencies {
 		'SpatialIndexProcessor.jar',
 		'TemporalIndexProcessor.jar'
 	])
-
+	
 	implementation "$commonsFileUpload"
 	implementation "$commonsLangDependency"
 	
