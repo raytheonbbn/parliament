@@ -4,7 +4,7 @@
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
 
-#include "JniAssessments.h"
+#include "com_bbn_parliament_jni_JniAssessments.h"
 #include "CppTestClass.h"
 #include <functional>
 #include <iostream>
