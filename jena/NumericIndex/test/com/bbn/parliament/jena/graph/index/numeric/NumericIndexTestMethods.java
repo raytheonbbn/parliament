@@ -126,7 +126,6 @@ public class NumericIndexTestMethods extends QueryableIndexTestMethods<NumericIn
 		assertEquals(2, count);
 	}
 
-	@SuppressWarnings("static-method")
 	public void testComplexQuery(NumericIndex<Integer> index, Model model) {
 		Property ageProp = ResourceFactory.createProperty("http://example.org#age");
 		Property nameProp = ResourceFactory.createProperty("http://example.org#name");

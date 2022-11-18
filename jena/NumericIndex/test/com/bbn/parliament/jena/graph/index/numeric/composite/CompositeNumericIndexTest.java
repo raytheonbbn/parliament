@@ -6,7 +6,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import com.bbn.parliament.jena.query.index.IndexTestMethods;
 
 public class CompositeNumericIndexTest {
-	@SuppressWarnings("static-method")
 	@ParameterizedTest
 	@EnumSource(IndexTestMethods.IndexUnderTest.class)
 	public void testAddAndRemove(IndexTestMethods.IndexUnderTest iut) {
@@ -15,7 +14,6 @@ public class CompositeNumericIndexTest {
 		}
 	}
 
-	@SuppressWarnings("static-method")
 	@ParameterizedTest
 	@EnumSource(IndexTestMethods.IndexUnderTest.class)
 	public void testOpenClose(IndexTestMethods.IndexUnderTest iut) {
@@ -24,7 +22,6 @@ public class CompositeNumericIndexTest {
 		}
 	}
 
-	@SuppressWarnings("static-method")
 	@ParameterizedTest
 	@EnumSource(IndexTestMethods.IndexUnderTest.class)
 	public void testIterator(IndexTestMethods.IndexUnderTest iut) {
@@ -33,7 +30,6 @@ public class CompositeNumericIndexTest {
 		}
 	}
 
-	@SuppressWarnings("static-method")
 	@ParameterizedTest
 	@EnumSource(IndexTestMethods.IndexUnderTest.class)
 	public void testAddClosed(IndexTestMethods.IndexUnderTest iut) {
@@ -42,7 +38,6 @@ public class CompositeNumericIndexTest {
 		}
 	}
 
-	@SuppressWarnings("static-method")
 	@ParameterizedTest
 	@EnumSource(IndexTestMethods.IndexUnderTest.class)
 	public void testRemoveClosed(IndexTestMethods.IndexUnderTest iut) {
@@ -51,7 +46,6 @@ public class CompositeNumericIndexTest {
 		}
 	}
 
-	@SuppressWarnings("static-method")
 	@ParameterizedTest
 	@EnumSource(IndexTestMethods.IndexUnderTest.class)
 	public void testIteratorClosed(IndexTestMethods.IndexUnderTest iut) {
@@ -60,7 +54,6 @@ public class CompositeNumericIndexTest {
 		}
 	}
 
-	@SuppressWarnings("static-method")
 	@ParameterizedTest
 	@EnumSource(IndexTestMethods.IndexUnderTest.class)
 	public void testDelete(IndexTestMethods.IndexUnderTest iut) {
@@ -70,7 +63,6 @@ public class CompositeNumericIndexTest {
 		}
 	}
 
-	@SuppressWarnings("static-method")
 	@ParameterizedTest
 	@EnumSource(IndexTestMethods.IndexUnderTest.class)
 	public void testDeleteOpen(IndexTestMethods.IndexUnderTest iut) {
@@ -79,7 +71,6 @@ public class CompositeNumericIndexTest {
 		}
 	}
 
-	@SuppressWarnings("static-method")
 	@ParameterizedTest
 	@EnumSource(IndexTestMethods.IndexUnderTest.class)
 	public void testClear(IndexTestMethods.IndexUnderTest iut) {
@@ -88,7 +79,6 @@ public class CompositeNumericIndexTest {
 		}
 	}
 
-	@SuppressWarnings("static-method")
 	@ParameterizedTest
 	@EnumSource(IndexTestMethods.IndexUnderTest.class)
 	public void testSubIndexes(IndexTestMethods.IndexUnderTest iut) {
