@@ -12,7 +12,7 @@
 		location="${basedir}/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab"/>
 	<property name="configDir" location="${basedir}/resources/conf"/>
 	<property name="libDir" value="${basedir}/lib"/>
-	<property name="josekiLibDir" value="${parliamentDependenciesDir}/joseki"/>
+	<property name="josekiLib" value="${parliamentDependenciesDir}/joseki/joseki-3.4.4.jar"/>
 	<property name="openMapLibDir" value="${parliamentDependenciesDir}/openmap"/>
 	<property name="deegreeLibDir" value="${parliamentDependenciesDir}/deegree"/>
 	<property name="serverJarFile" value="${artifactsDir}/ParliamentServer.jar"/>
@@ -102,7 +102,7 @@
 			<exclude name="com/bbn/parliament/jena/jetty/*.java"/>
 			<classpath>
 				<fileset dir="${libDir}/bridge" includes="**/*.jar"/>
-				<fileset dir="${josekiLibDir}" includes="**/joseki-*.jar"/>
+				<fileset file="${josekiLib}"/>
 				<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
 				<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
 				<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
@@ -126,7 +126,7 @@
 				<exclude name="**/slf4j-api-*.jar"/>
 				<exclude name="**/slf4j-log4j12-*.jar"/>
 			</lib>
-			<lib dir="${josekiLibDir}" includes="**/joseki-*.jar"/>
+			<lib file="${josekiLib}"/>
 			<lib dir="${openMapLibDir}" includes="**/*.jar"/>
 			<lib dir="${deegreeLibDir}" includes="**/*.jar"/>
 			<lib file="${bridgeJarFile}"/>
@@ -236,7 +236,7 @@
 		<junitlauncher printsummary="yes" haltonfailure="yes">
 			<classpath>
 				<fileset dir="${libDir}/test" includes="**/*.jar"/>
-				<fileset dir="${josekiLibDir}" includes="**/joseki-*.jar"/>
+				<fileset file="${josekiLib}"/>
 				<fileset dir="${openMapLibDir}" includes="**/*.jar"/>
 				<fileset dir="${deegreeLibDir}" includes="**/*.jar"/>
 				<fileset file="${bridgeJarFile}"/>
