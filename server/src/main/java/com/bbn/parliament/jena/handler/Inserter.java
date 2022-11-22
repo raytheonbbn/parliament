@@ -65,7 +65,7 @@ public final class Inserter {
 		return new Inserter(true, null, null, null, null, baseUri, streamSupplier);
 	}
 
-	private Inserter(boolean importRepository, String graphName, String dataFormat,
+	public Inserter(boolean importRepository, String graphName, String dataFormat,
 		String fileName, VerifyOption verifyOption, String baseUri,
 		Supplier<InputStream> streamSupplier) {
 
@@ -308,7 +308,7 @@ public final class Inserter {
 		}
 	}
 
-	private static Supplier<InputStream> getZipStrmProvider(ZipInputStream zin) {
+	public static Supplier<InputStream> getZipStrmProvider(ZipInputStream zin) {
 		return () -> new FilterInputStream(zin) {
 			@Override
 			public void close() throws IOException {
@@ -364,7 +364,9 @@ public final class Inserter {
 			LOG.warn("JSON-LD reader class after setting: %1$s"
 				.formatted(syntaxVerifier.getReader(JsonLdRdfReader.formatName).getClass().getName()));
 			//TODO: End temp code
-
+LOG.debug("in:"+in);
+LOG.debug("baseUri:"+baseUri);
+LOG.debug("format:"+format);
 			syntaxVerifier.read(in, baseUri, format.toString());
 			numStmts = syntaxVerifier.size();
 
