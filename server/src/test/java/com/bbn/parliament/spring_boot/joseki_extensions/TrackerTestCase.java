@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.zip.ZipInputStream;
 
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.sparql.pfunction.PropertyFunctionRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -20,6 +21,7 @@ import com.bbn.parliament.jena.bridge.tracker.TrackableInsert;
 import com.bbn.parliament.jena.bridge.tracker.TrackableQuery;
 import com.bbn.parliament.jena.bridge.tracker.TrackableUpdate;
 import com.bbn.parliament.jena.bridge.tracker.Tracker;
+import com.bbn.parliament.jena.bridge.tracker.management.TrackableMXBean.Status;
 import com.bbn.parliament.jena.exception.DataFormatException;
 import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.graph.ModelManager;
@@ -43,7 +45,6 @@ public class TrackerTestCase {
 
 	@SuppressWarnings("static-method")
 	@Test
-	@Disabled
 	public void testTrackerQuery() {
 		String query = "SELECT ?a WHERE { ?a ?b ?c }";
 
@@ -91,49 +92,48 @@ public class TrackerTestCase {
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 	}
 
-//	@SuppressWarnings("static-method")
-//	@Test
-//	public void testCancel() {
-//		PropertyFunctionRegistry.get().put("http://example.org/suspend", Suspend.class);
-//		String query = "SELECT * WHERE { ?a <http://example.org/suspend> ?b . }";
-//		final TrackableQuery tq = Tracker.getInstance().createQuery(query, "TEST");
-//		Runnable r = new Runnable() {
-//
-//			@Override
-//			public void run() {
-//				try {
-//					tq.run();
-//					ResultSet rs = tq.getResultSet();
-//					while (rs.hasNext()) {
-//						rs.next();
-//					}
-//				} catch (Throwable e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		};
-//
-//		Thread t = new Thread(r);
-//		t.start();
-//
-//		try {
-//			Thread.sleep(1000);
-//		} catch (InterruptedException e) {
-//
-//		}
-//		try {
-//			System.out.println("cancel");
-//			tq.cancel();
-//		} catch (TrackableException e) {
-//			e.printStackTrace();
-//		}
-//		assertEquals(Status.CANCELLED, tq.getStatus());
-//		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
-//	}
+	@SuppressWarnings("static-method")
+	@Test
+	public void testCancel() {
+		PropertyFunctionRegistry.get().put("http://example.org/suspend", Suspend.class);
+		String query = "SELECT * WHERE { ?a <http://example.org/suspend> ?b . }";
+		final TrackableQuery tq = Tracker.getInstance().createQuery(query, "TEST");
+		Runnable r = new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					tq.run();
+					ResultSet rs = tq.getResultSet();
+					while (rs.hasNext()) {
+						rs.next();
+					}
+				} catch (Throwable e) {
+					e.printStackTrace();
+				}
+			}
+		};
+
+		Thread t = new Thread(r);
+		t.start();
+
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+
+		}
+		try {
+			System.out.println("cancel");
+			tq.cancel();
+		} catch (TrackableException e) {
+			e.printStackTrace();
+		}
+		assertEquals(Status.CANCELLED, tq.getStatus());
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+	}
 
 	@SuppressWarnings("static-method")
 	@Test
-	@Disabled
 	public void testTrackerUpdate() {
 		TrackableUpdate tu;
 
@@ -178,6 +178,7 @@ public class TrackerTestCase {
 
 	@SuppressWarnings("static-method")
 	@Test
+	@Disabled
 	public void testTrackerInsert() {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		InputStream is = cl.getResourceAsStream("University15_20.owl-mini.zip");
