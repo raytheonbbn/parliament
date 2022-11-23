@@ -11,6 +11,7 @@ import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.util.Context;
 
 /**
@@ -153,19 +154,33 @@ public class CloseableQueryExec implements QueryExecution {
 
 	@Override
 	public boolean isClosed() {
-		// TODO Auto-generated method stub
-		return false;
+		return (qe == null)
+			? true
+			: qe.isClosed();
 	}
 
 	@Override
 	public long getTimeout1() {
-		// TODO Auto-generated method stub
-		return 0;
+		return qe.getTimeout1();
 	}
 
 	@Override
 	public long getTimeout2() {
-		// TODO Auto-generated method stub
-		return 0;
+		return qe.getTimeout2();
+	}
+
+	@Override
+	public Iterator<Quad> execConstructQuads() {
+		return qe.execConstructQuads();
+	}
+
+	@Override
+	public Dataset execConstructDataset() {
+		return qe.execConstructDataset();
+	}
+
+	@Override
+	public Dataset execConstructDataset(Dataset dataset) {
+		return qe.execConstructDataset(dataset);
 	}
 }

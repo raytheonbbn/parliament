@@ -17,12 +17,11 @@ import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.engine.ExecutionContext;
 import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.engine.iterator.QueryIterFilterExpr;
+import org.apache.jena.sparql.engine.join.Join;
 import org.apache.jena.sparql.engine.main.JoinClassifier;
 import org.apache.jena.sparql.engine.main.LeftJoinClassifier;
 import org.apache.jena.sparql.engine.main.OpExecutor;
 import org.apache.jena.sparql.engine.main.OpExecutorFactory;
-import org.apache.jena.sparql.engine.main.iterator.QueryIterJoin;
-import org.apache.jena.sparql.engine.main.iterator.QueryIterLeftJoin;
 import org.apache.jena.sparql.engine.main.iterator.QueryIterOptionalIndex;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprList;
@@ -129,9 +128,10 @@ public class KbOpExecutor extends OpExecutor {
 		// Look one level in for any filters with out-of-scope variables.
 		boolean canDoLinear = JoinClassifier.isLinear(opJoin);
 
-		if (canDoLinear)
+		if (canDoLinear) {
 			// Streamed evaluation
 			return stream(opJoin.getLeft(), opJoin.getRight(), input);
+		}
 
 		// Can't do purely indexed (e.g. a filter referencing a variable out of
 		// scope is in the way)
@@ -140,7 +140,7 @@ public class KbOpExecutor extends OpExecutor {
 
 		QueryIterator left = executeOp(opJoin.getLeft(), input);
 		QueryIterator right = executeOp(opJoin.getRight(), root());
-		QueryIterator qIter = new QueryIterJoin(left, right, execCxt);
+		QueryIterator qIter = Join.join(left, right, execCxt);
 		return qIter;
 		// Worth doing anything about join(join(..))?
 	}
@@ -149,8 +149,9 @@ public class KbOpExecutor extends OpExecutor {
 	@Override
 	protected QueryIterator execute(OpLeftJoin opLeftJoin, QueryIterator input) {
 		ExprList exprs = opLeftJoin.getExprs();
-		if (exprs != null)
+		if (exprs != null) {
 			exprs.prepareExprs(execCxt.getContext());
+		}
 
 		// Do an indexed substitute into the right if possible.
 		boolean canDoLinear = LeftJoinClassifier.isLinear(opLeftJoin);
@@ -163,11 +164,11 @@ public class KbOpExecutor extends OpExecutor {
 
 			Op opLeft = opLeftJoin.getLeft();
 			Op opRight = opLeftJoin.getRight();
-			if (exprs != null)
+			if (exprs != null) {
 				opRight = OpFilter.filter(exprs, opRight);
+			}
 			QueryIterator left = executeOp(opLeft, input);
-			QueryIterator qIter = new QueryIterOptionalIndex(left, opRight,
-				execCxt);
+			QueryIterator qIter = new QueryIterOptionalIndex(left, opRight, execCxt);
 			return qIter;
 		}
 
@@ -179,7 +180,7 @@ public class KbOpExecutor extends OpExecutor {
 
 		QueryIterator left = executeOp(opLeftJoin.getLeft(), input);
 		QueryIterator right = executeOp(opLeftJoin.getRight(), root());
-		QueryIterator qIter = new QueryIterLeftJoin(left, right, exprs, execCxt);
+		QueryIterator qIter = Join.leftJoin(left, right, exprs, execCxt);
 		return qIter;
 	}
 

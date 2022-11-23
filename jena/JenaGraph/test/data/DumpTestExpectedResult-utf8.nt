@@ -3,7 +3,7 @@
 <http://example.org/#maria> <http://example.org/#name> "María de la Concepción"@es-mx .
 <http://example.org/#maria> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/#Person> .
 <http://example.org/#mike> <http://example.org/#age> "55"^^<http://www.w3.org/2001/XMLSchema#integer> .
-<http://example.org/#mike> <http://example.org/#comment> "A multi-line\r\nliteral with escapes: '	', '\"', ''', and '\\'" .
+<http://example.org/#mike> <http://example.org/#comment> "A multi-line\r\nliteral with escapes: '	', '\\\"', ''', and '\\'" .
 <http://example.org/#mike> <http://example.org/#name> "Mike Dean" .
 <http://example.org/#mike> <http://example.org/#name> "Mike Dean"@en .
 <http://example.org/#mike> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/#Person> .
