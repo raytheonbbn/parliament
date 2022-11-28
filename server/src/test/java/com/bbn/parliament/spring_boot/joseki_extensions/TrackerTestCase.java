@@ -3,8 +3,10 @@ package com.bbn.parliament.spring_boot.joseki_extensions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Supplier;
 import java.util.zip.ZipInputStream;
 
 import org.apache.jena.query.ResultSet;
@@ -45,6 +47,7 @@ public class TrackerTestCase {
 
 	@SuppressWarnings("static-method")
 	@Test
+@Disabled
 	public void testTrackerQuery() {
 		String query = "SELECT ?a WHERE { ?a ?b ?c }";
 
@@ -94,6 +97,7 @@ public class TrackerTestCase {
 
 	@SuppressWarnings("static-method")
 	@Test
+@Disabled
 	public void testCancel() {
 		PropertyFunctionRegistry.get().put("http://example.org/suspend", Suspend.class);
 		String query = "SELECT * WHERE { ?a <http://example.org/suspend> ?b . }";
@@ -134,6 +138,7 @@ public class TrackerTestCase {
 
 	@SuppressWarnings("static-method")
 	@Test
+@Disabled
 	public void testTrackerUpdate() {
 		TrackableUpdate tu;
 
@@ -178,12 +183,33 @@ public class TrackerTestCase {
 
 	@SuppressWarnings("static-method")
 	@Test
-	@Disabled
+	// @Disabled
 	public void testTrackerInsert() {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		InputStream is = cl.getResourceAsStream("University15_20.owl-mini.zip");
+//		InputStream is = cl.getResourceAsStream("University15_20.owl.zip");
+
+//AK: TODO: zip doesn't work, but uncompressed can be parsed...
+InputStream is = cl.getResourceAsStream("University15_20.owl");
+
 		try (ZipInputStream zin = new ZipInputStream(is)) {
-			Inserter inserter = new Inserter(false, "",  "application/rdf+xml", "University15_20.owl", VerifyOption.VERIFY, null, Inserter.getZipStrmProvider(zin));
+
+Supplier<InputStream> supplier = () -> new FilterInputStream(is) {
+	@Override
+	public void close() throws IOException {
+		// Do nothing
+	}
+};
+//try {
+//	LOG.debug("read char:"+ (char) supplier.get().read());
+//	LOG.debug("read char:"+ (char) supplier.get().read());
+//	LOG.debug("read char:"+ (char) supplier.get().read());
+//} catch (IOException e1) {
+//	e1.printStackTrace();
+//}
+//			Inserter inserter = new Inserter(false, "",  "application/rdf+xml", "University15_20.owl", VerifyOption.VERIFY, null, Inserter.getZipStrmProvider(zin));
+//Inserter inserter = new Inserter(false, "",  "application/rdf+xml", "University15_20.owl", VerifyOption.VERIFY, null, zin.getNextEntry());
+Inserter inserter = new Inserter(false, "",  "application/rdf+xml", "University15_20.owl", VerifyOption.VERIFY, null, supplier);
+
 			TrackableInsert ti = Tracker.getInstance().createInsert(inserter, "TEST");
 			assertEquals(1, Tracker.getInstance().getTrackableIDs().size());
 			try {

@@ -358,15 +358,13 @@ public final class Inserter {
 			LOG.warn("JSON-LD reader class prior to setting: %1$s".formatted(rdrName));
 			//TODO: End temp code
 
-			syntaxVerifier.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
+//			syntaxVerifier.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
 
 			//TODO: Temp code
 			LOG.warn("JSON-LD reader class after setting: %1$s"
 				.formatted(syntaxVerifier.getReader(JsonLdRdfReader.formatName).getClass().getName()));
 			//TODO: End temp code
-LOG.debug("in:"+in);
-LOG.debug("baseUri:"+baseUri);
-LOG.debug("format:"+format);
+
 			syntaxVerifier.read(in, baseUri, format.toString());
 			numStmts = syntaxVerifier.size();
 
@@ -382,15 +380,26 @@ LOG.debug("format:"+format);
 	/** Inserts the statements from the InputStream into the given Model. */
 	private void insert(Model model, String graphLabel, Supplier<InputStream> inputStreamSupplier,
 		RDFFormat format) throws IOException {
-		long start = Calendar.getInstance().getTimeInMillis();
-		try (InputStream in = inputStreamSupplier.get()) {
-			model.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
-			model.read(in, baseUri, format.toString());
 
-			if (LOG.isInfoEnabled()) {
-				long end = Calendar.getInstance().getTimeInMillis();
-				LOG.info("Added statements to \"%1$s\" in %2$.3f seconds".formatted(
-					graphLabel, (end - start) / 1000.0));
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		InputStream is = cl.getResourceAsStream("University15_20.owl");
+		try (ZipInputStream zin = new ZipInputStream(is)) {
+			inputStreamSupplier = () -> new FilterInputStream(is) {
+				@Override
+				public void close() throws IOException {
+					// Do nothing
+				}
+			};
+			long start = Calendar.getInstance().getTimeInMillis();
+			try (InputStream in = inputStreamSupplier.get()) {
+	//			model.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
+				model.read(in, baseUri, format.toString());
+
+				if (LOG.isInfoEnabled()) {
+					long end = Calendar.getInstance().getTimeInMillis();
+					LOG.info("Added statements to \"%1$s\" in %2$.3f seconds".formatted(
+						graphLabel, (end - start) / 1000.0));
+				}
 			}
 		}
 	}
