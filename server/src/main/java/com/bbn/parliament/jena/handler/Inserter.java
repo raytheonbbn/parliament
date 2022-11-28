@@ -381,18 +381,9 @@ public final class Inserter {
 	private void insert(Model model, String graphLabel, Supplier<InputStream> inputStreamSupplier,
 		RDFFormat format) throws IOException {
 
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		InputStream is = cl.getResourceAsStream("University15_20.owl");
-		try (ZipInputStream zin = new ZipInputStream(is)) {
-			inputStreamSupplier = () -> new FilterInputStream(is) {
-				@Override
-				public void close() throws IOException {
-					// Do nothing
-				}
-			};
 			long start = Calendar.getInstance().getTimeInMillis();
 			try (InputStream in = inputStreamSupplier.get()) {
-	//			model.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
+//				model.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
 				model.read(in, baseUri, format.toString());
 
 				if (LOG.isInfoEnabled()) {
@@ -401,7 +392,6 @@ public final class Inserter {
 						graphLabel, (end - start) / 1000.0));
 				}
 			}
-		}
 	}
 
 	/** Use the dataFormat and file extension to determine the RDF serialization format */
