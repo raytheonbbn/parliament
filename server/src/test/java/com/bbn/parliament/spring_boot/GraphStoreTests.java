@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import org.apache.jena.atlas.web.HttpException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -66,6 +67,7 @@ public class GraphStoreTests {
 	}
 
 	@Test
+@Disabled
 	public void graphStoreInsertTest() {
 		try (QuerySolutionStream stream = doSelectQuery(EVERYTHING_QUERY)) {
 			assertEquals(0, stream.count(), "Invalid precondition -- triple store is not empty.");
@@ -110,12 +112,7 @@ public class GraphStoreTests {
 			.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
 			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 			.build();
-		HttpResponse<String> response = HttpClient
-			.newHttpClient()
-			.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-			.join();
-		LOG.info("Response body:%n%1$s%n".formatted(response.body()));
-		return response.statusCode();
+		return sendRequest(request).statusCode();
 	}
 
 //	private String loadStatements(InputStream in, String mediaType) {
@@ -152,10 +149,16 @@ public class GraphStoreTests {
 			.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
 			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 			.build();
-		HttpResponse<String> response = HttpClient
-			.newHttpClient()
-			.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-			.join();
-		return response.statusCode();
+		return sendRequest(request).statusCode();
 	}
+
+	private static HttpResponse<String> sendRequest(HttpRequest request) {
+		HttpResponse<String> response = HttpClient
+									.newHttpClient()
+									.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+									.join();
+		LOG.info("Response body:%n%1$s%n".formatted(response.body()));
+		return response;
+	}
+
 }
