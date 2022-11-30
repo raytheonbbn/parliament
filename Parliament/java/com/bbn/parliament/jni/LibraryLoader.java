@@ -39,8 +39,8 @@ public class LibraryLoader {
 
 	private static boolean isWindows() {
 		LOG.info("os.name = '{}'", System.getProperty(OS_NAME_PROP));
-		return true;
-		//return System.getProperty(OS_NAME_PROP).toLowerCase().contains("win");
+		//return true;
+		return System.getProperty(OS_NAME_PROP).toLowerCase().contains("win");
 	}
 
 	private static File findLibDir(String fileName) {

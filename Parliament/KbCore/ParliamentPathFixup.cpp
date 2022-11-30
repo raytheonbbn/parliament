@@ -12,31 +12,33 @@
 #include <boost/format.hpp>
 #include <cstdint>
 #include <string>
+#include <vector>
 
-#define BEGIN_JNI_EXCEPTION_HANDLER(pEnv)					\
-	try														\
-	{														\
-		try													\
+#define BEGIN_JNI_EXCEPTION_HANDLER(pEnv)				\
+	try													\
+	{													\
+		try												\
 		{
 
-#define END_JNI_EXCEPTION_HANDLER(pEnv)						\
-		}													\
-		catch (const exception& ex)							\
-		{													\
-			throwException(pEnv, ex, __FILE__, __LINE__);	\
-		}													\
-	}														\
-	catch (const JavaException&)							\
-	{														\
-		/* Do nothing, so as to return to the JVM. */		\
+#define END_JNI_EXCEPTION_HANDLER(pEnv)					\
+		}												\
+		catch (const exception& ex)						\
+		{												\
+			throwException(pEnv, ex);					\
+		}												\
+	}													\
+	catch (const JavaException&)						\
+	{													\
+		/* Do nothing, so as to return to the JVM. */	\
 	}
 
-//using namespace ::bbn::parliament;
-//namespace pmnt = ::bbn::parliament;
 using ::boost::format;
 using ::std::exception;
 using ::std::string;
 using ::std::uint32_t;
+using ::std::vector;
+
+static constexpr char k_nativeExClass[] = "com/bbn/parliament/jni/NativeCodeException";
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* /* pVM */, void* /* pReserved */)
 {
@@ -63,44 +65,36 @@ static jclass findClass(JNIEnv* pEnv, const char* pClassName)
 	return cls;
 }
 
-static void throwJavaException(JNIEnv* pEnv, const char* pClassName, const char* pMsg)
+static void throwException(JNIEnv* pEnv, const exception& ex)
 {
-	if (pEnv->ThrowNew(findClass(pEnv, pClassName), pMsg) != 0)
+	auto exClass = findClass(pEnv, k_nativeExClass);
+	if (pEnv->ThrowNew(exClass, ex.what()) != 0)
 	{
 		throw JavaException();
 	}
-}
-
-static void throwException(JNIEnv* pEnv, const exception& ex,
-	const char* pSrcFile, uint32_t srcLineNum)
-{
-	auto errMsg = str(format{"%1% thrown from %2% at line %3%: %4%"}
-		% typeid(ex).name() % pSrcFile % srcLineNum % ex.what());
-	throwJavaException(pEnv, "com/bbn/parliament/jni/NativeCodeException",
-		errMsg.c_str());
 }
 
 static string getCurrentDllFilePath()
 {
 #if defined(PARLIAMENT_WINDOWS)
 	HMODULE hModule = 0;
-	if (!::GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
-		reinterpret_cast<LPCTSTR>(getCurrentDllFilePath), &hModule))
+	if (!::GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
+		reinterpret_cast<LPCSTR>(getCurrentDllFilePath), &hModule))
 	{
-		SysErrCode errCode = Exception::getSysErrCode();
-		throw Exception(format("Unable to retrieve the module handle: %1% (%2%)")
-			% Exception::getSysErrMsg(errCode) % errCode);
+		throw exception(str(format(
+			"Unable to retrieve the module handle: Error code %1%, file %2%, line %3%")
+			% ::GetLastError() % __FILE__ % __LINE__));
 	}
 
 	for (DWORD bufferLen = MAX_PATH;; bufferLen += MAX_PATH)
 	{
-		::std::vector<TChar> buffer(bufferLen, '\0');
-		DWORD retVal = ::GetModuleFileName(hModule, &buffer[0], bufferLen);
+		vector<char> buffer(bufferLen, '\0');
+		DWORD retVal = ::GetModuleFileNameA(hModule, &buffer[0], bufferLen);
 		if (retVal == 0)
 		{
-			SysErrCode errCode = Exception::getSysErrCode();
-			throw Exception(format("Unable to retrieve the module file name: %1% (%2%)")
-				% Exception::getSysErrMsg(errCode) % errCode);
+			throw exception(str(format(
+				"Unable to retrieve the module file name: Error code %1%, file %2%, line %3%")
+				% ::GetLastError() % __FILE__ % __LINE__));
 		}
 		else if (retVal < bufferLen)
 		{
@@ -118,9 +112,9 @@ static void addDirToDllPath(const string& dir)
 #if defined(PARLIAMENT_WINDOWS)
 	if (!SetDllDirectoryA(dir.c_str()))
 	{
-		SysErrCode errCode = Exception::getSysErrCode();
-		throw Exception(format("Unable to set DLL search path %1%: %2% (%3%)")
-			% dir % Exception::getSysErrMsg(errCode) % errCode);
+		throw exception(str(format(
+			"Unable to set DLL search path %1%: Error code %2%, file %3%, line %4%")
+			% dir % ::GetLastError() % __FILE__ % __LINE__));
 	}
 #endif
 }
@@ -130,9 +124,9 @@ static void resetDllPath()
 #if defined(PARLIAMENT_WINDOWS)
 	if (!SetDllDirectoryA(nullptr))
 	{
-		SysErrCode errCode = Exception::getSysErrCode();
-		throw Exception(format("Unable to reset DLL search path: %1% (%2%)")
-			% Exception::getSysErrMsg(errCode) % errCode);
+		throw exception(str(format(
+			"Unable to reset DLL search path: Error code %1%, file %2%, line %3%")
+			% ::GetLastError() % __FILE__ % __LINE__));
 	}
 #endif
 }
