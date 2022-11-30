@@ -88,7 +88,7 @@ public class ReificationIterator implements Iterator<ReificationIterator.Reifica
 
 	static
 	{
-		System.loadLibrary("Parliament");
+		LibraryLoader.loadLibraries();
 	}
 
 	/**

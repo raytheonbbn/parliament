@@ -110,7 +110,7 @@ bfs::path pmnt::getCurrentDllFilePath()
 			% Exception::getSysErrMsg(errCode) % errCode);
 	}
 
-	for (DWORD bufferLen = 256;; bufferLen += 256)
+	for (DWORD bufferLen = MAX_PATH;; bufferLen += MAX_PATH)
 	{
 		::std::vector<TChar> buffer(bufferLen, '\0');
 		DWORD retVal = ::GetModuleFileName(hModule, &buffer[0], bufferLen);

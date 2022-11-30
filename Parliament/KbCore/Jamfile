@@ -15,8 +15,24 @@ project /KB/KbCore ;
 path-constant JavaSrcDir : ../java ;
 path-constant JenaLibDir : ../lib/default ;
 
+lib ParliamentPathFixup
+	:	DllMain.cpp ParliamentPathFixup.cpp
+		/site-config//BoostHeaderOnlyLibraries
+		/site-config//JavaJNI
+		# Parliament.jar
+	:	<include>.
+		<define>BUILDING_KBCORE
+		<visibility>hidden
+		<threading>multi
+		<os>NT:<source>Version.rc
+		<os>LINUX:<source>/KB//DynamicLinkLib
+		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_LibraryLoader.h
+	:	# default build
+	:	<include>.
+	;
+
 lib Parliament
-	:	[ glob *.cpp : Utf8StaticInitGen.cpp ]
+	:	[ glob *.cpp : ParliamentPathFixup.cpp Utf8StaticInitGen.cpp ]
 		/site-config//BerkeleyDB
 		/site-config//BoostHeaderOnlyLibraries
 		/site-config//BoostAtomic
