@@ -19,7 +19,7 @@ rule RunJniAssessments
 }
 actions RunJniAssessments
 {
-	env $(SLPath)="$$(SLPath)$(PathSep)$(>:D)" java -d64 -server -cp $(>:D) JniAssessments > ./results.csv
+	env $(SLPath)="$$(SLPath)$(PathSep)$(>:D)" java -cp $(>:D) com.bbn.parliament.jni.JniAssessments > ./results.csv
 }
 
 lib JniAssessments
@@ -30,16 +30,16 @@ lib JniAssessments
 		<define>_REENTRANT
 		<visibility>hidden
 		<threading>multi
-		<implicit-dependency>JniAssessments.h
+		<implicit-dependency>com_bbn_parliament_jni_JniAssessments.h
 	:	# default build
 	:	<include>.
 		<define>_REENTRANT
 	;
 
-explicit JniAssessments.h ;
-make JniAssessments.h : [ glob-tree *.java ] : @BuildJar ;
-actions BuildJar
+explicit com_bbn_parliament_jni_JniAssessments.h ;
+make com_bbn_parliament_jni_JniAssessments.h : [ glob-tree *.java ] : @CompileJava ;
+actions CompileJava
 {
-	javac -Xlint:all -d $(<:D) $(>)
-	javah -force -classpath $(<:D) -o $(<) JniAssessments
+	ECHO "cp:" $(<:D) ;
+	javac -Xlint:all -d $(<:D) -h $(<:D) $(>)
 }
