@@ -3,7 +3,8 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
-package com.bbn.parliament.spring_boot.joseki_extensions;
+
+package com.bbn.parliament.spring_boot;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

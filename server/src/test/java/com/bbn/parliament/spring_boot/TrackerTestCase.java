@@ -1,10 +1,11 @@
-package com.bbn.parliament.spring_boot.joseki_extensions;
+package com.bbn.parliament.spring_boot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.zip.ZipInputStream;
 
 import org.apache.jena.query.ResultSet;
@@ -12,8 +13,6 @@ import org.apache.jena.sparql.pfunction.PropertyFunctionRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.bridge.tracker.TrackableException;
 import com.bbn.parliament.jena.bridge.tracker.TrackableInsert;
@@ -28,8 +27,6 @@ import com.bbn.parliament.jena.handler.Inserter;
 import com.bbn.parliament.jena.handler.VerifyOption;
 
 public class TrackerTestCase {
-	private static final Logger LOG = LoggerFactory.getLogger(TrackerTestCase.class);
-
 	@SuppressWarnings("static-method")
 	@BeforeEach
 	public void initialize() {
@@ -171,9 +168,8 @@ public class TrackerTestCase {
 				ZipInputStream zis = new ZipInputStream(is);
 				try {
 					zis.getNextEntry();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				} catch (IOException ex) {
+					throw new UncheckedIOException(ex);
 				}
 				return zis;
 		});
@@ -181,7 +177,6 @@ public class TrackerTestCase {
 		TrackableInsert ti = Tracker.getInstance().createInsert(inserter, "TEST");
 		assertEquals(1, Tracker.getInstance().getTrackableIDs().size());
 		try {
-			LOG.debug("ti.run()...");
 			ti.run();
 		} catch (TrackableException | DataFormatException | MissingGraphException | IOException ex) {
 			fail(ex.getMessage());
