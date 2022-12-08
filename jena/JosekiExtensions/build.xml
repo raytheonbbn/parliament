@@ -267,7 +267,6 @@
 					<sysproperty key="jettyConfig" value="${basedir}/resources/conf/jetty.xml"/>
 					<sysproperty key="jetty.port" value="8586"/>
 					<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
-					<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
 				</fork>
 			</test>
 			<testclasses>
@@ -276,7 +275,6 @@
 				<fork>
 					<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
 					<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
-					<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
 				</fork>
 			</testclasses>
 		</junitlauncher>

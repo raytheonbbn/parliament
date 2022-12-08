@@ -89,7 +89,6 @@
 			<testclasses>
 				<fileset dir="${testBinDir}" includes="**/*Test.class"/>
 				<fork dir="${testBinDir}">
-					<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
 					<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
 					<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
 				</fork>

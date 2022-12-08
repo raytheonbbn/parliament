@@ -834,8 +834,7 @@ export CATALINA_OPTS="$CATALINA_OPTS -Xmx$JAVA_HEAP_SIZE"
 {\footnotesize\begin{verbatim}
 set JAVA_HEAP_SIZE=512m
 set PMNT_BIN=%CATALINA_HOME%\bin\parliament
-set CATALINA_OPTS=-Xmx%JAVA_HEAP_SIZE%
-set PATH=%PMNT_BIN%;%PATH%
+set CATALINA_OPTS=-Djava.library.path=%PMNT_BIN% -Xmx%JAVA_HEAP_SIZE%
 \end{verbatim}}
 	Note that you can control the amount of memory set aside for the Java virtual machine by changing \verb|JAVA_HEAP_SIZE| in the scripts above.  While it is important to allow the \ac{jvm} sufficient memory, it is also important to realize that \ac{pmnt} is native code, and therefore does not use the Java heap.  Java programmers are often inclined to set \verb|JAVA_HEAP_SIZE| close to the total memory of the machine, but this will starve \ac{pmnt} of the memory it needs to achieve good performance.  The default values given above, 128 MB and 512 MB, are reasonable values for machines with 4 to 8 GB of total memory.
 
@@ -929,7 +928,7 @@ Naturally, there is some setup required to make this work:
 		\item \path|ParliamentLogConfig.txt|
 	\end{itemize}
 
-	\item Ensure that the \ac{jvm} can find the \acp{dll} or shared libraries at run-time.  For Mac OS Xand Linux, add their directory to the Java system property \verb|java.library.path|.  On Windows, add the directory to the \verb|Path| environment variable.
+	\item To ensure that the \ac{jvm} can find the \acp{dll} or shared libraries at run-time, add their directory to the Java system property \verb|java.library.path|.
 
 	\item On Windows only, install the run-time libraries by running the installer in the \path|RedistributablePackages| subdirectory of your \ac{pmnt} distribution.
 
@@ -956,7 +955,7 @@ Because \ac{pmnt} is most often used within a Java environment, the most common 
 
 	\item Make sure that your system is up-to-date with respect to patches.  For Windows, this means a visit to the Windows Update web site\urlcite{http://windowsupdate.microsoft.com/}.  Most other operating systems have a similar facility.
 
-	\item Be sure that a 64-bit build of \ac{pmnt} is loaded by a 64-bit version of Java, and that a 32-bit build of \ac{pmnt} is loaded by a 32-bit version of Java.  On Macintosh, this is not a problem, because \ac{pmnt} is built as a universal binary.
+	\item Be sure that a 64-bit build of \ac{pmnt} is loaded by a 64-bit version of Java, and that a 32-bit build of \ac{pmnt} is loaded by a 32-bit version of Java.
 
 	\item When the \ac{jvm} loads the \ac{pmnt} \ac{dll}, \ac{pmnt} itself loads several other \acp{dll}.  Even if the \ac{jvm} is able to load \ac{pmnt}, an unsatisfied link error will result if \ac{pmnt} cannot load one of its subsidiary \acp{dll}.  Furthermore, the error message accompanying the unsatisfied link error usually does not indicate which \ac{dll} caused the load failure.  The subsidiary \acp{dll} fall into the following three categories:
 	\begin{itemize}
@@ -988,21 +987,15 @@ Because \ac{pmnt} is most often used within a Java environment, the most common 
 \end{quote}
 	Here the \path|java| command is not used at all, and instead the service executable directly loads the \path|jvm.dll| library, located via the \verb|JAVA_HOME| environment variable.  On Windows, this is done at the time the service is installed, so if you upgrade your Java installation after installation, you will have to uninstall and reinstall the service in order for it to find the \path|jvm.dll| library.
 
-	\item The process by which Windows searches for \acp{dll} is complex, so understanding it can often help pinpoint problems.  The search process is as follows:
+	\item The process by which \ac{pmnt} loads its \acp{dll} on Windows is a bit complex:
 
 	\begin{itemize}
-		\item The Windows system directory
-		\item The Windows directory
-		\item The directory where the executable module for the current process is located
-		\item The current directory
-		\item The directories listed in the \verb|PATH| environment variable
+		\item The \ac{jvm} finds \path|FixupParliamentPath.dll| using the Java system property \verb|java.library.path|.  (This works, because that \ac{dll} has no dependencies of its own.)
+		\item Code in \path|FixupParliamentPath.dll| adds the directory where it lives to the path.
+		\item Then the \ac{pmnt} \ac{dll} is loaded.  The \ac{jvm} finds it using \verb|java.library.path|, and the operating system finds its dependencies because they, \path|FixupParliamentPath.dll|, and the \ac{pmnt} \ac{dll} all live in the same directory.
 	\end{itemize}
 
-Note that placing \acp{dll} in the Windows or Windows system directories is strongly discouraged.
-
-Both the graphical tool Dependency Walker\urlcite{http://dependencywalker.com/} and the command-line tool \path|dumpbin| (part of the Visual Studio installation) show from where Windows is trying to load subsidiary \acp{dll}.  (Note that some operating system \acp{dll} themselves load many other libraries, some by magic.  This can confuse Dependency Walker, causing it to report missing \acp{dll}.  These error messages are, however, red herrings and should be ignored.)
-
-	\item On Mac OS X and Linux, the \ac{jvm} finds the \ac{pmnt} shared library by consulting the Java system property \verb|java.library.path|, and the operating system looks for its dependencies in the same directory.  The command ``\path|otool -L|'' (on Mac) or \path|ldd| (on Linux) will show from where the operating system is trying to load subsidiary shared libraries.
+	\item On Mac OS X and Linux, the \ac{jvm} finds the \ac{pmnt} shared library by consulting the Java system property \verb|java.library.path|, and the operating system looks for its dependencies via settings placed in the shared libraries during the \ac{pmnt} build process.  The command ``\path|otool -L|'' (on Mac) or \path|ldd| (on Linux) will show from where the operating system is trying to load subsidiary shared libraries.
 
 	\item A debug build of \ac{pmnt} will not work on Windows unless the corresponding version of Visual Studio is installed.  This is because the debug versions of the C and C++ run-time libraries are included only with Visual Studio.
 

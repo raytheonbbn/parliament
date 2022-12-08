@@ -79,8 +79,8 @@ private:
 	JNIEnv*			m_pEnv;
 	jstring			m_str;
 	const t_char*	m_pStr;
-	jsize				m_size;
-	jboolean			m_isCopy;
+	jsize			m_size;
+	jboolean		m_isCopy;
 };
 
 template<>
@@ -252,9 +252,9 @@ protected:
 private:
 	static const size_t			k_bufSize	= 4 * 1024;
 
-	JNIEnv*							m_pEnv;
-	jobject							m_printStream;
-	jmethodID						m_methodId;
+	JNIEnv*						m_pEnv;
+	jobject						m_printStream;
+	jmethodID					m_methodId;
 	::std::vector<char_type>	m_buffer;
 };
 
@@ -291,38 +291,38 @@ private:
 
 	static jbyteArray createJavaBuffer(JNIEnv* pEnv);
 
-	JNIEnv*							m_pEnv;
-	jobject							m_outputStream;
-	jmethodID						m_methodId;
+	JNIEnv*						m_pEnv;
+	jobject						m_outputStream;
+	jmethodID					m_methodId;
 	::std::vector<char_type>	m_buffer;
-	JByteArray						m_javaBuffer;
+	JByteArray					m_javaBuffer;
 };
 
 }	// namespace end
 
 
 
-#define BEGIN_JNI_EXCEPTION_HANDLER(pEnv)									\
-	try																				\
-	{																					\
-		try																			\
+#define BEGIN_JNI_EXCEPTION_HANDLER(pEnv)								\
+	try																	\
+	{																	\
+		try																\
 		{
 
 #define END_JNI_EXCEPTION_HANDLER(pEnv)									\
-		}																				\
-		catch (const ::std::exception& ex)									\
-		{																				\
-			PMNT_LOG(g_log, log::Level::error) << typeid(ex).name()	\
+		}																\
+		catch (const ::std::exception& ex)								\
+		{																\
+			PMNT_LOG(g_log, log::Level::error) << typeid(ex).name()		\
 				<< " caught in " << __FILE__ << " at line "				\
-				<< __LINE__ << ":  " << ex.what();							\
+				<< __LINE__ << ":  " << ex.what();						\
 			JNIHelper::throwException(pEnv, ex, __FILE__, __LINE__);	\
-		}																				\
-	}																					\
-	catch (const JavaException&)												\
-	{																					\
-		PMNT_LOG(g_log, log::Level::error)									\
+		}																\
+	}																	\
+	catch (const JavaException&)										\
+	{																	\
+		PMNT_LOG(g_log, log::Level::error)								\
 			<< "JavaException caught in " << __FILE__ << " at line "	\
-			<< __LINE__;															\
+			<< __LINE__;												\
 		/* Do nothing, so as to return to the JVM. */					\
 	}
 

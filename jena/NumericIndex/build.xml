@@ -83,7 +83,6 @@
 				<fork dir="${testBinDir}">
 					<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
 					<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
-					<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
 				</fork>
 			</testclasses>
 		</junitlauncher>
