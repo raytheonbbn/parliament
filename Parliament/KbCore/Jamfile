@@ -15,8 +15,20 @@ project /KB/KbCore ;
 path-constant JavaSrcDir : ../java ;
 path-constant JenaLibDir : ../lib/default ;
 
-lib ParliamentPathFixup
-	:	DllMain.cpp ParliamentPathFixup.cpp
+InstallLocation = [ os.environ NATIVE_CODE_INSTALL_DIR ] ;
+InstallLocation ?= $(JamRootDir)/target/drop-box ;
+
+install distribution
+	:	FixupParliamentPath
+	:	<location>$(InstallLocation)
+		<install-dependencies>on
+		<install-type>SHARED_LIB
+	:	# default build
+	:	# usage requirements
+	;
+
+lib FixupParliamentPath
+	:	DllMain.cpp FixupParliamentPath.cpp
 		/site-config//BoostHeaderOnlyLibraries
 		/site-config//JavaJNI
 		# Parliament.jar
@@ -32,7 +44,7 @@ lib ParliamentPathFixup
 	;
 
 lib Parliament
-	:	[ glob *.cpp : ParliamentPathFixup.cpp Utf8StaticInitGen.cpp ]
+	:	[ glob *.cpp : FixupParliamentPath.cpp Utf8StaticInitGen.cpp ]
 		/site-config//BerkeleyDB
 		/site-config//BoostHeaderOnlyLibraries
 		/site-config//BoostAtomic

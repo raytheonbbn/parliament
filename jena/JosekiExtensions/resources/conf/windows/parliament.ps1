@@ -90,12 +90,6 @@ popd
 $kbDirFwdSlash = echo $kbDir | %{$_ -replace '\\', '/'}
 
 
-######### Set env vars: #########
-# The Java property "java.library.path" below is supposed to take care
-# of this, but sometimes it doesn't work, so set up the Path as well:
-$env:Path += ";$pmntDir\bin"
-
-
 ######### Set up the command line: #########
 if ("$env:PARLIAMENT_JAVA_HEAP_SIZE" -ne "") {
 	$javaHeapSize = "$env:PARLIAMENT_JAVA_HEAP_SIZE"

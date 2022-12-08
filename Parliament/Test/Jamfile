@@ -13,7 +13,7 @@ path-constant TestDir : . ;
 path-constant KbCoreDir : ../KbCore ;
 
 run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
-		[ glob $(KbCoreDir)/*.cpp : $(KbCoreDir)/*JNI*.cpp $(KbCoreDir)/DllMain.cpp $(KbCoreDir)/ParliamentPathFixup.cpp $(KbCoreDir)/Utf8StaticInitGen.cpp ]
+		[ glob $(KbCoreDir)/*.cpp : $(KbCoreDir)/*JNI*.cpp $(KbCoreDir)/DllMain.cpp $(KbCoreDir)/FixupParliamentPath.cpp $(KbCoreDir)/Utf8StaticInitGen.cpp ]
 		/site-config//BerkeleyDB
 		/site-config//BoostHeaderOnlyLibraries
 		/site-config//BoostAtomic/<link>static

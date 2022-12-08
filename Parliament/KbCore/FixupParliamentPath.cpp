@@ -5,37 +5,38 @@
 // All rights reserved.
 
 #include "parliament/generated/com_bbn_parliament_jni_LibraryLoader.h"
-#include "parliament/Platform.h"
-//#include "parliament/JNIHelper.h"
 #include "parliament/Windows.h"
 
 #include <boost/format.hpp>
-#include <cstdint>
+#include <filesystem>
 #include <string>
+#include <system_error>
 #include <vector>
 
-#define BEGIN_JNI_EXCEPTION_HANDLER(pEnv)				\
+#define BEGIN_JNI_EXCEPTION_HANDLER(pEnv)		\
 	try													\
-	{													\
+	{														\
 		try												\
 		{
 
-#define END_JNI_EXCEPTION_HANDLER(pEnv)					\
-		}												\
-		catch (const exception& ex)						\
-		{												\
-			throwException(pEnv, ex);					\
-		}												\
-	}													\
-	catch (const JavaException&)						\
-	{													\
-		/* Do nothing, so as to return to the JVM. */	\
+#define END_JNI_EXCEPTION_HANDLER(pEnv)		\
+		}													\
+		catch (const exception& ex)				\
+		{													\
+			throwException(pEnv, ex);				\
+		}													\
+	}														\
+	catch (const JavaException&)					\
+	{														\
+		/* Do nothing to return to the JVM. */	\
 	}
 
 using ::boost::format;
 using ::std::exception;
+using ::std::filesystem::path;
 using ::std::string;
-using ::std::uint32_t;
+using ::std::system_category;
+using ::std::system_error;
 using ::std::vector;
 
 static constexpr char k_nativeExClass[] = "com/bbn/parliament/jni/NativeCodeException";
@@ -74,27 +75,36 @@ static void throwException(JNIEnv* pEnv, const exception& ex)
 	}
 }
 
-static string getCurrentDllFilePath()
+#if defined(PARLIAMENT_WINDOWS)
+static void throwSystemException(int errCode, const char* pFile, int line,
+	format& fmt)
+{
+	throw system_error{errCode, system_category(),
+		str(fmt % errCode % pFile % line)};
+}
+#endif
+
+static path getCurrentDllFilePath()
 {
 #if defined(PARLIAMENT_WINDOWS)
 	HMODULE hModule = 0;
-	if (!::GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
-		reinterpret_cast<LPCSTR>(getCurrentDllFilePath), &hModule))
+	if (!::GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
+		reinterpret_cast<LPCWSTR>(getCurrentDllFilePath), &hModule))
 	{
-		throw exception(str(format(
-			"Unable to retrieve the module handle: Error code %1%, file %2%, line %3%")
-			% ::GetLastError() % __FILE__ % __LINE__));
+		throwSystemException(::GetLastError(), __FILE__, __LINE__, format{
+			"Unable to retrieve the handle of the current module"
+			" (error code %1%, file %2%, line %3%)"});
 	}
 
 	for (DWORD bufferLen = MAX_PATH;; bufferLen += MAX_PATH)
 	{
-		vector<char> buffer(bufferLen, '\0');
-		DWORD retVal = ::GetModuleFileNameA(hModule, &buffer[0], bufferLen);
+		vector<wchar_t> buffer(bufferLen, '\0');
+		DWORD retVal = ::GetModuleFileNameW(hModule, &buffer[0], bufferLen);
 		if (retVal == 0)
 		{
-			throw exception(str(format(
-				"Unable to retrieve the module file name: Error code %1%, file %2%, line %3%")
-				% ::GetLastError() % __FILE__ % __LINE__));
+			throwSystemException(::GetLastError(), __FILE__, __LINE__, format{
+				"Unable to retrieve the module file name"
+				" (error code %1%, file %2%, line %3%)"});
 		}
 		else if (retVal < bufferLen)
 		{
@@ -107,14 +117,14 @@ static string getCurrentDllFilePath()
 #endif
 }
 
-static void addDirToDllPath(const string& dir)
+static void addDirToDllPath(const path& dir)
 {
 #if defined(PARLIAMENT_WINDOWS)
-	if (!SetDllDirectoryA(dir.c_str()))
+	if (!SetDllDirectoryW(dir.c_str()))
 	{
-		throw exception(str(format(
-			"Unable to set DLL search path %1%: Error code %2%, file %3%, line %4%")
-			% dir % ::GetLastError() % __FILE__ % __LINE__));
+		throwSystemException(::GetLastError(), __FILE__, __LINE__, format{
+			"Unable to set DLL search path %1%"
+			" (error code %2%, file %3%, line %4%)"} % dir.generic_string());
 	}
 #endif
 }
@@ -122,11 +132,11 @@ static void addDirToDllPath(const string& dir)
 static void resetDllPath()
 {
 #if defined(PARLIAMENT_WINDOWS)
-	if (!SetDllDirectoryA(nullptr))
+	if (!SetDllDirectoryW(nullptr))
 	{
-		throw exception(str(format(
-			"Unable to reset DLL search path: Error code %1%, file %2%, line %3%")
-			% ::GetLastError() % __FILE__ % __LINE__));
+		throwSystemException(::GetLastError(), __FILE__, __LINE__, format{
+			"Unable to reset DLL search path"
+			" (error code %1%, file %2%, line %3%)"});
 	}
 #endif
 }
@@ -135,7 +145,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_LibraryLoader_addDirToDllPath
 	JNIEnv* pEnv, jclass cls)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
-		auto directory = getCurrentDllFilePath();
+		auto directory = getCurrentDllFilePath().parent_path();
 		addDirToDllPath(directory);
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
