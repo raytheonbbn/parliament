@@ -121,7 +121,7 @@ public class KbInstance implements Closeable {
 	private long m_pKb = 0;
 
 	static {
-		System.loadLibrary("Parliament");
+		LibraryLoader.loadLibraries();
 		initStatic();
 	}
 

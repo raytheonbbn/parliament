@@ -85,10 +85,7 @@ test {
 	def distroDir = tgtDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
 
 	systemProperty 'java.library.path', "${distroDir}/bin"
-	//systemProperty 'log4j.configuration', "file:///${rootDir}/log4j.junit.properties"
-	environment = [
-		'Path' : "${distroDir}/bin;${System.env.Path}"
-	]
+	//systemProperty 'log4j.configuration', "file:${rootDir}/log4j.junit.properties"
 }
 
 task copyTestResources(type: Copy) {
@@ -100,9 +97,6 @@ bootRun {
 	def distroDir = tgtDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
 
 	systemProperty 'java.library.path', "${distroDir}/bin"
-	environment = [
-		'Path' : "${distroDir}/bin;${System.env.Path}"
-	]
 }
 
 subprojects {

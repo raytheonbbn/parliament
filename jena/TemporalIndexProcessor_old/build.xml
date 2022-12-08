@@ -71,7 +71,6 @@
 		<echo message="nativeArtifactsDir = '${nativeArtifactsDir}'"/>
 		<mkdir dir="${reportsDir}"/>
 		<junit fork="yes" printsummary="yes" haltonfailure="yes">
-			<env key="PATH" path="${nativeArtifactsDir}/bin;${env.PATH}"/>
 			<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
 			<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
 			<classpath refid="testClassPath"/>
