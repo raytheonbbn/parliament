@@ -73,7 +73,7 @@ public class GraphStoreService {
 		if (graphUri == null || graphUri.isEmpty()) {
 			updateStmt = "DROP %1$s DEFAULT ;".formatted(option);
 		} else if (ModelManager.inst().containsModel(graphUri)) {
-			updateStmt = "DROP %1$s GRAPH <%2s> ;".formatted(option, graphUri);
+			updateStmt = "DROP %1$s GRAPH <%2$s> ;".formatted(option, graphUri);
 		} else {
 			throw new MissingGraphException("Named graph <%1$s> does not exist", graphUri);
 		}
