@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -94,22 +96,34 @@ public class GraphUtils {
 		UpdateExecutionFactory.createRemote(update, updateUrl).execute();
 	}
 
-	public static int insertStatements(String graphStoreUrl, String stmt, RDFFormat format, String graphUri) {
+	public static int insertStatements(String graphStoreUrl, String stmt, RDFFormat format, String encodedGraphUri) {
 		ByteArrayInputStream bstrm = new ByteArrayInputStream(stmt.getBytes(StandardCharsets.UTF_8));
-		return loadRdf(graphStoreUrl, bstrm, format.getMediaType(), graphUri);
+		return loadRdf(graphStoreUrl, bstrm, format.getMediaType(), encodedGraphUri);
 	}
 
-	public static int insertStatements(String graphStoreUrl, InputStream in, RDFFormat format, String graphUri) {
-		return loadRdf(graphStoreUrl, in, format.getMediaType(), graphUri);
+	public static int insertStatements(String graphStoreUrl, InputStream in, RDFFormat format, String encodedGraphUri) {
+		return loadRdf(graphStoreUrl, in, format.getMediaType(), encodedGraphUri);
 	}
 
-	public static int loadRdf(String graphStoreUrl, InputStream in, String mediaType, String graphUri) {
-		if (graphUri != null )
-			graphUri = "?graph="+graphUri;
+	public static QuadDataAcc createQuadData(String sub, String pred, Node obj, String graphName) {
+		Node s = NodeFactory.createURI(sub);
+		Node p = NodeFactory.createURI(pred);
+		QuadDataAcc qd = new QuadDataAcc();
+		if (StringUtils.isBlank(graphName)) {
+			qd.addTriple(new Triple(s, p, obj));
+		} else {
+			qd.addQuad(new Quad(NodeFactory.createURI(graphName), s, p, obj));
+		}
+		return qd;
+	}
+
+	public static int loadRdf(String graphStoreUrl, InputStream in, String mediaType, String graphName) {
+		if (graphName != null )
+			graphName = "?graph=" + graphName;
 		else
-			graphUri = "?default";
+			graphName = "?default";
 		var request = HttpRequest.newBuilder()
-					.uri(URI.create(graphStoreUrl + graphUri))
+					.uri(URI.create(graphStoreUrl + graphName))
 					.POST(HttpRequest.BodyPublishers.ofInputStream(() -> in))
 					.header(HttpHeaders.CONTENT_TYPE, mediaType)
 					.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
@@ -117,6 +131,14 @@ public class GraphUtils {
 					.build();
 		return sendRequest(request).statusCode();
 	}
+
+//	public static void loadRdf(String graphStoreUrl, String rsrcName, RDFFormat rdfFormat, InputStream input) {
+//		int status = loadRdf(graphStoreUrl, input, rdfFormat.getMediaType(), null);
+//		if (status != HttpStatus.OK.value()) {
+//			throw new HttpException(status, "",
+//				"Failure inserting RDF from %1$s".formatted(rsrcName));
+//		}
+//	}
 
 	public static String doSelectToCsv(String sparqlUrl, String query) {
 		var request = HttpRequest.newBuilder()
@@ -138,22 +160,6 @@ public class GraphUtils {
 		return response;
 	}
 
-	public static void clearAll(String graphStoreUrl, String sparqlUrl) {
-		Set<String> allGraphs = getAvailableNamedGraphs(sparqlUrl);
-		allGraphs.add("?default");
-		for (String uri : allGraphs) {
-			if (uri != "?default")
-				uri = "?graph=" + uri;
-			var request = HttpRequest.newBuilder()
-					.uri(URI.create(graphStoreUrl + uri))
-					.DELETE()
-					.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
-					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
-					.build();
-			sendRequest(request);
-		}
-	}
-
 	public static Set<String> getAvailableNamedGraphs(String sparqlUrl) {
 		try (QuerySolutionStream stream = doSelectQuery(sparqlUrl, NG_QUERY)) {
 			return stream
@@ -162,24 +168,6 @@ public class GraphUtils {
 				.filter(uri -> !"http://parliament.semwebcentral.org/parliament#MasterGraph".equals(uri))
 				.collect(Collectors.toSet());
 		}
-	}
-
-	public static void delete(String updateUrl, String sub, String pred, Node obj, String graphName) {
-		QuadDataAcc qd = createQuadData(sub, pred, obj, graphName);
-		UpdateDataDelete update = new UpdateDataDelete(qd);
-		UpdateExecutionFactory.createRemote(update, updateUrl).execute();
-	}
-
-	public static QuadDataAcc createQuadData(String sub, String pred, Node obj, String graphName) {
-		Node s = NodeFactory.createURI(sub);
-		Node p = NodeFactory.createURI(pred);
-		QuadDataAcc qd = new QuadDataAcc();
-		if (StringUtils.isBlank(graphName)) {
-			qd.addTriple(new Triple(s, p, obj));
-		} else {
-			qd.addQuad(new Quad(NodeFactory.createURI(graphName), s, p, obj));
-		}
-		return qd;
 	}
 
 	private String getAvailableNamedGraphsNoJena(String sparqlUrl) {
@@ -204,4 +192,37 @@ public class GraphUtils {
 			.block()
 			.toString();
 	}
+
+	public static void delete(String updateUrl, String sub, String pred, Node obj, String graphName) {
+		QuadDataAcc qd = createQuadData(sub, pred, obj, graphName);
+		UpdateDataDelete update = new UpdateDataDelete(qd);
+		UpdateExecutionFactory.createRemote(update, updateUrl).execute();
+	}
+
+	public static void clearAll(String graphStoreUrl, String sparqlUrl) {
+		Set<String> allGraphs = getAvailableNamedGraphs(sparqlUrl);
+		allGraphs.add("?default");
+		for (String uri : allGraphs) {
+			deleteGraph(graphStoreUrl, uri);
+		}
+	}
+
+	public static int deleteGraph(String graphStoreUrl, String graphName) {
+		if (graphName == null || graphName == "?default" )
+			graphName = "?default";
+		else
+			try {
+				graphName = "?graph=" + URLEncoder.encode(graphName, StandardCharsets.UTF_8.toString());
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		var request = HttpRequest.newBuilder()
+			.uri(URI.create(graphStoreUrl + graphName))
+			.DELETE()
+			.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
+			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
+			.build();
+		return sendRequest(request).statusCode();
+	}
+
 }
