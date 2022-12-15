@@ -65,7 +65,7 @@ public final class Inserter {
 		return new Inserter(true, null, null, null, null, baseUri, streamSupplier);
 	}
 
-	public Inserter(boolean importRepository, String graphName, String dataFormat,
+	private Inserter(boolean importRepository, String graphName, String dataFormat,
 		String fileName, VerifyOption verifyOption, String baseUri,
 		Supplier<InputStream> streamSupplier) {
 
@@ -308,7 +308,7 @@ public final class Inserter {
 		}
 	}
 
-	public static Supplier<InputStream> getZipStrmProvider(ZipInputStream zin) {
+	private static Supplier<InputStream> getZipStrmProvider(ZipInputStream zin) {
 		return () -> new FilterInputStream(zin) {
 			@Override
 			public void close() throws IOException {
@@ -358,7 +358,7 @@ public final class Inserter {
 			LOG.warn("JSON-LD reader class prior to setting: %1$s".formatted(rdrName));
 			//TODO: End temp code
 
-//			syntaxVerifier.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
+			syntaxVerifier.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
 
 			//TODO: Temp code
 			LOG.warn("JSON-LD reader class after setting: %1$s"
@@ -381,17 +381,17 @@ public final class Inserter {
 	private void insert(Model model, String graphLabel, Supplier<InputStream> inputStreamSupplier,
 		RDFFormat format) throws IOException {
 
-			long start = Calendar.getInstance().getTimeInMillis();
-			try (InputStream in = inputStreamSupplier.get()) {
-//				model.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
-				model.read(in, baseUri, format.toString());
+		long start = Calendar.getInstance().getTimeInMillis();
+		try (InputStream in = inputStreamSupplier.get()) {
+			model.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
+			model.read(in, baseUri, format.toString());
 
-				if (LOG.isInfoEnabled()) {
-					long end = Calendar.getInstance().getTimeInMillis();
-					LOG.info("Added statements to \"%1$s\" in %2$.3f seconds".formatted(
-						graphLabel, (end - start) / 1000.0));
-				}
+			if (LOG.isInfoEnabled()) {
+				long end = Calendar.getInstance().getTimeInMillis();
+				LOG.info("Added statements to \"%1$s\" in %2$.3f seconds".formatted(
+					graphLabel, (end - start) / 1000.0));
 			}
+		}
 	}
 
 	/** Use the dataFormat and file extension to determine the RDF serialization format */

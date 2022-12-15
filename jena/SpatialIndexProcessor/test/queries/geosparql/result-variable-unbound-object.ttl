@@ -5,4 +5,5 @@
 @prefix my:  <http://example.org/ApplicationSchema#> .
 
 [] a rs:ResultSet ;
-	rs:resultVariable  "f" .
+	rs:resultVariable  "f" ;
+	rs:resultVariable  "y" .

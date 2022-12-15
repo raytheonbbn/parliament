@@ -3,7 +3,6 @@ package com.bbn.parliament.jena.graph.index.spatial;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Properties;
@@ -11,6 +10,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
@@ -82,7 +82,7 @@ public class SpatialTestDataset {
 	static {
 		PFX_MAP = PrefixMapping.Factory.create();
 		PFX_MAP.setNsPrefixes(PrefixMapping.Standard);
-		Arrays.stream(COMMON_PREFIXES)
+		Stream.of(COMMON_PREFIXES)
 			.forEach(pair -> PFX_MAP.setNsPrefix(pair[0], pair[1]));
 	}
 
@@ -171,7 +171,7 @@ public class SpatialTestDataset {
 	}
 
 	public static void checkResults(QueryExecution qexec, String... expectedResultQNames) {
-		Set<String> expectedResults = Arrays.stream(expectedResultQNames)
+		Set<String> expectedResults = Stream.of(expectedResultQNames)
 			.map(PFX_MAP::expandPrefix)
 			.collect(Collectors.toCollection(TreeSet::new));
 		Set<String> actualResults = StreamUtil.asStream(qexec.execSelect())

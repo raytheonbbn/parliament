@@ -1,4 +1,4 @@
-package com.bbn.parliament.spring_boot.joseki_extensions;
+package com.bbn.parliament.spring_boot;
 
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.engine.ExecutionContext;

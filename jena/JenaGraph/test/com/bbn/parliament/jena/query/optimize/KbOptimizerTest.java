@@ -33,7 +33,7 @@ public class KbOptimizerTest {
 					(bgp (triple ?s ?p ?o))
 					(slice _ 50
 						(project (?v)
-							(join
+							(sequence
 								(bgp (triple ?x ?y ?v))
 								(project (?w)
 									(bgp (triple ?a ?y ?w))))))))
@@ -71,7 +71,7 @@ public class KbOptimizerTest {
 				(join
 					(bgp (triple ?s ?p ?o))
 					(slice _ 50
-						(join
+						(sequence
 							(bgp (triple ?x ?y ?v))
 							(project (?w)
 								(bgp (triple ?a ?y ?w)))))))
@@ -89,7 +89,7 @@ public class KbOptimizerTest {
 				(bgp (triple ?s ?p ?o))
 				(slice _ 50
 					(project (?v)
-						(join
+						(sequence
 							(bgp (triple ?x ?y ?v))
 							(project (?w)
 								(bgp (triple ?a ?y ?w)))))))
@@ -108,7 +108,7 @@ public class KbOptimizerTest {
 					(bgp (triple ?s ?p ?o))
 					(slice _ 50
 						(project (?v)
-							(join
+							(sequence
 								(bgp (triple ?x ?y ?v))
 								(project (?w)
 									(bgp (triple ?a ?y ?w))))))))
@@ -124,10 +124,10 @@ public class KbOptimizerTest {
 		String opExpectedString = """
 			(slice _ 50
 				(project (?w)
-					(join
+					(sequence
 						(bgp (triple ?s ?p ?o))
 						(project (?w)
-							(join
+							(sequence
 								(bgp (triple ?x ?y ?v))
 								(project (?w)
 									(bgp (triple ?a ?y ?w))))))))
@@ -141,7 +141,7 @@ public class KbOptimizerTest {
 	{
 		String queryString = "select * { ?s ?p ?o . { select ?w { ?x ?y ?v }}}";
 		String opExpectedString = """
-			(join
+			(sequence
 				(bgp (triple ?s ?p ?o))
 				(project (?w)
 					(bgp (triple ?x ?y ?v))))
@@ -151,8 +151,7 @@ public class KbOptimizerTest {
 
 	private static void check(String queryString, String opExpectedString)
 	{
-		queryString = "prefix : <http://example.org/>\n"+queryString;
-		Query query = QueryFactory.create(queryString);
+		Query query = QueryFactory.create("prefix : <http://example.org/>\n" + queryString);
 		Op opQuery = Algebra.compile(query);
 		check(opQuery, opExpectedString);
 	}

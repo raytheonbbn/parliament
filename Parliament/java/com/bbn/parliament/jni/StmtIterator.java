@@ -87,7 +87,7 @@ public class StmtIterator implements Iterator<StmtIterator.Statement>, Closeable
 	private long m_pIter;
 
 	static {
-		System.loadLibrary("Parliament");
+		LibraryLoader.loadLibraries();
 	}
 
 	/**

@@ -13,7 +13,7 @@ import com.bbn.parliament.jena.query.index.pfunction.EnableIndexing;
 import com.bbn.parliament.jena.query.optimize.KbOptimize;
 
 public class Kb {
-	private static boolean initialized = false;
+	private static volatile boolean initialized = false;
 
 	static {
 		doInitialization();
@@ -28,9 +28,9 @@ public class Kb {
 		ARQ.init();
 		// insert our op executor into the SPARQL engine
 		QC.setFactory(ARQ.getContext(), KbOpExecutor.KbOpExecutorFactory);
-		StageGenerator orig = (StageGenerator) ARQ.getContext().get(ARQ.stageGenerator);
-		StageGenerator generator = new KbStageGenerator(orig);
-		StageBuilder.setGenerator(ARQ.getContext(), generator);
+		StageGenerator origGenerator = StageBuilder.chooseStageGenerator(ARQ.getContext());
+		StageGenerator newGenerator = new KbStageGenerator(origGenerator);
+		StageBuilder.setGenerator(ARQ.getContext(), newGenerator);
 
 		KbQueryEngine.register();
 		KbOptimize.register();

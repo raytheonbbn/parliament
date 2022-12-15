@@ -8,7 +8,7 @@ import os ;
 
 project /KB/AdminClient ;
 
-InstallLocation = [ os.environ ADMIN_CLIENT_INSTALL_DIR ] ;
+InstallLocation = [ os.environ NATIVE_CODE_INSTALL_DIR ] ;
 InstallLocation ?= $(JamRootDir)/target/drop-box ;
 
 install distribution

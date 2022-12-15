@@ -201,6 +201,6 @@ public class KbConfig {
 	}
 
 	static {
-		System.loadLibrary("Parliament");
+		LibraryLoader.loadLibraries();
 	}
 }

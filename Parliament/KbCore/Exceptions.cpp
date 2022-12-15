@@ -102,8 +102,8 @@ string pmnt::Exception::getSysErrMsg(SysErrCode errCode)
 		::std::vector<TChar> msgBuffer(bufferSize, _T('\0'));
 		DWORD numChars = ::FormatMessage(k_flags, nullptr, errCode, 0, &(msgBuffer[0]),
 			static_cast<DWORD>(msgBuffer.size()), nullptr);
-		auto errCode = getSysErrCode();
-		if ((numChars == 0 && errCode == ERROR_INSUFFICIENT_BUFFER)
+		auto errCode2 = getSysErrCode();
+		if ((numChars == 0 && errCode2 == ERROR_INSUFFICIENT_BUFFER)
 			|| numChars >= msgBuffer.size())
 		{
 			// The buffer is too small -- loop around and try again with a bigger buffer
@@ -122,7 +122,7 @@ string pmnt::Exception::getSysErrMsg(SysErrCode errCode)
 			// An error -- return an empty string
 			PMNT_LOG(g_log, log::Level::error) << format{
 				"FormatMessage error.  numChars = %1%, error code = %2%"}
-				% numChars % errCode;
+				% numChars % errCode2;
 			return string();
 		}
 	}
