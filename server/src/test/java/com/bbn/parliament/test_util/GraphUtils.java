@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -96,13 +95,15 @@ public class GraphUtils {
 		UpdateExecutionFactory.createRemote(update, updateUrl).execute();
 	}
 
-	public static int insertStatements(String graphStoreUrl, String stmt, RDFFormat format, String encodedGraphUri) {
-		ByteArrayInputStream bstrm = new ByteArrayInputStream(stmt.getBytes(StandardCharsets.UTF_8));
-		return loadRdf(graphStoreUrl, bstrm, format.getMediaType(), encodedGraphUri);
-	}
-
-	public static int insertStatements(String graphStoreUrl, InputStream in, RDFFormat format, String encodedGraphUri) {
-		return loadRdf(graphStoreUrl, in, format.getMediaType(), encodedGraphUri);
+	public static String doSelectToCsv(String sparqlUrl, String query) {
+		var request = HttpRequest.newBuilder()
+					.uri(URI.create(sparqlUrl))
+					.POST(HttpRequest.BodyPublishers.ofString(query))
+					.header(HttpHeaders.CONTENT_TYPE, "application/sparql-query")
+					.header(HttpHeaders.ACCEPT, "text/csv")
+					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
+					.build();
+		return sendRequest(request).body();
 	}
 
 	public static QuadDataAcc createQuadData(String sub, String pred, Node obj, String graphName) {
@@ -115,40 +116,6 @@ public class GraphUtils {
 			qd.addQuad(new Quad(NodeFactory.createURI(graphName), s, p, obj));
 		}
 		return qd;
-	}
-
-	public static int loadRdf(String graphStoreUrl, InputStream in, String mediaType, String graphName) {
-		if (graphName != null )
-			graphName = "?graph=" + graphName;
-		else
-			graphName = "?default";
-		var request = HttpRequest.newBuilder()
-					.uri(URI.create(graphStoreUrl + graphName))
-					.POST(HttpRequest.BodyPublishers.ofInputStream(() -> in))
-					.header(HttpHeaders.CONTENT_TYPE, mediaType)
-					.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
-					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
-					.build();
-		return sendRequest(request).statusCode();
-	}
-
-//	public static void loadRdf(String graphStoreUrl, String rsrcName, RDFFormat rdfFormat, InputStream input) {
-//		int status = loadRdf(graphStoreUrl, input, rdfFormat.getMediaType(), null);
-//		if (status != HttpStatus.OK.value()) {
-//			throw new HttpException(status, "",
-//				"Failure inserting RDF from %1$s".formatted(rsrcName));
-//		}
-//	}
-
-	public static String doSelectToCsv(String sparqlUrl, String query) {
-		var request = HttpRequest.newBuilder()
-					.uri(URI.create(sparqlUrl))
-					.POST(HttpRequest.BodyPublishers.ofString(query))
-					.header(HttpHeaders.CONTENT_TYPE, "application/sparql-query")
-					.header(HttpHeaders.ACCEPT, "text/csv")
-					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
-					.build();
-		return sendRequest(request).body();
 	}
 
 	public static HttpResponse<String> sendRequest(HttpRequest request) {
@@ -199,6 +166,58 @@ public class GraphUtils {
 		UpdateExecutionFactory.createRemote(update, updateUrl).execute();
 	}
 
+
+	/* Graph store protocol methods */
+
+	public static int insertStatements(String graphStoreUrl, String stmt, RDFFormat format, String encodedGraphUri) {
+		ByteArrayInputStream bstrm = new ByteArrayInputStream(stmt.getBytes(StandardCharsets.UTF_8));
+		return loadRdf(graphStoreUrl, bstrm, format.getMediaType(), encodedGraphUri);
+	}
+
+	public static int insertStatements(String graphStoreUrl, InputStream in, RDFFormat format, String encodedGraphUri) {
+		return loadRdf(graphStoreUrl, in, format.getMediaType(), encodedGraphUri);
+	}
+
+	public static int loadRdf(String graphStoreUrl, InputStream in, String mediaType, String graphName) {
+		if (graphName != null )
+			graphName = "?graph=" + graphName;
+		else
+			graphName = "?default";
+		var request = HttpRequest.newBuilder()
+					.uri(URI.create(graphStoreUrl + graphName))
+					.POST(HttpRequest.BodyPublishers.ofInputStream(() -> in))
+					.header(HttpHeaders.CONTENT_TYPE, mediaType)
+					.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
+					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
+					.build();
+		LOG.debug("insertStatements request.bodyPublisher().isEmpty():"+request.bodyPublisher().get().contentLength());
+		return sendRequest(request).statusCode();
+	}
+
+	public static int createGraph(String graphStoreUrl, String mediaType, String graphName) {
+		if (graphName != null )
+			graphName = "?graph=" + graphName;
+		else
+			graphName = "?default";
+		var request = HttpRequest.newBuilder()
+				.uri(URI.create(graphStoreUrl + graphName))
+				.POST(HttpRequest.BodyPublishers.noBody())
+				.header(HttpHeaders.CONTENT_TYPE, mediaType)
+				.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
+				.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
+				.build();
+		LOG.debug("createGraph request.bodyPublisher():"+request.bodyPublisher().get().contentLength());
+		return sendRequest(request).statusCode();
+	}
+
+//	public static void loadRdf(String graphStoreUrl, String rsrcName, RDFFormat rdfFormat, InputStream input) {
+//		int status = loadRdf(graphStoreUrl, input, rdfFormat.getMediaType(), null);
+//		if (status != HttpStatus.OK.value()) {
+//			throw new HttpException(status, "",
+//				"Failure inserting RDF from %1$s".formatted(rsrcName));
+//		}
+//	}
+
 	public static void clearAll(String graphStoreUrl, String sparqlUrl) {
 		Set<String> allGraphs = getAvailableNamedGraphs(sparqlUrl);
 		allGraphs.add("?default");
@@ -211,11 +230,7 @@ public class GraphUtils {
 		if (graphName == null || graphName == "?default" )
 			graphName = "?default";
 		else
-			try {
-				graphName = "?graph=" + URLEncoder.encode(graphName, StandardCharsets.UTF_8.toString());
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+			graphName = "?graph=" + URLEncoder.encode(graphName, StandardCharsets.UTF_8);
 		var request = HttpRequest.newBuilder()
 			.uri(URI.create(graphStoreUrl + graphName))
 			.DELETE()

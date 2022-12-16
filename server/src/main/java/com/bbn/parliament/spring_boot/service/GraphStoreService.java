@@ -85,14 +85,44 @@ public class GraphStoreService {
 	}
 
 	@SuppressWarnings("static-method")
+	public ResponseEntity<String> doCreateGraph(String graphUri, HttpHeaders headers, HttpServletRequest request,
+			DropGraphOption dropGraphOption)
+					throws QueryExecutionException, MissingGraphException {
+
+		String updateStmt = null;
+		String option = (dropGraphOption == DropGraphOption.SILENT)
+				? "SILENT" : "";
+		if (graphUri == null || graphUri.isEmpty()) {
+			throw new MissingGraphException("Missing graph uri argument: ", graphUri);
+		} else if (ModelManager.inst().containsModel(graphUri)) {
+			throw new MissingGraphException("Named graph <%1$s> already exists", graphUri);
+		} else {
+			updateStmt = "CREATE %1$s GRAPH <%2$s> ;".formatted(option, graphUri);
+		}
+
+		if (updateStmt != null) {
+			String serverName = ServiceUtil.getRequestor(headers, request);
+			new UpdateHandler().handleRequest(updateStmt, serverName);
+		}
+
+		HttpStatus status = HttpStatus.OK;
+		final Charset charSet = StandardCharsets.UTF_8;
+		MediaType responseContentType = new MediaType(MediaType.TEXT_HTML, charSet);
+		String body = INSERT_RESPONSE_BODY.formatted(
+			status.value(), status.name(), 0, charSet.name());
+		return ResponseEntity.status(status)
+			.contentType(responseContentType)
+			.body(body);
+	}
+
+	@SuppressWarnings("static-method")
 	public ResponseEntity<String> doInsertIntoGraph(String contentType, String graphUri,
 		HttpHeaders headers, HttpServletRequest request, HttpEntity<byte[]> requestEntity)
 		throws TrackableException, DataFormatException, MissingGraphException, IOException {
 
 		String serverName = ServiceUtil.getRequestor(headers, request);
 		long numStatements = new InsertHandler().handleRequest(graphUri, contentType, null,
-			serverName, () -> new ByteArrayInputStream(requestEntity.getBody()));
-
+				serverName, () -> new ByteArrayInputStream(requestEntity.getBody()));
 		return createInsertResponse(numStatements);
 	}
 
