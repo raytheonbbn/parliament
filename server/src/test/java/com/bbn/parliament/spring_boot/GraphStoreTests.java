@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.jena.atlas.web.HttpException;
@@ -80,7 +81,7 @@ public class GraphStoreTests {
 	}
 
 	@Test
-	@Disabled
+	// @Disabled
 	public void insertSampleDataTest() {
 		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, EVERYTHING_QUERY)) {
 			assertEquals(0, stream.count(), "Invalid precondition -- triple store is not empty.");
@@ -109,7 +110,7 @@ public class GraphStoreTests {
 	 * reason.
 	 */
 	@Test
-	@Disabled
+//	@Disabled
 	public void insertIntoNamedGraphAndQueryTest() {
 		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, EVERYTHING_QUERY)) {
 			assertEquals(0, stream.count(), "Invalid precondition -- triple store is not empty.");
@@ -123,7 +124,6 @@ public class GraphStoreTests {
 
 		boolean foundIt = false;
 		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, graph1Uri, TEST_CLASS)) {
-			LOG.debug("insertIntoNamedGraphAndQueryTest: Tracker.getInstance().getTrackableIDs():"+Tracker.getInstance().getTrackableIDs());
 			foundIt = stream
 					.map(qs -> qs.getResource("x"))
 					.map(Resource::getURI)
@@ -141,7 +141,7 @@ public class GraphStoreTests {
 	}
 
 	@Test
-	@Disabled
+//	@Disabled
 	public void insertIntoDefaultGraphAndQueryTest() {
 		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, EVERYTHING_QUERY)) {
 			assertEquals(0, stream.count(), "Invalid precondition -- triple store is not empty.");
@@ -154,7 +154,6 @@ public class GraphStoreTests {
 
 		boolean foundIt = false;
 		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_CLASS)) {
-			LOG.debug("insertIntoDefaultGraphAndQueryTest: Tracker.getInstance().getTrackableIDs():"+Tracker.getInstance().getTrackableIDs());
 			foundIt = stream
 					.map(qs -> qs.getResource("x"))
 					.map(Resource::getURI)
@@ -172,7 +171,7 @@ public class GraphStoreTests {
 	}
 
 	@Test
-	@Disabled
+//	@Disabled
 	public void deleteNamedGraphTest() {
 		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, EVERYTHING_QUERY)) {
 			assertEquals(0, stream.count(), "Invalid precondition -- triple store is not empty.");
@@ -186,7 +185,6 @@ public class GraphStoreTests {
 
 		boolean foundIt = false;
 		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_SUBJECT, TEST_CLASS)) {
-			LOG.debug("deleteNamedGraphTest: Tracker.getInstance().getTrackableIDs():"+Tracker.getInstance().getTrackableIDs());
 			foundIt = stream
 					.map(qs -> qs.getResource("g"))
 					.map(Resource::getURI)
@@ -204,6 +202,7 @@ public class GraphStoreTests {
 	}
 
 	@Test
+//	@Disabled
 	public void createNamedGraphTest() {
 		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, EVERYTHING_QUERY)) {
 			assertEquals(0, stream.count(), "Invalid precondition -- triple store is not empty.");
@@ -248,15 +247,15 @@ public class GraphStoreTests {
 //	}
 
 	@Test
-	@Disabled
+//	@Disabled
 	public void deleteNgErrorTest() {
 		String graph1Uri = "http://example.org/foo/bar/#Graph1";
-		String query = "select * where { graph ?g { <%1$s> a <%2$s1>. } }";
-		GraphUtils.deleteGraph(graphStoreUrl, graph1Uri);
-
-//		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_SUBJECT, TEST_CLASS)) {
-//			assertEquals(0, stream.count(), "Invalid postcondition -- triple store is not empty.");
-//		}
+		Set<String> allGraphs = GraphUtils.getAvailableNamedGraphs(sparqlUrl);
+		int responseCode = GraphUtils.deleteGraph(graphStoreUrl, graph1Uri);
+		boolean caughtException = responseCode == 404;
+		if (caughtException)
+			LOG.info("Missing named graph error (delete)");
+		assertTrue(caughtException);
 	}
 //TODO: create test for:
 /*
@@ -286,7 +285,6 @@ public class GraphStoreTests {
 			.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
 			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 			.build();
-LOG.debug("after loadRdf()");
 		return GraphUtils.sendRequest(request).statusCode();
 	}
 
