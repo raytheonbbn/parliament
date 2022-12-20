@@ -2,7 +2,9 @@ package com.bbn.parliament.spring_boot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -16,7 +18,6 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -43,6 +44,9 @@ import com.bbn.parliament.test_util.RdfResourceLoader;
 public class GraphStoreTests {
 	private static final String HOST = "localhost";
 	private static final String[] RSRCS_TO_LOAD = { "univ-bench.owl", "University15_20.owl.zip" };
+	private static final String TTL_TEST_INPUT = "geo-example.ttl";
+	private static final String NT_TEST_INPUT = "test.nt";
+	private static final String JSONLD_TEST_INPUT = "test.jsonld";
 	private static final Logger LOG = LoggerFactory.getLogger(GraphStoreTests.class);
 	private static final String TEST_SUBJECT = "http://example.org/#TestItem";
 	private static final String TEST_CLASS = "http://example.org/#TestClass";
@@ -55,13 +59,36 @@ public class GraphStoreTests {
 			{ graph ?g { ?s ?p ?o } }
 		}
 		""";
-	private static final String CLASS_QUERY = """
+	private static final String OWL_CLASS_QUERY = """
 		prefix owl: <http://www.w3.org/2002/07/owl#>
 		select distinct ?class where {
 			?class a owl:Class .
 			filter (!isblank(?class))
 		}
 		""";
+
+	private static final String TTL_TEST_QUERY = """
+			prefix sf: <http://www.opengis.net/ont/sf#>
+			select distinct ?s ?p ?o where {
+				bind( sf:Point as ?o )
+				?s ?p ?o .
+			} order by ?s
+			""";
+
+	private static final String NT_TEST_QUERY = """
+			select distinct ?s ?p ?o where {
+				bind( <http://example.org/property> as ?p )
+				?s ?p ?o .
+			} order by ?s
+			""";
+
+	private static final String JSONLD_TEST_QUERY = """
+			select distinct ?s ?p ?o where {
+				bind( <http://dbpedia.org/resource/Bob_Marley> as ?s )
+				?s ?p ?o .
+			} order by ?o
+			""";
+
 
 	@LocalServerPort
 	private int serverPort;
@@ -81,24 +108,83 @@ public class GraphStoreTests {
 	}
 
 	@Test
-	// @Disabled
-	public void insertSampleDataTest() {
+//	@Disabled
+	public void insertSampleDataTest() throws IOException {
+		// owl
 		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, EVERYTHING_QUERY)) {
 			assertEquals(0, stream.count(), "Invalid precondition -- triple store is not empty.");
 		}
 
 		loadSampleData();
 
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, CLASS_QUERY)) {
+		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, OWL_CLASS_QUERY)) {
 			assertEquals(43, stream.count());
 			assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 		}
 
 		GraphUtils.deleteGraph(graphStoreUrl, null);
-
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, CLASS_QUERY)) {
+		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, OWL_CLASS_QUERY)) {
 			assertEquals(0, stream.count(), "Invalid postcondition -- triple store is not empty.");
 		}
+
+
+		// ttl
+		try (InputStream is = getClass().getClassLoader().getResourceAsStream(TTL_TEST_INPUT)) {
+			if (is == null) {
+				fail("Unable to find resource '%1$s'".formatted(TTL_TEST_INPUT));
+			}
+			LOG.debug("rdf format: "+RDFFormat.parseFilename(TTL_TEST_INPUT));
+			GraphUtils.insertStatements(graphStoreUrl, is, RDFFormat.parseFilename(TTL_TEST_INPUT), null);
+		}
+
+		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, TTL_TEST_QUERY)) {
+			assertEquals(3, stream.count());
+			assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+		}
+
+		GraphUtils.deleteGraph(graphStoreUrl, null);
+		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, TTL_TEST_QUERY)) {
+			assertEquals(0, stream.count(), "Invalid postcondition -- triple store is not empty.");
+		}
+
+		// nt
+		try (InputStream is = getClass().getClassLoader().getResourceAsStream(NT_TEST_INPUT)) {
+			if (is == null) {
+				fail("Unable to find resource '%1$s'".formatted(NT_TEST_INPUT));
+			}
+			LOG.debug("rdf format: "+RDFFormat.parseFilename(NT_TEST_INPUT));
+			GraphUtils.insertStatements(graphStoreUrl, is, RDFFormat.parseFilename(NT_TEST_INPUT), null);
+		}
+
+		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, NT_TEST_QUERY)) {
+			assertEquals(30, stream.count());
+			assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+		}
+
+		GraphUtils.deleteGraph(graphStoreUrl, null);
+		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, NT_TEST_QUERY)) {
+			assertEquals(0, stream.count(), "Invalid postcondition -- triple store is not empty.");
+		}
+
+		// json-ld
+		try (InputStream is = getClass().getClassLoader().getResourceAsStream(JSONLD_TEST_INPUT)) {
+			if (is == null) {
+				fail("Unable to find resource '%1$s'".formatted(JSONLD_TEST_INPUT));
+			}
+			LOG.debug("rdf format: "+RDFFormat.parseFilename(JSONLD_TEST_INPUT));
+			GraphUtils.insertStatements(graphStoreUrl, is, RDFFormat.parseFilename(JSONLD_TEST_INPUT), null);
+		}
+
+		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, JSONLD_TEST_QUERY)) {
+			assertEquals(5, stream.count());
+			assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+		}
+
+		GraphUtils.deleteGraph(graphStoreUrl, null);
+		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, JSONLD_TEST_QUERY)) {
+			assertEquals(0, stream.count(), "Invalid postcondition -- triple store is not empty.");
+		}
+
 	}
 
 
@@ -177,10 +263,8 @@ public class GraphStoreTests {
 			assertEquals(0, stream.count(), "Invalid precondition -- triple store is not empty.");
 		}
 		String graph1Uri = "http://example.org/foo/bar/#Graph1";
-//		String graph2Uri = "http://example.org/foo/bar/#Graph2";
 		String triple1 = "<%1$s> <%2$s> <%3$s1> .".formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
 		String query = "select * where { graph ?g { <%1$s> a <%2$s1>. } }";
-//		GraphUtils.createGraph(graphStoreUrl, RDFFormat.NTRIPLES.getMediaType(), URLEncoder.encode(graph1Uri, StandardCharsets.UTF_8));
 		GraphUtils.insertStatements(graphStoreUrl, triple1, RDFFormat.NTRIPLES, URLEncoder.encode(graph1Uri, StandardCharsets.UTF_8));
 
 		boolean foundIt = false;
@@ -230,21 +314,6 @@ public class GraphStoreTests {
 			assertTrue(foundIt);
 		}
 	}
-
-//TODO: create negative tests:
-//
-//	@Test
-//	public void deleteErrorTest() {
-//		boolean caughtException = false;
-//		try {
-//			// Invalid n-triples:
-//			GraphUtils.delete(updateUrl, "oogetyboogetyboo!", null, null, null);
-//		} catch (Exception ex) {
-//			caughtException = true;
-//			LOG.info("N-triples parse error (delete)", ex);
-//		}
-//		assertTrue(caughtException);
-//	}
 
 	@Test
 //	@Disabled
