@@ -1,13 +1,8 @@
 package com.bbn.parliament.test_util;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -53,18 +48,6 @@ public class GraphUtils {
 			}
 			""";
 
-	public static String readStreamToEnd(InputStream is, String errorMsg, Object... args) throws IOException {
-		if (is == null) {
-			fail(errorMsg.formatted(args));
-		}
-		try (
-			Reader rdr = new InputStreamReader(is, StandardCharsets.UTF_8);
-			BufferedReader brdr = new BufferedReader(rdr);
-		) {
-			return brdr.lines().collect(Collectors.joining(System.lineSeparator()));
-		}
-	}
-
 	public static QuerySolutionStream doSelectQuery(String sparqlUrl, String queryFmt, Object... args) {
 		return new QuerySolutionStream(queryFmt.formatted(args), sparqlUrl);
 	}
@@ -77,7 +60,7 @@ public class GraphUtils {
 		}
 	}
 
-	public static Model doConstructQuery(String sparqlUrl, String queryFmt, Object... args) throws IOException {
+	public static Model doConstructQuery(String sparqlUrl, String queryFmt, Object... args) {
 		String query = queryFmt.formatted(args);
 		try (var qe = QueryExecutionFactory.sparqlService(sparqlUrl, query)) {
 			return qe.execConstruct();
@@ -137,7 +120,7 @@ public class GraphUtils {
 		}
 	}
 
-	private String getAvailableNamedGraphsNoJena(String sparqlUrl) {
+	public static String getAvailableNamedGraphsNoJena(String sparqlUrl) {
 		return WebClient.create(sparqlUrl)
 			.post()
 			.uri("")
@@ -167,24 +150,21 @@ public class GraphUtils {
 	}
 
 
-	/* Graph store protocol methods */
+	// Graph store protocol methods
 
-	public static int insertStatements(String graphStoreUrl, String stmt, RDFFormat format, String encodedGraphUri) {
-		ByteArrayInputStream bstrm = new ByteArrayInputStream(stmt.getBytes(StandardCharsets.UTF_8));
-		return loadRdf(graphStoreUrl, bstrm, format.getMediaType(), encodedGraphUri);
+	public static int insertStatements(String graphStoreUrl, String stmt, RDFFormat format, String graphName) throws IOException {
+		try (InputStream bstrm = new ByteArrayInputStream(stmt.getBytes(StandardCharsets.UTF_8))) {
+			return loadRdf(graphStoreUrl, bstrm, format.getMediaType(), graphName);
+		}
 	}
 
-	public static int insertStatements(String graphStoreUrl, InputStream in, RDFFormat format, String encodedGraphUri) {
-		return loadRdf(graphStoreUrl, in, format.getMediaType(), encodedGraphUri);
+	public static int insertStatements(String graphStoreUrl, InputStream in, RDFFormat format, String graphName) {
+		return loadRdf(graphStoreUrl, in, format.getMediaType(), graphName);
 	}
 
-	public static int loadRdf(String graphStoreUrl, InputStream in, String mediaType, String graphName) {
-		if (graphName != null )
-			graphName = "?graph=" + graphName;
-		else
-			graphName = "?default";
+	private static int loadRdf(String graphStoreUrl, InputStream in, String mediaType, String graphName) {
 		var request = HttpRequest.newBuilder()
-					.uri(URI.create(graphStoreUrl + graphName))
+					.uri(getRequestUrl(graphStoreUrl, graphName))
 					.POST(HttpRequest.BodyPublishers.ofInputStream(() -> in))
 					.header(HttpHeaders.CONTENT_TYPE, mediaType)
 					.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
@@ -195,12 +175,8 @@ public class GraphUtils {
 	}
 
 	public static int createGraph(String graphStoreUrl, String mediaType, String graphName) {
-		if (graphName != null )
-			graphName = "?graph=" + graphName;
-		else
-			graphName = "?default";
 		var request = HttpRequest.newBuilder()
-				.uri(URI.create(graphStoreUrl + graphName))
+				.uri(getRequestUrl(graphStoreUrl, graphName))
 				.POST(HttpRequest.BodyPublishers.noBody())
 				.header(HttpHeaders.CONTENT_TYPE, mediaType)
 				.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
@@ -210,29 +186,15 @@ public class GraphUtils {
 		return sendRequest(request).statusCode();
 	}
 
-//	public static void loadRdf(String graphStoreUrl, String rsrcName, RDFFormat rdfFormat, InputStream input) {
-//		int status = loadRdf(graphStoreUrl, input, rdfFormat.getMediaType(), null);
-//		if (status != HttpStatus.OK.value()) {
-//			throw new HttpException(status, "",
-//				"Failure inserting RDF from %1$s".formatted(rsrcName));
-//		}
-//	}
-
 	public static void clearAll(String graphStoreUrl, String sparqlUrl) {
 		Set<String> allGraphs = getAvailableNamedGraphs(sparqlUrl);
-		allGraphs.add("?default");
-		for (String uri : allGraphs) {
-			deleteGraph(graphStoreUrl, uri);
-		}
+		allGraphs.add("");
+		allGraphs.stream().forEach(uri -> deleteGraph(graphStoreUrl, uri));
 	}
 
 	public static int deleteGraph(String graphStoreUrl, String graphName) {
-		if (graphName == null || graphName == "?default" )
-			graphName = "?default";
-		else
-			graphName = "?graph=" + URLEncoder.encode(graphName, StandardCharsets.UTF_8);
 		var request = HttpRequest.newBuilder()
-			.uri(URI.create(graphStoreUrl + graphName))
+			.uri(getRequestUrl(graphStoreUrl, graphName))
 			.DELETE()
 			.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
 			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
@@ -240,4 +202,10 @@ public class GraphUtils {
 		return sendRequest(request).statusCode();
 	}
 
+	private static URI getRequestUrl(String graphStoreUrl, String graphName) {
+		var requestUrl = (graphName == null || graphName.isBlank())
+			? graphStoreUrl + "?default"
+			: graphStoreUrl + "?graph=" + URLEncoder.encode(graphName, StandardCharsets.UTF_8);
+		return URI.create(requestUrl);
+	}
 }

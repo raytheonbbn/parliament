@@ -24,7 +24,6 @@ import java.util.zip.ZipInputStream;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.RDFReader;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
@@ -39,7 +38,6 @@ import com.bbn.parliament.jena.graph.ForgetfulGraph;
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.graph.ModelManager;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
-import com.bbn.parliament.jena.util.JsonLdRdfReader;
 
 public final class Inserter {
 	private static final Logger LOG = LoggerFactory.getLogger(Inserter.class);
@@ -349,22 +347,6 @@ public final class Inserter {
 		long start = Calendar.getInstance().getTimeInMillis();
 		Model syntaxVerifier = ModelFactory.createModelForGraph(new ForgetfulGraph());
 		try (InputStream in = inputStreamSupplier.get()) {
-
-			//TODO: Temp code
-			RDFReader rrdr = syntaxVerifier.getReader(JsonLdRdfReader.formatName);
-			var rdrName = (rrdr == null)
-				? "null"
-				: rrdr.getClass().getName();
-			LOG.warn("JSON-LD reader class prior to setting: %1$s".formatted(rdrName));
-			//TODO: End temp code
-
-			syntaxVerifier.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
-
-			//TODO: Temp code
-			LOG.warn("JSON-LD reader class after setting: %1$s"
-				.formatted(syntaxVerifier.getReader(JsonLdRdfReader.formatName).getClass().getName()));
-			//TODO: End temp code
-
 			syntaxVerifier.read(in, baseUri, format.toString());
 			numStmts = syntaxVerifier.size();
 
@@ -383,7 +365,6 @@ public final class Inserter {
 
 		long start = Calendar.getInstance().getTimeInMillis();
 		try (InputStream in = inputStreamSupplier.get()) {
-			model.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
 			model.read(in, baseUri, format.toString());
 
 			if (LOG.isInfoEnabled()) {

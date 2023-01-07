@@ -5,8 +5,6 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -41,9 +39,6 @@ import com.bbn.parliament.spring_boot.service.GraphStoreService;
 public class GraphStoreController {
 	private static final String ENDPOINT = "/parliament/graphstore";
 	public static final String DEFAULT_GRAPH = null;
-
-	@SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory.getLogger(GraphStoreController.class);
 
 	private final GraphStoreService graphStoreService;
 

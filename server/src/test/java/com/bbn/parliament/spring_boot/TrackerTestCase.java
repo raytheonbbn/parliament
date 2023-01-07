@@ -3,6 +3,8 @@ package com.bbn.parliament.spring_boot;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -42,13 +44,13 @@ public class TrackerTestCase {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testTrackerQuery() {
-		String query = "SELECT ?a WHERE { ?a ?b ?c }";
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 
+		String query = "select * where { ?a ?b ?c }";
 		TrackableQuery tq = Tracker.getInstance().createQuery(query, "TEST");
 		try {
 			tq.run();
-		}
-		catch(TrackableException | DataFormatException | MissingGraphException | IOException ex) {
+		} catch(TrackableException | DataFormatException | MissingGraphException | IOException ex) {
 			fail(ex.getMessage());
 		}
 		// should be 1 since the result set isn't processed yet
@@ -57,8 +59,7 @@ public class TrackerTestCase {
 		TrackableQuery tq1 = Tracker.getInstance().createQuery(query, "TEST");
 		try {
 			tq1.run();
-		}
-		catch(TrackableException | DataFormatException | MissingGraphException | IOException ex) {
+		} catch(TrackableException | DataFormatException | MissingGraphException | IOException ex) {
 			fail(ex.getMessage());
 		}
 
@@ -76,13 +77,12 @@ public class TrackerTestCase {
 		}
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 
-		query = "CONSTRUCT { ?a a ?c }  WHERE {?a a ?c }";
+		query = "construct where {?a a ?c }";
 		tq = Tracker.getInstance().createQuery(query, "TEST");
 		assertEquals(1, Tracker.getInstance().getTrackableIDs().size());
 		try {
 			tq.run();
-		}
-		catch(TrackableException | DataFormatException | MissingGraphException | IOException ex) {
+		} catch(TrackableException | DataFormatException | MissingGraphException | IOException ex) {
 			fail(ex.getMessage());
 		}
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
@@ -91,11 +91,11 @@ public class TrackerTestCase {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testCancel() {
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 		PropertyFunctionRegistry.get().put("http://example.org/suspend", Suspend.class);
-		String query = "SELECT * WHERE { ?a <http://example.org/suspend> ?b . }";
+		String query = "select * where { ?a <http://example.org/suspend> ?b . }";
 		final TrackableQuery tq = Tracker.getInstance().createQuery(query, "TEST");
 		Runnable r = new Runnable() {
-
 			@Override
 			public void run() {
 				try {
@@ -104,8 +104,8 @@ public class TrackerTestCase {
 					while (rs.hasNext()) {
 						rs.next();
 					}
-				} catch (Throwable e) {
-					e.printStackTrace();
+				} catch (Throwable ex) {
+					ex.printStackTrace();
 				}
 			}
 		};
@@ -115,15 +115,17 @@ public class TrackerTestCase {
 
 		try {
 			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-
+		} catch (InterruptedException ex) {
+			fail(ex.getMessage());
 		}
+
 		try {
 			System.out.println("cancel");
 			tq.cancel();
-		} catch (TrackableException e) {
-			e.printStackTrace();
+		} catch (TrackableException ex) {
+			ex.printStackTrace();
 		}
+
 		assertEquals(Status.CANCELLED, tq.getStatus());
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 	}
@@ -133,25 +135,25 @@ public class TrackerTestCase {
 	public void testTrackerUpdate() {
 		TrackableUpdate tu;
 
-		String update = "INSERT DATA { <http://example.org/test> a <http://example.org/data> }";
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+
+		String update = "insert data { <http://example.org/test> a <http://example.org/data> }";
 		tu = Tracker.getInstance().createUpdate(update, "TEST");
 
 		assertEquals(1, Tracker.getInstance().getTrackableIDs().size());
 		try {
 			tu.run();
-		}
-		catch(TrackableException | DataFormatException | MissingGraphException | IOException ex) {
+		} catch(TrackableException | DataFormatException | MissingGraphException | IOException ex) {
 			fail(ex.getMessage());
 		}
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 
-		String delete = "DELETE DATA { <http://example.org/test> a <http://example.org/data> }";
+		String delete = "delete data { <http://example.org/test> a <http://example.org/data> }";
 		tu = Tracker.getInstance().createUpdate(delete, "TEST");
 		assertEquals(1, Tracker.getInstance().getTrackableIDs().size());
 		try {
 			tu.run();
-		}
-		catch(TrackableException | DataFormatException | MissingGraphException | IOException ex) {
+		} catch(TrackableException | DataFormatException | MissingGraphException | IOException ex) {
 			fail(ex.getMessage());
 		}
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
@@ -160,18 +162,20 @@ public class TrackerTestCase {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testTrackerInsert() {
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 		Inserter inserter = Inserter.newGraphInserter(
 			null, "RDF/XML", "University15_20.owl", VerifyOption.VERIFY, null,
 			() -> {
-				ClassLoader cl = Thread.currentThread().getContextClassLoader();
-				InputStream is = cl.getResourceAsStream("University15_20.owl.zip");
-				ZipInputStream zis = new ZipInputStream(is);
 				try {
+					File dataDir = new File(System.getProperty("test.data.path"));
+					File file = new File(dataDir, "University15_20.owl.zip");
+					InputStream is = new FileInputStream(file);
+					ZipInputStream zis = new ZipInputStream(is);
 					zis.getNextEntry();
+					return zis;
 				} catch (IOException ex) {
 					throw new UncheckedIOException(ex);
 				}
-				return zis;
 		});
 
 		TrackableInsert ti = Tracker.getInstance().createInsert(inserter, "TEST");

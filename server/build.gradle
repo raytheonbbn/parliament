@@ -10,7 +10,6 @@ defaultTasks 'bootRun'
 
 ext {
 	genJavaDir = file("$buildDir/generated/java")
-	artifactsDir = file("$rootDir/target/artifacts")
 	configVocabFile = "${projectDir}/src/main/resources/config-ont.ttl"
 	configVocabPackage = 'com.bbn.parliament.jena.bridge.configuration.vocab'
 	configVocabDir = configVocabPackage.replaceAll(/\./, '/')
@@ -39,7 +38,6 @@ dependencies {
 		exclude group: 'log4j', module: 'log4j'
 	}
 	
-	implementation "$jsonLdDependency"
 	implementation "$slf4jApiDependency"
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
@@ -82,23 +80,15 @@ compileJava.dependsOn runSchemagen
 test {
 	useJUnitPlatform()
 
-	def distroDir = tgtDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
+	def distroDir = targetDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
 
 	systemProperty 'java.library.path', "${distroDir}/bin"
+	systemProperty 'test.data.path', "${rootDir}/dependencies/data"
 	//systemProperty 'log4j.configuration', "file:${rootDir}/log4j.junit.properties"
 }
 
-task copyTestResources(type: Copy) {
-	from '${projectDir}/src/test/resources'
-	into '${buildDir}/classes/java/test'
-}
-
 bootRun {
-	def distroDir = tgtDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
+	def distroDir = targetDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
 
 	systemProperty 'java.library.path', "${distroDir}/bin"
-}
-
-subprojects {
-	junitPlatformTest.dependsOn copyTestResources
 }

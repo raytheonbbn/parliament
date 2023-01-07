@@ -27,7 +27,6 @@ import com.bbn.parliament.jena.exception.DataFormatException;
 import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.exception.NoAcceptableException;
 import com.bbn.parliament.jena.exception.QueryExecutionException;
-import com.bbn.parliament.jena.util.JsonLdRdfWriter;
 import com.bbn.parliament.spring_boot.service.AcceptableMediaType;
 import com.bbn.parliament.spring_boot.service.QueryResultCategory;
 
@@ -83,7 +82,6 @@ public class QueryHandler {
 			throw new QueryExecutionException("Query produced no result");
 		} else if (queryCategory == QueryResultCategory.RDF) {
 			Model respModel = trackable.getModel();
-			respModel.setWriterClassName(JsonLdRdfWriter.formatName, JsonLdRdfWriter.class.getName());
 			respModel.write(out, contentType.getRdfFormat().toString(), null);
 			LOG.debug(trackable.getQuery().isConstructType() ? "OK/construct" : "OK/describe");
 		} else if (trackable.getQuery().isSelectType()) {

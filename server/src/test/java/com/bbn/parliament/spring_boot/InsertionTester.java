@@ -6,9 +6,6 @@
 
 package com.bbn.parliament.spring_boot;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 import org.apache.jena.vocabulary.RDF;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -31,7 +26,6 @@ import com.bbn.parliament.test_util.GraphUtils;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
 public class InsertionTester {
-
 	private static final String HOST = "localhost";
 	private static final String TEST_SUBJECT = "http://foo/#foo";
 	private static final String TEST_SUBJECT2 = "http://foo/#foo2";
@@ -39,19 +33,16 @@ public class InsertionTester {
 	private static final String TEST_UNION_SUBJECT = "http://foo/#UnionFoo";
 	private static final String TEST_OBJECT = "http://foo/#Tool";
 	private static final String TEST_GRAPH = "foo2";
-	private static final Logger LOG = LoggerFactory.getLogger(InsertionTester.class);
 
 	@LocalServerPort
 	private int serverPort;
 
 	private String sparqlUrl;
-	private String updateUrl;
 	private String graphStoreUrl;
 
 	@BeforeEach
 	public void beforeEach() {
 		sparqlUrl = "http://%1$s:%2$s/parliament/sparql".formatted(HOST, serverPort);
-		updateUrl = "http://%1$s:%2$s/parliament/update".formatted(HOST, serverPort);
 		graphStoreUrl = "http://%1$s:%2$s/parliament/graphstore".formatted(HOST, serverPort);
 	}
 
@@ -71,11 +62,11 @@ public class InsertionTester {
 				TEST_SUBJECT,
 				KbGraphStore.RIGHT_GRAPH_PROPERTY,
 				TEST_SUBJECT2);
-		GraphUtils.insertStatements(graphStoreUrl, triples, RDFFormat.NTRIPLES, URLEncoder.encode(KbGraphStore.MASTER_GRAPH, StandardCharsets.UTF_8.toString()));
+		GraphUtils.insertStatements(graphStoreUrl, triples, RDFFormat.NTRIPLES, KbGraphStore.MASTER_GRAPH);
 
 		GraphUtils.insertStatements(graphStoreUrl,
 			statementsForAGraphDeclaration(TEST_SUBJECT2, TEST_GRAPH),
-			RDFFormat.NTRIPLES, URLEncoder.encode(KbGraphStore.MASTER_GRAPH, StandardCharsets.UTF_8.toString()));
+			RDFFormat.NTRIPLES, KbGraphStore.MASTER_GRAPH);
 
 		GraphUtils.insertStatements(graphStoreUrl, "<%1$s> <%2$s> <%3$s> .".formatted(TEST_SUBJECT3, RDF.type, TEST_OBJECT),
 				RDFFormat.NTRIPLES, TEST_SUBJECT2);
@@ -88,5 +79,4 @@ public class InsertionTester {
 			""".formatted(uri, RDF.type.getURI(), KbGraphStore.GRAPH_CLASS,
 				KbGraphStore.GRAPH_DIR_PROPERTY, graphDir);
 	}
-
 }

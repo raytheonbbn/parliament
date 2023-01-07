@@ -20,8 +20,6 @@ import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.pfunction.PFuncSimpleAndList;
 import org.apache.jena.sparql.pfunction.PropFuncArg;
 import org.apache.jena.sparql.util.IterLib;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.jena.graph.KbGraphStore;
 
@@ -42,8 +40,6 @@ import com.bbn.parliament.jena.graph.KbGraphStore;
  * @author sallen
  */
 public class createUnionGraph extends PFuncSimpleAndList {
-	private static final Logger LOG = LoggerFactory.getLogger(createUnionGraph.class);
-
 	@Override
 	public QueryIterator execEvaluated(Binding binding, Node subject, Node predicate, PropFuncArg object, ExecutionContext execCxt) {
 		DatasetGraph dsg = execCxt.getDataset();
@@ -81,7 +77,6 @@ public class createUnionGraph extends PFuncSimpleAndList {
 			return IterLib.oneResult(binding, Var.alloc("result"), result, execCxt);
 		}
 	}
-
 
 	/**
 	 * Get a list of one or more node objects provided to the property function.

@@ -6,13 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,6 +20,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.ext.com.google.common.base.Objects;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -46,7 +46,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.bbn.parliament.jena.bridge.tracker.Tracker;
 import com.bbn.parliament.jena.joseki.client.QuerySolutionStream;
 import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.test_util.GraphUtils;
@@ -57,12 +56,14 @@ import com.bbn.parliament.test_util.RdfResourceLoader;
 @TestInstance(Lifecycle.PER_CLASS)
 public class ParliamentServerTests {
 	private static final String HOST = "localhost";
-	private static final String[] RSRCS_TO_LOAD = { "univ-bench.owl", "University15_20.owl.zip" };
+	private static final String[] FILES_TO_LOAD = { "univ-bench.owl", "University15_20.owl.zip" };
 	private static final String CSV_QUOTE_TEST_INPUT = "csv-quote-test-input.ttl";
 	private static final String CSV_QUOTE_TEST_EXPECTED_RESULT = "csv-quote-test-expected-result.csv";
 	private static final String TEST_SUBJECT = "http://example.org/#TestItem";
 	private static final String TEST_CLASS = "http://example.org/#TestClass";
 	private static final String TEST_LITERAL = "TestLiteral";
+	private static final String TEST_NG_URI = "http://example.org/#TestGraph";
+	private static final File DATA_DIR = new File(System.getProperty("test.data.path"));
 	private static final Logger LOG = LoggerFactory.getLogger(ParliamentServerTests.class);
 
 	private static final String EVERYTHING_QUERY = """
@@ -129,7 +130,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	public void generalKBFunctionalityTest() throws IOException {
+	public void generalKBFunctionalityTest() {
 		GraphUtils.clearAll(graphStoreUrl, sparqlUrl);
 
 		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, EVERYTHING_QUERY)) {
@@ -142,7 +143,6 @@ public class ParliamentServerTests {
 		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, CLASS_QUERY)) {
 			long count = stream.count();
 			assertEquals(43, count);
-			assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 		}
 
 		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, THING_QUERY)) {
@@ -162,7 +162,6 @@ public class ParliamentServerTests {
 		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, THING_QUERY)) {
 			long count = stream.count();
 			assertEquals(0, count, "Data delete failed.");
-			assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 		}
 
 		GraphUtils.clearAll(graphStoreUrl, sparqlUrl);
@@ -175,14 +174,12 @@ public class ParliamentServerTests {
 
 	@Test
 	public void namedGraphsTest() {
-		String graphUri = "http://example.org/foo/bar/#Graph1";
-
 		assertTrue(GraphUtils.getAvailableNamedGraphs(sparqlUrl).isEmpty());
 
-		GraphUtils.doUpdate(updateUrl, "create graph <%1$s>", graphUri);
-		assertTrue(GraphUtils.getAvailableNamedGraphs(sparqlUrl).equals(Collections.singleton(graphUri)));
+		GraphUtils.doUpdate(updateUrl, "create graph <%1$s>", TEST_NG_URI);
+		assertTrue(GraphUtils.getAvailableNamedGraphs(sparqlUrl).equals(Collections.singleton(TEST_NG_URI)));
 
-		GraphUtils.doUpdate(updateUrl, "drop silent graph <%1$s>", graphUri);
+		GraphUtils.doUpdate(updateUrl, "drop silent graph <%1$s>", TEST_NG_URI);
 		assertTrue(GraphUtils.getAvailableNamedGraphs(sparqlUrl).isEmpty());
 	}
 
@@ -336,7 +333,7 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	public void namedGraphUnionTest() {
+	public void namedGraphUnionTest() throws IOException {
 		String graph1Uri = "http://example.org/foo/bar/#Graph4";
 		String graph2Uri = "http://example.org/foo/bar/#Graph5";
 		String unionGraphUri = "http://example.org/foo/bar/#UnionGraph";
@@ -346,14 +343,14 @@ public class ParliamentServerTests {
 
 		GraphUtils.doUpdate(updateUrl, "create graph <%1$s>", graph1Uri);
 		try {
-			GraphUtils.insertStatements(graphStoreUrl, triple1, RDFFormat.NTRIPLES, URLEncoder.encode(graph1Uri, StandardCharsets.UTF_8.toString()));
+			GraphUtils.insertStatements(graphStoreUrl, triple1, RDFFormat.NTRIPLES, graph1Uri);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 
 		GraphUtils.doUpdate(updateUrl, "create graph <%1$s>", graph2Uri);
 		try {
-			GraphUtils.insertStatements(graphStoreUrl, triple2, RDFFormat.NTRIPLES, URLEncoder.encode(graph2Uri, StandardCharsets.UTF_8.toString()));
+			GraphUtils.insertStatements(graphStoreUrl, triple2, RDFFormat.NTRIPLES, graph2Uri);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -403,39 +400,41 @@ public class ParliamentServerTests {
 		assertTrue(testModel.difference(resultModel).isEmpty());
 	}
 
+	private static List<CSVRecord> csvQuotingTest(String csvText) throws IOException {
+		try (
+			Reader expectedRdr = new StringReader(csvText);
+			CSVParser parser = CSVFormat.EXCEL.parse(expectedRdr);
+		) {
+			return parser.getRecords();
+		}
+	}
+
 	@Test
 	@Disabled
 	public void csvQuotingTest() throws IOException {
-		try (InputStream is = getClass().getClassLoader().getResourceAsStream(CSV_QUOTE_TEST_INPUT)) {
-			if (is == null) {
-				fail("Unable to find resource '%1$s'".formatted(CSV_QUOTE_TEST_INPUT));
-			}
-			LOG.debug("rdf format: "+RDFFormat.parseFilename(CSV_QUOTE_TEST_INPUT));
-			GraphUtils.insertStatements(graphStoreUrl, is, RDFFormat.parseFilename(CSV_QUOTE_TEST_INPUT), null);
+		try (InputStream is = RdfResourceLoader.getResourceAsStream(CSV_QUOTE_TEST_INPUT)) {
+			var rdfFmt = RDFFormat.parseFilename(CSV_QUOTE_TEST_INPUT);
+			LOG.debug("csvQuotingTest RDF format: {}", rdfFmt);
+			GraphUtils.insertStatements(graphStoreUrl, is, rdfFmt, null);
 		}
 
-		String actualResponse = GraphUtils.doSelectToCsv(sparqlUrl, CSV_QUOTING_TEST_QUERY);
-		Reader actualRdr = new StringReader(actualResponse);
+		List<CSVRecord> expectedRecords = csvQuotingTest(
+			RdfResourceLoader.readResourceAsString(CSV_QUOTE_TEST_EXPECTED_RESULT));
+		List<CSVRecord> actualRecords = csvQuotingTest(
+			GraphUtils.doSelectToCsv(sparqlUrl, CSV_QUOTING_TEST_QUERY));
 
-		String expectedResponse;
-		try (InputStream is = getClass().getClassLoader().getResourceAsStream(CSV_QUOTE_TEST_EXPECTED_RESULT)) {
-			expectedResponse = GraphUtils.readStreamToEnd(is, "Unable to find resource '%1$s'", CSV_QUOTE_TEST_EXPECTED_RESULT);
-		}
-		Reader expectedRdr = new StringReader(expectedResponse);
-		List<CSVRecord> expectedRecords;
-		try (CSVParser parser = CSVFormat.EXCEL.parse(expectedRdr)) {
-			expectedRecords = parser.getRecords();
-		}
-
-		try (CSVParser parser = CSVFormat.EXCEL.parse(actualRdr)) {
-			List<CSVRecord> actualRecords = parser.getRecords();
-			for (int i=0; i<actualRecords.size(); i++) {
-				String actual = actualRecords.get(i).get(2);
-				String expected = expectedRecords.get(i).get(2);
-				if (!actual.equals(expected)) {
+		assertEquals(expectedRecords.size(), actualRecords.size());
+		for (int i = 0; i < expectedRecords.size(); ++i) {
+			CSVRecord expectedRecord = expectedRecords.get(i);
+			CSVRecord actualRecord = actualRecords.get(i);
+			assertEquals(expectedRecord.size(), actualRecord.size());
+			for (int j = 0; j < expectedRecord.size(); ++j) {
+				String expected = expectedRecord.get(j);
+				String actual = actualRecord.get(j);
+				if (!Objects.equal(expected, actual)) {
 					// TODO: double quote is not being escaped..
-					LOG.debug("actual:\n"+actual);
-					LOG.debug("expected:\n"+expected);
+					LOG.debug("actual: '{}'", actual);
+					LOG.debug("expected: '{}'", expected);
 				}
 				assertEquals(expected, actual);
 			}
@@ -444,9 +443,10 @@ public class ParliamentServerTests {
 
 	private void loadSampleData() {
 		try {
-			for (String rsrcName : RSRCS_TO_LOAD) {
+			for (String fileName : FILES_TO_LOAD) {
 				Model clientSideModel = ModelFactory.createDefaultModel();
-				RdfResourceLoader.load(rsrcName, clientSideModel);
+				var file = new File(DATA_DIR, fileName);
+				RdfResourceLoader.load(file, clientSideModel);
 
 				QuadDataAcc qd = new QuadDataAcc();
 				StmtIterator it = clientSideModel.listStatements();
@@ -461,5 +461,4 @@ public class ParliamentServerTests {
 			fail(ex.getMessage());
 		}
 	}
-
 }
