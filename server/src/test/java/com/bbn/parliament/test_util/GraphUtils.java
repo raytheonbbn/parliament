@@ -111,7 +111,7 @@ public class GraphUtils {
 	}
 
 	public static Set<String> getAvailableNamedGraphs(String sparqlUrl) {
-		try (QuerySolutionStream stream = doSelectQuery(sparqlUrl, NG_QUERY)) {
+		try (var stream = new QuerySolutionStream(NG_QUERY, sparqlUrl)) {
 			return stream
 				.map(qs -> qs.getResource("g"))
 				.map(Resource::getURI)

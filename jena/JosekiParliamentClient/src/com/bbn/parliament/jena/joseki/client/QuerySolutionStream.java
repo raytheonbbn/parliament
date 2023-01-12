@@ -1,3 +1,9 @@
+// Parliament is licensed under the BSD License from the Open Source
+// Initiative, http://www.opensource.org/licenses/bsd-license.php
+//
+// Copyright (c) 2019-2023, BBN Technologies, Inc.
+// All rights reserved.
+
 package com.bbn.parliament.jena.joseki.client;
 
 import java.util.Comparator;
@@ -24,13 +30,13 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.jena.query.Dataset;
+import org.apache.jena.query.ParameterizedSparqlString;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
-
 
 /**
  * An implementation of Stream&lt;QuerySolution&gt; that converts a Jena
@@ -41,8 +47,8 @@ import org.apache.jena.rdf.model.Model;
  * @author iemmons
  */
 public class QuerySolutionStream implements Stream<QuerySolution> {
-	private final QueryExecution qe;
-	private final Stream<QuerySolution> underlyingStream;
+	private transient final QueryExecution qe;
+	private transient final Stream<QuerySolution> underlyingStream;
 
 	/**
 	 * Creates an AutoCloseable stream of QuerySolution objects by calling
@@ -66,6 +72,18 @@ public class QuerySolutionStream implements Stream<QuerySolution> {
 	@SuppressWarnings("resource")
 	public QuerySolutionStream(Query query, String service) {
 		this(QueryExecutionFactory.sparqlService(service, query));
+	}
+
+	/**
+	 * Creates an AutoCloseable stream of QuerySolution objects by calling
+	 * {@code QueryExecutionFactory.sparqlService(service, query)}
+	 *
+	 * @param pss The ParameterizedSparqlString containing the query to execute
+	 * @param service The service against which to execute the query
+	 */
+	@SuppressWarnings("resource")
+	public QuerySolutionStream(ParameterizedSparqlString pss, String service) {
+		this(QueryExecutionFactory.sparqlService(service, pss.asQuery()));
 	}
 
 	/**
@@ -94,6 +112,18 @@ public class QuerySolutionStream implements Stream<QuerySolution> {
 
 	/**
 	 * Creates an AutoCloseable stream of QuerySolution objects by calling
+	 * {@code QueryExecutionFactory.create(query, dataset)}
+	 *
+	 * @param pss The ParameterizedSparqlString containing the query to execute
+	 * @param dataset The dataset against which to execute the query
+	 */
+	@SuppressWarnings("resource")
+	public QuerySolutionStream(ParameterizedSparqlString pss, Dataset dataset) {
+		this(QueryExecutionFactory.create(pss.asQuery(), dataset));
+	}
+
+	/**
+	 * Creates an AutoCloseable stream of QuerySolution objects by calling
 	 * {@code QueryExecutionFactory.create(queryStr, model)}
 	 *
 	 * @param queryStr The query to execute
@@ -114,6 +144,18 @@ public class QuerySolutionStream implements Stream<QuerySolution> {
 	@SuppressWarnings("resource")
 	public QuerySolutionStream(Query query, Model model) {
 		this(QueryExecutionFactory.create(query, model));
+	}
+
+	/**
+	 * Creates an AutoCloseable stream of QuerySolution objects by calling
+	 * {@code QueryExecutionFactory.create(query, model)}
+	 *
+	 * @param pss The ParameterizedSparqlString containing the query to execute
+	 * @param model The model against which to execute the query
+	 */
+	@SuppressWarnings("resource")
+	public QuerySolutionStream(ParameterizedSparqlString pss, Model model) {
+		this(QueryExecutionFactory.create(pss.asQuery(), model));
 	}
 
 	/**

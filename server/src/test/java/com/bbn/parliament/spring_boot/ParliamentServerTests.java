@@ -133,40 +133,40 @@ public class ParliamentServerTests {
 	public void generalKBFunctionalityTest() {
 		GraphUtils.clearAll(graphStoreUrl, sparqlUrl);
 
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, EVERYTHING_QUERY)) {
+		try (var stream = new QuerySolutionStream(EVERYTHING_QUERY, sparqlUrl)) {
 			long count = stream.count();
 			assertEquals(0, count, "Invalid precondition -- triple store is not empty.");
 		}
 
 		loadSampleData();
 
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, CLASS_QUERY)) {
+		try (var stream = new QuerySolutionStream(CLASS_QUERY, sparqlUrl)) {
 			long count = stream.count();
 			assertEquals(43, count);
 		}
 
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, THING_QUERY)) {
+		try (var stream = new QuerySolutionStream(THING_QUERY, sparqlUrl)) {
 			long count = stream.count();
 			assertEquals(0, count, "Invalid precondition -- triple store already contains data.");
 		}
 
 		GraphUtils.doUpdate(updateUrl, THING_INSERT);
 
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, THING_QUERY)) {
+		try (var stream = new QuerySolutionStream(THING_QUERY, sparqlUrl)) {
 			long count = stream.count();
 			assertEquals(1, count, "Data insert failed.");
 		}
 
 		GraphUtils.doUpdate(updateUrl, THING_DELETE);
 
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, THING_QUERY)) {
+		try (var stream = new QuerySolutionStream(THING_QUERY, sparqlUrl)) {
 			long count = stream.count();
 			assertEquals(0, count, "Data delete failed.");
 		}
 
 		GraphUtils.clearAll(graphStoreUrl, sparqlUrl);
 
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, CLASS_QUERY)) {
+		try (var stream = new QuerySolutionStream(CLASS_QUERY, sparqlUrl)) {
 			long count = stream.count();
 			assertEquals(0, count, "Invalid postcondition -- triple store is not empty.");
 		}
@@ -189,7 +189,7 @@ public class ParliamentServerTests {
 		GraphUtils.insert(updateUrl, TEST_SUBJECT, RDFS.label.getURI(), NodeFactory.createLiteral(TEST_LITERAL), null);
 
 		String query = "select * where { ?thing a <%1$s> ; <%2$s> ?label . }";
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_CLASS, RDFS.label)) {
+		try (var stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_CLASS, RDFS.label)) {
 			long count = stream
 				.map(qs -> Pair.of(qs.getResource("thing"), qs.getLiteral("label")))
 				.filter(pair -> TEST_SUBJECT.equals(pair.getLeft().getURI())
@@ -245,7 +245,7 @@ public class ParliamentServerTests {
 		GraphUtils.insert(updateUrl, bs, RDF.type.getURI(), NodeFactory.createURI(y), graphUri);
 
 		boolean foundIt = false;
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, graphUri, y)) {
+		try (var stream = GraphUtils.doSelectQuery(sparqlUrl, query, graphUri, y)) {
 			foundIt = stream
 					.map(qs -> qs.getResource("thing"))
 					.map(Resource::getURI)
@@ -256,7 +256,7 @@ public class ParliamentServerTests {
 
 		GraphUtils.delete(updateUrl, bs, RDF.type.getURI(), NodeFactory.createURI(y), graphUri);
 		foundIt = false;
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, graphUri, y)) {
+		try (var stream = GraphUtils.doSelectQuery(sparqlUrl, query, graphUri, y)) {
 			foundIt = stream
 					.map(qs -> qs.getResource("thing"))
 					.map(Resource::getURI)
@@ -272,7 +272,7 @@ public class ParliamentServerTests {
 	public void queryErrorTest() {
 		String invalidQuery = "select * where { ?thing oogetyboogetyboo! }";
 		boolean caughtException = false;
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, invalidQuery)) {
+		try (var stream = new QuerySolutionStream(invalidQuery, sparqlUrl)) {
 			@SuppressWarnings("unused")
 			long count = stream.count();
 		} catch (Exception ex) {
@@ -320,7 +320,7 @@ public class ParliamentServerTests {
 
 		boolean foundIt = false;
 
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_CLASS, graphUri)) {
+		try (var stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_CLASS, graphUri)) {
 			foundIt = stream
 					.map(qs -> qs.getResource("x"))
 					.map(Resource::getURI)
@@ -370,7 +370,7 @@ public class ParliamentServerTests {
 			""", unionGraphUri, graph1Uri, graph2Uri);
 
 		boolean foundIt = false;
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, unionGraphUri, TEST_CLASS, TEST_CLASS)) {
+		try (var stream = GraphUtils.doSelectQuery(sparqlUrl, query, unionGraphUri, TEST_CLASS, TEST_CLASS)) {
 			foundIt = stream
 					.map(qs -> qs.getResource("x"))
 					.map(Resource::getURI)

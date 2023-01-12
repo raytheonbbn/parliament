@@ -96,8 +96,18 @@ public class GraphStoreTests {
 
 	private static void assertAllClear(String graphStoreUrl, String sparqlUrl) {
 		GraphUtils.clearAll(graphStoreUrl, sparqlUrl);
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, EVERYTHING_QUERY)) {
+		try (var stream = new QuerySolutionStream(EVERYTHING_QUERY, sparqlUrl)) {
 			assertEquals(0, stream.count(), "Invalid postcondition -- triple store is not empty.");
+		}
+	}
+
+	private static ParameterizedSparqlString prepareInsertTestQuery(String defaultQuery, String ngQuery, String graphName) {
+		if (graphName == null) {
+			return new ParameterizedSparqlString(defaultQuery);
+		} else {
+			var pss = new ParameterizedSparqlString(ngQuery);
+			pss.setIri("_ng", graphName);
+			return pss;
 		}
 	}
 
@@ -116,101 +126,28 @@ public class GraphStoreTests {
 
 	@ParameterizedTest
 	@MethodSource("insertSampleDataTestArgs")
-	public void insertSampleDataTest(String fileName, String graphName, long expectedAllQueryCount, long expectedLabelQueryCount) throws IOException {
+	public void insertSampleDataTest(String fileName, String graphName,
+			long expectedAllQueryCount, long expectedLabelQueryCount) throws IOException {
 		var fileFmt = RDFFormat.parseFilename(fileName);
 		LOG.debug("Loading file '{}' as {} via graph store protocol", fileName, fileFmt);
 		try (InputStream is = new FileInputStream(new File(DATA_DIR, fileName))) {
 			GraphUtils.insertStatements(graphStoreUrl, is, fileFmt, graphName);
 		}
 
-		String allQuery = DEFAULT_ALL_QUERY;
-		if (graphName != null) {
-			var pss = new ParameterizedSparqlString(NG_ALL_QUERY);
-			pss.setIri("_ng", graphName);
-			allQuery = pss.toString();
-		}
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, allQuery)) {
+		var allQuery = prepareInsertTestQuery(DEFAULT_ALL_QUERY, NG_ALL_QUERY, graphName);
+		try (var stream = new QuerySolutionStream(allQuery, sparqlUrl)) {
 			assertEquals(expectedAllQueryCount, stream.count());
 		}
 
-		String labelQuery = DEFAULT_LABEL_QUERY;
-		if (graphName != null) {
-			var pss = new ParameterizedSparqlString(NG_LABEL_QUERY);
-			pss.setIri("_ng", graphName);
-			labelQuery = pss.toString();
-		}
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, labelQuery)) {
+		var labelQuery = prepareInsertTestQuery(DEFAULT_LABEL_QUERY, NG_LABEL_QUERY, graphName);
+		try (var stream = new QuerySolutionStream(labelQuery, sparqlUrl)) {
 			assertEquals(expectedLabelQueryCount, stream.count());
-		}
-	}
-
-
-	/*
-	 * Non-empty inserts into non-existing graphs will, however, implicitly create
-	 * those graphs, i.e., an implementation fulfilling an update request should
-	 * silently an automatically create graphs that do not exist before triples are
-	 * inserted into them, and must return with failure if it fails to do so for any
-	 * reason.
-	 */
-	@Test
-	public void insertIntoNamedGraphAndQueryTest() throws IOException {
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, EVERYTHING_QUERY)) {
-			assertEquals(0, stream.count(), "Invalid precondition -- triple store is not empty.");
-		}
-
-		String triple1 = "<%1$s> <%2$s> <%3$s1> .".formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
-		String query = "select * where { graph <%1$s> { ?x a <%2$s1>. } }";
-
-		GraphUtils.insertStatements(graphStoreUrl, triple1, RDFFormat.NTRIPLES, TEST_NG_URI);
-
-		boolean foundIt = false;
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_NG_URI, TEST_CLASS)) {
-			foundIt = stream
-					.map(qs -> qs.getResource("x"))
-					.map(Resource::getURI)
-					.filter(uri -> TEST_SUBJECT.equals(uri))
-					.count() == 1;
-			assertTrue(foundIt);
-		}
-
-		GraphUtils.clearAll(graphStoreUrl, sparqlUrl);
-
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_NG_URI, TEST_CLASS)) {
-			assertEquals(0, stream.count(), "Invalid postcondition -- triple store is not empty.");
-		}
-	}
-
-	@Test
-	public void insertIntoDefaultGraphAndQueryTest() throws IOException {
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, EVERYTHING_QUERY)) {
-			assertEquals(0, stream.count(), "Invalid precondition -- triple store is not empty.");
-		}
-
-		String triple1 = "<%1$s> <%2$s> <%3$s1> .".formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
-		String query = "select * where { ?x a <%1$s1>. } ";
-
-		GraphUtils.insertStatements(graphStoreUrl, triple1, RDFFormat.NTRIPLES, null);
-
-		boolean foundIt = false;
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_CLASS)) {
-			foundIt = stream
-					.map(qs -> qs.getResource("x"))
-					.map(Resource::getURI)
-					.filter(uri -> TEST_SUBJECT.equals(uri))
-					.count() == 1;
-			assertTrue(foundIt);
-		}
-
-		GraphUtils.clearAll(graphStoreUrl, sparqlUrl);
-
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_CLASS)) {
-			assertEquals(0, stream.count(), "Invalid postcondition -- triple store is not empty.");
 		}
 	}
 
 	@Test
 	public void deleteNamedGraphTest() throws IOException {
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, EVERYTHING_QUERY)) {
+		try (var stream = new QuerySolutionStream(EVERYTHING_QUERY, sparqlUrl)) {
 			assertEquals(0, stream.count(), "Invalid precondition -- triple store is not empty.");
 		}
 		String triple1 = "<%1$s> <%2$s> <%3$s1> .".formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
@@ -218,7 +155,7 @@ public class GraphStoreTests {
 		GraphUtils.insertStatements(graphStoreUrl, triple1, RDFFormat.NTRIPLES, TEST_NG_URI);
 
 		boolean foundIt = false;
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_SUBJECT, TEST_CLASS)) {
+		try (var stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_SUBJECT, TEST_CLASS)) {
 			foundIt = stream
 					.map(qs -> qs.getResource("g"))
 					.map(Resource::getURI)
@@ -229,14 +166,14 @@ public class GraphStoreTests {
 
 		GraphUtils.deleteGraph(graphStoreUrl, TEST_NG_URI);
 
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_SUBJECT, TEST_CLASS)) {
+		try (var stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_SUBJECT, TEST_CLASS)) {
 			assertEquals(0, stream.count(), "Invalid postcondition -- triple store is not empty.");
 		}
 	}
 
 	@Test
 	public void createNamedGraphTest() throws IOException {
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, EVERYTHING_QUERY)) {
+		try (var stream = new QuerySolutionStream(EVERYTHING_QUERY, sparqlUrl)) {
 			assertEquals(0, stream.count(), "Invalid precondition -- triple store is not empty.");
 		}
 
@@ -252,7 +189,7 @@ public class GraphStoreTests {
 
 		GraphUtils.insertStatements(graphStoreUrl, triple1, RDFFormat.NTRIPLES, graph1Uri);
 
-		try (QuerySolutionStream stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_SUBJECT, TEST_CLASS)) {
+		try (var stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_SUBJECT, TEST_CLASS)) {
 			foundIt = stream
 					.map(qs -> qs.getResource("g"))
 					.map(Resource::getURI)
