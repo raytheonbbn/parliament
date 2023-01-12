@@ -77,6 +77,11 @@ task runSchemagen(type: JavaExec) {
 
 compileJava.dependsOn runSchemagen
 
+clean {
+	delete "${projectDir}/kb-data"
+	delete "${projectDir}/log"
+}
+
 test {
 	useJUnitPlatform()
 

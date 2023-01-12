@@ -65,6 +65,7 @@
 		<delete file="${basedir}/Parliament/AdminClient/.settings/language.settings.xml"/>
 		<delete file="${basedir}/Parliament/KbCore/.settings/language.settings.xml"/>
 		<delete file="${basedir}/Parliament/Test/.settings/language.settings.xml"/>
+		<delete dir="${basedir}/server/bin"/>
 		<delete dir="${basedir}/sesame/CSameAsSail/bin"/>
 		<delete dir="${basedir}/sesame/LuceneSail/bin"/>
 		<delete dir="${basedir}/sesame/ParliamentSail/bin"/>
