@@ -27,11 +27,11 @@ import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bbn.parliament.client.jena.RDFFormat;
 import com.bbn.parliament.jena.bridge.configuration.ConfigurationException;
 import com.bbn.parliament.jena.bridge.configuration.ConfigurationHandler;
 import com.bbn.parliament.jena.bridge.configuration.IndexProcessorConfigurationHandler;
 import com.bbn.parliament.jena.bridge.configuration.vocab.ConfigOnt;
-import com.bbn.parliament.jena.joseki.client.RDFFormat;
 
 public class ParliamentBridgeConfiguration {
 	/** Default threshold above which DeferredFileOutputStream stores to disk. Set to 10 MB. */

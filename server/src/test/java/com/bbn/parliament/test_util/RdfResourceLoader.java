@@ -13,7 +13,7 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.jena.rdf.model.Model;
 
-import com.bbn.parliament.jena.joseki.client.RDFFormat;
+import com.bbn.parliament.client.jena.RDFFormat;
 
 public class RdfResourceLoader {
 	@FunctionalInterface

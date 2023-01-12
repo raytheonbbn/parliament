@@ -33,8 +33,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.bbn.parliament.jena.joseki.client.QuerySolutionStream;
-import com.bbn.parliament.jena.joseki.client.RDFFormat;
+import com.bbn.parliament.client.jena.QuerySolutionStream;
+import com.bbn.parliament.client.jena.RDFFormat;
 import com.bbn.parliament.spring_boot.controller.QueryController;
 
 import reactor.core.publisher.Mono;

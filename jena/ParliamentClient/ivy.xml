@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ivy-module version="2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+
+	<info organisation="com.bbn.parliament" module="ParliamentClient">
+		<description>Client library for accessing Parliament server</description>
+	</info>
+
+	<configurations>
+		<conf name="default"/>
+		<conf name="test" extends="default" visibility="private"
+			description="for unit testing"/>
+	</configurations>
+
+	<dependencies>
+		<dependency org="org.apache.jena" name="jena-arq" rev="${jena.version}"
+			conf="default->default"/>
+		<dependency org="org.apache.httpcomponents" name="httpclient" rev="${httpclient.version}"
+			conf="default->default"/>
+		<dependency org="org.slf4j" name="slf4j-api" rev="${slf4j.version}"
+			conf="default->default"/>
+		<dependency org="org.slf4j" name="slf4j-log4j12" rev="${slf4j.version}"
+			conf="default->default"/>
+		<dependency org="org.slf4j" name="jcl-over-slf4j" rev="${slf4j.version}"
+			conf="default->default"/>
+
+		<dependency org="org.junit.jupiter" name="junit-jupiter" rev="${junit-jupiter.version}"
+			conf="test->default"/>
+		<dependency org="org.junit.platform" name="junit-platform-launcher" rev="${junit-platform-launcher.version}"
+			conf="test->default"/>
+
+		<exclude org="commons-logging"/>
+		<override org="org.apache.httpcomponents" module="httpclient-cache"
+			rev="${httpclient-cache.version}"/>
+		<override org="org.apache.httpcomponents" module="httpclient"
+			rev="${httpclient.version}"/>
+		<override org="org.apache.httpcomponents" module="httpcore"
+			rev="${httpcore.version}"/>
+		<override org="commons-codec" module="commons-codec"
+			rev="${commons-codec.version}"/>
+	</dependencies>
+</ivy-module>

@@ -30,10 +30,10 @@ import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bbn.parliament.client.jena.StreamUtil;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.graph.union.KbUnionGraph;
 import com.bbn.parliament.jena.graph.union.KbUnionableGraph;
-import com.bbn.parliament.jena.joseki.client.StreamUtil;
 import com.bbn.parliament.jni.KbConfig;
 
 /** @author sallen */

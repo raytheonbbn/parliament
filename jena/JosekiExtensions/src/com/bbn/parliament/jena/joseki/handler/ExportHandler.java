@@ -21,11 +21,11 @@ import org.joseki.Joseki;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bbn.parliament.client.jena.RDFFormat;
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.joseki.bridge.ActionRouter;
 import com.bbn.parliament.jena.joseki.bridge.servlet.ServletErrorResponseException;
 import com.bbn.parliament.jena.joseki.bridge.util.HttpServerUtil;
-import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
 
 /** @author sallen */

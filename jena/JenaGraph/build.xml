@@ -9,7 +9,7 @@
 	<property name="jarFile" value="${artifactsDir}/${ant.project.name}.jar"/>
 	<property name="testJarFile" value="${artifactsDir}/${ant.project.name}-tests.jar"/>
 	<property name="parliamentDir" value="${kbRootDir}/Parliament"/>
-	<property name="parliamentClientDir" value="${kbRootDir}/jena/JosekiParliamentClient"/>
+	<property name="parliamentClientDir" value="${kbRootDir}/jena/ParliamentClient"/>
 	<property name="testBinDir" value="${targetDir}/test-bin/${ant.project.name}"/>
 
 	<target name="buildDependencies">
@@ -23,7 +23,7 @@
 			<src path="${basedir}/src"/>
 			<classpath>
 				<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
-				<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
+				<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 				<fileset dir="${basedir}/lib/default" includes="*.jar"/>
 			</classpath>
 			<compilerarg value="-Xlint:all"/>
@@ -49,7 +49,7 @@
 	<path id="testPath">
 		<pathelement location="${jarFile}"/>
 		<pathelement location="${artifactsDir}/Parliament.jar"/>
-		<pathelement location="${artifactsDir}/JosekiParliamentClient.jar"/>
+		<pathelement location="${artifactsDir}/ParliamentClient.jar"/>
 		<fileset dir="${basedir}/lib/test" includes="*.jar"/>
 	</path>
 

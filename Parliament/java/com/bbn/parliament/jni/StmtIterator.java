@@ -18,8 +18,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * This class maintains a thread-local Boolean flag to facilitate the canceling
  * of queries at a high level.  This facility assumes that each query is handled
  * entirely on a single thread.  This assumption holds true for the current
- * combination of Joseki 3.4.1, Jena 2.6.2, and ARQ 2.8.1.  See the methods
- * resetQueryCanceledFlag and getQueryCanceledFlag for details.
+ * implementation.  See the methods resetQueryCanceledFlag and getQueryCanceledFlag
+ * for details.
  */
 public class StmtIterator implements Iterator<StmtIterator.Statement>, Closeable {
 	public static class Statement {

@@ -41,9 +41,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bbn.parliament.client.jena.QuerySolutionStream;
 import com.bbn.parliament.jena.TestingDataset;
 import com.bbn.parliament.jena.graph.KbGraph;
-import com.bbn.parliament.jena.joseki.client.QuerySolutionStream;
 
 public class KbOpExecutorDAWGTest {
 	private static final String[] DAWG_TEST_DIRS = {

@@ -21,7 +21,7 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation fileTree(dir: artifactsDir, include: [
 		'JenaGraph.jar',
-		'JosekiParliamentClient.jar',
+		'ParliamentClient.jar',
 		'NumericIndex.jar',
 		'Parliament.jar',
 		'SpatialIndexProcessor.jar',

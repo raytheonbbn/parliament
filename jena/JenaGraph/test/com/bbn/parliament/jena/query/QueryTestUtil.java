@@ -23,7 +23,7 @@ import org.apache.jena.sparql.engine.iterator.QueryIterPlainWrapper;
 import org.apache.jena.sparql.resultset.RDFInput;
 import org.apache.jena.sparql.resultset.ResultSetCompare;
 
-import com.bbn.parliament.jena.joseki.client.RDFFormat;
+import com.bbn.parliament.client.jena.RDFFormat;
 
 public class QueryTestUtil {
 	private QueryTestUtil() {}	// prevents instantiation

@@ -26,8 +26,6 @@ import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 
-//import org.joseki.util.Convert;
-
 import com.bbn.parliament.jena.graph.KbGraphStore;
 
 /** @author sallen */

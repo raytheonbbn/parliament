@@ -24,13 +24,13 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bbn.parliament.client.jena.RDFFormat;
 import com.bbn.parliament.jena.bridge.ConcurrentRequestController;
 import com.bbn.parliament.jena.bridge.ConcurrentRequestLock;
 import com.bbn.parliament.jena.bridge.configuration.ReasonerConfigurationHandler;
 import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.graph.union.KbUnionableGraph;
-import com.bbn.parliament.jena.joseki.client.RDFFormat;
 import com.bbn.parliament.jena.modify.KbUpdateEngine;
 import com.bbn.parliament.jni.KbConfig;
 

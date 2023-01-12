@@ -38,6 +38,8 @@ import org.apache.jena.vocabulary.XSD;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bbn.parliament.client.jena.RDFFormat;
+import com.bbn.parliament.client.jena.StreamUtil;
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.KbGraphFactory;
 import com.bbn.parliament.jena.graph.KbGraphStore;
@@ -45,8 +47,6 @@ import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Geo;
 import com.bbn.parliament.jena.graph.index.spatial.standard.StdConstants;
-import com.bbn.parliament.jena.joseki.client.RDFFormat;
-import com.bbn.parliament.jena.joseki.client.StreamUtil;
 import com.bbn.parliament.jena.query.QueryTestUtil;
 
 public class SpatialTestDataset {

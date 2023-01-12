@@ -13,7 +13,7 @@ import org.apache.jena.rdf.model.RDFReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.joseki.client.RDFFormat;
+import com.bbn.parliament.client.jena.RDFFormat;
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.impl.TurtleTripleCallback;

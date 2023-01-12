@@ -35,7 +35,7 @@
 		<delete dir="${basedir}/jena/JenaGraph/lib"/>
 		<delete dir="${basedir}/jena/JenaGraph/union-test-kb-data"/>
 		<delete dir="${basedir}/jena/JosekiExtensions/lib"/>
-		<delete dir="${basedir}/jena/JosekiParliamentClient/lib"/>
+		<delete dir="${basedir}/jena/ParliamentClient/lib"/>
 		<delete dir="${basedir}/jena/NumericIndex/lib"/>
 		<delete dir="${basedir}/jena/SpatialIndexProcessor/lib"/>
 		<delete dir="${basedir}/jena/TemporalIndexProcessor/lib"/>
@@ -55,7 +55,7 @@
 		<delete dir="${basedir}/jena/JenaGraph/bin"/>
 		<delete dir="${basedir}/jena/JosekiExtensions/bin"/>
 		<delete file="${basedir}/jena/JosekiExtensions/build.log"/>
-		<delete dir="${basedir}/jena/JosekiParliamentClient/bin"/>
+		<delete dir="${basedir}/jena/ParliamentClient/bin"/>
 		<delete dir="${basedir}/jena/NumericIndex/bin"/>
 		<delete dir="${basedir}/jena/SpatialIndexProcessor/bin"/>
 		<delete dir="${basedir}/jena/TemporalIndexProcessor/bin"/>
@@ -78,7 +78,7 @@
 	</target>
 
 	<target name="runTests" depends="createDistro" description="Runs extended unit and integration tests">
-		<ant dir="${basedir}/jena/JosekiParliamentClient" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/jena/ParliamentClient" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JenaGraph" target="runTests" inheritAll="false"/>
 		<!-- ant dir="${basedir}/jena/JosekiExtensions" target="runTests" inheritAll="false"/ -->
 		<ant dir="${basedir}/jena/NumericIndex" target="runTests" inheritAll="false"/>
@@ -108,7 +108,7 @@
 
 	<target name="buildCode" depends="init">
 		<ant dir="${basedir}/Parliament" target="deliverArtifacts" inheritAll="false"/>
-		<ant dir="${basedir}/jena/JosekiParliamentClient" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/jena/ParliamentClient" target="jar" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JenaGraph" target="jar" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JosekiExtensions" target="prepareDeployableServers" inheritAll="false"/>
 		<ant dir="${basedir}/jena/NumericIndex" target="jar" inheritAll="false"/>
@@ -158,7 +158,7 @@
 
 		<include name="jena/JenaGraph/src/**/*.java"/>
 		<include name="jena/JosekiExtensions/src/**/*.java"/>
-		<include name="jena/JosekiParliamentClient/src/**/*.java"/>
+		<include name="jena/ParliamentClient/src/**/*.java"/>
 		<include name="jena/NumericIndex/src/**/*.java"/>
 		<include name="jena/SpatialIndexProcessor/src/**/*.java"/>
 		<include name="jena/TemporalIndexProcessor/src/**/*.java"/>

@@ -320,7 +320,7 @@ Another common update operation is inserting a body of \ac{rdf} into \ac{pmnt}, 
 
 \begin{verbatim}
    java -cp "clientJars/*"
-   com.bbn.parliament.jena.joseki.client.RemoteInserter
+   com.bbn.parliament.client.jena.RemoteInserter
    <hostname> <port> <inputfile> [<graph-name>]
 \end{verbatim}
 
@@ -330,7 +330,7 @@ where \path|clientJars| is the full path name of the directory of that name unde
 
 \ac{pmnt} also provides a Java library to help programmers interact with the \ac{pmnt} server, which can be found here:
 \begin{quote}
-	\path|ParliamentKB/lib/JosekiParliamentClient.jar|
+	\path|ParliamentKB/lib/ParliamentClient.jar|
 \end{quote}
 This library leverages the Jena functionality shown above, but exposes a few extra features of the \ac{pmnt} server that are not accessible within the bounds of \ac{sparql}.  Note, however, that for common operations, there is no need to use this library.
 
@@ -339,7 +339,7 @@ To use this approach, first add the above jar file to your class path.  Then cre
 	\footnotesize
 	\centering
 	\begin{verbatim}
-import com.bbn.parliament.jena.joseki.client.RemoteModel;
+import com.bbn.parliament.client.jena.RemoteModel;
 
 void useRemoteParliamentModel()
 {
@@ -567,7 +567,7 @@ The recognized settings are as follows:
 
 	\item[readOnly] When set to ``yes'', prevents \ac{pmnt} from changing the underlying storage files in any way. \emph{Default: ``no''}
 
-	\item[fileSyncTimerDelay] \ac{pmnt} periodically flushes its underlying data files to disk to decrease the chances of a file corruption and to limit the amount of time required to shut down \ac{pmnt} gracefully.  This parameter is the time interval in milliseconds between flushes.  Set it to zero to disable flushing the files to disk.  This setting applies only to \ac{pmnt} deployed as a server using Jena, Joseki, and Jetty.  Any other deployment will ignore this setting. \emph{Default: ``15000''}
+	\item[fileSyncTimerDelay] \ac{pmnt} periodically flushes its underlying data files to disk to decrease the chances of a file corruption and to limit the amount of time required to shut down \ac{pmnt} gracefully.  This parameter is the time interval in milliseconds between flushes.  Set it to zero to disable flushing the files to disk.  This setting applies only to \ac{pmnt} deployed as a server.  Any other deployment will ignore this setting. \emph{Default: ``15000''}
 
 	\item[initialRsrcCapacity] The number of resources \ac{pmnt} should allocate space for when creating a new \ac{kb}. \emph{Default: ``300000''}
 

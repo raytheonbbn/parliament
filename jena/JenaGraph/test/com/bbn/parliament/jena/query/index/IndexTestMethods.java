@@ -21,6 +21,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bbn.parliament.client.jena.StreamUtil;
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.KbGraphFactory;
 import com.bbn.parliament.jena.graph.KbGraphStore;
@@ -30,7 +31,6 @@ import com.bbn.parliament.jena.graph.index.IndexFactory;
 import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.jena.graph.index.IndexManager;
 import com.bbn.parliament.jena.graph.index.Record;
-import com.bbn.parliament.jena.joseki.client.StreamUtil;
 
 public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoCloseable {
 	public enum IndexUnderTest { DEFAULT_GRAPH, NAMED_GRAPH }

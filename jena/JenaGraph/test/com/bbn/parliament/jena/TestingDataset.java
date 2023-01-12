@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 
+import com.bbn.parliament.client.jena.StreamUtil;
 import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.KbGraphFactory;
 import com.bbn.parliament.jena.graph.KbGraphStore;
-import com.bbn.parliament.jena.joseki.client.StreamUtil;
 
 public class TestingDataset {
 	public static final Node NAMED_GRAPH_URI = NodeFactory.createURI("http://example.org/testgraph");

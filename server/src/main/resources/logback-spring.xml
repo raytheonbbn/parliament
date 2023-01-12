@@ -28,21 +28,6 @@
 		<appender-ref ref="Console"/>
 	</root>
 
-	<!-- logger name="org.mortbay" level="warn" additivity="false">
-		<appender-ref ref="RollingFile"/>
-		<appender-ref ref="Console"/>
-	</logger>
-
-	<logger name="org.joseki" level="warn" additivity="false">
-		<appender-ref ref="RollingFile"/>
-		<appender-ref ref="Console"/>
-	</logger>
-
-	<logger name="com.hp.hpl.jena" level="warn" additivity="false">
-		<appender-ref ref="RollingFile"/>
-		<appender-ref ref="Console"/>
-	</logger -->
-
 	<logger name="com.bbn.parliament" level="trace" additivity="false">
 		<appender-ref ref="RollingFile"/>
 		<appender-ref ref="Console"/>

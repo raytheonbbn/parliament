@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 
 import org.apache.jena.vocabulary.RDF;
 
+import com.bbn.parliament.client.jena.RemoteModel;
 import com.bbn.parliament.jena.graph.KbGraphStore;
-import com.bbn.parliament.jena.joseki.client.RemoteModel;
 
 /** @author dkolas */
 public class InsertionTester {

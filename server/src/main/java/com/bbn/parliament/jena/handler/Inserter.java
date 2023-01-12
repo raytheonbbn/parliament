@@ -32,12 +32,12 @@ import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bbn.parliament.client.jena.RDFFormat;
 import com.bbn.parliament.jena.exception.DataFormatException;
 import com.bbn.parliament.jena.exception.MissingGraphException;
 import com.bbn.parliament.jena.graph.ForgetfulGraph;
 import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.graph.ModelManager;
-import com.bbn.parliament.jena.joseki.client.RDFFormat;
 
 public final class Inserter {
 	private static final Logger LOG = LoggerFactory.getLogger(Inserter.class);

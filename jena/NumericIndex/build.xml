@@ -19,7 +19,7 @@
 		<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
 		<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
 		<fileset dir="${artifactsDir}" includes="JenaGraph-tests.jar"/>
-		<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
+		<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 		<fileset file="${jarFile}"/>
 	</path>
 

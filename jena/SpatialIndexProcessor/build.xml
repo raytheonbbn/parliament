@@ -23,7 +23,7 @@
 		<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
 		<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
 		<fileset dir="${artifactsDir}" includes="JenaGraph-tests.jar"/>
-		<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
+		<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 		<fileset file="${jarFile}"/>
 	</path>
 
@@ -35,7 +35,7 @@
 	</target>
 
 	<target name="buildDependencies">
-		<ant dir="${kbRootDir}/jena/JosekiParliamentClient" target="jar" inheritAll="false"/>
+		<ant dir="${kbRootDir}/jena/ParliamentClient" target="jar" inheritAll="false"/>
 		<ant dir="${kbRootDir}/jena/JenaGraph" target="jar" inheritall="false"/>
 	</target>
 

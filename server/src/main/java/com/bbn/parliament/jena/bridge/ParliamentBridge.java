@@ -44,14 +44,6 @@ public class ParliamentBridge {
 
 	/** Initialize this instance using the given config file and tmp dir.  If the tmp dir is null, the system's tmp dir will be used instead. */
 	public static void initialize(String configurationFile, File tmpDir) throws ParliamentBridgeException {
-		// Add JSON-LD to the set of recognized RDF serializations:
-
-		/*
-		ResponseHttpInitializer.fixupHttpAcceptTypes();
-		Joseki.setWriterType(JsonLdRdfWriter.contentType, JsonLdRdfWriter.formatName);
-		Joseki.setReaderType(JsonLdRdfReader.contentType, JsonLdRdfReader.formatName);
-		*/
-
 		_instance = new ParliamentBridge(
 			ParliamentBridgeConfiguration.readConfiguration(configurationFile, tmpDir));
 	}

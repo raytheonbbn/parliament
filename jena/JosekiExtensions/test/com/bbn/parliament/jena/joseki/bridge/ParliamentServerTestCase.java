@@ -48,10 +48,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bbn.parliament.client.jena.HttpClientUtil;
+import com.bbn.parliament.client.jena.RDFFormat;
+import com.bbn.parliament.client.jena.RemoteModel;
 import com.bbn.parliament.jena.joseki.bridge.tracker.Tracker;
-import com.bbn.parliament.jena.joseki.client.HttpClientUtil;
-import com.bbn.parliament.jena.joseki.client.RDFFormat;
-import com.bbn.parliament.jena.joseki.client.RemoteModel;
 
 import test_util.RdfResourceLoader;
 

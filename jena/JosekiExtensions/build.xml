@@ -20,7 +20,7 @@
 	<property name="warFile" value="${artifactsDir}/parliament.war"
 		description="This file name becomes the base URL of the service, so don't add a version number to it!"/>
 
-	<property name="parliamentClientDir" value="${kbRootDir}/jena/JosekiParliamentClient"/>
+	<property name="parliamentClientDir" value="${kbRootDir}/jena/ParliamentClient"/>
 	<property name="jenaGraphDir" location="${kbRootDir}/jena/JenaGraph"/>
 	<property name="numericIndexDir" location="${kbRootDir}/jena/NumericIndex"/>
 	<property name="spatialIndexDir" location="${kbRootDir}/jena/SpatialIndexProcessor"/>
@@ -105,7 +105,7 @@
 				<fileset file="${josekiLib}"/>
 				<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
 				<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
-				<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
+				<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 				<fileset file="${serverJarFile}"/>
 			</classpath>
 			<compilerarg value="-Xlint:all"/>
@@ -133,7 +133,7 @@
 			<lib dir="${artifactsDir}">
 				<include name="Parliament.jar"/>
 				<include name="JenaGraph.jar"/>
-				<include name="JosekiParliamentClient.jar"/>
+				<include name="ParliamentClient.jar"/>
 				<include name="NumericIndex.jar"/>
 				<include name="SpatialIndexProcessor.jar"/>
 				<include name="TemporalIndexProcessor.jar"/>
@@ -170,7 +170,7 @@
 
 		<copy todir="${deployableSvrDir}/clientJars">
 			<fileset dir="${parliamentClientDir}/lib/default" includes="*.jar"/>
-			<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
+			<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 		</copy>
 
 		<if>
@@ -209,7 +209,7 @@
 				<fileset file="${bridgeJarFile}"/>
 				<fileset file="${serverJarFile}"/>
 				<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
-				<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
+				<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 			</classpath>
 			<compilerarg value="-Xlint:all"/>
 		</javac>
@@ -243,7 +243,7 @@
 				<fileset file="${serverJarFile}"/>
 				<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
 				<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
-				<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
+				<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 				<fileset dir="${artifactsDir}" includes="NumericIndex.jar"/>
 				<fileset dir="${artifactsDir}" includes="SpatialIndexProcessor.jar"/>
 				<fileset dir="${artifactsDir}" includes="TemporalIndexProcessor.jar"/>
