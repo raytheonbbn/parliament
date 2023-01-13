@@ -9,36 +9,52 @@ package com.bbn.parliament.client.jena;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /** @author sallen */
 public class RDFFormatTest {
-	/** Test for {@link com.bbn.parliament.jena.util.RDFFormat#parse(java.lang.String)}. */
+	private static Stream<Arguments> testParseArgs() {
+		return Stream.of(
+			Arguments.of(RDFFormat.RDFXML,	"RDF/XML"),
+			Arguments.of(RDFFormat.RDFXML,	"RDF/XML-ABBREV"),
+			Arguments.of(RDFFormat.TURTLE,	"TURTLE"),
+			Arguments.of(RDFFormat.TURTLE,	"TTL"),
+			Arguments.of(RDFFormat.NTRIPLES,	"N-TRIPLES"),
+			Arguments.of(RDFFormat.NTRIPLES,	"NTRIPLES"),
+			Arguments.of(RDFFormat.N3,			"N3"),
+			Arguments.of(RDFFormat.JSON_LD,	"JSON-LD"),
+			Arguments.of(RDFFormat.ZIP,		"ZIP"),
+			Arguments.of(RDFFormat.UNKNOWN,	"UNKNOWN"),
+			Arguments.of(RDFFormat.RDFXML,	"  rdf/xml"),
+			Arguments.of(RDFFormat.RDFXML,	"Rdf/XML-Abbrev  "),
+			Arguments.of(RDFFormat.TURTLE,	"\tTurTLE"),
+			Arguments.of(RDFFormat.TURTLE,	"ttl\t"),
+			Arguments.of(RDFFormat.NTRIPLES,	" \tN-Triples"),
+			Arguments.of(RDFFormat.NTRIPLES,	"ntriples\t  "),
+			Arguments.of(RDFFormat.N3,			"\t  \tn3   "),
+			Arguments.of(RDFFormat.JSON_LD,	"json-ld"),
+			Arguments.of(RDFFormat.ZIP,		"Zip"),
+			Arguments.of(RDFFormat.UNKNOWN,	"Unknown"),
+			Arguments.of(RDFFormat.UNKNOWN,	"\t xYzzY   ")
+			);
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@MethodSource("testParseArgs")
+	public void testParse(RDFFormat expectedFormat, String stringToParse) {
+		assertEquals(expectedFormat, RDFFormat.parse(stringToParse));
+	}
+
+
 	@SuppressWarnings("static-method")
 	@Test
-	public void testParse() {
-		assertEquals(RDFFormat.RDFXML,   RDFFormat.parse("RDF/XML"));
-		assertEquals(RDFFormat.RDFXML,   RDFFormat.parse("RDF/XML-ABBREV"));
-		assertEquals(RDFFormat.TURTLE,   RDFFormat.parse("TURTLE"));
-		assertEquals(RDFFormat.TURTLE,   RDFFormat.parse("TTL"));
-		assertEquals(RDFFormat.NTRIPLES, RDFFormat.parse("N-TRIPLES"));
-		assertEquals(RDFFormat.NTRIPLES, RDFFormat.parse("NTRIPLES"));
-		assertEquals(RDFFormat.N3,       RDFFormat.parse("N3"));
-		assertEquals(RDFFormat.JSON_LD,  RDFFormat.parse("JSON-LD"));
-		assertEquals(RDFFormat.ZIP,      RDFFormat.parse("ZIP"));
-		assertEquals(RDFFormat.UNKNOWN,  RDFFormat.parse("UNKNOWN"));
-		assertEquals(RDFFormat.RDFXML,   RDFFormat.parse("  rdf/xml"));
-		assertEquals(RDFFormat.RDFXML,   RDFFormat.parse("Rdf/XML-Abbrev  "));
-		assertEquals(RDFFormat.TURTLE,   RDFFormat.parse("\tTurTLE"));
-		assertEquals(RDFFormat.TURTLE,   RDFFormat.parse("ttl\t"));
-		assertEquals(RDFFormat.NTRIPLES, RDFFormat.parse(" \tN-Triples"));
-		assertEquals(RDFFormat.NTRIPLES, RDFFormat.parse("ntriples\t  "));
-		assertEquals(RDFFormat.N3,       RDFFormat.parse("\t  \tn3   "));
-		assertEquals(RDFFormat.JSON_LD,  RDFFormat.parse("json-ld"));
-		assertEquals(RDFFormat.ZIP,      RDFFormat.parse("Zip"));
-		assertEquals(RDFFormat.UNKNOWN,  RDFFormat.parse("Unknown"));
-		assertEquals(RDFFormat.UNKNOWN,  RDFFormat.parse("\t xYzzY   "));
-
+	public void testParseOfNull() {
 		try {
 			RDFFormat.parse(null);
 			assertTrue(false, "Should have thrown an NPE");
@@ -47,18 +63,30 @@ public class RDFFormatTest {
 		}
 	}
 
-	/** Test for {@link com.bbn.parliament.jena.util.RDFFormat#parse(java.lang.String)}. */
+
+	private static Stream<Arguments> testParseJenaFormatStringArgs() {
+		return Stream.of(
+			Arguments.of(RDFFormat.RDFXML,	"RDF/XML"),
+			Arguments.of(RDFFormat.RDFXML,	"RDF/XML-ABBREV"),
+			Arguments.of(RDFFormat.TURTLE,	"TURTLE"),
+			Arguments.of(RDFFormat.TURTLE,	"TTL"),
+			Arguments.of(RDFFormat.NTRIPLES,	"N-TRIPLES"),
+			Arguments.of(RDFFormat.NTRIPLES,	"NTRIPLES"),
+			Arguments.of(RDFFormat.N3,			"N3")
+			);
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@MethodSource("testParseJenaFormatStringArgs")
+	public void testParseJenaFormatString(RDFFormat expectedFormat, String stringToParse) {
+		assertEquals(expectedFormat, RDFFormat.parseJenaFormatString(stringToParse));
+	}
+
+
 	@SuppressWarnings("static-method")
 	@Test
-	public void testParseJenaFormatString() {
-		assertEquals(RDFFormat.RDFXML,   RDFFormat.parseJenaFormatString("RDF/XML"));
-		assertEquals(RDFFormat.RDFXML,   RDFFormat.parseJenaFormatString("RDF/XML-ABBREV"));
-		assertEquals(RDFFormat.TURTLE,   RDFFormat.parseJenaFormatString("TURTLE"));
-		assertEquals(RDFFormat.TURTLE,   RDFFormat.parseJenaFormatString("TTL"));
-		assertEquals(RDFFormat.NTRIPLES, RDFFormat.parseJenaFormatString("N-TRIPLES"));
-		assertEquals(RDFFormat.NTRIPLES, RDFFormat.parseJenaFormatString("NTRIPLES"));
-		assertEquals(RDFFormat.N3,       RDFFormat.parseJenaFormatString("N3"));
-
+	public void testParseJenaFormatStringIllegalValues() {
 		try {
 			RDFFormat.parseJenaFormatString("JSON-LD");
 			assertTrue(false, "Should have thrown an IllegalArgumentException");
@@ -81,32 +109,44 @@ public class RDFFormatTest {
 		}
 	}
 
-	/** Test for {@link com.bbn.parliament.jena.util.RDFFormat#parseFilename(java.lang.String)}. */
+
+	private static Stream<Arguments> testParseFilenameArgs() {
+		return Stream.of(
+			Arguments.of(RDFFormat.N3,			"foo.n3"),
+			Arguments.of(RDFFormat.N3,			"foo.N3"),
+			Arguments.of(RDFFormat.N3,			"a thing.n3"),
+			Arguments.of(RDFFormat.TURTLE,			"blah.ttl"),
+			Arguments.of(RDFFormat.NTRIPLES,			"blah.nt"),
+			Arguments.of(RDFFormat.RDFXML,			"thing.rdf"),
+			Arguments.of(RDFFormat.RDFXML,			"thing 2.rdf"),
+			Arguments.of(RDFFormat.RDFXML,			"thing.owl"),
+			Arguments.of(RDFFormat.RDFXML,			"thing.xml"),
+			Arguments.of(RDFFormat.NTRIPLES,			"thing.nt"),
+			Arguments.of(RDFFormat.N3,			"thing.rdf.n3"),
+			Arguments.of(RDFFormat.N3,			".n3"),
+			Arguments.of(RDFFormat.JSON_LD,			"foo.jsonld"),
+			Arguments.of(RDFFormat.JSON_LD,			"foo.json-ld"),
+			Arguments.of(RDFFormat.JSON_LD,			"foo.json_ld"),
+			Arguments.of(RDFFormat.JSON_LD,			"foo.json+ld"),
+			Arguments.of(RDFFormat.ZIP,			"foo.zip"),
+			Arguments.of(RDFFormat.UNKNOWN,			"thing.txt"),
+			Arguments.of(RDFFormat.UNKNOWN,			"boo.fww"),
+			Arguments.of(RDFFormat.UNKNOWN,			""),
+			Arguments.of(RDFFormat.UNKNOWN,			".")
+			);
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@MethodSource("testParseFilenameArgs")
+	public void testParseFilename(RDFFormat expectedFormat, String stringToParse) {
+		assertEquals(expectedFormat, RDFFormat.parseFilename(stringToParse));
+	}
+
+
 	@SuppressWarnings("static-method")
 	@Test
-	public void testParseFilename() {
-		assertEquals(RDFFormat.N3,       RDFFormat.parseFilename("foo.n3"));
-		assertEquals(RDFFormat.N3,       RDFFormat.parseFilename("foo.N3"));
-		assertEquals(RDFFormat.N3,       RDFFormat.parseFilename("a thing.n3"));
-		assertEquals(RDFFormat.TURTLE,   RDFFormat.parseFilename("blah.ttl"));
-		assertEquals(RDFFormat.NTRIPLES, RDFFormat.parseFilename("blah.nt"));
-		assertEquals(RDFFormat.RDFXML,   RDFFormat.parseFilename("thing.rdf"));
-		assertEquals(RDFFormat.RDFXML,   RDFFormat.parseFilename("thing 2.rdf"));
-		assertEquals(RDFFormat.RDFXML,   RDFFormat.parseFilename("thing.owl"));
-		assertEquals(RDFFormat.RDFXML,   RDFFormat.parseFilename("thing.xml"));
-		assertEquals(RDFFormat.NTRIPLES, RDFFormat.parseFilename("thing.nt"));
-		assertEquals(RDFFormat.N3,       RDFFormat.parseFilename("thing.rdf.n3"));
-		assertEquals(RDFFormat.N3,       RDFFormat.parseFilename(".n3"));
-		assertEquals(RDFFormat.JSON_LD,  RDFFormat.parseFilename("foo.jsonld"));
-		assertEquals(RDFFormat.JSON_LD,  RDFFormat.parseFilename("foo.json-ld"));
-		assertEquals(RDFFormat.JSON_LD,  RDFFormat.parseFilename("foo.json_ld"));
-		assertEquals(RDFFormat.JSON_LD,  RDFFormat.parseFilename("foo.json+ld"));
-		assertEquals(RDFFormat.ZIP,      RDFFormat.parseFilename("foo.zip"));
-		assertEquals(RDFFormat.UNKNOWN,  RDFFormat.parseFilename("thing.txt"));
-		assertEquals(RDFFormat.UNKNOWN,  RDFFormat.parseFilename("boo.fww"));
-		assertEquals(RDFFormat.UNKNOWN,  RDFFormat.parseFilename(""));
-		assertEquals(RDFFormat.UNKNOWN,  RDFFormat.parseFilename("."));
-
+	public void testParseFilenameOfNull() {
 		try {
 			RDFFormat.parseFilename((String) null);
 			assertTrue(false, "Should have thrown an NPE");
@@ -115,21 +155,28 @@ public class RDFFormatTest {
 		}
 	}
 
-	/** Test for {@link com.bbn.parliament.jena.util.RDFFormat#parseFilename(java.lang.String)}. */
+
+	private static Stream<Arguments> testParseMediaTypeArgs() {
+		return Stream.of(
+			Arguments.of(RDFFormat.RDFXML,	"application/rdf+xml"),
+			Arguments.of(RDFFormat.TURTLE,	"   text/turtle ; charset=\"UTF-8\""),
+			Arguments.of(RDFFormat.TURTLE,	"application/X-TURTLE"),
+			Arguments.of(RDFFormat.NTRIPLES,	"application/n-triples"),
+			Arguments.of(RDFFormat.NTRIPLES,	"TEXT/PLAIN; charset=us-ascii"),
+			Arguments.of(RDFFormat.N3,			"text/n3"),
+			Arguments.of(RDFFormat.JSON_LD,	"application/ld+json"),
+			Arguments.of(RDFFormat.JSON_LD,	"application/json"),
+			Arguments.of(RDFFormat.ZIP,		"application/zip"),
+			Arguments.of(RDFFormat.UNKNOWN,	"xyzzy"),
+			Arguments.of(RDFFormat.UNKNOWN,	""),
+			Arguments.of(RDFFormat.UNKNOWN,	null)
+			);
+	}
+
 	@SuppressWarnings("static-method")
-	@Test
-	public void testParseMediaType() {
-		assertEquals(RDFFormat.RDFXML,   RDFFormat.parseMediaType("application/rdf+xml"));
-		assertEquals(RDFFormat.TURTLE,   RDFFormat.parseMediaType("   text/turtle ; charset=\"UTF-8\""));
-		assertEquals(RDFFormat.TURTLE,   RDFFormat.parseMediaType("application/X-TURTLE"));
-		assertEquals(RDFFormat.NTRIPLES, RDFFormat.parseMediaType("application/n-triples"));
-		assertEquals(RDFFormat.NTRIPLES, RDFFormat.parseMediaType("TEXT/PLAIN; charset=us-ascii"));
-		assertEquals(RDFFormat.N3,       RDFFormat.parseMediaType("text/n3"));
-		assertEquals(RDFFormat.JSON_LD,  RDFFormat.parseMediaType("application/ld+json"));
-		assertEquals(RDFFormat.JSON_LD,  RDFFormat.parseMediaType("application/json"));
-		assertEquals(RDFFormat.ZIP,      RDFFormat.parseMediaType("application/zip"));
-		assertEquals(RDFFormat.UNKNOWN,  RDFFormat.parseMediaType("xyzzy"));
-		assertEquals(RDFFormat.UNKNOWN,  RDFFormat.parseMediaType(""));
-		assertEquals(RDFFormat.UNKNOWN,  RDFFormat.parseMediaType(null));
+	@ParameterizedTest
+	@MethodSource("testParseMediaTypeArgs")
+	public void testParseMediaType(RDFFormat expectedFormat, String stringToParse) {
+		assertEquals(expectedFormat, RDFFormat.parseMediaType(stringToParse));
 	}
 }

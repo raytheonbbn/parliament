@@ -8,9 +8,7 @@ if not exist "%JAVA_HOME%\bin\java.exe" (
 	goto end
 )
 
-set LCP=.;.\bin;..\..\target\artifacts\ParliamentClient.jar
-for /r "..\..\lib\HttpClient" %%i in (*.jar) do set LCP=!LCP!;%%i
-
+set EXEC="%JAVA_HOME%\bin\java" -cp lib/default/*;../../target/artifacts/*
 set EXEC="%JAVA_HOME%\bin\java" -cp "%LCP%"
 set EXEC=%EXEC% com.bbn.parliament.client.jena.RemoteExporter %*
 
