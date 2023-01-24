@@ -71,6 +71,7 @@
 					<exclude name="**/*StressTest.class"/>
 				</fileset>
 				<fork>
+					<sysproperty key="test.data.path" value="${parliamentDependenciesDir}/data"/>
 					<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
 				</fork>
 			</testclasses>
