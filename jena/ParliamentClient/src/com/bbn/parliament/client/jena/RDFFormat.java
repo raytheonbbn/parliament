@@ -8,8 +8,8 @@ package com.bbn.parliament.client.jena;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 
 /**
@@ -45,7 +45,7 @@ public enum RDFFormat {
 		new String[]{ "text/n3" }),
 
 	/** JSON-LD format */
-	JSON_LD(false,
+	JSON_LD(true,
 		new String[]{ "JSON-LD" },
 		new String[]{ "jsonld", "json-ld", "json_ld", "json+ld" },
 		new String[]{ "application/ld+json", "application/json" }),
@@ -104,9 +104,9 @@ public enum RDFFormat {
 	public static RDFFormat parseJenaFormatString(String formatStr) {
 		RDFFormat format = RDFFormat.parse(formatStr);
 		if (!format.isJenaReadable()) {
-			String errMsg = Arrays.stream(RDFFormat.values())
+			String errMsg = Stream.of(RDFFormat.values())
 				.filter((fmt) -> fmt.isJenaReadable())
-				.flatMap((fmt) -> Arrays.stream(fmt.formatStrList))
+				.flatMap((fmt) -> Stream.of(fmt.formatStrList))
 				.sorted(String.CASE_INSENSITIVE_ORDER)
 				.distinct()
 				.collect(Collectors.joining("\", \"", "Jena format string must be one of \"", "\"."));

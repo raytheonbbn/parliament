@@ -70,7 +70,7 @@ public class RemoteInserter {
 			}
 
 			inputFormat = RDFFormat.parseFilename(inputFile);
-			if (!inputFormat.isJenaReadable() && inputFormat != RDFFormat.JSON_LD) {
+			if (!inputFormat.isJenaReadable()) {
 				throw new CmdLineException("Unrecognized file extension:  \"%1$s\"", inputFile.getName());
 			}
 

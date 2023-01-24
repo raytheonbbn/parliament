@@ -72,7 +72,8 @@ public class RDFFormatTest {
 			Arguments.of(RDFFormat.TURTLE,	"TTL"),
 			Arguments.of(RDFFormat.NTRIPLES,	"N-TRIPLES"),
 			Arguments.of(RDFFormat.NTRIPLES,	"NTRIPLES"),
-			Arguments.of(RDFFormat.N3,			"N3")
+			Arguments.of(RDFFormat.N3,			"N3"),
+			Arguments.of(RDFFormat.JSON_LD,	"JSON-LD")
 			);
 	}
 
@@ -87,13 +88,6 @@ public class RDFFormatTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testParseJenaFormatStringIllegalValues() {
-		try {
-			RDFFormat.parseJenaFormatString("JSON-LD");
-			assertTrue(false, "Should have thrown an IllegalArgumentException");
-		} catch (IllegalArgumentException ex) {
-			System.out.println(ex.getMessage());
-		}
-
 		try {
 			RDFFormat.parseJenaFormatString("ZIP");
 			assertTrue(false, "Should have thrown an IllegalArgumentException");
