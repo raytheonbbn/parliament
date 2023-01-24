@@ -1,6 +1,7 @@
 package com.bbn.parliament.test_util;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -33,6 +34,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.bbn.parliament.client.jena.MultiPartBodyPublisherBuilder;
 import com.bbn.parliament.client.jena.QuerySolutionStream;
 import com.bbn.parliament.client.jena.RDFFormat;
 import com.bbn.parliament.spring_boot.controller.QueryController;
@@ -101,15 +103,6 @@ public class GraphUtils {
 		return qd;
 	}
 
-	public static HttpResponse<String> sendRequest(HttpRequest request) {
-		HttpResponse<String> response = HttpClient
-									.newHttpClient()
-									.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-									.join();
-		LOG.info("Response body:%n%1$s%n".formatted(response.body()));
-		return response;
-	}
-
 	public static Set<String> getAvailableNamedGraphs(String sparqlUrl) {
 		try (var stream = new QuerySolutionStream(NG_QUERY, sparqlUrl)) {
 			return stream
@@ -154,23 +147,44 @@ public class GraphUtils {
 
 	public static int insertStatements(String graphStoreUrl, String stmt, RDFFormat format, String graphName) throws IOException {
 		try (InputStream bstrm = new ByteArrayInputStream(stmt.getBytes(StandardCharsets.UTF_8))) {
-			return loadRdf(graphStoreUrl, bstrm, format.getMediaType(), graphName);
+			return insertStatements(graphStoreUrl, bstrm, format, graphName);
 		}
 	}
 
 	public static int insertStatements(String graphStoreUrl, InputStream in, RDFFormat format, String graphName) {
-		return loadRdf(graphStoreUrl, in, format.getMediaType(), graphName);
-	}
-
-	private static int loadRdf(String graphStoreUrl, InputStream in, String mediaType, String graphName) {
 		var request = HttpRequest.newBuilder()
 					.uri(getRequestUrl(graphStoreUrl, graphName))
 					.POST(HttpRequest.BodyPublishers.ofInputStream(() -> in))
-					.header(HttpHeaders.CONTENT_TYPE, mediaType)
+					.header(HttpHeaders.CONTENT_TYPE, format.getMediaType())
 					.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
 					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 					.build();
-		LOG.debug("insertStatements request.bodyPublisher().isEmpty():"+request.bodyPublisher().get().contentLength());
+		return sendRequest(request).statusCode();
+	}
+
+	public static int insertStatements(String graphStoreUrl, String graphName, File file) throws IOException {
+		var request = HttpRequest.newBuilder()
+			.uri(getRequestUrl(graphStoreUrl, graphName))
+			.POST(HttpRequest.BodyPublishers.ofFile(file.toPath()))
+			.header(HttpHeaders.CONTENT_TYPE, RDFFormat.parseFilename(file).getMediaType())
+			.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
+			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
+			.build();
+		return sendRequest(request).statusCode();
+	}
+
+	public static int insertStatements(String graphStoreUrl, String graphName, File... filesToLoad) {
+		var builder = new MultiPartBodyPublisherBuilder();
+		for (var file : filesToLoad) {
+			builder = builder.addPart("file", file, f -> RDFFormat.parseFilename(f).getMediaType());
+		}
+		var request = HttpRequest.newBuilder()
+					.uri(getRequestUrl(graphStoreUrl, graphName))
+					.POST(builder.build())
+					.header(HttpHeaders.CONTENT_TYPE, builder.getRequestContentType())
+					.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
+					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
+					.build();
 		return sendRequest(request).statusCode();
 	}
 
@@ -200,6 +214,21 @@ public class GraphUtils {
 			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 			.build();
 		return sendRequest(request).statusCode();
+	}
+
+	private static HttpResponse<String> sendRequest(HttpRequest request) {
+		HttpResponse<String> response = HttpClient.newHttpClient()
+			.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+			.join();
+		if (LOG.isDebugEnabled()) {
+			var respBody = response.body();
+			if (StringUtils.isBlank(respBody)) {
+				LOG.debug("Blank response body");
+			} else {
+				LOG.debug("Response body: {}", respBody);
+			}
+		}
+		return response;
 	}
 
 	private static URI getRequestUrl(String graphStoreUrl, String graphName) {

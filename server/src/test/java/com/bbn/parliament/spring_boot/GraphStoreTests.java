@@ -4,9 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.stream.Stream;
 
 import org.apache.jena.query.ParameterizedSparqlString;
@@ -129,10 +127,8 @@ public class GraphStoreTests {
 	public void insertSampleDataTest(String fileName, String graphName,
 			long expectedAllQueryCount, long expectedLabelQueryCount) throws IOException {
 		var fileFmt = RDFFormat.parseFilename(fileName);
-		LOG.debug("Loading file '{}' as {} via graph store protocol", fileName, fileFmt);
-		try (InputStream is = new FileInputStream(new File(DATA_DIR, fileName))) {
-			GraphUtils.insertStatements(graphStoreUrl, is, fileFmt, graphName);
-		}
+		LOG.info("Loading file '{}' as {} via graph store protocol", fileName, fileFmt);
+		GraphUtils.insertStatements(graphStoreUrl, graphName, new File(DATA_DIR, fileName));
 
 		var allQuery = prepareInsertTestQuery(DEFAULT_ALL_QUERY, NG_ALL_QUERY, graphName);
 		try (var stream = new QuerySolutionStream(allQuery, sparqlUrl)) {
@@ -143,6 +139,16 @@ public class GraphStoreTests {
 		try (var stream = new QuerySolutionStream(labelQuery, sparqlUrl)) {
 			assertEquals(expectedLabelQueryCount, stream.count());
 		}
+	}
+
+	@Test
+	public void multiPostTest() {
+		var file1 = new File(DATA_DIR, "univ-bench.owl");
+		var file2 = new File(DATA_DIR, "geo-example.ttl");
+		LOG.info("Loading files '{}' and '{}' via graph store protocol multi-part request",
+			file1.getName(), file2.getName());
+		var returnCode = GraphUtils.insertStatements(graphStoreUrl, null, file1, file2);
+		assertEquals(200, returnCode);
 	}
 
 	@Test
@@ -203,8 +209,9 @@ public class GraphStoreTests {
 	public void deleteNgErrorTest() {
 		int responseCode = GraphUtils.deleteGraph(graphStoreUrl, TEST_NG_URI);
 		boolean caughtException = responseCode == 404;
-		if (caughtException)
+		if (caughtException) {
 			LOG.info("Missing named graph error (delete)");
+		}
 		assertTrue(caughtException);
 	}
 }
