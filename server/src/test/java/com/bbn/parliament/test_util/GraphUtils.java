@@ -10,6 +10,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -173,7 +174,7 @@ public class GraphUtils {
 		return sendRequest(request).statusCode();
 	}
 
-	public static int insertStatements(String graphStoreUrl, String graphName, File... filesToLoad) {
+	public static int insertStatements(String graphStoreUrl, String graphName, List<File> filesToLoad) {
 		var builder = new MultiPartBodyPublisherBuilder();
 		for (var file : filesToLoad) {
 			builder = builder.addPart("file", file, f -> RDFFormat.parseFilename(f).getMediaType());
@@ -232,7 +233,7 @@ public class GraphUtils {
 	}
 
 	private static URI getRequestUrl(String graphStoreUrl, String graphName) {
-		var requestUrl = (graphName == null || graphName.isBlank())
+		var requestUrl = StringUtils.isBlank(graphName)
 			? graphStoreUrl + "?default"
 			: graphStoreUrl + "?graph=" + URLEncoder.encode(graphName, StandardCharsets.UTF_8);
 		return URI.create(requestUrl);

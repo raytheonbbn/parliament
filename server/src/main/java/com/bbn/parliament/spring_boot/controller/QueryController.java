@@ -45,10 +45,7 @@ public class QueryController {
 
 	private final QueryService queryService;
 
-	@Value("${spring.application.name}")
-	private String appName;
-
-	@Value("${multipart.location}")
+	@Value("${spring.servlet.multipart.location:}")
 	private String multipartLocation;
 
 	@Value("${parliament.bridge.config}")
@@ -61,7 +58,6 @@ public class QueryController {
 
 	@PostConstruct
 	public void initBridge() {
-		LOG.info("spring.application.name set to '{}'", appName);
 		LOG.info("multipart.location set to '{}'", multipartLocation);
 		LOG.info("parliament.bridge.config set to '{}'", parliamentBridgeConfigFile);
 		try {

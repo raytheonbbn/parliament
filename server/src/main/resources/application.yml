@@ -1,25 +1,39 @@
-# https://docs.spring.io/spring-boot/docs/1.2.0.M2/reference/html/common-application-properties.html
+# https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html
 
 spring:
    application:
       name: Parliament
+   jackson:
+      serialization:
+         indent_output: false
+   servlet:
+      multipart:
+         enabled: true
+         max-file-size: 16MB
+         max-request-size: 64MB
+         # location: ''
+         file-size-threshold: 64KB
+         resolve-lazily: true
 
 server:
    error:
       include-binding-errors: always
-      include-messsage: always
+      include-message: always
    port: 8089
+#   tomcat:
+#      max-http-post-size: 52428800
+#      max-swallow-size: 52428800
 
 http:
    mappers:
       json-pretty-print: false
       json-sort-keys: false
 
-multipart:
-   location: ''
-   maxFileSize: 10Mb
-   maxRequestSize: 50Mb
-   fileSizeThreshold: 64Kb
+#multipart:
+#   location: ''
+#   maxFileSize: 16Mb
+#   maxRequestSize: 64Mb
+#   fileSizeThreshold: 64Kb
 
 parliament:
    bridge:

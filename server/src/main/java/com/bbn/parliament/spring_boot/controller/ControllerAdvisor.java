@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.bbn.parliament.jena.bridge.tracker.TrackableException;
@@ -114,8 +115,14 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 		return buildResponse(ex, req, HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
 	}
 
+	@SuppressWarnings("static-method")
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	public ResponseEntity<Object> handle(MaxUploadSizeExceededException ex, WebRequest req) {
+		return buildResponse(ex, req, HttpStatus.BAD_REQUEST, ex.getMessage());
+	}
+
 	private static ResponseEntity<Object> buildResponse(Throwable t, WebRequest req,
-			HttpStatus status, String messageFmt, Object... args) {
+		HttpStatus status, String messageFmt, Object... args) {
 		LOG.warn("Converting exception to HTTP error:", t);
 
 		Map<String, Object> body = new LinkedHashMap<>();

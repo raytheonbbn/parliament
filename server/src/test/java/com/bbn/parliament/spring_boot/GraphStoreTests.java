@@ -5,8 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.query.ParameterizedSparqlString;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
@@ -19,6 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -100,7 +108,7 @@ public class GraphStoreTests {
 	}
 
 	private static ParameterizedSparqlString prepareInsertTestQuery(String defaultQuery, String ngQuery, String graphName) {
-		if (graphName == null) {
+		if (StringUtils.isBlank(graphName)) {
 			return new ParameterizedSparqlString(defaultQuery);
 		} else {
 			var pss = new ParameterizedSparqlString(ngQuery);
@@ -128,7 +136,8 @@ public class GraphStoreTests {
 			long expectedAllQueryCount, long expectedLabelQueryCount) throws IOException {
 		var fileFmt = RDFFormat.parseFilename(fileName);
 		LOG.info("Loading file '{}' as {} via graph store protocol", fileName, fileFmt);
-		GraphUtils.insertStatements(graphStoreUrl, graphName, new File(DATA_DIR, fileName));
+		var returnCode = GraphUtils.insertStatements(graphStoreUrl, graphName, new File(DATA_DIR, fileName));
+		assertEquals(200, returnCode);
 
 		var allQuery = prepareInsertTestQuery(DEFAULT_ALL_QUERY, NG_ALL_QUERY, graphName);
 		try (var stream = new QuerySolutionStream(allQuery, sparqlUrl)) {
@@ -141,14 +150,36 @@ public class GraphStoreTests {
 		}
 	}
 
-	@Test
-	public void multiPostTest() {
-		var file1 = new File(DATA_DIR, "univ-bench.owl");
-		var file2 = new File(DATA_DIR, "geo-example.ttl");
-		LOG.info("Loading files '{}' and '{}' via graph store protocol multi-part request",
-			file1.getName(), file2.getName());
-		var returnCode = GraphUtils.insertStatements(graphStoreUrl, null, file1, file2);
+	private static boolean multiPostTestFileMatcher(Path path, BasicFileAttributes attrs) {
+		return attrs.isRegularFile()
+			&& attrs.size() < 12 * 1024 * 1024
+			&& RDFFormat.parseFilename(path).isJenaReadable();
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = { "", TEST_NG_URI })
+	public void multiPostTest(String graphName) throws IOException {
+		List<File> files;
+		try (
+			var paths = Files.find(DATA_DIR.toPath(), Integer.MAX_VALUE,
+				GraphStoreTests::multiPostTestFileMatcher, FileVisitOption.FOLLOW_LINKS);
+		) {
+			files = paths.map(Path::toFile).collect(Collectors.toUnmodifiableList());
+		}
+		LOG.info("multiPostTest files:\n   {}",
+			files.stream().map(File::getPath).collect(Collectors.joining("\n   ")));
+		var returnCode = GraphUtils.insertStatements(graphStoreUrl, graphName, files);
 		assertEquals(200, returnCode);
+
+		var allQuery = prepareInsertTestQuery(DEFAULT_ALL_QUERY, NG_ALL_QUERY, graphName);
+		try (var stream = new QuerySolutionStream(allQuery, sparqlUrl)) {
+			assertEquals(97512, stream.count());
+		}
+
+		var labelQuery = prepareInsertTestQuery(DEFAULT_LABEL_QUERY, NG_LABEL_QUERY, graphName);
+		try (var stream = new QuerySolutionStream(labelQuery, sparqlUrl)) {
+			assertEquals(82, stream.count());
+		}
 	}
 
 	@Test
