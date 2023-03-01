@@ -4,12 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -62,57 +62,45 @@ public class GraphStoreService {
 			.body(handler::handleRequest);
 	}
 
+	/** Returns true is the indictaed graph was deleted, or false if not (because it does not exist). */
 	@SuppressWarnings("static-method")
-	public void doDeleteGraph(String graphUri, HttpHeaders headers, HttpServletRequest request,
+	public boolean doDeleteGraph(String graphUri, HttpHeaders headers, HttpServletRequest request,
 		DropGraphOption dropGraphOption)
 		throws QueryExecutionException, MissingGraphException {
 
 		String updateStmt = null;
-		String option = (dropGraphOption == DropGraphOption.SILENT)
-			? "SILENT" : "";
-		if (graphUri == null || graphUri.isEmpty()) {
-			updateStmt = "DROP %1$s DEFAULT ;".formatted(option);
+		var option = (dropGraphOption == DropGraphOption.SILENT) ? "silent" : "";
+		if (StringUtils.isBlank(graphUri)) {
+			updateStmt = "drop %1$s default ;".formatted(option);
 		} else if (ModelManager.inst().containsModel(graphUri)) {
-			updateStmt = "DROP %1$s GRAPH <%2$s> ;".formatted(option, graphUri);
-		} else {
+			updateStmt = "drop %1$s graph <%2$s> ;".formatted(option, graphUri);
+		} else if (dropGraphOption != DropGraphOption.SILENT) {
 			throw new MissingGraphException("Named graph <%1$s> does not exist", graphUri);
 		}
 
 		if (updateStmt != null) {
-			String serverName = ServiceUtil.getRequestor(headers, request);
+			var serverName = ServiceUtil.getRequestor(headers, request);
 			new UpdateHandler().handleRequest(updateStmt, serverName);
+			return true;
 		}
+		return false;
 	}
 
 	@SuppressWarnings("static-method")
-	public ResponseEntity<String> doCreateGraph(String graphUri, HttpHeaders headers, HttpServletRequest request,
-			DropGraphOption dropGraphOption)
-					throws QueryExecutionException, MissingGraphException {
+	private void doCreateGraph(String graphUri, HttpHeaders headers,
+		HttpServletRequest request, DropGraphOption dropGraphOption)
+			throws QueryExecutionException, MissingGraphException {
 
-		String updateStmt = null;
-		String option = (dropGraphOption == DropGraphOption.SILENT)
-				? "SILENT" : "";
-		if (graphUri == null || graphUri.isEmpty()) {
-			throw new MissingGraphException("Missing graph uri argument: ", graphUri);
+		if (StringUtils.isBlank(graphUri)) {
+			throw new MissingGraphException("Missing graph uri argument");
 		} else if (ModelManager.inst().containsModel(graphUri)) {
 			throw new MissingGraphException("Named graph <%1$s> already exists", graphUri);
-		} else {
-			updateStmt = "CREATE %1$s GRAPH <%2$s> ;".formatted(option, graphUri);
 		}
 
-		if (updateStmt != null) {
-			String serverName = ServiceUtil.getRequestor(headers, request);
-			new UpdateHandler().handleRequest(updateStmt, serverName);
-		}
-
-		HttpStatus status = HttpStatus.OK;
-		final Charset charSet = StandardCharsets.UTF_8;
-		MediaType responseContentType = new MediaType(MediaType.TEXT_HTML, charSet);
-		String body = INSERT_RESPONSE_BODY.formatted(
-			status.value(), status.name(), 0, charSet.name());
-		return ResponseEntity.status(status)
-			.contentType(responseContentType)
-			.body(body);
+		var updateStmt = "create %2$s graph <%1$s> ;".formatted(graphUri,
+			(dropGraphOption == DropGraphOption.SILENT) ? "silent" : "");
+		var serverName = ServiceUtil.getRequestor(headers, request);
+		new UpdateHandler().handleRequest(updateStmt, serverName);
 	}
 
 	@SuppressWarnings("static-method")
@@ -147,7 +135,8 @@ public class GraphStoreService {
 		throws QueryExecutionException, TrackableException, DataFormatException,
 		MissingGraphException, IOException {
 
-		doDeleteGraph(graphUri, headers, request, DropGraphOption.SILENT);
+		var wasDeleted = doDeleteGraph(graphUri, headers, request, DropGraphOption.SILENT);
+		doCreateGraph(graphUri, headers, request, DropGraphOption.SILENT);
 		return doInsertIntoGraph(contentType, graphUri, headers, request, requestEntity);
 	}
 
@@ -156,7 +145,8 @@ public class GraphStoreService {
 		throws QueryExecutionException, TrackableException, DataFormatException,
 		MissingGraphException, IOException {
 
-		doDeleteGraph(graphUri, headers, request, DropGraphOption.SILENT);
+		var wasDeleted = doDeleteGraph(graphUri, headers, request, DropGraphOption.SILENT);
+		doCreateGraph(graphUri, headers, request, DropGraphOption.SILENT);
 		return doInsertIntoGraph(graphUri, headers, request, files);
 	}
 
@@ -170,9 +160,9 @@ public class GraphStoreService {
 
 	/** Sends an <tt>OK</tt> response with the number of inserted statements in the message. */
 	private static ResponseEntity<String> createInsertResponse(long numStatements) {
-		HttpStatus status = HttpStatus.OK;
-		final Charset charSet = StandardCharsets.UTF_8;
-		MediaType responseContentType = new MediaType(MediaType.TEXT_HTML, charSet);
+		var status = (numStatements > 0) ? HttpStatus.OK : HttpStatus.NO_CONTENT;
+		var charSet = StandardCharsets.UTF_8;
+		var responseContentType = new MediaType(MediaType.TEXT_HTML, charSet);
 		String body = INSERT_RESPONSE_BODY.formatted(
 			status.value(), status.name(), numStatements, charSet.name());
 		return ResponseEntity.status(status)

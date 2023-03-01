@@ -35,7 +35,7 @@ public class TransformFilterPlacementWithOptional extends TransformFilterPlaceme
 	public static Op transform(ExprList exprs, BasicPattern bgp)
 	{
 		if ( ! doFilterPlacement )
-			return OpFilter.filter(exprs, new OpBGP(bgp)) ;
+			return OpFilter.filterBy(exprs, new OpBGP(bgp)) ;
 
 		Op op = transformFilterBGP(exprs, new HashSet<Var>(), bgp) ;
 		// Remaining filters? e.g. ones mentioning var s not used anywhere.
@@ -46,7 +46,7 @@ public class TransformFilterPlacementWithOptional extends TransformFilterPlaceme
 	public static Op transform(ExprList exprs, Node graphNode, BasicPattern bgp)
 	{
 		if ( ! doFilterPlacement )
-			return OpFilter.filter(exprs, new OpQuadPattern(graphNode, bgp)) ;
+			return OpFilter.filterBy(exprs, new OpQuadPattern(graphNode, bgp)) ;
 		Op op =  transformFilterQuadPattern(exprs, new HashSet<Var>(), graphNode, bgp);
 		op = buildFilter(exprs, op) ;
 		return op ;

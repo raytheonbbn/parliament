@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.jena.query.QueryBuildException;
 import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprList;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.sparql.function.FunctionBase;
@@ -23,7 +24,7 @@ public class ToWKT extends FunctionBase {
 		try {
 			g = new WKTReader().read(wkt);
 		} catch (ParseException e) {
-			return NodeValue.nvNothing;
+			return Expr.NONE.getConstant();
 		}
 
 		if (args.size() == 2) {

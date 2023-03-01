@@ -23,6 +23,7 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -40,6 +41,9 @@ import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.graph.ModelManager;
 
 public final class Inserter {
+	private static final Property GRAPH_DIR_PROPERTY = ResourceFactory.createProperty(KbGraphStore.GRAPH_DIR_PROPERTY.getURI());
+	private static final Resource INDEXED_GRAPH = ResourceFactory.createResource(KbGraphStore.INDEXED_GRAPH.getURI());
+	private static final Resource UNION_GRAPH_CLASS = ResourceFactory.createResource(KbGraphStore.UNION_GRAPH_CLASS.getURI());
 	private static final Logger LOG = LoggerFactory.getLogger(Inserter.class);
 
 	private final boolean importRepository;
@@ -160,9 +164,7 @@ public final class Inserter {
 
 		// Verify that all the filenames seen are in the Master Graph, and vice-versa
 		Map<String, String> dirToGraphNameMap = new HashMap<>();
-		StmtIterator it = masterGraph.listStatements(null,
-			ResourceFactory.createProperty(KbGraphStore.GRAPH_DIR_PROPERTY),
-			(RDFNode) null);
+		StmtIterator it = masterGraph.listStatements(null, GRAPH_DIR_PROPERTY, (RDFNode) null);
 		try {
 			while (it.hasNext()) {
 				Statement stmt = it.nextStatement();
@@ -198,7 +200,7 @@ public final class Inserter {
 		ModelManager.inst().clearKb();
 
 		Set<String> indexGraphs = new HashSet<>(dirToGraphNameMap.size());
-		it = masterGraph.listStatements(null, RDF.type, ResourceFactory.createResource(KbGraphStore.INDEXED_GRAPH));
+		it = masterGraph.listStatements(null, RDF.type, INDEXED_GRAPH);
 		try {
 			while (it.hasNext()) {
 				indexGraphs.add(it.next().getSubject().getURI());
@@ -225,7 +227,7 @@ public final class Inserter {
 					// Do nothing (ignore the Master Graph)
 				} else if (decomp.isDefaultGraph()) {
 					Model model = ModelManager.inst().getDefaultModel();
-					insert(model, "Default Graph", entryStrmProvider, decomp.getFormat());
+					insert(model, KbGraphStore.DEFAULT_GRAPH_BASENAME, entryStrmProvider, decomp.getFormat());
 				} else {
 					String graphDir = decomp.getDirName();
 					String graphNm = dirToGraphNameMap.get(graphDir);
@@ -238,7 +240,7 @@ public final class Inserter {
 		}
 
 		// Add any KbUnionGraphs
-		it = masterGraph.listStatements(null, RDF.type, ResourceFactory.createResource(KbGraphStore.UNION_GRAPH_CLASS));
+		it = masterGraph.listStatements(null, RDF.type, UNION_GRAPH_CLASS);
 		try {
 			while (it.hasNext()) {
 				Resource subject = it.next().getSubject();
@@ -250,10 +252,10 @@ public final class Inserter {
 				try {
 					while (it2.hasNext()) {
 						Statement stmt = it2.next();
-						if (KbGraphStore.LEFT_GRAPH_PROPERTY.equals(stmt.getPredicate().getURI())) {
+						if (KbGraphStore.LEFT_GRAPH_PROPERTY.equals(stmt.asTriple().getPredicate())) {
 							leftGraphName = ((Resource)stmt.getObject()).getURI();
 						}
-						if (KbGraphStore.RIGHT_GRAPH_PROPERTY.equals(stmt.getPredicate().getURI())) {
+						if (KbGraphStore.RIGHT_GRAPH_PROPERTY.equals(stmt.asTriple().getPredicate())) {
 							rightGraphName = ((Resource)stmt.getObject()).getURI();
 						}
 					}
@@ -323,7 +325,7 @@ public final class Inserter {
 		Model model = isDefaultGraph
 			? ModelManager.inst().getDefaultModel()
 			: ModelManager.inst().getModel(graphName);
-		String graphLabel = isDefaultGraph ? "Default Graph" : graphName;
+		String graphLabel = isDefaultGraph ? KbGraphStore.DEFAULT_GRAPH_BASENAME : graphName;
 
 		if (null == model) {
 			throw new MissingGraphException("There is no graph named \"%1$s\"", graphName);

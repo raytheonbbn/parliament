@@ -60,8 +60,7 @@ public abstract class PFGraphsAsSubject extends PropertyFunctionEval {
 			if (!g.isURI()) {
 				throw new JenaException("The subject must be the URI of a graph");
 			}
-			String uri = g.getURI();
-			if (!KbGraphStore.DEFAULT_GRAPH_URI.equals(uri)) {
+			if (!KbGraphStore.DEFAULT_GRAPH_NODE.equals(g)) {
 				Graph graph = kbGraphStore.getGraph(g);
 				if (null == graph) {
 					throw new JenaException("The subject must be the URI of a graph");

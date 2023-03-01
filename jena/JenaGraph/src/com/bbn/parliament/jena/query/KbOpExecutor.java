@@ -165,7 +165,7 @@ public class KbOpExecutor extends OpExecutor {
 			Op opLeft = opLeftJoin.getLeft();
 			Op opRight = opLeftJoin.getRight();
 			if (exprs != null) {
-				opRight = OpFilter.filter(exprs, opRight);
+				opRight = OpFilter.filterBy(exprs, opRight);
 			}
 			QueryIterator left = executeOp(opLeft, input);
 			QueryIterator qIter = new QueryIterOptionalIndex(left, opRight, execCxt);

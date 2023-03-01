@@ -9,6 +9,7 @@ import org.apache.jena.sparql.algebra.op.OpPropFunc;
 import org.apache.jena.sparql.algebra.optimize.OpVisitorExprPrepare;
 import org.apache.jena.sparql.algebra.optimize.Optimize;
 import org.apache.jena.sparql.algebra.optimize.Rewrite;
+import org.apache.jena.sparql.algebra.optimize.RewriteFactory;
 import org.apache.jena.sparql.algebra.optimize.TransformExpandOneOf;
 import org.apache.jena.sparql.algebra.optimize.TransformFilterConjunction;
 import org.apache.jena.sparql.algebra.optimize.TransformFilterDisjunction;
@@ -43,8 +44,7 @@ import com.bbn.parliament.jena.query.index.pfunction.algebra.OpIndexPropFunc;
 public class KbOptimize implements Rewrite {
 	private static Logger log = LoggerFactory.getLogger(KbOptimize.class);
 
-	public static Optimize.RewriterFactory factory = new Optimize.RewriterFactory() {
-
+	public static RewriteFactory factory = new RewriteFactory() {
 		@Override
 		public Rewrite create(Context context) {
 			return new KbOptimize(context);

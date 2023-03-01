@@ -11,19 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /** @author dkolas */
 public class TreeWidthQueryOptimizerTest {
-	@SuppressWarnings("static-method")
-	@BeforeEach
-	public void beforeEach() {
-		Logger.getRootLogger().setLevel(Level.DEBUG);
-	}
-
 	@SuppressWarnings("static-method")
 	@Test
 	public void test1() {

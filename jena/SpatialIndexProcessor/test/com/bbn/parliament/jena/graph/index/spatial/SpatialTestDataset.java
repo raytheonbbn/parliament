@@ -125,7 +125,7 @@ public class SpatialTestDataset {
 		loadData("queries/ontology.ttl");
 
 		StreamUtil.asStream(graphStore.listGraphNodes())
-			.filter(graphName -> !KbGraphStore.MASTER_GRAPH.equals(graphName.getURI()))
+			.filter(graphName -> !KbGraphStore.MASTER_GRAPH.equals(graphName))
 			.forEach(graphName -> createIndexForGraph(graphStore.getGraph(graphName), graphName));
 	}
 

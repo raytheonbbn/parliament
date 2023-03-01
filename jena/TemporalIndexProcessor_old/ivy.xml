@@ -19,22 +19,11 @@
 			conf="default->default"/>
 		<dependency org="org.slf4j" name="slf4j-api" rev="${slf4j.version}"
 			conf="default->default"/>
-		<dependency org="org.slf4j" name="slf4j-log4j12" rev="${slf4j.version}"
-			conf="default->default"/>
-		<dependency org="org.slf4j" name="jcl-over-slf4j" rev="${slf4j.version}"
-			conf="default->default"/>
 
 		<dependency org="junit" name="junit" rev="4.12" conf="test->default"/>
+		<dependency org="org.slf4j" name="slf4j-log4j12" rev="${slf4j.version}"
+			conf="test->default"/>
 
-		<exclude org="commons-logging"/>
 		<exclude org="xml-apis"/>
-		<override org="org.apache.httpcomponents" module="httpclient-cache"
-			rev="${httpclient-cache.version}"/>
-		<override org="org.apache.httpcomponents" module="httpclient"
-			rev="${httpclient.version}"/>
-		<override org="org.apache.httpcomponents" module="httpcore"
-			rev="${httpcore.version}"/>
-		<override org="commons-codec" module="commons-codec"
-			rev="${commons-codec.version}"/>
 	</dependencies>
 </ivy-module>

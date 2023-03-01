@@ -35,7 +35,7 @@ public class InsertionTester {
 		//sendInsertRequest("http://foo/#foo", "<http://foo/#Dave> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://foo/#Person> .");
 		//sendInsertRequest(null, "<http://foo/#foo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://foo/#AGoodGraphToQuery> .");
 
-		sendInsertRequest(KbGraphStore.MASTER_GRAPH, """
+		sendInsertRequest(KbGraphStore.MASTER_GRAPH.getURI(), """
 			<http://foo/#UnionFoo> <%1$s> <%2$s> ;
 				<%3$s> <http://foo/#foo> ;
 				<%4$s> <http://foo/#foo2> .
@@ -43,7 +43,7 @@ public class InsertionTester {
 				KbGraphStore.LEFT_GRAPH_PROPERTY,
 				KbGraphStore.RIGHT_GRAPH_PROPERTY));
 
-		sendInsertRequest(KbGraphStore.MASTER_GRAPH,
+		sendInsertRequest(KbGraphStore.MASTER_GRAPH.getURI(),
 			statementsForAGraphDeclaration("http://foo/#foo2", "foo2"));
 		sendInsertRequest("http://foo/#foo2",
 			"<http://foo/#Dave> <%1$s> <http://foo/#Tool> .".formatted(RDF.type.getURI()));

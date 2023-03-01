@@ -39,8 +39,8 @@ public class TestingDataset {
 		namedGraph.clear();
 		List<Node> graphs = StreamUtil.asStream(dataset.listGraphNodes())
 			.filter(node -> !node.equals(NAMED_GRAPH_URI))
-			.filter(node -> !node.getURI().equals(KbGraphStore.MASTER_GRAPH))
-			.collect(Collectors.toList());
+			.filter(node -> !node.equals(KbGraphStore.MASTER_GRAPH))
+			.collect(Collectors.toUnmodifiableList());
 		graphs.stream().forEach(node -> dataset.removeGraph(node));
 	}
 

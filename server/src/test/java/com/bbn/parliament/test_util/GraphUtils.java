@@ -11,10 +11,12 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
@@ -43,13 +45,20 @@ import com.bbn.parliament.spring_boot.controller.QueryController;
 import reactor.core.publisher.Mono;
 
 public class GraphUtils {
-
-	private static final Logger LOG = LoggerFactory.getLogger(GraphUtils.class);
+	private static final String MASTER_GRAPH = "http://parliament.semwebcentral.org/parliament#MasterGraph";
 	private static final String NG_QUERY = """
 			select distinct ?g where {
 				graph ?g {}
 			}
 			""";
+	private static final String GRAPH_COUNT_QUERY = """
+		select distinct ?g (count(distinct *) as ?count) where {
+			{ ?s ?p ?o }
+			union
+			{ graph ?g { ?s ?p ?o } }
+		} group by ?g
+		""";
+	private static final Logger LOG = LoggerFactory.getLogger(GraphUtils.class);
 
 	public static QuerySolutionStream doSelectQuery(String sparqlUrl, String queryFmt, Object... args) {
 		return new QuerySolutionStream(queryFmt.formatted(args), sparqlUrl);
@@ -109,8 +118,21 @@ public class GraphUtils {
 			return stream
 				.map(qs -> qs.getResource("g"))
 				.map(Resource::getURI)
-				.filter(uri -> !"http://parliament.semwebcentral.org/parliament#MasterGraph".equals(uri))
+				.filter(uri -> !MASTER_GRAPH.equals(uri))
 				.collect(Collectors.toSet());
+		}
+	}
+
+	public static Map<String, Integer> getGraphCounts(String sparqlUrl) {
+		try (var stream = new QuerySolutionStream(GRAPH_COUNT_QUERY, sparqlUrl)) {
+			return stream
+				.map(qs -> Pair.of(
+					(qs.getResource("g") == null) ? "" : qs.getResource("g").getURI(),
+					Integer.valueOf(qs.getLiteral("count").getInt())))
+				.filter(pair -> !MASTER_GRAPH.equals(pair.getLeft()))
+				.collect(Collectors.toUnmodifiableMap(
+					pair -> pair.getLeft(),		// key mapper
+					pair -> pair.getRight()));	// value mapper
 		}
 	}
 
@@ -123,7 +145,7 @@ public class GraphUtils {
 			.accept(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML)
 			.acceptCharset(StandardCharsets.UTF_8)
 			.exchangeToMono(response -> {
-				System.out.format("HTTP response status code: %1$d%n", response.rawStatusCode());
+				System.out.format("HTTP response status code: %1$d%n", response.statusCode().value());
 				System.out.format("HTTP response headers: %1$s%n", response.headers().asHttpHeaders());
 				if (response.statusCode().equals(HttpStatus.OK)) {
 					return response.bodyToMono(String.class);

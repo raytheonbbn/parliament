@@ -23,9 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.bbn.parliament.jena.bridge.ParliamentBridge;
-import com.bbn.parliament.jena.bridge.ParliamentBridgeConfiguration;
 import com.bbn.parliament.jena.bridge.ParliamentBridgeException;
-import com.bbn.parliament.jena.bridge.util.HttpServerUtil;
 import com.bbn.parliament.jena.exception.BadRequestException;
 import com.bbn.parliament.spring_boot.service.QueryService;
 
@@ -70,12 +68,6 @@ public class QueryController {
 			LOG.error("Unable to initialize ParliamentBridge:", ex);
 			throw new IllegalStateException("Error while initializing ParliamentBridge", ex);
 		}
-
-		ParliamentBridgeConfiguration bridgeConfig = ParliamentBridge.getInstance()
-			.getConfiguration();
-		HttpServerUtil.init(
-			bridgeConfig.getTmpDir(),
-			bridgeConfig.getDeferredFileOutputStreamThreshold());
 	}
 
 	private File getTempDir() {

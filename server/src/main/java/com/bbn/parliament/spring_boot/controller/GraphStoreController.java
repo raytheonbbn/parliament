@@ -108,10 +108,7 @@ public class GraphStoreController {
 		@RequestHeader HttpHeaders headers,
 		HttpServletRequest request,
 		HttpEntity<byte[]> requestEntity)
-		throws TrackableException, DataFormatException, MissingGraphException, IOException, QueryExecutionException {
-
-		if (request.getContentLength() == 0) // if creating an empty named graph
-			return graphStoreService.doCreateGraph(graphUri, headers, request, DropGraphOption.NOISY);
+		throws TrackableException, DataFormatException, MissingGraphException, IOException {
 
 		return graphStoreService.doInsertIntoGraph(contentType, graphUri, headers, request, requestEntity);
 	}

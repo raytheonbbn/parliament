@@ -8,22 +8,28 @@ package com.bbn.parliament.jena.graph;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.jena.atlas.iterator.IteratorConcat;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.GraphUtil;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Dataset;
+import org.apache.jena.query.ReadWrite;
 import org.apache.jena.reasoner.InfGraph;
 import org.apache.jena.shared.JenaException;
-import org.apache.jena.sparql.core.DatasetGraphMap;
+import org.apache.jena.sparql.core.DatasetGraphTriplesQuads;
 import org.apache.jena.sparql.core.DatasetImpl;
 import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.util.graph.GraphUtils;
 import org.apache.jena.util.iterator.ClosableIterator;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.vocabulary.RDF;
@@ -36,45 +42,48 @@ import com.bbn.parliament.jena.graph.union.KbUnionGraph;
 import com.bbn.parliament.jena.graph.union.KbUnionableGraph;
 import com.bbn.parliament.jni.KbConfig;
 
-/** @author sallen */
-public class KbGraphStore extends DatasetGraphMap {
-	public static final String PARLIAMENT_NS          = "http://parliament.semwebcentral.org/parliament#";
-	public static final String MASTER_GRAPH           = PARLIAMENT_NS + "MasterGraph";
-	public static final String GRAPH_CLASS            = PARLIAMENT_NS + "NamedGraph";
-	public static final String GRAPH_DIR_PROPERTY     = PARLIAMENT_NS + "graphDirectory";
-	public static final String UNION_GRAPH_CLASS      = PARLIAMENT_NS + "UnionGraph";
-	public static final String LEFT_GRAPH_PROPERTY    = PARLIAMENT_NS + "leftGraph";
-	public static final String RIGHT_GRAPH_PROPERTY   = PARLIAMENT_NS + "rightGraph";
-	public static final String INDEXED_GRAPH          = PARLIAMENT_NS + "IndexedGraph";
+public class KbGraphStore extends DatasetGraphTriplesQuads {
+	public static final String PARLIAMENT_NS = "http://parliament.semwebcentral.org/parliament#";
+	public static final Node MASTER_GRAPH = createNode("MasterGraph");
+	public static final Node GRAPH_CLASS = createNode("NamedGraph");
+	public static final Node GRAPH_DIR_PROPERTY = createNode("graphDirectory");
+	public static final Node UNION_GRAPH_CLASS = createNode("UnionGraph");
+	public static final Node LEFT_GRAPH_PROPERTY = createNode("leftGraph");
+	public static final Node RIGHT_GRAPH_PROPERTY = createNode("rightGraph");
+	public static final Node INDEXED_GRAPH = createNode("IndexedGraph");
+	public static final Node DEFAULT_GRAPH_NODE = Quad.defaultGraphIRI;
 
-	public static final String MASTER_GRAPH_DIR       = "master";
-	public static final String OLD_MASTER_GRAPH_DIR   = "graphs";
-
-	public static final Node   DEFAULT_GRAPH_NODE     = Quad.defaultGraphIRI;
-	public static final String DEFAULT_GRAPH_URI      = DEFAULT_GRAPH_NODE.getURI();
+	public static final String MASTER_GRAPH_DIR = "master";
+	public static final String OLD_MASTER_GRAPH_DIR = "graphs";
 	public static final String DEFAULT_GRAPH_BASENAME = "Default Graph";
 
-	private static Logger LOG = LoggerFactory.getLogger(KbGraphStore.class);
+	private static final Logger LOG = LoggerFactory.getLogger(KbGraphStore.class);
+
+	private static Node createNode(String localName) {
+		return NodeFactory.createURI(localName);
+	}
+
+	private KbGraph defaultGraph ;
+	private final Map<Node, Graph> graphs;
 
 	public KbGraphStore(KbGraph defaultGraph) {
-		super(defaultGraph);
+		this.defaultGraph = defaultGraph;
+		graphs = new HashMap<>();
 	}
 
 	public void initialize() {
 		@SuppressWarnings("resource")
-		Graph masterGraph = KbGraphFactory.createMasterGraph();
-		addGraph(NodeFactory.createURI(MASTER_GRAPH), masterGraph, MASTER_GRAPH_DIR, false);
+		var masterGraph = KbGraphFactory.createMasterGraph();
+		addGraph(MASTER_GRAPH, masterGraph, MASTER_GRAPH_DIR, false);
 
 		if (isIndexingEnabled(DEFAULT_GRAPH_NODE)) {
-			@SuppressWarnings("resource")
-			Graph graph = getDefaultGraph();
-			if (!IndexManager.getInstance().hasIndexes(graph)) {
-				IndexManager.getInstance().createAndRegisterAll(graph, DEFAULT_GRAPH_NODE);
-				IndexManager.getInstance().rebuild(graph);
+			if (!IndexManager.getInstance().hasIndexes(defaultGraph)) {
+				IndexManager.getInstance().createAndRegisterAll(defaultGraph, DEFAULT_GRAPH_NODE);
+				IndexManager.getInstance().rebuild(defaultGraph);
 			}
 		}
 		// Load all of the existing named graphs
-		ExtendedIterator<Triple> it = masterGraph.find(null, RDF.Nodes.type, NodeFactory.createURI(GRAPH_CLASS));
+		var it = masterGraph.find(null, RDF.Nodes.type, GRAPH_CLASS);
 		try {
 			while (it.hasNext()) {
 				Triple triple = it.next();
@@ -95,14 +104,14 @@ public class KbGraphStore extends DatasetGraphMap {
 		}
 
 		// Load any existing union graphs
-		it = masterGraph.find(null, RDF.Nodes.type, NodeFactory.createURI(UNION_GRAPH_CLASS));
+		it = masterGraph.find(null, RDF.Nodes.type, UNION_GRAPH_CLASS) ;
 		try {
 			while (it.hasNext()) {
 				Triple triple = it.next();
 
 				Node graphName = triple.getSubject();
-				Node leftGraphName = getOneTriple(masterGraph, graphName, NodeFactory.createURI(LEFT_GRAPH_PROPERTY), null).getObject();
-				Node rightGraphName = getOneTriple(masterGraph, graphName, NodeFactory.createURI(RIGHT_GRAPH_PROPERTY), null).getObject();
+				Node leftGraphName = getOneTriple(masterGraph, graphName, LEFT_GRAPH_PROPERTY, null).getObject();
+				Node rightGraphName = getOneTriple(masterGraph, graphName, RIGHT_GRAPH_PROPERTY, null).getObject();
 
 				addUnionGraph(graphName, leftGraphName, rightGraphName, false);
 			}
@@ -111,42 +120,120 @@ public class KbGraphStore extends DatasetGraphMap {
 		}
 	}
 
-	/** Get the default graph's configuration. */
-	@SuppressWarnings("resource")
-	public KbConfig getDefaultGraphConfig() {
-		return getDefaultGraph().getConfig();
+	@Override
+	public Iterator<Node> listGraphNodes() {
+		return graphs.keySet().iterator();
 	}
 
-	/** Get the default graph. */
+	@Override
+	public boolean supportsTransactions() {
+		return false;
+	}
+
+	@Override
+	public void begin(ReadWrite readWrite) {
+	}
+
+	@Override
+	public void commit() {
+	}
+
+	@Override
+	public void abort() {
+	}
+
+	@Override
+	public void end() {
+	}
+
+	@Override
+	public boolean isInTransaction() {
+		return false;
+	}
+
+	@Override
+	protected void addToDftGraph(Node s, Node p, Node o) {
+		defaultGraph.add(Triple.create(s, p, o));
+	}
+
+	@Override
+	protected void addToNamedGraph(Node g, Node s, Node p, Node o) {
+		getGraph(g).add(Triple.create(s, p, o));
+	}
+
+	@Override
+	protected void deleteFromDftGraph(Node s, Node p, Node o) {
+		defaultGraph.delete(Triple.create(s, p, o));
+	}
+
+	@Override
+	protected void deleteFromNamedGraph(Node g, Node s, Node p, Node o) {
+		getGraph(g).delete(Triple.create(s, p, o));
+	}
+
+	@Override
+	protected Iterator<Quad> findInDftGraph(Node s, Node p, Node o) {
+		var iter = defaultGraph.find(s, p, o);
+		return GraphUtils.triples2quadsDftGraph(iter);
+	}
+
+	@Override
+	protected Iterator<Quad> findInSpecificNamedGraph(Node g, Node s, Node p, Node o) {
+		var iter = getGraph(g).find(s, p, o);
+		return GraphUtils.triples2quads(g, iter);
+	}
+
+	@Override
+	protected Iterator<Quad> findInAnyNamedGraphs(Node s, Node p, Node o) {
+		var iter = new IteratorConcat<Quad>();
+		StreamUtil.asStream(listGraphNodes())
+			.map(graphName -> findInSpecificNamedGraph(graphName, s, p, o))
+			.filter(Objects::nonNull)
+			.forEach(iterWithinGraph -> iter.add(iterWithinGraph));
+		return iter;
+	}
+
 	@Override
 	public KbGraph getDefaultGraph() {
-		return (KbGraph) super.getDefaultGraph();
+		return defaultGraph;
+	}
+
+	public KbConfig getDefaultGraphConfig() {
+		return defaultGraph.getConfig();
 	}
 
 	/** Get the master graph, which contains references to all named graphs. */
 	public Graph getMasterGraph() {
-		return getGraph(NodeFactory.createURI(MASTER_GRAPH));
+		return getGraph(MASTER_GRAPH);
 	}
 
-	/** {@inheritDoc} */
 	@Override
-	protected KbGraph getGraphCreate() {
-		return KbGraphFactory.createNamedGraph();
+	public Graph getGraph(Node graphNode) {
+		if (Quad.isDefaultGraph(graphNode)) {
+			return defaultGraph;
+		}
+		return graphs.computeIfAbsent(graphNode, key -> KbGraphFactory.createNamedGraph());
+	}
+
+	@Override
+	public boolean containsGraph(Node graphNode) {
+		return graphs.containsKey(graphNode);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void addGraph(Node graphName, Graph graph) {
 		Graph toAdd = graph;
+
 		// If the graph already exists, then we delete it and replace it with the new graph
 		if (containsGraph(graphName)) {
 			removeGraph(graphName);
 		}
 
 		// If we are passed a non-Parliament graph, then create a new KbGraph and copy all the statements into it
-		if (!((toAdd instanceof KbGraph) || (toAdd instanceof KbUnionGraph))) {
+		if (!(toAdd instanceof KbGraph) && !(toAdd instanceof KbUnionGraph)) {
 			@SuppressWarnings("resource")
-			KbGraph kbGraph = getGraphCreate();
+			KbGraph kbGraph = KbGraphFactory.createNamedGraph();
 			GraphUtil.addInto(kbGraph, toAdd);
 			toAdd = kbGraph;
 		}
@@ -158,15 +245,15 @@ public class KbGraphStore extends DatasetGraphMap {
 		}
 	}
 
-	protected void addGraph(Node graphName, Graph graph, String graphDir, boolean addStatementsToMasterGraph) {
+	private void addGraph(Node graphName, Graph graph, String graphDir, boolean addStatementsToMasterGraph) {
 		// Only add a graph if it doesn't exist
 		if (!containsGraph(graphName)) {
-			LOG.debug("Adding named graph: <{}> (graphDir = \"{}\")", graphName.getURI(), graphDir);
-			super.addGraph(graphName, graph);
+			LOG.debug("Adding named graph: <{}> (graphDir = '{}')", graphName.getURI(), graphDir);
+			graphs.put(graphName, graph);
 			if (addStatementsToMasterGraph) {
 				Graph masterGraph = getMasterGraph();
-				masterGraph.add(Triple.create(graphName, RDF.Nodes.type, NodeFactory.createURI(GRAPH_CLASS)));
-				masterGraph.add(Triple.create(graphName, NodeFactory.createURI(GRAPH_DIR_PROPERTY), NodeFactory.createLiteral(graphDir)));
+				masterGraph.add(Triple.create(graphName, RDF.Nodes.type, GRAPH_CLASS));
+				masterGraph.add(Triple.create(graphName, GRAPH_DIR_PROPERTY, NodeFactory.createLiteral(graphDir)));
 			}
 		}
 	}
@@ -175,7 +262,8 @@ public class KbGraphStore extends DatasetGraphMap {
 		return addUnionGraph(graphName, leftGraphName, rightGraphName, true);
 	}
 
-	private boolean addUnionGraph(Node graphName, Node leftGraphName, Node rightGraphName, boolean addStatementsToMasterGraph) {
+	private boolean addUnionGraph(Node graphName, Node leftGraphName, Node rightGraphName,
+			boolean addStatementsToMasterGraph) {
 		// Only add a graph if it doesn't exist
 		if (!containsGraph(graphName)) {
 			Graph leftGraph = getGraph(leftGraphName);
@@ -185,16 +273,17 @@ public class KbGraphStore extends DatasetGraphMap {
 				if (leftGraph instanceof KbUnionableGraph leftKbUnionableGraph
 					&& rightGraph instanceof KbUnionableGraph rightKbUnionableGraph) {
 
-					KbUnionGraph unionGraph = KbGraphFactory.createKbUnionGraph(leftKbUnionableGraph, leftGraphName, rightKbUnionableGraph, rightGraphName);
+					KbUnionGraph unionGraph = KbGraphFactory.createKbUnionGraph(
+						leftKbUnionableGraph, leftGraphName, rightKbUnionableGraph, rightGraphName);
 
 					LOG.debug("Adding union graph: <{}> (left: <{}>  right: <{}>)",
 						graphName.getURI(), leftGraphName.getURI(), rightGraphName.getURI());
 
 					if (addStatementsToMasterGraph) {
 						Graph masterGraph = getMasterGraph();
-						masterGraph.add(Triple.create(graphName, RDF.Nodes.type, NodeFactory.createURI(UNION_GRAPH_CLASS)));
-						masterGraph.add(Triple.create(graphName, NodeFactory.createURI(LEFT_GRAPH_PROPERTY), leftGraphName));
-						masterGraph.add(Triple.create(graphName, NodeFactory.createURI(RIGHT_GRAPH_PROPERTY), rightGraphName));
+						masterGraph.add(Triple.create(graphName, RDF.type.asNode(), UNION_GRAPH_CLASS));
+						masterGraph.add(Triple.create(graphName, LEFT_GRAPH_PROPERTY, leftGraphName));
+						masterGraph.add(Triple.create(graphName, RIGHT_GRAPH_PROPERTY, rightGraphName));
 					}
 
 					addGraph(graphName, unionGraph, null, false);
@@ -228,7 +317,7 @@ public class KbGraphStore extends DatasetGraphMap {
 
 		// Then delete all the named graphs except the master graph:
 		graphNames.stream()
-			.filter(graphName -> !MASTER_GRAPH.equals(graphName.getURI()))
+			.filter(graphName -> !MASTER_GRAPH.equals(graphName))
 			.filter(graphName -> getGraph(graphName) instanceof KbGraph)
 			.forEach(graphName -> removeGraph(graphName));
 
@@ -236,7 +325,7 @@ public class KbGraphStore extends DatasetGraphMap {
 		removeGraph(null);
 
 		// Finally, delete the master graph:
-		removeGraph(NodeFactory.createURI(MASTER_GRAPH));
+		removeGraph(MASTER_GRAPH);
 
 		if (deleteContainingDirectory) {
 			deleteDirectory(containingDir);
@@ -244,100 +333,94 @@ public class KbGraphStore extends DatasetGraphMap {
 	}
 
 	/**
-	 * Deletes any of the named graphs, including the default graph and
-	 * master graph.  All aspects of the graph will be deleted, including its
-	 * entry in the master graph, its model, its files, and its sub-
-	 * directory.  Note that attempting to delete the master graph if named
-	 * graphs still exist will throw an exception.
+	 * Deletes any of the contained graphs, including the default graph and master
+	 * graph. All aspects of the graph will be deleted, including its entry in the
+	 * master graph, its model, its files, and its sub-directory. Attempting to
+	 * delete the master graph will throw an exception if named graphs still exist.
 	 *
-	 * @param graphName The URI of the graph to delete, or the empty string
-	 * for the default graph.
+	 * @param graphName The URI of the graph to delete, or the empty string for the
+	 *                  default graph.
 	 */
-	@SuppressWarnings("resource")
 	@Override
 	public void removeGraph(Node graphName) {
-		Graph toReturn = null;
-		boolean isKbGraph = true;
+		Graph graphToDelete = null;
 
 		if (isDefaultGraphName(graphName)) {
 			// Remove the default graph
-			toReturn = getDefaultGraph();
-			setDefaultGraph(null);
-		} else if (MASTER_GRAPH.equals(graphName.getURI())) {
-			if (StreamUtil.asStream(listGraphNodes()).anyMatch(gn -> !MASTER_GRAPH.equals(gn.getURI()))) {
-				throw new JenaException("You cannot delete the master graph while other named graphs still exist!");
+			graphToDelete = defaultGraph;
+			defaultGraph = null;
+		} else if (MASTER_GRAPH.equals(graphName)) {
+			// Check for any graph name other than MASTER_GRAPH:
+			if (StreamUtil.asStream(listGraphNodes()).anyMatch(gn -> !MASTER_GRAPH.equals(gn))) {
+				throw new JenaException(
+					"You cannot delete the master graph while other named graphs still exist!");
 			}
 
-			toReturn = getGraph(graphName);
-			super.removeGraph(graphName);
+			graphToDelete = graphs.remove(graphName);
 		} else {
-			Graph graph = getGraph(graphName);
-			isKbGraph = (graph instanceof KbGraph);
-
 			// Make sure we don't delete a member of a union graph
-			for (Iterator<Node> iter = listGraphNodes(); iter.hasNext(); )
-			{
-				Node gName = iter.next();
-				Graph g = getGraph(gName);
-				if (g instanceof KbUnionGraph unionGraph) {
-					if (graphName.equals(unionGraph.getLeftGraphName()) || graphName.equals(unionGraph.getRightGraphName())) {
-						throw new JenaException("""
-							Cannot delete a named graph while it is a member of a union. \
-							Delete union graph <%1$s> first.""".formatted(gName));
-					}
+			StreamUtil.asStream(listGraphNodes())
+				.filter(gn -> isMemberOfUnion(graphName, gn))
+				.findAny()
+				.ifPresent(gn -> {
+					throw new JenaException("""
+						Cannot delete a named graph while it is a member of a union. \
+						Delete union graph <%1$s> first.""".formatted(gn.getURI()));
+				});
+
+			graphToDelete = graphs.remove(graphName);
+			removeGraphFromMaster(graphName);
+		}
+
+		if (graphToDelete != null) {
+			if (LOG.isDebugEnabled()) {
+				String graphDisplayName = isDefaultGraphName(graphName) ? "default-graph" : graphName.getURI();
+				if (graphToDelete instanceof KbGraph kbGraphToDelete) {
+					LOG.debug("Deleting KbGraph <{}> (graphDir = \"{}\")", graphDisplayName,
+						kbGraphToDelete.getConfig().m_kbDirectoryPath);
+				} else {
+					LOG.debug("Deleting union graph <{}>", graphDisplayName);
 				}
 			}
 
-			toReturn = getGraph(graphName);
-			super.removeGraph(graphName);
+			// Close the graph
+			graphToDelete.close();
 
-			Graph masterGraph = getMasterGraph();
-			List<Triple> triplesToRemoveFromMaster = new ArrayList<>(2);
+			// Delete its indexes
+			IndexManager.getInstance().unregisterAll(graphToDelete, graphName);
 
-			ExtendedIterator<Triple> it = getMasterGraph().find(graphName, null, null);
-			try {
-				while (it.hasNext()) {
-					Triple t = it.next();
-					triplesToRemoveFromMaster.add(t);
-				}
-			} finally {
-				closeQuietly(it);
-			}
-
-			for (Triple t : triplesToRemoveFromMaster) {
-				masterGraph.delete(t);
+			// Delete its files
+			if (graphToDelete instanceof KbGraph kbGraphToDelete) {
+				kbGraphToDelete.deleteUnderlyingFiles(!isDefaultGraphName(graphName));
 			}
 		}
+	}
 
-		if (LOG.isDebugEnabled()) {
-			String graphDisplayName = (null == graphName) ? "default-graph" : graphName.getURI();
-			if (isKbGraph) {
-				KbConfig config = ((KbGraph)toReturn).getConfig();
-				File kbDir = new File(config.m_kbDirectoryPath);
-				LOG.debug("Deleting KbGraph <{}> (graphDir = \"{}\")", graphDisplayName, kbDir.getPath());
-			} else {
-				LOG.debug("Deleting union graph <{}>", graphDisplayName);
+	private boolean isMemberOfUnion(Node graphName, Node candidateUnionGraphName) {
+		if (getGraph(candidateUnionGraphName) instanceof KbUnionGraph unionGraph) {
+			if (graphName.equals(unionGraph.getLeftGraphName())
+					|| graphName.equals(unionGraph.getRightGraphName())) {
+				return true;
 			}
 		}
+		return false;
+	}
 
-		// Close the graph
-		toReturn.close();
-
-		// delete indexes
-		IndexManager.getInstance().unregisterAll(toReturn, graphName);
-
-		// Delete the files
-		if (isKbGraph) {
-			KbConfig config = ((KbGraph)toReturn).getConfig();
-			File kbDir = new File(config.m_kbDirectoryPath);
-			(new File(kbDir, config.m_rsrcFileName)).delete();
-			(new File(kbDir, config.m_stmtFileName)).delete();
-			(new File(kbDir, config.m_uriTableFileName)).delete();
-			(new File(kbDir, config.m_uriToIntFileName)).delete();
-
-			if (!isDefaultGraphName(graphName)) {
-				deleteDirectory(kbDir);
+	private void removeGraphFromMaster(Node graphName) {
+		Graph masterGraph = getMasterGraph();
+		List<Triple> triplesToRemoveFromMaster = new ArrayList<>();
+		ExtendedIterator<Triple> it = masterGraph.find(graphName, null, null);
+		try {
+			while (it.hasNext()) {
+				Triple t = it.next();
+				triplesToRemoveFromMaster.add(t);
 			}
+		} finally {
+			closeQuietly(it);
+		}
+
+		for (Triple t : triplesToRemoveFromMaster) {
+			masterGraph.delete(t);
 		}
 	}
 
@@ -356,7 +439,7 @@ public class KbGraphStore extends DatasetGraphMap {
 			LOG.debug("'{}' is not a directory, or an I/O error occurred", dir.getAbsolutePath());
 		} else if (dirContents.length != 0) {
 			LOG.debug("'{}' is not empty:  {}", dir.getAbsolutePath(),
-				Arrays.stream(dirContents).collect(Collectors.joining("', '", "'", "'")));
+				Stream.of(dirContents).collect(Collectors.joining("', '", "'", "'")));
 		} else {
 			boolean success = dir.delete();
 			LOG.debug("Deleted graph dir '{}':  {}", dir.getAbsolutePath(), success);
@@ -368,22 +451,33 @@ public class KbGraphStore extends DatasetGraphMap {
 	 * Will return null for the default graph.
 	 */
 	public String getGraphDir(Node graphName) {
-		return !isDefaultGraphName(graphName) && MASTER_GRAPH.equals(graphName.getURI())
-			? MASTER_GRAPH_DIR
-			: getOneTriple(getMasterGraph(), graphName, NodeFactory.createURI(GRAPH_DIR_PROPERTY), null)
+		if (isDefaultGraphName(graphName)) {
+			return null;
+		} else if (MASTER_GRAPH.equals(graphName)) {
+			return MASTER_GRAPH_DIR;
+		} else {
+			return getOneTriple(getMasterGraph(), graphName, GRAPH_DIR_PROPERTY, null)
 				.getObject().getLiteralLexicalForm();
+		}
 	}
 
 	/** Flush all graphs. */
 	public void flush() {
-		@SuppressWarnings("resource")
-		Graph defaultGraph = getDefaultGraph();
 		if (null != defaultGraph) {
-			flushGraph(defaultGraph, null);
+			flushGraph(defaultGraph);
 		}
 
 		StreamUtil.asStream(listGraphNodes())
-			.forEach(graphName -> flushGraph(getGraph(graphName), graphName.getURI()));
+			.forEach(graphName -> flushGraph(getGraph(graphName)));
+	}
+
+	private void flushGraph(Graph graph) {
+		@SuppressWarnings("resource")
+		KbGraph kbGraph = getInnerKbGraph(graph);
+		if (kbGraph != null) {
+			kbGraph.flush();
+			//IndexManager.getInstance().flush(graph);
+		}
 	}
 
 	private KbGraph getInnerKbGraph(Graph graph) {
@@ -397,33 +491,10 @@ public class KbGraphStore extends DatasetGraphMap {
 		}
 	}
 
-	private void flushGraph(Graph graph, String graphName) {
-		@SuppressWarnings("resource")
-		KbGraph kbGraph = getInnerKbGraph(graph);
-		if (kbGraph != null) {
-			long start = 0;
-			if (LOG.isDebugEnabled()) {
-				start = System.currentTimeMillis();
-			}
-			kbGraph.flush();
-			//IndexManager.getInstance().flush(graph);
-			if (LOG.isDebugEnabled()) {
-				long duration = System.currentTimeMillis() - start;
-				String graphDisplayName = (graphName == null || graphName.isEmpty())
-					? "default" : graphName;
-				LOG.debug("Flushed graph <{}> in {} ms", graphDisplayName, duration);
-			}
-		}
-	}
-
 	public void setIndexingEnabled(Node graphName, boolean enabled) {
-		Node name = graphName;
-		if (isDefaultGraphName(name)) {
-			name = NodeFactory.createURI(DEFAULT_GRAPH_URI);
-		}
-
+		Node name = isDefaultGraphName(graphName) ? DEFAULT_GRAPH_NODE : graphName;
 		Graph masterGraph = getMasterGraph();
-		Triple t = Triple.create(name, RDF.Nodes.type, NodeFactory.createURI(INDEXED_GRAPH));
+		Triple t = Triple.create(name, RDF.Nodes.type, INDEXED_GRAPH);
 		if (enabled) {
 			masterGraph.add(t);
 		} else {
@@ -432,12 +503,9 @@ public class KbGraphStore extends DatasetGraphMap {
 	}
 
 	private boolean isIndexingEnabled(Node graphName) {
-		Node name = graphName;
-		if (isDefaultGraphName(name)) {
-			name = NodeFactory.createURI(DEFAULT_GRAPH_URI);
-		}
+		Node name = isDefaultGraphName(graphName) ? DEFAULT_GRAPH_NODE : graphName;
 		Graph masterGraph = getMasterGraph();
-		ExtendedIterator<Triple> it = masterGraph.find(name, RDF.Nodes.type, NodeFactory.createURI(INDEXED_GRAPH));
+		ExtendedIterator<Triple> it = masterGraph.find(name, RDF.Nodes.type, INDEXED_GRAPH);
 		try {
 			return it.hasNext();
 		} finally {
@@ -453,15 +521,14 @@ public class KbGraphStore extends DatasetGraphMap {
 	}
 
 	/**
-	 * Retrieves a single triple matching the pattern given.  If there is more than one
-	 * triple matching the pattern, the first one found is returned, and a warning is logged.
-	 *
+	 * Retrieves a single triple matching the given pattern. If there is more than
+	 * one matching triple, the first one found is returned and a warning is logged.
 	 * If the triple doesn't exist, then null is returned and a warning is logged.
 	 *
 	 * @param graph The graph to search
-	 * @param s The subject Node
-	 * @param p The predicate Node
-	 * @param o The object Node
+	 * @param s     The subject Node
+	 * @param p     The predicate Node
+	 * @param o     The object Node
 	 * @return A triple matching the pattern or null if it doesn't exist.
 	 */
 	public static Triple getOneTriple(Graph graph, Node s, Node p, Node o) {
@@ -499,20 +566,17 @@ public class KbGraphStore extends DatasetGraphMap {
 		return DatasetImpl.wrap(this);
 	}
 
-	/** {@inheritDoc} */
-	@SuppressWarnings("resource")
 	@Override
 	public void close() {
 		StreamUtil.asStream(listGraphNodes())
 			.map(graphName -> getGraph(graphName))
 			.forEach(KbGraphStore::closeGraph);
-		KbGraph defaultGraph = getDefaultGraph();
 		closeGraph(defaultGraph);
 	}
 
 	private static void closeGraph(Graph graph) {
 		if (graph != null) {
-			IndexManager.getInstance().closeAll(graph);	// close all indexes
+			IndexManager.getInstance().closeAll(graph);
 			graph.close();
 		}
 	}

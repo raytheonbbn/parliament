@@ -73,7 +73,7 @@
 		<mkdir dir="${genSrcDir}"/>
 		<java classname="jena.schemagen" failonerror="true">
 			<classpath>
-				<fileset dir="${libDir}/bridge" includes="**/*.jar"/>
+				<fileset dir="${libDir}/schemagen" includes="**/*.jar"/>
 			</classpath>
 			<arg value="-i"/>
 			<arg value="${basedir}/resources/ontology/config-ont.ttl"/>

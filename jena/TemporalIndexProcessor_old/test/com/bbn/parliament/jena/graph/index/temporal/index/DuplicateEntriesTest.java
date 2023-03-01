@@ -58,8 +58,7 @@ public class DuplicateEntriesTest extends AbstractTemporalTestClass {
 		addThingWithTime(model, INSTANT_2);
 
 		LOG.debug("DuplicateEntriesTest query:\n{}", QUERY);
-		QueryExecution qe = QueryExecutionFactory.create(QUERY, model);
-		try {
+		try (QueryExecution qe = QueryExecutionFactory.create(QUERY, model)) {
 			ResultSet resultSet = qe.execSelect();
 			int count = 0;
 			while (resultSet.hasNext()){
@@ -67,8 +66,6 @@ public class DuplicateEntriesTest extends AbstractTemporalTestClass {
 				++count;
 			}
 			assertEquals("Count did not equal expected count.", 4, count);
-		} finally {
-			qe.close();
 		}
 	}
 

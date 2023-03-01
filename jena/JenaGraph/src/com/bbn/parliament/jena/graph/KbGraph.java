@@ -249,10 +249,9 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 	@Override
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
-		ExtendedIterator<Triple> iterator = this.find(Node.ANY, Node.ANY,
-			Node.ANY);
+		ExtendedIterator<Triple> iterator = this.find(Node.ANY, Node.ANY, Node.ANY);
 		while (iterator.hasNext()) {
-			buffer.append(iterator.next() + "\n");
+			buffer.append(iterator.next()).append(System.lineSeparator());
 		}
 		return buffer.toString();
 	}
@@ -325,6 +324,13 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 		// on, manually clear indexes
 		for (Index<?> index : IndexManager.getInstance().getIndexes(this)) {
 			index.clear();
+		}
+	}
+
+	/** The graph must be closed before calling this method. */
+	public void deleteUnderlyingFiles(boolean deleteContainingDir) {
+		if (isClosed) {
+			KbInstance.deleteKb(config, null, deleteContainingDir);
 		}
 	}
 

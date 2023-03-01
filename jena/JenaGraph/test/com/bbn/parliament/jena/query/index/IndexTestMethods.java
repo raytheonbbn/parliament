@@ -63,10 +63,12 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 				.formatted(KB_DIR.getAbsolutePath()));
 		}
 
+		@SuppressWarnings("resource")
 		KbGraph defaultGraph = KbGraphFactory.createDefaultGraph();
 		store = new KbGraphStore(defaultGraph);
 		store.initialize();
 
+		@SuppressWarnings("resource")
 		KbGraph namedGraph = KbGraphFactory.createNamedGraph();
 		store.addGraph(NAMED_GRAPH_NAME, namedGraph);
 
@@ -121,6 +123,7 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 			: store.getGraph(NAMED_GRAPH_NAME);
 	}
 
+	@SuppressWarnings("static-method")
 	public Node getGraphName(IndexUnderTest iut) {
 		return (iut == IndexUnderTest.DEFAULT_GRAPH)
 			? null

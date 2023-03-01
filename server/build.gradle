@@ -27,17 +27,10 @@ dependencies {
 		'SpatialIndexProcessor.jar',
 		'TemporalIndexProcessor.jar'
 	])
-	
+
 	implementation "$commonsCsvDependency"
-	implementation "$commonsFileUpload"
 	implementation "$commonsLangDependency"
-	
-	implementation("$jenaArqDependency") {
-		exclude group: 'org.slf4j', module: 'jcl-over-slf4j'
-		exclude group: 'org.slf4j', module: 'slf4j-log4j12'
-		exclude group: 'log4j', module: 'log4j'
-	}
-	
+	implementation "$jenaArqDependency"
 	implementation "$slf4jApiDependency"
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
@@ -56,7 +49,7 @@ configurations {
 }
 
 dependencies {
-	schemagen "$jenaArqDependency"
+	schemagen "$jenaCmdsDependency"
 }
 
 // See https://jena.apache.org/documentation/tools/schemagen.html

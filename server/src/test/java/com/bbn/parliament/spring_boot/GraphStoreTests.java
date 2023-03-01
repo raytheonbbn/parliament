@@ -1,7 +1,6 @@
 package com.bbn.parliament.spring_boot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,13 +9,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.query.ParameterizedSparqlString;
-import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,6 +81,12 @@ public class GraphStoreTests {
 			}
 		}
 		""";
+	private static final String SAMPLE_TRIPLES = """
+		<%1$s>
+			<%2$s> <%3$s> ;
+			<%4$s> "Test Item" ;
+			.
+		""".formatted(TEST_SUBJECT, RDF.type, TEST_CLASS, RDFS.label);
 
 	@LocalServerPort
 	private int serverPort;
@@ -150,7 +156,7 @@ public class GraphStoreTests {
 		}
 	}
 
-	private static boolean multiPostTestFileMatcher(Path path, BasicFileAttributes attrs) {
+	private static boolean multiPostInsertTestFileMatcher(Path path, BasicFileAttributes attrs) {
 		return attrs.isRegularFile()
 			&& attrs.size() < 12 * 1024 * 1024
 			&& RDFFormat.parseFilename(path).isJenaReadable();
@@ -158,11 +164,11 @@ public class GraphStoreTests {
 
 	@ParameterizedTest
 	@ValueSource(strings = { "", TEST_NG_URI })
-	public void multiPostTest(String graphName) throws IOException {
+	public void multiPostInsertTest(String graphName) throws IOException {
 		List<File> files;
 		try (
 			var paths = Files.find(DATA_DIR.toPath(), Integer.MAX_VALUE,
-				GraphStoreTests::multiPostTestFileMatcher, FileVisitOption.FOLLOW_LINKS);
+				GraphStoreTests::multiPostInsertTestFileMatcher, FileVisitOption.FOLLOW_LINKS);
 		) {
 			files = paths.map(Path::toFile).collect(Collectors.toUnmodifiableList());
 		}
@@ -183,66 +189,37 @@ public class GraphStoreTests {
 	}
 
 	@Test
-	public void deleteNamedGraphTest() throws IOException {
-		try (var stream = new QuerySolutionStream(EVERYTHING_QUERY, sparqlUrl)) {
-			assertEquals(0, stream.count(), "Invalid precondition -- triple store is not empty.");
-		}
-		String triple1 = "<%1$s> <%2$s> <%3$s1> .".formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
-		String query = "select * where { graph ?g { <%1$s> a <%2$s1>. } }";
-		GraphUtils.insertStatements(graphStoreUrl, triple1, RDFFormat.NTRIPLES, TEST_NG_URI);
+	public void createAndDeleteNamedGraphTest() throws IOException {
+		final String ng1Uri = TEST_NG_URI + "1";
+		final String ng2Uri = TEST_NG_URI + "2";
 
-		boolean foundIt = false;
-		try (var stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_SUBJECT, TEST_CLASS)) {
-			foundIt = stream
-					.map(qs -> qs.getResource("g"))
-					.map(Resource::getURI)
-					.filter(uri -> TEST_NG_URI.equals(uri))
-					.count() == 1;
-			assertTrue(foundIt);
-		}
+		GraphUtils.insertStatements(graphStoreUrl, SAMPLE_TRIPLES, RDFFormat.TURTLE, null);
+		GraphUtils.insertStatements(graphStoreUrl, "", RDFFormat.TURTLE, ng1Uri);
+		GraphUtils.insertStatements(graphStoreUrl, SAMPLE_TRIPLES, RDFFormat.TURTLE, ng2Uri);
 
-		GraphUtils.deleteGraph(graphStoreUrl, TEST_NG_URI);
+		var expectedCounts1 = Map.of("", 2, ng1Uri, 0, ng2Uri, 2);
+		var actualCountsMap1 = GraphUtils.getGraphCounts(sparqlUrl);
+		assertEquals(expectedCounts1, actualCountsMap1);
 
-		try (var stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_SUBJECT, TEST_CLASS)) {
-			assertEquals(0, stream.count(), "Invalid postcondition -- triple store is not empty.");
-		}
-	}
+		GraphUtils.deleteGraph(graphStoreUrl, ng1Uri);
 
-	@Test
-	public void createNamedGraphTest() throws IOException {
-		try (var stream = new QuerySolutionStream(EVERYTHING_QUERY, sparqlUrl)) {
-			assertEquals(0, stream.count(), "Invalid precondition -- triple store is not empty.");
-		}
+		var expectedCounts2 = Map.of("", 2, ng2Uri, 2);
+		var actualCountsMap2 = GraphUtils.getGraphCounts(sparqlUrl);
+		assertEquals(expectedCounts2, actualCountsMap2);
 
-		String graph1Uri = "http://example.org/foo/bar/#NewNamedGraph";
-		String triple1 = "<%1$s> <%2$s> <%3$s1> .".formatted(TEST_SUBJECT, RDF.type, TEST_CLASS);
-		String query = "select * where { graph ?g { <%1$s> a <%2$s1>. } }";
+		GraphUtils.deleteGraph(graphStoreUrl, ng2Uri);
 
-		GraphUtils.createGraph(graphStoreUrl, RDFFormat.NTRIPLES.getMediaType(), graph1Uri);
+		var expectedCounts3 = Map.of("", 2);
+		var actualCountsMap3 = GraphUtils.getGraphCounts(sparqlUrl);
+		assertEquals(expectedCounts3, actualCountsMap3);
 
-		boolean foundIt;
-		foundIt = GraphUtils.getAvailableNamedGraphs(sparqlUrl).stream().filter(uri -> graph1Uri.equals(uri)).count() == 1;
-		assertTrue(foundIt);
-
-		GraphUtils.insertStatements(graphStoreUrl, triple1, RDFFormat.NTRIPLES, graph1Uri);
-
-		try (var stream = GraphUtils.doSelectQuery(sparqlUrl, query, TEST_SUBJECT, TEST_CLASS)) {
-			foundIt = stream
-					.map(qs -> qs.getResource("g"))
-					.map(Resource::getURI)
-					.filter(uri -> graph1Uri.equals(uri))
-					.count() == 1;
-			assertTrue(foundIt);
-		}
+		assertEquals(0, GraphUtils.getAvailableNamedGraphs(sparqlUrl).size());
 	}
 
 	@Test
 	public void deleteNgErrorTest() {
 		int responseCode = GraphUtils.deleteGraph(graphStoreUrl, TEST_NG_URI);
-		boolean caughtException = responseCode == 404;
-		if (caughtException) {
-			LOG.info("Missing named graph error (delete)");
-		}
-		assertTrue(caughtException);
+		LOG.info("Error code on delete of non-existant named graph: {}", responseCode);
+		assertEquals(404, responseCode);
 	}
 }

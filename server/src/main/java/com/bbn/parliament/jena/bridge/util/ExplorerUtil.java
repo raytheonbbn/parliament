@@ -67,7 +67,9 @@ public class ExplorerUtil {
 		labelMap.put(RDFS.ContainerMembershipProperty, "ContainerMemberShipProperty");
 
 		// add default graph resource
-		labelMap.put(ResourceFactory.createResource(KbGraphStore.DEFAULT_GRAPH_URI), "Default Graph");
+		labelMap.put(
+			ResourceFactory.createResource(KbGraphStore.DEFAULT_GRAPH_NODE.getURI()),
+			KbGraphStore.DEFAULT_GRAPH_BASENAME);
 	}
 
 	public static class BlankNodeLabeler {

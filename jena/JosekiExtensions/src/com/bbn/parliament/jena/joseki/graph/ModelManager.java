@@ -76,7 +76,7 @@ public class ModelManager {
 
 	/** Gets the model corresponding to the master graph. */
 	public Model getMasterModel() {
-		return _dataSource.getNamedModel(KbGraphStore.MASTER_GRAPH);
+		return _dataSource.getNamedModel(KbGraphStore.MASTER_GRAPH.getURI());
 	}
 
 	/** Gets the model corresponding to the given named graph URI. */

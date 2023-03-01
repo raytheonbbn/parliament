@@ -104,6 +104,7 @@ public class NodeIdHash extends HashCommon<Node>
 		{
 			int index = capacity - 1;
 
+			@SuppressWarnings("synthetic-access")
 			@Override
 			public boolean hasNext()
 			{
@@ -114,6 +115,7 @@ public class NodeIdHash extends HashCommon<Node>
 				return index >= 0;
 			}
 
+			@SuppressWarnings("synthetic-access")
 			@Override
 			public Node next()
 			{

@@ -115,17 +115,10 @@ public class NumericIndexTestMethods extends QueryableIndexTestMethods<NumericIn
 		} catch (IndexException ex) {
 			fail(ex.getMessage());
 		}
-		QueryExecution qExec = QueryExecutionFactory.create(query, model);
-		ResultSet result = qExec.execSelect();
-		assertTrue(result.hasNext());
-		int count = 0;
-		while (result.hasNext()) {
-			result.next();
-			count++;
-		}
-		assertEquals(2, count);
+		assertEquals(2, countQuerySolutions(query, model));
 	}
 
+	@SuppressWarnings("static-method")
 	public void testComplexQuery(NumericIndex<Integer> index, Model model) {
 		Property ageProp = ResourceFactory.createProperty("http://example.org#age");
 		Property nameProp = ResourceFactory.createProperty("http://example.org#name");
@@ -181,15 +174,19 @@ public class NumericIndexTestMethods extends QueryableIndexTestMethods<NumericIn
 		} catch (IndexException ex) {
 			fail(ex.getMessage());
 		}
-		QueryExecution qExec = QueryExecutionFactory.create(query, model);
-		ResultSet result = qExec.execSelect();
-		assertTrue(result.hasNext());
-		int counter = 0;
-		while (result.hasNext()) {
-			result.next();
-			counter++;
+		assertEquals(1, countQuerySolutions(query, model));
+	}
+
+	private static int countQuerySolutions(String query, Model model) {
+		try (QueryExecution qExec = QueryExecutionFactory.create(query, model)) {
+			ResultSet result = qExec.execSelect();
+			int counter = 0;
+			while (result.hasNext()) {
+				result.next();
+				++counter;
+			}
+			return counter;
 		}
-		assertEquals(1, counter);
 	}
 
 	public void testRangeIterator(NumericIndex<Integer> index) {

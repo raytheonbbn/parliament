@@ -97,7 +97,7 @@ public abstract class IndexFactory<I extends Index<T>, T> {
 				dir = kbg.getConfig().m_kbDirectoryPath; // m_kbDirectoryPath includes the relative directory...
 				//dir = kbg.getConfig().m_kbDirectoryPath + File.separator
 				//	+ ((null == relativeDir) ? "" : relativeDir);
-			} else if (null == graphName || graphName.getURI().equals(KbGraphStore.DEFAULT_GRAPH_URI)) {
+			} else if (null == graphName || graphName.equals(KbGraphStore.DEFAULT_GRAPH_NODE)) {
 				dir = ".";
 			} else {
 				dir = FileUtil.encodeStringForFilename(graphName.getURI());

@@ -195,7 +195,7 @@ public class Inserter {
 		// Verify that all the filenames seen are in the Master Graph, and vice-versa
 		Map<String, String> dirToGraphNameMap = new HashMap<>();
 		StmtIterator it = masterGraph.listStatements(null,
-			ResourceFactory.createProperty(KbGraphStore.GRAPH_DIR_PROPERTY),
+			ResourceFactory.createProperty(KbGraphStore.GRAPH_DIR_PROPERTY.getURI()),
 			(RDFNode) null);
 		try {
 			while (it.hasNext()) {
@@ -242,7 +242,8 @@ public class Inserter {
 		ModelManager.inst().clearKb();
 
 		Set<String> indexGraphs = new HashSet<>(dirToGraphNameMap.size());
-		it = masterGraph.listStatements(null, RDF.type, ResourceFactory.createResource(KbGraphStore.INDEXED_GRAPH));
+		it = masterGraph.listStatements(null, RDF.type,
+			ResourceFactory.createResource(KbGraphStore.INDEXED_GRAPH.getURI()));
 		try {
 			while (it.hasNext()) {
 				indexGraphs.add(it.next().getSubject().getURI());
@@ -282,7 +283,8 @@ public class Inserter {
 		}
 
 		// Add any KbUnionGraphs
-		it = masterGraph.listStatements(null, RDF.type, ResourceFactory.createResource(KbGraphStore.UNION_GRAPH_CLASS));
+		it = masterGraph.listStatements(null, RDF.type,
+			ResourceFactory.createResource(KbGraphStore.UNION_GRAPH_CLASS.getURI()));
 		try {
 			while (it.hasNext()) {
 				Resource subject = it.next().getSubject();
@@ -294,10 +296,10 @@ public class Inserter {
 				try {
 					while (it2.hasNext()) {
 						Statement stmt = it2.next();
-						if (KbGraphStore.LEFT_GRAPH_PROPERTY.equals(stmt.getPredicate().getURI())) {
+						if (KbGraphStore.LEFT_GRAPH_PROPERTY.getURI().equals(stmt.getPredicate().getURI())) {
 							leftGraphName = ((Resource)stmt.getObject()).getURI();
 						}
-						if (KbGraphStore.RIGHT_GRAPH_PROPERTY.equals(stmt.getPredicate().getURI())) {
+						if (KbGraphStore.RIGHT_GRAPH_PROPERTY.getURI().equals(stmt.getPredicate().getURI())) {
 							rightGraphName = ((Resource)stmt.getObject()).getURI();
 						}
 					}
