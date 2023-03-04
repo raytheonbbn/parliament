@@ -60,7 +60,7 @@ public class KbGraphStore extends DatasetGraphTriplesQuads {
 	private static final Logger LOG = LoggerFactory.getLogger(KbGraphStore.class);
 
 	private static Node createNode(String localName) {
-		return NodeFactory.createURI(localName);
+		return NodeFactory.createURI(PARLIAMENT_NS + localName);
 	}
 
 	private KbGraph defaultGraph ;
