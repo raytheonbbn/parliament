@@ -22,6 +22,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.ext.com.google.common.base.Objects;
 import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.query.QueryParseException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -122,6 +123,7 @@ public class ParliamentServerTests {
 		sparqlUrl = "http://%1$s:%2$s/parliament/sparql".formatted(HOST, serverPort);
 		updateUrl = "http://%1$s:%2$s/parliament/update".formatted(HOST, serverPort);
 		graphStoreUrl = "http://%1$s:%2$s/parliament/graphstore".formatted(HOST, serverPort);
+		GraphUtils.clearAll(graphStoreUrl, sparqlUrl);
 	}
 
 	@AfterEach
@@ -275,7 +277,7 @@ public class ParliamentServerTests {
 		try (var stream = new QuerySolutionStream(invalidQuery, sparqlUrl)) {
 			@SuppressWarnings("unused")
 			long count = stream.count();
-		} catch (Exception ex) {
+		} catch (QueryParseException ex) {
 			caughtException = true;
 			LOG.info("Query parse error", ex);
 		}
@@ -283,27 +285,14 @@ public class ParliamentServerTests {
 	}
 
 	@Test
-	public void insertErrorTest() {
+	public void updateErrorTest() {
 		boolean caughtException = false;
 		try {
-			// Invalid n-triples:
-			GraphUtils.insert(updateUrl, "oogetyboogetyboo!", null, null, null);
-		} catch (Exception ex) {
+			// Delete invalid n-triples:
+			GraphUtils.doUpdate(updateUrl, "delete data { oogetyboogetyboo! }");
+		} catch (QueryParseException ex) {
 			caughtException = true;
-			LOG.info("N-triples parse error (insert)", ex);
-		}
-		assertTrue(caughtException);
-	}
-
-	@Test
-	public void deleteErrorTest() {
-		boolean caughtException = false;
-		try {
-			// Invalid n-triples:
-			GraphUtils.delete(updateUrl, "oogetyboogetyboo!", null, null, null);
-		} catch (Exception ex) {
-			caughtException = true;
-			LOG.info("N-triples parse error (delete)", ex);
+			LOG.info("Update parse error", ex);
 		}
 		assertTrue(caughtException);
 	}

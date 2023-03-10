@@ -40,12 +40,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.bbn.parliament.client.jena.MultiPartBodyPublisherBuilder;
 import com.bbn.parliament.client.jena.QuerySolutionStream;
 import com.bbn.parliament.client.jena.RDFFormat;
+import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.spring_boot.controller.QueryController;
 
 import reactor.core.publisher.Mono;
 
 public class GraphUtils {
-	private static final String MASTER_GRAPH = "http://parliament.semwebcentral.org/parliament#MasterGraph";
 	private static final String NG_QUERY = """
 			select distinct ?g where {
 				graph ?g {}
@@ -117,8 +117,9 @@ public class GraphUtils {
 		try (var stream = new QuerySolutionStream(NG_QUERY, sparqlUrl)) {
 			return stream
 				.map(qs -> qs.getResource("g"))
-				.map(Resource::getURI)
-				.filter(uri -> !MASTER_GRAPH.equals(uri))
+				.map(Resource::asNode)
+				.filter(g -> !KbGraphStore.MASTER_GRAPH.equals(g))
+				.map(Node::getURI)
 				.collect(Collectors.toSet());
 		}
 	}
@@ -129,7 +130,7 @@ public class GraphUtils {
 				.map(qs -> Pair.of(
 					(qs.getResource("g") == null) ? "" : qs.getResource("g").getURI(),
 					Integer.valueOf(qs.getLiteral("count").getInt())))
-				.filter(pair -> !MASTER_GRAPH.equals(pair.getLeft()))
+				.filter(pair -> !KbGraphStore.MASTER_GRAPH.getURI().equals(pair.getLeft()))
 				.collect(Collectors.toUnmodifiableMap(
 					pair -> pair.getLeft(),		// key mapper
 					pair -> pair.getRight()));	// value mapper

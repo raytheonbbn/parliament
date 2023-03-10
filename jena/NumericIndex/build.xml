@@ -72,7 +72,6 @@
 	<!-- Runs unit tests for a specific native directory (whose name is expected as a parameter) -->
 	<target name="runTestsForOneNativeDir">
 		<echo message="nativeArtifactsDir = '${nativeArtifactsDir}'"/>
-		<mkdir dir="${reportsDir}/${ant.project.name}"/>
 		<junitlauncher printsummary="yes" haltonfailure="yes">
 			<classpath refid="testClassPath"/>
 			<classpath path="${testBinDir}"/>

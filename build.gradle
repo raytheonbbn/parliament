@@ -21,7 +21,7 @@ allprojects {
 	version = '2.8.2-SNAPSHOT'
 
 	tasks.withType(JavaCompile).all {
-		options.compilerArgs.add("-Xlint:all")
+		options.compilerArgs.add('-Xlint:all')
 	}
 }
 
