@@ -174,14 +174,16 @@ public class GraphStoreTests {
 			model.read(bstrm, null, RDFFormat.TURTLE.toString());
 			LOG.debug("foogetmodel:{}", model.listStatements().toList());
 
-			// create input stream from orig sample file
+			// create another model for the sample file using that stream
 			Model sampleModel = ModelFactory.createDefaultModel();
 			var file = new File(DATA_DIR, fileName);
 			RdfResourceLoader.load(file, sampleModel);
 			LOG.debug("foosamplemodel:{}", sampleModel.listStatements().toList());
-			// create another model for the sample file using that stream
 			// then compare the two models (model from GET, and model from sample file)
 			Model diff = model.difference(sampleModel);
+//			TODO: GET endpoint gets all statements of the sample file.
+//			however, the Model created from the sample file doesn't contain all stmts
+//			accord. to the arguments length specs...
 			LOG.debug("foo diff: {}", diff.listStatements().toList());
 //			LOG.debug("foo diff: {}", model.difference(sampleModel));
 
