@@ -172,13 +172,13 @@ public class GraphStoreTests {
 			Model model = ModelFactory.createDefaultModel();
 //			insertStatements(graphStoreUrl, bstrm, RDFFormat.TURTLE, graphName);
 			model.read(bstrm, null, RDFFormat.TURTLE.toString());
-			LOG.debug("foogetmodel:{}", model.listStatements().toList());
+			LOG.debug("foogetmodel len:{}", model.listStatements().toList().size());
 
 			// create another model for the sample file using that stream
 			Model sampleModel = ModelFactory.createDefaultModel();
 			var file = new File(DATA_DIR, fileName);
 			RdfResourceLoader.load(file, sampleModel);
-			LOG.debug("foosamplemodel:{}", sampleModel.listStatements().toList());
+			LOG.debug("foosamplemodel len:{}", sampleModel.listStatements().toList().size());
 			// then compare the two models (model from GET, and model from sample file)
 			Model diff = model.difference(sampleModel);
 //			TODO: GET endpoint gets all statements of the sample file.
