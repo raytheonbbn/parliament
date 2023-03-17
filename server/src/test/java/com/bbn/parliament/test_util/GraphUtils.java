@@ -41,6 +41,7 @@ import com.bbn.parliament.client.jena.MultiPartBodyPublisherBuilder;
 import com.bbn.parliament.client.jena.QuerySolutionStream;
 import com.bbn.parliament.client.jena.RDFFormat;
 import com.bbn.parliament.spring_boot.controller.QueryController;
+import com.bbn.parliament.spring_boot.service.AcceptableMediaType;
 
 import reactor.core.publisher.Mono;
 
@@ -209,6 +210,23 @@ public class GraphUtils {
 					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 					.build();
 		return sendRequest(request).statusCode();
+	}
+
+	public static HttpResponse<String> getStatements(String graphStoreUrl, String graphName) throws IOException {
+		LOG.debug("foo graphstore GET endpoint: getStatements for graph={}",graphName==null ? "default": graphName);
+		var requestUrl = StringUtils.isBlank(graphName)
+				? graphStoreUrl + "?default"
+				: graphStoreUrl + "?graph=" + URLEncoder.encode(graphName, StandardCharsets.UTF_8);
+		URI uri = URI.create(requestUrl + "&format="+ AcceptableMediaType.TURTLE.getQueryStringFormat());
+		var request = HttpRequest.newBuilder()
+			.uri(uri)
+//			.uri(getRequestUrl(graphStoreUrl, graphName))
+			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
+			.GET()
+			.build();
+		HttpResponse<String> response = sendRequest(request);
+
+		return response;
 	}
 
 	public static int createGraph(String graphStoreUrl, String mediaType, String graphName) {

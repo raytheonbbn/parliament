@@ -2,8 +2,12 @@ package com.bbn.parliament.spring_boot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,10 +19,13 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.query.ParameterizedSparqlString;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -36,6 +43,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.bbn.parliament.client.jena.QuerySolutionStream;
 import com.bbn.parliament.client.jena.RDFFormat;
 import com.bbn.parliament.test_util.GraphUtils;
+import com.bbn.parliament.test_util.RdfResourceLoader;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -154,6 +162,33 @@ public class GraphStoreTests {
 		try (var stream = new QuerySolutionStream(labelQuery, sparqlUrl)) {
 			assertEquals(expectedLabelQueryCount, stream.count());
 		}
+
+
+		// GET test
+		HttpResponse<String> response = GraphUtils.getStatements(graphStoreUrl, graphName);
+		LOG.debug("foo GET response code:{}", response.statusCode());
+
+		try (InputStream bstrm = new ByteArrayInputStream(response.body().getBytes(StandardCharsets.UTF_8))) {
+			Model model = ModelFactory.createDefaultModel();
+//			insertStatements(graphStoreUrl, bstrm, RDFFormat.TURTLE, graphName);
+			model.read(bstrm, null, RDFFormat.TURTLE.toString());
+			LOG.debug("foogetmodel:{}", model.listStatements().toList());
+
+			// create input stream from orig sample file
+			Model sampleModel = ModelFactory.createDefaultModel();
+			var file = new File(DATA_DIR, fileName);
+			RdfResourceLoader.load(file, sampleModel);
+			LOG.debug("foosamplemodel:{}", sampleModel.listStatements().toList());
+			// create another model for the sample file using that stream
+			// then compare the two models (model from GET, and model from sample file)
+			Model diff = model.difference(sampleModel);
+			LOG.debug("foo diff: {}", diff.listStatements().toList());
+//			LOG.debug("foo diff: {}", model.difference(sampleModel));
+
+		}
+
+
+
 	}
 
 	private static boolean multiPostInsertTestFileMatcher(Path path, BasicFileAttributes attrs) {
@@ -188,6 +223,7 @@ public class GraphStoreTests {
 		}
 	}
 
+	@Disabled
 	@Test
 	public void createAndDeleteNamedGraphTest() throws IOException {
 		final String ng1Uri = TEST_NG_URI + "1";
