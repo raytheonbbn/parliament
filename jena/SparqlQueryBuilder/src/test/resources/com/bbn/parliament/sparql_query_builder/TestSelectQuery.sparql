@@ -1,0 +1,11 @@
+# Copyright (c) 2019, 2020 Raytheon BBN Technologies Corp.
+
+# Just a meaningless test query
+
+prefix abox: <http://www.bbn.com/abox/rush/decomposer#>
+prefix ps: <http://www.bbn.com/ontologies/rush/problem-strategy#>
+
+select ?uri ?value where {
+	?uri a ps:DecompNode .
+	?uri ?prop ?value .
+}

@@ -1,0 +1,51 @@
+plugins {
+	id 'java-gradle-plugin'
+	id 'eclipse'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	api 'org.apache.jena:jena-arq:2.9.4'
+	implementation 'com.bbn.parliament:SparqlQueryAssembly:1.0.0'
+	implementation 'org.apache.commons:commons-csv:1.8'
+	testImplementation gradleTestKit()
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.6.1'
+}
+
+configurations.all {
+	exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+	exclude group: 'log4j', module: 'log4j'
+}
+
+gradlePlugin {
+	plugins {
+		ontologyBundle {
+			id = 'com.bbn.parliament.ontology_bundle.ontologyBundle'
+			implementationClass = 'com.bbn.parliament.ontology_bundle.OntologyBundlePlugin'
+		}
+	}
+}
+
+sourceSets {
+	functionalTest {
+	}
+}
+
+gradlePlugin.testSourceSets(sourceSets.functionalTest)
+configurations.functionalTestImplementation.extendsFrom(configurations.testImplementation)
+
+task functionalTest(type: Test) {
+	testClassesDirs = sourceSets.functionalTest.output.classesDirs
+	classpath = sourceSets.functionalTest.runtimeClasspath
+}
+
+check {
+	dependsOn(tasks.functionalTest)
+}
+
+test {
+	useJUnitPlatform()
+}

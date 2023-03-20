@@ -1,0 +1,458 @@
+# baseURI: http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl
+# prefix: ub
+
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl>
+  a owl:Ontology ;
+  rdfs:comment "An university ontology for benchmark tests" ;
+  rdfs:label "Univ-bench Ontology" ;
+  owl:versionInfo "univ-bench-ontology-owl, ver April 1, 2004" ;
+.
+ub:AdministrativeStaff
+  a owl:Class ;
+  rdfs:label "administrative staff worker" ;
+  rdfs:subClassOf ub:Employee ;
+.
+ub:Article
+  a owl:Class ;
+  rdfs:label "article" ;
+  rdfs:subClassOf ub:Publication ;
+.
+ub:AssistantProfessor
+  a owl:Class ;
+  rdfs:label "assistant professor" ;
+  rdfs:subClassOf ub:Professor ;
+.
+ub:AssociateProfessor
+  a owl:Class ;
+  rdfs:label "associate professor" ;
+  rdfs:subClassOf ub:Professor ;
+.
+ub:Book
+  a owl:Class ;
+  rdfs:label "book" ;
+  rdfs:subClassOf ub:Publication ;
+.
+ub:Chair
+  a owl:Class ;
+  rdfs:label "chair" ;
+  rdfs:subClassOf ub:Professor ;
+  owl:intersectionOf (
+      ub:Person
+      [
+        a owl:Restriction ;
+        owl:onProperty ub:headOf ;
+        owl:someValuesFrom ub:Department ;
+      ]
+    ) ;
+.
+ub:ClericalStaff
+  a owl:Class ;
+  rdfs:label "clerical staff worker" ;
+  rdfs:subClassOf ub:AdministrativeStaff ;
+.
+ub:College
+  a owl:Class ;
+  rdfs:label "school" ;
+  rdfs:subClassOf ub:Organization ;
+.
+ub:ConferencePaper
+  a owl:Class ;
+  rdfs:label "conference paper" ;
+  rdfs:subClassOf ub:Article ;
+.
+ub:Course
+  a owl:Class ;
+  rdfs:label "teaching course" ;
+  rdfs:subClassOf ub:Work ;
+.
+ub:Dean
+  a owl:Class ;
+  rdfs:label "dean" ;
+  rdfs:subClassOf ub:Professor ;
+  owl:intersectionOf (
+      ub:Person
+      [
+        a owl:Restriction ;
+        owl:onProperty ub:headOf ;
+        owl:someValuesFrom ub:College ;
+      ]
+    ) ;
+.
+ub:Department
+  a owl:Class ;
+  rdfs:label "university department" ;
+  rdfs:subClassOf ub:Organization ;
+.
+ub:Director
+  a owl:Class ;
+  rdfs:label "director" ;
+  owl:intersectionOf (
+      ub:Person
+      [
+        a owl:Restriction ;
+        owl:onProperty ub:headOf ;
+        owl:someValuesFrom ub:Program ;
+      ]
+    ) ;
+.
+ub:Employee
+  a owl:Class ;
+  rdfs:label "Employee" ;
+  owl:intersectionOf (
+      ub:Person
+      [
+        a owl:Restriction ;
+        owl:onProperty ub:worksFor ;
+        owl:someValuesFrom ub:Organization ;
+      ]
+    ) ;
+.
+ub:Faculty
+  a owl:Class ;
+  rdfs:label "faculty member" ;
+  rdfs:subClassOf ub:Employee ;
+.
+ub:FullProfessor
+  a owl:Class ;
+  rdfs:label "full professor" ;
+  rdfs:subClassOf ub:Professor ;
+.
+ub:GraduateCourse
+  a owl:Class ;
+  rdfs:label "Graduate Level Courses" ;
+  rdfs:subClassOf ub:Course ;
+.
+ub:GraduateStudent
+  a owl:Class ;
+  rdfs:label "graduate student" ;
+  rdfs:subClassOf ub:Person ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:onProperty ub:takesCourse ;
+      owl:someValuesFrom ub:GraduateCourse ;
+    ] ;
+.
+ub:Institute
+  a owl:Class ;
+  rdfs:label "institute" ;
+  rdfs:subClassOf ub:Organization ;
+.
+ub:JournalArticle
+  a owl:Class ;
+  rdfs:label "journal article" ;
+  rdfs:subClassOf ub:Article ;
+.
+ub:Lecturer
+  a owl:Class ;
+  rdfs:label "lecturer" ;
+  rdfs:subClassOf ub:Faculty ;
+.
+ub:Manual
+  a owl:Class ;
+  rdfs:label "manual" ;
+  rdfs:subClassOf ub:Publication ;
+.
+ub:Organization
+  a owl:Class ;
+  rdfs:label "organization" ;
+.
+ub:Person
+  a owl:Class ;
+  rdfs:label "person" ;
+.
+ub:PostDoc
+  a owl:Class ;
+  rdfs:label "post doctorate" ;
+  rdfs:subClassOf ub:Faculty ;
+.
+ub:Professor
+  a owl:Class ;
+  rdfs:label "professor" ;
+  rdfs:subClassOf ub:Faculty ;
+.
+ub:Program
+  a owl:Class ;
+  rdfs:label "program" ;
+  rdfs:subClassOf ub:Organization ;
+.
+ub:Publication
+  a owl:Class ;
+  rdfs:label "publication" ;
+.
+ub:Research
+  a owl:Class ;
+  rdfs:label "research work" ;
+  rdfs:subClassOf ub:Work ;
+.
+ub:ResearchAssistant
+  a owl:Class ;
+  rdfs:label "university research assistant" ;
+  rdfs:subClassOf ub:Student ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:onProperty ub:worksFor ;
+      owl:someValuesFrom ub:ResearchGroup ;
+    ] ;
+.
+ub:ResearchGroup
+  a owl:Class ;
+  rdfs:label "research group" ;
+  rdfs:subClassOf ub:Organization ;
+.
+ub:Schedule
+  a owl:Class ;
+  rdfs:label "schedule" ;
+.
+ub:Software
+  a owl:Class ;
+  rdfs:label "software program" ;
+  rdfs:subClassOf ub:Publication ;
+.
+ub:Specification
+  a owl:Class ;
+  rdfs:label "published specification" ;
+  rdfs:subClassOf ub:Publication ;
+.
+ub:Student
+  a owl:Class ;
+  rdfs:label "student" ;
+  owl:intersectionOf (
+      ub:Person
+      [
+        a owl:Restriction ;
+        owl:onProperty ub:takesCourse ;
+        owl:someValuesFrom ub:Course ;
+      ]
+    ) ;
+.
+ub:SystemsStaff
+  a owl:Class ;
+  rdfs:label "systems staff worker" ;
+  rdfs:subClassOf ub:AdministrativeStaff ;
+.
+ub:TeachingAssistant
+  a owl:Class ;
+  rdfs:label "university teaching assistant" ;
+  owl:intersectionOf (
+      ub:Person
+      [
+        a owl:Restriction ;
+        owl:onProperty ub:teachingAssistantOf ;
+        owl:someValuesFrom ub:Course ;
+      ]
+    ) ;
+.
+ub:TechnicalReport
+  a owl:Class ;
+  rdfs:label "technical report" ;
+  rdfs:subClassOf ub:Article ;
+.
+ub:UndergraduateStudent
+  a owl:Class ;
+  rdfs:label "undergraduate student" ;
+  rdfs:subClassOf ub:Student ;
+.
+ub:University
+  a owl:Class ;
+  rdfs:label "university" ;
+  rdfs:subClassOf ub:Organization ;
+.
+ub:UnofficialPublication
+  a owl:Class ;
+  rdfs:label "unnoficial publication" ;
+  rdfs:subClassOf ub:Publication ;
+.
+ub:VisitingProfessor
+  a owl:Class ;
+  rdfs:label "visiting professor" ;
+  rdfs:subClassOf ub:Professor ;
+.
+ub:Work
+  a owl:Class ;
+  rdfs:label "Work" ;
+.
+ub:advisor
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Person ;
+  rdfs:label "is being advised by" ;
+  rdfs:range ub:Professor ;
+.
+ub:affiliateOf
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Organization ;
+  rdfs:label "is affiliated with" ;
+  rdfs:range ub:Person ;
+.
+ub:affiliatedOrganizationOf
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Organization ;
+  rdfs:label "is affiliated with" ;
+  rdfs:range ub:Organization ;
+.
+ub:age
+  a owl:DatatypeProperty ;
+  rdfs:domain ub:Person ;
+  rdfs:label "is age" ;
+.
+ub:degreeFrom
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Person ;
+  rdfs:label "has a degree from" ;
+  rdfs:range ub:University ;
+  owl:inverseOf ub:hasAlumnus ;
+.
+ub:doctoralDegreeFrom
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Person ;
+  rdfs:label "has a doctoral degree from" ;
+  rdfs:range ub:University ;
+  rdfs:subPropertyOf ub:degreeFrom ;
+.
+ub:emailAddress
+  a owl:DatatypeProperty ;
+  rdfs:domain ub:Person ;
+  rdfs:label "can be reached at" ;
+.
+ub:hasAlumnus
+  a owl:ObjectProperty ;
+  rdfs:domain ub:University ;
+  rdfs:label "has as an alumnus" ;
+  rdfs:range ub:Person ;
+  owl:inverseOf ub:degreeFrom ;
+.
+ub:headOf
+  a owl:ObjectProperty ;
+  rdfs:label "is the head of" ;
+  rdfs:subPropertyOf ub:worksFor ;
+.
+ub:listedCourse
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Schedule ;
+  rdfs:label "lists as a course" ;
+  rdfs:range ub:Course ;
+.
+ub:mastersDegreeFrom
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Person ;
+  rdfs:label "has a masters degree from" ;
+  rdfs:range ub:University ;
+  rdfs:subPropertyOf ub:degreeFrom ;
+.
+ub:member
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Organization ;
+  rdfs:label "has as a member" ;
+  rdfs:range ub:Person ;
+.
+ub:memberOf
+  a owl:ObjectProperty ;
+  rdfs:label "member of" ;
+  owl:inverseOf ub:member ;
+.
+ub:name
+  a owl:DatatypeProperty ;
+  rdfs:label "name" ;
+.
+ub:officeNumber
+  a owl:DatatypeProperty ;
+  rdfs:label "office room No." ;
+.
+ub:orgPublication
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Organization ;
+  rdfs:label "publishes" ;
+  rdfs:range ub:Publication ;
+.
+ub:publicationAuthor
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Publication ;
+  rdfs:label "was written by" ;
+  rdfs:range ub:Person ;
+.
+ub:publicationDate
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Publication ;
+  rdfs:label "was written on" ;
+.
+ub:publicationResearch
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Publication ;
+  rdfs:label "is about" ;
+  rdfs:range ub:Research ;
+.
+ub:researchInterest
+  a owl:DatatypeProperty ;
+  rdfs:label "is researching" ;
+.
+ub:researchProject
+  a owl:ObjectProperty ;
+  rdfs:domain ub:ResearchGroup ;
+  rdfs:label "has as a research project" ;
+  rdfs:range ub:Research ;
+.
+ub:softwareDocumentation
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Software ;
+  rdfs:label "is documented in" ;
+  rdfs:range ub:Publication ;
+.
+ub:softwareVersion
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Software ;
+  rdfs:label "is version" ;
+.
+ub:subOrganizationOf
+  a owl:TransitiveProperty ;
+  rdfs:domain ub:Organization ;
+  rdfs:label "is part of" ;
+  rdfs:range ub:Organization ;
+.
+ub:takesCourse
+  a owl:ObjectProperty ;
+  rdfs:label "is taking" ;
+.
+ub:teacherOf
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Faculty ;
+  rdfs:label "teaches" ;
+  rdfs:range ub:Course ;
+.
+ub:teachingAssistantOf
+  a owl:ObjectProperty ;
+  rdfs:domain ub:TeachingAssistant ;
+  rdfs:label "is a teaching assistant for" ;
+  rdfs:range ub:Course ;
+.
+ub:telephone
+  a owl:DatatypeProperty ;
+  rdfs:domain ub:Person ;
+  rdfs:label "telephone number" ;
+.
+ub:tenured
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Professor ;
+  rdfs:label "is tenured:" ;
+.
+ub:title
+  a owl:DatatypeProperty ;
+  rdfs:domain ub:Person ;
+  rdfs:label "title" ;
+.
+ub:undergraduateDegreeFrom
+  a owl:ObjectProperty ;
+  rdfs:domain ub:Person ;
+  rdfs:label "has an undergraduate degree from" ;
+  rdfs:range ub:University ;
+  rdfs:subPropertyOf ub:degreeFrom ;
+.
+ub:worksFor
+  a owl:ObjectProperty ;
+  rdfs:label "Works For" ;
+  rdfs:subPropertyOf ub:memberOf ;
+.

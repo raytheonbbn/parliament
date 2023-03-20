@@ -1,14 +1,29 @@
+.DS_Store
+.gradle/
 bin/
 build/
-indexes/
-lib/
-log/
-parliament-test.log
-/.gradle/
-/.project
-/.settings/
 /build.properties
 /dependencies/
+lib/
+
+/.project
+/.settings/
+/jena/OntologyBundle/.classpath
+/jena/OntologyBundle/.project
+/jena/OntologyBundle/.settings/
+/jena/OntologyDrivenDataAccess/.classpath
+/jena/OntologyDrivenDataAccess/.project
+/jena/OntologyDrivenDataAccess/.settings/
+/jena/OntologyDrivenDataAccess/odda.pdf
+/jena/OntologyPackager/.classpath
+/jena/OntologyPackager/.project
+/jena/OntologyPackager/.settings/
+/jena/QueryBuilder/.classpath
+/jena/QueryBuilder/.project
+/jena/QueryBuilder/.settings/
+/server/.classpath
+/server/.project
+/server/.settings/
 
 /doc/**/missfont.log
 /doc/**/*.acr
@@ -26,9 +41,7 @@ parliament-test.log
 /doc/**/*.toc
 
 /jena/JosekiExtensions/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab/
-/jena/JenaGraph/*.log*
 *.log*
-/jena/JenaGraph/test-kb-data/
 /Parliament/AdminClient/.settings/language.settings.xml
 /Parliament/AdminClient/Debug_with_Linux GCC/
 /Parliament/AdminClient/Debug_with_MacOSX GCC/
@@ -41,6 +54,4 @@ parliament-test.log
 /Parliament/Test/Debug_with_MacOSX GCC/
 /Parliament/Test/ParliamentKbConfig.txt
 /Parliament/Test/ParliamentLogConfig.txt
-/server/test-kb-data/
 /target/
-.DS_Store

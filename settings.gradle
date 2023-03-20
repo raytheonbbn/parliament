@@ -1,3 +1,6 @@
 rootProject.name = 'kb'
 
-include 'server'
+include 'server',
+	'jena:OntologyBundle',
+	'jena:OntologyDrivenDataAccess',
+	'jena:SparqlQueryBuilder'

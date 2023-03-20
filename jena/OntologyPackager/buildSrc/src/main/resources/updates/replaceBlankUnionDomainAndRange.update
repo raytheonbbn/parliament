@@ -1,0 +1,26 @@
+prefix owl:   <http://www.w3.org/2002/07/owl#>
+prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+prefix xsd:   <http://www.w3.org/2001/XMLSchema#>
+prefix ps:    <http://www.bbn.com/ontologies/rush/problem-strategy#>
+
+delete {
+	?prop ?domainOrRange ?unionCls .
+	?unionCls a owl:Class ;
+		owl:unionOf ?clsList .
+} insert {
+	?prop ?domainOrRange ?newUnionCls .
+	?newUnionCls a owl:Class ;
+		owl:unionOf ?clsList .
+} where {
+	values ?domainOrRange {
+		rdfs:domain
+		rdfs:range
+	}
+
+	?prop ?domainOrRange ?unionCls .
+	?unionCls owl:unionOf ?clsList .
+	optional { ?unionCls a owl:Class . }
+	filter ( isBlank(?unionCls) && !isBlank(?clsList) )
+	bind ( iri(concat(str(?clsList), "-classUnion")) as ?newUnionCls )
+}
