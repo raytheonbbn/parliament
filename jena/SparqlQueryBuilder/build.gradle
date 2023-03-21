@@ -2,13 +2,11 @@
 
 plugins {
 	id 'java-library'
-	id 'eclipse'
 	id 'maven-publish'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-group = 'com.bbn.parliament'
+sourceCompatibility = 17
+targetCompatibility = 17
 version = '1.1.4'
 
 repositories {
@@ -22,8 +20,8 @@ dependencies {
 	testImplementation "$logbackDependency"
 }
 
-tasks.withType(JavaCompile).all {
-	options.compilerArgs.add("-Xlint:all")
+configurations.all {
+	exclude group: 'xml-apis'
 }
 
 task sourcesJar(type: Jar) {

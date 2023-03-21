@@ -51,7 +51,7 @@ public class NamespaceClassGenerator extends DefaultTask {
 				String ns = entry.getValue();
 				System.out.format("Generating %1$s.java%n", clsName);
 				ExecResult execResult = getProject().javaexec(spec -> {
-					spec.setMain("jena.schemagen");
+					spec.getMainClass().set("jena.schemagen");
 					spec.setClasspath(getProject().getConfigurations().getByName("runtimeClasspath").fileCollection(dep -> true));
 					spec.args("-c", ontBundleExt.getSchemagenConfigFile().getPath());
 					spec.args("-i", ontFile.getPath());

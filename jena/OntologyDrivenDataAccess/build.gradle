@@ -1,6 +1,5 @@
 plugins {
 	id 'java-library'
-	id 'eclipse'
 }
 
 repositories {
@@ -19,13 +18,12 @@ dependencies {
 	testImplementation "$logbackDependency"
 }
 
-group = 'com.bbn.parliament'
-version = '1.0-SNAPSHOT'
-sourceCompatibility = 17
-
-tasks.withType(JavaCompile).all {
-	options.compilerArgs.add("-Xlint:all")
+configurations.all {
+	exclude group: 'xml-apis'
 }
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
 
 test {
 	useJUnitPlatform()

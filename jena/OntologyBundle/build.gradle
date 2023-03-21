@@ -1,6 +1,5 @@
 plugins {
 	id 'java-gradle-plugin'
-	id 'eclipse'
 }
 
 repositories {
@@ -8,17 +7,22 @@ repositories {
 }
 
 dependencies {
-	api 'org.apache.jena:jena-arq:2.9.4'
-	implementation 'com.bbn.parliament:SparqlQueryAssembly:1.0.0'
-	implementation 'org.apache.commons:commons-csv:1.8'
+	implementation "$commonsCsvDependency"
+	implementation "$jenaArqDependency"
+	//implementation "$sparqlQueryBuilderDependency"
+	implementation project(':jena:SparqlQueryBuilder')
+
 	testImplementation gradleTestKit()
-	testImplementation 'org.junit.jupiter:junit-jupiter:5.6.1'
+	testImplementation "$jupiterDependency"
 }
 
 configurations.all {
 	exclude group: 'org.slf4j', module: 'slf4j-log4j12'
 	exclude group: 'log4j', module: 'log4j'
 }
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
 
 gradlePlugin {
 	plugins {

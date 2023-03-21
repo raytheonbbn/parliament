@@ -15,9 +15,8 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.jena.shared.PrefixMapping;
 import org.gradle.api.InvalidUserDataException;
-
-import com.hp.hpl.jena.shared.PrefixMapping;
 
 final class PrefixFileLoader {
 	private final File pfxFile;

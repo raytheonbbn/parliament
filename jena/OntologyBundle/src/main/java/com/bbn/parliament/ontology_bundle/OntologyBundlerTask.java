@@ -14,6 +14,23 @@ import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.jena.query.DatasetFactory;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFLanguages;
+import org.apache.jena.update.UpdateExecutionFactory;
+import org.apache.jena.update.UpdateFactory;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.tasks.Input;
@@ -25,27 +42,8 @@ import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
-import org.openjena.riot.Lang;
 
-import com.bbn.parliament.util.CloseableQueryExecution;
 import com.bbn.parliament.util.JavaResource;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.update.GraphStore;
-import com.hp.hpl.jena.update.GraphStoreFactory;
-import com.hp.hpl.jena.update.UpdateExecutionFactory;
-import com.hp.hpl.jena.update.UpdateFactory;
-import com.hp.hpl.jena.update.UpdateProcessor;
-import com.hp.hpl.jena.update.UpdateRequest;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 public class OntologyBundlerTask extends DefaultTask {
 	private static enum OutputType { FOR_HUMANS, FOR_MACHINES }
@@ -169,7 +167,7 @@ public class OntologyBundlerTask extends DefaultTask {
 		Model combinedModel = ModelFactory.createDefaultModel();
 		prefixLoader.addDeclaredPrefixesTo(combinedModel);
 		for (File f : srcFiles.getFiles()) {
-			Lang lang = Lang.guess(f.getName());
+			Lang lang = RDFLanguages.filenameToLang(f.getName());
 			if (lang == null) {
 				System.out.format("Unrecognized RDF serialization:  '%1$s'%n", f.getPath());
 				continue;
@@ -213,11 +211,10 @@ public class OntologyBundlerTask extends DefaultTask {
 
 	private static void runUpdate(Model combinedModel, String rsrcName) {
 		System.out.format("Running update '%1$s'%n", rsrcName);
-		String updateStr = JavaResource.getAsString(rsrcName);
-		UpdateRequest updateReq = UpdateFactory.create(updateStr);
-		GraphStore graphStore = GraphStoreFactory.create(combinedModel);
-		UpdateProcessor up = UpdateExecutionFactory.create(updateReq, graphStore);
-		up.execute();
+		var updateStr = JavaResource.getAsString(rsrcName);
+		var updateReq = UpdateFactory.create(updateStr);
+		var dataset = DatasetFactory.create(combinedModel);
+		UpdateExecutionFactory.create(updateReq, dataset).execute();
 	}
 
 	private void runReports(Model combinedModel) throws IOException {
@@ -230,10 +227,12 @@ public class OntologyBundlerTask extends DefaultTask {
 			File reportFile = new File(reportsDir, getFileNameStem(rsrcName) + ".csv");
 			System.out.format("Running report '%1$s'%n", reportFile.getPath());
 			String queryStr = JavaResource.getAsString(rsrcName);
-			try (CloseableQueryExecution qe = new CloseableQueryExecution(queryStr, combinedModel)) {
+			try (var qe = QueryExecutionFactory.create(queryStr, combinedModel)) {
 				ResultSet rs = qe.execSelect();
 				List<String> vars = rs.getResultVars();
-				CSVFormat csvFmt = CSVFormat.DEFAULT.withHeader(vars.toArray(new String[0]));
+				var csvFmt = CSVFormat.Builder.create(CSVFormat.DEFAULT)
+					.setHeader(vars.toArray(new String[0]))
+					.build();
 				try (
 					BufferedWriter wtr = Files.newBufferedWriter(reportFile.toPath(), StandardCharsets.UTF_8);
 					CSVPrinter csv = new CSVPrinter(wtr, csvFmt);
@@ -284,7 +283,7 @@ public class OntologyBundlerTask extends DefaultTask {
 		long result = -1;
 		Query query = QueryFactory.create(JavaResource.getAsString(queryRsrc));
 		String varName = query.getResultVars().get(0);
-		try (CloseableQueryExecution qe = new CloseableQueryExecution(query, combinedModel)) {
+		try (var qe = QueryExecutionFactory.create(query, combinedModel)) {
 			ResultSet rs = qe.execSelect();
 			while (rs.hasNext()) {
 				QuerySolution qs = rs.next();
@@ -305,7 +304,7 @@ public class OntologyBundlerTask extends DefaultTask {
 
 	private void writeCombinedOutputOntology(Model combinedModel, OutputType outType) throws IOException {
 		File outFile = (outType == OutputType.FOR_HUMANS) ? humanOutFile : machineOutFile;
-		Lang outLang = Lang.guess(outFile.getName(), Lang.TURTLE);
+		Lang outLang = RDFLanguages.filenameToLang(outFile.getName(), Lang.TURTLE);
 		System.out.format("Writing %1$s file '%2$s'%n", outLang.getName(), outFile.getPath());
 		try (OutputStream out = new FileOutputStream(outFile)) {
 			combinedModel.write(out, outLang.getName(), null);

@@ -5,7 +5,7 @@ import java.io.File;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
 
 public class OntologyBundlePlugin implements Plugin<Project> {
@@ -21,8 +21,8 @@ public class OntologyBundlePlugin implements Plugin<Project> {
 		File genJavaDir = new File(project.getBuildDir(), "generated/java");
 		File genRsrcDir = new File(project.getBuildDir(), "generated/resources");
 		project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
-			JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
-			SourceSet main = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+			var javaExtension = project.getExtensions().findByType(JavaPluginExtension.class);
+			var main = javaExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
 			main.getJava().srcDir(genJavaDir);
 			main.getResources().srcDir(genRsrcDir);
 		});
