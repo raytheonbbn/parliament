@@ -16,10 +16,10 @@ repositories {
 }
 
 dependencies {
-	api 'org.apache.jena:jena-arq:3.14.0'
-	implementation 'org.slf4j:slf4j-api:1.7.28'
-	implementation 'org.slf4j:jcl-over-slf4j:1.7.28'
-	testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+	api "$jenaArqDependency"
+	implementation "$slf4jApiDependency"
+	testImplementation "$jupiterDependency"
+	testImplementation "$logbackDependency"
 }
 
 tasks.withType(JavaCompile).all {
