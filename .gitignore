@@ -8,6 +8,8 @@ lib/
 
 /.project
 /.settings/
+/jena/.project
+/jena/.settings/
 /jena/OntologyBundle/.classpath
 /jena/OntologyBundle/.project
 /jena/OntologyBundle/.settings/
@@ -18,9 +20,9 @@ lib/
 /jena/OntologyPackager/.classpath
 /jena/OntologyPackager/.project
 /jena/OntologyPackager/.settings/
-/jena/QueryBuilder/.classpath
-/jena/QueryBuilder/.project
-/jena/QueryBuilder/.settings/
+/jena/SparqlQueryBuilder/.classpath
+/jena/SparqlQueryBuilder/.project
+/jena/SparqlQueryBuilder/.settings/
 /server/.classpath
 /server/.project
 /server/.settings/

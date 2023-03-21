@@ -7,9 +7,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
 
 public class ObjectProperty extends RdfProperty implements Iterable<Entity> {
 	private final Set<Entity> values;

@@ -11,15 +11,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.shared.PrefixMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.misc_needing_refactor.QName;
-import com.bbn.parliament.sparql_query_assembly.QueryBuilder;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.shared.PrefixMapping;
+import com.bbn.parliament.sparql_query_builder.QueryBuilder;
 
 public class RdfPropertyTools {
 	private static final Logger LOG = LoggerFactory.getLogger(RdfPropertyTools.class);

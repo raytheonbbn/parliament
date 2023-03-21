@@ -27,7 +27,7 @@ import org.apache.jena.sparql.syntax.ElementSubQuery;
 import org.apache.jena.sparql.syntax.ElementUnion;
 import org.apache.jena.sparql.syntax.ElementVisitor;
 
-import com.bbn.ix.util.JavaResource;
+import com.bbn.parliament.util.JavaResource;
 
 /**
  * Assembles and updates parameterized query snippets. Since the internal

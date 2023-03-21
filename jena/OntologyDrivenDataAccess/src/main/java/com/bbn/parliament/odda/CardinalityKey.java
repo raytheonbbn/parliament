@@ -3,8 +3,7 @@ package com.bbn.parliament.odda;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import com.hp.hpl.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Resource;
 
 public class CardinalityKey implements Comparable<CardinalityKey> {
 	public final Resource cls;

@@ -7,10 +7,10 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
 
 public class DatatypeProperty extends RdfProperty implements Iterable<RdfLiteral> {
 	private final Set<RdfLiteral> values;

@@ -1,7 +1,7 @@
 package com.bbn.parliament.odda;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 
 public class Geo {
 	public static final String NS = "http://www.opengis.net/ont/geosparql#";

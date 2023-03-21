@@ -9,11 +9,11 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
 
 import com.bbn.parliament.misc_needing_refactor.Dmn;
 import com.google.gson.stream.JsonWriter;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Resource;
 
 public class EntityImpl implements Entity {
 	private Resource uri;

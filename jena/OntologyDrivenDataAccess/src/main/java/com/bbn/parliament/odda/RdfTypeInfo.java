@@ -7,8 +7,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import com.hp.hpl.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Resource;
 
 public class RdfTypeInfo implements Comparable<RdfTypeInfo> {
 	private final Resource uri;

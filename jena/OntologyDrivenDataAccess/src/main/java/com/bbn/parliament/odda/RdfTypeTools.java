@@ -3,10 +3,11 @@ package com.bbn.parliament.odda;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.bbn.parliament.sparql_query_assembly.QueryBuilder;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.shared.PrefixMapping;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.shared.PrefixMapping;
+
+import com.bbn.parliament.sparql_query_builder.QueryBuilder;
 
 public class RdfTypeTools {
 	private final Map<Resource, RdfTypeInfo> rdfTypeMap;
@@ -27,7 +28,7 @@ public class RdfTypeTools {
 		}
 	}
 
-	private RdfTypeInfo getOrCreateTypeInfo(com.hp.hpl.jena.query.QuerySolution qs, String uriVarName, String labelVarName) {
+	private RdfTypeInfo getOrCreateTypeInfo(QuerySolution qs, String uriVarName, String labelVarName) {
 		Resource uri = qs.getResource(uriVarName);
 		String label = QSUtil.getString(qs, labelVarName);
 		return (uri == null)

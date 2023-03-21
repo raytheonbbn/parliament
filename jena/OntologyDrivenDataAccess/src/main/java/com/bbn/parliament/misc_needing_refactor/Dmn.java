@@ -1,7 +1,7 @@
 package com.bbn.parliament.misc_needing_refactor;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 
 public final class Dmn {
 	public static final String NS = "http://bbn.com/tbox/ix/example_domain#";

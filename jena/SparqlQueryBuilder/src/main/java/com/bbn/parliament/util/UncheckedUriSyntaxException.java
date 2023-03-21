@@ -1,6 +1,6 @@
 // Copyright (c) 2020 Raytheon BBN Technologies Corp.
 
-package com.bbn.ix.util;
+package com.bbn.parliament.util;
 
 import java.net.URISyntaxException;
 

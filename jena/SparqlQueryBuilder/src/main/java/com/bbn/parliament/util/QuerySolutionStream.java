@@ -1,7 +1,7 @@
 // Copyright (c) 2019-2023 Raytheon BBN Technologies
 // All rights reserved.
 
-package com.bbn.ix.util;
+package com.bbn.parliament.util;
 
 import java.util.Comparator;
 import java.util.Iterator;

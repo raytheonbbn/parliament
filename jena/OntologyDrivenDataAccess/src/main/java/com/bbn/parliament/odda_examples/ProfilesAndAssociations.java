@@ -6,14 +6,14 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.apache.jena.rdf.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.misc_needing_refactor.Dmn;
 import com.bbn.parliament.odda.Entity;
 import com.bbn.parliament.odda.EntityFactory;
-import com.bbn.parliament.sparql_query_assembly.QueryBuilder;
-import com.hp.hpl.jena.rdf.model.Resource;
+import com.bbn.parliament.sparql_query_builder.QueryBuilder;
 
 public class ProfilesAndAssociations {
 	private static final Logger LOG = LoggerFactory.getLogger(ProfilesAndAssociations.class);

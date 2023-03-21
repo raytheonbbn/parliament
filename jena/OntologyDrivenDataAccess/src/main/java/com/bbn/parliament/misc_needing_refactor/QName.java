@@ -1,6 +1,6 @@
 package com.bbn.parliament.misc_needing_refactor;
 
-import com.hp.hpl.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Resource;
 
 public class QName {
 	public static String asQName(Resource uri) {

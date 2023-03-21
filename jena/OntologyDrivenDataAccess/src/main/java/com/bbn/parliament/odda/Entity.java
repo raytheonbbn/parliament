@@ -5,10 +5,10 @@ import java.util.Collection;
 import java.util.Comparator;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
 
 import com.google.gson.stream.JsonWriter;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Resource;
 
 public interface Entity {
 	// This comparator orders entities by their order index property.

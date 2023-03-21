@@ -5,17 +5,17 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.sparql_query_assembly.QueryBuilder;
+import com.bbn.parliament.sparql_query_builder.QueryBuilder;
 import com.google.gson.stream.JsonReader;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.shared.PrefixMapping;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 public class EntityFactory {
 	private static final Logger LOG = LoggerFactory.getLogger(EntityFactory.class);

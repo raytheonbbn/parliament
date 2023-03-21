@@ -66,7 +66,6 @@ class ValuesClauseSetter extends ElementVisitorBase {
 	}
 
 	@SafeVarargs
-	@SuppressWarnings("varargs")
 	public ValuesClauseSetter(List<String> variables, String markerValue, Collection<RDFNode>... newValues) {
 		this.variables = Collections.unmodifiableList(variables);
 		this.markerValue = markerValue;

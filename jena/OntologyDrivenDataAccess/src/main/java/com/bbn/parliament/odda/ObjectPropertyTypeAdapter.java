@@ -2,11 +2,12 @@ package com.bbn.parliament.odda;
 
 import java.io.IOException;
 
+import org.apache.jena.rdf.model.Resource;
+
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import com.hp.hpl.jena.rdf.model.Resource;
 
 public class ObjectPropertyTypeAdapter extends TypeAdapter<ObjectProperty> {
 	private final Entity owner;

@@ -3,10 +3,10 @@ package com.bbn.parliament.odda;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 
 import com.bbn.parliament.misc_needing_refactor.QName;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 public class ClassPropPair implements Comparable<ClassPropPair> {
 	private final Resource rdfClassUri;

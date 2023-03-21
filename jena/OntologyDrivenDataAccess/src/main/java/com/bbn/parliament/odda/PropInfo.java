@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.vocabulary.OWL;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.OWL;
 
 public class PropInfo {
 	private final Resource prop;
