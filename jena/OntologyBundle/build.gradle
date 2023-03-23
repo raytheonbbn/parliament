@@ -1,0 +1,55 @@
+plugins {
+	id 'java-gradle-plugin'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation "$commonsCsvDependency"
+	implementation "$jenaArqDependency"
+	//implementation "$sparqlQueryBuilderDependency"
+	implementation project(':jena:SparqlQueryBuilder')
+
+	testImplementation gradleTestKit()
+	testImplementation "$jupiterDependency"
+}
+
+configurations.all {
+	exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+	exclude group: 'log4j', module: 'log4j'
+}
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+gradlePlugin {
+	plugins {
+		ontologyBundle {
+			id = 'com.bbn.parliament.ontology_bundle.ontologyBundle'
+			implementationClass = 'com.bbn.parliament.ontology_bundle.OntologyBundlePlugin'
+		}
+	}
+}
+
+sourceSets {
+	functionalTest {
+	}
+}
+
+gradlePlugin.testSourceSets(sourceSets.functionalTest)
+configurations.functionalTestImplementation.extendsFrom(configurations.testImplementation)
+
+task functionalTest(type: Test) {
+	testClassesDirs = sourceSets.functionalTest.output.classesDirs
+	classpath = sourceSets.functionalTest.runtimeClasspath
+}
+
+check {
+	dependsOn(tasks.functionalTest)
+}
+
+test {
+	useJUnitPlatform()
+}

@@ -22,18 +22,8 @@
 		<echo message="Using java version ${java.version}"/>
 
 		<delete dir="${targetDir}" deleteonexit="true"/>
-		<delete file="${basedir}/Parliament/Test/ParliamentKbConfig.txt"/>
-		<delete file="${basedir}/Parliament/Test/ParliamentLogConfig.txt"/>
-		<delete dir="${basedir}/Parliament/Test/kb-data"/>
-		<delete dir="${basedir}/indexes"/>
-		<delete dir="${basedir}/jena/JenaGraph/kb-data"/>
-		<delete dir="${basedir}/jena/JenaGraph" includes="parliament-test.log*"/>
-		<delete dir="${basedir}/jena/TemporalIndexProcessor/log"/>
-		<delete dir="${basedir}/kb-data"/>
-		<delete dir="${basedir}" includes="parliament-test.log*"/>
 
 		<delete dir="${basedir}/jena/JenaGraph/lib"/>
-		<delete dir="${basedir}/jena/JenaGraph/union-test-kb-data"/>
 		<delete dir="${basedir}/jena/JosekiExtensions/lib"/>
 		<delete dir="${basedir}/jena/ParliamentClient/lib"/>
 		<delete dir="${basedir}/jena/NumericIndex/lib"/>
@@ -42,6 +32,9 @@
 		<delete dir="${basedir}/jena/TemporalIndexProcessor_old/lib"/>
 		<delete dir="${basedir}/Parliament/lib"/>
 		<delete dir="${basedir}/Parliament/KbCore/parliament/generated"/>
+		<delete file="${basedir}/Parliament/Test/ParliamentKbConfig.txt"/>
+		<delete file="${basedir}/Parliament/Test/ParliamentLogConfig.txt"/>
+		<delete dir="${basedir}/Parliament/Test/kb-data"/>
 		<delete dir="${basedir}/sesame/CSameAsSail/lib"/>
 		<delete dir="${basedir}/sesame/LuceneSail/lib"/>
 		<delete dir="${basedir}/sesame/ParliamentSail/lib"/>

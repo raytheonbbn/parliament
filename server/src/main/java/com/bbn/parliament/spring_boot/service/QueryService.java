@@ -22,7 +22,7 @@ public class QueryService {
 
 		if ((defaultGraphUris != null && defaultGraphUris.size() > 0)
 			|| (namedGraphUris != null && namedGraphUris.size() > 0)) {
-			throw new BadRequestException("Explicit graph URI parameters are not supported");
+			throw new BadRequestException("Parliament does not support explicit graph URI parameters");
 		}
 
 		List<AcceptableMediaType> acceptList = ServiceUtil.getAcceptList(format, headers);

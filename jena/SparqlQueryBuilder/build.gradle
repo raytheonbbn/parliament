@@ -1,0 +1,90 @@
+// Copyright (c) 2019, 2020 Raytheon BBN Technologies Corp.
+
+plugins {
+	id 'java-library'
+	id 'maven-publish'
+}
+
+sourceCompatibility = 17
+targetCompatibility = 17
+version = '1.1.4'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	api "$jenaArqDependency"
+	implementation "$slf4jApiDependency"
+	testImplementation "$jupiterDependency"
+	testImplementation "$logbackDependency"
+}
+
+configurations.all {
+	exclude group: 'xml-apis'
+}
+
+task sourcesJar(type: Jar) {
+	archiveClassifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	archiveClassifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+artifacts {
+	archives sourcesJar
+	archives javadocJar
+}
+
+test {
+	useJUnitPlatform()
+}
+
+publishing {
+	publications {
+		SparqlQueryBuilder(MavenPublication) {
+			from components.java
+
+			artifact sourcesJar {
+				classifier = 'sources'
+			}
+			artifact javadocJar {
+				classifier = 'javadoc'
+			}
+
+			pom {
+				name = 'SPARQL Query Builder'
+				description = "A Java library for manipulating SPARQL queries.${System.lineSeparator}Copyright © 2019 Raytheon BBN Technologies Corp."
+				url = 'https://github.com/SemWebCentral/parliament/tree/main/jena/SparqlQueryBuilder'
+				organization {
+					name = 'Raytheon BBN Technologies'
+					url = 'http://raytheon.com/'
+				}
+				developers {
+					developer {
+						id = 'mallen'
+						name = 'Matthew Allen'
+						email = 'matthew.allen@raytheon.com'
+					}
+					developer {
+						id = 'iemmons'
+						name = 'Ian Emmons'
+						email = 'iemmons@raytheon.com'
+					}
+				}
+			}
+		}
+	}
+
+	repositories {
+		//mavenLocal()
+		maven {
+			name = 'BbnMavenUsOnly'
+			url = uri('https://artifacts.bbn.com/artifactory/bbn-maven-us-only/')
+			credentials(PasswordCredentials)
+		}
+	}
+}

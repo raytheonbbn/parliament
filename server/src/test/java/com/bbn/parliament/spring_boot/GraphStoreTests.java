@@ -2,6 +2,7 @@ package com.bbn.parliament.spring_boot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.bbn.parliament.client.jena.QuerySolutionStream;
@@ -210,6 +213,17 @@ public class GraphStoreTests {
 	}
 
 	@Disabled
+	@Test
+	public void insertErrorTest() throws IOException {
+		// Insert invalid n-triples:
+		var statusCode = GraphUtils.insertStatements(graphStoreUrl, "oogetyboogetyboo!",
+			RDFFormat.NTRIPLES, null);
+		var status = Optional.ofNullable(HttpStatus.resolve(statusCode));
+		LOG.info("insertErrorTest status code: {} ({})", statusCode,
+			status.map(HttpStatus::getReasonPhrase).orElse("unrecognized status code"));
+		assertFalse(status.map(HttpStatus::is2xxSuccessful).orElse(false));
+	}
+
 	@Test
 	public void createAndDeleteNamedGraphTest() throws IOException {
 		final String ng1Uri = TEST_NG_URI + "1";

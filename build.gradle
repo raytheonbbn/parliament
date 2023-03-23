@@ -3,12 +3,14 @@ ext {
 
 	commonsCsvDependency = 'org.apache.commons:commons-csv:1.9.0'
 	commonsLangDependency = 'org.apache.commons:commons-lang3:3.12.0'
-	//gsonDependency = 'com.google.code.gson:gson:2.6.2'
+	gsonDependency = 'com.google.code.gson:gson:2.10.1'
 	jclOverSlf4j = 'org.slf4j:jcl-over-slf4j:1.7.36'
 	jenaArqDependency = "org.apache.jena:jena-arq:$jenaVersion"
 	jenaCmdsDependency = "org.apache.jena:jena-cmds:$jenaVersion"
+	jupiterDependency = 'org.junit.jupiter:junit-jupiter:5.8.1'
+	logbackDependency = 'ch.qos.logback:logback-classic:1.3.6'
 	slf4jApiDependency = 'org.slf4j:slf4j-api:1.7.36'
-	//sparqlQueryAssemblyDependency = 'com.bbn.ix:SparqlQueryAssembly:1.0.0'
+	//sparqlQueryBuilderDependency = 'com.bbn.parliament:SparqlQueryBuilder:1.1.4'
 
 	targetDir = file("${rootDir}/target")
 	artifactsDir = file("$targetDir/artifacts")
@@ -21,7 +23,7 @@ allprojects {
 	version = '2.8.2-SNAPSHOT'
 
 	tasks.withType(JavaCompile).all {
-		options.compilerArgs.add("-Xlint:all")
+		options.compilerArgs.add('-Xlint:all')
 	}
 }
 

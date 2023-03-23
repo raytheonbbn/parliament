@@ -1,0 +1,79 @@
+import com.bbn.parliament.ontology_packager.OntologyPackager
+import com.bbn.parliament.ontology_packager.ResourceClassGenerator
+
+apply plugin: 'java-library'
+apply plugin: 'eclipse'
+
+ext {
+	genJavaDir = file("$buildDir/generated/java")
+	genRsrcDir = file("$buildDir/generated/resources")
+	pfxFile = file("$projectDir/rdfPrefixes.properties")
+	humanOnt = file("$genRsrcDir/Ontology-HumanReadable.ttl")
+	machineOnt = file("$genRsrcDir/Ontology-MachineReadable.ttl")
+}
+
+group = 'com.bbn.project_name'
+version = '0.0.1.SNAPSHOT'
+defaultTasks 'clean', 'build'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation gradleApi()
+	api 'org.apache.jena:jena-cmds:3.6.0'
+	implementation 'org.apache.commons:commons-csv:1.8'
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.6.1'
+}
+
+configurations.all {
+	exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+	exclude group: 'log4j', module: 'log4j'
+}
+
+sourceSets {
+	main {
+		java { srcDir genJavaDir }
+		resources { srcDir genRsrcDir }
+	}
+}
+
+task packageOntology(type: OntologyPackager) {
+	humanReadableOutputFile = humanOnt
+	machineReadableOutputFile = machineOnt
+	prefixesFile = pfxFile
+	reportDir = file("$buildDir/reports")
+	sources fileTree("$projectDir/testOnt") { include '**/*' }
+	ontologyUri = 'http://bbn.com/ont/packaged-ontology'
+	ontologyVersion = project.version
+}
+
+task generateResourceClasses(type: ResourceClassGenerator) {
+	dependsOn packageOntology
+
+	prefixesFile = pfxFile
+	desiredPrefixes = [ 'dul', 'geo' ]
+	schemagenConfigFile = file("$projectDir/schemagenConfig.ttl")
+	ontologyFile = humanOnt
+	outputDirectory = genJavaDir
+}
+
+compileJava.dependsOn generateResourceClasses
+processResources.dependsOn generateResourceClasses
+
+jar {
+	archiveBaseName = 'packaged-ontology'
+	manifest {
+		attributes(
+			'Implementation-Title': project.name,
+			'Implementation-Version': project.version)
+	}
+	doLast {
+		println "Archive name:  '$archiveName'"
+	}
+}
+
+test {
+	useJUnitPlatform()
+}

@@ -1,0 +1,21 @@
+prefix owl:   <http://www.w3.org/2002/07/owl#>
+prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+prefix xsd:   <http://www.w3.org/2001/XMLSchema#>
+
+delete {
+	?root ?predicate ?listNode .
+	?listNode rdf:first ?listNodeContent ;
+		rdf:rest ?nextListNode .
+} insert {
+	?root ?predicate ?listNodeUri .
+	?listNodeUri rdf:first ?listNodeContent ;
+		rdf:rest ?nextListNode .
+} where {
+	?root ?predicate ?listNode .
+	?listNode rdf:first ?listNodeContent ;
+		rdf:rest ?nextListNode .
+	filter ( isBlank(?listNode) && !isBlank(?listNodeContent) && !isBlank(?nextListNode) )
+	bind ( concat(str(?nextListNode), "\n", str(?listNodeContent)) as ?toHash )
+	bind ( iri(concat("http://bbn.com/tbox/buc/infoexploit/filled-blank#z", sha256(?toHash))) as ?listNodeUri )
+}

@@ -1,0 +1,4 @@
+select distinct ?violatedDomain where {
+	?_property rdfs:domain ?violatedDomain .
+	filter not exists { ?_entity a ?violatedDomain . }
+}

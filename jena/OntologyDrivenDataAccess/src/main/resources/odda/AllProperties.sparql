@@ -1,0 +1,23 @@
+select distinct ?prop ?propFamily ?domainType ?jsonFieldName where {
+	{
+		{
+			?prop rdfs:subPropertyOf dmn:attribute .
+			filter ( ?prop != dmn:attribute )
+			bind ( owl:DatatypeProperty as ?propFamily )
+		} union {
+			?prop rdfs:subPropertyOf dmn:relationship .
+			filter ( ?prop != dmn:relationship && ?prop != dmn:link )
+			bind ( owl:ObjectProperty as ?propFamily )
+		}
+	}
+	optional {
+		{
+			?domainType rdfs:subClassOf ?restriction .
+			?restriction a owl:Restriction ;
+			Owl:onProperty ?prop .
+			optional { ?restriction dmn:jsonFieldName ?jsonFieldName }
+		} union {
+			?prop rdfs:domain ?domainType .
+		}
+	}
+}

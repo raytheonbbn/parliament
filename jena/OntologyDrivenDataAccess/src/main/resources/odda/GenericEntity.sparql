@@ -1,0 +1,41 @@
+# Assumes sub-type and sub-property inference.
+
+select distinct ?ent ?prop ?propValue where {
+	######################################################
+	# Sub-query to select the set of entities is inserted here.
+	# Select list must consist of the single variable ?ent
+
+	{
+		{
+			{
+				##################################################
+				# Pre-fetch all proper sub-classes of BFO's Entity
+				select distinct ?entType where {
+					?entType a owl:Class ;
+						rdfs:subClassOf obo:BFO_0000001 .
+					filter not exists { ?entType a owl:Restriction . }
+					filter ( !isBlank(?entType) )
+					filter ( ?entType != obo:BFO_0000001 )
+				}
+			}
+
+			###############################
+			# Get most-derived entity types
+			?ent a ?entType .
+			bind (rdf:type as ?prop)
+			bind (?entType as ?propValue)
+		} union {
+			#############################
+			# Get the entity's properties
+			values ?superProp { dmn:attribute dmn:relationship }
+			?ent ?prop ?propValue .
+			?prop rdfs:subPropertyOf ?superProp .
+			filter ( ?prop != dmn:link )
+			filter not exists {
+				?ent ?prop2 ?propValue .
+				?prop2 rdfs:subPropertyOf ?prop .
+				filter ( ?prop2 != ?prop )
+			}
+		}
+	}
+}

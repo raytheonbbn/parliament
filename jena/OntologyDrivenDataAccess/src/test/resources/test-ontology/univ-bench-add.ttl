@@ -1,0 +1,56 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> .
+@prefix ub-add: <http://bbn.com/tbox/ix/univ-bench-additions#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://bbn.com/tbox/ix/univ-bench-additions>
+  a owl:Ontology ;
+  rdfs:comment "Additions to the university benchmark ontology for to enable ontology-driven data access" ;
+  rdfs:label "Univ-bench Ontology Additions" ;
+  owl:versionInfo "April 28, 2019" ;
+.
+
+ub-add:attribute
+  a owl:DatatypeProperty ;
+  rdfs:label "attribute" ;
+.
+ub-add:relationship
+  a owl:ObjectProperty ;
+  rdfs:label "relationship" ;
+.
+ub-add:link
+  a owl:ObjectProperty ;
+  a owl:TransitiveProperty ;
+  rdfs:label "relationship" ;
+  rdfs:subPropertyOf ub-add:relationship ;
+.
+
+ub:advisor rdfs:subPropertyOf ub-add:relationship .
+ub:affiliateOf rdfs:subPropertyOf ub-add:relationship .
+ub:affiliatedOrganizationOf rdfs:subPropertyOf ub-add:relationship .
+ub:age rdfs:subPropertyOf ub-add:attribute .
+ub:degreeFrom rdfs:subPropertyOf ub-add:relationship .
+ub:emailAddress rdfs:subPropertyOf ub-add:attribute .
+ub:hasAlumnus rdfs:subPropertyOf ub-add:relationship .
+ub:listedCourse rdfs:subPropertyOf ub-add:relationship .
+ub:member rdfs:subPropertyOf ub-add:link .
+ub:memberOf rdfs:subPropertyOf ub-add:relationship .
+ub:name rdfs:subPropertyOf ub-add:attribute .
+ub:officeNumber rdfs:subPropertyOf ub-add:attribute .
+ub:orgPublication rdfs:subPropertyOf ub-add:relationship .
+ub:publicationAuthor rdfs:subPropertyOf ub-add:relationship .
+ub:publicationDate rdfs:subPropertyOf ub-add:relationship .
+ub:publicationResearch rdfs:subPropertyOf ub-add:relationship .
+ub:researchInterest rdfs:subPropertyOf ub-add:attribute .
+ub:researchProject rdfs:subPropertyOf ub-add:relationship .
+ub:softwareDocumentation rdfs:subPropertyOf ub-add:relationship .
+ub:softwareVersion rdfs:subPropertyOf ub-add:relationship .
+ub:subOrganizationOf rdfs:subPropertyOf ub-add:link.
+ub:takesCourse rdfs:subPropertyOf ub-add:relationship .
+ub:teacherOf rdfs:subPropertyOf ub-add:relationship .
+ub:teachingAssistantOf rdfs:subPropertyOf ub-add:relationship .
+ub:telephone rdfs:subPropertyOf ub-add:attribute .
+ub:tenured rdfs:subPropertyOf ub-add:relationship .
+ub:title rdfs:subPropertyOf ub-add:attribute .

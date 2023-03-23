@@ -8,6 +8,7 @@
 	<property name="bridgeBinDir" value="${targetDir}/bin/${ant.project.name}-bridge"/>
 	<property name="serverBinDir" value="${targetDir}/bin/${ant.project.name}-server"/>
 	<property name="testBinDir" value="${targetDir}/test-bin/${ant.project.name}"/>
+	<property name="tmpServerDir" value="${testBinDir}/tmp-server"/>
 	<property name="genSrcDir"
 		location="${basedir}/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab"/>
 	<property name="configDir" location="${basedir}/resources/conf"/>
@@ -224,14 +225,14 @@
 	<!-- Runs unit tests for a specific native directory, which is expected as a parameter -->
 	<target name="runTestsForOneNativeDir">
 		<echo message="nativeArtifactsDir = '${nativeArtifactsDir}'"/>
-		<delete dir="${basedir}/tmp-server"/>
-		<copy todir="${basedir}/tmp-server/webapps">
+		<delete dir="${tmpServerDir}"/>
+		<copy todir="${tmpServerDir}/webapps">
 			<fileset file="${warFile}"/>
 		</copy>
-		<copy todir="${basedir}/tmp-server/conf">
+		<copy todir="${tmpServerDir}/conf">
 			<fileset file="${basedir}/resources/conf/webdefault.xml"/>
 		</copy>
-		<mkdir dir="${basedir}/tmp-server/log"/>
+		<mkdir dir="${tmpServerDir}/log"/>
 
 		<junitlauncher printsummary="yes" haltonfailure="yes">
 			<classpath>
@@ -259,7 +260,7 @@
 			which makes Java unhappy.
 			-->
 			<test name="com.bbn.parliament.jena.joseki.bridge.ParliamentServerTestCase">
-				<fork dir="${basedir}/tmp-server">
+				<fork dir="${tmpServerDir}">
 					<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
 					<!-- This used to use jetty-test.xml, but that was written for Jetty 6.  Now
 						that we're using Jetty 9, we'll just use jetty.xml rather than bothering to
@@ -272,12 +273,11 @@
 			<testclasses>
 				<fileset dir="${testBinDir}" includes="**/*TestCase.class"
 					excludes="**/bridge/ParliamentServerTestCase.class"/>
-				<fork>
+				<fork dir="${testBinDir}">
 					<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
 					<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
 				</fork>
 			</testclasses>
 		</junitlauncher>
-		<delete dir="${basedir}/tmp-server"/>
 	</target>
 </project>

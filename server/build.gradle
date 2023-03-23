@@ -85,6 +85,8 @@ test {
 	systemProperty 'java.library.path', "${distroDir}/bin"
 	systemProperty 'test.data.path', "${rootDir}/dependencies/data"
 	//systemProperty 'log4j.configuration', "file:${rootDir}/log4j.junit.properties"
+
+	workingDir = buildDir
 }
 
 bootRun {

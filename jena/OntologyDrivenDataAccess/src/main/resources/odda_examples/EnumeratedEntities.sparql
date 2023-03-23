@@ -1,0 +1,5 @@
+select distinct ?ent where {
+	values ?ent { "entity-uri-list" }
+
+	?ent a dmn:EntityOfInterest .
+}
