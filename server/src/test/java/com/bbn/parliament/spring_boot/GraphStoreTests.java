@@ -1,13 +1,12 @@
 package com.bbn.parliament.spring_boot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -131,26 +130,27 @@ public class GraphStoreTests {
 		}
 	}
 
-	private static Stream<Arguments> insertSampleDataTestArgs() {
+	private static Stream<Arguments> insertAndGetSampleDataTestArgs() {
 		return Stream.of(
-			Arguments.of("univ-bench.owl",		null,				393, 76),
-			Arguments.of("univ-bench.owl",		TEST_NG_URI,	393, 76),
-			Arguments.of("geo-example.ttl",		null,				14, 0),
-			Arguments.of("geo-example.ttl",		TEST_NG_URI,	14, 0),
-			Arguments.of("deft-data-load.nt",	null,				97094, 2),
-			Arguments.of("deft-data-load.nt",	TEST_NG_URI,	97094, 2),
-			Arguments.of("marley.jsonld",			null,				11, 4),
-			Arguments.of("marley.jsonld",			TEST_NG_URI,	11, 4)
+			Arguments.of("univ-bench.owl",		null,				393, 76, true),
+			Arguments.of("univ-bench.owl",		TEST_NG_URI,	393, 76, true),
+			Arguments.of("geo-example.ttl",		null,				14, 0, false),
+			Arguments.of("geo-example.ttl",		TEST_NG_URI,	14, 0, false),
+			Arguments.of("deft-data-load.nt",	null,				97094, 2, true),
+			Arguments.of("deft-data-load.nt",	TEST_NG_URI,	97094, 2, true),
+			Arguments.of("marley.jsonld",			null,				11, 4, false),
+			Arguments.of("marley.jsonld",			TEST_NG_URI,	11, 4, false)
 			);
 	}
 
 	@ParameterizedTest
-	@MethodSource("insertSampleDataTestArgs")
-	public void insertSampleDataTest(String fileName, String graphName,
-			long expectedAllQueryCount, long expectedLabelQueryCount) throws IOException {
+	@MethodSource("insertAndGetSampleDataTestArgs")
+	public void insertAndGetSampleDataTest(String fileName, String graphName,
+			long expectedAllQueryCount, long expectedLabelQueryCount, boolean hasInferredOrBlankNodes) throws IOException {
 		var fileFmt = RDFFormat.parseFilename(fileName);
 		LOG.info("Loading file '{}' as {} via graph store protocol", fileName, fileFmt);
-		var returnCode = GraphUtils.insertStatements(graphStoreUrl, graphName, new File(DATA_DIR, fileName));
+		var file = new File(DATA_DIR, fileName);
+		var returnCode = GraphUtils.insertStatements(graphStoreUrl, graphName, file);
 		assertEquals(200, returnCode);
 
 		var allQuery = prepareInsertTestQuery(DEFAULT_ALL_QUERY, NG_ALL_QUERY, graphName);
@@ -163,34 +163,18 @@ public class GraphStoreTests {
 			assertEquals(expectedLabelQueryCount, stream.count());
 		}
 
-
 		// GET test
-		HttpResponse<String> response = GraphUtils.getStatements(graphStoreUrl, graphName);
-		LOG.debug("foo GET response code:{}", response.statusCode());
+		if (!hasInferredOrBlankNodes) {
+			HttpResponse<InputStream> response = GraphUtils.getStatements(graphStoreUrl, graphName, fileFmt);
 
-		try (InputStream bstrm = new ByteArrayInputStream(response.body().getBytes(StandardCharsets.UTF_8))) {
-			Model model = ModelFactory.createDefaultModel();
-//			insertStatements(graphStoreUrl, bstrm, RDFFormat.TURTLE, graphName);
-			model.read(bstrm, null, RDFFormat.TURTLE.toString());
-			LOG.debug("foogetmodel len:{}", model.listStatements().toList().size());
-
-			// create another model for the sample file using that stream
-			Model sampleModel = ModelFactory.createDefaultModel();
-			var file = new File(DATA_DIR, fileName);
-			RdfResourceLoader.load(file, sampleModel);
-			LOG.debug("foosamplemodel len:{}", sampleModel.listStatements().toList().size());
-			// then compare the two models (model from GET, and model from sample file)
-			Model diff = model.difference(sampleModel);
-//			TODO: GET endpoint gets all statements of the sample file.
-//			however, the Model created from the sample file doesn't contain all stmts
-//			accord. to the arguments length specs...
-			LOG.debug("foo diff: {}", diff.listStatements().toList());
-//			LOG.debug("foo diff: {}", model.difference(sampleModel));
-
+			Model responseModel = ModelFactory.createDefaultModel();
+			try (InputStream bstrm = response.body()) {
+				responseModel.read(bstrm, null, fileFmt.toString());
+			}
+			Model fileModel = ModelFactory.createDefaultModel();
+			RdfResourceLoader.load(file, fileModel);
+			assertTrue(responseModel.isIsomorphicWith(fileModel));
 		}
-
-
-
 	}
 
 	private static boolean multiPostInsertTestFileMatcher(Path path, BasicFileAttributes attrs) {

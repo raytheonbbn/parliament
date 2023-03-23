@@ -52,7 +52,6 @@ public class GraphStoreService {
 	@SuppressWarnings("static-method")
 	public ResponseEntity<StreamingResponseBody> doGetGraph(String graphUri, String format,
 		HttpHeaders headers, HttpServletRequest request) {
-
 		AcceptableMediaType contentType = chooseMediaType(format, headers);
 		String serverName = ServiceUtil.getRequestor(headers, request);
 		GraphExportHandler handler = new GraphExportHandler(contentType, serverName, graphUri);

@@ -41,7 +41,6 @@ import com.bbn.parliament.client.jena.MultiPartBodyPublisherBuilder;
 import com.bbn.parliament.client.jena.QuerySolutionStream;
 import com.bbn.parliament.client.jena.RDFFormat;
 import com.bbn.parliament.spring_boot.controller.QueryController;
-import com.bbn.parliament.spring_boot.service.AcceptableMediaType;
 
 import reactor.core.publisher.Mono;
 
@@ -99,7 +98,7 @@ public class GraphUtils {
 					.header(HttpHeaders.ACCEPT, "text/csv")
 					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 					.build();
-		return sendRequest(request).body();
+		return getReponseAsString(request).body();
 	}
 
 	public static QuadDataAcc createQuadData(String sub, String pred, Node obj, String graphName) {
@@ -183,7 +182,7 @@ public class GraphUtils {
 					.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
 					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 					.build();
-		return sendRequest(request).statusCode();
+		return getReponseAsString(request).statusCode();
 	}
 
 	public static int insertStatements(String graphStoreUrl, String graphName, File file) throws IOException {
@@ -194,7 +193,7 @@ public class GraphUtils {
 			.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
 			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 			.build();
-		return sendRequest(request).statusCode();
+		return getReponseAsString(request).statusCode();
 	}
 
 	public static int insertStatements(String graphStoreUrl, String graphName, List<File> filesToLoad) {
@@ -209,24 +208,17 @@ public class GraphUtils {
 					.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
 					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 					.build();
-		return sendRequest(request).statusCode();
+		return getReponseAsString(request).statusCode();
 	}
 
-	public static HttpResponse<String> getStatements(String graphStoreUrl, String graphName) throws IOException {
-		LOG.debug("foo graphstore GET endpoint: getStatements for graph={}",graphName==null ? "default": graphName);
-		var requestUrl = StringUtils.isBlank(graphName)
-				? graphStoreUrl + "?default"
-				: graphStoreUrl + "?graph=" + URLEncoder.encode(graphName, StandardCharsets.UTF_8);
-		URI uri = URI.create(requestUrl + "&format="+ AcceptableMediaType.TURTLE.getQueryStringFormat());
+	public static HttpResponse<InputStream> getStatements(String graphStoreUrl, String graphName, RDFFormat rdfFmt) {
 		var request = HttpRequest.newBuilder()
-			.uri(uri)
-//			.uri(getRequestUrl(graphStoreUrl, graphName))
+			.uri(getRequestUrl(graphStoreUrl, graphName))
+			.header(HttpHeaders.ACCEPT, rdfFmt.getMediaType())
 			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 			.GET()
 			.build();
-		HttpResponse<String> response = sendRequest(request);
-
-		return response;
+		return getReponseAsStream(request);
 	}
 
 	public static int createGraph(String graphStoreUrl, String mediaType, String graphName) {
@@ -238,7 +230,7 @@ public class GraphUtils {
 				.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 				.build();
 		LOG.debug("createGraph request.bodyPublisher():"+request.bodyPublisher().get().contentLength());
-		return sendRequest(request).statusCode();
+		return getReponseAsString(request).statusCode();
 	}
 
 	public static void clearAll(String graphStoreUrl, String sparqlUrl) {
@@ -254,10 +246,16 @@ public class GraphUtils {
 			.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
 			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 			.build();
-		return sendRequest(request).statusCode();
+		return getReponseAsString(request).statusCode();
 	}
 
-	private static HttpResponse<String> sendRequest(HttpRequest request) {
+	private static HttpResponse<InputStream> getReponseAsStream(HttpRequest request) {
+		return HttpClient.newHttpClient()
+				.sendAsync(request, HttpResponse.BodyHandlers.ofInputStream())
+				.join();
+	}
+
+	private static HttpResponse<String> getReponseAsString(HttpRequest request) {
 		HttpResponse<String> response = HttpClient.newHttpClient()
 			.sendAsync(request, HttpResponse.BodyHandlers.ofString())
 			.join();
