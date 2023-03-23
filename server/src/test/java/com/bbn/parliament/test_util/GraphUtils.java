@@ -98,7 +98,7 @@ public class GraphUtils {
 					.header(HttpHeaders.ACCEPT, "text/csv")
 					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 					.build();
-		return sendRequest(request).body();
+		return getReponseAsString(request).body();
 	}
 
 	public static QuadDataAcc createQuadData(String sub, String pred, Node obj, String graphName) {
@@ -183,7 +183,7 @@ public class GraphUtils {
 					.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
 					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 					.build();
-		return sendRequest(request).statusCode();
+		return getReponseAsString(request).statusCode();
 	}
 
 	public static int insertStatements(String graphStoreUrl, String graphName, File file) throws IOException {
@@ -194,7 +194,7 @@ public class GraphUtils {
 			.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
 			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 			.build();
-		return sendRequest(request).statusCode();
+		return getReponseAsString(request).statusCode();
 	}
 
 	public static int insertStatements(String graphStoreUrl, String graphName, List<File> filesToLoad) {
@@ -209,7 +209,17 @@ public class GraphUtils {
 					.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
 					.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 					.build();
-		return sendRequest(request).statusCode();
+		return getReponseAsString(request).statusCode();
+	}
+
+	public static HttpResponse<InputStream> getStatements(String graphStoreUrl, String graphName, RDFFormat rdfFmt) {
+		var request = HttpRequest.newBuilder()
+			.uri(getRequestUrl(graphStoreUrl, graphName))
+			.header(HttpHeaders.ACCEPT, rdfFmt.getMediaType())
+			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
+			.GET()
+			.build();
+		return getReponseAsStream(request);
 	}
 
 	public static int createGraph(String graphStoreUrl, String mediaType, String graphName) {
@@ -221,7 +231,7 @@ public class GraphUtils {
 				.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 				.build();
 		LOG.debug("createGraph request.bodyPublisher():"+request.bodyPublisher().get().contentLength());
-		return sendRequest(request).statusCode();
+		return getReponseAsString(request).statusCode();
 	}
 
 	public static void clearAll(String graphStoreUrl, String sparqlUrl) {
@@ -237,10 +247,16 @@ public class GraphUtils {
 			.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
 			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 			.build();
-		return sendRequest(request).statusCode();
+		return getReponseAsString(request).statusCode();
 	}
 
-	private static HttpResponse<String> sendRequest(HttpRequest request) {
+	private static HttpResponse<InputStream> getReponseAsStream(HttpRequest request) {
+		return HttpClient.newHttpClient()
+				.sendAsync(request, HttpResponse.BodyHandlers.ofInputStream())
+				.join();
+	}
+
+	private static HttpResponse<String> getReponseAsString(HttpRequest request) {
 		HttpResponse<String> response = HttpClient.newHttpClient()
 			.sendAsync(request, HttpResponse.BodyHandlers.ofString())
 			.join();

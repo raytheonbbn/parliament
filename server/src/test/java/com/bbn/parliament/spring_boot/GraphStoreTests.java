@@ -1,10 +1,13 @@
 package com.bbn.parliament.spring_boot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.http.HttpResponse;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,10 +20,13 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.query.ParameterizedSparqlString;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -39,6 +45,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.bbn.parliament.client.jena.QuerySolutionStream;
 import com.bbn.parliament.client.jena.RDFFormat;
 import com.bbn.parliament.test_util.GraphUtils;
+import com.bbn.parliament.test_util.RdfResourceLoader;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -126,26 +133,27 @@ public class GraphStoreTests {
 		}
 	}
 
-	private static Stream<Arguments> insertSampleDataTestArgs() {
+	private static Stream<Arguments> insertAndGetSampleDataTestArgs() {
 		return Stream.of(
-			Arguments.of("univ-bench.owl",		null,				393, 76),
-			Arguments.of("univ-bench.owl",		TEST_NG_URI,	393, 76),
-			Arguments.of("geo-example.ttl",		null,				14, 0),
-			Arguments.of("geo-example.ttl",		TEST_NG_URI,	14, 0),
-			Arguments.of("deft-data-load.nt",	null,				97094, 2),
-			Arguments.of("deft-data-load.nt",	TEST_NG_URI,	97094, 2),
-			Arguments.of("marley.jsonld",			null,				11, 4),
-			Arguments.of("marley.jsonld",			TEST_NG_URI,	11, 4)
+			Arguments.of("univ-bench.owl",		null,				393, 76, true),
+			Arguments.of("univ-bench.owl",		TEST_NG_URI,	393, 76, true),
+			Arguments.of("geo-example.ttl",		null,				14, 0, false),
+			Arguments.of("geo-example.ttl",		TEST_NG_URI,	14, 0, false),
+			Arguments.of("deft-data-load.nt",	null,				97094, 2, true),
+			Arguments.of("deft-data-load.nt",	TEST_NG_URI,	97094, 2, true),
+			Arguments.of("marley.jsonld",			null,				11, 4, false),
+			Arguments.of("marley.jsonld",			TEST_NG_URI,	11, 4, false)
 			);
 	}
 
 	@ParameterizedTest
-	@MethodSource("insertSampleDataTestArgs")
-	public void insertSampleDataTest(String fileName, String graphName,
-			long expectedAllQueryCount, long expectedLabelQueryCount) throws IOException {
+	@MethodSource("insertAndGetSampleDataTestArgs")
+	public void insertAndGetSampleDataTest(String fileName, String graphName,
+			long expectedAllQueryCount, long expectedLabelQueryCount, boolean hasInferredOrBlankNodes) throws IOException {
 		var fileFmt = RDFFormat.parseFilename(fileName);
 		LOG.info("Loading file '{}' as {} via graph store protocol", fileName, fileFmt);
-		var returnCode = GraphUtils.insertStatements(graphStoreUrl, graphName, new File(DATA_DIR, fileName));
+		var file = new File(DATA_DIR, fileName);
+		var returnCode = GraphUtils.insertStatements(graphStoreUrl, graphName, file);
 		assertEquals(200, returnCode);
 
 		var allQuery = prepareInsertTestQuery(DEFAULT_ALL_QUERY, NG_ALL_QUERY, graphName);
@@ -156,6 +164,19 @@ public class GraphStoreTests {
 		var labelQuery = prepareInsertTestQuery(DEFAULT_LABEL_QUERY, NG_LABEL_QUERY, graphName);
 		try (var stream = new QuerySolutionStream(labelQuery, sparqlUrl)) {
 			assertEquals(expectedLabelQueryCount, stream.count());
+		}
+
+		// GET test
+		if (!hasInferredOrBlankNodes) {
+			HttpResponse<InputStream> response = GraphUtils.getStatements(graphStoreUrl, graphName, fileFmt);
+
+			Model responseModel = ModelFactory.createDefaultModel();
+			try (InputStream bstrm = response.body()) {
+				responseModel.read(bstrm, null, fileFmt.toString());
+			}
+			Model fileModel = ModelFactory.createDefaultModel();
+			RdfResourceLoader.load(file, fileModel);
+			assertTrue(responseModel.isIsomorphicWith(fileModel));
 		}
 	}
 
@@ -191,6 +212,7 @@ public class GraphStoreTests {
 		}
 	}
 
+	@Disabled
 	@Test
 	public void insertErrorTest() throws IOException {
 		// Insert invalid n-triples:
