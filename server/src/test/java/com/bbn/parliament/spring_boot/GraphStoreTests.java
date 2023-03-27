@@ -142,7 +142,9 @@ public class GraphStoreTests {
 			Arguments.of("deft-data-load.nt",	null,				97094, 2, true),
 			Arguments.of("deft-data-load.nt",	TEST_NG_URI,	97094, 2, true),
 			Arguments.of("marley.jsonld",			null,				11, 4, false),
-			Arguments.of("marley.jsonld",			TEST_NG_URI,	11, 4, false)
+			Arguments.of("marley.jsonld",			TEST_NG_URI,	11, 4, false),
+			Arguments.of("University15_20.owl",	null,				9067, 0, false),
+			Arguments.of("University15_20.owl",	TEST_NG_URI,	9067, 0, false)
 			);
 	}
 
