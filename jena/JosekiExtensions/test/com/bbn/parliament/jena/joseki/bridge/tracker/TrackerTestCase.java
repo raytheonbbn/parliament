@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.ZipInputStream;
 
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.sparql.pfunction.PropertyFunctionRegistry;
@@ -18,6 +17,8 @@ import com.bbn.parliament.jena.joseki.graph.ModelManager;
 import com.bbn.parliament.jena.joseki.handler.Inserter;
 
 public class TrackerTestCase {
+	private static final String TEST_RDF_FILE = "University15_20.owl";
+
 	@SuppressWarnings("static-method")
 	@BeforeEach
 	public void initialize() {
@@ -154,12 +155,9 @@ public class TrackerTestCase {
 				@Override
 				public InputStream getInputStream() throws IOException {
 					ClassLoader cl = Thread.currentThread().getContextClassLoader();
-					InputStream is = cl.getResourceAsStream("University15_20.owl.zip");
-					ZipInputStream zis = new ZipInputStream(is);
-					zis.getNextEntry();
-					return zis;
+					return cl.getResourceAsStream(TEST_RDF_FILE);
 				}
-			}, "RDF/XML", null, "yes", "no", "University15_20.owl");
+			}, "RDF/XML", null, "yes", "no", TEST_RDF_FILE);
 		}
 	}
 

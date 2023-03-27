@@ -6,9 +6,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.util.zip.ZipInputStream;
 
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.sparql.pfunction.PropertyFunctionRegistry;
@@ -29,6 +27,8 @@ import com.bbn.parliament.jena.handler.Inserter;
 import com.bbn.parliament.jena.handler.VerifyOption;
 
 public class TrackerTestCase {
+	private static final String TEST_RDF_FILE = "University15_20.owl";
+
 	@SuppressWarnings("static-method")
 	@BeforeEach
 	public void initialize() {
@@ -164,15 +164,12 @@ public class TrackerTestCase {
 	public void testTrackerInsert() {
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 		Inserter inserter = Inserter.newGraphInserter(
-			null, "RDF/XML", "University15_20.owl", VerifyOption.VERIFY, null,
+			null, "RDF/XML", TEST_RDF_FILE, VerifyOption.VERIFY, null,
 			() -> {
 				try {
 					File dataDir = new File(System.getProperty("test.data.path"));
-					File file = new File(dataDir, "University15_20.owl.zip");
-					InputStream is = new FileInputStream(file);
-					ZipInputStream zis = new ZipInputStream(is);
-					zis.getNextEntry();
-					return zis;
+					File file = new File(dataDir, TEST_RDF_FILE);
+					return new FileInputStream(file);
 				} catch (IOException ex) {
 					throw new UncheckedIOException(ex);
 				}

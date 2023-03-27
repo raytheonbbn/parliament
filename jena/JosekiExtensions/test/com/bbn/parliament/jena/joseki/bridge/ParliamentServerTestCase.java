@@ -60,7 +60,7 @@ public class ParliamentServerTestCase {
 	private static final String PORT = System.getProperty("jetty.port", "8586");
 	private static final String SPARQL_URL = RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL.formatted(HOST, PORT);
 	private static final String BULK_URL = RemoteModel.DEFAULT_BULK_ENDPOINT_URL.formatted(HOST, PORT);
-	private static final String[] RSRCS_TO_LOAD = { "univ-bench.owl", "University15_20.owl.zip" };
+	private static final String[] RSRCS_TO_LOAD = { "univ-bench.owl", "University15_20.owl" };
 	private static final String CSV_QUOTE_TEST_INPUT = "csv-quote-test-input.ttl";
 	private static final String CSV_QUOTE_TEST_EXPECTED_RESULT = "csv-quote-test-expected-result.csv";
 	private static final String CSV_QUOTE_TEST_ACTUAL_CSV_RESULT = "../csv-quote-test-actual-result.csv";
@@ -503,20 +503,20 @@ public class ParliamentServerTestCase {
 
 	private static void loadSampleData() {
 		try {
+			Model clientSideModel = ModelFactory.createDefaultModel();
 			for (String rsrcName : RSRCS_TO_LOAD) {
-				Model clientSideModel = ModelFactory.createDefaultModel();
 				RdfResourceLoader.load(rsrcName, clientSideModel);
-
-				QuadDataAcc qd = new QuadDataAcc();
-				StmtIterator it = clientSideModel.listStatements();
-				while (it.hasNext()) {
-					Statement stmt = it.next();
-					qd.addTriple(stmt.asTriple());
-				}
-				UpdateDataInsert update = new UpdateDataInsert(qd);
-				UpdateProcessor exec = UpdateExecutionFactory.createRemote(update, SPARQL_URL);
-				executeUpdate(exec);
 			}
+
+			QuadDataAcc qd = new QuadDataAcc();
+			StmtIterator it = clientSideModel.listStatements();
+			while (it.hasNext()) {
+				Statement stmt = it.next();
+				qd.addTriple(stmt.asTriple());
+			}
+			UpdateDataInsert update = new UpdateDataInsert(qd);
+			UpdateProcessor exec = UpdateExecutionFactory.createRemote(update, SPARQL_URL);
+			executeUpdate(exec);
 		} catch (IOException ex) {
 			fail(ex.getMessage());
 		}

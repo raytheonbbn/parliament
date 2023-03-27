@@ -57,7 +57,7 @@ import com.bbn.parliament.test_util.RdfResourceLoader;
 @TestInstance(Lifecycle.PER_CLASS)
 public class ParliamentServerTests {
 	private static final String HOST = "localhost";
-	private static final String[] FILES_TO_LOAD = { "univ-bench.owl", "University15_20.owl.zip" };
+	private static final String[] FILES_TO_LOAD = { "univ-bench.owl", "University15_20.owl" };
 	private static final String CSV_QUOTE_TEST_INPUT = "csv-quote-test-input.ttl";
 	private static final String CSV_QUOTE_TEST_EXPECTED_RESULT = "csv-quote-test-expected-result.csv";
 	private static final String TEST_SUBJECT = "http://example.org/#TestItem";
@@ -432,20 +432,20 @@ public class ParliamentServerTests {
 
 	private void loadSampleData() {
 		try {
+			Model clientSideModel = ModelFactory.createDefaultModel();
 			for (String fileName : FILES_TO_LOAD) {
-				Model clientSideModel = ModelFactory.createDefaultModel();
 				var file = new File(DATA_DIR, fileName);
 				RdfResourceLoader.load(file, clientSideModel);
-
-				QuadDataAcc qd = new QuadDataAcc();
-				StmtIterator it = clientSideModel.listStatements();
-				while (it.hasNext()) {
-					Statement stmt = it.next();
-					qd.addTriple(stmt.asTriple());
-				}
-				UpdateDataInsert update = new UpdateDataInsert(qd);
-				UpdateExecutionFactory.createRemote(update, updateUrl).execute();
 			}
+
+			QuadDataAcc qd = new QuadDataAcc();
+			StmtIterator it = clientSideModel.listStatements();
+			while (it.hasNext()) {
+				Statement stmt = it.next();
+				qd.addTriple(stmt.asTriple());
+			}
+			UpdateDataInsert update = new UpdateDataInsert(qd);
+			UpdateExecutionFactory.createRemote(update, updateUrl).execute();
 		} catch (Exception ex) {
 			fail(ex.getMessage());
 		}
