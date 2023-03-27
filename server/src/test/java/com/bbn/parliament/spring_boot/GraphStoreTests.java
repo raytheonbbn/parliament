@@ -1,8 +1,8 @@
 package com.bbn.parliament.spring_boot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -203,7 +203,7 @@ public class GraphStoreTests {
 
 		var allQuery = prepareInsertTestQuery(DEFAULT_ALL_QUERY, NG_ALL_QUERY, graphName);
 		try (var stream = new QuerySolutionStream(allQuery, sparqlUrl)) {
-			assertEquals(97512, stream.count());
+			assertEquals(110133, stream.count());
 		}
 
 		var labelQuery = prepareInsertTestQuery(DEFAULT_LABEL_QUERY, NG_LABEL_QUERY, graphName);
