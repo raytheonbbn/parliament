@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,6 +107,20 @@ public class Tracker implements Observer {
 		return ids;
 	}
 
+	public void logTrackables() {
+		synchronized (_trackablesLock) {
+			var formattedList = _trackables.values().stream()
+				.map(Tracker::formatTrackableEntry)
+				.collect(Collectors.joining());
+			LOG.info("Trackables outstanding ({}):{}", _trackables.size(), formattedList);
+		}
+	}
+
+	private static String formatTrackableEntry(Trackable t) {
+		return "%n   %1$s #%2$d: %3$s".formatted(
+			t.getClass().getSimpleName(), t.getId(), t.getDisplay());
+	}
+
 	/**
 	 * Get a trackable given its ID. This can return null if the trackable has
 	 * been unregistered in between calls to getTrackabledIDs and getTrackable.
@@ -120,19 +135,19 @@ public class Tracker implements Observer {
 	}
 
 	public TrackableInsert createInsert(Inserter inserter, String creator) {
-		TrackableInsert ti = new TrackableInsert(getNextTrackerId(), inserter, creator);
+		var ti = new TrackableInsert(getNextTrackerId(), inserter, creator);
 		registerTrackable(ti);
 		return ti;
 	}
 
 	public TrackableUpdate createUpdate(String query, String creator) {
-		TrackableUpdate tu = new TrackableUpdate(getNextTrackerId(), query, creator);
+		var tu = new TrackableUpdate(getNextTrackerId(), query, creator);
 		registerTrackable(tu);
 		return tu;
 	}
 
 	public TrackableQuery createQuery(String query, String creator) {
-		TrackableQuery tq = new TrackableQuery(getNextTrackerId(), query, creator);
+		var tq = new TrackableQuery(getNextTrackerId(), query, creator);
 		registerTrackable(tq);
 		return tq;
 	}

@@ -48,8 +48,11 @@
 		<delete dir="${basedir}/jena/JenaGraph/bin"/>
 		<delete dir="${basedir}/jena/JosekiExtensions/bin"/>
 		<delete file="${basedir}/jena/JosekiExtensions/build.log"/>
+		<delete dir="${basedir}/jena/OntologyBundle/bin"/>
+		<delete dir="${basedir}/jena/OntologyDrivenDataAccess/bin"/>
 		<delete dir="${basedir}/jena/ParliamentClient/bin"/>
 		<delete dir="${basedir}/jena/NumericIndex/bin"/>
+		<delete dir="${basedir}/jena/SparqlQueryBuilder/bin"/>
 		<delete dir="${basedir}/jena/SpatialIndexProcessor/bin"/>
 		<delete dir="${basedir}/jena/TemporalIndexProcessor/bin"/>
 		<delete dir="${basedir}/jena/TemporalIndexProcessor_old/bin"/>

@@ -8,19 +8,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
-import java.util.List;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
-import org.apache.jena.ext.com.google.common.base.Objects;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.QueryParseException;
 import org.apache.jena.rdf.model.Model;
@@ -36,7 +28,6 @@ import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -58,8 +49,6 @@ import com.bbn.parliament.test_util.RdfResourceLoader;
 public class ParliamentServerTests {
 	private static final String HOST = "localhost";
 	private static final String[] FILES_TO_LOAD = { "univ-bench.owl", "University15_20.owl" };
-	private static final String CSV_QUOTE_TEST_INPUT = "csv-quote-test-input.ttl";
-	private static final String CSV_QUOTE_TEST_EXPECTED_RESULT = "csv-quote-test-expected-result.csv";
 	private static final String TEST_SUBJECT = "http://example.org/#TestItem";
 	private static final String TEST_CLASS = "http://example.org/#TestClass";
 	private static final String TEST_LITERAL = "TestLiteral";
@@ -102,13 +91,6 @@ public class ParliamentServerTests {
 		delete data {
 			ex:TestItem a owl:Thing .
 		}
-		""";
-	private static final String CSV_QUOTING_TEST_QUERY = """
-		prefix ex: <http://example.org/#>
-		select distinct ?s ?p ?o where {
-			bind( ex:comment as ?p )
-			?s ?p ?o .
-		} order by ?o
 		""";
 
 	@LocalServerPort
@@ -387,47 +369,6 @@ public class ParliamentServerTests {
 
 		Model resultModel = GraphUtils.doConstructQuery(sparqlUrl, query);
 		assertTrue(testModel.difference(resultModel).isEmpty());
-	}
-
-	private static List<CSVRecord> csvQuotingTest(String csvText) throws IOException {
-		try (
-			Reader expectedRdr = new StringReader(csvText);
-			CSVParser parser = CSVFormat.EXCEL.parse(expectedRdr);
-		) {
-			return parser.getRecords();
-		}
-	}
-
-	@Test
-	@Disabled
-	public void csvQuotingTest() throws IOException {
-		try (InputStream is = RdfResourceLoader.getResourceAsStream(CSV_QUOTE_TEST_INPUT)) {
-			var rdfFmt = RDFFormat.parseFilename(CSV_QUOTE_TEST_INPUT);
-			LOG.debug("csvQuotingTest RDF format: {}", rdfFmt);
-			GraphUtils.insertStatements(graphStoreUrl, is, rdfFmt, null);
-		}
-
-		List<CSVRecord> expectedRecords = csvQuotingTest(
-			RdfResourceLoader.readResourceAsString(CSV_QUOTE_TEST_EXPECTED_RESULT));
-		List<CSVRecord> actualRecords = csvQuotingTest(
-			GraphUtils.doSelectToCsv(sparqlUrl, CSV_QUOTING_TEST_QUERY));
-
-		assertEquals(expectedRecords.size(), actualRecords.size());
-		for (int i = 0; i < expectedRecords.size(); ++i) {
-			CSVRecord expectedRecord = expectedRecords.get(i);
-			CSVRecord actualRecord = actualRecords.get(i);
-			assertEquals(expectedRecord.size(), actualRecord.size());
-			for (int j = 0; j < expectedRecord.size(); ++j) {
-				String expected = expectedRecord.get(j);
-				String actual = actualRecord.get(j);
-				if (!Objects.equal(expected, actual)) {
-					// TODO: double quote is not being escaped..
-					LOG.debug("actual: '{}'", actual);
-					LOG.debug("expected: '{}'", expected);
-				}
-				assertEquals(expected, actual);
-			}
-		}
 	}
 
 	private void loadSampleData() {

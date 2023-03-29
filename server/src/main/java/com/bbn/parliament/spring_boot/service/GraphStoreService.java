@@ -108,8 +108,11 @@ public class GraphStoreService {
 		throws TrackableException, DataFormatException, MissingGraphException, IOException {
 
 		String serverName = ServiceUtil.getRequestor(headers, request);
-		long numStatements = new InsertHandler().handleRequest(graphUri, contentType, null,
+		long numStatements = 0;
+		if (requestEntity.getBody() != null) {
+			numStatements = new InsertHandler().handleRequest(graphUri, contentType, null,
 				serverName, () -> new ByteArrayInputStream(requestEntity.getBody()));
+		}
 		return createInsertResponse(numStatements);
 	}
 
