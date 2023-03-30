@@ -40,7 +40,7 @@ public abstract class Trackable extends Observable implements TrackableMXBean, C
 	}
 
 	protected abstract void doCancel() throws TrackableException;
-	protected abstract void doRun() throws TrackableException, IOException, DataFormatException, MissingGraphException;
+	protected abstract void doRun() throws TrackableException, DataFormatException, MissingGraphException, IOException;
 	protected abstract void release();
 
 	@Override
@@ -63,9 +63,14 @@ public abstract class Trackable extends Observable implements TrackableMXBean, C
 		if (!Tracker.getInstance().isShuttingDown()) {
 			try {
 				doRun();
-			} catch (TrackableException | DataFormatException | MissingGraphException | IOException e) {
+			} catch (TrackableException | DataFormatException | MissingGraphException
+					| IOException | RuntimeException ex) {
+				/*
+				 * Note that catching the runtime exceptions here is imperative to ensure we
+				 * catch anything Jena throws. (All Jena's exceptions are runtime exceptions.)
+				 */
 				setError();
-				throw e;
+				throw ex;
 			}
 		}
 		if (_setFinishedOnRun) {

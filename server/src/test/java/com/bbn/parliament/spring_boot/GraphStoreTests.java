@@ -26,7 +26,6 @@ import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -214,7 +213,6 @@ public class GraphStoreTests {
 		}
 	}
 
-	@Disabled
 	@Test
 	public void insertErrorTest() throws IOException {
 		// Insert invalid n-triples:
