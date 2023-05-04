@@ -15,13 +15,13 @@ import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.XSD;
 
-import com.bbn.parliament.client.jena.StreamUtil;
-import com.bbn.parliament.jena.graph.KbGraph;
-import com.bbn.parliament.jena.graph.KbGraphFactory;
-import com.bbn.parliament.jena.graph.KbGraphStore;
-import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
-import com.bbn.parliament.jena.graph.index.IndexManager;
+import com.bbn.parliament.client.StreamUtil;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalRecordFactory;
+import com.bbn.parliament.kb_graph.KbGraph;
+import com.bbn.parliament.kb_graph.KbGraphFactory;
+import com.bbn.parliament.kb_graph.KbGraphStore;
+import com.bbn.parliament.kb_graph.index.IndexFactoryRegistry;
+import com.bbn.parliament.kb_graph.index.IndexManager;
 
 public class TemporalTestServer implements AutoCloseable {
 	public static final Property INSTANT_PF = ResourceFactory.createProperty(Constants.PT_AS_INSTANT.getURI());

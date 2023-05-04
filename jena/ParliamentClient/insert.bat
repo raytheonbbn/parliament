@@ -9,7 +9,7 @@ if not exist "%JAVA_HOME%\bin\java.exe" (
 )
 
 set EXEC="%JAVA_HOME%\bin\java" -cp lib/default/*;../../target/artifacts/*
-set EXEC=%EXEC% com.bbn.parliament.client.jena.RemoteInserter %*
+set EXEC=%EXEC% com.bbn.parliament.client.RemoteInserter %*
 
 rem echo EXEC = %EXEC%
 %EXEC%

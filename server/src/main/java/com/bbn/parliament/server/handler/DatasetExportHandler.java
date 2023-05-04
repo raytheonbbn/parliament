@@ -11,8 +11,8 @@ import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.KbGraph;
-import com.bbn.parliament.jena.graph.KbGraphStore;
+import com.bbn.parliament.kb_graph.KbGraph;
+import com.bbn.parliament.kb_graph.KbGraphStore;
 import com.bbn.parliament.server.graph.ModelManager;
 import com.bbn.parliament.server.service.AcceptableMediaType;
 import com.bbn.parliament.server.util.ConcurrentRequestController;

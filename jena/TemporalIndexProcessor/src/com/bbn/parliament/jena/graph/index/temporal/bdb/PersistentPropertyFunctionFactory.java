@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.ExtentTester;
 import com.bbn.parliament.jena.graph.index.temporal.Operand;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalPropertyFunction;
@@ -19,6 +18,7 @@ import com.bbn.parliament.jena.graph.index.temporal.TemporalPropertyFunctionFact
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInterval;
+import com.bbn.parliament.kb_graph.index.Record;
 
 /** @author dkolas */
 public class PersistentPropertyFunctionFactory extends TemporalPropertyFunctionFactory<PersistentTemporalIndex> {

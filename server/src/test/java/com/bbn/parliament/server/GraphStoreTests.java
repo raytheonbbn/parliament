@@ -41,8 +41,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.bbn.parliament.client.jena.QuerySolutionStream;
-import com.bbn.parliament.client.jena.RDFFormat;
+import com.bbn.parliament.client.QuerySolutionStream;
+import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.server.test_util.GraphUtils;
 import com.bbn.parliament.server.test_util.RdfFileLoader;
 

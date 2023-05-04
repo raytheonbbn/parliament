@@ -7,13 +7,13 @@ package com.bbn.parliament.jena.graph.index.temporal.operands;
 
 import java.util.Iterator;
 
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.ExtentTester;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalExtentIterator;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalExtentIterator.InclusionDecider;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInterval;
+import com.bbn.parliament.kb_graph.index.Record;
 
 public class IntervalOverlaps extends MemoryOperatorImplementation {
 	public IntervalOverlaps(ExtentTester extentTester) {

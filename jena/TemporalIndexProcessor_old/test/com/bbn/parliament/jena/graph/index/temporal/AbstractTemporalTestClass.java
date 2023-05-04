@@ -8,11 +8,11 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.KbGraph;
-import com.bbn.parliament.jena.graph.OptimizationMethod;
-import com.bbn.parliament.jena.graph.index.IndexManager;
-import com.bbn.parliament.jena.util.FileUtil;
 import com.bbn.parliament.jni.KbConfig;
+import com.bbn.parliament.kb_graph.KbGraph;
+import com.bbn.parliament.kb_graph.OptimizationMethod;
+import com.bbn.parliament.kb_graph.index.IndexManager;
+import com.bbn.parliament.kb_graph.util.FileUtil;
 
 import junit.framework.TestCase;
 

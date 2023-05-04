@@ -6,7 +6,7 @@
 
 package com.bbn.parliament.jena.graph.index.spatial;
 
-import com.bbn.parliament.jena.graph.index.IndexException;
+import com.bbn.parliament.kb_graph.index.IndexException;
 
 /**
  * An exception that can be thrown in the {@link SpatialIndex}.

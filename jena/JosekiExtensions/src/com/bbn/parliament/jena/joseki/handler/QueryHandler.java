@@ -29,7 +29,7 @@ import com.bbn.parliament.jena.joseki.bridge.ParliamentBridge;
 import com.bbn.parliament.jena.joseki.bridge.tracker.TrackableException;
 import com.bbn.parliament.jena.joseki.bridge.tracker.TrackableQuery;
 import com.bbn.parliament.jena.joseki.bridge.util.LogUtil;
-import com.bbn.parliament.jena.util.JsonLdRdfWriter;
+import com.bbn.parliament.kb_graph.util.JsonLdRdfWriter;
 
 /** @author ebenson@bbn.com */
 public class QueryHandler extends SPARQL {

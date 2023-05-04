@@ -9,12 +9,13 @@ package com.bbn.parliament.jena.graph.index.temporal.bdb;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import com.bbn.parliament.jena.graph.index.Record;
+
 import com.bbn.parliament.jena.graph.index.temporal.ExtentTester;
 import com.bbn.parliament.jena.graph.index.temporal.Operand;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalPropertyFunction;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalPropertyFunctionFactory;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
+import com.bbn.parliament.kb_graph.index.Record;
 
 /** @author dkolas */
 public class PersistentPropertyFunctionFactory extends TemporalPropertyFunctionFactory<PersistentTemporalIndex> {

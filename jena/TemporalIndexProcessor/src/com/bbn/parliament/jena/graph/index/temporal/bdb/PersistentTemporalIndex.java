@@ -17,14 +17,14 @@ import org.apache.jena.graph.NodeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.KbGraph;
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalIndex;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalPropertyFunctionFactory;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInterval;
-import com.bbn.parliament.jena.util.FileUtil;
+import com.bbn.parliament.kb_graph.KbGraph;
+import com.bbn.parliament.kb_graph.index.Record;
+import com.bbn.parliament.kb_graph.util.FileUtil;
 import com.sleepycat.je.CursorConfig;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;

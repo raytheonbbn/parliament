@@ -12,9 +12,6 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.sparql.graph.GraphFactory;
 
-import com.bbn.parliament.jena.graph.index.IndexException;
-import com.bbn.parliament.jena.graph.index.IndexManager;
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalIndex;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalIndexFactory;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalPropertyFunctionFactory;
@@ -23,6 +20,9 @@ import com.bbn.parliament.jena.graph.index.temporal.bdb.PersistentTemporalIndex;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInterval;
+import com.bbn.parliament.kb_graph.index.IndexException;
+import com.bbn.parliament.kb_graph.index.IndexManager;
+import com.bbn.parliament.kb_graph.index.Record;
 
 public class TestIndexFactory {
 	private static TemporalPropertyFunctionFactory<PersistentTemporalIndex> factory;

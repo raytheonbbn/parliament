@@ -6,7 +6,7 @@ import org.apache.jena.util.iterator.ClosableIterator;
 import org.apache.jena.util.iterator.NiceIterator;
 import org.locationtech.jts.geom.Geometry;
 
-import com.bbn.parliament.jena.graph.index.Record;
+import com.bbn.parliament.kb_graph.index.Record;
 
 /**
  * An iterator that, given an iterator of items, will check each item and return

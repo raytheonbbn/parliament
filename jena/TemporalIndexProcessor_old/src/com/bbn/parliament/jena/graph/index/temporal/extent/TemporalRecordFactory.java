@@ -19,10 +19,10 @@ import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.index.Record;
-import com.bbn.parliament.jena.graph.index.RecordFactory;
 import com.bbn.parliament.jena.graph.index.temporal.Constants;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalIndex;
+import com.bbn.parliament.kb_graph.index.Record;
+import com.bbn.parliament.kb_graph.index.RecordFactory;
 
 /** @author rbattle */
 public class TemporalRecordFactory implements RecordFactory<TemporalExtent> {

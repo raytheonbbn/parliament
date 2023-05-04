@@ -18,7 +18,6 @@ import org.apache.jena.sparql.core.DatasetGraphFactory;
 import org.apache.jena.sparql.engine.ExecutionContext;
 import org.apache.jena.sparql.pfunction.PropFuncArg;
 
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.Operand;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalIndex;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalPropertyFunction;
@@ -26,8 +25,9 @@ import com.bbn.parliament.jena.graph.index.temporal.TemporalPropertyFunctionFact
 import com.bbn.parliament.jena.graph.index.temporal.bdb.PersistentTemporalIndex;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.index.TestIndexFactory;
-import com.bbn.parliament.jena.query.KbOpExecutor;
-import com.bbn.parliament.jena.util.FileUtil;
+import com.bbn.parliament.kb_graph.index.Record;
+import com.bbn.parliament.kb_graph.query.KbOpExecutor;
+import com.bbn.parliament.kb_graph.util.FileUtil;
 
 import junit.framework.TestCase;
 

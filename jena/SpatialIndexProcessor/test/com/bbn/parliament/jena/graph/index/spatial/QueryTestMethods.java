@@ -17,9 +17,9 @@ import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.NodeCreateUtils;
 import com.bbn.parliament.jena.graph.index.spatial.sql.postgres.PostgresIndex;
 import com.bbn.parliament.jena.graph.index.spatial.standard.StdConstants;
+import com.bbn.parliament.kb_graph.NodeCreateUtils;
 
 public class QueryTestMethods extends SpatialTestDataset {
 	private static final Logger LOG = LoggerFactory.getLogger(QueryTestMethods.class);

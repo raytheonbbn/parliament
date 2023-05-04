@@ -3,7 +3,7 @@ package com.bbn.parliament.jena.graph.index.spatial;
 import org.apache.jena.riot.system.PrefixMap;
 import org.locationtech.jts.geom.Geometry;
 
-import com.bbn.parliament.jena.query.index.operand.OperandFactory;
+import com.bbn.parliament.kb_graph.query.index.operand.OperandFactory;
 
 public interface Profile {
 	public GeometryRecordFactory getRecordFactory();

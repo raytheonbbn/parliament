@@ -14,8 +14,8 @@ import org.locationtech.jts.geom.Geometry;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.GML;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Geo;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.WKT;
-import com.bbn.parliament.jena.query.index.operand.Operand;
-import com.bbn.parliament.jena.query.index.operand.OperandFactoryBase;
+import com.bbn.parliament.kb_graph.query.index.operand.Operand;
+import com.bbn.parliament.kb_graph.query.index.operand.OperandFactoryBase;
 
 public class GeoSPARQLOperandFactory extends OperandFactoryBase<Geometry> {
 	/** {@inheritDoc} */

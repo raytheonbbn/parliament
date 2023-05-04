@@ -15,18 +15,18 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.util.iterator.ClosableIterator;
 import org.apache.jena.util.iterator.NiceIterator;
 
-import com.bbn.parliament.jena.graph.index.CompositeIndex;
-import com.bbn.parliament.jena.graph.index.Index;
-import com.bbn.parliament.jena.graph.index.IndexBase;
-import com.bbn.parliament.jena.graph.index.IndexException;
-import com.bbn.parliament.jena.graph.index.IndexManager;
-import com.bbn.parliament.jena.graph.index.Record;
-import com.bbn.parliament.jena.graph.index.Record.TripleRecord;
-import com.bbn.parliament.jena.graph.index.RecordFactory;
 import com.bbn.parliament.jena.graph.index.numeric.NumericIndex;
 import com.bbn.parliament.jena.graph.index.numeric.NumericIndexFactory;
-import com.bbn.parliament.jena.query.index.IndexPatternQuerierManager;
-import com.bbn.parliament.jena.util.FileUtil;
+import com.bbn.parliament.kb_graph.index.CompositeIndex;
+import com.bbn.parliament.kb_graph.index.Index;
+import com.bbn.parliament.kb_graph.index.IndexBase;
+import com.bbn.parliament.kb_graph.index.IndexException;
+import com.bbn.parliament.kb_graph.index.IndexManager;
+import com.bbn.parliament.kb_graph.index.Record;
+import com.bbn.parliament.kb_graph.index.RecordFactory;
+import com.bbn.parliament.kb_graph.index.Record.TripleRecord;
+import com.bbn.parliament.kb_graph.query.index.IndexPatternQuerierManager;
+import com.bbn.parliament.kb_graph.util.FileUtil;
 
 /**
  * A composite index that dynamically generates a {@link NumericIndex} for

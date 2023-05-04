@@ -27,11 +27,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.bbn.parliament.jena.graph.index.IndexException;
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.pt.TemporalIndexField;
+import com.bbn.parliament.kb_graph.index.IndexException;
+import com.bbn.parliament.kb_graph.index.Record;
 
 /** @author rbattle */
 public class TemporalIndexProcessorTest {

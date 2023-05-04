@@ -20,11 +20,11 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.quadtree.Quadtree;
 
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.spatial.GeometryRecord;
 import com.bbn.parliament.jena.graph.index.spatial.Operation;
 import com.bbn.parliament.jena.graph.index.spatial.Profile;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialIndexException;
+import com.bbn.parliament.kb_graph.index.Record;
 
 /** @author Robert Battle */
 public class JTSIndex extends com.bbn.parliament.jena.graph.index.spatial.SpatialIndex {

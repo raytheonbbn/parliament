@@ -17,8 +17,8 @@ import org.apache.jena.rdf.model.StmtIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.index.IndexFactory;
-import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
+import com.bbn.parliament.kb_graph.index.IndexFactory;
+import com.bbn.parliament.kb_graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.server.ParliamentBridge;
 import com.bbn.parliament.server.configuration.vocab.ConfigOnt;
 import com.bbn.parliament.server.graph.ModelManager;

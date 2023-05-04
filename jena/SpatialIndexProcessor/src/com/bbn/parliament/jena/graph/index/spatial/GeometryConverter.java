@@ -24,8 +24,8 @@ import org.locationtech.jts.io.WKBWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.KbGraph;
 import com.bbn.parliament.jena.graph.index.spatial.standard.SpatialGeometryFactory;
+import com.bbn.parliament.kb_graph.KbGraph;
 
 /** @author Robert Battle */
 public class GeometryConverter {

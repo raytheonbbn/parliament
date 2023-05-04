@@ -15,9 +15,9 @@ import org.joseki.http.ResponseHttpInitializer;
 import com.bbn.parliament.jena.joseki.bridge.configuration.ConfigurationHandler;
 import com.bbn.parliament.jena.joseki.bridge.tracker.Tracker;
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
-import com.bbn.parliament.jena.query.PrefixRegistry;
-import com.bbn.parliament.jena.util.JsonLdRdfReader;
-import com.bbn.parliament.jena.util.JsonLdRdfWriter;
+import com.bbn.parliament.kb_graph.query.PrefixRegistry;
+import com.bbn.parliament.kb_graph.util.JsonLdRdfReader;
+import com.bbn.parliament.kb_graph.util.JsonLdRdfWriter;
 
 /**
  * A server for Parliament.

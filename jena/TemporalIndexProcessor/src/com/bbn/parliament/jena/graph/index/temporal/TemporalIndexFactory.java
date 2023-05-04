@@ -5,11 +5,11 @@ import java.util.Properties;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
 
-import com.bbn.parliament.jena.graph.index.IndexFactory;
 import com.bbn.parliament.jena.graph.index.temporal.bdb.PersistentTemporalIndex;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.memory.MemoryTemporalIndex;
-import com.bbn.parliament.jena.query.PrefixRegistry;
+import com.bbn.parliament.kb_graph.index.IndexFactory;
+import com.bbn.parliament.kb_graph.query.PrefixRegistry;
 
 /** @author rbattle */
 public class TemporalIndexFactory extends IndexFactory<TemporalIndex, TemporalExtent> {

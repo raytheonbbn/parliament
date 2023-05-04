@@ -8,7 +8,7 @@ import com.bbn.parliament.jena.graph.index.spatial.IterableFunctionFactory;
 import com.bbn.parliament.jena.graph.index.spatial.IterablePropertyFunctionFactory;
 import com.bbn.parliament.jena.graph.index.spatial.OperationFactory;
 import com.bbn.parliament.jena.graph.index.spatial.Profile;
-import com.bbn.parliament.jena.query.index.operand.OperandFactory;
+import com.bbn.parliament.kb_graph.query.index.operand.OperandFactory;
 
 public class PostgreSQLProfileWrapper implements Profile {
 	private Profile base;

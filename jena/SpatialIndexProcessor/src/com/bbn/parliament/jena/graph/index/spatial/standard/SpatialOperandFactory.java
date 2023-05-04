@@ -17,8 +17,8 @@ import org.locationtech.jts.geom.Polygon;
 
 import com.bbn.parliament.jena.graph.index.spatial.standard.data.BufferedGeometry;
 import com.bbn.parliament.jena.graph.index.spatial.standard.data.FloatingCircle;
-import com.bbn.parliament.jena.query.index.operand.Operand;
-import com.bbn.parliament.jena.query.index.operand.OperandFactoryBase;
+import com.bbn.parliament.kb_graph.query.index.operand.Operand;
+import com.bbn.parliament.kb_graph.query.index.operand.OperandFactoryBase;
 
 /** @author rbattle */
 public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {

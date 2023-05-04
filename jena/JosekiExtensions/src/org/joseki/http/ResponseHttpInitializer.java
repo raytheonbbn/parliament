@@ -3,7 +3,7 @@ package org.joseki.http;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bbn.parliament.jena.util.JsonLdRdfWriter;
+import com.bbn.parliament.kb_graph.util.JsonLdRdfWriter;
 
 public class ResponseHttpInitializer {
 	// Prevent instantiation:

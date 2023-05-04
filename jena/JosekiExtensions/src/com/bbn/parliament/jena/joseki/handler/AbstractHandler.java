@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 
-import com.bbn.parliament.jena.graph.KbGraphStore;
 import com.bbn.parliament.jena.joseki.bridge.servlet.ServletErrorResponseException;
+import com.bbn.parliament.kb_graph.KbGraphStore;
 
 /**
  * AbstractHandler that provides some common methods for subclasses.

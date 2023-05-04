@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import com.bbn.parliament.jena.query.index.IndexTestMethods;
+import com.bbn.parliament.kb_graph.query.index.IndexTestMethods;
 
 /** @author Robert Battle */
 @Disabled

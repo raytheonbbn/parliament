@@ -16,10 +16,10 @@ import org.locationtech.jts.geom.Geometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.spatial.GeometryConverter;
 import com.bbn.parliament.jena.graph.index.spatial.GeometryRecord;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialIndexException;
+import com.bbn.parliament.kb_graph.index.Record;
 
 /** @author Robert Battle */
 public class ResultSetIterator implements ClosableIterator<Record<Geometry>> {

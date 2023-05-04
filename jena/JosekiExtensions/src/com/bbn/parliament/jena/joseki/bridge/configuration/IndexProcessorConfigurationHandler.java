@@ -16,11 +16,11 @@ import org.apache.jena.rdf.model.StmtIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.index.IndexFactory;
-import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.jena.joseki.bridge.ParliamentBridge;
 import com.bbn.parliament.jena.joseki.bridge.configuration.vocab.ConfigOnt;
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
+import com.bbn.parliament.kb_graph.index.IndexFactory;
+import com.bbn.parliament.kb_graph.index.IndexFactoryRegistry;
 
 /**
  * A {@link ConfigurationHandler} that registers a list of {@link IndexFactory}s

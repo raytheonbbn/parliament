@@ -12,7 +12,7 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.jena.rdf.model.Model;
 
-import com.bbn.parliament.client.jena.RDFFormat;
+import com.bbn.parliament.client.RDFFormat;
 
 public class RdfFileLoader {
 	// This class is used to circumvent Jena closing the zip input stream prematurely:

@@ -11,12 +11,12 @@ import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.pfunction.PropertyFunctionRegistry;
 
-import com.bbn.parliament.jena.graph.index.IndexException;
-import com.bbn.parliament.jena.graph.index.QueryableIndex;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalRecordFactory;
-import com.bbn.parliament.jena.query.index.QueryCache;
-import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunctionFactory;
+import com.bbn.parliament.kb_graph.index.IndexException;
+import com.bbn.parliament.kb_graph.index.QueryableIndex;
+import com.bbn.parliament.kb_graph.query.index.QueryCache;
+import com.bbn.parliament.kb_graph.query.index.pfunction.IndexPropertyFunctionFactory;
 
 public abstract class TemporalIndex implements QueryableIndex<TemporalExtent> {
 	protected TemporalRecordFactory recordFactory;

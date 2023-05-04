@@ -11,12 +11,12 @@ import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
 import org.locationtech.jts.geom.Geometry;
 
-import com.bbn.parliament.jena.graph.index.IndexFactory;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialIndex;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialIndexFactory;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialIndexTestMethods;
 import com.bbn.parliament.jena.graph.index.spatial.sql.PersistentStore;
 import com.bbn.parliament.jena.graph.index.spatial.sql.PersistentStoreException;
+import com.bbn.parliament.kb_graph.index.IndexFactory;
 
 public class PostgresIndexTestMethods extends SpatialIndexTestMethods {
 	@Override

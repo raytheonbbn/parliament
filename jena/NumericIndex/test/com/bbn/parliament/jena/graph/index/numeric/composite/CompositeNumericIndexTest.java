@@ -3,7 +3,7 @@ package com.bbn.parliament.jena.graph.index.numeric.composite;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import com.bbn.parliament.jena.query.index.IndexTestMethods;
+import com.bbn.parliament.kb_graph.query.index.IndexTestMethods;
 
 public class CompositeNumericIndexTest {
 	@SuppressWarnings("static-method")

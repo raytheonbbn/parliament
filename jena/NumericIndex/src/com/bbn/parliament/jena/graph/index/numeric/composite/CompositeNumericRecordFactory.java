@@ -6,9 +6,9 @@ import java.util.List;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 
-import com.bbn.parliament.jena.graph.index.Index;
-import com.bbn.parliament.jena.graph.index.Record.TripleRecord;
-import com.bbn.parliament.jena.graph.index.RecordFactory;
+import com.bbn.parliament.kb_graph.index.Index;
+import com.bbn.parliament.kb_graph.index.RecordFactory;
+import com.bbn.parliament.kb_graph.index.Record.TripleRecord;
 
 /**
  * Record factory for the <code>CompositeNumericIndex</code>. This factory creates

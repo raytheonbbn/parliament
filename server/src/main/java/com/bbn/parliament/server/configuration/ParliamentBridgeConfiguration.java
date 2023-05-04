@@ -31,7 +31,7 @@ import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.client.jena.RDFFormat;
+import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.server.configuration.vocab.ConfigOnt;
 import com.bbn.parliament.server.exception.ConfigurationException;
 import com.bbn.parliament.server.exception.ParliamentBridgeException;

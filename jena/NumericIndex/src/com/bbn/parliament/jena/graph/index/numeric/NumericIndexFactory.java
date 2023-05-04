@@ -5,7 +5,7 @@ import java.util.Properties;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
 
-import com.bbn.parliament.jena.graph.index.IndexFactory;
+import com.bbn.parliament.kb_graph.index.IndexFactory;
 
 /**
  * Factory for creating {@link NumericIndex}es.

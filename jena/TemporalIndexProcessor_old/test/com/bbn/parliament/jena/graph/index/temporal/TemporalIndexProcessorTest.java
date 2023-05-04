@@ -19,10 +19,10 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.util.iterator.NiceIterator;
 import org.apache.jena.vocabulary.RDF;
 
-import com.bbn.parliament.jena.graph.index.IndexException;
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
+import com.bbn.parliament.kb_graph.index.IndexException;
+import com.bbn.parliament.kb_graph.index.Record;
 
 /** @author rbattle */
 public class TemporalIndexProcessorTest extends AbstractTemporalTestClass {

@@ -14,8 +14,8 @@ import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.KbGraphStore;
-import com.bbn.parliament.jena.util.FileUtil;
+import com.bbn.parliament.kb_graph.KbGraphStore;
+import com.bbn.parliament.kb_graph.util.FileUtil;
 import com.bbn.parliament.server.exception.MissingGraphException;
 import com.bbn.parliament.server.graph.ModelManager;
 import com.bbn.parliament.server.service.AcceptableMediaType;

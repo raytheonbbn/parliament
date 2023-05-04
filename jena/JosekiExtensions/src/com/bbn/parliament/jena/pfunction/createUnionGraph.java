@@ -21,7 +21,7 @@ import org.apache.jena.sparql.pfunction.PFuncSimpleAndList;
 import org.apache.jena.sparql.pfunction.PropFuncArg;
 import org.apache.jena.sparql.util.IterLib;
 
-import com.bbn.parliament.jena.graph.KbGraphStore;
+import com.bbn.parliament.kb_graph.KbGraphStore;
 
 /**
  * This property function allows you to create KbUnionGraphs (you can delete

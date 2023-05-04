@@ -18,13 +18,13 @@ import java.util.TreeSet;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
 
-import com.bbn.parliament.jena.graph.index.IndexException;
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalIndex;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalPropertyFunctionFactory;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInterval;
+import com.bbn.parliament.kb_graph.index.IndexException;
+import com.bbn.parliament.kb_graph.index.Record;
 
 /** @author dkolas */
 public class MemoryTemporalIndex extends TemporalIndex {

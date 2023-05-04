@@ -5,8 +5,8 @@ import org.locationtech.jts.geom.Geometry;
 import com.bbn.parliament.jena.graph.index.spatial.Operation;
 import com.bbn.parliament.jena.graph.index.spatial.OperationFactory;
 import com.bbn.parliament.jena.graph.index.spatial.SpatialPropertyFunctionFactory;
-import com.bbn.parliament.jena.query.index.operand.OperandFactory;
-import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunction;
+import com.bbn.parliament.kb_graph.query.index.operand.OperandFactory;
+import com.bbn.parliament.kb_graph.query.index.pfunction.IndexPropertyFunction;
 
 public class PostgreSQLPropertyFunctionFactory extends SpatialPropertyFunctionFactory {
 	public PostgreSQLPropertyFunctionFactory(OperationFactory operationFactory,

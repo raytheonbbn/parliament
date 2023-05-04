@@ -16,8 +16,8 @@ import org.slf4j.LoggerFactory;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.pt.TemporalIndexField;
-import com.bbn.parliament.jena.query.index.operand.Operand;
-import com.bbn.parliament.jena.query.index.operand.OperandFactoryBase;
+import com.bbn.parliament.kb_graph.query.index.operand.Operand;
+import com.bbn.parliament.kb_graph.query.index.operand.OperandFactoryBase;
 
 /** @author rbattle */
 public class TemporalOperandFactory extends OperandFactoryBase<TemporalExtent> {

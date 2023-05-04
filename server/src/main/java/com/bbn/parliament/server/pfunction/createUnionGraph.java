@@ -22,7 +22,7 @@ import org.apache.jena.sparql.util.IterLib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.KbGraphStore;
+import com.bbn.parliament.kb_graph.KbGraphStore;
 
 /**
  * This property function allows you to create KbUnionGraphs. Here is an example

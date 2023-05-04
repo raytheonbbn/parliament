@@ -25,13 +25,13 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.vocabulary.XSD;
 
-import com.bbn.parliament.jena.graph.index.IndexException;
-import com.bbn.parliament.jena.graph.index.IndexFactory;
-import com.bbn.parliament.jena.graph.index.IndexFactory.IndexFactoryHelper;
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.numeric.Constants.NumberType;
-import com.bbn.parliament.jena.query.index.QueryableIndexTestMethods;
-import com.bbn.parliament.jena.util.FileUtil;
+import com.bbn.parliament.kb_graph.index.IndexException;
+import com.bbn.parliament.kb_graph.index.IndexFactory;
+import com.bbn.parliament.kb_graph.index.Record;
+import com.bbn.parliament.kb_graph.index.IndexFactory.IndexFactoryHelper;
+import com.bbn.parliament.kb_graph.query.index.QueryableIndexTestMethods;
+import com.bbn.parliament.kb_graph.util.FileUtil;
 
 public class NumericIndexTestMethods extends QueryableIndexTestMethods<NumericIndex<Integer>, Integer> {
 	public static final String AGE_URI = "http://example.org#age";

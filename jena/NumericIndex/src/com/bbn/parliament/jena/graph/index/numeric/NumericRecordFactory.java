@@ -11,8 +11,8 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 
-import com.bbn.parliament.jena.graph.index.Record;
-import com.bbn.parliament.jena.graph.index.RecordFactory;
+import com.bbn.parliament.kb_graph.index.Record;
+import com.bbn.parliament.kb_graph.index.RecordFactory;
 
 /**
  * A record factory that creates numeric records. The factory contains abstract methods

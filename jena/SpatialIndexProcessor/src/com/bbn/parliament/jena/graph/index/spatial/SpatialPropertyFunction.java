@@ -27,15 +27,15 @@ import org.locationtech.jts.geom.Polygon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.index.IndexException;
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.spatial.standard.SpatialGeometryFactory;
 import com.bbn.parliament.jena.graph.index.spatial.standard.data.BufferedGeometry;
 import com.bbn.parliament.jena.graph.index.spatial.standard.data.FloatingCircle;
-import com.bbn.parliament.jena.query.index.QueryCache;
-import com.bbn.parliament.jena.query.index.operand.Operand;
-import com.bbn.parliament.jena.query.index.operand.OperandFactory;
-import com.bbn.parliament.jena.query.index.pfunction.EstimableIndexPropertyFunction;
+import com.bbn.parliament.kb_graph.index.IndexException;
+import com.bbn.parliament.kb_graph.index.Record;
+import com.bbn.parliament.kb_graph.query.index.QueryCache;
+import com.bbn.parliament.kb_graph.query.index.operand.Operand;
+import com.bbn.parliament.kb_graph.query.index.operand.OperandFactory;
+import com.bbn.parliament.kb_graph.query.index.pfunction.EstimableIndexPropertyFunction;
 
 public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geometry> {
 	private static final Logger LOG = LoggerFactory.getLogger(SpatialPropertyFunction.class);

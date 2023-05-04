@@ -6,13 +6,13 @@ import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 
-import com.bbn.parliament.jena.graph.index.IndexFactory.IndexFactoryHelper;
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.bdb.PersistentTemporalIndex;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInterval;
-import com.bbn.parliament.jena.query.index.QueryableIndexTestMethods;
+import com.bbn.parliament.kb_graph.index.Record;
+import com.bbn.parliament.kb_graph.index.IndexFactory.IndexFactoryHelper;
+import com.bbn.parliament.kb_graph.query.index.QueryableIndexTestMethods;
 
 public class TemporalIndexTestMethods extends QueryableIndexTestMethods<TemporalIndex, TemporalExtent> {
 	private long creationTime = System.currentTimeMillis();

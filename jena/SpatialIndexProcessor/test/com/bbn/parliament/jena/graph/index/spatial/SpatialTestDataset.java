@@ -38,16 +38,16 @@ import org.apache.jena.vocabulary.XSD;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.client.jena.RDFFormat;
-import com.bbn.parliament.client.jena.StreamUtil;
-import com.bbn.parliament.jena.graph.KbGraph;
-import com.bbn.parliament.jena.graph.KbGraphFactory;
-import com.bbn.parliament.jena.graph.KbGraphStore;
-import com.bbn.parliament.jena.graph.index.IndexFactoryRegistry;
-import com.bbn.parliament.jena.graph.index.IndexManager;
+import com.bbn.parliament.client.RDFFormat;
+import com.bbn.parliament.client.StreamUtil;
 import com.bbn.parliament.jena.graph.index.spatial.geosparql.vocabulary.Geo;
 import com.bbn.parliament.jena.graph.index.spatial.standard.StdConstants;
-import com.bbn.parliament.jena.query.QueryTestUtil;
+import com.bbn.parliament.kb_graph.KbGraph;
+import com.bbn.parliament.kb_graph.KbGraphFactory;
+import com.bbn.parliament.kb_graph.KbGraphStore;
+import com.bbn.parliament.kb_graph.index.IndexFactoryRegistry;
+import com.bbn.parliament.kb_graph.index.IndexManager;
+import com.bbn.parliament.kb_graph.query.QueryTestUtil;
 
 public class SpatialTestDataset {
 	private static final Logger LOG = LoggerFactory.getLogger(SpatialTestDataset.class);

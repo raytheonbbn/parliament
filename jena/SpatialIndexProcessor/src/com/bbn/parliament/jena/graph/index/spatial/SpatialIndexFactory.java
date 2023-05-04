@@ -6,12 +6,12 @@ import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
 import org.locationtech.jts.geom.Geometry;
 
-import com.bbn.parliament.jena.graph.KbGraph;
-import com.bbn.parliament.jena.graph.index.IndexFactory;
 import com.bbn.parliament.jena.graph.index.spatial.jts.JTSIndex;
 import com.bbn.parliament.jena.graph.index.spatial.rtree.RTreeIndex;
 import com.bbn.parliament.jena.graph.index.spatial.sql.postgres.PostgresIndex;
-import com.bbn.parliament.jena.util.FileUtil;
+import com.bbn.parliament.kb_graph.KbGraph;
+import com.bbn.parliament.kb_graph.index.IndexFactory;
+import com.bbn.parliament.kb_graph.util.FileUtil;
 
 public class SpatialIndexFactory extends IndexFactory<SpatialIndex, Geometry> {
 	private static final String LABEL = "Spatial Index";

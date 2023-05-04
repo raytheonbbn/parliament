@@ -17,8 +17,8 @@ import org.apache.jena.sparql.engine.iterator.QueryIterRepeatApply;
 import org.apache.jena.sparql.util.IterLib;
 import org.apache.jena.util.iterator.NiceIterator;
 
-import com.bbn.parliament.jena.graph.index.Record;
-import com.bbn.parliament.jena.query.index.IndexPatternQuerier;
+import com.bbn.parliament.kb_graph.index.Record;
+import com.bbn.parliament.kb_graph.query.index.IndexPatternQuerier;
 
 /**
  * Querier for {@link NumericIndex}es. The <code>NumericInexPatternQuerier</code> matches

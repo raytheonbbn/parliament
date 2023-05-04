@@ -1,7 +1,7 @@
 package com.bbn.parliament.jena.graph.index.temporal;
 
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
-import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunctionFactory;
+import com.bbn.parliament.kb_graph.query.index.pfunction.IndexPropertyFunctionFactory;
 
 public abstract class TemporalPropertyFunctionFactory<I extends TemporalIndex> implements IndexPropertyFunctionFactory<TemporalExtent> {
 	/** {@inheritDoc} */

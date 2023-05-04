@@ -28,12 +28,12 @@ import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.client.jena.RDFFormat;
-import com.bbn.parliament.jena.graph.KbGraphStore;
+import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.jena.joseki.bridge.servlet.ServletErrorResponseException;
 import com.bbn.parliament.jena.joseki.graph.ForgetfulGraph;
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
-import com.bbn.parliament.jena.util.JsonLdRdfReader;
+import com.bbn.parliament.kb_graph.KbGraphStore;
+import com.bbn.parliament.kb_graph.util.JsonLdRdfReader;
 
 public class Inserter {
 	/** Interface that defines a method for getting an InputStream from some object. */

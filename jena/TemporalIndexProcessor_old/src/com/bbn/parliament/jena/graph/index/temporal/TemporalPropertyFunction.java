@@ -24,15 +24,15 @@ import org.apache.jena.util.iterator.NiceIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.index.IndexException;
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalExtentIterator.InclusionDecider;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInstant;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalInterval;
-import com.bbn.parliament.jena.query.index.QueryCache;
-import com.bbn.parliament.jena.query.index.operand.Operand;
-import com.bbn.parliament.jena.query.index.pfunction.EstimableIndexPropertyFunction;
+import com.bbn.parliament.kb_graph.index.IndexException;
+import com.bbn.parliament.kb_graph.index.Record;
+import com.bbn.parliament.kb_graph.query.index.QueryCache;
+import com.bbn.parliament.kb_graph.query.index.operand.Operand;
+import com.bbn.parliament.kb_graph.query.index.pfunction.EstimableIndexPropertyFunction;
 
 /** @author dkolas */
 public abstract class TemporalPropertyFunction<I extends TemporalIndex>

@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
 
-import com.bbn.parliament.jena.query.index.operand.OperandFactory;
-import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunction;
-import com.bbn.parliament.jena.query.index.pfunction.IndexPropertyFunctionFactory;
+import com.bbn.parliament.kb_graph.query.index.operand.OperandFactory;
+import com.bbn.parliament.kb_graph.query.index.pfunction.IndexPropertyFunction;
+import com.bbn.parliament.kb_graph.query.index.pfunction.IndexPropertyFunctionFactory;
 
 /** @author rbattle */
 public class SpatialPropertyFunctionFactory implements IndexPropertyFunctionFactory<Geometry>, IterablePropertyFunctionFactory {

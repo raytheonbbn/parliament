@@ -5,8 +5,8 @@ import java.util.NoSuchElementException;
 import org.apache.jena.graph.Node;
 import org.apache.jena.util.iterator.ClosableIterator;
 
-import com.bbn.parliament.jena.graph.index.Record;
-import com.bbn.parliament.jena.util.NodeUtil;
+import com.bbn.parliament.kb_graph.index.Record;
+import com.bbn.parliament.kb_graph.util.NodeUtil;
 import com.sleepycat.je.CursorConfig;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;

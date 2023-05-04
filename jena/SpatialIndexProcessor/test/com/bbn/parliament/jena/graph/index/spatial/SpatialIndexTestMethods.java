@@ -19,9 +19,9 @@ import org.apache.jena.graph.NodeFactory;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 
-import com.bbn.parliament.jena.graph.index.IndexFactory.IndexFactoryHelper;
-import com.bbn.parliament.jena.graph.index.Record;
-import com.bbn.parliament.jena.query.index.QueryableIndexTestMethods;
+import com.bbn.parliament.kb_graph.index.Record;
+import com.bbn.parliament.kb_graph.index.IndexFactory.IndexFactoryHelper;
+import com.bbn.parliament.kb_graph.query.index.QueryableIndexTestMethods;
 
 public abstract class SpatialIndexTestMethods extends QueryableIndexTestMethods<SpatialIndex, Geometry> {
 	@Override

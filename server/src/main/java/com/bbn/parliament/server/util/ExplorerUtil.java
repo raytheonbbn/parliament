@@ -26,7 +26,7 @@ import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 
-import com.bbn.parliament.jena.graph.KbGraphStore;
+import com.bbn.parliament.kb_graph.KbGraphStore;
 
 /** @author sallen */
 public class ExplorerUtil {

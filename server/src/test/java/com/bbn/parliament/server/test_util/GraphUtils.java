@@ -38,10 +38,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.bbn.parliament.client.jena.MultiPartBodyPublisherBuilder;
-import com.bbn.parliament.client.jena.QuerySolutionStream;
-import com.bbn.parliament.client.jena.RDFFormat;
-import com.bbn.parliament.jena.graph.KbGraphStore;
+import com.bbn.parliament.client.MultiPartBodyPublisherBuilder;
+import com.bbn.parliament.client.QuerySolutionStream;
+import com.bbn.parliament.client.RDFFormat;
+import com.bbn.parliament.kb_graph.KbGraphStore;
 import com.bbn.parliament.server.controller.QueryController;
 import com.bbn.parliament.sparql_query_builder.QueryBuilder;
 

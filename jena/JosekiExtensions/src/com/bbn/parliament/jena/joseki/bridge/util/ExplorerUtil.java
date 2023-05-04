@@ -27,7 +27,7 @@ import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.joseki.util.Convert;
 
-import com.bbn.parliament.jena.graph.KbGraphStore;
+import com.bbn.parliament.kb_graph.KbGraphStore;
 
 /** @author sallen */
 public class ExplorerUtil {

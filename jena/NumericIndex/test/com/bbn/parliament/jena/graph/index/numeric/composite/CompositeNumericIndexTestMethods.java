@@ -13,13 +13,13 @@ import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.ResourceFactory;
 
-import com.bbn.parliament.jena.graph.index.Index;
-import com.bbn.parliament.jena.graph.index.IndexFactory;
-import com.bbn.parliament.jena.graph.index.IndexFactory.IndexFactoryHelper;
-import com.bbn.parliament.jena.graph.index.Record;
-import com.bbn.parliament.jena.graph.index.Record.TripleRecord;
 import com.bbn.parliament.jena.graph.index.numeric.NumericIndex;
-import com.bbn.parliament.jena.query.index.IndexTestMethods;
+import com.bbn.parliament.kb_graph.index.Index;
+import com.bbn.parliament.kb_graph.index.IndexFactory;
+import com.bbn.parliament.kb_graph.index.Record;
+import com.bbn.parliament.kb_graph.index.IndexFactory.IndexFactoryHelper;
+import com.bbn.parliament.kb_graph.index.Record.TripleRecord;
+import com.bbn.parliament.kb_graph.query.index.IndexTestMethods;
 
 public class CompositeNumericIndexTestMethods extends IndexTestMethods<CompositeNumericIndex, Number> {
 	private static final String INT_URI = "http://example.org#int";

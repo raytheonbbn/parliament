@@ -16,7 +16,6 @@ import org.locationtech.jts.geom.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.spatial.Constants;
 import com.bbn.parliament.jena.graph.index.spatial.GeometryConverter;
 import com.bbn.parliament.jena.graph.index.spatial.Operation;
@@ -26,7 +25,8 @@ import com.bbn.parliament.jena.graph.index.spatial.sql.PersistentStore;
 import com.bbn.parliament.jena.graph.index.spatial.sql.PersistentStoreException;
 import com.bbn.parliament.jena.graph.index.spatial.sql.ResultSetIterator;
 import com.bbn.parliament.jena.graph.index.spatial.sql.SQLOp;
-import com.bbn.parliament.jena.query.index.operand.OperandFactory;
+import com.bbn.parliament.kb_graph.index.Record;
+import com.bbn.parliament.kb_graph.query.index.operand.OperandFactory;
 
 public class PostgresPropertyFunction extends SpatialPropertyFunction {
 	private final static Logger LOG = LoggerFactory.getLogger(PostgresPropertyFunction.class);

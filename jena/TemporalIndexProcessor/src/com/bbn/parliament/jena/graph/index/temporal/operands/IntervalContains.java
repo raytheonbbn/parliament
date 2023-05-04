@@ -8,10 +8,10 @@ package com.bbn.parliament.jena.graph.index.temporal.operands;
 
 import java.util.Iterator;
 
-import com.bbn.parliament.jena.graph.index.Record;
 import com.bbn.parliament.jena.graph.index.temporal.ExtentTester;
 import com.bbn.parliament.jena.graph.index.temporal.TemporalExtentIterator;
 import com.bbn.parliament.jena.graph.index.temporal.extent.TemporalExtent;
+import com.bbn.parliament.kb_graph.index.Record;
 
 public class IntervalContains extends MemoryOperatorImplementation {
 	public IntervalContains(ExtentTester extentTester) {

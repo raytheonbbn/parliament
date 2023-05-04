@@ -9,7 +9,7 @@ import java.util.function.BiConsumer;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
 
-import com.bbn.parliament.client.jena.RDFFormat;
+import com.bbn.parliament.client.RDFFormat;
 
 public enum AcceptableMediaType {
 	/** Turtle format */
