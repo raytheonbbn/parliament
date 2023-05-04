@@ -149,31 +149,31 @@ pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteralImpl(ConstBidiIter first
 
 	// Try for a plain literal:
 	auto trailingQuoteIt = find_end(first, last, cbegin(k_quote), cend(k_quote));
-	if (unsignedDist(first, last) >= (2 * k_quote.size())
-		&& unsignedDist(trailingQuoteIt, last) == k_quote.size())
+	if (unsignedDist(first, last) >= (2 * size(k_quote))
+		&& unsignedDist(trailingQuoteIt, last) == size(k_quote))
 	{
-		advance(first, k_quote.size());
+		advance(first, size(k_quote));
 		return make_tuple(RsrcString{first, trailingQuoteIt}, RsrcString{}, RsrcString{});
 	}
 
 	// Try for a typed literal:
 	auto typeSepIt = find_end(first, last, cbegin(k_typeSep), cend(k_typeSep));
-	if (unsignedDist(first, last) > (k_quote.size() + k_typeSep.size())
-		&& unsignedDist(typeSepIt, last) > k_typeSep.size())
+	if (unsignedDist(first, last) > (size(k_quote) + size(k_typeSep))
+		&& unsignedDist(typeSepIt, last) > size(k_typeSep))
 	{
-		advance(first, k_quote.size());
+		advance(first, size(k_quote));
 		auto typeIt = typeSepIt;
-		advance(typeIt, k_typeSep.size());
+		advance(typeIt, size(k_typeSep));
 		return make_tuple(RsrcString{first, typeSepIt}, RsrcString{typeIt, last}, RsrcString{});
 	}
 
 	// Try for a language-tagged literal:
 	auto langSepIt = find_end(first, last, cbegin(k_langSep), cend(k_langSep));
-	if (unsignedDist(first, last) > (k_quote.size() + k_langSep.size())
-		&& unsignedDist(langSepIt, last) > k_langSep.size())
+	if (unsignedDist(first, last) > (size(k_quote) + size(k_langSep))
+		&& unsignedDist(langSepIt, last) > size(k_langSep))
 	{
 		auto langIt = langSepIt;
-		advance(langIt, k_langSep.size());
+		advance(langIt, size(k_langSep));
 		if (any_of(langIt, last, [](RsrcChar ch){
 			return ch < 'a' && ch > 'z' && ch < 'A' && ch > 'Z' && ch != '-'; }))
 		{
@@ -181,7 +181,7 @@ pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteralImpl(ConstBidiIter first
 				% convertFromRsrcChar(RsrcString(first, last)));
 		}
 
-		advance(first, k_quote.size());
+		advance(first, size(k_quote));
 		return make_tuple(RsrcString{first, langSepIt}, RsrcString{}, RsrcString{langIt, last});
 	}
 

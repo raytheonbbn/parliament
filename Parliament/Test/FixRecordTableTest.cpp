@@ -124,7 +124,7 @@ BOOST_DATA_TEST_CASE(
 		BOOST_CHECK_EQUAL(0u, frt.recordCount());
 		BOOST_CHECK_EQUAL(4u, frt.capacity());
 
-		for (size_t i = 0; i < k_testData1.size(); ++i)
+		for (size_t i = 0; i < size(k_testData1); ++i)
 		{
 			BOOST_CHECK_NO_THROW(frt.pushBack(k_testData1[i]));
 			BOOST_CHECK(!frt.isEmpty());
@@ -132,17 +132,17 @@ BOOST_DATA_TEST_CASE(
 			BOOST_CHECK_EQUAL(4u, frt.capacity());
 		}
 
-		BOOST_CHECK_NO_THROW(frt.pushBack(k_testData2.data(), k_testData2.size()));
-		BOOST_CHECK_EQUAL(k_testData1.size() + k_testData2.size(), frt.recordCount());
+		BOOST_CHECK_NO_THROW(frt.pushBack(data(k_testData2), size(k_testData2)));
+		BOOST_CHECK_EQUAL(size(k_testData1) + size(k_testData2), frt.recordCount());
 		const size_t finalCapacity = frt.capacity();
-		BOOST_CHECK(finalCapacity >= k_testData1.size() + k_testData2.size());
+		BOOST_CHECK(finalCapacity >= size(k_testData1) + size(k_testData2));
 
 		BOOST_CHECK_NO_THROW(frt.popBack());
-		BOOST_CHECK_EQUAL(k_testData1.size() + k_testData2.size() - 1, frt.recordCount());
+		BOOST_CHECK_EQUAL(size(k_testData1) + size(k_testData2) - 1, frt.recordCount());
 		BOOST_CHECK_EQUAL(finalCapacity, frt.capacity());
 
 		BOOST_CHECK_NO_THROW(frt.releaseExcessCapacity());
-		BOOST_CHECK_EQUAL(k_testData1.size() + k_testData2.size() - 1, frt.recordCount());
+		BOOST_CHECK_EQUAL(size(k_testData1) + size(k_testData2) - 1, frt.recordCount());
 		BOOST_CHECK_EQUAL(frt.recordCount(), frt.capacity());
 
 		BOOST_CHECK_NO_THROW(frt.sync());
@@ -151,29 +151,29 @@ BOOST_DATA_TEST_CASE(
 	{
 		FixRecordTable<TestRecord> frt(k_fName, true, 4, growthIncrement, growthFactor);
 		BOOST_CHECK(!frt.isEmpty());
-		BOOST_CHECK_EQUAL(k_testData1.size() + k_testData2.size() - 1, frt.recordCount());
+		BOOST_CHECK_EQUAL(size(k_testData1) + size(k_testData2) - 1, frt.recordCount());
 		BOOST_CHECK_EQUAL(frt.recordCount(), frt.capacity());
 
-		for (size_t i = 0; i < k_testData1.size(); ++i)
+		for (size_t i = 0; i < size(k_testData1); ++i)
 		{
 			TestRecord& current = frt.getRecordAt(i);
 			BOOST_CHECK_EQUAL(k_testData1[i].m_field0, current.m_field0);
 			BOOST_CHECK_EQUAL(k_testData1[i].m_field1, current.m_field1);
 		}
 
-		for (size_t i = 0; i < k_testData2.size() - 1; ++i)
+		for (size_t i = 0; i < size(k_testData2) - 1; ++i)
 		{
-			TestRecord& current = frt.getRecordAt(k_testData1.size() + i);
+			TestRecord& current = frt.getRecordAt(size(k_testData1) + i);
 			BOOST_CHECK_EQUAL(k_testData2[i].m_field0, current.m_field0);
 			BOOST_CHECK_EQUAL(k_testData2[i].m_field1, current.m_field1);
 		}
 
-		BOOST_CHECK_THROW(frt.getRecordAt(k_testData1.size() + k_testData2.size() - 1), Exception);
+		BOOST_CHECK_THROW(frt.getRecordAt(size(k_testData1) + size(k_testData2) - 1), Exception);
 	}
 
 	vector<uint8> fileContent;
 	readFileContents(k_fName, fileContent);
-	BOOST_CHECK_EQUAL(arrayLen(k_expectedResult), fileContent.size());
+	BOOST_CHECK_EQUAL(arrayLen(k_expectedResult), size(fileContent));
 	BOOST_CHECK(memcmp(&(fileContent[0]), k_expectedResult, sizeof(k_expectedResult)) == 0);
 }
 

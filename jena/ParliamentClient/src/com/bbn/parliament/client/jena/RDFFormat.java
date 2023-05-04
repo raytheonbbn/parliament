@@ -8,9 +8,12 @@ package com.bbn.parliament.client.jena;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
+
+import org.apache.jena.riot.Lang;
 
 /**
  * Enum that specifies the various RDF formats Jena can handle. The .toString() method
@@ -21,54 +24,56 @@ import java.util.zip.ZipEntry;
  */
 public enum RDFFormat {
 	/** RDF/XML format */
-	RDFXML(true,
-		new String[]{ "RDF/XML", "RDF/XML-ABBREV" },
+	RDFXML(true, Lang.RDFXML,
+		new String[]{ "RDF/XML", "RDF/XML-ABBREV", "RDFXML", "RDFXML-ABBREV" },
 		new String[]{ "rdf", "owl", "xml" },
 		new String[]{ "application/rdf+xml" }),
 
 	/** Turtle format */
-	TURTLE(true,
-		new String[]{ "TURTLE", "TTL" },
+	TURTLE(true, Lang.TURTLE,
+		new String[]{ "Turtle", "TTL" },
 		new String[]{ "ttl" },
-		new String[]{ "text/turtle", "application/x-turtle" }),
+		new String[]{ "text/turtle", "application/turtle", "application/x-turtle" }),
 
 	/** N-Triples format */
-	NTRIPLES(true,
-		new String[]{ "N-TRIPLES", "NTRIPLES" },
+	NTRIPLES(true, Lang.NTRIPLES,
+		new String[]{ "N-Triples", "NTriples", "N-Triple", "NTriple", "NT" },
 		new String[]{ "nt" },
 		new String[]{ "application/n-triples", "text/plain" }),
 
 	/** N3 format */
-	N3(true,
+	N3(true, Lang.N3,
 		new String[]{ "N3" },
 		new String[]{ "n3" },
-		new String[]{ "text/n3" }),
+		new String[]{ "text/rdf+n3", "text/n3", "application/n3" }),
 
 	/** JSON-LD format */
-	JSON_LD(true,
-		new String[]{ "JSON-LD" },
-		new String[]{ "jsonld", "json-ld", "json_ld", "json+ld" },
-		new String[]{ "application/ld+json", "application/json" }),
+	JSON_LD(true, Lang.JSONLD,
+		new String[]{ "JSON-LD", "JSONLD" },
+		new String[]{ "jsonld" },
+		new String[]{ "application/ld+json" }),
 
 	/** Zip format */
-	ZIP(false,
+	ZIP(false, null,
 		new String[]{ "ZIP" },
 		new String[]{ "zip" },
 		new String[]{ "application/zip" }),
 
 	/** Unknown format */
-	UNKNOWN(false,
+	UNKNOWN(false, Lang.RDFNULL,
 		new String[]{ "UNKNOWN" },
-		new String[]{ "txt" },
+		new String[]{},
 		new String[]{});
 
-	private boolean isJenaReadable;
+	private final boolean isJenaReadable;
+	private final Lang lang;
 	private final String[] formatStrList;
 	private final String[] fileExtList;
 	private final String[] mediaTypeList;
 
-	private RDFFormat(boolean isReadableByJena, String[] formatStrings, String[] fileExtensions, String[] mediaTypes) {
+	private RDFFormat(boolean isReadableByJena, Lang jenaLang, String[] formatStrings, String[] fileExtensions, String[] mediaTypes) {
 		isJenaReadable = isReadableByJena;
+		lang = jenaLang;
 		formatStrList = formatStrings;
 		fileExtList = fileExtensions;
 		mediaTypeList = mediaTypes;
@@ -215,8 +220,8 @@ public enum RDFFormat {
 	 * Returns a filename extension string that matches this RDFFormat, or "txt" for
 	 * RDFFormat.UNKNOWN.
 	 */
-	public String[] getExtensions() {
-		return fileExtList.clone();
+	public List<String> getExtensions() {
+		return List.of(fileExtList);
 	}
 
 	/** Returns media type string for this RDFFormat, or null for RDFFormat.UNKNOWN. */
@@ -224,9 +229,21 @@ public enum RDFFormat {
 		return (mediaTypeList.length == 0) ? null : mediaTypeList[0];
 	}
 
+	public List<String> getMediaTypes() {
+		return List.of(mediaTypeList);
+	}
+
+	public List<String> getFormatStrs() {
+		return List.of(formatStrList);
+	}
+
 	/** Returns true if this is a format that Jena can parse */
 	public boolean isJenaReadable() {
 		return isJenaReadable;
+	}
+
+	public Lang getLang() {
+		return lang;
 	}
 
 	/**

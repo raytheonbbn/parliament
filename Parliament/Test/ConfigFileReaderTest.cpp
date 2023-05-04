@@ -44,13 +44,13 @@ static bfs::path getRunningDllFilePath()
 {
 #if defined(PARLIAMENT_WINDOWS)
 	array<TChar, 8192> buffer;
-	DWORD errCode = ::GetModuleFileName(0, buffer.data(), static_cast<DWORD>(buffer.size()));
-	if (errCode <= 0 || errCode >= buffer.size())
+	DWORD errCode = ::GetModuleFileName(0, data(buffer), static_cast<DWORD>(size(buffer)));
+	if (errCode <= 0 || errCode >= size(buffer))
 	{
 		throw ::std::system_error(::GetLastError(), ::std::system_category(),
 			"GetModuleFileName failed in unit test");
 	}
-	return buffer.data();
+	return data(buffer);
 #else
 	::Dl_info info;
 	if (::dladdr(reinterpret_cast<const void*>(getRunningDllFilePath), &info) == 0)

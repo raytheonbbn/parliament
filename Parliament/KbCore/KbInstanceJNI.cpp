@@ -21,6 +21,7 @@
 using namespace ::bbn::parliament;
 namespace pmnt = ::bbn::parliament;
 using ::std::basic_ostream;
+using ::std::size;
 using ::std::string;
 
 static auto g_log(pmnt::log::getSource("KbInstanceJNI"));
@@ -416,7 +417,7 @@ JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_uriToRsrcId(
 		{
 			KbInstance* pKb = kbPtr(pEnv, obj);
 			JStringAccessor<RsrcChar> accessor(pEnv, uri);
-			result = static_cast<jlong>(pKb->uriToRsrcId(accessor.begin(), accessor.size(), !!isLiteral, !!createIfMissing));
+			result = static_cast<jlong>(pKb->uriToRsrcId(accessor.begin(), size(accessor), !!isLiteral, !!createIfMissing));
 		}
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 	return result;

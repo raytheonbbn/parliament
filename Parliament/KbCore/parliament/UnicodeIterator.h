@@ -679,8 +679,8 @@ inline ::std::string convertTCharToUtf8(TStringView src, bool conversionIsStrict
 {
 #if defined(PARLIAMENT_WINDOWS) && defined(UNICODE)
 	static_assert(sizeof(TChar) == sizeof(Utf16Char), "Unexpected size for type alias TChar");
-	auto pUtf16Src = reinterpret_cast<const Utf16Char*>(src.data());
-	auto utf16Src = Utf16StringView(pUtf16Src, src.size());
+	auto pUtf16Src = reinterpret_cast<const Utf16Char*>(data(src));
+	auto utf16Src = Utf16StringView(pUtf16Src, size(src));
 	return convertUtf32ToUtf8(UnicodeIteratorFactory<Utf16Char>::begin(utf16Src),
 		UnicodeIteratorFactory<Utf16Char>::end(utf16Src), conversionIsStrict);
 #else

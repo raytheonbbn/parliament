@@ -4,14 +4,13 @@ plugins {
 	id 'java'
 }
 
-sourceCompatibility = '17'
-targetCompatibility = '17'
-defaultTasks 'bootRun'
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 ext {
-	genJavaDir = file("$buildDir/generated/java")
+	genJavaDir = file("$buildDir/generated/sources/java")
 	configVocabFile = "${projectDir}/src/main/resources/config-ont.ttl"
-	configVocabPackage = 'com.bbn.parliament.jena.bridge.configuration.vocab'
+	configVocabPackage = 'com.bbn.parliament.server.configuration.vocab'
 	configVocabDir = configVocabPackage.replaceAll(/\./, '/')
 	configVocabClassNm = 'ConfigOnt'
 	configVocabSource = "${genJavaDir}/${configVocabDir}/${configVocabClassNm}.java"
@@ -19,6 +18,7 @@ ext {
 
 dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation project(':jena:SparqlQueryBuilder')
 	implementation fileTree(dir: artifactsDir, include: [
 		'JenaGraph.jar',
 		'ParliamentClient.jar',
@@ -29,6 +29,7 @@ dependencies {
 	])
 
 	implementation "$commonsCsvDependency"
+	implementation "$commonsIoDependency"
 	implementation "$commonsLangDependency"
 	implementation "$jenaArqDependency"
 	implementation "$slf4jApiDependency"
@@ -69,6 +70,29 @@ task runSchemagen(type: JavaExec) {
 }
 
 compileJava.dependsOn runSchemagen
+
+java {
+	withSourcesJar()
+	withJavadocJar()
+}
+
+javadoc {
+	source = sourceSets.main.allJava
+	classpath = configurations.compileClasspath
+	dependsOn runSchemagen
+
+	options
+	{
+		//setMemberLevel JavadocMemberLevel.PUBLIC
+		//setAuthor true
+		addStringOption('Xdoclint:-missing', '-quiet')
+	}
+}
+
+tasks.getByName('sourcesJar') {
+	from sourceSets.main.allSource
+	dependsOn runSchemagen
+}
 
 clean {
 	delete "${projectDir}/kb-data"

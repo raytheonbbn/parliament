@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultFileContainsDefaults)
 	BOOST_CHECK_EQUAL(defaults.logFileMinFreeSpace(), c.logFileMinFreeSpace());
 	BOOST_CHECK_EQUAL(defaults.logFileRotationTimePoint(), c.logFileRotationTimePoint());
 	BOOST_CHECK_EQUAL(defaults.logLevel(), c.logLevel());
-	BOOST_CHECK_EQUAL(defaults.logChannelLevels().size(), c.logChannelLevels().size());
+	BOOST_CHECK_EQUAL(size(defaults.logChannelLevels()), size(c.logChannelLevels()));
 	BOOST_CHECK(equal(begin(defaults.logChannelLevels()), end(defaults.logChannelLevels()), begin(c.logChannelLevels())));
 }
 
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 	::std::map<string, string> expected;
 	expected["KbInstance"] = "ALL";
 	expected["StringToId"] = "ALL";
-	BOOST_CHECK_EQUAL(expected.size(), c.logChannelLevels().size());
+	BOOST_CHECK_EQUAL(size(expected), size(c.logChannelLevels()));
 	BOOST_CHECK(equal(begin(expected), end(expected), begin(c.logChannelLevels())));
 }
 

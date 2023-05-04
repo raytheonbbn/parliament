@@ -31,6 +31,7 @@ using ::std::make_pair;
 using ::std::ostream;
 using ::std::setfill;
 using ::std::setw;
+using ::std::size;
 using ::std::vector;
 
 bool pmnt::KbInstance::validate(ostream& s) const
@@ -40,7 +41,7 @@ bool pmnt::KbInstance::validate(ostream& s) const
 	// Compile a list of all the resource offsets:
 	::std::map<size_t, vector<ResourceId> > rsrcOffsetMap;
 	size_t currentRsrcStart = 0;
-	for (size_t i = 0; i < m_pi->m_uriTbl.size(); ++i)
+	for (size_t i = 0; i < size(m_pi->m_uriTbl); ++i)
 	{
 		const RsrcChar* p = m_pi->m_uriTbl.getRecordAt(i);
 		if (*p == 0)
@@ -75,7 +76,7 @@ bool pmnt::KbInstance::validate(ostream& s) const
 	bool foundUnusedRsrcStr = false;
 	for (auto it = cbegin(rsrcOffsetMap); it != cend(rsrcOffsetMap); ++it)
 	{
-		if (it->second.size() < 1)
+		if (size(it->second) < 1)
 		{
 			isKbValid = false;
 			if (!foundUnusedRsrcStr)
@@ -92,7 +93,7 @@ bool pmnt::KbInstance::validate(ostream& s) const
 	bool foundOverusedRsrcStr = false;
 	for (auto it = cbegin(rsrcOffsetMap); it != cend(rsrcOffsetMap); ++it)
 	{
-		if (it->second.size() > 1)
+		if (size(it->second) > 1)
 		{
 			isKbValid = false;
 			if (!foundOverusedRsrcStr)
@@ -114,7 +115,7 @@ bool pmnt::KbInstance::validate(ostream& s) const
 		}
 	}
 
-	if (wildRsrcList.size() > 0)
+	if (size(wildRsrcList) > 0)
 	{
 		s << endl << "Resource records with a wild resource string offset:" << endl;
 	}
@@ -208,7 +209,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 		}
 		else
 		{
-			if (rsrc.m_uriOffset >= m_pi->m_uriTbl.size())
+			if (rsrc.m_uriOffset >= size(m_pi->m_uriTbl))
 			{
 				offTheEndWildRsrcList.push_back(rsrcId);
 			}
@@ -228,7 +229,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 	auto ofsIt = cbegin(encounteredOffsetsList);
 	OffsetList unusedOffsetsList;
 	OffsetList multiUsedOffsetsList;
-	for (size_t i = 0; i < m_pi->m_uriTbl.size(); ++i)
+	for (size_t i = 0; i < size(m_pi->m_uriTbl); ++i)
 	{
 		const RsrcChar* p = m_pi->m_uriTbl.getRecordAt(i);
 		if (*p == 0)
@@ -273,12 +274,12 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 			currentRsrcStart = i + 1;
 		}
 	}
-	if (currentRsrcStart != m_pi->m_uriTbl.size())
+	if (currentRsrcStart != size(m_pi->m_uriTbl))
 	{
 		//TODO: report m_uriTbl ends with garbage
 	}
 
-	if (noValidBitRsrcList.size() > 0)
+	if (size(noValidBitRsrcList) > 0)
 	{
 		isKbValid = false;
 		s << endl << "Resources whose valid bit is not set:" << endl;
@@ -290,7 +291,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 		s << "   " << rsrcId << ":  " << pRsrc << endl;
 	}
 
-	if (badAnonRsrcList.size() > 0)
+	if (size(badAnonRsrcList) > 0)
 	{
 		isKbValid = false;
 		s << endl << "Anonymous resources whose offset is not null:" << endl;
@@ -301,7 +302,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 		s << "   " << rsrcId << endl;
 	}
 
-	if (offTheEndWildRsrcList.size() > 0)
+	if (size(offTheEndWildRsrcList) > 0)
 	{
 		isKbValid = false;
 		s << endl << "Resources whose offset is wild (off the end):" << endl;
@@ -314,7 +315,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 		s << "   " << rsrcId << ":  " << rsrcOffset << endl;
 	}
 
-	if (inTheMiddleWildRsrcList.size() > 0)
+	if (size(inTheMiddleWildRsrcList) > 0)
 	{
 		isKbValid = false;
 		s << endl << "Resources whose offset is wild (in the middle):" << endl;
@@ -327,7 +328,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 		s << "   " << rsrcId << ":  " << rsrcOffset << endl;
 	}
 
-	if (unusedOffsetsList.size() > 0)
+	if (size(unusedOffsetsList) > 0)
 	{
 		isKbValid = false;
 		s << endl << "Resource strings that are not used by any resources:" << endl;
@@ -339,7 +340,7 @@ bool pmnt::KbInstance::validateUriTblAgainstRsrcTbl(ostream& s) const
 		s << "   " << rsrcOffset << ":  " << pRsrc << endl;
 	}
 
-	if (multiUsedOffsetsList.size() > 0)
+	if (size(multiUsedOffsetsList) > 0)
 	{
 		isKbValid = false;
 		s << endl << "Resource strings that are used by more than one resource:" << endl;
@@ -358,7 +359,7 @@ bool pmnt::KbInstance::isStartOfRsrcStr(size_t rsrcOffset) const
 {
 	bool result = false;
 
-	if (rsrcOffset < m_pi->m_uriTbl.size())
+	if (rsrcOffset < size(m_pi->m_uriTbl))
 	{
 		if (rsrcOffset == 0)
 		{

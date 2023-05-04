@@ -169,7 +169,7 @@ static basic_ostream<CharT, TraitsT>& operator<<(
 	if (strm.good())
 	{
 		auto levelInt = static_cast<size_t>(level);
-		if (levelInt < k_levelStrings.size())
+		if (levelInt < size(k_levelStrings))
 		{
 			strm << k_levelStrings[levelInt];
 		}

@@ -340,7 +340,7 @@ auto pmnt::StrToIdEntryIterator::advanceCursor() -> void
 	{
 		auto key = DBT{};
 		auto val = DBT{};
-		initOutputDbt(key, m_curVal.first, m_buffer.size() - 1);
+		initOutputDbt(key, m_curVal.first, size(m_buffer) - 1);
 		initOutputDbt(val, &m_curVal.second, 1);
 
 		auto err = m_pCursor->c_get(m_pCursor.get(), &key, &val, DB_NEXT);

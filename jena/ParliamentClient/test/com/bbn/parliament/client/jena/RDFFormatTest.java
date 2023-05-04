@@ -9,11 +9,15 @@ package com.bbn.parliament.client.jena;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
+import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 /** @author sallen */
@@ -119,9 +123,6 @@ public class RDFFormatTest {
 			Arguments.of(RDFFormat.N3,			"thing.rdf.n3"),
 			Arguments.of(RDFFormat.N3,			".n3"),
 			Arguments.of(RDFFormat.JSON_LD,			"foo.jsonld"),
-			Arguments.of(RDFFormat.JSON_LD,			"foo.json-ld"),
-			Arguments.of(RDFFormat.JSON_LD,			"foo.json_ld"),
-			Arguments.of(RDFFormat.JSON_LD,			"foo.json+ld"),
 			Arguments.of(RDFFormat.ZIP,			"foo.zip"),
 			Arguments.of(RDFFormat.UNKNOWN,			"thing.txt"),
 			Arguments.of(RDFFormat.UNKNOWN,			"boo.fww"),
@@ -159,7 +160,6 @@ public class RDFFormatTest {
 			Arguments.of(RDFFormat.NTRIPLES,	"TEXT/PLAIN; charset=us-ascii"),
 			Arguments.of(RDFFormat.N3,			"text/n3"),
 			Arguments.of(RDFFormat.JSON_LD,	"application/ld+json"),
-			Arguments.of(RDFFormat.JSON_LD,	"application/json"),
 			Arguments.of(RDFFormat.ZIP,		"application/zip"),
 			Arguments.of(RDFFormat.UNKNOWN,	"xyzzy"),
 			Arguments.of(RDFFormat.UNKNOWN,	""),
@@ -172,5 +172,34 @@ public class RDFFormatTest {
 	@MethodSource("testParseMediaTypeArgs")
 	public void testParseMediaType(RDFFormat expectedFormat, String stringToParse) {
 		assertEquals(expectedFormat, RDFFormat.parseMediaType(stringToParse));
+	}
+
+	@SuppressWarnings("static-method")
+	@ParameterizedTest
+	@EnumSource(RDFFormat.class)
+	public void testJenaLangCompatibility(RDFFormat format) {
+		if (format == RDFFormat.ZIP || format == RDFFormat.UNKNOWN) {
+			return;
+		}
+		Lang lang = format.getLang();
+
+		assertEquals(lang.getContentType().getContentType(), format.getMediaType());
+
+		SortedSet<String> expectedContentTypes = new TreeSet<>(lang.getAltContentTypes());
+		SortedSet<String> actualContentTypes = new TreeSet<>(format.getMediaTypes());
+		assertEquals(expectedContentTypes, actualContentTypes);
+
+		assertEquals(lang.getFileExtensions().get(0), format.getExtension());
+
+		SortedSet<String> expectedExtensions = new TreeSet<>(lang.getFileExtensions());
+		SortedSet<String> actualExtensions = new TreeSet<>(format.getExtensions());
+		assertEquals(expectedExtensions, actualExtensions);
+
+		assertEquals(lang.getLabel(), format.getFormatStrs().get(0));
+		assertEquals(lang.getName(), format.getFormatStrs().get(0));
+
+		SortedSet<String> expectedNames = new TreeSet<>(lang.getAltNames());
+		SortedSet<String> actualNames = new TreeSet<>(format.getFormatStrs());
+		assertEquals(expectedNames, actualNames);
 	}
 }

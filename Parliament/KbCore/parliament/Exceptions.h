@@ -44,7 +44,7 @@ public:
 	PARLIAMENT_EXPORT Exception& operator=(const Exception& rhs) noexcept;
 	PARLIAMENT_EXPORT ~Exception() override;
 
-	const char* what() const noexcept override { return m_msg.data(); }
+	const char* what() const noexcept override { return data(m_msg); }
 
 	PARLIAMENT_EXPORT static SysErrCode getSysErrCode() noexcept;
 	PARLIAMENT_EXPORT static ::std::string getSysErrMsg(SysErrCode errCode);

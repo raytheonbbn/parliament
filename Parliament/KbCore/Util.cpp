@@ -83,7 +83,7 @@ pmnt::TString pmnt::tGetEnvVar(const TChar* pVarName)
 				throw Exception(errMsg);
 			}
 		}
-		else if (numChars < buffer.size())
+		else if (numChars < size(buffer))
 		{
 			return TString(&(buffer[0]));
 		}

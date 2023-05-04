@@ -81,19 +81,19 @@ void pmnt::RuleAtom::print(ostream& s, const KbInstance* pKB) const
 bool pmnt::SWRLBuiltinRuleAtom::evaluate(KbInstance* pKB, BindingList& bindingList) const
 {
 	const auto argCountLimits = getArgCountLimits();
-	if (getAtomSlotList().size() < argCountLimits.m_min)
+	if (size(getAtomSlotList()) < argCountLimits.m_min)
 	{
 		PMNT_LOG(g_log, log::Level::warn) << format(
 			"SWRL built-in '%1%' requires at least %2% arguments, but has only %3%")
-			% convertFromRsrcChar(m_id) % argCountLimits.m_min % getAtomSlotList().size();
+			% convertFromRsrcChar(m_id) % argCountLimits.m_min % size(getAtomSlotList());
 		return false;
 	}
 	else if (argCountLimits.m_max != ArgCountLimits::k_unbounded
-		&& getAtomSlotList().size() > argCountLimits.m_max)
+		&& size(getAtomSlotList()) > argCountLimits.m_max)
 	{
 		PMNT_LOG(g_log, log::Level::warn) << format(
 			"SWRL built-in '%1%' takes at most %2% arguments, but has %3%")
-			% convertFromRsrcChar(m_id) % argCountLimits.m_max % getAtomSlotList().size();
+			% convertFromRsrcChar(m_id) % argCountLimits.m_max % size(getAtomSlotList());
 		return false;
 	}
 
@@ -334,7 +334,7 @@ void pmnt::RuleEngine::setTriggers(RuleIndex ruleIdx)
 	}
 
 	PMNT_LOG(g_log, log::Level::debug) << format("Setting triggers for %1% atoms")
-		% m_ruleList[ruleIdx]->getBody().size();
+		% size(m_ruleList[ruleIdx]->getBody());
 
 	auto beginIt = cbegin(m_ruleList[ruleIdx]->getBody());
 	auto endIt = cend(m_ruleList[ruleIdx]->getBody());

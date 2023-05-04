@@ -77,9 +77,9 @@ BOOST_AUTO_TEST_CASE(testFileOpen)
 
 	readFileContents(k_fName, fileContent);
 
-	BOOST_CHECK_EQUAL(fileContent.size(), strlen(k_result));
-	BOOST_CHECK_EQUAL(fileContent.size(), file_size(bfs::path(k_fName)));
-	BOOST_CHECK(memcmp(&(fileContent[0]), k_result, fileContent.size()) == 0);
+	BOOST_CHECK_EQUAL(size(fileContent), strlen(k_result));
+	BOOST_CHECK_EQUAL(size(fileContent), file_size(bfs::path(k_fName)));
+	BOOST_CHECK(memcmp(&(fileContent[0]), k_result, size(fileContent)) == 0);
 }
 
 BOOST_AUTO_TEST_CASE(testFileTruncate)
@@ -146,16 +146,16 @@ BOOST_AUTO_TEST_CASE(testGrowingFile)
 		BOOST_CHECK(hFile.wasCreatedOnOpen());
 		BOOST_CHECK(hFile.getFileSize() == 0);
 
-		auto bytesWritten = hFile.write(k_first40bytes.data(), k_first40bytes.size());
-		BOOST_CHECK_EQUAL(bytesWritten, k_first40bytes.size());
-		BOOST_CHECK(hFile.getFileSize() == k_first40bytes.size());
+		auto bytesWritten = hFile.write(data(k_first40bytes), size(k_first40bytes));
+		BOOST_CHECK_EQUAL(bytesWritten, size(k_first40bytes));
+		BOOST_CHECK(hFile.getFileSize() == size(k_first40bytes));
 	}
 
-	BOOST_CHECK_EQUAL(file_size(bfs::path(k_fName)), k_first40bytes.size());
+	BOOST_CHECK_EQUAL(file_size(bfs::path(k_fName)), size(k_first40bytes));
 	vector<uint8> fileContent;
 	readFileContents(k_fName, fileContent);
-	BOOST_CHECK_EQUAL(k_first40bytes.size(), fileContent.size());
-	BOOST_CHECK(memcmp(&(fileContent[0]), k_first40bytes.data(), k_first40bytes.size()) == 0);
+	BOOST_CHECK_EQUAL(size(k_first40bytes), size(fileContent));
+	BOOST_CHECK(memcmp(&(fileContent[0]), data(k_first40bytes), size(k_first40bytes)) == 0);
 
 	{
 		FileHandle hFile(k_fName, false);
@@ -163,16 +163,16 @@ BOOST_AUTO_TEST_CASE(testGrowingFile)
 		BOOST_CHECK(hFile.getFilePath() == k_fName);
 		BOOST_CHECK(!hFile.isReadOnly());
 		BOOST_CHECK(!hFile.wasCreatedOnOpen());
-		BOOST_CHECK_NO_THROW(hFile.truncate(k_first40bytes.size() + k_last8bytes.size()));
-		BOOST_CHECK(hFile.getFileSize() == k_first40bytes.size() + k_last8bytes.size());
+		BOOST_CHECK_NO_THROW(hFile.truncate(size(k_first40bytes) + size(k_last8bytes)));
+		BOOST_CHECK(hFile.getFileSize() == size(k_first40bytes) + size(k_last8bytes));
 	}
 
-	BOOST_CHECK_EQUAL(file_size(bfs::path(k_fName)), k_first40bytes.size() + k_last8bytes.size());
+	BOOST_CHECK_EQUAL(file_size(bfs::path(k_fName)), size(k_first40bytes) + size(k_last8bytes));
 	readFileContents(k_fName, fileContent);
-	BOOST_CHECK_EQUAL(k_first40bytes.size() + k_last8bytes.size(), fileContent.size());
-	vector<uint8> expectedFileContent(k_first40bytes.size() + k_last8bytes.size(), 0);
+	BOOST_CHECK_EQUAL(size(k_first40bytes) + size(k_last8bytes), size(fileContent));
+	vector<uint8> expectedFileContent(size(k_first40bytes) + size(k_last8bytes), 0);
 	copy(begin(k_first40bytes), end(k_first40bytes), begin(expectedFileContent));
-	BOOST_CHECK(memcmp(&(fileContent[0]), &(expectedFileContent[0]), k_first40bytes.size() + k_last8bytes.size()) == 0);
+	BOOST_CHECK(memcmp(&(fileContent[0]), &(expectedFileContent[0]), size(k_first40bytes) + size(k_last8bytes)) == 0);
 
 	{
 		FileHandle hFile(k_fName, false);
@@ -181,18 +181,18 @@ BOOST_AUTO_TEST_CASE(testGrowingFile)
 		BOOST_CHECK(!hFile.isReadOnly());
 		BOOST_CHECK(!hFile.wasCreatedOnOpen());
 
-		FileHandle::FileSize filePos = hFile.seek(k_first40bytes.size(), SeekMethod::k_start);
-		BOOST_CHECK_EQUAL(filePos, k_first40bytes.size());
-		auto bytesWritten = hFile.write(k_last8bytes.data(), k_last8bytes.size());
-		BOOST_CHECK_EQUAL(bytesWritten, k_last8bytes.size());
-		BOOST_CHECK(hFile.getFileSize() == k_first40bytes.size() + k_last8bytes.size());
+		FileHandle::FileSize filePos = hFile.seek(size(k_first40bytes), SeekMethod::k_start);
+		BOOST_CHECK_EQUAL(filePos, size(k_first40bytes));
+		auto bytesWritten = hFile.write(data(k_last8bytes), size(k_last8bytes));
+		BOOST_CHECK_EQUAL(bytesWritten, size(k_last8bytes));
+		BOOST_CHECK(hFile.getFileSize() == size(k_first40bytes) + size(k_last8bytes));
 	}
 
-	BOOST_CHECK_EQUAL(file_size(bfs::path(k_fName)), k_first40bytes.size() + k_last8bytes.size());
+	BOOST_CHECK_EQUAL(file_size(bfs::path(k_fName)), size(k_first40bytes) + size(k_last8bytes));
 	readFileContents(k_fName, fileContent);
-	BOOST_CHECK_EQUAL(k_first40bytes.size() + k_last8bytes.size(), fileContent.size());
-	copy(begin(k_last8bytes), end(k_last8bytes), begin(expectedFileContent) + k_first40bytes.size());
-	BOOST_CHECK(memcmp(&(fileContent[0]), &(expectedFileContent[0]), k_first40bytes.size() + k_last8bytes.size()) == 0);
+	BOOST_CHECK_EQUAL(size(k_first40bytes) + size(k_last8bytes), size(fileContent));
+	copy(begin(k_last8bytes), end(k_last8bytes), begin(expectedFileContent) + size(k_first40bytes));
+	BOOST_CHECK(memcmp(&(fileContent[0]), &(expectedFileContent[0]), size(k_first40bytes) + size(k_last8bytes)) == 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -66,6 +66,7 @@ using ::std::pair;
 using ::std::remove;
 using ::std::setfill;
 using ::std::setw;
+using ::std::size;
 using ::std::string;
 
 static auto g_log(pmnt::log::getSource("KbInstance"));
@@ -196,7 +197,7 @@ void pmnt::KbInstance::getExcessCapacity(/* out */ double& pctUnusedUriCapacity,
 	pctUnusedRsrcCapacity = 0.0;
 	pctUnusedStmtCapacity = 0.0;
 
-	pctUnusedUriCapacity = computeExcessCapacity(m_pi->m_uriTbl.capacity(), m_pi->m_uriTbl.size());
+	pctUnusedUriCapacity = computeExcessCapacity(m_pi->m_uriTbl.capacity(), size(m_pi->m_uriTbl));
 	pctUnusedRsrcCapacity = computeExcessCapacity(m_pi->m_rsrcTbl.capacity(), m_pi->m_rsrcTbl.recordCount());
 	pctUnusedStmtCapacity = computeExcessCapacity(m_pi->m_stmtTbl.capacity(), m_pi->m_stmtTbl.recordCount());
 }

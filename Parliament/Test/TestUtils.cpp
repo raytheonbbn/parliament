@@ -130,7 +130,7 @@ void pmnt::readFileContents(const bfs::path& fileName, vector<uint8>& content)
 		{
 			fseek(pFile, 0, SEEK_SET);
 			content.resize(fileSize);
-			numItemsRead = fread(&(content[0]), sizeof(content[0]), content.size(), pFile);
+			numItemsRead = fread(&(content[0]), sizeof(content[0]), size(content), pFile);
 		}
 		fclose(pFile);
 		if (numItemsRead != fileSize)
@@ -163,12 +163,12 @@ void pmnt::writeBytesToFile(const bfs::path& fileName, const vector<uint8>& cont
 		}
 
 		size_t numItemsWritten = 0;
-		if (content.size() > 0)
+		if (size(content) > 0)
 		{
-			numItemsWritten = fwrite(&(content[0]), sizeof(content[0]), content.size(), pFile);
+			numItemsWritten = fwrite(&(content[0]), sizeof(content[0]), size(content), pFile);
 		}
 		fclose(pFile);
-		if (numItemsWritten != content.size())
+		if (numItemsWritten != size(content))
 		{
 			throw runtime_error("fwrite failed in unit test");
 		}

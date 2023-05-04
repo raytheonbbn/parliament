@@ -1,123 +1,125 @@
-@prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
-@prefix rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix owl:	<http://www.w3.org/2002/07/owl#> .
-@prefix xsd:	<http://www.w3.org/2001/XMLSchema#> .
-@prefix par:	<http://parliament.semwebcentral.org/parliament-config#> .
-@prefix :		<http://parliament.semwebcentral.org/parliament-config-example#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix pcfg: <http://parliament.semwebcentral.org/parliament-config#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-[]
-	a par:Configuration ;
-	par:deferredFileOutputStreamThreshold 10485760 ;
-	par:prefixes (
-		[
-			par:prefix "rdf";
-			par:uri <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-		]
-		[
-			par:prefix "rdfs";
-			par:uri <http://www.w3.org/2000/01/rdf-schema#>
-		]
-		[
-			par:prefix "owl";
-			par:uri <http://www.w3.org/2002/07/owl#>
-		]
-		[
-			par:prefix "xsd";
-			par:uri <http://www.w3.org/2001/XMLSchema#>
-		]
-		[
-			par:prefix "xml";
-			par:uri <http://www.w3.org/XML/1998/namespace>
-		]
-		[
-			par:prefix "fn";
-			par:uri <http://www.w3.org/2005/xpath-functions#>
-		]
-		[
-			par:prefix "afn";
-			par:uri <http://jena.hpl.hp.com/ARQ/function#>
-		]
-		[
-			par:prefix "par";
-			par:uri <http://parliament.semwebcentral.org/parliament#>
-		]
-		[
-			par:prefix "dc" ;
-			par:uri <http://purl.org/dc/elements/1.1/>
-		]
-		[
-			par:prefix "ja" ;
-			par:uri <http://jena.hpl.hp.com/2005/11/Assembler#>
-		]
-		[
-			par:prefix "rss" ;
-			par:uri <http://purl.org/rss/1.0/>
-		]
-		[
-			par:prefix "vcard" ;
-			par:uri <http://www.w3.org/2001/vcard-rdf/3.0#>
-		]
-		[
-			par:prefix "dul" ;
-			par:uri <http://www.loa-cnr.it/ontologies/DUL.owl#>
-		]
-		[
-			par:prefix "skos" ;
-			par:uri <http://www.w3.org/2004/02/skos/core#>
-		]
-		[
-			par:prefix "ssn" ;
-			par:uri <http://purl.oclc.org/NET/ssnx/ssn#>
-		]
-		[
-			par:prefix "time" ;
-			par:uri <http://www.w3.org/2006/time#>
-		]
-		[
-			par:prefix "pt" ;
-			par:uri <http://bbn.com/ParliamentTime#>
-		]
-		[
-			par:prefix "ogc" ;
-			par:uri <http://www.opengis.net/>
-		]
-		[
-			par:prefix "geo" ;
-			par:uri <http://www.opengis.net/ont/geosparql#>
-		]
-		[
-			par:prefix "geof" ;
-			par:uri <http://www.opengis.net/def/function/geosparql/>
-		]
-		[
-			par:prefix "geor" ;
-			par:uri <http://www.opengis.net/def/rule/geosparql/>
-		]
-		[
-			par:prefix "sf" ;
-			par:uri <http://www.opengis.net/ont/sf#>
-		]
-		[
-			par:prefix "gml" ;
-			par:uri <http://www.opengis.net/ont/gml#>
-		]
-		[
-			par:prefix "units" ;
-			par:uri <http://www.opengis.net/def/uom/OGC/1.0/>
-		]
-	) ;
-	par:indexHandler :indexHandler .
-
-:indexHandler
-	a par:IndexProcessorConfigurationHandler ;
-	# change to true to enable indexing whenever a graph is created
-	par:enabledByDefault false ;
-	par:index [
-		par:processorFactoryClass "com.bbn.parliament.jena.graph.index.spatial.SpatialIndexFactory" ;
-		par:indexType "RTree" ;
-		par:geoSPARQL true
-	] ;
-	par:index [
-		par:processorFactoryClass "com.bbn.parliament.jena.graph.index.temporal.TemporalIndexFactory" ;
-		par:indexType "bdb" ;
-	].
+[
+  a pcfg:Configuration ;
+  pcfg:deferredFileOutputStreamThreshold 10485760 ;
+  pcfg:indexHandler [
+      a pcfg:IndexProcessorConfigurationHandler ;
+      pcfg:enabledByDefault false ;
+      pcfg:index [
+          pcfg:geoSPARQL true ;
+          pcfg:indexType "RTree" ;
+          pcfg:processorFactoryClass "com.bbn.parliament.jena.graph.index.spatial.SpatialIndexFactory" ;
+        ] ;
+      pcfg:index [
+          pcfg:indexType "bdb" ;
+          pcfg:processorFactoryClass "com.bbn.parliament.jena.graph.index.temporal.TemporalIndexFactory" ;
+        ] ;
+    ] ;
+  pcfg:prefixes (
+      [
+        pcfg:prefix "rdf" ;
+        pcfg:uri rdf: ;
+      ]
+      [
+        pcfg:prefix "rdfs" ;
+        pcfg:uri rdfs: ;
+      ]
+      [
+        pcfg:prefix "owl" ;
+        pcfg:uri owl: ;
+      ]
+      [
+        pcfg:prefix "xsd" ;
+        pcfg:uri xsd: ;
+      ]
+      [
+        pcfg:prefix "xml" ;
+        pcfg:uri <http://www.w3.org/XML/1998/namespace> ;
+      ]
+      [
+        pcfg:prefix "fn" ;
+        pcfg:uri <http://www.w3.org/2005/xpath-functions#> ;
+      ]
+      [
+        pcfg:prefix "afn" ;
+        pcfg:uri <http://jena.hpl.hp.com/ARQ/function#> ;
+      ]
+      [
+        pcfg:prefix "par" ;
+        pcfg:uri <http://parliament.semwebcentral.org/parliament#> ;
+      ]
+      [
+        pcfg:prefix "parPF" ;
+        pcfg:uri <java:com.bbn.parliament.server.pfunction.> ;
+      ]
+      [
+        pcfg:prefix "dc" ;
+        pcfg:uri <http://purl.org/dc/elements/1.1/> ;
+      ]
+      [
+        pcfg:prefix "ja" ;
+        pcfg:uri <http://jena.hpl.hp.com/2005/11/Assembler#> ;
+      ]
+      [
+        pcfg:prefix "rss" ;
+        pcfg:uri <http://purl.org/rss/1.0/> ;
+      ]
+      [
+        pcfg:prefix "vcard" ;
+        pcfg:uri <http://www.w3.org/2001/vcard-rdf/3.0#> ;
+      ]
+      [
+        pcfg:prefix "dul" ;
+        pcfg:uri <http://www.loa-cnr.it/ontologies/DUL.owl#> ;
+      ]
+      [
+        pcfg:prefix "skos" ;
+        pcfg:uri <http://www.w3.org/2004/02/skos/core#> ;
+      ]
+      [
+        pcfg:prefix "ssn" ;
+        pcfg:uri <http://purl.oclc.org/NET/ssnx/ssn#> ;
+      ]
+      [
+        pcfg:prefix "time" ;
+        pcfg:uri <http://www.w3.org/2006/time#> ;
+      ]
+      [
+        pcfg:prefix "pt" ;
+        pcfg:uri <http://bbn.com/ParliamentTime#> ;
+      ]
+      [
+        pcfg:prefix "ogc" ;
+        pcfg:uri <http://www.opengis.net/> ;
+      ]
+      [
+        pcfg:prefix "geo" ;
+        pcfg:uri <http://www.opengis.net/ont/geosparql#> ;
+      ]
+      [
+        pcfg:prefix "geof" ;
+        pcfg:uri <http://www.opengis.net/def/function/geosparql/> ;
+      ]
+      [
+        pcfg:prefix "geor" ;
+        pcfg:uri <http://www.opengis.net/def/rule/geosparql/> ;
+      ]
+      [
+        pcfg:prefix "sf" ;
+        pcfg:uri <http://www.opengis.net/ont/sf#> ;
+      ]
+      [
+        pcfg:prefix "gml" ;
+        pcfg:uri <http://www.opengis.net/ont/gml#> ;
+      ]
+      [
+        pcfg:prefix "units" ;
+        pcfg:uri <http://www.opengis.net/def/uom/OGC/1.0/> ;
+      ]
+    ) ;
+].

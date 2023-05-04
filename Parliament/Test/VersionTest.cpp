@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(testVersionNumber)
 {
 	auto verArray = vector<int>{PARLIAMENT_VERSION_NUMERIC};
 
-	BOOST_CHECK_EQUAL(4u, verArray.size());
+	BOOST_CHECK_EQUAL(4u, size(verArray));
 	BOOST_CHECK_EQUAL(0, verArray.back());
 
 	auto verStr = string{PARLIAMENT_VERSION_STRING};
@@ -40,15 +40,13 @@ BOOST_AUTO_TEST_CASE(testVersionNumber)
 	BOOST_CHECK(regex_match(verStr, captures, rex));
 
 	// We start at i == 1 because i == 0 is the whole-pattern match.
-	// Also, i is declared an int because although size() returns
-	// size_t, operator[] takes an int parameter.
 	auto parsedVersions = vector<int>{};
-	for (size_t i = 1; i < captures.size(); ++i)
+	for (size_t i = 1; i < size(captures); ++i)
 	{
 		parsedVersions.push_back(lexical_cast<int>(captures[i].str()));
 	}
 
-	BOOST_CHECK_EQUAL(verArray.size(), parsedVersions.size());
+	BOOST_CHECK_EQUAL(size(verArray), size(parsedVersions));
 	BOOST_CHECK(equal(cbegin(verArray), cend(verArray), cbegin(parsedVersions)));
 }
 
