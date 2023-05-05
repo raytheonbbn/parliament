@@ -29,7 +29,6 @@ import com.bbn.parliament.jena.joseki.bridge.ParliamentBridge;
 import com.bbn.parliament.jena.joseki.bridge.tracker.TrackableException;
 import com.bbn.parliament.jena.joseki.bridge.tracker.TrackableQuery;
 import com.bbn.parliament.jena.joseki.bridge.util.LogUtil;
-import com.bbn.parliament.kb_graph.util.JsonLdRdfWriter;
 
 /** @author ebenson@bbn.com */
 public class QueryHandler extends SPARQL {
@@ -79,7 +78,6 @@ public class QueryHandler extends SPARQL {
 				log.debug("OK/select");
 			} else if (q.isConstructType() || q.isDescribeType()) {
 				Model respModel = trackable.getModel();
-				respModel.setWriterClassName(JsonLdRdfWriter.formatName, JsonLdRdfWriter.class.getName());
 				resp.setModel(respModel);
 				log.debug(q.isConstructType() ? "OK/construct" : "OK/describe");
 			} else if (q.isAskType()) {

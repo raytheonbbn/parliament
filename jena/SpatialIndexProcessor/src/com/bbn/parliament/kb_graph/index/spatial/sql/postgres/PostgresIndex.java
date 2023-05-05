@@ -19,6 +19,8 @@ import java.util.Properties;
 import org.apache.jena.graph.Node;
 import org.locationtech.jts.geom.Geometry;
 
+import com.bbn.parliament.kb_graph.index.IndexException;
+import com.bbn.parliament.kb_graph.index.Record;
 import com.bbn.parliament.kb_graph.index.spatial.Constants;
 import com.bbn.parliament.kb_graph.index.spatial.GeometryConverter;
 import com.bbn.parliament.kb_graph.index.spatial.Operation;
@@ -28,8 +30,6 @@ import com.bbn.parliament.kb_graph.index.spatial.sql.PersistentStore;
 import com.bbn.parliament.kb_graph.index.spatial.sql.PersistentStoreException;
 import com.bbn.parliament.kb_graph.index.spatial.sql.ResultSetIterator;
 import com.bbn.parliament.kb_graph.index.spatial.sql.SQLGeometryIndex;
-import com.bbn.parliament.kb_graph.index.IndexException;
-import com.bbn.parliament.kb_graph.index.Record;
 
 /** @author Robert Battle */
 public class PostgresIndex extends SQLGeometryIndex {
@@ -180,7 +180,7 @@ public class PostgresIndex extends SQLGeometryIndex {
 	/** {@inheritDoc} */
 	@Override
 	protected void indexClear() throws SpatialIndexException {
-		try (Connection c = store.getConnection()) {
+		try {
 			execute("DELETE FROM %1$s", tableName);
 		} catch (SQLException | PersistentStoreException ex) {
 			throw new SpatialIndexException(this, ex);

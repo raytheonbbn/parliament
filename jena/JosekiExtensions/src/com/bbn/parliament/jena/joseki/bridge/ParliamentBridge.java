@@ -9,15 +9,12 @@ package com.bbn.parliament.jena.joseki.bridge;
 import java.io.File;
 import java.util.List;
 
-import org.joseki.Joseki;
 import org.joseki.http.ResponseHttpInitializer;
 
 import com.bbn.parliament.jena.joseki.bridge.configuration.ConfigurationHandler;
 import com.bbn.parliament.jena.joseki.bridge.tracker.Tracker;
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
 import com.bbn.parliament.kb_graph.query.PrefixRegistry;
-import com.bbn.parliament.kb_graph.util.JsonLdRdfReader;
-import com.bbn.parliament.kb_graph.util.JsonLdRdfWriter;
 
 /**
  * A server for Parliament.
@@ -52,8 +49,6 @@ public class ParliamentBridge {
 	public static void initialize(String configurationFile, File tmpDir) throws ParliamentBridgeException {
 		// Add JSON-LD to the set of recognized RDF serializations:
 		ResponseHttpInitializer.fixupHttpAcceptTypes();
-		Joseki.setWriterType(JsonLdRdfWriter.contentType, JsonLdRdfWriter.formatName);
-		Joseki.setReaderType(JsonLdRdfReader.contentType, JsonLdRdfReader.formatName);
 
 		_instance = new ParliamentBridge(
 			ParliamentBridgeConfiguration.readConfiguration(configurationFile, tmpDir));

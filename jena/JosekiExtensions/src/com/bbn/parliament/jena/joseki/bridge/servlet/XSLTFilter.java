@@ -106,6 +106,7 @@ public class XSLTFilter implements Filter {
 				@Override
 				public void run() {
 					try (OutputStream toClose = wrapper.getOutputStream()) {
+						toClose.hashCode();	// Avoids "never referenced" compiler warning
 						chain.doFilter(req, wrapper);
 
 						if ("application/xml".equals(resp.getContentType()) && contentType != null) {

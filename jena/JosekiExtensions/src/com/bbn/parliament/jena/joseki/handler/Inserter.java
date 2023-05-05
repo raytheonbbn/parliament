@@ -33,7 +33,6 @@ import com.bbn.parliament.jena.joseki.bridge.servlet.ServletErrorResponseExcepti
 import com.bbn.parliament.jena.joseki.graph.ForgetfulGraph;
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
 import com.bbn.parliament.kb_graph.KbGraphStore;
-import com.bbn.parliament.kb_graph.util.JsonLdRdfReader;
 
 public class Inserter {
 	/** Interface that defines a method for getting an InputStream from some object. */
@@ -381,9 +380,6 @@ public class Inserter {
 		long start = Calendar.getInstance().getTimeInMillis();
 		Model syntaxVerifier = ModelFactory.createModelForGraph(new ForgetfulGraph());
 		try (InputStream in = inStrmPrvdr.getInputStream()) {
-			if (format == RDFFormat.JSON_LD) {
-				syntaxVerifier.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
-			}
 			syntaxVerifier.read(in, baseUri, format.toString());
 			numStmts = syntaxVerifier.size();
 
@@ -402,9 +398,6 @@ public class Inserter {
 		RDFFormat format, String baseUri) throws IOException {
 		long start = Calendar.getInstance().getTimeInMillis();
 		try (InputStream in = inStrmPrvdr.getInputStream()) {
-			if (format == RDFFormat.JSON_LD) {
-				model.setReaderClassName(JsonLdRdfReader.formatName, JsonLdRdfReader.class.getName());
-			}
 			model.read(in, baseUri, format.toString());
 
 			if (LOG.isInfoEnabled()) {

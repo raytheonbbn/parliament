@@ -107,6 +107,7 @@ public class RemoteModel {
 		params.putAll(_defaultParams);
 		params.put("update", updateQuery);
 		try (InputStream respStrm = sendRequest(params)) {
+			respStrm.hashCode();	// Avoids "never referenced" compiler warning
 			// Do nothing -- there is no response
 		}
 	}
@@ -567,6 +568,7 @@ public class RemoteModel {
 		Map<String, Object> params = new HashMap<>();
 		params.put("update", wtr.toString());
 		try (InputStream respStrm = sendRequest(params)) {
+			respStrm.hashCode();	// Avoids "never referenced" compiler warning
 			// Do nothing -- there is no response
 		}
 	}
@@ -658,6 +660,7 @@ public class RemoteModel {
 		params.put(P_PERFORM_CLEAR, "yes");
 
 		try (InputStream respStrm = sendBulkRequest(params, "clear", false)) {
+			respStrm.hashCode();	// Avoids "never referenced" compiler warning
 			// Do nothing -- there is no response
 		}
 	}
@@ -669,6 +672,7 @@ public class RemoteModel {
 		params.put(P_PERFORM_CLEAR, "yes");
 
 		try (InputStream respStrm = sendBulkRequest(params, "clear", false)) {
+			respStrm.hashCode();	// Avoids "never referenced" compiler warning
 			// Do nothing -- there is no response
 		}
 	}

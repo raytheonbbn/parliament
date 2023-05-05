@@ -112,6 +112,7 @@ public class JTSIndex extends com.bbn.parliament.kb_graph.index.spatial.SpatialI
 	/** {@inheritDoc} */
 	@Override
 	public Iterator<Record<Geometry>> iterator(final Geometry geometry, final Operation operation) {
+		@SuppressWarnings("unchecked")
 		List<Geometry> i = index.query(geometry.getEnvelopeInternal());
 		final Iterator<Geometry> items = i.iterator();
 
