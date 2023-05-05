@@ -6,6 +6,8 @@ import org.apache.jena.shared.PrefixMapping;
 
 /** @author dkolas */
 public class ReifiedTriple extends Triple {
+	private static final long serialVersionUID = 1L;
+
 	private Node name;
 
 	public ReifiedTriple(Node name, Node s, Node p, Node o){

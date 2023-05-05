@@ -25,10 +25,10 @@ import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.core.jni.KbConfig;
 import com.bbn.parliament.core.jni.KbInstance;
-import com.bbn.parliament.core.jni.ReificationIterator;
-import com.bbn.parliament.core.jni.StmtIterator;
 import com.bbn.parliament.core.jni.KbInstance.CountStmtsResult;
 import com.bbn.parliament.core.jni.KbInstance.GetExcessCapacityResult;
+import com.bbn.parliament.core.jni.ReificationIterator;
+import com.bbn.parliament.core.jni.StmtIterator;
 import com.bbn.parliament.core.jni.StmtIterator.Statement;
 import com.bbn.parliament.kb_graph.index.Index;
 import com.bbn.parliament.kb_graph.index.IndexManager;
@@ -260,17 +260,20 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 		return new KbCapabilities();
 	}
 
+	//TODO: Just remove the deprecated methods when Jena does.
 	private static class KbCapabilities implements Capabilities {
 		@Override
 		public boolean addAllowed() {
 			return true;
 		}
 
+		@Deprecated
 		@Override
 		public boolean addAllowed(boolean everyTriple) {
 			return true;
 		}
 
+		@Deprecated
 		@Override
 		public boolean canBeEmpty() {
 			return true;
@@ -281,11 +284,13 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 			return true;
 		}
 
+		@Deprecated
 		@Override
 		public boolean deleteAllowed(boolean everyTriple) {
 			return true;
 		}
 
+		@Deprecated
 		@Override
 		public boolean findContractSafe() {
 			return true;
@@ -296,6 +301,7 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 			return false;
 		}
 
+		@Deprecated
 		@Override
 		public boolean iteratorRemoveAllowed() {
 			return true;
