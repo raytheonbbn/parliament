@@ -12,8 +12,8 @@ import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 
-import com.bbn.parliament.jni.KbInstance;
-import com.bbn.parliament.jni.StmtIterator;
+import com.bbn.parliament.core.jni.KbInstance;
+import com.bbn.parliament.core.jni.StmtIterator;
 
 public class KbStatement implements Statement
 {

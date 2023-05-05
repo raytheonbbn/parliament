@@ -13,11 +13,11 @@
       pcfg:index [
           pcfg:geoSPARQL true ;
           pcfg:indexType "RTree" ;
-          pcfg:processorFactoryClass "com.bbn.parliament.jena.graph.index.spatial.SpatialIndexFactory" ;
+          pcfg:processorFactoryClass "com.bbn.parliament.kb_graph.index.spatial.SpatialIndexFactory" ;
         ] ;
       pcfg:index [
           pcfg:indexType "bdb" ;
-          pcfg:processorFactoryClass "com.bbn.parliament.jena.graph.index.temporal.TemporalIndexFactory" ;
+          pcfg:processorFactoryClass "com.bbn.parliament.kb_graph.index.temporal.TemporalIndexFactory" ;
         ] ;
     ] ;
   pcfg:prefixes (

@@ -4,7 +4,7 @@
 // Copyright (c) 2022, BBN Technologies, Inc.
 // All rights reserved.
 
-#include "parliament/generated/com_bbn_parliament_jni_LibraryLoader.h"
+#include "parliament/generated/com_bbn_parliament_core_jni_LibraryLoader.h"
 #include "parliament/Windows.h"
 
 #include <boost/format.hpp>
@@ -39,7 +39,7 @@ using ::std::system_category;
 using ::std::system_error;
 using ::std::vector;
 
-static constexpr char k_nativeExClass[] = "com/bbn/parliament/jni/NativeCodeException";
+static constexpr char k_nativeExClass[] = "com/bbn/parliament/core/jni/NativeCodeException";
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* /* pVM */, void* /* pReserved */)
 {
@@ -141,7 +141,7 @@ static void resetDllPath()
 #endif
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_LibraryLoader_addDirToDllPath(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_LibraryLoader_addDirToDllPath(
 	JNIEnv* pEnv, jclass cls)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
@@ -150,7 +150,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_LibraryLoader_addDirToDllPath
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_LibraryLoader_resetDllPath(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_LibraryLoader_resetDllPath(
 	JNIEnv* pEnv, jclass cls)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)

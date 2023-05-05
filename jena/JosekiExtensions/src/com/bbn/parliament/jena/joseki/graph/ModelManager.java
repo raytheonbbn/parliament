@@ -25,9 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.client.RDFFormat;
+import com.bbn.parliament.core.jni.KbConfig;
 import com.bbn.parliament.jena.joseki.bridge.ActionRouter;
 import com.bbn.parliament.jena.joseki.bridge.configuration.ReasonerConfigurationHandler;
-import com.bbn.parliament.jni.KbConfig;
 import com.bbn.parliament.kb_graph.KbGraph;
 import com.bbn.parliament.kb_graph.KbGraphFactory;
 import com.bbn.parliament.kb_graph.KbGraphStore;

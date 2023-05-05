@@ -28,7 +28,7 @@ import org.openrdf.sesame.sail.SailInitializationException;
 import org.openrdf.sesame.sail.SailInternalException;
 import org.openrdf.sesame.sail.SailUpdateException;
 
-import com.bbn.parliament.jni.KbInstance;
+import com.bbn.parliament.core.jni.KbInstance;
 import com.bbn.parliament.sesame.sail.KbValue;
 
 public class LuceneRdfRepository extends LuceneRdfSource implements RdfRepository

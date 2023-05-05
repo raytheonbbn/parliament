@@ -6,7 +6,7 @@
 
 // Java Native Interface (JNI) to Parliament
 
-#include "parliament/generated/com_bbn_parliament_jni_KbInstance.h"
+#include "parliament/generated/com_bbn_parliament_core_jni_KbInstance.h"
 #include "parliament/Platform.h"
 #include "parliament/KbConfig.h"
 #include "parliament/KbInstance.h"
@@ -35,7 +35,7 @@ JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* /* pVM */, void* /* pReserved */)
 {
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_initStatic(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbInstance_initStatic(
 	JNIEnv* pEnv, jclass cls)
 {
 	JNIHelper::setStaticLongFld(pEnv, cls, "NULL_STMT_ID", k_nullStmtId);
@@ -122,7 +122,7 @@ static void assignJavaConfigToCppConfig(KbConfig& config, JNIEnv* pEnv, jobject 
 	config.inferOwlThing(						JNIHelper::getBooleanFld(pEnv, obj,	"m_inferOwlThing"));
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_init(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbInstance_init(
 	JNIEnv* pEnv, jobject obj, jobject jconfig)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
@@ -136,7 +136,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_init(
 		END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_dispose(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbInstance_dispose(
 	JNIEnv* pEnv, jobject obj)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
@@ -144,7 +144,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_dispose(
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT jstring JNICALL Java_com_bbn_parliament_jni_KbInstance_getVersion(
+JNIEXPORT jstring JNICALL Java_com_bbn_parliament_core_jni_KbInstance_getVersion(
 	JNIEnv* pEnv, jclass /* cls */)
 {
 	jstring result = 0;
@@ -155,7 +155,7 @@ JNIEXPORT jstring JNICALL Java_com_bbn_parliament_jni_KbInstance_getVersion(
 	return result;
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_sync(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbInstance_sync(
 	JNIEnv* pEnv, jobject obj)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
@@ -164,7 +164,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_sync(
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT jobject JNICALL Java_com_bbn_parliament_jni_KbInstance_getExcessCapacity(
+JNIEXPORT jobject JNICALL Java_com_bbn_parliament_core_jni_KbInstance_getExcessCapacity(
 	JNIEnv* pEnv, jobject obj)
 {
 	jobject result = 0;
@@ -178,13 +178,13 @@ JNIEXPORT jobject JNICALL Java_com_bbn_parliament_jni_KbInstance_getExcessCapaci
 		pKb->getExcessCapacity(pctUnusedUriCapacity, pctUnusedRsrcCapacity, pctUnusedStmtCapacity);
 
 		result = JNIHelper::newObject(pEnv,
-			JNIHelper::findClass(pEnv, "com/bbn/parliament/jni/KbInstance$GetExcessCapacityResult"),
+			JNIHelper::findClass(pEnv, "com/bbn/parliament/core/jni/KbInstance$GetExcessCapacityResult"),
 			"(DDD)V", pctUnusedUriCapacity, pctUnusedRsrcCapacity, pctUnusedStmtCapacity);
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 	return result;
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_releaseExcessCapacity(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbInstance_releaseExcessCapacity(
 	JNIEnv* pEnv, jobject obj)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
@@ -193,7 +193,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_releaseExcessCapac
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT jshort JNICALL Java_com_bbn_parliament_jni_KbInstance_determineDisposition(
+JNIEXPORT jshort JNICALL Java_com_bbn_parliament_core_jni_KbInstance_determineDisposition(
 	JNIEnv* pEnv, jclass /* cls */, jobject javaConfig, jboolean throwIfIndeterminate)
 {
 	jshort result = static_cast<jshort>(KbDisposition::k_indeterminateKbState);
@@ -206,7 +206,7 @@ JNIEXPORT jshort JNICALL Java_com_bbn_parliament_jni_KbInstance_determineDisposi
 	return result;
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_deleteKb(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbInstance_deleteKb(
 	JNIEnv* pEnv, jclass /* cls */, jobject javaConfig, jstring directory, jboolean deleteContainingDir)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
@@ -230,7 +230,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_deleteKb(
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_stmtCount(
+JNIEXPORT jlong JNICALL Java_com_bbn_parliament_core_jni_KbInstance_stmtCount(
 	JNIEnv* pEnv, jobject obj)
 {
 	jlong result = -1;
@@ -241,7 +241,7 @@ JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_stmtCount(
 	return result;
 }
 
-JNIEXPORT jobject JNICALL Java_com_bbn_parliament_jni_KbInstance_countStmts(
+JNIEXPORT jobject JNICALL Java_com_bbn_parliament_core_jni_KbInstance_countStmts(
 	JNIEnv* pEnv, jobject obj)
 {
 	jobject result = 0;
@@ -258,7 +258,7 @@ JNIEXPORT jobject JNICALL Java_com_bbn_parliament_jni_KbInstance_countStmts(
 		pKb->countStmts(total, numDel, numInferred, numDelAndInferred, numHidden, numVirtual);
 
 		result = JNIHelper::newObject(pEnv,
-			JNIHelper::findClass(pEnv, "com/bbn/parliament/jni/KbInstance$CountStmtsResult"),
+			JNIHelper::findClass(pEnv, "com/bbn/parliament/core/jni/KbInstance$CountStmtsResult"),
 			"(JJJJJJ)V", static_cast<uint64>(total), static_cast<uint64>(numDel),
 			static_cast<uint64>(numInferred), static_cast<uint64>(numDelAndInferred),
 			static_cast<uint64>(numHidden), static_cast<uint64>(numVirtual));
@@ -266,7 +266,7 @@ JNIEXPORT jobject JNICALL Java_com_bbn_parliament_jni_KbInstance_countStmts(
 	return result;
 }
 
-JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_rsrcCount(
+JNIEXPORT jlong JNICALL Java_com_bbn_parliament_core_jni_KbInstance_rsrcCount(
 	JNIEnv* pEnv, jobject obj)
 {
 	jlong result = -1;
@@ -277,7 +277,7 @@ JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_rsrcCount(
 	return result;
 }
 
-JNIEXPORT jdouble JNICALL Java_com_bbn_parliament_jni_KbInstance_averageRsrcLength(
+JNIEXPORT jdouble JNICALL Java_com_bbn_parliament_core_jni_KbInstance_averageRsrcLength(
 	JNIEnv* pEnv, jobject obj)
 {
 	jdouble result = -1;
@@ -288,7 +288,7 @@ JNIEXPORT jdouble JNICALL Java_com_bbn_parliament_jni_KbInstance_averageRsrcLeng
 	return result;
 }
 
-JNIEXPORT jobject JNICALL Java_com_bbn_parliament_jni_KbInstance_find(
+JNIEXPORT jobject JNICALL Java_com_bbn_parliament_core_jni_KbInstance_find(
 	JNIEnv* pEnv, jobject obj, jlong subjectId,
 	jlong predicateId, jlong objectId, jint flags)
 {
@@ -299,14 +299,14 @@ JNIEXPORT jobject JNICALL Java_com_bbn_parliament_jni_KbInstance_find(
 			static_cast<ResourceId>(subjectId), static_cast<ResourceId>(predicateId),
 			static_cast<ResourceId>(objectId), static_cast<StmtIteratorFlags>(flags)));
 		jclass iterCls = JNIHelper::findClass(pEnv,
-			"com/bbn/parliament/jni/StmtIterator");
+			"com/bbn/parliament/core/jni/StmtIterator");
 		pResult = JNIHelper::newObject(pEnv, iterCls, "(J)V",
 			static_cast<uint64>(reinterpret_cast<uintPtr>(pIter)));
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 	return pResult;
 }
 
-JNIEXPORT jobject JNICALL Java_com_bbn_parliament_jni_KbInstance_findReifications(
+JNIEXPORT jobject JNICALL Java_com_bbn_parliament_core_jni_KbInstance_findReifications(
 	JNIEnv* pEnv, jobject obj, jlong statementName, jlong subjectId,
 	jlong predicateId, jlong objectId)
 {
@@ -318,14 +318,14 @@ JNIEXPORT jobject JNICALL Java_com_bbn_parliament_jni_KbInstance_findReification
 			static_cast<ResourceId>(predicateId), static_cast<ResourceId>(objectId)
 			));
 		jclass iterCls = JNIHelper::findClass(pEnv,
-			"com/bbn/parliament/jni/ReificationIterator");
+			"com/bbn/parliament/core/jni/ReificationIterator");
 		pResult = JNIHelper::newObject(pEnv, iterCls, "(J)V",
 			static_cast<uint64>(reinterpret_cast<uintPtr>(pIter)));
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 	return pResult;
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_addReification(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbInstance_addReification(
 	JNIEnv* pEnv, jobject obj, jlong statementName,
 	jlong subjectId, jlong predicateId, jlong objectId)
 {
@@ -339,7 +339,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_addReification(
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_deleteReification(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbInstance_deleteReification(
 	JNIEnv* pEnv, jobject obj, jlong statementName, jlong subjectId,
 	jlong predicateId, jlong objectId)
 {
@@ -353,7 +353,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_deleteReification(
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_subjectCount(
+JNIEXPORT jlong JNICALL Java_com_bbn_parliament_core_jni_KbInstance_subjectCount(
 	JNIEnv* pEnv, jobject obj, jlong rsrcId)
 {
 	jlong result = 0;
@@ -364,7 +364,7 @@ JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_subjectCount(
 	return result;
 }
 
-JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_predicateCount(
+JNIEXPORT jlong JNICALL Java_com_bbn_parliament_core_jni_KbInstance_predicateCount(
 	JNIEnv* pEnv, jobject obj, jlong rsrcId)
 {
 	jlong result = 0;
@@ -375,7 +375,7 @@ JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_predicateCount(
 	return result;
 }
 
-JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_objectCount(
+JNIEXPORT jlong JNICALL Java_com_bbn_parliament_core_jni_KbInstance_objectCount(
 	JNIEnv* pEnv, jobject obj, jlong rsrcId)
 {
 	jlong result = 0;
@@ -386,7 +386,7 @@ JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_objectCount(
 	return result;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_jni_KbInstance_isRsrcLiteral(
+JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_core_jni_KbInstance_isRsrcLiteral(
 	JNIEnv* pEnv, jobject obj, jlong rsrcId)
 {
 	jboolean result = 0;
@@ -397,7 +397,7 @@ JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_jni_KbInstance_isRsrcLiteral(
 	return result;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_jni_KbInstance_isRsrcAnonymous(
+JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_core_jni_KbInstance_isRsrcAnonymous(
 	JNIEnv* pEnv, jobject obj, jlong rsrcId)
 {
 	jboolean result = 0;
@@ -408,7 +408,7 @@ JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_jni_KbInstance_isRsrcAnonymou
 	return result;
 }
 
-JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_uriToRsrcId(
+JNIEXPORT jlong JNICALL Java_com_bbn_parliament_core_jni_KbInstance_uriToRsrcId(
 	JNIEnv* pEnv, jobject obj, jstring uri, jboolean isLiteral, jboolean createIfMissing)
 {
 	jlong result = k_nullRsrcId;
@@ -423,7 +423,7 @@ JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_uriToRsrcId(
 	return result;
 }
 
-JNIEXPORT jstring JNICALL Java_com_bbn_parliament_jni_KbInstance_rsrcIdToUri(
+JNIEXPORT jstring JNICALL Java_com_bbn_parliament_core_jni_KbInstance_rsrcIdToUri(
 	JNIEnv* pEnv, jobject obj, jlong rsrcId)
 {
 	jstring result = 0;
@@ -435,7 +435,7 @@ JNIEXPORT jstring JNICALL Java_com_bbn_parliament_jni_KbInstance_rsrcIdToUri(
 	return result;
 }
 
-JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_createAnonymousRsrc(
+JNIEXPORT jlong JNICALL Java_com_bbn_parliament_core_jni_KbInstance_createAnonymousRsrc(
 	JNIEnv* pEnv, jobject obj)
 {
 	jlong result = k_nullRsrcId;
@@ -446,7 +446,7 @@ JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_createAnonymousRs
 	return result;
 }
 
-JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_addStmt(
+JNIEXPORT jlong JNICALL Java_com_bbn_parliament_core_jni_KbInstance_addStmt(
 	JNIEnv* pEnv, jobject obj, jlong subjectId,
 	jlong predicateId, jlong objectId, jboolean isInferred)
 {
@@ -460,7 +460,7 @@ JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_addStmt(
 	return result;
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_deleteStmt(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbInstance_deleteStmt(
 	JNIEnv* pEnv, jobject obj, jlong subjectId, jlong predicateId, jlong objectId)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
@@ -469,7 +469,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_deleteStmt(
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_dumpKbAsNTriples(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbInstance_dumpKbAsNTriples(
 	JNIEnv* pEnv, jobject obj, jobject outputStream, jboolean includeInferredStmts,
 	jboolean includeDeletedStmts, jboolean useAsciiOnlyEncoding)
 {
@@ -484,7 +484,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_dumpKbAsNTriples(
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_jni_KbInstance_validate(
+JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_core_jni_KbInstance_validate(
 	JNIEnv* pEnv, jobject obj, jobject printStream)
 {
 	jboolean result = 0;
@@ -497,7 +497,7 @@ JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_jni_KbInstance_validate(
 	return result;
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_printStatements(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbInstance_printStatements(
 	JNIEnv* pEnv, jobject obj, jobject printStream, jboolean includeNextStmts,
 	jboolean verboseNextStmts)
 {
@@ -509,7 +509,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_printStatements(
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_printResources(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbInstance_printResources(
 	JNIEnv* pEnv, jobject obj, jobject printStream, jboolean includeFirstStmts,
 	jboolean verboseFirstStmts)
 {
@@ -521,7 +521,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_printResources(
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_ruleCount(
+JNIEXPORT jlong JNICALL Java_com_bbn_parliament_core_jni_KbInstance_ruleCount(
 	JNIEnv* pEnv, jobject obj)
 {
 	jlong result = 0;
@@ -532,7 +532,7 @@ JNIEXPORT jlong JNICALL Java_com_bbn_parliament_jni_KbInstance_ruleCount(
 	return result;
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_printRules(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbInstance_printRules(
 	JNIEnv* pEnv, jobject obj, jobject printStream)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
@@ -543,7 +543,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_printRules(
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbInstance_printRuleTriggers(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbInstance_printRuleTriggers(
 	JNIEnv* pEnv, jobject obj, jobject printStream)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)

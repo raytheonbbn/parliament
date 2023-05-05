@@ -11,7 +11,7 @@ import org.openrdf.model.Literal;
 import org.openrdf.model.Value;
 import org.openrdf.sesame.sail.StatementIterator;
 
-import com.bbn.parliament.jni.KbInstance;
+import com.bbn.parliament.core.jni.KbInstance;
 
 public abstract class KbValue implements Value
 {

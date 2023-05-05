@@ -38,7 +38,7 @@ import org.openrdf.sesame.sail.query.GraphPatternQuery;
 import org.openrdf.sesame.sail.query.Like;
 import org.openrdf.sesame.sail.query.Query;
 
-import com.bbn.parliament.jni.KbInstance;
+import com.bbn.parliament.core.jni.KbInstance;
 import com.bbn.parliament.sesame.sail.KbLiteral;
 import com.bbn.parliament.sesame.sail.KbRdfSource;
 import com.bbn.sesame.sail.sameas.StatementIteratorIterator;

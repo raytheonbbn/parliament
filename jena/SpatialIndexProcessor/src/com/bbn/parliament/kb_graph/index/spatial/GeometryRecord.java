@@ -18,7 +18,7 @@ import com.bbn.parliament.kb_graph.index.Record;
  *
  * Why this is so is a bit of a mystery to me, but unfortunately we sometimes
  * need to test equality of these things. (See for example the {@code testIterator}
- * method in class {@code com.bbn.parliament.jena.query.index.IndexTestMethods}.)
+ * method in class {@code com.bbn.parliament.kb_graph.query.index.IndexTestMethods}.)
  * As a partial work-around, we derive this class, override {@code equals}, and use the
  * {@code compareTo} method on Geometry to test for equality. I say partial, because
  * this does not help implement {@code hashCode}. So, I've disabled {@code hashCode} by throwing

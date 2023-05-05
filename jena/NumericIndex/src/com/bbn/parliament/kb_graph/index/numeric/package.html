@@ -1,18 +1,18 @@
 <html>
 <body>
 Provides classes and interfaces for creating an index that handles numeric
-data. The {@link com.bbn.parliament.jena.graph.index.numeric.NumericIndex}
+data. The {@link com.bbn.parliament.kb_graph.index.numeric.NumericIndex}
 indexes a specific predicate and number type using the Berkeley DB Java
 Edition. The <code>NumericIndex</code> and {@link
-com.bbn.parliament.jena.graph.index.numeric.NumericIndexFactory} classes
+com.bbn.parliament.kb_graph.index.numeric.NumericIndexFactory} classes
 are abstract. Concrete implementations are provided as static nested
 classes. For instance, {@link
-com.bbn.parliament.jena.graph.index.numeric.NumericIndex.DoubleIndex}
+com.bbn.parliament.kb_graph.index.numeric.NumericIndex.DoubleIndex}
 and the related {@link
-com.bbn.parliament.jena.graph.index.numeric.NumericIndexFactory.DoubleIndexFactory}
+com.bbn.parliament.kb_graph.index.numeric.NumericIndexFactory.DoubleIndexFactory}
 provide an index and factory for {@link java.lang.Double}s.
 <p />
-The {@link com.bbn.parliament.jena.graph.index.numeric.NumericIndexPatternQuerier}
+The {@link com.bbn.parliament.kb_graph.index.numeric.NumericIndexPatternQuerier}
 claims triples of the form <code>?s &lt;predicate-to-index&gt; ?o</code>.
 The index is intended to be accessed only for range queries.
 <h2>Related Documentation</h2>

@@ -22,7 +22,7 @@ import org.openrdf.sesame.sail.SailInitializationException;
 import org.openrdf.sesame.sail.SailUpdateException;
 import org.openrdf.sesame.sail.StatementIterator;
 
-import com.bbn.parliament.jni.KbInstance;
+import com.bbn.parliament.core.jni.KbInstance;
 
 public class KbRdfRepository extends KbRdfSource implements RdfRepository
 {

@@ -10,7 +10,7 @@
 	<property name="jarFile" value="${artifactsDir}/${ant.project.name}.jar"/>
 
 	<path id="compileClassPath">
-		<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
+		<fileset dir="${artifactsDir}" includes="KbGraph.jar"/>
 		<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
 		<fileset dir="${basedir}/lib/default" includes="*.jar"/>
 	</path>
@@ -18,8 +18,8 @@
 	<path id="testClassPath">
 		<fileset dir="${basedir}/lib/test" includes="*.jar"/>
 		<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
-		<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
-		<fileset dir="${artifactsDir}" includes="JenaGraph-tests.jar"/>
+		<fileset dir="${artifactsDir}" includes="KbGraph.jar"/>
+		<fileset dir="${artifactsDir}" includes="KbGraph-tests.jar"/>
 		<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 		<fileset file="${jarFile}"/>
 	</path>
@@ -32,7 +32,7 @@
 	</target>
 
 	<target name="buildDependencies">
-		<ant dir="${kbRootDir}/jena/JenaGraph" target="jar" inheritall="false"/>
+		<ant dir="${kbRootDir}/jena/KbGraph" target="jar" inheritall="false"/>
 	</target>
 
 	<target name="compile" depends="buildDependencies,resolve">

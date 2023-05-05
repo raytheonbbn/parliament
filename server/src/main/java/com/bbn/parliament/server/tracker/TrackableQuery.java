@@ -15,23 +15,22 @@ import org.apache.jena.sparql.engine.binding.Binding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.jni.KbConfig;
+import com.bbn.parliament.core.jni.KbConfig;
 import com.bbn.parliament.server.exception.TrackableException;
 import com.bbn.parliament.server.graph.ModelManager;
 
 /**
- * A trackable query. Currently the only cancellable Trackable object.
- * Cancelling aborts the query execution.
+ * A trackable query. Currently the only Trackable object that can be canceled.
+ * Canceling aborts the query execution.
  *
  * @author rbattle
  */
 public class TrackableQuery extends Trackable {
-	private static Logger _log = LoggerFactory.getLogger(TrackableQuery.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TrackableQuery.class);
 
-	private final Query _query;
-	// private final AtomicBoolean _cancelled;
-	private QueryExecution _qExec;
-	private Object _queryResult;
+	private final Query query;
+	private QueryExecution qExec;
+	private Object queryResult;
 
 	@ConstructorProperties({ "id", "query", "creator" })
 	TrackableQuery(long id, String query, String creator) {
@@ -40,101 +39,94 @@ public class TrackableQuery extends Trackable {
 
 	TrackableQuery(long id, Query query, String creator) {
 		super(id, creator);
-		_query = query;
-		if (_log.isDebugEnabled()) {
-			_log.debug("Create query: {}\n{}", _id, query.toString());
+		this.query = query;
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Create query: {}\n{}", _id, query.toString());
 		}
-		// _cancelled = new AtomicBoolean(false);
 	}
 
 	@Override
 	public void release() {
-		if (_log.isDebugEnabled()) {
-			_log.debug("release query: {}", _id);
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("release query: {}", _id);
 		}
-		if (_qExec != null) {
+		if (qExec != null) {
 			if (isRunning()) {
 				try {
 					cancel();
 				} catch (TrackableException e) {
-					_log.error("While releasing, error while canceling query.", e);
+					LOG.error("While releasing, error while canceling query.", e);
 				}
 			}
 			if (!isCancelled()) {
-				_qExec.close();
+				qExec.close();
 			}
 		}
 	}
 
 	private void createQueryExecution() {
-		_qExec = !_query.hasDatasetDescription()
-			? QueryExecutionFactory.create(_query, ModelManager.inst().getDataset())
-			: QueryExecutionFactory.create(_query);
-			KbConfig cfg = ModelManager.inst().getDefaultGraphConfig();
-			_qExec.setTimeout(cfg.m_timeoutDuration, cfg.m_timeoutUnit);
+		if (query.hasDatasetDescription()) {
+			qExec = QueryExecutionFactory.create(query);
+		} else {
+			qExec = QueryExecutionFactory.create(query, ModelManager.inst().getDataset());
+		}
+		KbConfig cfg = ModelManager.inst().getDefaultGraphConfig();
+		qExec.setTimeout(cfg.m_timeoutDuration, cfg.m_timeoutUnit);
 
-			// add a cancel flag to the query execution context. The context is a
-			// copy of the ARQ global context (The constructor for
-			// QueryExecutionBase calls ARQ.getContext().copy()) so this should be
-			// unique for each query execution
-			// _qExec.getContext().set(Constants.CANCEL_QUERY_FLAG_SYMBOL,
-			// _cancelled);
-
-			if (_log.isDebugEnabled()) {
-				_log.debug("Created query execution # {} of type {}", getId(), _qExec
-					.getClass().getName());
-			}
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Created query execution # {} of type {}", getId(), qExec
+				.getClass().getName());
+		}
 	}
 
 	@Override
 	protected void doCancel() {
-		if (_qExec != null) { // && !_cancelled.get()) {
-			_log.info("Cancel query: {}", _id);
-			_qExec.abort();
+		if (qExec != null) {
+			LOG.info("Cancel query: {}", _id);
+			qExec.abort();
 		}
 	}
 
 	@Override
 	protected void doRun() {
-
 		createQueryExecution();
 
-		if (_query.isAskType()) {
-			_queryResult = _qExec.execAsk();
-		} else if (_query.isConstructType()) {
-			_queryResult = _qExec.execConstruct();
-		} else if (_query.isSelectType()) {
+		if (query.isAskType()) {
+			queryResult = qExec.execAsk();
+		} else if (query.isConstructType()) {
+			queryResult = qExec.execConstruct();
+		} else if (query.isSelectType()) {
 			// set finished on run to false as the query returns when the first
 			// match is found. This will cause the website to display a status of
 			// finished even though the query could be iterating over a large
 			// result set
 			_setFinishedOnRun = false;
 
-			_queryResult = new TrackableResultSet(_qExec.execSelect());
+			queryResult = new TrackableResultSet(qExec.execSelect());
 
-		} else if (_query.isDescribeType()) {
-			_queryResult = _qExec.execDescribe();
+		} else if (query.isDescribeType()) {
+			queryResult = qExec.execDescribe();
 		}
 	}
 
 	public Object getQueryResult() {
-		return _queryResult;
+		return queryResult;
 	}
 
 	public ResultSet getResultSet() {
-		return ResultSet.class.cast(_queryResult);
+		return ResultSet.class.cast(queryResult);
 	}
 
 	public Model getModel() {
-		return Model.class.cast(_queryResult);
+		return Model.class.cast(queryResult);
 	}
 
 	public boolean getBoolean() {
-		return Boolean.class.cast(_queryResult);
+		return Boolean.class.cast(queryResult);
 	}
 
 	public Query getQuery() {
-		return _query;
+		return query;
 	}
 
 	@Override
@@ -144,7 +136,7 @@ public class TrackableQuery extends Trackable {
 
 	@Override
 	public String getDisplay() {
-		return _query.toString();
+		return query.toString();
 	}
 
 	/**
@@ -154,32 +146,32 @@ public class TrackableQuery extends Trackable {
 	 * @author rbattle
 	 */
 	private class TrackableResultSet implements ResultSet {
-		private ResultSet _base;
+		private ResultSet base;
 
 		public TrackableResultSet(ResultSet rs) {
-			_base = rs;
+			base = rs;
 		}
 
 		@Override
 		public Model getResourceModel() {
-			return _base.getResourceModel();
+			return base.getResourceModel();
 		}
 
 		@Override
 		public List<String> getResultVars() {
-			return _base.getResultVars();
+			return base.getResultVars();
 		}
 
 		@Override
 		public int getRowNumber() {
-			return _base.getRowNumber();
+			return base.getRowNumber();
 		}
 
 		@Override
 		public boolean hasNext() {
 			boolean ret = false;
 			try {
-				ret = _base.hasNext();
+				ret = base.hasNext();
 			} catch (RuntimeException e) {
 				setError();
 				throw e;
@@ -195,7 +187,7 @@ public class TrackableQuery extends Trackable {
 		public QuerySolution next() {
 			QuerySolution next = null;
 			try {
-				next = _base.next();
+				next = base.next();
 			} catch (RuntimeException e) {
 				setError();
 				throw e;
@@ -208,7 +200,7 @@ public class TrackableQuery extends Trackable {
 		public Binding nextBinding() {
 			Binding next = null;
 			try {
-				next = _base.nextBinding();
+				next = base.nextBinding();
 			} catch (RuntimeException e) {
 				setError();
 				throw e;
@@ -220,7 +212,7 @@ public class TrackableQuery extends Trackable {
 		public QuerySolution nextSolution() {
 			QuerySolution next = null;
 			try {
-				next = _base.nextSolution();
+				next = base.nextSolution();
 			} catch (RuntimeException e) {
 				setError();
 				throw e;
@@ -231,7 +223,7 @@ public class TrackableQuery extends Trackable {
 		@Override
 		public void remove() {
 			try {
-				_base.remove();
+				base.remove();
 			} catch (RuntimeException e) {
 				setError();
 				throw e;

@@ -10,7 +10,7 @@ package com.bbn.parliament.sesame.sail;
 import org.openrdf.model.URI;
 import org.openrdf.sesame.sail.StatementIterator;
 
-import com.bbn.parliament.jni.KbInstance;
+import com.bbn.parliament.core.jni.KbInstance;
 
 public class KbUri extends KbResource implements URI
 {

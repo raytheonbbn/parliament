@@ -4,7 +4,7 @@
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
 
-#include "parliament/generated/com_bbn_parliament_jni_KbConfig.h"
+#include "parliament/generated/com_bbn_parliament_core_jni_KbConfig.h"
 #include "parliament/Platform.h"
 #include "parliament/KbConfig.h"
 #include "parliament/JNIHelper.h"
@@ -62,7 +62,7 @@ static void assignCppConfigToJavaConfig(JNIEnv* pEnv, jobject obj, const KbConfi
 	JNIHelper::setBooleanFld(pEnv, obj,	"m_inferOwlThing",					config.inferOwlThing());
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbConfig_init(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbConfig_init(
 	JNIEnv* pEnv, jobject obj)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
@@ -71,7 +71,7 @@ JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbConfig_init(
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_KbConfig_readFromFile(
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_KbConfig_readFromFile(
 	JNIEnv* pEnv, jobject obj)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)

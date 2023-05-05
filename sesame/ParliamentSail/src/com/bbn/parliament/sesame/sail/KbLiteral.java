@@ -10,7 +10,7 @@ package com.bbn.parliament.sesame.sail;
 import org.openrdf.model.Literal;
 import org.openrdf.model.URI;
 
-import com.bbn.parliament.jni.KbInstance;
+import com.bbn.parliament.core.jni.KbInstance;
 
 public class KbLiteral extends KbValue implements Literal
 {

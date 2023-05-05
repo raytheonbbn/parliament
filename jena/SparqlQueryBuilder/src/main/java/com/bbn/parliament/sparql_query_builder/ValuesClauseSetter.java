@@ -2,11 +2,11 @@
 
 package com.bbn.parliament.sparql_query_builder;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.RDFNode;
@@ -26,52 +26,49 @@ class ValuesClauseSetter extends ElementVisitorBase {
 	private transient final List<Collection<RDFNode>> newValues;
 
 	public ValuesClauseSetter(String variable, String markerValue, Collection<RDFNode> newValues) {
-		variables = Collections.unmodifiableList(Arrays.asList(variable));
+		variables = List.of(variable);
 		this.markerValue = markerValue;
-		this.newValues = Collections.unmodifiableList(newValues.stream()
-			.map(Arrays::asList)
-			.map(Collections::unmodifiableList)
-			.collect(Collectors.toList()));
+		this.newValues = newValues.stream()
+			.map(List::of)
+			.collect(Collectors.toUnmodifiableList());
 		checkArity();
 	}
 
 	public ValuesClauseSetter(String variable, String markerValue, RDFNode... newValues) {
-		variables = Collections.unmodifiableList(Arrays.asList(variable));
+		variables = List.of(variable);
 		this.markerValue = markerValue;
-		this.newValues = Collections.unmodifiableList(Arrays.stream(newValues)
-			.map(Arrays::asList)
-			.map(Collections::unmodifiableList)
-			.collect(Collectors.toList()));
+		this.newValues = Stream.of(newValues)
+			.map(List::of)
+			.collect(Collectors.toUnmodifiableList());
 		checkArity();
 	}
 
 	public ValuesClauseSetter(List<String> variables, String markerValue, RDFNode[]... newValues) {
-		this.variables = Collections.unmodifiableList(variables);
+		this.variables = variables.stream().toList();
 		this.markerValue = markerValue;
-		this.newValues = Collections.unmodifiableList(Arrays.stream(newValues)
-			.map(Arrays::asList)
-			.map(Collections::unmodifiableList)
-			.collect(Collectors.toList()));
+		this.newValues = Stream.of(newValues)
+			.map(List::of)
+			.collect(Collectors.toUnmodifiableList());
 		checkArity();
 	}
 
 	public ValuesClauseSetter(List<String> variables, String markerValue, Collection<RDFNode[]> newValues) {
-		this.variables = Collections.unmodifiableList(variables);
+		this.variables = variables.stream().toList();
 		this.markerValue = markerValue;
-		this.newValues = Collections.unmodifiableList(newValues.stream()
-			.map(Arrays::asList)
-			.map(Collections::unmodifiableList)
-			.collect(Collectors.toList()));
+		this.newValues = newValues.stream()
+			.map(List::of)
+			.collect(Collectors.toUnmodifiableList());
 		checkArity();
 	}
 
+	@SuppressWarnings("varargs")
 	@SafeVarargs
 	public ValuesClauseSetter(List<String> variables, String markerValue, Collection<RDFNode>... newValues) {
-		this.variables = Collections.unmodifiableList(variables);
+		this.variables = variables.stream().toList();
 		this.markerValue = markerValue;
-		this.newValues = Collections.unmodifiableList(Arrays.stream(newValues)
+		this.newValues = Stream.of(newValues)
 			.map(Collections::unmodifiableCollection)
-			.collect(Collectors.toList()));
+			.collect(Collectors.toUnmodifiableList());
 		checkArity();
 	}
 
@@ -100,7 +97,7 @@ class ValuesClauseSetter extends ElementVisitorBase {
 	private boolean varListsMatch(ElementData el) {
 		List<String> elVarNames = el.getVars().stream()
 			.map(var -> var.getVarName())
-			.collect(Collectors.toList());
+			.collect(Collectors.toUnmodifiableList());
 		return variables.equals(elVarNames);
 	}
 

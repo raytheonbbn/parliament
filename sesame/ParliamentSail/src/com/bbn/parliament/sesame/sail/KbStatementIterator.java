@@ -9,8 +9,8 @@ package com.bbn.parliament.sesame.sail;
 import org.openrdf.model.Statement;
 import org.openrdf.sesame.sail.StatementIterator;
 
-import com.bbn.parliament.jni.KbInstance;
-import com.bbn.parliament.jni.StmtIterator;
+import com.bbn.parliament.core.jni.KbInstance;
+import com.bbn.parliament.core.jni.StmtIterator;
 
 public class KbStatementIterator implements StatementIterator
 {

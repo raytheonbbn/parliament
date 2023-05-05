@@ -22,7 +22,7 @@
 		description="This file name becomes the base URL of the service, so don't add a version number to it!"/>
 
 	<property name="parliamentClientDir" value="${kbRootDir}/jena/ParliamentClient"/>
-	<property name="jenaGraphDir" location="${kbRootDir}/jena/JenaGraph"/>
+	<property name="kbGraphDir" location="${kbRootDir}/jena/KbGraph"/>
 	<property name="numericIndexDir" location="${kbRootDir}/jena/NumericIndex"/>
 	<property name="spatialIndexDir" location="${kbRootDir}/jena/SpatialIndexProcessor"/>
 	<property name="temporalIndexDir" location="${kbRootDir}/jena/TemporalIndexProcessor"/>
@@ -40,7 +40,7 @@
 
 	<target name="buildDependencies">
 		<ant dir="${parliamentClientDir}" target="jar" inheritAll="false"/>
-		<ant dir="${jenaGraphDir}" target="jar" inheritAll="false"/>
+		<ant dir="${kbGraphDir}" target="jar" inheritAll="false"/>
 		<ant dir="${numericIndexDir}" target="jar" inheritall="false"/>
 		<ant dir="${spatialIndexDir}" target="jar" inheritall="false"/>
 		<ant dir="${temporalIndexDir}" target="jar" inheritall="false"/>
@@ -105,7 +105,7 @@
 				<fileset dir="${libDir}/bridge" includes="**/*.jar"/>
 				<fileset file="${josekiLib}"/>
 				<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
-				<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
+				<fileset dir="${artifactsDir}" includes="KbGraph.jar"/>
 				<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 				<fileset file="${serverJarFile}"/>
 			</classpath>
@@ -133,7 +133,7 @@
 			<lib file="${bridgeJarFile}"/>
 			<lib dir="${artifactsDir}">
 				<include name="Parliament.jar"/>
-				<include name="JenaGraph.jar"/>
+				<include name="KbGraph.jar"/>
 				<include name="ParliamentClient.jar"/>
 				<include name="NumericIndex.jar"/>
 				<include name="SpatialIndexProcessor.jar"/>
@@ -209,7 +209,7 @@
 				<fileset dir="${libDir}/test" includes="**/*.jar"/>
 				<fileset file="${bridgeJarFile}"/>
 				<fileset file="${serverJarFile}"/>
-				<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
+				<fileset dir="${artifactsDir}" includes="KbGraph.jar"/>
 				<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 			</classpath>
 			<compilerarg value="-Xlint:all"/>
@@ -243,7 +243,7 @@
 				<fileset file="${bridgeJarFile}"/>
 				<fileset file="${serverJarFile}"/>
 				<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
-				<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
+				<fileset dir="${artifactsDir}" includes="KbGraph.jar"/>
 				<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 				<fileset dir="${artifactsDir}" includes="NumericIndex.jar"/>
 				<fileset dir="${artifactsDir}" includes="SpatialIndexProcessor.jar"/>

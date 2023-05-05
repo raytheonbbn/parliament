@@ -422,7 +422,7 @@ public class PersistentTemporalIndex extends TemporalIndex {
 	public void delete() {
 		// (J. Craig, 2019-01-07)
 		// The old code closed the index if it was open.  The test suite expects this method to throw an Exception
-		// (see com.bbn.parliament.jena.graph.index.IndexBase).  I changed this code based upon the assumption that the
+		// (see com.bbn.parliament.kb_graph.index.IndexBase).  I changed this code based upon the assumption that the
 		// test suite is correct.
 		if (!closed) {
 			throw new IllegalStateException("Index open");

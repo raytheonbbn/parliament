@@ -15,8 +15,8 @@ import org.apache.jena.sparql.engine.binding.Binding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bbn.parliament.core.jni.KbConfig;
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
-import com.bbn.parliament.jni.KbConfig;
 
 /**
  * A trackable query. Currently the only cancellable Trackable object.

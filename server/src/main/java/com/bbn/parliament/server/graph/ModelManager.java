@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.client.StreamUtil;
-import com.bbn.parliament.jni.KbConfig;
+import com.bbn.parliament.core.jni.KbConfig;
 import com.bbn.parliament.kb_graph.KbGraph;
 import com.bbn.parliament.kb_graph.KbGraphFactory;
 import com.bbn.parliament.kb_graph.KbGraphStore;

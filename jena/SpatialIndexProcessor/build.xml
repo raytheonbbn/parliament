@@ -13,7 +13,7 @@
 		<fileset dir="${basedir}/lib/default" includes="*.jar"/>
 		<fileset dir="${parliamentDependenciesDir}/openmap" includes="*.jar"/>
 		<fileset dir="${parliamentDependenciesDir}/deegree" includes="*.jar"/>
-		<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
+		<fileset dir="${artifactsDir}" includes="KbGraph.jar"/>
 	</path>
 
 	<path id="testClassPath">
@@ -21,8 +21,8 @@
 		<fileset dir="${parliamentDependenciesDir}/openmap" includes="*.jar"/>
 		<fileset dir="${parliamentDependenciesDir}/deegree" includes="*.jar"/>
 		<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
-		<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
-		<fileset dir="${artifactsDir}" includes="JenaGraph-tests.jar"/>
+		<fileset dir="${artifactsDir}" includes="KbGraph.jar"/>
+		<fileset dir="${artifactsDir}" includes="KbGraph-tests.jar"/>
 		<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 		<fileset file="${jarFile}"/>
 	</path>
@@ -36,11 +36,11 @@
 
 	<target name="buildDependencies">
 		<ant dir="${kbRootDir}/jena/ParliamentClient" target="jar" inheritAll="false"/>
-		<ant dir="${kbRootDir}/jena/JenaGraph" target="jar" inheritall="false"/>
+		<ant dir="${kbRootDir}/jena/KbGraph" target="jar" inheritall="false"/>
 	</target>
 
 	<target name="buildTestDependencies">
-		<ant dir="${kbRootDir}/jena/JenaGraph" target="jarTests" inheritall="false"/>
+		<ant dir="${kbRootDir}/jena/KbGraph" target="jarTests" inheritall="false"/>
 	</target>
 
 	<target name="compile" depends="buildDependencies,resolve">

@@ -39,11 +39,11 @@ import org.openrdf.sesame.sail.query.Var;
 import org.openrdf.sesame.sail.util.EmptyStatementIterator;
 import org.openrdf.sesame.sailimpl.memory.MemNamespaceIterator;
 
-import com.bbn.parliament.jni.KbConfig;
-import com.bbn.parliament.jni.KbInstance;
-import com.bbn.parliament.jni.StmtIterator;
-import com.bbn.parliament.queryoptimization.Constraint;
-import com.bbn.parliament.queryoptimization.TreeWidthQueryOptimizer;
+import com.bbn.parliament.core.jni.KbConfig;
+import com.bbn.parliament.core.jni.KbInstance;
+import com.bbn.parliament.core.jni.StmtIterator;
+import com.bbn.parliament.core.queryoptimization.Constraint;
+import com.bbn.parliament.core.queryoptimization.TreeWidthQueryOptimizer;
 
 public class KbRdfSource implements RdfSource, ValueFactory
 {

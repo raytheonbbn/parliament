@@ -23,7 +23,7 @@
 
 		<delete dir="${targetDir}" deleteonexit="true"/>
 
-		<delete dir="${basedir}/jena/JenaGraph/lib"/>
+		<delete dir="${basedir}/jena/KbGraph/lib"/>
 		<delete dir="${basedir}/jena/JosekiExtensions/lib"/>
 		<delete dir="${basedir}/jena/ParliamentClient/lib"/>
 		<delete dir="${basedir}/jena/NumericIndex/lib"/>
@@ -45,7 +45,7 @@
 	</target>
 
 	<target name="cleanEclipseBuild" description="Cleans up the Eclipse build directories">
-		<delete dir="${basedir}/jena/JenaGraph/bin"/>
+		<delete dir="${basedir}/jena/KbGraph/bin"/>
 		<delete dir="${basedir}/jena/JosekiExtensions/bin"/>
 		<delete file="${basedir}/jena/JosekiExtensions/build.log"/>
 		<delete dir="${basedir}/jena/OntologyBundle/bin"/>
@@ -76,7 +76,7 @@
 
 	<target name="runTests" depends="createDistro" description="Runs extended unit and integration tests">
 		<ant dir="${basedir}/jena/ParliamentClient" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/jena/JenaGraph" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/jena/KbGraph" target="runTests" inheritAll="false"/>
 		<!-- ant dir="${basedir}/jena/JosekiExtensions" target="runTests" inheritAll="false"/ -->
 		<ant dir="${basedir}/jena/NumericIndex" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="runTests" inheritAll="false"/>
@@ -106,7 +106,7 @@
 	<target name="buildCode" depends="init">
 		<ant dir="${basedir}/Parliament" target="deliverArtifacts" inheritAll="false"/>
 		<ant dir="${basedir}/jena/ParliamentClient" target="jar" inheritAll="false"/>
-		<ant dir="${basedir}/jena/JenaGraph" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/jena/KbGraph" target="jar" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JosekiExtensions" target="prepareDeployableServers" inheritAll="false"/>
 		<ant dir="${basedir}/jena/NumericIndex" target="jar" inheritAll="false"/>
 		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="jar" inheritAll="false"/>
@@ -153,7 +153,7 @@
 		<include name="Parliament/java/**/*.java"/>
 		<!--include name="Parliament/JniAssessments/**/*.java"/-->
 
-		<include name="jena/JenaGraph/src/**/*.java"/>
+		<include name="jena/KbGraph/src/**/*.java"/>
 		<include name="jena/JosekiExtensions/src/**/*.java"/>
 		<include name="jena/ParliamentClient/src/**/*.java"/>
 		<include name="jena/NumericIndex/src/**/*.java"/>

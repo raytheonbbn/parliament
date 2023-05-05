@@ -14,7 +14,7 @@ import org.openrdf.model.Value;
 import org.openrdf.sesame.sail.SailUpdateException;
 import org.openrdf.sesame.sail.StatementIterator;
 
-import com.bbn.parliament.jni.KbInstance;
+import com.bbn.parliament.core.jni.KbInstance;
 
 public abstract class KbResource extends KbValue implements Resource
 {

@@ -38,7 +38,7 @@ lib FixupParliamentPath
 		<threading>multi
 		<os>NT:<source>Version.rc
 		<os>LINUX:<source>/KB//DynamicLinkLib
-		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_LibraryLoader.h
+		<implicit-dependency>parliament/generated/com_bbn_parliament_core_jni_LibraryLoader.h
 	:	# default build
 	:	<include>.
 	;
@@ -61,23 +61,23 @@ lib Parliament
 		<threading>multi
 		<os>NT:<source>Version.rc
 		<os>LINUX:<source>/KB//DynamicLinkLib
-		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_KbConfig.h
-		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_KbInstance.h
-		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_StmtIterator.h
-		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_ReificationIterator.h
+		<implicit-dependency>parliament/generated/com_bbn_parliament_core_jni_KbConfig.h
+		<implicit-dependency>parliament/generated/com_bbn_parliament_core_jni_KbInstance.h
+		<implicit-dependency>parliament/generated/com_bbn_parliament_core_jni_StmtIterator.h
+		<implicit-dependency>parliament/generated/com_bbn_parliament_core_jni_ReificationIterator.h
 	:	# default build
 	:	<include>.
 	;
 
-explicit parliament/generated/com_bbn_parliament_jni_KbConfig.h ;
-explicit parliament/generated/com_bbn_parliament_jni_KbInstance.h ;
-explicit parliament/generated/com_bbn_parliament_jni_StmtIterator.h ;
-explicit parliament/generated/com_bbn_parliament_jni_ReificationIterator.h ;
+explicit parliament/generated/com_bbn_parliament_core_jni_KbConfig.h ;
+explicit parliament/generated/com_bbn_parliament_core_jni_KbInstance.h ;
+explicit parliament/generated/com_bbn_parliament_core_jni_StmtIterator.h ;
+explicit parliament/generated/com_bbn_parliament_core_jni_ReificationIterator.h ;
 
-h parliament/generated/com_bbn_parliament_jni_KbConfig.h : Parliament.jar ;
-h parliament/generated/com_bbn_parliament_jni_KbInstance.h : Parliament.jar ;
-h parliament/generated/com_bbn_parliament_jni_StmtIterator.h : Parliament.jar ;
-h parliament/generated/com_bbn_parliament_jni_ReificationIterator.h : Parliament.jar ;
+h parliament/generated/com_bbn_parliament_core_jni_KbConfig.h : Parliament.jar ;
+h parliament/generated/com_bbn_parliament_core_jni_KbInstance.h : Parliament.jar ;
+h parliament/generated/com_bbn_parliament_core_jni_StmtIterator.h : Parliament.jar ;
+h parliament/generated/com_bbn_parliament_core_jni_ReificationIterator.h : Parliament.jar ;
 
 explicit Parliament.jar ;
 make Parliament.jar : [ path.glob-tree $(JavaSrcDir) : *.java ] : @BuildJar ;

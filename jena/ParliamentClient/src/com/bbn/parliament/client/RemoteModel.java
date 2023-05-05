@@ -626,7 +626,7 @@ public class RemoteModel {
 		String leftGraphURI, String rightGraphURI) throws IOException {
 
 		String query = """
-			prefix parPF: <java:com.bbn.parliament.jena.pfunction.>
+			prefix parPF: <java:com.bbn.parliament.server.pfunction.>
 			insert {} where {
 				<%1$s> parPF:createUnionGraph ( <%2$s> <%3$s> ) .
 			}

@@ -180,7 +180,7 @@ void pmnt::JNIHelper::throwException(JNIEnv* pEnv, const exception& ex,
 {
 	auto errMsg = str(format{"%1% thrown from %2% at line %3%: %4%"}
 		% typeid(ex).name() % pSrcFile % srcLineNum % ex.what());
-	throwJavaException(pEnv, "com/bbn/parliament/jni/NativeCodeException",
+	throwJavaException(pEnv, "com/bbn/parliament/core/jni/NativeCodeException",
 		errMsg.c_str());
 }
 

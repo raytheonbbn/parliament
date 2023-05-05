@@ -20,7 +20,7 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation project(':jena:SparqlQueryBuilder')
 	implementation fileTree(dir: artifactsDir, include: [
-		'JenaGraph.jar',
+		'KbGraph.jar',
 		'ParliamentClient.jar',
 		'NumericIndex.jar',
 		'Parliament.jar',
