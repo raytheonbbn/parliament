@@ -3,6 +3,8 @@ package com.bbn.parliament.client;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.jena.atlas.json.JsonArray;
+import org.apache.jena.atlas.json.JsonObject;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.Query;
@@ -61,11 +63,6 @@ public class CloseableQueryExec implements QueryExecution {
 			qe = null;
 		}
 	}
-
-//	@Override
-//	public void setFileManager(FileManager fm) {
-//		qe.setFileManager(fm);
-//	}
 
 	@Override
 	public void setInitialBinding(QuerySolution binding) {
@@ -182,5 +179,15 @@ public class CloseableQueryExec implements QueryExecution {
 	@Override
 	public Dataset execConstructDataset(Dataset dataset) {
 		return qe.execConstructDataset(dataset);
+	}
+
+	@Override
+	public JsonArray execJson() {
+		return qe.execJson();
+	}
+
+	@Override
+	public Iterator<JsonObject> execJsonItems() {
+		return qe.execJsonItems();
 	}
 }

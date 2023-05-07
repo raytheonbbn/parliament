@@ -24,6 +24,7 @@ import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ReadWrite;
+import org.apache.jena.query.TxnType;
 import org.apache.jena.reasoner.InfGraph;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.core.DatasetGraphTriplesQuads;
@@ -131,7 +132,16 @@ public class KbGraphStore extends DatasetGraphTriplesQuads {
 	}
 
 	@Override
+	public void begin(TxnType type) {
+	}
+
+	@Override
 	public void begin(ReadWrite readWrite) {
+	}
+
+	@Override
+	public boolean promote(Promote mode) {
+		return false;
 	}
 
 	@Override
@@ -144,6 +154,16 @@ public class KbGraphStore extends DatasetGraphTriplesQuads {
 
 	@Override
 	public void end() {
+	}
+
+	@Override
+	public ReadWrite transactionMode() {
+		return null;	// Not in a transaction
+	}
+
+	@Override
+	public TxnType transactionType() {
+		return null;	// Not in a transaction
 	}
 
 	@Override
