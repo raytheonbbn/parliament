@@ -48,6 +48,11 @@
 		<touch file="lib/LastResolvePerformedAt.txt" mkdirs="true"/>
 	</target>
 
+	<target name="resolveAlways">
+		<delete dir="lib"/>
+		<antcall target="resolve"/>
+	</target>
+
 	<target name="clean-cache">
 		<ivy:cleancache/>
 	</target>

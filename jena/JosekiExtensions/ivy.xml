@@ -22,6 +22,8 @@
 	<dependencies>
 		<dependency org="org.apache.jena" name="jena-cmds" rev="${jena.version}"
 			conf="schemagen->default"/>
+		<dependency org="org.apache.logging.log4j" name="log4j-slf4j-impl" rev="2.20.0"
+			conf="schemagen->default"/>
 
 		<dependency org="org.slf4j" name="slf4j-api" rev="${slf4j.version}"
 			conf="logging->default"/>

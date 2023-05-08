@@ -16,7 +16,7 @@
 	<property name="junit-jupiter.version" value="5.8.1"/>
 	<property name="junit-platform-launcher.version" value="1.8.1"/>
 	<property name="slf4j.version" value="1.7.36"/>
-	<property name="jena.version" value="3.13.0"/>
+	<property name="jena.version" value="3.15.0"/>
 
 	<!-- If no resolver is specified, use the default chain -->
 	<settings defaultResolver="default"/>

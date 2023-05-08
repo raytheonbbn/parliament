@@ -7,9 +7,9 @@
 package com.bbn.parliament.kb_graph;
 
 import java.io.File;
+import java.util.UUID;
 
 import org.apache.jena.graph.Node;
-import org.apache.jena.shared.uuid.JenaUUID;
 
 import com.bbn.parliament.core.jni.KbConfig;
 import com.bbn.parliament.kb_graph.union.KbUnionGraph;
@@ -34,10 +34,10 @@ public class KbGraphFactory {
 			OPT_METHOD);
 	}
 
-	/** Creates a Parliament graph with a GUID backing directory. */
+	/** Creates a Parliament graph with a UUID backing directory. */
 	public static KbGraph createNamedGraph() {
-		String guid = JenaUUID.generate().asString();
-		return new KbGraph(getKbConfigForNamedGraph(guid), guid, OPT_METHOD);
+		var uuid = UUID.randomUUID().toString();
+		return new KbGraph(getKbConfigForNamedGraph(uuid), uuid, OPT_METHOD);
 	}
 
 	/** Create a Parliament graph with files in the specified backing directory. */

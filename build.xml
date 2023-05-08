@@ -74,6 +74,24 @@
 		</delete>
 	</target>
 
+	<target name="resolveAll" description="Force an Ivy resolve on all sub-projects">
+		<ant dir="${basedir}/Parliament" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/jena/JosekiExtensions" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/jena/KbGraph" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/jena/NumericIndex" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/jena/ParliamentClient" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/jena/TemporalIndexProcessor_old" target="resolveAlways" inheritAll="false"/>
+		<!--
+		<ant dir="${basedir}/sesame/CSameAsSail" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/LuceneSail" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/ParliamentSail" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/SameAsSail" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/Swrl2Sesame" target="resolveAlways" inheritAll="false"/>
+		-->
+	</target>
+
 	<target name="runTests" depends="createDistro" description="Runs extended unit and integration tests">
 		<ant dir="${basedir}/jena/ParliamentClient" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/jena/KbGraph" target="runTests" inheritAll="false"/>

@@ -1,9 +1,7 @@
 package com.bbn.parliament.kb_graph.query;
 
-import java.util.Collections;
 import java.util.Map;
 
-import org.apache.jena.iri.IRI;
 import org.apache.jena.riot.system.PrefixMap;
 import org.apache.jena.riot.system.PrefixMapStd;
 
@@ -30,19 +28,8 @@ public class PrefixRegistry {
 
 	public void registerPrefixes(PrefixMap map) {
 		synchronized (lock) {
-			Map<String, IRI> mapping = map.getMapping();
-			for (Map.Entry<String, IRI> entry : mapping.entrySet()) {
-				prefixes.add(entry.getKey(), entry.getValue());
-			}
-		}
-	}
-
-	public void removePrefixes(PrefixMap map) {
-		synchronized (lock) {
-			Map<String, IRI> mapping = map.getMapping();
-			for (Map.Entry<String, IRI> entry : mapping.entrySet()) {
-				removePrefix(entry.getKey());
-			}
+			map.getMapping().entrySet().stream()
+				.forEach(entry -> prefixes.add(entry.getKey(), entry.getValue()));
 		}
 	}
 
@@ -52,9 +39,16 @@ public class PrefixRegistry {
 		}
 	}
 
-	public Map<String, IRI> getPrefixes() {
+	public void removePrefixes(PrefixMap map) {
 		synchronized (lock) {
-			return Collections.unmodifiableMap(prefixes.getMapping());
+			map.getMapping().keySet().stream()
+				.forEach(this::removePrefix);
+		}
+	}
+
+	public Map<String, String> getPrefixes() {
+		synchronized (lock) {
+			return prefixes.getMappingCopy();
 		}
 	}
 }
