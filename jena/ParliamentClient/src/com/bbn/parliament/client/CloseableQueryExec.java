@@ -14,6 +14,7 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.util.Context;
 
 /**
@@ -189,5 +190,10 @@ public class CloseableQueryExec implements QueryExecution {
 	@Override
 	public Iterator<JsonObject> execJsonItems() {
 		return qe.execJsonItems();
+	}
+
+	@Override
+	public void setInitialBinding(Binding binding) {
+		qe.setInitialBinding(binding);
 	}
 }
