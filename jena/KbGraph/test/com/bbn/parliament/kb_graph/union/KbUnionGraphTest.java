@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.jena.graph.Graph;
@@ -20,13 +21,16 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.util.FileManager;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFLanguages;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bbn.parliament.client.ResourceUtil;
 import com.bbn.parliament.kb_graph.KbGraph;
 import com.bbn.parliament.kb_graph.KbGraphFactory;
 import com.bbn.parliament.kb_graph.KbGraphStore;
@@ -68,8 +72,12 @@ public class KbUnionGraphTest {
 		graphStore.clear();
 	}
 
-	private static Model loadModel(String path) {
-		Model m = FileManager.get().loadModel(path);
+	private static Model loadModel(String rsrcName) throws IOException {
+		var lang = RDFLanguages.resourceNameToLang(rsrcName, Lang.TURTLE);
+		var m = ModelFactory.createDefaultModel();
+		try (var is = ResourceUtil.getAsStream(rsrcName)) {
+			RDFDataMgr.read(m, is, null, lang);
+		}
 		return m;
 	}
 
@@ -92,7 +100,7 @@ public class KbUnionGraphTest {
 	}
 
 	@Test
-	public void testCreateUnionGraph() {
+	public void testCreateUnionGraph() throws IOException {
 		Graph left = getLeftGraph(union);
 		Model leftModel = getLeftModel(union);
 		Graph right = getRightGraph(union);
@@ -137,7 +145,7 @@ public class KbUnionGraphTest {
 		""";
 
 	@Test
-	public void testQueryUnionGraph() {
+	public void testQueryUnionGraph() throws IOException {
 		Graph left = getLeftGraph(union);
 		Model leftModel = getLeftModel(union);
 		//Graph right = getRightGraph(union);

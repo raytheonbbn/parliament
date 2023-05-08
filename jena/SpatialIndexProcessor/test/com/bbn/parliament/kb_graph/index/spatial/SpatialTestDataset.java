@@ -3,6 +3,8 @@ package com.bbn.parliament.kb_graph.index.spatial;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Properties;
@@ -29,8 +31,10 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFLanguages;
 import org.apache.jena.shared.PrefixMapping;
-import org.apache.jena.util.FileManager;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
@@ -38,15 +42,15 @@ import org.apache.jena.vocabulary.XSD;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.client.RDFFormat;
+import com.bbn.parliament.client.ResourceUtil;
 import com.bbn.parliament.client.StreamUtil;
-import com.bbn.parliament.kb_graph.index.spatial.geosparql.vocabulary.Geo;
-import com.bbn.parliament.kb_graph.index.spatial.standard.StdConstants;
 import com.bbn.parliament.kb_graph.KbGraph;
 import com.bbn.parliament.kb_graph.KbGraphFactory;
 import com.bbn.parliament.kb_graph.KbGraphStore;
 import com.bbn.parliament.kb_graph.index.IndexFactoryRegistry;
 import com.bbn.parliament.kb_graph.index.IndexManager;
+import com.bbn.parliament.kb_graph.index.spatial.geosparql.vocabulary.Geo;
+import com.bbn.parliament.kb_graph.index.spatial.standard.StdConstants;
 import com.bbn.parliament.kb_graph.query.QueryTestUtil;
 
 public class SpatialTestDataset {
@@ -146,9 +150,13 @@ public class SpatialTestDataset {
 		model.removeAll();
 	}
 
-	public void loadData(String fileName) {
-		RDFFormat dataFormat = RDFFormat.parseFilename(fileName);
-		FileManager.get().readModel(model, fileName, dataFormat.toString());
+	public void loadData(String rsrcName) {
+		var lang = RDFLanguages.resourceNameToLang(rsrcName, Lang.TURTLE);
+		try (var is = ResourceUtil.getAsStream(rsrcName)) {
+			RDFDataMgr.read(model, is, null, lang);
+		} catch (IOException ex) {
+			throw new UncheckedIOException(ex);
+		}
 	}
 
 	public static void printQuerySolution(QuerySolution querySolution) {
