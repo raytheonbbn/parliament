@@ -63,6 +63,7 @@ task runSchemagen(type: JavaExec) {
 	mainClass = 'jena.schemagen'
 	args = [
 		'-i', configVocabFile,
+		'-e', 'TURTLE',
 		'-o', "${genJavaDir}",
 		'--owl',
 		'-n', configVocabClassNm,

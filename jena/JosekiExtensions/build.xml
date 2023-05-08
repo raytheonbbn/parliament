@@ -78,6 +78,8 @@
 			</classpath>
 			<arg value="-i"/>
 			<arg value="${basedir}/resources/ontology/config-ont.ttl"/>
+			<arg value="-e"/>
+			<arg value="TURTLE"/>
 			<arg value="-o"/>
 			<arg value="${basedir}/src"/>
 			<arg value="--ontology"/>

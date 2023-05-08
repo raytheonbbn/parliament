@@ -1,5 +1,5 @@
 ext {
-	jenaVersion = '3.15.0'
+	jenaVersion = '3.17.0'
 	slf4jVersion = '1.7.36'
 
 	commonsCsvDependency = 'org.apache.commons:commons-csv:1.10.0'

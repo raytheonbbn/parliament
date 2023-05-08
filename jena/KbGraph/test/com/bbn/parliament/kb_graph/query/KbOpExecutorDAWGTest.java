@@ -22,7 +22,6 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
-import org.apache.jena.riot.checker.CheckerLiterals;
 import org.apache.jena.sparql.algebra.Algebra;
 import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.engine.ExecutionContext;
@@ -32,9 +31,7 @@ import org.apache.jena.sparql.resultset.SPARQLResult;
 import org.apache.jena.sparql.util.Context;
 import org.apache.jena.sparql.vocabulary.ResultSetGraphVocab;
 import org.apache.jena.vocabulary.RDF;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -116,30 +113,15 @@ public class KbOpExecutorDAWGTest {
 	private static final File DAWG_ROOT_DIR = new File("data/data-r2");
 	private static final Pattern FILE_URI_FIXER = Pattern.compile("^(file:/)([^/].*)$");
 	private static final Pattern FILE_URI_FIXER_2 = Pattern.compile("^(file:///[A-Za-z]):(.*)$");
-	private static final Logger log = LoggerFactory.getLogger(KbOpExecutorDAWGTest.class);
+	private static final Logger LOG = LoggerFactory.getLogger(KbOpExecutorDAWGTest.class);
 
-	private static TestingDataset dataset;
-
-	@BeforeAll
-	public static void beforeAll() {
-		dataset = new TestingDataset();
-	}
-
-	@AfterAll
-	public static void afterAll() {
-		dataset.clear();
-	}
-
-	private boolean oldWarningFlag = false;
-	private ExecutionContext execCxt;
-	private KbOpExecutor opExecutor;
+	private TestingDataset dataset = null;
+	private ExecutionContext execCxt = null;
+	private KbOpExecutor opExecutor = null;
 
 	@BeforeEach
 	public void beforeEach() {
-		oldWarningFlag = CheckerLiterals.WarnOnBadLiterals;
-		CheckerLiterals.WarnOnBadLiterals = false;
-		log.debug("AbstractDAWGTestCase.setUp:  Set CheckerLiterals.WarnOnBadLiterals to false.");
-
+		dataset = new TestingDataset();
 		Context params = ARQ.getContext();
 		@SuppressWarnings("resource")
 		KbGraph defaultGraph = dataset.getDefaultGraph();
@@ -150,8 +132,7 @@ public class KbOpExecutorDAWGTest {
 
 	@AfterEach
 	public void afterEach() {
-		dataset.reset();
-		CheckerLiterals.WarnOnBadLiterals = oldWarningFlag;
+		dataset.clear();
 	}
 
 	private static Stream<DAWGManifestEntry> testDawgTest() {
@@ -159,7 +140,7 @@ public class KbOpExecutorDAWGTest {
 		for (String relTestDir : DAWG_TEST_DIRS) {
 			File testDir = new File(DAWG_ROOT_DIR, relTestDir);
 			File manifestFile = new File(testDir, "manifest.ttl");
-			log.debug("Loading manifest file '{}' with base '{}'",
+			LOG.debug("Loading manifest file '{}' with base '{}'",
 				manifestFile.getPath(), testDir.getPath());
 			Model manifestModel = QueryTestUtil.loadModel(
 				manifestFile.getPath(), testDir.getPath());
@@ -173,7 +154,7 @@ public class KbOpExecutorDAWGTest {
 				});
 			}
 		}
-		log.info("Found {} DAWG tests to be run", testDataMap.size());
+		LOG.info("Found {} DAWG tests to be run", testDataMap.size());
 		return testDataMap.values().stream();
 	}
 
@@ -181,7 +162,7 @@ public class KbOpExecutorDAWGTest {
 	@MethodSource
 	public void testDawgTest(DAWGManifestEntry me) throws IOException {
 		if (INVALID_TESTS.contains(me.getCurrentTest())) {
-			log.warn("Skipping DAWG test '{}'", me.getCurrentTest());
+			LOG.warn("Skipping DAWG test '{}'", me.getCurrentTest());
 			return;
 		}
 		for (File dataFile : me.getData()) {
@@ -201,7 +182,7 @@ public class KbOpExecutorDAWGTest {
 			if (m2.matches()) {
 				uri = m2.replaceAll("$1%3A$2");
 			}
-			log.debug("Graph URI for test '{}' is '{}'", me.getName(), uri);
+			LOG.debug("Graph URI for test '{}' is '{}'", me.getName(), uri);
 			@SuppressWarnings("resource")
 			KbGraph namedGraph = dataset.getNamedGraph(uri);
 			QueryTestUtil.loadResource(graphDataFile.getPath(), namedGraph);

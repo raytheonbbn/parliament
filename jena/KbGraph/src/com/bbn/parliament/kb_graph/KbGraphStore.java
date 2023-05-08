@@ -26,11 +26,11 @@ import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.TxnType;
 import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.riot.other.G;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.core.DatasetGraphTriplesQuads;
 import org.apache.jena.sparql.core.DatasetImpl;
 import org.apache.jena.sparql.core.Quad;
-import org.apache.jena.sparql.util.graph.GraphUtils;
 import org.apache.jena.util.iterator.ClosableIterator;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.vocabulary.RDF;
@@ -194,13 +194,13 @@ public class KbGraphStore extends DatasetGraphTriplesQuads {
 	@Override
 	protected Iterator<Quad> findInDftGraph(Node s, Node p, Node o) {
 		var iter = defaultGraph.find(s, p, o);
-		return GraphUtils.triples2quadsDftGraph(iter);
+		return G.triples2quadsDftGraph(iter);
 	}
 
 	@Override
 	protected Iterator<Quad> findInSpecificNamedGraph(Node g, Node s, Node p, Node o) {
 		var iter = getGraph(g).find(s, p, o);
-		return GraphUtils.triples2quads(g, iter);
+		return G.triples2quads(g, iter);
 	}
 
 	@Override

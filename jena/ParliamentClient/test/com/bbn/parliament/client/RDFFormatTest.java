@@ -183,7 +183,7 @@ public class RDFFormatTest {
 		}
 		Lang lang = format.getLang();
 
-		assertEquals(lang.getContentType().getContentType(), format.getMediaType());
+		assertEquals(lang.getContentType().getContentTypeStr(), format.getMediaType());
 
 		SortedSet<String> expectedContentTypes = new TreeSet<>(lang.getAltContentTypes());
 		SortedSet<String> actualContentTypes = new TreeSet<>(format.getMediaTypes());
