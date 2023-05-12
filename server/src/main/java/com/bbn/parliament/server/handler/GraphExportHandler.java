@@ -38,7 +38,7 @@ public class GraphExportHandler {
 		this.fileName = "%1$s-%2$s.%3$s".formatted(
 			serverName,
 			FileUtil.encodeStringForFilename(this.graphName),
-			this.contentType.getRdfFormat().getExtension());
+			this.contentType.getPrimaryFileExtension());
 	}
 
 	public String getContentDisposition() {
@@ -58,7 +58,7 @@ public class GraphExportHandler {
 
 			LOG.info("Exporting <{}> as {}", graphName, contentType);
 
-			model.write(out, contentType.getRdfFormat().toString());
+			model.write(out, contentType.getRdfLang().getName());
 
 			LOG.info("Export/OK");
 		}

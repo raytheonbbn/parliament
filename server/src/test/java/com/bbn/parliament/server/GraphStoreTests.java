@@ -22,6 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.query.ParameterizedSparqlString;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFLanguages;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.junit.jupiter.api.AfterEach;
@@ -42,7 +44,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.bbn.parliament.client.QuerySolutionStream;
-import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.server.test_util.GraphUtils;
 import com.bbn.parliament.server.test_util.RdfFileLoader;
 
@@ -151,8 +152,8 @@ public class GraphStoreTests {
 	@MethodSource("insertAndGetSampleDataTestArgs")
 	public void insertAndGetSampleDataTest(String fileName, String graphName,
 			long expectedAllQueryCount, long expectedLabelQueryCount, boolean hasInferredOrBlankNodes) throws IOException {
-		var fileFmt = RDFFormat.parseFilename(fileName);
-		LOG.info("Loading file '{}' as {} via graph store protocol", fileName, fileFmt);
+		var lang = RDFLanguages.pathnameToLang(fileName);
+		LOG.info("Loading file '{}' as {} via graph store protocol", fileName, lang.getName());
 		var file = new File(DATA_DIR, fileName);
 		var returnCode = GraphUtils.insertStatements(graphStoreUrl, graphName, file);
 		assertEquals(HttpStatus.OK.value(), returnCode);
@@ -169,11 +170,11 @@ public class GraphStoreTests {
 
 		// GET test
 		if (!hasInferredOrBlankNodes) {
-			HttpResponse<InputStream> response = GraphUtils.getStatements(graphStoreUrl, graphName, fileFmt);
+			HttpResponse<InputStream> response = GraphUtils.getStatements(graphStoreUrl, graphName, lang);
 
 			Model responseModel = ModelFactory.createDefaultModel();
 			try (InputStream bstrm = response.body()) {
-				responseModel.read(bstrm, null, fileFmt.toString());
+				responseModel.read(bstrm, null, lang.getName());
 			}
 			Model fileModel = ModelFactory.createDefaultModel();
 			RdfFileLoader.load(file, fileModel);
@@ -182,9 +183,11 @@ public class GraphStoreTests {
 	}
 
 	private static boolean multiPostInsertTestFileMatcher(Path path, BasicFileAttributes attrs) {
+		var lang = RDFLanguages.pathnameToLang(path.toString());
 		return attrs.isRegularFile()
 			&& attrs.size() < 12 * 1024 * 1024
-			&& RDFFormat.parseFilename(path).isJenaReadable();
+			&& (lang != null)
+			&& !RDFLanguages.sameLang(lang, Lang.RDFNULL);
 	}
 
 	@ParameterizedTest
@@ -217,7 +220,7 @@ public class GraphStoreTests {
 	public void insertErrorTest() throws IOException {
 		// Insert invalid n-triples:
 		var statusCode = GraphUtils.insertStatements(graphStoreUrl, "oogetyboogetyboo!",
-			RDFFormat.NTRIPLES, null);
+			Lang.NTRIPLES, null);
 		var status = Optional.ofNullable(HttpStatus.resolve(statusCode));
 		LOG.info("insertErrorTest status code: {} ({})", statusCode,
 			status.map(HttpStatus::getReasonPhrase).orElse("unrecognized status code"));
@@ -237,11 +240,11 @@ public class GraphStoreTests {
 		final String ng2Uri = TEST_NG_URI + "2";
 
 		assertEquals(HttpStatus.OK.value(), GraphUtils.insertStatements(
-			graphStoreUrl, SAMPLE_TRIPLES, RDFFormat.TURTLE, null));
+			graphStoreUrl, SAMPLE_TRIPLES, Lang.TURTLE, null));
 		assertEquals(HttpStatus.NO_CONTENT.value(), GraphUtils.replaceGraph(
-			graphStoreUrl, "", RDFFormat.TURTLE, ng1Uri));
+			graphStoreUrl, "", Lang.TURTLE, ng1Uri));
 		assertEquals(HttpStatus.OK.value(), GraphUtils.insertStatements(
-			graphStoreUrl, SAMPLE_TRIPLES, RDFFormat.TURTLE, ng2Uri));
+			graphStoreUrl, SAMPLE_TRIPLES, Lang.TURTLE, ng2Uri));
 
 		var expectedCounts1 = Map.of("", 2L, ng1Uri, 0L, ng2Uri, 2L);
 		var actualCountsMap1 = GraphUtils.getGraphCounts(sparqlUrl);

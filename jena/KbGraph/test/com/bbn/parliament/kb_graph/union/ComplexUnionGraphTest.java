@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -26,6 +26,7 @@ import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.RDFLanguages;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -35,16 +36,15 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.core.jni.KbConfig;
 import com.bbn.parliament.core.jni.KbInstance;
 import com.bbn.parliament.kb_graph.KbGraph;
 import com.bbn.parliament.kb_graph.OptimizationMethod;
 
 public class ComplexUnionGraphTest {
-	private static final String ONT_RSRC = "univ-bench.owl";
-	private static final File INPUT_DATA_FILE = new File(
-		System.getProperty("test.data.path"), "univ-bench-03.zip");
+	private static final File TEST_DATA_DIR = new File(System.getProperty("test.data.path"));
+	private static final File ONT_FILE = new File(TEST_DATA_DIR, "univ-bench.owl");
+	private static final File INPUT_DATA_FILE = new File(TEST_DATA_DIR, "univ-bench-03.zip");
 	private static final File KB_DATA_DIR = new File("./union-test-kb-data");
 	private static final String PREFIXES = """
 		prefix ub: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#>
@@ -195,15 +195,11 @@ public class ComplexUnionGraphTest {
 		return new KbGraph(config, relativeDirectory, OptimizationMethod.DefaultOptimization);
 	}
 
-	private static Model createModel(KbGraph g) throws IOException {
-		Model m = ModelFactory.createModelForGraph(g);
-		RDFFormat rdfFmt = RDFFormat.parseFilename(ONT_RSRC);
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		try (InputStream strm = cl.getResourceAsStream(ONT_RSRC)) {
-			if (strm == null) {
-				throw new FileNotFoundException("Unable to load resource " + ONT_RSRC);
-			}
-			m.read(strm, null, rdfFmt.toString());
+	private static Model createModel(KbGraph kbGraph) throws IOException {
+		var m = ModelFactory.createModelForGraph(kbGraph);
+		var lang = RDFLanguages.pathnameToLang(ONT_FILE.getPath());
+		try (InputStream strm = new FileInputStream(ONT_FILE)) {
+			m.read(strm, null, lang.getName());
 		}
 		return m;
 	}
@@ -230,9 +226,9 @@ public class ComplexUnionGraphTest {
 			while (entries.hasMoreElements()) {
 				ZipEntry zipEntry = entries.nextElement();
 				if (!zipEntry.isDirectory() && pattern.matcher(zipEntry.getName()).matches()) {
-					RDFFormat rdfFmt = RDFFormat.parseFilename(zipEntry.getName());
+					var lang = RDFLanguages.pathnameToLang(zipEntry.getName());
 					try (InputStream strm = zipFile.getInputStream(zipEntry)) {
-						result.read(strm, null, rdfFmt.toString());
+						result.read(strm, null, lang.getName());
 					}
 				}
 			}

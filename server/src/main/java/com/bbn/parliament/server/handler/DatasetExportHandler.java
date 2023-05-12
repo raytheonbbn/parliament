@@ -31,7 +31,7 @@ public class DatasetExportHandler {
 			LOG.info("Exporting entire repository to ZIP file in \"{}\" format.", contentType);
 
 			String zipFilename = ZIP_FILENAME_FORMAT.formatted(serverName, Instant.now());
-			String extension = contentType.getRdfFormat().getExtension();
+			String extension = contentType.getPrimaryFileExtension();
 
 			resp.setContentType("application/zip");
 			resp.setHeader("Content-Disposition",
@@ -44,7 +44,7 @@ public class DatasetExportHandler {
 					String basename = KbGraphStore.DEFAULT_GRAPH_BASENAME;
 					String filename = "%1$s.%2$s".formatted(basename, extension);
 					zout.putNextEntry(new ZipEntry(filename));
-					model.write(zout, contentType.getRdfFormat().toString());
+					model.write(zout, contentType.getRdfLang().getName());
 					zout.closeEntry();
 				}
 
@@ -55,7 +55,7 @@ public class DatasetExportHandler {
 						String basename = kbGraph.getRelativeDirectory();
 						String filename = "%1$s.%2$s".formatted(basename, extension);
 						zout.putNextEntry(new ZipEntry(filename));
-						model.write(zout, contentType.getRdfFormat().toString());
+						model.write(zout, contentType.getRdfLang().getName());
 						zout.closeEntry();
 					}
 				}

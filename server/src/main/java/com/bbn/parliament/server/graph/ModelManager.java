@@ -22,10 +22,10 @@ import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.RDFLanguages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.client.StreamUtil;
 import com.bbn.parliament.core.jni.KbConfig;
 import com.bbn.parliament.kb_graph.KbGraph;
@@ -236,15 +236,15 @@ public class ModelManager {
 			initialize();
 		}
 
-		RDFFormat type = RDFFormat.parseFilename(filename);
-		if (RDFFormat.UNKNOWN == type) {
+		var lang = RDFLanguages.pathnameToLang(filename);
+		if (lang == null) {
 			LOG.warn("Ignoring {}", filename);
 			return;
 		}
 
 		try (Reader reader = new FileReader(filename)) {
 			LOG.info("Importing model data from: {}", filename);
-			getDefaultModel().read(reader, null, type.toString());
+			getDefaultModel().read(reader, null, lang.getName());
 		} catch (Exception ex) {
 			LOG.error("Could not read file: " + filename, ex);
 		}

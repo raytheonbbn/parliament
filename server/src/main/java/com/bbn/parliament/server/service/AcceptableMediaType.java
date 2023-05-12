@@ -1,89 +1,85 @@
 package com.bbn.parliament.server.service;
 
+import static org.apache.jena.riot.WebContent.ctJSON;
+import static org.apache.jena.riot.WebContent.ctResultsJSON;
+import static org.apache.jena.riot.WebContent.ctResultsXML;
+import static org.apache.jena.riot.WebContent.ctTextCSV;
+import static org.apache.jena.riot.WebContent.ctTextTSV;
+import static org.apache.jena.riot.WebContent.ctXML;
+import static org.apache.jena.riot.WebContent.ctXMLAlt;
+
 import java.io.OutputStream;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
+import org.apache.jena.atlas.web.ContentType;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
-
-import com.bbn.parliament.client.RDFFormat;
+import org.apache.jena.riot.Lang;
 
 public enum AcceptableMediaType {
-	/** Turtle format */
-	TURTLE(QueryResultCategory.RDF, "turtle",
-		new String[]{ "text/turtle", "application/x-turtle" },
-		RDFFormat.TURTLE, null, null),
+	// Media types for construct and describe queries:
+	TURTLE("turtle", Lang.TURTLE),
+	RDF_XML("rdfxml", Lang.RDFXML),
+	N_TRIPLES("ntriples", Lang.NTRIPLES),
+	N3("n3", Lang.N3),
+	JSON_LD("jsonld", Lang.JSONLD),
 
-	/** RDF/XML format */
-	RDF_XML(QueryResultCategory.RDF, "rdfxml",
-		new String[]{ "application/rdf+xml" },
-		RDFFormat.RDFXML, null, null),
-
-	/** N-Triples format */
-	N_TRIPLES(QueryResultCategory.RDF, "ntriples",
-		new String[]{ "application/n-triples", "text/plain" },
-		RDFFormat.NTRIPLES, null, null),
-
-	/** N3 format */
-	N3(QueryResultCategory.RDF, "n3",
-		new String[]{ "text/n3" },
-		RDFFormat.N3, null, null),
-
-	/** JSON-LD format */
-	JSON_LD(QueryResultCategory.RDF, "jsonld",
-		new String[]{ "application/ld+json", "application/json" },
-		RDFFormat.JSON_LD, null, null),
-
-	XML_RESULTS(QueryResultCategory.RESULT_SET, "xml",
-		new String[]{ "application/sparql-results+xml", "application/xml", "text/xml" },
-		null,
+	// Media types for select and ask queries:
+	XML_RESULTS("xml",
+		List.of(ctResultsXML, ctXML, ctXMLAlt),
 		(out, resultSet) -> ResultSetFormatter.outputAsXML(out, resultSet),
 		(out, result) -> ResultSetFormatter.outputAsXML(out, result)),
-
-	JSON_RESULTS(QueryResultCategory.RESULT_SET, "json",
-		new String[]{ "application/sparql-results+json", "application/json", "text/json" },
-		null,
+	JSON_RESULTS("json",
+		List.of(ctResultsJSON, ctJSON),
 		(out, resultSet) -> ResultSetFormatter.outputAsJSON(out, resultSet),
 		(out, result) -> ResultSetFormatter.outputAsJSON(out, result)),
-
-	CSV_RESULTS(QueryResultCategory.RESULT_SET, "csv",
-		new String[]{ "text/csv" },
-		null,
+	CSV_RESULTS("csv",
+		List.of(ctTextCSV),
 		(out, resultSet) -> ResultSetFormatter.outputAsCSV(out, resultSet),
 		(out, result) -> ResultSetFormatter.outputAsCSV(out, result)),
-
-	TSV_RESULTS(QueryResultCategory.RESULT_SET, "tsv",
-		new String[]{ "text/tab-separated-values" },
-		null,
+	TSV_RESULTS("tsv",
+		List.of(ctTextTSV),
 		(out, resultSet) -> ResultSetFormatter.outputAsTSV(out, resultSet),
 		(out, result) -> ResultSetFormatter.outputAsTSV(out, result));
 
 	private final QueryResultCategory category;
 	private final String queryStringFormat;
-	private final String[] mediaTypes;
-	private final RDFFormat rdfFormat;
+	private final Lang rdfLang;
+	private final List<ContentType> mediaTypes;
 	private final BiConsumer<OutputStream, ResultSet> serializeResultSet;
 	private final BiConsumer<OutputStream, Boolean> serializeAskResults;
 
-	private AcceptableMediaType(QueryResultCategory category, String queryStringFormat,
-		String[] mediaTypes, RDFFormat rdfFormat,
+	// For QueryResultCategory.RDF:
+	private AcceptableMediaType(String queryStringFormat, Lang rdfLang) {
+		this.category = QueryResultCategory.RDF;
+		this.queryStringFormat = Objects.requireNonNull(queryStringFormat, "queryStringFormat");
+		this.rdfLang = Objects.requireNonNull(rdfLang, "rdfLang");
+		this.mediaTypes = extractContentTypes(this.rdfLang);
+		this.serializeResultSet = null;
+		this.serializeAskResults = null;
+	}
+
+	// For QueryResultCategory.RESULT_SET:
+	private AcceptableMediaType(String queryStringFormat, List<ContentType> mediaTypes,
 		BiConsumer<OutputStream, ResultSet> serializeResultSet,
 		BiConsumer<OutputStream, Boolean> serializeAskResults) {
-		this.category = Objects.requireNonNull(category, "category");
+		this.category = QueryResultCategory.RESULT_SET;
 		this.queryStringFormat = Objects.requireNonNull(queryStringFormat, "queryStringFormat");
+		this.rdfLang = null;
 		this.mediaTypes = Objects.requireNonNull(mediaTypes, "mediaTypes");
-		if (category == QueryResultCategory.RDF) {
-			this.rdfFormat = Objects.requireNonNull(rdfFormat, "rdfFormat");
-			this.serializeResultSet = null;
-			this.serializeAskResults = null;
-		} else {
-			this.rdfFormat = null;
-			this.serializeResultSet = Objects.requireNonNull(serializeResultSet, "serializeResultSet");
-			this.serializeAskResults = Objects.requireNonNull(serializeAskResults, "serializeAskResults");
-		}
+		this.serializeResultSet = Objects.requireNonNull(serializeResultSet, "serializeResultSet");
+		this.serializeAskResults = Objects.requireNonNull(serializeAskResults, "serializeAskResults");
+	}
+
+	private static List<ContentType> extractContentTypes(Lang lang) {
+		var mainCTStream = Stream.of(lang.getContentType());
+		var altCTStream = lang.getAltContentTypes().stream()
+			.map(ContentType::create);
+		return Stream.concat(mainCTStream, altCTStream).toList();
 	}
 
 	public QueryResultCategory getCategory() {
@@ -94,24 +90,27 @@ public enum AcceptableMediaType {
 		return queryStringFormat;
 	}
 
-	public boolean hasQueryStringFormat(String format) {
-		return queryStringFormat.equalsIgnoreCase(format);
-	}
-
 	public boolean hasMediaType(String mediaType, String mediaSubType) {
 		String mediaTypeStr = "%1$s/%2$s".formatted(
 			Objects.requireNonNull(mediaType, "mediaType").strip(),
 			Objects.requireNonNull(mediaSubType, "mediaSubType").strip());
-		return Arrays.stream(mediaTypes)
+		return mediaTypes.stream()
+			.map(ContentType::getContentTypeStr)
 			.anyMatch(mediaTypeStr::equalsIgnoreCase);
 	}
 
-	public String getPrimaryMediaType() {
-		return mediaTypes[0];
+	public ContentType getPrimaryMediaType() {
+		return mediaTypes.get(0);
 	}
 
-	public RDFFormat getRdfFormat() {
-		return rdfFormat;
+	public String getPrimaryFileExtension() {
+		return (rdfLang == null)
+			? null
+			: rdfLang.getFileExtensions().get(0);
+	}
+
+	public Lang getRdfLang() {
+		return rdfLang;
 	}
 
 	public void serializeResultSet(OutputStream out, ResultSet resultSet) {
@@ -123,14 +122,14 @@ public enum AcceptableMediaType {
 	}
 
 	public static Optional<AcceptableMediaType> find(String mediaType, String mediaSubType) {
-		return Arrays.stream(AcceptableMediaType.values())
+		return Stream.of(AcceptableMediaType.values())
 			.filter(amt -> amt.hasMediaType(mediaType, mediaSubType))
 			.findFirst();
 	}
 
 	public static Optional<AcceptableMediaType> find(String queryStringFormat) {
-		return Arrays.stream(AcceptableMediaType.values())
-			.filter(amt -> amt.hasQueryStringFormat(queryStringFormat))
+		return Stream.of(AcceptableMediaType.values())
+			.filter(amt -> amt.queryStringFormat.equalsIgnoreCase(queryStringFormat))
 			.findFirst();
 	}
 }

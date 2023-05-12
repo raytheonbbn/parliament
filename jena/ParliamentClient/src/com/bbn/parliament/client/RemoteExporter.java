@@ -25,6 +25,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.jena.riot.Lang;
 
 /**
  * Functions for exporting the contents of a Parliament triple store to a file.
@@ -113,7 +114,7 @@ public class RemoteExporter {
 			HttpPost postMethod = new HttpPost(endPointUrl);
 			List<NameValuePair> nvps = new ArrayList<>();
 			nvps.add(new BasicNameValuePair("exportAll", "yes"));
-			nvps.add(new BasicNameValuePair("dataFormat", RDFFormat.NTRIPLES.toString()));
+			nvps.add(new BasicNameValuePair("dataFormat", Lang.NTRIPLES.getName()));
 			postMethod.setEntity(new UrlEncodedFormEntity(nvps));
 
 			// execute the directive and process the response (i.e. save the export to a file)

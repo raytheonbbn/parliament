@@ -20,6 +20,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.sparql.modify.request.QuadDataAcc;
 import org.apache.jena.sparql.modify.request.UpdateDataInsert;
 import org.apache.jena.update.UpdateExecutionFactory;
@@ -38,7 +39,6 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.bbn.parliament.client.QuerySolutionStream;
-import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.server.test_util.GraphUtils;
 import com.bbn.parliament.server.test_util.RdfFileLoader;
 
@@ -312,10 +312,10 @@ public class ParliamentServerTests {
 		String query = "select * where { graph <%1$s> { ?x a <%2$s1> , <%2$s2> . } }";
 
 		GraphUtils.doUpdate(updateUrl, "create graph <%1$s>", graph1Uri);
-		GraphUtils.insertStatements(graphStoreUrl, triple1, RDFFormat.NTRIPLES, graph1Uri);
+		GraphUtils.insertStatements(graphStoreUrl, triple1, Lang.NTRIPLES, graph1Uri);
 
 		GraphUtils.doUpdate(updateUrl, "create graph <%1$s>", graph2Uri);
-		GraphUtils.insertStatements(graphStoreUrl, triple2, RDFFormat.NTRIPLES, graph2Uri);
+		GraphUtils.insertStatements(graphStoreUrl, triple2, Lang.NTRIPLES, graph2Uri);
 
 		// Jena's update parser doesn't understand the parenthesis abbreviation of RDF lists:
 		GraphUtils.doUpdate(updateUrl, """
@@ -355,7 +355,7 @@ public class ParliamentServerTests {
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		testModel.write(os, "N-TRIPLE", null);
-		GraphUtils.insertStatements(graphStoreUrl, os.toString(), RDFFormat.NTRIPLES, null);
+		GraphUtils.insertStatements(graphStoreUrl, os.toString(), Lang.NTRIPLES, null);
 
 		Model resultModel = GraphUtils.doConstructQuery(sparqlUrl, query);
 		assertTrue(testModel.difference(resultModel).isEmpty());

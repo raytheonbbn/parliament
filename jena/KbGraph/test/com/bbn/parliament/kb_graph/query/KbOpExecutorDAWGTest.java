@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -160,7 +159,7 @@ public class KbOpExecutorDAWGTest {
 
 	@ParameterizedTest
 	@MethodSource
-	public void testDawgTest(DAWGManifestEntry me) throws IOException {
+	public void testDawgTest(DAWGManifestEntry me) {
 		if (INVALID_TESTS.contains(me.getCurrentTest())) {
 			LOG.warn("Skipping DAWG test '{}'", me.getCurrentTest());
 			return;

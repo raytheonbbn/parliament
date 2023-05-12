@@ -24,11 +24,12 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFLanguages;
 import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.jena.joseki.bridge.servlet.ServletErrorResponseException;
 import com.bbn.parliament.jena.joseki.graph.ForgetfulGraph;
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
@@ -95,7 +96,7 @@ public class Inserter {
 			}
 
 			// Determine the RDF serialization format by looking at the file extension:
-			RDFFormat format = null;
+			Lang lang = null;
 			if ("auto".equalsIgnoreCase(dataFormat)) {
 				if (null == filename || filename.length() == 0) {
 					throw new ServletErrorResponseException("""
@@ -103,20 +104,19 @@ public class Inserter {
 						the filename extension, but the filename was not available.  Please \
 						resubmit with the proper data format specified.""");
 				} else {
-					format = RDFFormat.parseFilename(filename);
-					if (RDFFormat.UNKNOWN == format) {
+					lang = RDFLanguages.pathnameToLang(filename);
+					if (lang == null) {
 						throw new ServletErrorResponseException("""
 							Unable to determine the serialization format of the RDF document \
 							from the filename extension.  Please resubmit with the proper data \
 							format specified.""");
 					} else {
-						LOG.debug("Mapping input filename '{}' to {} format",
-							filename, format);
+						LOG.debug("Interpreting input file '{}' as {}", filename, lang);
 					}
 				}
 			} else {
-				format = RDFFormat.parse(dataFormat);
-				if (RDFFormat.UNKNOWN == format) {
+				lang = RDFLanguages.nameToLang(dataFormat);
+				if (lang == null) {
 					throw new ServletErrorResponseException("Unsupported data format \"%1$s\"",
 						dataFormat);
 				}
@@ -136,9 +136,9 @@ public class Inserter {
 					"There was no named graph with name \"%1$s\"", graphName);
 			} else {
 				if (verify) {
-					numStatements = verify(strmPrvdr, base, format);
+					numStatements = verify(strmPrvdr, base, lang);
 				}
-				insert(model, graphLabel, strmPrvdr, format, base);
+				insert(model, graphLabel, strmPrvdr, lang, base);
 			}
 		}
 	}
@@ -158,7 +158,7 @@ public class Inserter {
 			while ((ze = zin.getNextEntry()) != null) {
 				String zipEntryName = ze.getName();
 				FileNameDecomposition decomp = new FileNameDecomposition(zipEntryName);
-				if (RDFFormat.UNKNOWN == decomp.getFormat()) {
+				if (decomp.getLang() == null) {
 					throw new ServletErrorResponseException("""
 						Unsupported file extension on "%1$s" -- must be one of 'ttl', 'n3', \
 						'nt', 'rdf', 'owl', or 'xml'""", zipEntryName);
@@ -170,10 +170,10 @@ public class Inserter {
 				if (decomp.isMasterGraph()) {
 					masterGraph = ModelFactory.createDefaultModel();
 					try (InputStream is = entryStrmProvider.getInputStream()) {
-						masterGraph.read(is, baseUri, decomp.getFormat().toString());
+						masterGraph.read(is, baseUri, decomp.getLang().getName());
 					}
 				} else {
-					long num = verify(entryStrmProvider, baseUri, decomp.getFormat());
+					long num = verify(entryStrmProvider, baseUri, decomp.getLang());
 					if (num > 0) {
 						toReturn += num;
 					}
@@ -260,8 +260,8 @@ public class Inserter {
 			ZipEntry ze = null;
 			while ((ze = zin.getNextEntry()) != null) {
 				FileNameDecomposition decomp = new FileNameDecomposition(ze.getName());
-				// We can assume that decomp.getFormat() is not RDFFormat.UNKNOWN
-				// because that was checked in the verification loop above.
+				// We can assume that decomp.getFormat() is not null because that
+				// was checked in the verification loop above.
 
 				IInputStreamProvider entryStrmProvider = getZipStrmProvider(zin);
 
@@ -269,12 +269,12 @@ public class Inserter {
 					// Do nothing (ignore the Master Graph)
 				} else if (decomp.isDefaultGraph()) {
 					Model model = ModelManager.inst().getDefaultModel();
-					insert(model, "Default Graph", entryStrmProvider, decomp.getFormat(), baseUri);
+					insert(model, "Default Graph", entryStrmProvider, decomp.getLang(), baseUri);
 				} else {
 					String graphDir = decomp.getDirName();
 					String graphNm = dirToGraphNameMap.get(graphDir);
 					Model model = ModelManager.inst().createAndAddNamedModel(graphNm, graphDir, indexGraphs.contains(graphNm));
-					insert(model, graphNm, entryStrmProvider, decomp.getFormat(), baseUri);
+					insert(model, graphNm, entryStrmProvider, decomp.getLang(), baseUri);
 				}
 
 				zin.closeEntry();
@@ -320,36 +320,33 @@ public class Inserter {
 	}
 
 	private static class FileNameDecomposition {
-		private String _dirName;
-		private RDFFormat _format;
+		private String dirName;
+		private Lang lang;
 
 		public FileNameDecomposition(String fname) {
-			String extension = null;
-			_dirName = null;
+			dirName = null;
+			lang = RDFLanguages.pathnameToLang(fname);
 			int dotIndex = fname.lastIndexOf('.');
 			if (dotIndex >= 0 && (dotIndex + 1) < fname.length()) {
-				extension = fname.substring(dotIndex + 1);
-				_dirName = fname.substring(0, dotIndex);
+				dirName = fname.substring(0, dotIndex);
 			}
-
-			_format = RDFFormat.parseExtension(extension);
 		}
 
 		public String getDirName() {
-			return _dirName;
+			return dirName;
 		}
 
 		public boolean isMasterGraph() {
-			return _dirName.equalsIgnoreCase(AbstractHandler.MASTER_GRAPH_BASENAME)
-				|| _dirName.equalsIgnoreCase(AbstractHandler.OLD_MASTER_GRAPH_BASENAME);
+			return dirName.equalsIgnoreCase(AbstractHandler.MASTER_GRAPH_BASENAME)
+				|| dirName.equalsIgnoreCase(AbstractHandler.OLD_MASTER_GRAPH_BASENAME);
 		}
 
 		public boolean isDefaultGraph() {
-			return _dirName.equalsIgnoreCase(AbstractHandler.DEFAULT_GRAPH_BASENAME);
+			return dirName.equalsIgnoreCase(AbstractHandler.DEFAULT_GRAPH_BASENAME);
 		}
 
-		public RDFFormat getFormat() {
-			return _format;
+		public Lang getLang() {
+			return lang;
 		}
 	}
 
@@ -374,13 +371,13 @@ public class Inserter {
 	 * @return the number of statements in the stream
 	 */
 	@SuppressWarnings("static-method")
-	protected long verify(IInputStreamProvider inStrmPrvdr, String baseUri, RDFFormat format)
+	protected long verify(IInputStreamProvider inStrmPrvdr, String baseUri, Lang lang)
 		throws IOException {
 		long numStmts = 0;
 		long start = Calendar.getInstance().getTimeInMillis();
 		Model syntaxVerifier = ModelFactory.createModelForGraph(new ForgetfulGraph());
 		try (InputStream in = inStrmPrvdr.getInputStream()) {
-			syntaxVerifier.read(in, baseUri, format.toString());
+			syntaxVerifier.read(in, baseUri, lang.getName());
 			numStmts = syntaxVerifier.size();
 
 			if (LOG.isInfoEnabled()) {
@@ -395,10 +392,10 @@ public class Inserter {
 	/** Inserts the statements from the InputStream into the given Model. */
 	@SuppressWarnings("static-method")
 	protected void insert(Model model, String graphLabel, IInputStreamProvider inStrmPrvdr,
-		RDFFormat format, String baseUri) throws IOException {
+		Lang lang, String baseUri) throws IOException {
 		long start = Calendar.getInstance().getTimeInMillis();
 		try (InputStream in = inStrmPrvdr.getInputStream()) {
-			model.read(in, baseUri, format.toString());
+			model.read(in, baseUri, lang.getName());
 
 			if (LOG.isInfoEnabled()) {
 				long end = Calendar.getInstance().getTimeInMillis();

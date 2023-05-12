@@ -28,9 +28,8 @@ public class QueryService {
 		List<AcceptableMediaType> acceptList = ServiceUtil.getAcceptList(format, headers);
 		String requestor = ServiceUtil.getRequestor(request);
 		QueryHandler handler = new QueryHandler(query, acceptList, requestor);
-		String contentType = handler.getContentType().getPrimaryMediaType();
 		return ResponseEntity.status(HttpStatus.OK)
-			.contentType(ServiceUtil.mediaTypeFromString(contentType))
+			.contentType(ServiceUtil.getSpringMediaType(handler.getContentType()))
 			.body(handler::handleRequest);
 	}
 }

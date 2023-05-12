@@ -9,6 +9,7 @@ package com.bbn.parliament.jena.joseki.graph;
 import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -21,10 +22,10 @@ import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.RDFLanguages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.core.jni.KbConfig;
 import com.bbn.parliament.jena.joseki.bridge.ActionRouter;
 import com.bbn.parliament.jena.joseki.bridge.configuration.ReasonerConfigurationHandler;
@@ -220,22 +221,22 @@ public class ModelManager {
 	}
 
 	/** Load the given file into the model. */
-	public void loadFile(String filename) {
+	public void loadFile(String fileName) {
 		if (_dataSource == null) {
 			initialize();
 		}
 
-		RDFFormat type = RDFFormat.parseFilename(filename);
-		if (RDFFormat.UNKNOWN == type) {
-			LOG.warn("Ignoring {}", filename);
+		var lang = RDFLanguages.pathnameToLang(fileName);
+		if (lang == null) {
+			LOG.warn("Ignoring {}", fileName);
 			return;
 		}
 
-		try (Reader reader = new FileReader(filename)) {
-			LOG.info("Importing model data from: {}", filename);
-			getDefaultModel().read(reader, null, type.toString());
+		try (Reader reader = new FileReader(fileName, StandardCharsets.UTF_8)) {
+			LOG.info("Importing model data from: {}", fileName);
+			getDefaultModel().read(reader, null, lang.getName());
 		} catch (Exception ex) {
-			LOG.error("Could not read file: " + filename, ex);
+			LOG.error("Could not read file: " + fileName, ex);
 		}
 	}
 

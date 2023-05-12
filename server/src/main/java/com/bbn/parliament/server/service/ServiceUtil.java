@@ -53,17 +53,9 @@ final class ServiceUtil {
 		return fmt.formatted(host, port, user);
 	}
 
-	public static MediaType mediaTypeFromString(String mediaType) {
-		String[] pieces = Objects.requireNonNull(mediaType, "mediaType")
-			.split("/", 2);
-		if (pieces.length == 0) {
-			throw new IllegalArgumentException(
-				"'%1$s' is not a legal media type".formatted(mediaType));
-		} else if (pieces.length == 1) {
-			return new MediaType(pieces[0]);
-		} else {
-			return new MediaType(pieces[0], pieces[1]);
-		}
+	public static MediaType getSpringMediaType(AcceptableMediaType mediaType) {
+		var jenaCT = Objects.requireNonNull(mediaType, "mediaType").getPrimaryMediaType();
+		return new MediaType(jenaCT.getType(), jenaCT.getSubType());
 	}
 
 	public static String getBaseUrl(HttpServletRequest request) {

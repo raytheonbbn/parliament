@@ -6,6 +6,8 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Function;
 
+import org.apache.jena.atlas.web.ContentType;
+import org.apache.jena.riot.RDFLanguages;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +19,8 @@ public class MultiPartBodyPublisherBuilderTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void multiPartBodyPublisherBuilderTest() {
-		Function<File, String> contentTypeDeducer = f -> RDFFormat.parseFilename(f).getMediaType();
+		Function<File, ContentType> contentTypeDeducer =
+			f -> RDFLanguages.pathnameToLang(f.getName()).getContentType();
 		var partIterable = new MultiPartBodyPublisherBuilder()
 			.addPart("graph", "http://example.org/#TestGraph")
 			.addPart("file", new File(DATA_DIR, "geo-example.ttl"), contentTypeDeducer)

@@ -34,6 +34,8 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFLanguages;
 import org.apache.jena.sparql.modify.request.QuadDataAcc;
 import org.apache.jena.sparql.modify.request.UpdateDataInsert;
 import org.apache.jena.update.UpdateExecutionFactory;
@@ -49,7 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.client.HttpClientUtil;
-import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.client.RemoteModel;
 import com.bbn.parliament.jena.joseki.bridge.tracker.Tracker;
 
@@ -60,7 +61,8 @@ public class ParliamentServerTestCase {
 	private static final String PORT = System.getProperty("jetty.port", "8586");
 	private static final String SPARQL_URL = RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL.formatted(HOST, PORT);
 	private static final String BULK_URL = RemoteModel.DEFAULT_BULK_ENDPOINT_URL.formatted(HOST, PORT);
-	private static final String[] RSRCS_TO_LOAD = { "univ-bench.owl", "University15_20.owl" };
+	private static final File DATA_DIR = new File(System.getProperty("test.data.path"));
+	private static final String[] FILES_TO_LOAD = { "univ-bench.owl", "University15_20.owl" };
 	private static final String CSV_QUOTE_TEST_INPUT = "csv-quote-test-input.ttl";
 	private static final String CSV_QUOTE_TEST_EXPECTED_RESULT = "csv-quote-test-expected-result.csv";
 	private static final String CSV_QUOTE_TEST_ACTUAL_CSV_RESULT = "../csv-quote-test-actual-result.csv";
@@ -197,7 +199,7 @@ public class ParliamentServerTestCase {
 
 		String triples = "<%1$s> <%2$s> \"%3$s\" ."
 			.formatted(TEST_SUBJECT, RDFS.label, TEST_LITERAL);
-		rm.insertStatements(triples, RDFFormat.NTRIPLES, null, true);
+		rm.insertStatements(triples, Lang.NTRIPLES.getName(), null, true);
 
 		String query = "select * where { ?thing a <%1$s> ; <%2$s> ?label . }"
 			.formatted(TEST_CLASS, RDFS.label);
@@ -230,9 +232,9 @@ public class ParliamentServerTestCase {
 		String query = "ask where { %1$s }".formatted(stmt);
 
 		assertFalse(rm.askQuery(query));
-		rm.insertStatements(stmt, RDFFormat.NTRIPLES, null, true);
+		rm.insertStatements(stmt, Lang.NTRIPLES.getName(), null, true);
 		assertTrue(rm.askQuery(query));
-		rm.deleteStatements(stmt, RDFFormat.NTRIPLES);
+		rm.deleteStatements(stmt, Lang.NTRIPLES.getName());
 		assertFalse(rm.askQuery(query));
 	}
 
@@ -331,7 +333,7 @@ public class ParliamentServerTestCase {
 		boolean caughtException = false;
 		try {
 			// Invalid n-triples:
-			rm.insertStatements("oogetyboogetyboo!", RDFFormat.NTRIPLES, null, true);
+			rm.insertStatements("oogetyboogetyboo!", Lang.NTRIPLES.getName(), null, true);
 		} catch (Exception ex) {
 			caughtException = true;
 			log.info("Exception type for n-triples parse error (insert):  {}", ex.getClass().getName());
@@ -345,7 +347,7 @@ public class ParliamentServerTestCase {
 		boolean caughtException = false;
 		try {
 			// Invalid n-triples:
-			rm.deleteStatements("oogetyboogetyboo!", RDFFormat.NTRIPLES);
+			rm.deleteStatements("oogetyboogetyboo!", Lang.NTRIPLES.getName());
 		} catch (Exception ex) {
 			caughtException = true;
 			log.info("Exception type for n-triples parse error (delete):  {}", ex.getClass().getName());
@@ -364,8 +366,8 @@ public class ParliamentServerTestCase {
 
 		rm.createNamedGraph(graphUri);
 
-		rm.insertStatements(triples, RDFFormat.NTRIPLES, null, true);
-		rm.insertStatements(triples, RDFFormat.NTRIPLES, null, graphUri, true);
+		rm.insertStatements(triples, Lang.NTRIPLES.getName(), null, true);
+		rm.insertStatements(triples, Lang.NTRIPLES.getName(), null, graphUri, true);
 
 		ResultSet rs = rm.selectQuery(query);
 		boolean foundIt = false;
@@ -393,10 +395,10 @@ public class ParliamentServerTestCase {
 			.formatted(unionGraphUri, TEST_CLASS);
 
 		rm.createNamedGraph(graph1Uri);
-		rm.insertStatements(triple1, RDFFormat.NTRIPLES, null, graph1Uri, true);
+		rm.insertStatements(triple1, Lang.NTRIPLES.getName(), null, graph1Uri, true);
 
 		rm.createNamedGraph(graph2Uri);
-		rm.insertStatements(triple2, RDFFormat.NTRIPLES, null, graph2Uri, true);
+		rm.insertStatements(triple2, Lang.NTRIPLES.getName(), null, graph2Uri, true);
 
 		rm.createNamedUnionGraph(unionGraphUri, graph1Uri, graph2Uri);
 
@@ -428,7 +430,8 @@ public class ParliamentServerTestCase {
 	@Test
 	public void csvQuotingTest() throws IOException {
 		try (InputStream is = getResourceAsStream(CSV_QUOTE_TEST_INPUT)) {
-			rm.insertStatements(is, RDFFormat.parseFilename(CSV_QUOTE_TEST_INPUT), null, true);
+			var lang = RDFLanguages.pathnameToLang(CSV_QUOTE_TEST_INPUT);
+			rm.insertStatements(is, lang.getName(), null, true);
 		}
 
 		String actualResponse;
@@ -502,24 +505,21 @@ public class ParliamentServerTestCase {
 	}
 
 	private static void loadSampleData() {
-		try {
-			Model clientSideModel = ModelFactory.createDefaultModel();
-			for (String rsrcName : RSRCS_TO_LOAD) {
-				RdfResourceLoader.load(rsrcName, clientSideModel);
-			}
-
-			QuadDataAcc qd = new QuadDataAcc();
-			StmtIterator it = clientSideModel.listStatements();
-			while (it.hasNext()) {
-				Statement stmt = it.next();
-				qd.addTriple(stmt.asTriple());
-			}
-			UpdateDataInsert update = new UpdateDataInsert(qd);
-			UpdateProcessor exec = UpdateExecutionFactory.createRemote(update, SPARQL_URL);
-			executeUpdate(exec);
-		} catch (IOException ex) {
-			fail(ex.getMessage());
+		Model clientSideModel = ModelFactory.createDefaultModel();
+		for (String fileName : FILES_TO_LOAD) {
+			var file = new File(DATA_DIR, fileName);
+			RdfResourceLoader.load(file, clientSideModel);
 		}
+
+		QuadDataAcc qd = new QuadDataAcc();
+		StmtIterator it = clientSideModel.listStatements();
+		while (it.hasNext()) {
+			Statement stmt = it.next();
+			qd.addTriple(stmt.asTriple());
+		}
+		UpdateDataInsert update = new UpdateDataInsert(qd);
+		UpdateProcessor exec = UpdateExecutionFactory.createRemote(update, SPARQL_URL);
+		executeUpdate(exec);
 	}
 
 	private static void doUpdate(String queryFmt, Object... args) {

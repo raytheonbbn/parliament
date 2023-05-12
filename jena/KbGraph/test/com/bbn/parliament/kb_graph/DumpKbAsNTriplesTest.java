@@ -6,8 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,18 +20,18 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.RDFLanguages;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.core.jni.KbConfig;
 import com.bbn.parliament.core.jni.KbInstance;
+import com.bbn.parliament.kb_graph.query.QueryTestUtil;
 
 public class DumpKbAsNTriplesTest {
-	private static final File TEST_DATA_DIR = new File("data");
-	private static final File TEST_INPUT = new File(TEST_DATA_DIR, "DumpTestData.ttl");
+	private static final String TEST_INPUT = "data/DumpTestData.ttl";
 	private static final String OUTPUT_DELIMITER = "########## Actual dump output ##########";
 
 	private KbConfig config;
@@ -68,13 +66,14 @@ public class DumpKbAsNTriplesTest {
 
 	@ParameterizedTest
 	@CsvSource({
-		"false, DumpTestExpectedResult-utf8.nt",
-		"true, DumpTestExpectedResult-ascii.nt",
+		"false, data/DumpTestExpectedResult-utf8.nt",
+		"true, data/DumpTestExpectedResult-ascii.nt",
 	})
 	public void dumpKB(boolean useAsciiEncoding, String expectedOutputFileName) throws IOException {
 		// Set up the KB:
-		try (InputStream in = getRsrcAsStream(TEST_INPUT)) {
-			model.read(in, null, RDFFormat.parseFilename(TEST_INPUT).toString());
+		var lang = RDFLanguages.resourceNameToLang(TEST_INPUT);
+		try (InputStream in = QueryTestUtil.getResource(TEST_INPUT)) {
+			model.read(in, null, lang.getName());
 		}
 
 		// Test that inferred statements are present.  The comparison with the
@@ -83,8 +82,7 @@ public class DumpKbAsNTriplesTest {
 		assertEquals(2L, countNamedEntities(), "No inferred statements are present");
 
 		Set<String> expectedOutput;
-		File expectedTestOutput = new File(TEST_DATA_DIR, expectedOutputFileName);
-		try (InputStream in = getRsrcAsStream(expectedTestOutput)) {
+		try (InputStream in = QueryTestUtil.getResource(expectedOutputFileName)) {
 			expectedOutput = getLinesFromFile(in);
 		}
 		String actualOutputStr;
@@ -100,16 +98,6 @@ public class DumpKbAsNTriplesTest {
 			actualOutput = getLinesFromFile(in);
 		}
 		assertTrue(setsAreIdentical(expectedOutput, actualOutput));
-	}
-
-	private static InputStream getRsrcAsStream(File rsrcPath) throws FileNotFoundException {
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		InputStream result = cl.getResourceAsStream(rsrcPath.getPath());
-		if (result == null) {
-			throw new FileNotFoundException("Could not load resource: '%1$s'"
-				.formatted(rsrcPath.getPath()));
-		}
-		return result;
 	}
 
 	private long countNamedEntities() {

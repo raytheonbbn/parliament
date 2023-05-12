@@ -18,12 +18,15 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.jena.atlas.web.ContentType;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFLanguages;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.modify.request.QuadDataAcc;
 import org.apache.jena.sparql.modify.request.UpdateDataDelete;
@@ -40,7 +43,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.bbn.parliament.client.MultiPartBodyPublisherBuilder;
 import com.bbn.parliament.client.QuerySolutionStream;
-import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.kb_graph.KbGraphStore;
 import com.bbn.parliament.server.controller.QueryController;
 import com.bbn.parliament.sparql_query_builder.QueryBuilder;
@@ -194,32 +196,32 @@ public class GraphUtils {
 
 	// Graph store protocol methods
 
-	public static int insertStatements(String graphStoreUrl, String stmt, RDFFormat format,
+	public static int insertStatements(String graphStoreUrl, String stmt, Lang lang,
 			String graphName) throws IOException {
 		try (InputStream is = new ByteArrayInputStream(stmt.getBytes(StandardCharsets.UTF_8))) {
-			return insertStatements(graphStoreUrl, is, format, graphName);
+			return insertStatements(graphStoreUrl, is, lang, graphName);
 		}
 	}
 
 	public static int insertStatements(String graphStoreUrl, InputStream in,
-			RDFFormat format, String graphName) {
+			Lang lang, String graphName) {
 		return insertStatements(graphStoreUrl, graphName,
-			HttpRequest.BodyPublishers.ofInputStream(() -> in), format.getMediaType());
+			HttpRequest.BodyPublishers.ofInputStream(() -> in), lang.getContentType());
 	}
 
 	public static int insertStatements(String graphStoreUrl, String graphName, File file)
 			throws IOException {
 		return insertStatements(graphStoreUrl, graphName,
 			HttpRequest.BodyPublishers.ofFile(file.toPath()),
-			RDFFormat.parseFilename(file).getMediaType());
+			RDFLanguages.pathnameToLang(file.getName()).getContentType());
 	}
 
 	private static int insertStatements(String graphStoreUrl, String graphName,
-			BodyPublisher bp, String mediaType) {
+			BodyPublisher bp, ContentType contentType) {
 		var request = HttpRequest.newBuilder()
 			.uri(getRequestUrl(graphStoreUrl, graphName))
 			.POST(bp)
-			.header(HttpHeaders.CONTENT_TYPE, mediaType)
+			.header(HttpHeaders.CONTENT_TYPE, contentType.getContentTypeStr())
 			.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
 			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 			.build();
@@ -229,7 +231,8 @@ public class GraphUtils {
 	public static int insertStatements(String graphStoreUrl, String graphName, List<File> filesToLoad) {
 		var builder = new MultiPartBodyPublisherBuilder();
 		for (var file : filesToLoad) {
-			builder = builder.addPart("file", file, f -> RDFFormat.parseFilename(f).getMediaType());
+			builder = builder.addPart("file", file,
+				f -> RDFLanguages.pathnameToLang(f.getName()).getContentType());
 		}
 		var request = HttpRequest.newBuilder()
 					.uri(getRequestUrl(graphStoreUrl, graphName))
@@ -241,42 +244,42 @@ public class GraphUtils {
 		return getReponseAsString(request).statusCode();
 	}
 
-	public static int replaceGraph(String graphStoreUrl, String stmt, RDFFormat format,
+	public static int replaceGraph(String graphStoreUrl, String stmt, Lang lang,
 			String graphName) throws IOException {
 		try (InputStream is = new ByteArrayInputStream(stmt.getBytes(StandardCharsets.UTF_8))) {
-			return replaceGraph(graphStoreUrl, is, format, graphName);
+			return replaceGraph(graphStoreUrl, is, lang, graphName);
 		}
 	}
 
 	public static int replaceGraph(String graphStoreUrl, InputStream in,
-			RDFFormat format, String graphName) {
+			Lang lang, String graphName) {
 		return replaceGraph(graphStoreUrl, graphName,
-			HttpRequest.BodyPublishers.ofInputStream(() -> in), format.getMediaType());
+			HttpRequest.BodyPublishers.ofInputStream(() -> in), lang.getContentType());
 	}
 
 	public static int replaceGraph(String graphStoreUrl, String graphName, File file)
 			throws IOException {
 		return replaceGraph(graphStoreUrl, graphName,
 			HttpRequest.BodyPublishers.ofFile(file.toPath()),
-			RDFFormat.parseFilename(file).getMediaType());
+			RDFLanguages.pathnameToLang(file.getName()).getContentType());
 	}
 
 	private static int replaceGraph(String graphStoreUrl, String graphName,
-			BodyPublisher bp, String mediaType) {
+			BodyPublisher bp, ContentType contentType) {
 		var request = HttpRequest.newBuilder()
 			.uri(getRequestUrl(graphStoreUrl, graphName))
 			.PUT(bp)
-			.header(HttpHeaders.CONTENT_TYPE, mediaType)
+			.header(HttpHeaders.CONTENT_TYPE, contentType.getContentTypeStr())
 			.header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
 			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 			.build();
 		return getReponseAsString(request).statusCode();
 	}
 
-	public static HttpResponse<InputStream> getStatements(String graphStoreUrl, String graphName, RDFFormat rdfFmt) {
+	public static HttpResponse<InputStream> getStatements(String graphStoreUrl, String graphName, Lang lang) {
 		var request = HttpRequest.newBuilder()
 			.uri(getRequestUrl(graphStoreUrl, graphName))
-			.header(HttpHeaders.ACCEPT, rdfFmt.getMediaType())
+			.header(HttpHeaders.ACCEPT, lang.getContentType().getContentTypeStr())
 			.header(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())
 			.GET()
 			.build();

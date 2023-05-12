@@ -27,8 +27,8 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.riot.Lang;
 
-import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.client.RemoteModel;
 
 /** @author jlerner */
@@ -505,7 +505,7 @@ public abstract class AbstractStressTest
 
 				// start timing and perform the write operation
 				startTime = System.nanoTime();
-				_repository.insertStatements(toAdd.toString(), RDFFormat.NTRIPLES, null, true);
+				_repository.insertStatements(toAdd.toString(), Lang.NTRIPLES.getName(), null, true);
 				_totalThreadElapsedTime += (System.nanoTime() - startTime);
 			}
 			catch (IOException e)

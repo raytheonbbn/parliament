@@ -7,7 +7,6 @@
 package com.bbn.parliament.jena.joseki.handler;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -17,11 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.jena.rdf.model.Model;
-import org.joseki.Joseki;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFLanguages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.jena.joseki.bridge.ActionRouter;
 import com.bbn.parliament.jena.joseki.bridge.servlet.ServletErrorResponseException;
 import com.bbn.parliament.jena.joseki.bridge.util.HttpServerUtil;
@@ -80,32 +79,30 @@ public class ExportHandler extends AbstractHandler {
 			"'multipart/form data' requests are not supported by this handler.");
 	}
 
-	protected void handleRequest(HttpServletRequest req, HttpServletResponse resp,
+	private static void handleRequest(HttpServletRequest req, HttpServletResponse resp,
 		String graphName, String dataFormat, String exportAllStr)
 			throws IOException, ServletErrorResponseException {
 		// Default to false
 		boolean exportAll = "yes".equalsIgnoreCase(exportAllStr);
 
-		RDFFormat format = RDFFormat.parse(dataFormat);
-		if (format == RDFFormat.UNKNOWN) {
+		var lang = RDFLanguages.nameToLang(dataFormat);
+		if (lang == null) {
 			throw new ServletErrorResponseException("Unsupported data format \"%1$s\"", dataFormat);
 		}
 
 		ActionRouter.getReadLock();
 		try {
 			if (exportAll) {
-				writeResponse(req, resp, format);
-			}
-			else {
+				writeResponse(req, resp, lang);
+			} else {
 				boolean isDefaultGraph = "".equals(graphName);
 				Model model = isDefaultGraph ? ModelManager.inst().getDefaultModel() : ModelManager.inst().getModel(graphName);
 
 				if (null == model) {
 					throw new ServletErrorResponseException(
 						"There was no named graph with name \"%1$s\"", graphName);
-				}
-				else {
-					writeResponse(req, resp, model, graphName, format);
+				} else {
+					writeResponse(req, resp, model, graphName, lang);
 				}
 
 				LOG.info("Export finished!");
@@ -121,33 +118,25 @@ public class ExportHandler extends AbstractHandler {
 	 * @param resp The HttpServletResponse to respond on.
 	 * @param model The graph to export.
 	 * @param graphName The name of the graph to export.
-	 * @param dataFormat The RDF serialization format.
+	 * @param lang The RDF serialization format.
 	 */
-	protected void writeResponse(HttpServletRequest req, HttpServletResponse resp,
-		Model model, String graphName, RDFFormat dataFormat) throws IOException {
+	private static void writeResponse(HttpServletRequest req, HttpServletResponse resp,
+		Model model, String graphName, Lang lang) throws IOException {
 
 		String graphLabel = (graphName.length() == 0) ? DEFAULT_GRAPH_BASENAME : graphName;
 
-		LOG.info("Exporting <{}> in \"{}\" format.", graphLabel, dataFormat);
+		LOG.info("Exporting <{}> in \"{}\" format.", graphLabel, lang);
 
 		String basename = encodeUriForFilename(graphLabel);
-		String extension = dataFormat.getExtension();
+		String extension = lang.getFileExtensions().get(0);
 		String filename = "%1$s.%2$s".formatted(basename, extension);
 
-		String writerMimeType = switch (dataFormat) {
-			case N3 -> Joseki.contentTypeN3;
-			case TURTLE -> Joseki.contentTypeTurtle;
-			case NTRIPLES -> Joseki.contentTypeNTriples;
-			case RDFXML -> Joseki.contentTypeRDFXML;
-			default -> "text/plain";
-		};
-
-		resp.setContentType(writerMimeType);
+		resp.setContentType(lang.getContentType().getContentTypeStr());
 		resp.setHeader("Content-Disposition", "inline; filename=\"%1$s\";".formatted(filename));
 
 		@SuppressWarnings("resource")
 		ServletOutputStream out = resp.getOutputStream();
-		writeModel(out, model, dataFormat);
+		model.write(out, lang.getName(), null);
 		out.flush();
 	}
 
@@ -155,15 +144,15 @@ public class ExportHandler extends AbstractHandler {
 	 * Exports a set of graphs in a zip archive.
 	 *
 	 * @param resp The HttpServletResponse to respond on.
-	 * @param dataFormat The RDF serialization format.
+	 * @param lang The RDF serialization format.
 	 */
-	protected void writeResponse(HttpServletRequest req, HttpServletResponse resp,
-		RDFFormat dataFormat) throws IOException {
-		LOG.info("Exporting entire repository to ZIP file in \"{}\" format.", dataFormat);
+	private static void writeResponse(HttpServletRequest req, HttpServletResponse resp,
+		Lang lang) throws IOException {
+		LOG.info("Exporting entire repository to ZIP file in \"{}\" format.", lang);
 
 		String hostname = req.getServerName();
 		String zipFilename = ZIP_FILENAME_FORMAT.formatted(hostname, Calendar.getInstance());
-		String extension = dataFormat.getExtension();
+		String extension = lang.getFileExtensions().get(0);
 
 		resp.setContentType("application/zip");
 		resp.setHeader("Content-Disposition", "inline; filename=\"%1$s\";".formatted(zipFilename));
@@ -175,7 +164,7 @@ public class ExportHandler extends AbstractHandler {
 				String basename = DEFAULT_GRAPH_BASENAME;
 				String filename = "%1$s.%2$s".formatted(basename, extension);
 				zout.putNextEntry(new ZipEntry(filename));
-				writeModel(zout, model, dataFormat);
+				model.write(zout, lang.getName(), null);
 				zout.closeEntry();
 			}
 
@@ -186,18 +175,13 @@ public class ExportHandler extends AbstractHandler {
 					String basename = kbGraph.getRelativeDirectory();
 					String filename = "%1$s.%2$s".formatted(basename, extension);
 					zout.putNextEntry(new ZipEntry(filename));
-					writeModel(zout, model, dataFormat);
+					model.write(zout, lang.getName(), null);
 					zout.closeEntry();
 				}
 			}
 
 			zout.finish();
 		}
-	}
-
-	@SuppressWarnings("static-method")
-	protected void writeModel(OutputStream out, Model model, RDFFormat dataFormat) {
-		model.write(out, dataFormat.toString());
 	}
 
 	/**
@@ -207,7 +191,7 @@ public class ExportHandler extends AbstractHandler {
 	 * @param uri URI to encode.
 	 * @return A string that can be used as a valid filename.
 	 */
-	public static String encodeUriForFilename(String uri) {
+	private static String encodeUriForFilename(String uri) {
 		// Some helpful comments here:
 		// http://stackoverflow.com/questions/62771/how-check-if-given-string-is-legal-allowed-file-name-under-windows
 

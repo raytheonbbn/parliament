@@ -51,11 +51,11 @@ public class GraphStoreService {
 	@SuppressWarnings("static-method")
 	public ResponseEntity<StreamingResponseBody> doGetGraph(String graphUri, String format,
 		HttpHeaders headers, HttpServletRequest request) {
-		AcceptableMediaType contentType = chooseMediaType(format, headers);
+		AcceptableMediaType mediaType = chooseMediaType(format, headers);
 		String serverName = ServiceUtil.getRequestor(request);
-		GraphExportHandler handler = new GraphExportHandler(contentType, serverName, graphUri);
+		GraphExportHandler handler = new GraphExportHandler(mediaType, serverName, graphUri);
 		return ResponseEntity.status(HttpStatus.OK)
-			.contentType(ServiceUtil.mediaTypeFromString(contentType.getPrimaryMediaType()))
+			.contentType(ServiceUtil.getSpringMediaType(mediaType))
 			.header("Content-Disposition", handler.getContentDisposition())
 			.body(handler::handleRequest);
 	}

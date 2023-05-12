@@ -11,12 +11,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFLanguages;
+
 /** @author sallen */
 public class RemoteInserter {
 	private final String sparqlEndPointUrl;
 	private final String bulkEndPointUrl;
 	private final File inputFile;
-	private final RDFFormat inputFormat;
+	private final Lang inputFormat;
 	private final String graphName;
 
 	public static void main(String[] args) {
@@ -69,8 +72,8 @@ public class RemoteInserter {
 					inputFile.getPath());
 			}
 
-			inputFormat = RDFFormat.parseFilename(inputFile);
-			if (!inputFormat.isJenaReadable()) {
+			inputFormat = RDFLanguages.pathnameToLang(inputFile.getPath());
+			if (inputFormat == null) {
 				throw new CmdLineException("Unrecognized file extension:  \"%1$s\"", inputFile.getName());
 			}
 
@@ -85,7 +88,7 @@ public class RemoteInserter {
 	private void run() throws IOException {
 		try (InputStream in = new FileInputStream(inputFile)) {
 			RemoteModel remote = new RemoteModel(sparqlEndPointUrl, bulkEndPointUrl);
-			long numStmts = remote.insertStatements(in, inputFormat, null, graphName, true);
+			long numStmts = remote.insertStatements(in, inputFormat.getName(), null, graphName, true);
 			System.out.format("Successfully inserted %1$d statements.%n", numStmts);
 		}
 	}

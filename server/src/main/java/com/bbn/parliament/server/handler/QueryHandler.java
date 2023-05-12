@@ -82,7 +82,7 @@ public class QueryHandler {
 			throw new QueryExecutionException("Query produced no result");
 		} else if (queryCategory == QueryResultCategory.RDF) {
 			Model respModel = trackable.getModel();
-			respModel.write(out, contentType.getRdfFormat().toString(), null);
+			respModel.write(out, contentType.getRdfLang().getName(), null);
 			LOG.debug(trackable.getQuery().isConstructType() ? "OK/construct" : "OK/describe");
 		} else if (trackable.getQuery().isSelectType()) {
 			//File tmpDir = ParliamentBridge.getInstance().getConfiguration().getTmpDir();

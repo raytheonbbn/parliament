@@ -3,8 +3,6 @@ package com.bbn.parliament.kb_graph.query;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
-
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.ARQ;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -74,7 +72,7 @@ public class KbOpExecutorTest {
 	}
 
 	@Test
-	public void testExecuteOpBGPSimple() throws IOException {
+	public void testExecuteOpBGPSimple() {
 		@SuppressWarnings("resource")
 		KbGraph defaultGraph = dataset.getDefaultGraph();
 		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", defaultGraph);
@@ -92,7 +90,7 @@ public class KbOpExecutorTest {
 	}
 
 	@Test
-	public void testFilterSequence() throws IOException {
+	public void testFilterSequence() {
 		String algebra;
 		Op op;
 		QueryIterator it;
@@ -144,7 +142,7 @@ public class KbOpExecutorTest {
 	}
 
 	@Test
-	public void testFilter() throws IOException {
+	public void testFilter() {
 		@SuppressWarnings("resource")
 		KbGraph defaultGraph = dataset.getDefaultGraph();
 		QueryTestUtil.loadResource("data/data-r2/sort/data-sort-numbers.ttl", defaultGraph);
@@ -166,7 +164,7 @@ public class KbOpExecutorTest {
 	}
 
 	@Test
-	public void testFilterSequenceBGP() throws IOException {
+	public void testFilterSequenceBGP() {
 		String algebra;
 		Op op;
 		QueryIterator it;

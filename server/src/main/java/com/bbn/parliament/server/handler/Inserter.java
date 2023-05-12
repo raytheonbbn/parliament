@@ -15,9 +15,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -29,11 +29,12 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFLanguages;
 import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.kb_graph.KbGraphStore;
 import com.bbn.parliament.server.exception.DataFormatException;
 import com.bbn.parliament.server.exception.MissingGraphException;
@@ -50,7 +51,7 @@ public final class Inserter {
 	private final String dataFormat;
 	private final String fileName;
 	private final VerifyOption verifyOption;
-	private final RDFFormat rdfFormat;
+	private final Lang rdfLang;
 	private final String baseUri;
 	private final Supplier<InputStream> streamSupplier;
 	private long numStatements;
@@ -73,7 +74,7 @@ public final class Inserter {
 		this.dataFormat = null;
 		this.fileName = null;
 		this.verifyOption = null;
-		rdfFormat = null;
+		rdfLang = null;
 		this.baseUri = baseUri;
 		this.streamSupplier = Objects.requireNonNull(streamSupplier, "streamSupplier");
 		numStatements = 0;
@@ -87,7 +88,7 @@ public final class Inserter {
 		this.dataFormat = dataFormat;
 		this.fileName = fileName;
 		this.verifyOption = Objects.requireNonNull(verifyOption, "verifyOption");
-		rdfFormat = Inserter.getRdfFormat(this.dataFormat, this.fileName);
+		rdfLang = Inserter.getRdfLang(this.dataFormat, this.fileName);
 		this.baseUri = baseUri;
 		this.streamSupplier = Objects.requireNonNull(streamSupplier, "streamSupplier");
 		numStatements = 0;
@@ -129,10 +130,12 @@ public final class Inserter {
 			while ((ze = zin.getNextEntry()) != null) {
 				String zipEntryName = ze.getName();
 				FileNameDecomposition decomp = new FileNameDecomposition(zipEntryName);
-				if (RDFFormat.UNKNOWN == decomp.getFormat()) {
-					var extList = Stream.of(RDFFormat.values())
-						.filter(rdfFmt -> rdfFmt.isJenaReadable() || rdfFmt == RDFFormat.JSON_LD)
-						.flatMap(rdfFmt -> rdfFmt.getExtensions().stream())
+				if (decomp.getLang() == null) {
+					var extensions = RDFLanguages.getRegisteredLanguages().stream()
+						.filter(lang -> !RDFLanguages.sameLang(lang, Lang.RDFNULL))
+						.flatMap(lang -> lang.getFileExtensions().stream())
+						.collect(Collectors.toCollection(TreeSet::new));
+					var extList = extensions.stream()
 						.collect(Collectors.joining("', '"));
 					throw new DataFormatException(
 						"Unsupported file extension on \"%1$s\": Must be one of '%2$s'",
@@ -145,10 +148,10 @@ public final class Inserter {
 				if (decomp.isMasterGraph()) {
 					masterGraph = ModelFactory.createDefaultModel();
 					try (InputStream entryStream = entryStrmProvider.get()) {
-						masterGraph.read(entryStream, baseUri, decomp.getFormat().toString());
+						masterGraph.read(entryStream, baseUri, decomp.getLang().getName());
 					}
 				} else {
-					long num = verify(entryStrmProvider, decomp.getFormat());
+					long num = verify(entryStrmProvider, decomp.getLang());
 					if (num > 0) {
 						numStatements += num;
 					}
@@ -222,8 +225,8 @@ public final class Inserter {
 			ZipEntry ze = null;
 			while ((ze = zin.getNextEntry()) != null) {
 				FileNameDecomposition decomp = new FileNameDecomposition(ze.getName());
-				// We can assume that decomp.getFormat() is not RDFFormat.UNKNOWN
-				// because that was checked in the verification loop above.
+				// We can assume that decomp.getFormat() is not null because that
+				// was checked in the verification loop above.
 
 				Supplier<InputStream> entryStrmProvider = getZipStrmProvider(zin);
 
@@ -231,12 +234,12 @@ public final class Inserter {
 					// Do nothing (ignore the Master Graph)
 				} else if (decomp.isDefaultGraph()) {
 					Model model = ModelManager.inst().getDefaultModel();
-					insert(model, KbGraphStore.DEFAULT_GRAPH_BASENAME, entryStrmProvider, decomp.getFormat());
+					insert(model, KbGraphStore.DEFAULT_GRAPH_BASENAME, entryStrmProvider, decomp.getLang());
 				} else {
 					String graphDir = decomp.getDirName();
 					String graphNm = dirToGraphNameMap.get(graphDir);
 					Model model = ModelManager.inst().createAndAddNamedModel(graphNm, graphDir, indexGraphs.contains(graphNm));
-					insert(model, graphNm, entryStrmProvider, decomp.getFormat());
+					insert(model, graphNm, entryStrmProvider, decomp.getLang());
 				}
 
 				zin.closeEntry();
@@ -279,36 +282,33 @@ public final class Inserter {
 	}
 
 	private static class FileNameDecomposition {
-		private String _dirName;
-		private RDFFormat _format;
+		private Lang fileLang;
+		private String dirName;
 
 		public FileNameDecomposition(String fname) {
-			String extension = null;
-			_dirName = null;
+			fileLang = RDFLanguages.pathnameToLang(fname);
+			dirName = null;
 			int dotIndex = fname.lastIndexOf('.');
 			if (dotIndex >= 0 && (dotIndex + 1) < fname.length()) {
-				extension = fname.substring(dotIndex + 1);
-				_dirName = fname.substring(0, dotIndex);
+				dirName = fname.substring(0, dotIndex);
 			}
+		}
 
-			_format = RDFFormat.parseExtension(extension);
+		public Lang getLang() {
+			return fileLang;
 		}
 
 		public String getDirName() {
-			return _dirName;
+			return dirName;
 		}
 
 		public boolean isMasterGraph() {
-			return _dirName.equalsIgnoreCase(KbGraphStore.MASTER_GRAPH_DIR)
-				|| _dirName.equalsIgnoreCase(KbGraphStore.OLD_MASTER_GRAPH_DIR);
+			return dirName.equalsIgnoreCase(KbGraphStore.MASTER_GRAPH_DIR)
+				|| dirName.equalsIgnoreCase(KbGraphStore.OLD_MASTER_GRAPH_DIR);
 		}
 
 		public boolean isDefaultGraph() {
-			return _dirName.equalsIgnoreCase(KbGraphStore.DEFAULT_GRAPH_BASENAME);
-		}
-
-		public RDFFormat getFormat() {
-			return _format;
+			return dirName.equalsIgnoreCase(KbGraphStore.DEFAULT_GRAPH_BASENAME);
 		}
 	}
 
@@ -335,10 +335,10 @@ public final class Inserter {
 		}
 
 		if (verifyOption == VerifyOption.VERIFY) {
-			numStatements = verify(streamSupplier, rdfFormat);
+			numStatements = verify(streamSupplier, rdfLang);
 		}
 
-		insert(model, graphLabel, streamSupplier, rdfFormat);
+		insert(model, graphLabel, streamSupplier, rdfLang);
 	}
 
 	/**
@@ -347,12 +347,12 @@ public final class Inserter {
 	 *
 	 * @return the number of statements in the stream
 	 */
-	private long verify(Supplier<InputStream> inputStreamSupplier, RDFFormat format) throws IOException {
+	private long verify(Supplier<InputStream> inputStreamSupplier, Lang strmLang) throws IOException {
 		long numStmts = 0;
 		long start = Calendar.getInstance().getTimeInMillis();
 		Model syntaxVerifier = ModelFactory.createModelForGraph(new ForgetfulGraph());
 		try (InputStream in = inputStreamSupplier.get()) {
-			syntaxVerifier.read(in, baseUri, format.toString());
+			syntaxVerifier.read(in, baseUri, strmLang.getName());
 			numStmts = syntaxVerifier.size();
 
 			if (LOG.isInfoEnabled()) {
@@ -366,11 +366,11 @@ public final class Inserter {
 
 	/** Inserts the statements from the InputStream into the given Model. */
 	private void insert(Model model, String graphLabel, Supplier<InputStream> inputStreamSupplier,
-		RDFFormat format) throws IOException {
+		Lang strmLang) throws IOException {
 
 		long start = Calendar.getInstance().getTimeInMillis();
 		try (InputStream in = inputStreamSupplier.get()) {
-			model.read(in, baseUri, format.toString());
+			model.read(in, baseUri, strmLang.getName());
 
 			if (LOG.isInfoEnabled()) {
 				long end = Calendar.getInstance().getTimeInMillis();
@@ -381,7 +381,7 @@ public final class Inserter {
 	}
 
 	/** Use the dataFormat and file extension to determine the RDF serialization format */
-	private static RDFFormat getRdfFormat(String dataFormat, String fileName) throws DataFormatException {
+	private static Lang getRdfLang(String dataFormat, String fileName) throws DataFormatException {
 		if (dataFormat == null || dataFormat.isEmpty() || "auto".equalsIgnoreCase(dataFormat)) {
 			if (null == fileName || fileName.isEmpty()) {
 				throw new DataFormatException("""
@@ -390,24 +390,24 @@ public final class Inserter {
 					resubmit with the proper data format specified.""");
 			}
 
-			RDFFormat format = RDFFormat.parseFilename(fileName);
-			if (RDFFormat.UNKNOWN == format) {
+			var lang = RDFLanguages.pathnameToLang(fileName);
+			if (lang == null) {
 				throw new DataFormatException("""
 					Unable to determine the serialization format of the RDF document from \
 					the fileName extension.  Please resubmit with the proper data format \
 					specified.""");
 			}
-			LOG.debug("Mapping input fileName '{}' to {} format", fileName, format);
-			return format;
+			LOG.debug("Mapping input fileName '{}' to {} format", fileName, lang);
+			return lang;
 		} else {
-			RDFFormat format = RDFFormat.parseMediaType(dataFormat);
-			if (RDFFormat.UNKNOWN == format && null != fileName && !fileName.isEmpty()) {
-				format = RDFFormat.parseFilename(fileName);
+			var lang = RDFLanguages.contentTypeToLang(dataFormat);
+			if (lang ==null && null != fileName && !fileName.isEmpty()) {
+				lang = RDFLanguages.pathnameToLang(fileName);
 			}
-			if (RDFFormat.UNKNOWN == format) {
+			if (lang == null) {
 				throw new DataFormatException("Unsupported data format \"%1$s\"", dataFormat);
 			}
-			return format;
+			return lang;
 		}
 	}
 }

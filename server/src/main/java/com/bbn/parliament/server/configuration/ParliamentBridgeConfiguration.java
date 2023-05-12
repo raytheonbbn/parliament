@@ -24,6 +24,7 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.riot.RDFLanguages;
 import org.apache.jena.riot.system.PrefixMap;
 import org.apache.jena.riot.system.PrefixMapFactory;
 import org.apache.jena.riot.system.PrefixMapStd;
@@ -31,7 +32,6 @@ import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.client.RDFFormat;
 import com.bbn.parliament.server.configuration.vocab.ConfigOnt;
 import com.bbn.parliament.server.exception.ConfigurationException;
 import com.bbn.parliament.server.exception.ParliamentBridgeException;
@@ -229,13 +229,13 @@ public class ParliamentBridgeConfiguration {
 			throw new IllegalArgumentException("Model configuration filename is null or empty");
 		}
 
-		RDFFormat format = RDFFormat.parseFilename(fileName);
-		if (!format.isJenaReadable()) {
+		var lang = RDFLanguages.pathnameToLang(fileName);
+		if (lang == null) {
 			LOG.warn("Model configuration file \"{}\" is of unrecognized format \"{}\"",
-				fileName, format);
+				fileName, lang);
 		} else {
 			try (InputStream strm = JavaResource.getAsStream(fileName)) {
-				destModel.read(strm, null, format.toString());
+				destModel.read(strm, null, lang.getName());
 				result = true;
 			} catch (IOException ex) {
 				LOG.warn("Error while reading model configuration file \"{}\":  {}",

@@ -16,11 +16,11 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.atlas.web.ContentType;
 
 public class MultiPartBodyPublisherBuilder {
 	private static abstract class Part {
-		protected static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
+		protected static final ContentType DEFAULT_CONTENT_TYPE = ContentType.create("application/octet-stream");
 
 		public final String name;
 
@@ -46,25 +46,25 @@ public class MultiPartBodyPublisherBuilder {
 
 	private static final class FilePart extends Part {
 		public final File value;
-		public final String contentType;
+		public final ContentType contentType;
 
-		public FilePart(String name, File value, String contentType) {
+		public FilePart(String name, File value, ContentType contentType) {
 			super(name);
 			this.value = value;
-			this.contentType = StringUtils.isBlank(contentType) ? DEFAULT_CONTENT_TYPE : contentType;
+			this.contentType = (contentType == null) ? DEFAULT_CONTENT_TYPE : contentType;
 		}
 	}
 
 	private static final class StreamPart extends Part {
 		public final Supplier<InputStream> value;
 		public final String fileName;
-		public final String contentType;
+		public final ContentType contentType;
 
-		public StreamPart(String name, Supplier<InputStream> value, String fileName, String contentType) {
+		public StreamPart(String name, Supplier<InputStream> value, String fileName, ContentType contentType) {
 			super(name);
 			this.value = value;
 			this.fileName = fileName;
-			this.contentType = StringUtils.isBlank(contentType) ? DEFAULT_CONTENT_TYPE : contentType;
+			this.contentType = (contentType == null) ? DEFAULT_CONTENT_TYPE : contentType;
 		}
 	}
 
@@ -103,21 +103,21 @@ public class MultiPartBodyPublisherBuilder {
 	}
 
 	public MultiPartBodyPublisherBuilder addPart(String name, File value) throws IOException {
-		parts.add(new FilePart(name, value, Files.probeContentType(value.toPath())));
+		parts.add(new FilePart(name, value, ContentType.create(Files.probeContentType(value.toPath()))));
 		return this;
 	}
 
-	public MultiPartBodyPublisherBuilder addPart(String name, File value, String contentType) {
+	public MultiPartBodyPublisherBuilder addPart(String name, File value, ContentType contentType) {
 		parts.add(new FilePart(name, value, contentType));
 		return this;
 	}
 
-	public MultiPartBodyPublisherBuilder addPart(String name, File value, Function<File, String> contentTypeDeducer) {
+	public MultiPartBodyPublisherBuilder addPart(String name, File value, Function<File, ContentType> contentTypeDeducer) {
 		parts.add(new FilePart(name, value, contentTypeDeducer.apply(value)));
 		return this;
 	}
 
-	public MultiPartBodyPublisherBuilder addPart(String name, Supplier<InputStream> value, String fileName, String contentType) {
+	public MultiPartBodyPublisherBuilder addPart(String name, Supplier<InputStream> value, String fileName, ContentType contentType) {
 		parts.add(new StreamPart(name, value, fileName, contentType));
 		return this;
 	}
@@ -185,7 +185,7 @@ public class MultiPartBodyPublisherBuilder {
 					return formatBytes("--%1$s--", boundary);
 				} else {
 					String fileName;
-					String contentType;
+					ContentType contentType;
 					if (nextPart instanceof FilePart nextFilePart) {
 						File file = nextFilePart.value;
 						fileName = file.getName();
@@ -204,7 +204,7 @@ public class MultiPartBodyPublisherBuilder {
 						Content-Disposition: form-data; name=%2$s; filename=%3$s
 						Content-Type: %4$s
 
-						""", boundary, nextPart.name, fileName, contentType);
+						""", boundary, nextPart.name, fileName, contentType.getContentTypeStr());
 				}
 			} else {
 				byte[] buffer = new byte[BUFFER_SIZE];
