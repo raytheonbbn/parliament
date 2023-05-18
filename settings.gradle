@@ -1,6 +1,19 @@
 rootProject.name = 'kb'
 
-include 'server',
+include 'Parliament',
+	'jena:JosekiExtensions',
+	'jena:KbGraph',
+	'jena:NumericIndex',
 	'jena:OntologyBundle',
 	'jena:OntologyDrivenDataAccess',
-	'jena:SparqlQueryBuilder'
+	'jena:ParliamentClient',
+	'jena:SparqlQueryBuilder',
+	'jena:SpatialIndex',
+	'jena:TemporalIndex',
+	'jena:TemporalIndexOld',
+	'server',
+	'sesame:CSameAsSail',
+	'sesame:LuceneSail',
+	'sesame:ParliamentSail',
+	'sesame:SameAsSail',
+	'sesame:Swrl2Sesame'

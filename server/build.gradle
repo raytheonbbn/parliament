@@ -16,17 +16,23 @@ ext {
 	configVocabSource = "${genJavaDir}/${configVocabDir}/${configVocabClassNm}.java"
 }
 
+configurations {
+	schemagen
+}
+
 dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	schemagen "$jenaCmdsDependency"
+	schemagen 'org.apache.logging.log4j:log4j-slf4j-impl:2.20.0'
+
+	implementation project(':Parliament')
+	implementation project(':jena:ParliamentClient')
+	implementation project(':jena:KbGraph')
+	implementation project(':jena:NumericIndex')
 	implementation project(':jena:SparqlQueryBuilder')
-	implementation fileTree(dir: artifactsDir, include: [
-		'KbGraph.jar',
-		'ParliamentClient.jar',
-		'NumericIndex.jar',
-		'Parliament.jar',
-		'SpatialIndexProcessor.jar',
-		'TemporalIndexProcessor.jar'
-	])
+	implementation project(':jena:SpatialIndex')
+	implementation project(':jena:TemporalIndex')
 
 	implementation "$commonsCsvDependency"
 	implementation "$commonsIoDependency"
@@ -43,15 +49,6 @@ sourceSets {
 	main {
 		java { srcDir genJavaDir }
 	}
-}
-
-configurations {
-	schemagen
-}
-
-dependencies {
-	schemagen "$jenaCmdsDependency"
-	schemagen 'org.apache.logging.log4j:log4j-slf4j-impl:2.20.0'
 }
 
 // See https://jena.apache.org/documentation/tools/schemagen.html
@@ -106,17 +103,16 @@ test {
 	//maxHeapSize = "2g"	// maximum heap size
 	//jvmArgs '-Xmx1g'	// mem argument for the test JVM
 
-	def distroDir = targetDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
+	//def distroDir = targetDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
 
-	systemProperty 'java.library.path', "${distroDir}/bin"
-	systemProperty 'test.data.path', "${rootDir}/dependencies/data"
-	//systemProperty 'log4j.configuration', "file:${rootDir}/log4j.junit.properties"
+	systemProperty 'java.library.path', "${deployableDir}/bin"
+	systemProperty 'test.data.path', "${depDataDir}"
 
 	workingDir = buildDir
 }
 
 bootRun {
-	def distroDir = targetDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
+	//def distroDir = targetDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
 
-	systemProperty 'java.library.path', "${distroDir}/bin"
+	systemProperty 'java.library.path', "${deployableDir}/bin"
 }

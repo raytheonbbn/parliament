@@ -4,28 +4,11 @@ bin/
 build/
 /build.properties
 /dependencies/
-lib/
 
-/.project
-/.settings/
-/jena/.project
-/jena/.settings/
-/jena/OntologyBundle/.classpath
-/jena/OntologyBundle/.project
-/jena/OntologyBundle/.settings/
-/jena/OntologyDrivenDataAccess/.classpath
-/jena/OntologyDrivenDataAccess/.project
-/jena/OntologyDrivenDataAccess/.settings/
+.classpath
+.project
+.settings/
 /jena/OntologyDrivenDataAccess/odda.pdf
-/jena/OntologyPackager/.classpath
-/jena/OntologyPackager/.project
-/jena/OntologyPackager/.settings/
-/jena/SparqlQueryBuilder/.classpath
-/jena/SparqlQueryBuilder/.project
-/jena/SparqlQueryBuilder/.settings/
-/server/.classpath
-/server/.project
-/server/.settings/
 
 /doc/**/missfont.log
 /doc/**/*.acr

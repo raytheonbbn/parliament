@@ -24,8 +24,8 @@
 	<property name="parliamentClientDir" value="${kbRootDir}/jena/ParliamentClient"/>
 	<property name="kbGraphDir" location="${kbRootDir}/jena/KbGraph"/>
 	<property name="numericIndexDir" location="${kbRootDir}/jena/NumericIndex"/>
-	<property name="spatialIndexDir" location="${kbRootDir}/jena/SpatialIndexProcessor"/>
-	<property name="temporalIndexDir" location="${kbRootDir}/jena/TemporalIndexProcessor"/>
+	<property name="spatialIndexDir" location="${kbRootDir}/jena/SpatialIndex"/>
+	<property name="temporalIndexDir" location="${kbRootDir}/jena/TemporalIndex"/>
 
 	<target name="clean">
 		<delete dir="${serverBinDir}"/>
@@ -138,8 +138,8 @@
 				<include name="KbGraph.jar"/>
 				<include name="ParliamentClient.jar"/>
 				<include name="NumericIndex.jar"/>
-				<include name="SpatialIndexProcessor.jar"/>
-				<include name="TemporalIndexProcessor.jar"/>
+				<include name="SpatialIndex.jar"/>
+				<include name="TemporalIndex.jar"/>
 			</lib>
 			<fileset dir="www"/>
 		</war>
@@ -248,8 +248,8 @@
 				<fileset dir="${artifactsDir}" includes="KbGraph.jar"/>
 				<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 				<fileset dir="${artifactsDir}" includes="NumericIndex.jar"/>
-				<fileset dir="${artifactsDir}" includes="SpatialIndexProcessor.jar"/>
-				<fileset dir="${artifactsDir}" includes="TemporalIndexProcessor.jar"/>
+				<fileset dir="${artifactsDir}" includes="SpatialIndex.jar"/>
+				<fileset dir="${artifactsDir}" includes="TemporalIndex.jar"/>
 				<pathelement location="${testBinDir}"/>
 			</classpath>
 			<listener type="legacy-xml" outputdir="${reportsDir}/${ant.project.name}"

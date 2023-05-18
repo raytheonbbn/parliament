@@ -1,0 +1,100 @@
+// Copyright (c) 2023 Raytheon BBN Technologies Corp.
+
+plugins {
+	id 'java-library'
+	id 'maven-publish'
+}
+
+sourceCompatibility = 17
+targetCompatibility = 17
+version = parliamentVersion
+
+dependencies {
+	implementation "$berkeleyDbJeDependency"
+	implementation "$jenaArqDependency"
+	implementation "$slf4jApiDependency"
+	implementation project(':Parliament')
+	implementation project(':jena:ParliamentClient')
+	implementation project(':jena:KbGraph')
+	testImplementation "$junitDependency"
+	testImplementation "$logbackDependency"
+	testImplementation(testFixtures(project(":jena:KbGraph")))
+}
+
+configurations.all {
+	exclude group: 'xml-apis'
+}
+
+task sourcesJar(type: Jar) {
+	archiveClassifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	archiveClassifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+javadoc {
+	source = sourceSets.main.allJava
+	classpath = configurations.compileClasspath
+
+	options
+	{
+		//setMemberLevel JavadocMemberLevel.PUBLIC
+		//setAuthor true
+		addStringOption('Xdoclint:-missing', '-quiet')
+	}
+}
+
+artifacts {
+	archives sourcesJar
+	archives javadocJar
+}
+
+test {
+	useJUnit()
+
+	systemProperty 'java.library.path', "${deployableDir}/bin"
+	systemProperty 'test.data.path', "${depDataDir}"
+}
+
+publishing {
+	publications {
+		TemporalIndexOld(MavenPublication) {
+			from components.java
+
+			artifact sourcesJar {
+				archiveClassifier = 'sources'
+			}
+			artifact javadocJar {
+				archiveClassifier = 'javadoc'
+			}
+
+			pom {
+				name = 'Parliament Client Library'
+				description = "A Java library that implements a Parliament index for temporal data.${System.lineSeparator}Copyright © 2023 Raytheon BBN Technologies Corp."
+				url = 'https://github.com/SemWebCentral/parliament/tree/main/jena/TemporalIndexOld'
+				organization {
+					name = 'Raytheon BBN Technologies'
+					url = 'https://bbn.com/'
+				}
+				developers {
+					developer {
+						id = 'iemmons'
+						name = 'Ian Emmons'
+						email = 'iemmons@rtx.com'
+					}
+				}
+			}
+		}
+	}
+
+	repositories {
+		maven {
+			name = 'BbnMavenUsOnly'
+			url = uri('https://artifacts.bbn.com/artifactory/bbn-maven-us-only/')
+			credentials(PasswordCredentials)
+		}
+	}
+}

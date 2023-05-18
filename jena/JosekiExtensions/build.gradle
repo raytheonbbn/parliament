@@ -1,0 +1,119 @@
+// Copyright (c) 2023 Raytheon BBN Technologies Corp.
+
+plugins {
+	id 'java-library'
+}
+
+sourceCompatibility = 17
+targetCompatibility = 17
+version = parliamentVersion
+
+ext {
+	genJavaDir = file("$buildDir/generated/sources/java")
+	configVocabFile = "${projectDir}/resources/ontology/config-ont.ttl"
+	configVocabPackage = 'com.bbn.parliament.jena.joseki.bridge.configuration.vocab'
+	configVocabDir = configVocabPackage.replaceAll(/\./, '/')
+	configVocabClassNm = 'ConfigOnt'
+	configVocabSource = "${genJavaDir}/${configVocabDir}/${configVocabClassNm}.java"
+}
+
+configurations {
+	schemagen
+}
+
+dependencies {
+	schemagen "$jenaCmdsDependency"
+	schemagen 'org.apache.logging.log4j:log4j-slf4j-impl:2.20.0'
+
+	implementation "$jenaArqDependency"
+	implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
+	implementation "org.eclipse.jetty:jetty-security:$jettyVersion"
+	implementation "org.eclipse.jetty:jetty-servlet:$jettyVersion"
+	implementation "org.eclipse.jetty:jetty-webapp:$jettyVersion"
+	implementation "org.eclipse.jetty:jetty-annotations:$jettyVersion"
+	implementation "org.eclipse.jetty:apache-jsp:$jettyVersion"
+	implementation "org.eclipse.jetty:apache-jstl:$jettyVersion"
+	implementation "org.eclipse.jetty:jetty-deploy:$jettyVersion"
+	implementation "org.eclipse.jetty:jetty-util:$jettyVersion"
+	implementation "org.eclipse.jetty:jetty-jmx:$jettyVersion"
+	implementation 'javax.servlet:javax.servlet-api:3.1.0'
+	implementation 'commons-fileupload:commons-fileupload:1.5'
+	implementation "$httpClientDependency"
+	implementation 'com.github.jsonld-java:jsonld-java:0.8.3'
+	implementation "$slf4jApiDependency"
+
+	implementation project(':Parliament')
+	implementation project(':jena:ParliamentClient')
+	implementation project(':jena:KbGraph')
+
+	implementation fileTree(dir: "${depDir}/joseki", include: "joseki-3.4.4.jar")
+
+	testImplementation "$jupiterDependency"
+	testImplementation "$logbackDependency"
+	//testImplementation(testFixtures(project(":jena:KbGraph")))
+}
+
+configurations.all {
+	exclude group: 'xml-apis'
+}
+
+sourceSets {
+	main {
+		java { srcDir genJavaDir }
+	}
+}
+
+// See https://jena.apache.org/documentation/tools/schemagen.html
+task runSchemagen(type: JavaExec) {
+	inputs.file(configVocabFile)
+	outputs.file(configVocabSource)
+
+	classpath = configurations.schemagen
+	mainClass = 'jena.schemagen'
+	args = [
+		'-i', configVocabFile,
+		'-e', 'TURTLE',
+		'-o', "${genJavaDir}",
+		'--owl',
+		'-n', configVocabClassNm,
+		'--package', configVocabPackage
+	]
+}
+
+compileJava.dependsOn runSchemagen
+
+task sourcesJar(type: Jar) {
+	archiveClassifier = 'sources'
+	from sourceSets.main.allSource
+	dependsOn runSchemagen
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	archiveClassifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+javadoc {
+	source = sourceSets.main.allJava
+	classpath = configurations.compileClasspath
+	dependsOn runSchemagen
+
+	options
+	{
+		//setMemberLevel JavadocMemberLevel.PUBLIC
+		//setAuthor true
+		addStringOption('Xdoclint:-missing', '-quiet')
+	}
+}
+
+artifacts {
+	archives sourcesJar
+	archives javadocJar
+}
+
+test {
+	useJUnitPlatform()
+
+	systemProperty 'java.library.path', "${deployableDir}/bin"
+	systemProperty 'test.data.path', "${depDataDir}"
+}

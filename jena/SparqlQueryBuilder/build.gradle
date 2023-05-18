@@ -9,10 +9,6 @@ sourceCompatibility = 17
 targetCompatibility = 17
 version = '1.2.0'
 
-repositories {
-	mavenCentral()
-}
-
 dependencies {
 	api "$jenaArqDependency"
 	implementation "$slf4jApiDependency"
@@ -80,7 +76,6 @@ publishing {
 	}
 
 	repositories {
-		//mavenLocal()
 		maven {
 			name = 'BbnMavenUsOnly'
 			url = uri('https://artifacts.bbn.com/artifactory/bbn-maven-us-only/')

@@ -1,0 +1,194 @@
+// Copyright (c) 2023 Raytheon BBN Technologies Corp.
+
+plugins {
+	id 'java-library'
+	id 'maven-publish'
+}
+
+ext {
+	jniHeaderIncludeDir = file("$buildDir/generated/sources")
+	jniHeaderGenDir = file("$jniHeaderIncludeDir/parliament/generated")
+	fixupScript = file("$buildDir/generated/fixup.sh")
+}
+
+// caller,callee,calleeDir
+def macOsFixups = """\
+	ParliamentAdmin,libboost_filesystem-,@rpath
+	ParliamentAdmin,libParliament,@rpath
+	libParliament,libdb-,${System.getenv('BDB_HOME')}/lib
+	libParliament,libboost_atomic-,@rpath
+	libParliament,libboost_chrono-,@rpath
+	libParliament,libboost_filesystem-,@rpath
+	libParliament,libboost_log-,@rpath
+	libParliament,libboost_log_setup-,@rpath
+	libParliament,libboost_thread-,@rpath
+	libboost_log_setup-,libboost_atomic-,@rpath
+	libboost_log_setup-,libboost_chrono-,@rpath
+	libboost_log_setup-,libboost_filesystem-,@rpath
+	libboost_log_setup-,libboost_log-,@rpath
+	libboost_log_setup-,libboost_thread-,@rpath
+	libboost_log-,libboost_atomic-,@rpath
+	libboost_log-,libboost_chrono-,@rpath
+	libboost_log-,libboost_filesystem-,@rpath
+	libboost_log-,libboost_thread-,@rpath""".stripIndent()
+
+// caller
+def linuxFixups = """\
+	ParliamentAdmin
+	libParliament
+	libboost_log_setup-
+	libboost_log-
+	libboost_filesystem-""".stripIndent()
+
+dependencies {
+	api "$jenaArqDependency"
+	implementation "$slf4jApiDependency"
+	testImplementation "$jupiterDependency"
+	testImplementation "$logbackDependency"
+}
+
+configurations.all {
+	exclude group: 'xml-apis'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
+	version = parliamentVersion
+}
+
+compileJava {
+	options.compilerArgs << '-h' << "$jniHeaderGenDir"
+}
+
+task sourcesJar(type: Jar) {
+	archiveClassifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	archiveClassifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+javadoc {
+	source = sourceSets.main.allJava
+	classpath = configurations.compileClasspath
+
+	options
+	{
+		//setMemberLevel JavadocMemberLevel.PUBLIC
+		//setAuthor true
+		addStringOption('Xdoclint:-missing', '-quiet')
+	}
+}
+
+artifacts {
+	archives sourcesJar
+	archives javadocJar
+}
+
+test {
+	useJUnitPlatform()
+	dependsOn 'fixupSharedLibs', 'copyNativeConfig', 'buildTest'
+
+	systemProperty 'java.library.path', "${deployableDir}/bin"
+}
+
+task buildTest(type:Exec) {
+	commandLine 'b2', '-q', '-j8', 'address-model=64', 'variant=release'
+	workingDir "$projectDir/Test"
+}
+
+task buildAdminClient(type:Exec, dependsOn: 'buildKbCore') {
+	commandLine 'b2', '-q', '-j8', 'address-model=64', 'variant=release'
+	workingDir "$projectDir/AdminClient"
+	environment 'NATIVE_CODE_INSTALL_DIR', "${deployableDir}/bin"
+}
+
+task buildKbCore(type:Exec, dependsOn: compileJava) {
+	commandLine 'b2', '-q', '-j8', 'address-model=64', 'variant=release'
+	workingDir "$projectDir/KbCore"
+	environment 'GENERATED_JNI_HEADER_DIR', "$jniHeaderIncludeDir"
+	environment 'NATIVE_CODE_INSTALL_DIR', "${deployableDir}/bin"
+}
+
+task fixupSharedLibs(dependsOn: 'buildAdminClient') {
+	doLast {
+		def pattern = ~/.*/
+		def replacement = ''
+		def os = System.getProperty('os.name').toLowerCase()
+		if (os.contains('mac')) {
+			pattern = ~/(?m)^([^,]*),([^,]*),([^,]*)$/
+			// The parenthesis around the callee value cause the evaluation of the
+			// glob to an array, and subsequent expansion of callee gets the first
+			// (and hopefully only) element in the array:
+			replacement = 'callee=($2*) ; install_name_tool -change $3/\\$callee @loader_path/\\$callee $1*'
+		} else if (os.contains('linux')) {
+			pattern = ~/(?m)^([^\n]*)$/
+			replacement = 'patchelf --set-rpath \'\\$ORIGIN\' $1*'
+		}
+
+		if (!replacement.isEmpty()) {
+			def matcher = macOsFixups =~ pattern
+			def commands = matcher.replaceAll(replacement)
+			fixupScript.withWriter { writer ->
+				writer.writeLine '#!/bin/bash'
+				writer.writeLine ''
+				writer.writeLine commands
+			}
+			exec {
+				commandLine 'bash', '-c', ". $fixupScript"
+				workingDir "${deployableDir}/bin"
+			}
+		}
+	}
+}
+
+task copyNativeConfig(type: Copy) {
+	from("$projectDir/KbCore") {
+		include '**/Parliament*Config.txt'
+	}
+	into "${deployableDir}"
+	includeEmptyDirs = false
+}
+
+publishing {
+	publications {
+		Parliament(MavenPublication) {
+			from components.java
+
+			artifact sourcesJar {
+				archiveClassifier = 'sources'
+			}
+			artifact javadocJar {
+				archiveClassifier = 'javadoc'
+			}
+
+			pom {
+				name = 'Parliament Client Library'
+				description = "A Java library for accessing Parliament's native code.${System.lineSeparator}Copyright © 2023 Raytheon BBN Technologies Corp."
+				url = 'https://github.com/SemWebCentral/parliament/tree/main/jena/Parliament'
+				organization {
+					name = 'Raytheon BBN Technologies'
+					url = 'https://bbn.com/'
+				}
+				developers {
+					developer {
+						id = 'iemmons'
+						name = 'Ian Emmons'
+						email = 'iemmons@rtx.com'
+					}
+				}
+			}
+		}
+	}
+
+	repositories {
+		maven {
+			name = 'BbnMavenUsOnly'
+			url = uri('https://artifacts.bbn.com/artifactory/bbn-maven-us-only/')
+			credentials(PasswordCredentials)
+		}
+	}
+}

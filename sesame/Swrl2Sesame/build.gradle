@@ -1,0 +1,47 @@
+// Copyright (c) 2023 Raytheon BBN Technologies Corp.
+
+plugins {
+	id 'java-library'
+}
+
+sourceCompatibility = 17
+targetCompatibility = 17
+version = parliamentVersion
+
+dependencies {
+	implementation "$sesameDependency"
+	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3'
+	implementation project(':sesame:ParliamentSail')
+	implementation fileTree(dir: "${depDir}/swrl-jaxb", include: "*.jar")
+}
+
+configurations.all {
+	exclude group: 'xml-apis'
+}
+
+task sourcesJar(type: Jar) {
+	archiveClassifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	archiveClassifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+javadoc {
+	source = sourceSets.main.allJava
+	classpath = configurations.compileClasspath
+
+	options
+	{
+		//setMemberLevel JavadocMemberLevel.PUBLIC
+		//setAuthor true
+		addStringOption('Xdoclint:-missing', '-quiet')
+	}
+}
+
+artifacts {
+	archives sourcesJar
+	archives javadocJar
+}
