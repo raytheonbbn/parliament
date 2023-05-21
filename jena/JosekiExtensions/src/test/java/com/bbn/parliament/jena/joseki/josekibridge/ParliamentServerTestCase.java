@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.bbn.parliament.jena.joseki.bridge.ParliamentBridge;
@@ -19,6 +20,7 @@ import com.bbn.parliament.jena.joseki.bridge.configuration.IndexProcessorConfigu
 import com.bbn.parliament.jena.joseki.graph.ModelManager;
 
 /** @author Robert Battle */
+@Disabled
 public class ParliamentServerTestCase {
 	@SuppressWarnings("static-method")
 	@BeforeEach

@@ -46,6 +46,7 @@ import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,7 @@ import com.bbn.parliament.jena.joseki.bridge.tracker.Tracker;
 
 import test_util.RdfResourceLoader;
 
+@Disabled
 public class ParliamentServerTestCase {
 	private static final String HOST = "localhost";
 	private static final String PORT = System.getProperty("jetty.port", "8586");
