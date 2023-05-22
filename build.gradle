@@ -27,7 +27,7 @@ ext {
 	junitDependency = 'junit:junit:4.12'
 	jupiterDependency = 'org.junit.jupiter:junit-jupiter:5.9.2'
 	logbackDependency = 'ch.qos.logback:logback-classic:1.3.6'
-	postgresqlDependency = 'org.postgresql:postgresql:42.6.0'	// 9.4.1208
+	postgresqlDependency = 'org.postgresql:postgresql:42.6.0'
 	sesameDependency = 'org.openrdf:sesame:1.2.7'
 	slf4jApiDependency = "org.slf4j:slf4j-api:$slf4jVersion"
 
