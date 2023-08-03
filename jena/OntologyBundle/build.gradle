@@ -2,23 +2,26 @@ plugins {
 	id 'java-gradle-plugin'
 }
 
+sourceSets {
+	functionalTest {
+	}
+}
+
 repositories {
 	mavenCentral()
 }
 
 dependencies {
 	implementation "$commonsCsvDependency"
-	implementation "$jenaArqDependency"
+	implementation "$jenaCmdsDependency"
 	//implementation "$sparqlQueryBuilderDependency"
 	implementation project(':jena:SparqlQueryBuilder')
 
 	testImplementation gradleTestKit()
 	testImplementation "$jupiterDependency"
-}
 
-configurations.all {
-	exclude group: 'org.slf4j', module: 'slf4j-log4j12'
-	exclude group: 'log4j', module: 'log4j'
+	functionalTestImplementation gradleTestKit()
+	functionalTestImplementation "$jupiterDependency"
 }
 
 sourceCompatibility = '17'
@@ -33,23 +36,34 @@ gradlePlugin {
 	}
 }
 
-sourceSets {
-	functionalTest {
-	}
-}
-
 gradlePlugin.testSourceSets(sourceSets.functionalTest)
 configurations.functionalTestImplementation.extendsFrom(configurations.testImplementation)
 
 task functionalTest(type: Test) {
 	testClassesDirs = sourceSets.functionalTest.output.classesDirs
 	classpath = sourceSets.functionalTest.runtimeClasspath
+	mustRunAfter(tasks.named('test'))
 }
 
 check {
 	dependsOn(tasks.functionalTest)
 }
 
-test {
+tasks.withType(Test).configureEach {
 	useJUnitPlatform()
+}
+
+task xlatePrefix(type: JavaExec) {
+	dependsOn compileJava
+	mainClass = 'com.bbn.parliament.ontology_bundle.XlatePrefix'
+	classpath = sourceSets.main.runtimeClasspath
+
+	//systemProperty 'SUNRISE_IMAGE_COLLECTION', "$rootDir/local-image-collection"
+
+	args = [
+		"$projectDir/test-ontology/owl-time.ttl",	// input
+		"$projectDir/test-ontology/owl-time-new.ttl",				// output
+		'',																// old prefix
+		'time',															// new prefix
+	]
 }

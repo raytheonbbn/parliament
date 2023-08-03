@@ -14,12 +14,13 @@ public class OntologyBundlePluginTest {
 	@Test
 	public void pluginRegistersATask() {
 		// Create a test project and apply the plugin
-		Project project = ProjectBuilder.builder().build();
-		project.getPlugins().apply("java-library");
+		Project project = ProjectBuilder.builder()
+			.withName("ont-bundle-test")
+			.build();
 		project.getPlugins().apply("com.bbn.parliament.ontology_bundle.ontologyBundle");
 
 		// Verify the result
-		assertNotNull(project.getTasks().findByName("bundleOntology"));
-		assertNotNull(project.getTasks().findByName("generateNamespaceClasses"));
+		assertNotNull(project.getTasks().findByName(OntologyBundlePlugin.PREP_ONT_TASK));
+		assertNotNull(project.getTasks().findByName(OntologyBundlePlugin.NS_CLASSES_TASK));
 	}
 }

@@ -1,6 +1,5 @@
 package com.bbn.parliament.ontology_bundle;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,27 +14,31 @@ import java.util.List;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.jena.query.DatasetFactory;
-import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.riot.RDFLanguages;
 import org.apache.jena.update.UpdateExecutionFactory;
 import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Optional;
+import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
@@ -44,9 +47,11 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
 
 import com.bbn.parliament.util.JavaResource;
+import com.bbn.parliament.util.QuerySolutionStream;
 
-public class OntologyBundlerTask extends DefaultTask {
+public class PrepareOntologyTask extends DefaultTask {
 	private static enum OutputType { FOR_HUMANS, FOR_MACHINES }
+
 	private static final String[] UPDATES_FOR_HUMANS = {
 		"updates/deleteOntologyNodes.update",
 		"updates/trimStringLiterals.update",
@@ -65,16 +70,44 @@ public class OntologyBundlerTask extends DefaultTask {
 	private static final String COUNT_CLASS_QUERY = "queries/countClasses.sparql";
 	private static final String COUNT_PROP_QUERY = "queries/countProperties.sparql";
 	private static final String COUNT_RESTR_QUERY = "queries/countRestrictions.sparql";
+	private static final String STATS_FORMAT = """
+		The %1$s ontology contains:
+			%2$d statements
+			%3$d classes
+			%4$d properties
+			%5$d restrictions
+			%6$d blank nodes
+		""";
 
-	private final OntologyBundleExtension ontBundleExt = getProject().getExtensions()
-		.getByType(OntologyBundleExtension.class);
-	private FileCollection srcFiles = getProject().files();
-	private File humanOutFile = null;
-	private File machineOutFile = null;
-	private String ontUri = null;
-	private String ontVersion = null;
-
+	private FileCollection srcFiles;
+	private ListProperty<String> prefixes;
+	private RegularFileProperty humanOntFile;
+	private RegularFileProperty machineOntFile;
+	private DirectoryProperty reportDir;
+	private Property<String> ontUri;
+	private Property<String> ontVersion;
 	private PrefixFileLoader prefixLoader;
+
+	public PrepareOntologyTask() {
+		var objFact = getProject().getObjects();
+		var ext = OntologyBundleExtension.getExtension(getProject());
+		srcFiles = ext.getOntologySources();
+		prefixes = objFact.listProperty(String.class);
+		prefixes.set(ext.getPrefixes());
+
+		humanOntFile = objFact.fileProperty();
+		humanOntFile.fileProvider(ext.getOntologyForHumansFile());
+		machineOntFile = objFact.fileProperty();
+		machineOntFile.fileProvider(ext.getOntologyForMachinesFile());
+
+		reportDir = objFact.directoryProperty();
+		reportDir.set(ext.getReportDir());
+		ontUri = objFact.property(String.class);
+		ontUri.set(ext.getOntologyUri());
+		ontVersion = objFact.property(String.class);
+		ontVersion.set(ext.getOntologyVersion());
+		prefixLoader = null;
+	}
 
 	@SkipWhenEmpty
 	@InputFiles
@@ -91,62 +124,58 @@ public class OntologyBundlerTask extends DefaultTask {
 		srcFiles = srcFiles.plus(sourceFiles);
 	}
 
-	@OutputFile
-	public File getHumanReadableOutputFile() {
-		return humanOutFile;
-	}
-
-	public void setHumanReadableOutputFile(File humanReadableOutputFile) {
-		humanOutFile = humanReadableOutputFile;
+	@Input
+	public ListProperty<String> getPrefixes() {
+		return prefixes;
 	}
 
 	@OutputFile
-	public File getMachineReadableOutputFile() {
-		return machineOutFile;
+	public RegularFileProperty getOntFileForHumans() {
+		return humanOntFile;
 	}
 
-	public void setMachineReadableOutputFile(File machineReadableOutputFile) {
-		machineOutFile = machineReadableOutputFile;
+	@OutputFile
+	public RegularFileProperty getOntFileForMachines() {
+		return machineOntFile;
+	}
+
+	@OutputDirectory
+	@Optional
+	public DirectoryProperty getReportDir() {
+		return reportDir;
 	}
 
 	@Input
 	@Optional
-	public String getOntologyUri() {
+	public Property<String> getOntologyUri() {
 		return ontUri;
 	}
 
-	public void setOntologyUri(String ontologyUri) {
-		ontUri = ontologyUri;
-	}
-
 	@Input
 	@Optional
-	public String getOntologyVersion() {
+	public Property<String> getOntologyVersion() {
 		return ontVersion;
-	}
-
-	public void setOntologyVersion(String ontologyVersion) {
-		ontVersion = ontologyVersion;
 	}
 
 	@TaskAction
 	public void run() {
 		try {
-			prefixLoader = new PrefixFileLoader(ontBundleExt.getPrefixFile());
-			Model combinedModel = combineSourceFiles();
+			prefixLoader = new PrefixFileLoader(prefixes.get());
+
+			var combinedModel = combineSourceFiles();
 			printOntStats(combinedModel, "initial");
 
 			runReports(combinedModel);
-			for (String rsrcName : UPDATES_FOR_HUMANS) {
+			for (var rsrcName : UPDATES_FOR_HUMANS) {
 				runUpdate(combinedModel, rsrcName);
 			}
 
 			insertOntologyNode(combinedModel);
 
 			printOntStats(combinedModel, "human-readable");
-			writeCombinedOutputOntology(combinedModel, OutputType.FOR_HUMANS);
+			writeCombinedOntology(combinedModel, OutputType.FOR_HUMANS);
 
-			for (String rsrcName : UPDATES_FOR_MACHINES) {
+			for (var rsrcName : UPDATES_FOR_MACHINES) {
 				runUpdate(combinedModel, rsrcName);
 			}
 
@@ -157,24 +186,24 @@ public class OntologyBundlerTask extends DefaultTask {
 			runBlankNodeFiller(combinedModel, BLANK_LIST_UPDATE);
 
 			printOntStats(combinedModel, "machine-readable");
-			writeCombinedOutputOntology(combinedModel, OutputType.FOR_MACHINES);
+			writeCombinedOntology(combinedModel, OutputType.FOR_MACHINES);
 		} catch (IOException ex) {
 			throw new TaskExecutionException(this, ex);
 		}
 	}
 
 	private Model combineSourceFiles() throws IOException {
-		Model combinedModel = ModelFactory.createDefaultModel();
+		var combinedModel = ModelFactory.createDefaultModel();
 		prefixLoader.addDeclaredPrefixesTo(combinedModel);
-		for (File f : srcFiles.getFiles()) {
-			Lang lang = RDFLanguages.filenameToLang(f.getName());
+		for (var f : srcFiles.getFiles()) {
+			var lang = RDFLanguages.filenameToLang(f.getName());
 			if (lang == null) {
-				System.out.format("Unrecognized RDF serialization:  '%1$s'%n", f.getPath());
+				System.out.format("Unrecognized RDF serialization: '%1$s'%n", f.getPath());
 				continue;
 			}
 			System.out.format("Reading %1$s file '%2$s'%n", lang.getName(), f.getPath());
 			try (InputStream in = new FileInputStream(f)) {
-				Model inputModel = ModelFactory.createDefaultModel();
+				var inputModel = ModelFactory.createDefaultModel();
 				inputModel.read(in, null, lang.getName());
 				prefixLoader.validateInputFilePrefixes(inputModel, f);
 				combinedModel.add(inputModel);
@@ -185,17 +214,17 @@ public class OntologyBundlerTask extends DefaultTask {
 	}
 
 	private void insertOntologyNode(Model combinedModel) {
-		if (ontUri != null && !ontUri.isEmpty()) {
-			Resource ont = combinedModel.createResource(combinedModel.expandPrefix(ontUri));
+		if (ontUri.isPresent()) {
+			var ont = combinedModel.createResource(combinedModel.expandPrefix(ontUri.get()));
 			combinedModel.add(ont, RDF.type, OWL.Ontology);
-			if (ontVersion != null && !ontVersion.isEmpty()) {
-				combinedModel.add(ont, OWL.versionInfo, ontVersion);
+			if (ontVersion.isPresent()) {
+				combinedModel.add(ont, OWL.versionInfo, ontVersion.get());
 			}
 		}
 	}
 
 	private static void runBlankNodeFiller(Model combinedModel, String rsrcName) {
-		String updateName =  getFileNameStem(rsrcName);
+		var updateName =  getFileNameStem(rsrcName);
 		for (long blankNodeCount = getBlankNodeCount(combinedModel);;) {
 			runUpdate(combinedModel, rsrcName);
 			long newBlankNodeCount = getBlankNodeCount(combinedModel);
@@ -218,15 +247,15 @@ public class OntologyBundlerTask extends DefaultTask {
 	}
 
 	private void runReports(Model combinedModel) throws IOException {
-		File reportsDir = ontBundleExt.getReportsDir();
-		if (reportsDir == null) {
-			return;	// This shouldn't happen
+		if (!reportDir.isPresent()) {
+			return;
 		}
-		reportsDir.mkdirs();
+		reportDir.get().getAsFile().mkdirs();
 		for (String rsrcName : REPORTS) {
-			File reportFile = new File(reportsDir, getFileNameStem(rsrcName) + ".csv");
+			var reportFile = new File(reportDir.get().getAsFile(),
+				getFileNameStem(rsrcName) + ".csv");
 			System.out.format("Running report '%1$s'%n", reportFile.getPath());
-			String queryStr = JavaResource.getAsString(rsrcName);
+			var queryStr = JavaResource.getAsString(rsrcName);
 			try (var qe = QueryExecutionFactory.create(queryStr, combinedModel)) {
 				ResultSet rs = qe.execSelect();
 				List<String> vars = rs.getResultVars();
@@ -234,8 +263,8 @@ public class OntologyBundlerTask extends DefaultTask {
 					.setHeader(vars.toArray(new String[0]))
 					.build();
 				try (
-					BufferedWriter wtr = Files.newBufferedWriter(reportFile.toPath(), StandardCharsets.UTF_8);
-					CSVPrinter csv = new CSVPrinter(wtr, csvFmt);
+					var wtr = Files.newBufferedWriter(reportFile.toPath(), StandardCharsets.UTF_8);
+					var csv = new CSVPrinter(wtr, csvFmt);
 				) {
 					while (rs.hasNext()) {
 						QuerySolution qs = rs.next();
@@ -251,7 +280,7 @@ public class OntologyBundlerTask extends DefaultTask {
 							} else if (node.isLiteral()) {
 								resultStrings.add(node.toString());
 							} else {
-								throw new RuntimeException("Shouldn't happen");
+								throw new IllegalStateException("Shouldn't happen");
 							}
 						}
 						csv.printRecord(resultStrings);
@@ -262,13 +291,7 @@ public class OntologyBundlerTask extends DefaultTask {
 	}
 
 	private static void printOntStats(Model combinedModel, String label) {
-		System.out.format("The %1$s ontology contains:%n"
-			+ "   %2$d statements%n"
-			+ "   %3$d classes%n"
-			+ "   %4$d properties%n"
-			+ "   %5$d restrictions%n"
-			+ "   %6$d blank nodes%n",
-			label, combinedModel.size(),
+		System.out.format(STATS_FORMAT, label, combinedModel.size(),
 			getCount(combinedModel, COUNT_CLASS_QUERY),
 			getCount(combinedModel, COUNT_PROP_QUERY),
 			getCount(combinedModel, COUNT_RESTR_QUERY),
@@ -280,20 +303,15 @@ public class OntologyBundlerTask extends DefaultTask {
 	}
 
 	private static long getCount(Model combinedModel, String queryRsrc) {
-		long result = -1;
-		Query query = QueryFactory.create(JavaResource.getAsString(queryRsrc));
-		String varName = query.getResultVars().get(0);
-		try (var qe = QueryExecutionFactory.create(query, combinedModel)) {
-			ResultSet rs = qe.execSelect();
-			while (rs.hasNext()) {
-				QuerySolution qs = rs.next();
-				Literal node = qs.getLiteral(varName);
-				if (node != null) {
-					result = node.getLong();
-				}
-			}
+		var query = QueryFactory.create(JavaResource.getAsString(queryRsrc));
+		var varName = query.getResultVars().get(0);
+		try (var strm = new QuerySolutionStream(query, combinedModel)) {
+			return strm.map(qs -> qs.getLiteral(varName))
+				.filter(literal -> literal != null)
+				.map(literal -> literal.getLong())
+				.findFirst()
+				.orElse(0L);
 		}
-		return result;
 	}
 
 	private static String getFileNameStem(String fName) {
@@ -302,12 +320,29 @@ public class OntologyBundlerTask extends DefaultTask {
 		return (dotIdx < 0) ? stem : stem.substring(0, dotIdx);
 	}
 
-	private void writeCombinedOutputOntology(Model combinedModel, OutputType outType) throws IOException {
-		File outFile = (outType == OutputType.FOR_HUMANS) ? humanOutFile : machineOutFile;
-		Lang outLang = RDFLanguages.filenameToLang(outFile.getName(), Lang.TURTLE);
-		System.out.format("Writing %1$s file '%2$s'%n", outLang.getName(), outFile.getPath());
-		try (OutputStream out = new FileOutputStream(outFile)) {
-			combinedModel.write(out, outLang.getName(), null);
+	private void writeCombinedOntology(Model model, OutputType outType) throws IOException {
+		var file = getOutputFile(outType);
+		var lang = RDFLanguages.filenameToLang(file.getName());
+		System.out.format("Writing %1$s file '%2$s'%n", lang.getName(), file.getPath());
+		try (OutputStream out = new FileOutputStream(file)) {
+			if (lang.equals(Lang.TURTLE)) {
+				RDFDataMgr.write(out, model, getTurtleVariant(outType));
+			} else {
+				RDFDataMgr.write(out, model, lang);
+			}
 		}
+	}
+
+	private File getOutputFile(OutputType outType) {
+		var outFileProperty = (outType == OutputType.FOR_HUMANS)
+			? humanOntFile
+			: machineOntFile;
+		return outFileProperty.get().getAsFile();
+	}
+
+	private static RDFFormat getTurtleVariant(OutputType outType) {
+		return (outType == OutputType.FOR_HUMANS)
+			? RDFFormat.TURTLE_PRETTY
+			: RDFFormat.TURTLE_BLOCKS;
 	}
 }
