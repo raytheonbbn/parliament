@@ -77,9 +77,11 @@ publishing {
 
 	repositories {
 		maven {
-			name = 'BbnMavenUsOnly'
-			url = uri('https://artifacts.bbn.com/artifactory/bbn-maven-us-only/')
-			credentials(PasswordCredentials)
+			url "${artifactory_contextUrl}/bbn-maven-us-only"
+			credentials {
+				username = "${artifactory_user}"
+				password = "${artifactory_password}"
+			}
 		}
 	}
 }
