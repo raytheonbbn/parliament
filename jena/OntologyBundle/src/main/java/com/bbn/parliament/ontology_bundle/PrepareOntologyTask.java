@@ -59,23 +59,23 @@ public class PrepareOntologyTask extends DefaultTask {
 	private static enum OutputType { FOR_HUMANS, FOR_MACHINES }
 
 	private static final String[] UPDATES_FOR_HUMANS = {
-		"updates/deleteOntologyNodes.update",
-		"updates/trimStringLiterals.update",
-		"updates/deleteEmptyLiterals.update",
-		"updates/removeOwlThingAsSuperClass.update",
+		"deleteOntologyNodes.update",
+		"trimStringLiterals.update",
+		"deleteEmptyLiterals.update",
+		"removeOwlThingAsSuperClass.update",
 	};
 	private static final String[] UPDATES_FOR_MACHINES = {
-		"updates/deleteAnnotationProperties.update",
+		"deleteAnnotationProperties.update",
 	};
 	private static final String[] REPORTS = {
 	};
-	private static final String BLANK_LIST_UPDATE = "updates/replaceBlankListNodes.update";
-	private static final String BLANK_UNION_DOMAIN_AND_RANGE_UPDATE = "updates/replaceBlankUnionDomainAndRange.update";
-	private static final String BLANK_RESTR_UPDATE = "updates/replaceBlankRestrictions.update";
-	private static final String COUNT_BLANK_QUERY = "queries/countBlankNodes.sparql";
-	private static final String COUNT_CLASS_QUERY = "queries/countClasses.sparql";
-	private static final String COUNT_PROP_QUERY = "queries/countProperties.sparql";
-	private static final String COUNT_RESTR_QUERY = "queries/countRestrictions.sparql";
+	private static final String BLANK_LIST_UPDATE = "replaceBlankListNodes.update";
+	private static final String BLANK_UNION_DOMAIN_AND_RANGE_UPDATE = "replaceBlankUnionDomainAndRange.update";
+	private static final String BLANK_RESTR_UPDATE = "replaceBlankRestrictions.update";
+	private static final String COUNT_BLANK_QUERY = "countBlankNodes.sparql";
+	private static final String COUNT_CLASS_QUERY = "countClasses.sparql";
+	private static final String COUNT_PROP_QUERY = "countProperties.sparql";
+	private static final String COUNT_RESTR_QUERY = "countRestrictions.sparql";
 	private static final String STATS_FORMAT = """
 		The %1$s ontology contains:
 			%2$d statements
