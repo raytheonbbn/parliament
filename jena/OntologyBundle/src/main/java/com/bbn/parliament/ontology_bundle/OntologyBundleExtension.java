@@ -1,3 +1,9 @@
+// Parliament is licensed under the BSD License from the Open Source
+// Initiative, http://www.opensource.org/licenses/bsd-license.php
+//
+// Copyright (c) 2023, BBN Technologies, Inc.
+// All rights reserved.
+
 package com.bbn.parliament.ontology_bundle;
 
 import java.io.File;
@@ -15,10 +21,11 @@ import org.gradle.api.provider.Provider;
 
 /**
  * Plugin configuration parameters, set through the build script.
- *
- * @author iemmons
  */
 public class OntologyBundleExtension {
+	public static final String HUMAN_ONT_DEFAULT_FILE = "OntologyForHumans.ttl";
+	public static final String MACHINE_ONT_DEFAULT_FILE = "OntologyForMachines.ttl";
+
 	private final Property<String> ontologyForHumansFileName;
 	private final Property<String> ontologyForMachinesFileName;
 	private final ListProperty<String> prefixes;
@@ -28,9 +35,11 @@ public class OntologyBundleExtension {
 	private final Property<String> ontologyUri;
 	private final Property<String> ontologyVersion;
 	private final Property<String> generatedCodePackageName;
-	private final Property<String> generatedCodeFileHeader;
 	private final DirectoryProperty generatedJavaDir;
 	private final DirectoryProperty generatedRsrcDir;
+	private final DirectoryProperty generatedTestDir;
+	private final Property<String> jenaDependency;
+	private final Property<String> jupiterDependency;
 
 	public static OntologyBundleExtension getExtension(Project project) {
 		return project
@@ -49,19 +58,24 @@ public class OntologyBundleExtension {
 		ontologyUri = objFact.property(String.class);
 		ontologyVersion = objFact.property(String.class);
 		generatedCodePackageName = objFact.property(String.class);
-		generatedCodeFileHeader = objFact.property(String.class);
 		generatedJavaDir = objFact.directoryProperty();
 		generatedRsrcDir = objFact.directoryProperty();
+		generatedTestDir = objFact.directoryProperty();
+		jenaDependency = objFact.property(String.class);
+		jupiterDependency = objFact.property(String.class);
 	}
 
 	public void setConventions(Project project) {
 		DirectoryProperty buildDir = project.getLayout().getBuildDirectory();
 
-		ontologyForHumansFileName.convention("OntologyForHumans.ttl");
-		ontologyForMachinesFileName.convention("OntologyForMachines.ttl");
+		ontologyForHumansFileName.convention(HUMAN_ONT_DEFAULT_FILE);
+		ontologyForMachinesFileName.convention(MACHINE_ONT_DEFAULT_FILE);
 		reportDir.convention(buildDir.dir("reports/ontologyBundle"));
-		generatedJavaDir.convention(buildDir.dir("generated/java"));
-		generatedRsrcDir.convention(buildDir.dir("generated/resources"));
+		generatedJavaDir.convention(buildDir.dir("generated/main/java"));
+		generatedRsrcDir.convention(buildDir.dir("generated/main/resources"));
+		generatedTestDir.convention(buildDir.dir("generated/test/java"));
+		jenaDependency.convention("org.apache.jena:jena-arq:3.17.0");
+		jupiterDependency.convention("org.junit.jupiter:junit-jupiter:5.9.2");
 	}
 
 	public Property<String> getOntologyForHumansFileName() {
@@ -100,10 +114,6 @@ public class OntologyBundleExtension {
 		return generatedCodePackageName;
 	}
 
-	public Property<String> getGeneratedCodeFileHeader() {
-		return generatedCodeFileHeader;
-	}
-
 	public Provider<File> getGeneratedJavaDir() {
 		return generatedJavaDir.getAsFile();
 	}
@@ -112,13 +122,27 @@ public class OntologyBundleExtension {
 		return generatedRsrcDir.getAsFile();
 	}
 
+	public Provider<File> getGeneratedTestDir() {
+		return generatedTestDir.getAsFile();
+	}
+
 	public Provider<File> getOntologyForHumansFile() {
 		return ontologyForHumansFileName.map(
-			fname -> new File(generatedRsrcDir.get().getAsFile(), fname));
+			fname -> FileUtil.getCodeFile(generatedRsrcDir.get().getAsFile(),
+				generatedCodePackageName.get(), fname));
 	}
 
 	public Provider<File> getOntologyForMachinesFile() {
 		return ontologyForMachinesFileName.map(
-			fname -> new File(generatedRsrcDir.get().getAsFile(), fname));
+			fname -> FileUtil.getCodeFile(generatedRsrcDir.get().getAsFile(),
+				generatedCodePackageName.get(), fname));
+	}
+
+	public Provider<String> getJenaDependency() {
+		return jenaDependency;
+	}
+
+	public Provider<String> getJupiterDependency() {
+		return jupiterDependency;
 	}
 }

@@ -1,3 +1,9 @@
+// Parliament is licensed under the BSD License from the Open Source
+// Initiative, http://www.opensource.org/licenses/bsd-license.php
+//
+// Copyright (c) 2023, BBN Technologies, Inc.
+// All rights reserved.
+
 package com.bbn.parliament.ontology_bundle;
 
 import java.io.File;

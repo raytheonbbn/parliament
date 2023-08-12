@@ -3,9 +3,6 @@ select (count(distinct ?blank) as ?blankCount) where {
 		?blank ?p ?o .
 		filter ( isBlank(?blank) )
 	} union {
-		?s ?blank ?o .
-		filter ( isBlank(?blank) )
-	} union {
 		?s ?p ?blank .
 		filter ( isBlank(?blank) )
 	}

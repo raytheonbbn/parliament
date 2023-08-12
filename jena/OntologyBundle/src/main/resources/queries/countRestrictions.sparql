@@ -1,4 +1,4 @@
-prefix owl:   <http://www.w3.org/2002/07/owl#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
 
 select (count(distinct ?r) as ?rCount) where {
 	?r a owl:Restriction .

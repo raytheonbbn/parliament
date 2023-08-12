@@ -1,3 +1,9 @@
+// Parliament is licensed under the BSD License from the Open Source
+// Initiative, http://www.opensource.org/licenses/bsd-license.php
+//
+// Copyright (c) 2023, BBN Technologies, Inc.
+// All rights reserved.
+
 package com.bbn.parliament.ontology_bundle;
 
 import java.io.File;
@@ -7,10 +13,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import org.apache.jena.riot.RDFLanguages;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.Optional;
@@ -27,6 +35,7 @@ public class NamespaceClassGenerator extends DefaultTask {
 	private RegularFileProperty schemagenConfig;
 	private RegularFileProperty ontFile;
 	private DirectoryProperty outputDir;
+	private Property<String> generatedCodePackageName;
 
 	public NamespaceClassGenerator() {
 		var objFact = getProject().getObjects();
@@ -39,6 +48,8 @@ public class NamespaceClassGenerator extends DefaultTask {
 		ontFile.fileProvider(ext.getOntologyForHumansFile());
 		outputDir = objFact.directoryProperty();
 		outputDir.fileProvider(ext.getGeneratedJavaDir());
+		generatedCodePackageName = objFact.property(String.class);
+		generatedCodePackageName.set(ext.getGeneratedCodePackageName());
 	}
 
 	@Input
@@ -62,6 +73,11 @@ public class NamespaceClassGenerator extends DefaultTask {
 		return outputDir;
 	}
 
+	@Input
+	public Property<String> getGeneratedCodePackageName() {
+		return generatedCodePackageName;
+	}
+
 	@TaskAction
 	public void run() {
 		try {
@@ -70,6 +86,8 @@ public class NamespaceClassGenerator extends DefaultTask {
 			var configPath = schemagenConfig.isPresent()
 				? schemagenConfig.get().getAsFile()
 				: copyConfigRsrcToTempFile();
+			var inputFile = ontFile.get().getAsFile();
+			var lang = RDFLanguages.filenameToLang(inputFile.getName());
 			for (var mapEntry : clsNameToNamespaceMap.entrySet()) {
 				var clsName = mapEntry.getKey();
 				var ns = mapEntry.getValue();
@@ -78,11 +96,15 @@ public class NamespaceClassGenerator extends DefaultTask {
 				args.add("-c");
 				args.add(configPath.getPath());
 				args.add("-i");
-				args.add(ontFile.get().getAsFile().getPath());
+				args.add(inputFile.getPath());
 				args.add("-a");
 				args.add(ns);
 				args.add("-n");
 				args.add(clsName);
+				args.add("-e");
+				args.add(lang.getName());
+				args.add("--package");
+				args.add(generatedCodePackageName.get());
 				args.add("-o");
 				args.add(outputDir.get().getAsFile().getPath());
 				jena.schemagen.main(args.toArray(new String[0]));

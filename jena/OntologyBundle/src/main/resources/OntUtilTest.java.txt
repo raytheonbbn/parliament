@@ -1,0 +1,123 @@
+// Parliament is licensed under the BSD License from the Open Source
+// Initiative, http://www.opensource.org/licenses/bsd-license.php
+//
+// Copyright (c) 2023, BBN Technologies, Inc.
+// All rights reserved.
+
+package com.bbn.parliament.ontology_bundle;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.IOException;
+
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.rdf.model.InfModel;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.junit.jupiter.api.Test;
+
+import com.bbn.parliament.ontology_bundle.OntUtil.OntType;
+
+public class OntUtilTest {
+	private static final String MIN_CLASS_COUNT_SYS_PROP = "minClassCount";
+	private static final String MIN_PROP_COUNT_SYS_PROP = "minPropCount";
+	private static final String MAX_BNODE_COUNT_SYS_PROP = "maxBlankNodeCount";
+	private static final String COUNT_CLASS_QUERY = """
+		prefix owl: <http://www.w3.org/2002/07/owl#>
+
+		select (count(distinct ?cls) as ?count) where {
+			?cls a owl:Class .
+			filter not exists { ?cls a owl:Restriction . }
+		}
+		""";
+	private static final String COUNT_PROP_QUERY = """
+		prefix owl: <http://www.w3.org/2002/07/owl#>
+		prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+		select (count(distinct ?prop) as ?count) where {
+			values ?propType {
+				rdf:Property
+				owl:AnnotationProperty
+				owl:AsymmetricProperty
+				owl:DatatypeProperty
+				owl:DeprecatedProperty
+				owl:FunctionalProperty
+				owl:InverseFunctionalProperty
+				owl:IrreflexiveProperty
+				owl:ObjectProperty
+				owl:OntologyProperty
+				owl:ReflexiveProperty
+				owl:SymmetricProperty
+				owl:TransitiveProperty
+			}
+			?prop a ?propType .
+		}
+		""";
+	private static final String COUNT_PROP_QUERY_2 = """
+		prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+		select (count(distinct ?prop) as ?count) where {
+			?prop a rdf:Property .
+		}
+		""";
+	private static final String COUNT_BLANK_QUERY = """
+		select (count(distinct ?blank) as ?count) where {
+			{
+				?blank ?p ?o .
+				filter ( isBlank(?blank) )
+			} union {
+				?s ?p ?blank .
+				filter ( isBlank(?blank) )
+			}
+		}
+		""";
+
+	@SuppressWarnings("static-method")
+	@Test
+	public void smokeTest() throws IOException {
+		Model model = OntUtil.getOntResourceAsModel(OntType.FOR_MACHINES);
+		InfModel infModel = ModelFactory.createRDFSModel(model);
+
+		long minClassCount = Long.parseLong(System.getProperty(MIN_CLASS_COUNT_SYS_PROP, "1"));
+		long minPropertyCount = Long.parseLong(System.getProperty(MIN_PROP_COUNT_SYS_PROP, "1"));
+		long maxBlankNodeCount = Long.parseLong(System.getProperty(MAX_BNODE_COUNT_SYS_PROP, "0"));
+
+		long classCount = getCount(COUNT_CLASS_QUERY, model);
+		long propertyCount = getCount(COUNT_PROP_QUERY, model);
+		long propertyCount2 = getCount(COUNT_PROP_QUERY_2, infModel);
+		long blankNodeCount = getCount(COUNT_BLANK_QUERY, model);
+
+		assertTrue(classCount >= minClassCount, "Class count is too small");
+		assertTrue(propertyCount >= minPropertyCount, "Property count is too small");
+		assertTrue(propertyCount2 >= minPropertyCount, "Property count (with inference) is too small");
+		assertTrue(blankNodeCount <= maxBlankNodeCount, "Blank node count is too large");
+	}
+
+	@SuppressWarnings("static-method")
+	@Test
+	public void humanVersusMachineTest() throws IOException {
+		Model humanModel = OntUtil.getOntResourceAsModel(OntType.FOR_HUMANS);
+		Model machineModel = OntUtil.getOntResourceAsModel(OntType.FOR_MACHINES);
+
+		long humanClassCount = getCount(COUNT_CLASS_QUERY, machineModel);
+		long machineClassCount = getCount(COUNT_CLASS_QUERY, machineModel);
+
+		assertTrue(humanModel.size() >= machineModel.size(), "Human model is not larger than machine model");
+		assertEquals(humanClassCount, machineClassCount, "Human and machine class counts are not the same");
+	}
+
+	private static long getCount(String query, Model model) {
+		try (var qe = QueryExecutionFactory.create(query, model)) {
+			var resultSet = qe.execSelect();
+			while (resultSet.hasNext()) {
+				var qs = resultSet.next();
+				var count = qs.getLiteral("count");
+				if (count != null) {
+					return count.getLong();
+				}
+			}
+		}
+		return 0L;
+	}
+}

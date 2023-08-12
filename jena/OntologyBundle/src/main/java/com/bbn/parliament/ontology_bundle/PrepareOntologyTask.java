@@ -1,3 +1,9 @@
+// Parliament is licensed under the BSD License from the Open Source
+// Initiative, http://www.opensource.org/licenses/bsd-license.php
+//
+// Copyright (c) 2023, BBN Technologies, Inc.
+// All rights reserved.
+
 package com.bbn.parliament.ontology_bundle;
 
 import java.io.File;
@@ -225,9 +231,9 @@ public class PrepareOntologyTask extends DefaultTask {
 
 	private static void runBlankNodeFiller(Model combinedModel, String rsrcName) {
 		var updateName =  getFileNameStem(rsrcName);
-		for (long blankNodeCount = getBlankNodeCount(combinedModel);;) {
+		for (long blankNodeCount = getCount(combinedModel, COUNT_BLANK_QUERY);;) {
 			runUpdate(combinedModel, rsrcName);
-			long newBlankNodeCount = getBlankNodeCount(combinedModel);
+			long newBlankNodeCount = getCount(combinedModel, COUNT_BLANK_QUERY);
 			if (newBlankNodeCount < blankNodeCount) {
 				System.out.format("%1$s reduced blank node count from %2$d to %3$d%n",
 					updateName, blankNodeCount, newBlankNodeCount);
@@ -295,11 +301,7 @@ public class PrepareOntologyTask extends DefaultTask {
 			getCount(combinedModel, COUNT_CLASS_QUERY),
 			getCount(combinedModel, COUNT_PROP_QUERY),
 			getCount(combinedModel, COUNT_RESTR_QUERY),
-			getBlankNodeCount(combinedModel));
-	}
-
-	private static long getBlankNodeCount(Model combinedModel) {
-		return getCount(combinedModel, COUNT_BLANK_QUERY);
+			getCount(combinedModel, COUNT_BLANK_QUERY));
 	}
 
 	private static long getCount(Model combinedModel, String queryRsrc) {

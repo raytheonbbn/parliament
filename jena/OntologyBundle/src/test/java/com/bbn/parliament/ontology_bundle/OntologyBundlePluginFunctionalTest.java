@@ -1,12 +1,15 @@
+// Parliament is licensed under the BSD License from the Open Source
+// Initiative, http://www.opensource.org/licenses/bsd-license.php
+//
+// Copyright (c) 2023, BBN Technologies, Inc.
+// All rights reserved.
+
 package com.bbn.parliament.ontology_bundle;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
+import java.util.regex.Pattern;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
@@ -18,18 +21,18 @@ import org.junit.jupiter.api.Test;
 public class OntologyBundlePluginFunctionalTest {
 	@SuppressWarnings("static-method")
 	@Test
-	public void basicBuildTest() throws IOException {
+	public void basicBuildTest() {
 		// Setup the test build
 		File testProjectDir = getTestDir();
 		testProjectDir.mkdirs();
-		writeString(new File(testProjectDir, "settings.gradle"), """
+		FileUtil.writeString(new File(testProjectDir, "settings.gradle"), """
 			pluginManagement {
 				includeBuild '../../..'
 			}
 
 			rootProject.name = 'basicBuildTest'
 			""");
-		writeString(new File(testProjectDir, "build.gradle"), """
+		FileUtil.writeString(new File(testProjectDir, "build.gradle"), """
 			plugins {
 				id 'com.bbn.parliament.ontology_bundle.OntologyBundle'
 			}
@@ -68,7 +71,6 @@ public class OntologyBundlePluginFunctionalTest {
 				ontologyUri = 'http://bbn.com/ix/ontology-bundle/functional-test'
 				ontologyVersion = project.version
 				generatedCodePackageName = 'com.bbn.ix.ontology_bundle.functional_test'
-				//generatedCodeFileHeader = ''
 			}
 			""");
 
@@ -81,13 +83,12 @@ public class OntologyBundlePluginFunctionalTest {
 			.build();
 
 		// Verify the result
-		assertTrue(result.getOutput().contains("Hello from plugin 'com.bbn.parliament.ontology_bundle.OntologyBundle'"));
-	}
-
-	private static void writeString(File file, String string) throws IOException {
-		try (Writer writer = new FileWriter(file, StandardCharsets.UTF_8)) {
-			writer.write(string);
-		}
+		assertTrue(result.getOutput().contains("Generating GEO.java"));
+		assertTrue(result.getOutput().contains("BUILD SUCCESSFUL in"));
+		assertTrue(Pattern
+			.compile("(?m)^Writing [a-zA-Z0-9_]+ file '.*/OntologyForMachines\\.ttl'$")
+			.matcher(result.getOutput())
+			.find());
 	}
 
 	private static File getTestDir() {
