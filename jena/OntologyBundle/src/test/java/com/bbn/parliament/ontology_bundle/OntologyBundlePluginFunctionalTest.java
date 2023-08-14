@@ -68,7 +68,7 @@ public class OntologyBundlePluginFunctionalTest {
 					includes: [ '**/*.ttl', '**/*.rdf', '**/*.owl' ],
 					exclude: '**/*-original*'
 				)
-				ontologyUri = 'http://bbn.com/ix/ontology-bundle/functional-test'
+				ontologyIri = 'http://bbn.com/ix/ontology-bundle/functional-test'
 				ontologyVersion = project.version
 				generatedCodePackageName = 'com.bbn.ix.ontology_bundle.functional_test'
 			}

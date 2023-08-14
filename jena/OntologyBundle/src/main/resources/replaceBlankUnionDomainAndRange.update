@@ -1,26 +1,24 @@
-prefix owl:   <http://www.w3.org/2002/07/owl#>
-prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
-prefix xsd:   <http://www.w3.org/2001/XMLSchema#>
-prefix ps:    <http://www.bbn.com/ontologies/rush/problem-strategy#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
 
 delete {
-	?prop ?domainOrRange ?unionCls .
-	?unionCls a owl:Class ;
-		owl:unionOf ?clsList .
+	?s ?p ?unionOrIntersectionCls .
+	?unionOrIntersectionCls a owl:Class ;
+		?unionOrIntersectionOf ?clsList .
 } insert {
-	?prop ?domainOrRange ?newUnionCls .
-	?newUnionCls a owl:Class ;
-		owl:unionOf ?clsList .
+	?s ?p ?newUnionOrIntersectionCls .
+	?newUnionOrIntersectionCls a owl:Class ;
+		?unionOrIntersectionOf ?clsList .
 } where {
-	values ?domainOrRange {
-		rdfs:domain
-		rdfs:range
+	values ?unionOrIntersectionOf {
+		owl:unionOf
+		owl:intersectionOf
 	}
 
-	?prop ?domainOrRange ?unionCls .
-	?unionCls owl:unionOf ?clsList .
-	optional { ?unionCls a owl:Class . }
-	filter ( isBlank(?unionCls) && !isBlank(?clsList) )
-	bind ( iri(concat(str(?clsList), "-classUnion")) as ?newUnionCls )
+	?s ?p ?unionOrIntersectionCls .
+	?unionOrIntersectionCls ?unionOrIntersectionOf ?clsList .
+	optional { ?unionOrIntersectionCls a owl:Class . }
+	filter ( isBlank(?unionOrIntersectionCls) && !isBlank(?clsList) )
+	bind (?_fillNS as ?fillNS)
+	bind ( concat(str(?unionOrIntersectionOf), "\n", str(?clsList)) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?newUnionOrIntersectionCls )
 }

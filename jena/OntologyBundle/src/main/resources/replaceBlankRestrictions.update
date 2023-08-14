@@ -1,22 +1,24 @@
-prefix owl:   <http://www.w3.org/2002/07/owl#>
-prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
-prefix xsd:   <http://www.w3.org/2001/XMLSchema#>
+prefix owl:  <http://www.w3.org/2002/07/owl#>
+prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 delete {
 	?restrictionBearer ?incomingPredicate ?r .
 	?r a owl:Restriction ;
 		owl:onProperty ?prop ;
-		?rPredicate ?rValue .
+		?rPredicate ?rValue ;
+		owl:onClass ?class .
 } insert {
-	?restrictionBearer ?incomingPredicate ?rUri .
-	?rUri a owl:Restriction ;
+	?restrictionBearer ?incomingPredicate ?rIri .
+	?rIri a owl:Restriction ;
 		owl:onProperty ?prop ;
-		?rPredicate ?rValue .
+		?rPredicate ?rValue ;
+		owl:onClass ?class .
 } where {
 	values ?incomingPredicate {
 		rdfs:subClassOf	# the usual case
 		rdf:first			# for restrictions in lists
+		owl:equivalentClass
 	}
 	values ?rPredicate {
 		owl:allValuesFrom
@@ -25,12 +27,19 @@ delete {
 		owl:maxCardinality
 		owl:minCardinality
 		owl:someValuesFrom
+		owl:qualifiedCardinality
+		owl:minQualifiedCardinality
+		owl:maxQualifiedCardinality
+		owl:hasSelf
 	}
 	?restrictionBearer ?incomingPredicate ?r .
 	?r a owl:Restriction ;
 		owl:onProperty ?prop ;
 		?rPredicate ?rValue .
+	optional { ?r owl:onClass ?class . }
 	filter ( isBlank(?r) && !isBlank(?rValue) )
-	bind ( concat(str(?prop), "\n", str(?rPredicate), "\n", str(?rValue)) as ?rLN )
-	bind ( iri(concat("http://bbn.com/tbox/buc/infoexploit/filled-blank#z", sha256(?rLN))) as ?rUri )
+	bind (?_fillNS as ?fillNS)
+	bind ( concat(str(?prop), "\n", str(?rPredicate), "\n", str(?rValue), "\n",
+		if(bound(?class), str(?class), "")) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?rIri )
 }

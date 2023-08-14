@@ -79,9 +79,9 @@ public class XlatePrefix {
 			model.read(in, null, inLang.getName());
 		}
 
-		var nsUri = model.getNsPrefixURI(oldPrefix);
+		var nsIri = model.getNsPrefixURI(oldPrefix);
 		model.removeNsPrefix(oldPrefix);
-		model.setNsPrefix(newPrefix, nsUri);
+		model.setNsPrefix(newPrefix, nsIri);
 
 		try (OutputStream os = new FileOutputStream(outFile)) {
 			model.write(os, outLang.getName(), null);

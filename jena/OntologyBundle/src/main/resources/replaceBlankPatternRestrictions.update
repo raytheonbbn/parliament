@@ -1,0 +1,17 @@
+prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+
+delete {
+	?listNode rdf:first ?patternBN .
+	?patternBN xsd:pattern ?pattern .
+} insert {
+	?listNode rdf:first ?patternIri .
+	?patternIri xsd:pattern ?pattern .
+} where {
+	?listNode rdf:first ?patternBN .
+	?patternBN xsd:pattern ?pattern .
+	filter ( isBlank(?patternBN) && !isBlank(?pattern) )
+	bind (?_fillNS as ?fillNS)
+	bind ( str(?pattern) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?patternIri )
+}

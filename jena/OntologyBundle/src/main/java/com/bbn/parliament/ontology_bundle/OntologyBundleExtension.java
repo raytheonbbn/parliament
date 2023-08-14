@@ -32,7 +32,7 @@ public class OntologyBundleExtension {
 	private final RegularFileProperty schemagenConfigFile;
 	private final DirectoryProperty reportDir;
 	private final ConfigurableFileCollection ontologySources;
-	private final Property<String> ontologyUri;
+	private final Property<String> ontologyIri;
 	private final Property<String> ontologyVersion;
 	private final Property<String> generatedCodePackageName;
 	private final DirectoryProperty generatedJavaDir;
@@ -55,7 +55,7 @@ public class OntologyBundleExtension {
 		schemagenConfigFile = objFact.fileProperty();
 		reportDir = objFact.directoryProperty();
 		ontologySources = objFact.fileCollection();
-		ontologyUri = objFact.property(String.class);
+		ontologyIri = objFact.property(String.class);
 		ontologyVersion = objFact.property(String.class);
 		generatedCodePackageName = objFact.property(String.class);
 		generatedJavaDir = objFact.directoryProperty();
@@ -102,8 +102,8 @@ public class OntologyBundleExtension {
 		return ontologySources;
 	}
 
-	public Property<String> getOntologyUri() {
-		return ontologyUri;
+	public Property<String> getOntologyIri() {
+		return ontologyIri;
 	}
 
 	public Property<String> getOntologyVersion() {

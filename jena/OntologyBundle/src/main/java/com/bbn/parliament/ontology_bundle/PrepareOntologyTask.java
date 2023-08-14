@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.jena.query.DatasetFactory;
+import org.apache.jena.query.ParameterizedSparqlString;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
@@ -58,6 +59,8 @@ import com.bbn.parliament.util.QuerySolutionStream;
 public class PrepareOntologyTask extends DefaultTask {
 	private static enum OutputType { FOR_HUMANS, FOR_MACHINES }
 
+	private static final PrefixInfo FILLED_IN_PREFIX = new PrefixInfo("fill", null,
+		"http://parliament.semwebcentral.org/filled-in-blank-node#");
 	private static final String[] UPDATES_FOR_HUMANS = {
 		"deleteOntologyNodes.update",
 		"trimStringLiterals.update",
@@ -69,9 +72,12 @@ public class PrepareOntologyTask extends DefaultTask {
 	};
 	private static final String[] REPORTS = {
 	};
+	private static final String BLANK_PATTERN_UPDATE = "replaceBlankPatternRestrictions.update";
+	private static final String BLANK_INVERSE_PROP_UPDATE = "replaceBlankInverseProp.update";
 	private static final String BLANK_LIST_UPDATE = "replaceBlankListNodes.update";
 	private static final String BLANK_UNION_DOMAIN_AND_RANGE_UPDATE = "replaceBlankUnionDomainAndRange.update";
 	private static final String BLANK_RESTR_UPDATE = "replaceBlankRestrictions.update";
+	private static final String BLANK_AXIOM_ANN_UPDATE = "replaceBlankAxiomAnnotation.update";
 	private static final String COUNT_BLANK_QUERY = "countBlankNodes.sparql";
 	private static final String COUNT_CLASS_QUERY = "countClasses.sparql";
 	private static final String COUNT_PROP_QUERY = "countProperties.sparql";
@@ -90,7 +96,7 @@ public class PrepareOntologyTask extends DefaultTask {
 	private RegularFileProperty humanOntFile;
 	private RegularFileProperty machineOntFile;
 	private DirectoryProperty reportDir;
-	private Property<String> ontUri;
+	private Property<String> ontIri;
 	private Property<String> ontVersion;
 	private PrefixFileLoader prefixLoader;
 
@@ -108,8 +114,8 @@ public class PrepareOntologyTask extends DefaultTask {
 
 		reportDir = objFact.directoryProperty();
 		reportDir.set(ext.getReportDir());
-		ontUri = objFact.property(String.class);
-		ontUri.set(ext.getOntologyUri());
+		ontIri = objFact.property(String.class);
+		ontIri.set(ext.getOntologyIri());
 		ontVersion = objFact.property(String.class);
 		ontVersion.set(ext.getOntologyVersion());
 		prefixLoader = null;
@@ -153,8 +159,8 @@ public class PrepareOntologyTask extends DefaultTask {
 
 	@Input
 	@Optional
-	public Property<String> getOntologyUri() {
-		return ontUri;
+	public Property<String> getOntologyIri() {
+		return ontIri;
 	}
 
 	@Input
@@ -185,11 +191,14 @@ public class PrepareOntologyTask extends DefaultTask {
 				runUpdate(combinedModel, rsrcName);
 			}
 
-			combinedModel.setNsPrefix("fillb", "http://bbn.com/tbox/buc/infoexploit/filled-blank#");
-			runBlankNodeFiller(combinedModel, BLANK_LIST_UPDATE);
-			runBlankNodeFiller(combinedModel, BLANK_UNION_DOMAIN_AND_RANGE_UPDATE);
-			runBlankNodeFiller(combinedModel, BLANK_RESTR_UPDATE);
-			runBlankNodeFiller(combinedModel, BLANK_LIST_UPDATE);
+			combinedModel.setNsPrefix(FILLED_IN_PREFIX.prefix(), FILLED_IN_PREFIX.namespace());
+			runBlankNodeFillers(combinedModel,
+				BLANK_AXIOM_ANN_UPDATE,
+				BLANK_INVERSE_PROP_UPDATE,
+				BLANK_PATTERN_UPDATE,
+				BLANK_UNION_DOMAIN_AND_RANGE_UPDATE,
+				BLANK_RESTR_UPDATE,
+				BLANK_LIST_UPDATE);
 
 			printOntStats(combinedModel, "machine-readable");
 			writeCombinedOntology(combinedModel, OutputType.FOR_MACHINES);
@@ -220,8 +229,8 @@ public class PrepareOntologyTask extends DefaultTask {
 	}
 
 	private void insertOntologyNode(Model combinedModel) {
-		if (ontUri.isPresent()) {
-			var ont = combinedModel.createResource(combinedModel.expandPrefix(ontUri.get()));
+		if (ontIri.isPresent()) {
+			var ont = combinedModel.createResource(combinedModel.expandPrefix(ontIri.get()));
 			combinedModel.add(ont, RDF.type, OWL.Ontology);
 			if (ontVersion.isPresent()) {
 				combinedModel.add(ont, OWL.versionInfo, ontVersion.get());
@@ -229,14 +238,15 @@ public class PrepareOntologyTask extends DefaultTask {
 		}
 	}
 
-	private static void runBlankNodeFiller(Model combinedModel, String rsrcName) {
-		var updateName =  getFileNameStem(rsrcName);
+	private static void runBlankNodeFillers(Model combinedModel, String... rsrcNames) {
 		for (long blankNodeCount = getCount(combinedModel, COUNT_BLANK_QUERY);;) {
-			runUpdate(combinedModel, rsrcName);
+			for (var rsrcName : rsrcNames) {
+				runUpdate(combinedModel, rsrcName);
+			}
 			long newBlankNodeCount = getCount(combinedModel, COUNT_BLANK_QUERY);
 			if (newBlankNodeCount < blankNodeCount) {
-				System.out.format("%1$s reduced blank node count from %2$d to %3$d%n",
-					updateName, blankNodeCount, newBlankNodeCount);
+				System.out.format("Reduced blank node count from %1$d to %2$d%n",
+					blankNodeCount, newBlankNodeCount);
 				blankNodeCount = newBlankNodeCount;
 			} else {
 				break;
@@ -246,8 +256,9 @@ public class PrepareOntologyTask extends DefaultTask {
 
 	private static void runUpdate(Model combinedModel, String rsrcName) {
 		System.out.format("Running update '%1$s'%n", rsrcName);
-		var updateStr = JavaResource.getAsString(rsrcName);
-		var updateReq = UpdateFactory.create(updateStr);
+		var update = new ParameterizedSparqlString(JavaResource.getAsString(rsrcName));
+		update.setIri("_fillNS", FILLED_IN_PREFIX.namespace());
+		var updateReq = UpdateFactory.create(update.toString());
 		var dataset = DatasetFactory.create(combinedModel);
 		UpdateExecutionFactory.create(updateReq, dataset).execute();
 	}

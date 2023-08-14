@@ -1,0 +1,37 @@
+prefix obo:  <http://purl.obolibrary.org/obo/>
+prefix owl:  <http://www.w3.org/2002/07/owl#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# Works against axiom annotations found in BFO, but likely not others.
+
+delete {
+	?axiom a owl:Axiom ;
+		owl:annotatedSource ?annSrc ;
+		owl:annotatedProperty ?annProp ;
+		owl:annotatedTarget ?annTgt ;
+		obo:IAO_0010000 ?axiomLabel ;
+		rdfs:seeAlso ?seeAlso ;
+		rdfs:comment ?comment .
+} insert {
+	?axiomIri a owl:Axiom ;
+		owl:annotatedSource ?annSrc ;
+		owl:annotatedProperty ?annProp ;
+		owl:annotatedTarget ?annTgt ;
+		obo:IAO_0010000 ?axiomLabel ;
+		rdfs:seeAlso ?seeAlso ;
+		rdfs:comment ?comment .
+} where {
+	?axiom a owl:Axiom ;
+		owl:annotatedSource ?annSrc ;
+		owl:annotatedProperty ?annProp ;
+		owl:annotatedTarget ?annTgt ;
+		obo:IAO_0010000 ?axiomLabel .
+	optional { ?axiom rdfs:seeAlso ?seeAlso . }
+	optional { ?axiom rdfs:comment ?comment . }
+	filter ( isblank(?axiom) )
+	bind (?_fillNS as ?fillNS)
+	bind ( concat(str(?annSrc), "\n", str(?annProp), "\n", str(?annTgt), "\n",
+		str(?axiomLabel), "\n", if(bound(?seeAlso), str(?seeAlso), ""), "\n",
+		if(bound(?comment), str(?comment), "")) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?axiomIri )
+}
