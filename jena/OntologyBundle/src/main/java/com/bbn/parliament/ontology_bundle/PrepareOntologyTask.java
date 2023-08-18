@@ -221,8 +221,8 @@ public class PrepareOntologyTask extends DefaultTask {
 				var inputModel = ModelFactory.createDefaultModel();
 				inputModel.read(in, null, lang.getName());
 				prefixLoader.validateInputFilePrefixes(inputModel, f);
+				prefixLoader.switchToPreferredPrefixes(inputModel, f);
 				combinedModel.add(inputModel);
-				combinedModel.removeNsPrefix("");
 			}
 		}
 		return combinedModel;

@@ -66,7 +66,7 @@ public class OntologyBundlePluginFunctionalTest {
 				]
 				ontologySources = fileTree(dir: "$projectDir/../../../test-ontology",
 					includes: [ '**/*.ttl', '**/*.rdf', '**/*.owl' ],
-					exclude: '**/*-original*'
+					//exclude: '**/*-original*'
 				)
 				ontologyIri = 'http://bbn.com/ix/ontology-bundle/functional-test'
 				ontologyVersion = project.version
