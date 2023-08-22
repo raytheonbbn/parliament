@@ -7,7 +7,7 @@
 - Add more standard ontologies to test suite, to include https://www.w3.org/wiki/Good_Ontologies and these:
   - Dublin Core (done)
   - FOAF (done)
-  - Good Relations
+  - Good Relations (done)
   - MarineTLO
   - Music Ontology
   - PROV-O (done)

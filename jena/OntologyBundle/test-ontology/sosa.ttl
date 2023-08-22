@@ -68,7 +68,7 @@ sosa:FeatureOfInterest a rdfs:Class ; a owl:Class ;
     rdfs:isDefinedBy sosa: .
 
 
-## Sample 
+## Sample
 
 sosa:Sample a rdfs:Class , owl:Class ;
   rdfs:label "Sample"@en ;
@@ -103,7 +103,7 @@ A Sample is intended to sample some FatureOfInterest, so there is an expectation
     rdfs:isDefinedBy sosa: .
 
 
-## Platform 
+## Platform
 
 sosa:Platform a rdfs:Class , owl:Class ;
   rdfs:label "Platform"@en ;
@@ -339,7 +339,7 @@ sosa:Sampling a rdfs:Class , owl:Class ;
     rdfs:isDefinedBy sosa: .
 
 
-## Result 
+## Result
 
 sosa:Result a rdfs:Class , owl:Class ;
   rdfs:label "Result"@en ;

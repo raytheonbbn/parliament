@@ -53,6 +53,7 @@ public class OntologyBundlePluginFunctionalTest {
 					'foaf, FOAF, http://xmlns.com/foaf/0.1/',
 					'geo, GEO, http://www.opengis.net/ont/geosparql#',
 					'gml, GML, http://www.opengis.net/ont/gml#',
+					'gr, GR, http://purl.org/goodrelations/v1#',
 					'obo, OBO, http://purl.obolibrary.org/obo/',
 					'owl, , http://www.w3.org/2002/07/owl#',
 					'provo, ProvO, http://www.w3.org/ns/prov#',

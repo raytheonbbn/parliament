@@ -78,6 +78,7 @@ public class PrepareOntologyTask extends DefaultTask {
 	private static final String BLANK_UNION_DOMAIN_AND_RANGE_UPDATE = "replaceBlankUnionDomainAndRange.update";
 	private static final String BLANK_RESTR_UPDATE = "replaceBlankRestrictions.update";
 	private static final String BLANK_AXIOM_ANN_UPDATE = "replaceBlankAxiomAnnotation.update";
+	private static final String BLANK_GR_OFFERING_UPDATE = "replaceBlankGROffering.update";
 	private static final String COUNT_BLANK_QUERY = "countBlankNodes.sparql";
 	private static final String COUNT_CLASS_QUERY = "countClasses.sparql";
 	private static final String COUNT_PROP_QUERY = "countProperties.sparql";
@@ -194,6 +195,7 @@ public class PrepareOntologyTask extends DefaultTask {
 			combinedModel.setNsPrefix(FILLED_IN_PREFIX.prefix(), FILLED_IN_PREFIX.namespace());
 			runBlankNodeFillers(combinedModel,
 				BLANK_AXIOM_ANN_UPDATE,
+				BLANK_GR_OFFERING_UPDATE,
 				BLANK_INVERSE_PROP_UPDATE,
 				BLANK_PATTERN_UPDATE,
 				BLANK_UNION_DOMAIN_AND_RANGE_UPDATE,

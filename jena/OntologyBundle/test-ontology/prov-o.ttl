@@ -835,7 +835,7 @@ A primary source relation is a particular case of derivation of secondary materi
 
 :qualifiedForm
     a owl:AnnotationProperty ;
-    rdfs:comment """This annotation property links a subproperty of prov:wasInfluencedBy with the subclass of prov:Influence and the qualifying property that are used to qualify it. 
+    rdfs:comment """This annotation property links a subproperty of prov:wasInfluencedBy with the subclass of prov:Influence and the qualifying property that are used to qualify it.
 
 Example annotation:
 
@@ -848,7 +848,7 @@ Then this unqualified assertion:
 can be qualified by adding:
 
    :entity1 prov:qualifiedGeneration :entity1Gen .
-   :entity1Gen 
+   :entity1Gen
        a prov:Generation, prov:Influence;
        prov:activity :activity1;
        :customValue 1337 .
@@ -1149,7 +1149,7 @@ Note how the value of the unqualified influence (prov:wasGeneratedBy :activity1)
 
 Subproperties of prov:wasInfluencedBy may also be asserted directly without being qualified.
 
-prov:wasInfluencedBy should not be used without also using one of its subproperties. 
+prov:wasInfluencedBy should not be used without also using one of its subproperties.
 """@en ;
     :inverse "influenced" ;
     :qualifiedForm :Influence, :qualifiedInfluence ;
@@ -1236,7 +1236,7 @@ prov:wasInfluencedBy should not be used without also using one of its subpropert
 
 <http://www.w3.org/ns/prov-o#>
     a owl:Ontology ;
-    rdfs:comment """This document is published by the Provenance Working Group (http://www.w3.org/2011/prov/wiki/Main_Page). 
+    rdfs:comment """This document is published by the Provenance Working Group (http://www.w3.org/2011/prov/wiki/Main_Page).
 
 If you wish to make comments regarding this document, please send them to public-prov-comments@w3.org (subscribe public-prov-comments-request@w3.org, archives http://lists.w3.org/Archives/Public/public-prov-comments/). All feedback is welcome."""@en ;
     rdfs:label "W3C PROVenance Interchange Ontology (PROV-O)"@en ;
@@ -1313,7 +1313,7 @@ If you wish to make comments regarding this document, please send them to public
 
 []
     a owl:Axiom ;
-    rdfs:comment """Revision is a derivation (see http://www.w3.org/TR/prov-dm/#term-Revision). Moreover, according to 
+    rdfs:comment """Revision is a derivation (see http://www.w3.org/TR/prov-dm/#term-Revision). Moreover, according to
 http://www.w3.org/TR/2013/REC-prov-constraints-20130430/#term-Revision 23 April 2012 'wasRevisionOf is a strict sub-relation of wasDerivedFrom since two entities e2 and e1 may satisfy wasDerivedFrom(e2,e1) without being a variant of each other.'""" ;
     owl:annotatedProperty rdfs:subPropertyOf ;
     owl:annotatedSource :wasRevisionOf ;

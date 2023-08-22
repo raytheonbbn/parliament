@@ -1,0 +1,21 @@
+prefix gr: <http://purl.org/goodrelations/v1#>
+
+# Works against a single odd-looking BN in the GR ontology.
+
+delete {
+	?offeringBN a gr:Offering ;
+		gr:category ?category ;
+		gr:description ?description .
+} insert {
+	?offeringIri a gr:Offering ;
+		gr:category ?category ;
+		gr:description ?description .
+} where {
+	?offeringBN a gr:Offering ;
+		gr:category ?category ;
+		gr:description ?description .
+	filter ( isblank(?offeringBN) && !isblank(?category) && !isblank(?description) )
+	bind (?_fillNS as ?fillNS)
+	bind ( concat(str(?category), "\n", str(?description)) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?offeringIri )
+}
