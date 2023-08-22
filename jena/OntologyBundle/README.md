@@ -9,9 +9,9 @@
   - FOAF (done)
   - Good Relations (done)
   - MarineTLO
-  - Music Ontology
+  - Music Ontology (done)
   - PROV-O (done)
   - QUDT (https://www.qudt.org/2.1/catalog/qudt-catalog.html)
   - schema.org (done)
-  - SIOC
+  - SIOC (done)
   - SKOS (done)

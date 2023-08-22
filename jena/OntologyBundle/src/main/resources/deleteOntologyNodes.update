@@ -4,9 +4,12 @@ prefix owl:  <http://www.w3.org/2002/07/owl#>
 
 delete {
 	?ont ?p ?o ;
-		dct:creator ?agent .
+		dct:creator ?agent ;
+		foaf:maker ?maker .
 	?agent a foaf:Agent ;
 		foaf:name ?name .
+	?maker foaf:name ?name ;
+		foaf:homepage ?homepage .
 } where {
 	?ont a owl:Ontology ;
 		?p ?o .
@@ -15,5 +18,11 @@ delete {
 		?ont dct:creator ?agent .
 		?agent a foaf:Agent ;
 			foaf:name ?name .
+	}
+
+	optional {
+		?ont foaf:maker ?maker .
+		optional { ?maker foaf:name ?name . }
+		optional { ?maker foaf:homepage ?homepage . }
 	}
 }

@@ -42,18 +42,26 @@ public class OntologyBundlePluginFunctionalTest {
 
 			ontologyBundle {
 				prefixes = [
-					// prefix, class, namespace
+					// prefix, class (blank for none), namespace
+					'ao, , http://purl.org/ontology/ao/core#',
 					'bfo, BFO, http://purl.obolibrary.org/obo/bfo.owl#',
+					'bio, , http://purl.org/vocab/bio/0.1/',
+					'cc, , http://web.resource.org/cc/',
 					'dc, DC, http://purl.org/dc/elements/1.1/',
 					'dcam, DCAM, http://purl.org/dc/dcam/',
 					'dcat, , http://www.w3.org/ns/dcat#',
 					'dcmitype, , http://purl.org/dc/dcmitype/',
 					'dct, DCT, http://purl.org/dc/terms/',
 					'dul, DUL, http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#',
+					'event, , http://purl.org/NET/c4dm/event.owl#',
 					'foaf, FOAF, http://xmlns.com/foaf/0.1/',
+					'frbr, , http://purl.org/vocab/frbr/core#',
 					'geo, GEO, http://www.opengis.net/ont/geosparql#',
+					'geo_old, , http://www.w3.org/2003/01/geo/wgs84_pos#',
 					'gml, GML, http://www.opengis.net/ont/gml#',
 					'gr, GR, http://purl.org/goodrelations/v1#',
+					'keys, , http://purl.org/NET/c4dm/keys.owl#',
+					'mo, MO, http://purl.org/ontology/mo/',
 					'obo, OBO, http://purl.obolibrary.org/obo/',
 					'owl, , http://www.w3.org/2002/07/owl#',
 					'provo, ProvO, http://www.w3.org/ns/prov#',
@@ -61,6 +69,7 @@ public class OntologyBundlePluginFunctionalTest {
 					'rdfs, , http://www.w3.org/2000/01/rdf-schema#',
 					'schema, Schema, http://schema.org/',
 					'sf, SF, http://www.opengis.net/ont/sf#',
+					'sioc, SIOC, http://rdfs.org/sioc/ns#',
 					'skos, SKOS, http://www.w3.org/2004/02/skos/core#',
 					'sosa, SOSA, http://www.w3.org/ns/sosa/',
 					'ssn, SSN, http://www.w3.org/ns/ssn/',
