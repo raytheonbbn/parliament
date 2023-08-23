@@ -649,7 +649,7 @@ schema:BusinessAudience a rdfs:Class ;
 schema:BusinessEntityType a rdfs:Class ;
     rdfs:label "BusinessEntityType" ;
     rdfs:comment """A business entity type is a conceptual entity representing the legal form, the size, the main line of business, the position in the value chain, or any combination thereof, of an organization or business person.\\n\\nCommonly used values:\\n\\n* http://purl.org/goodrelations/v1#Business\\n* http://purl.org/goodrelations/v1#Enduser\\n* http://purl.org/goodrelations/v1#PublicInstitution\\n* http://purl.org/goodrelations/v1#Reseller
-	  """ ;
+      """ ;
     rdfs:subClassOf schema:Enumeration ;
     schema:contributor <http://schema.org/docs/collab/GoodRelationsClass> .
 
@@ -909,27 +909,27 @@ schema:ComicCoverArt a rdfs:Class ;
 schema:ComicIssue a rdfs:Class ;
     rdfs:label "ComicIssue" ;
     rdfs:comment """Individual comic issues are serially published as
-    	part of a larger series. For the sake of consistency, even one-shot issues
-    	belong to a series comprised of a single issue. All comic issues can be
-    	uniquely identified by: the combination of the name and volume number of the
-    	series to which the issue belongs; the issue number; and the variant
-    	description of the issue (if any).""" ;
+        part of a larger series. For the sake of consistency, even one-shot issues
+        belong to a series comprised of a single issue. All comic issues can be
+        uniquely identified by: the combination of the name and volume number of the
+        series to which the issue belongs; the issue number; and the variant
+        description of the issue (if any).""" ;
     rdfs:subClassOf schema:PublicationIssue ;
     schema:isPartOf <http://bib.schema.org> .
 
 schema:ComicSeries a rdfs:Class ;
     rdfs:label "ComicSeries" ;
     rdfs:comment """A sequential publication of comic stories under a
-    	unifying title, for example "The Amazing Spider-Man" or "Groo the
-    	Wanderer".""" ;
+        unifying title, for example "The Amazing Spider-Man" or "Groo the
+        Wanderer".""" ;
     rdfs:subClassOf schema:Periodical ;
     schema:isPartOf <http://bib.schema.org> .
 
 schema:ComicStory a rdfs:Class ;
     rdfs:label "ComicStory" ;
     rdfs:comment """The term "story" is any indivisible, re-printable
-    	unit of a comic, including the interior stories, covers, and backmatter. Most
-    	comics have at least two stories: a cover (ComicCoverArt) and an interior story.""" ;
+        unit of a comic, including the interior stories, covers, and backmatter. Most
+        comics have at least two stories: a cover (ComicCoverArt) and an interior story.""" ;
     rdfs:subClassOf schema:CreativeWork ;
     schema:isPartOf <http://bib.schema.org> .
 
@@ -1108,7 +1108,7 @@ schema:CreativeWorkSeason a rdfs:Class ;
 schema:CreativeWorkSeries a rdfs:Class ;
     rdfs:label "CreativeWorkSeries" ;
     rdfs:comment """A CreativeWorkSeries in schema.org is a group of related items, typically but not necessarily of the same kind. CreativeWorkSeries are usually organized into some order, often chronological. Unlike [[ItemList]] which is a general purpose data structure for lists of things, the emphasis with CreativeWorkSeries is on published materials (written e.g. books and periodicals, or media such as TV, radio and games).\\n\\nSpecific subtypes are available for describing [[TVSeries]], [[RadioSeries]], [[MovieSeries]], [[BookSeries]], [[Periodical]] and [[VideoGameSeries]]. In each case, the [[hasPart]] / [[isPartOf]] properties can be used to relate the CreativeWorkSeries to its parts. The general CreativeWorkSeries type serves largely just to organize these more specific and practical subtypes.\\n\\nIt is common for properties applicable to an item from the series to be usefully applied to the containing group. Schema.org attempts to anticipate some of these cases, but publishers should be free to apply properties of the series parts to the series as a whole wherever they seem appropriate.
-	  """ ;
+      """ ;
     rdfs:subClassOf schema:CreativeWork,
         schema:Series .
 
@@ -8652,8 +8652,8 @@ schema:articleSection a rdf:Property ;
 schema:artist a rdf:Property ;
     rdfs:label "artist" ;
     rdfs:comment """The primary artist for a work
-    	in a medium other than pencils or digital line art--for example, if the
-    	primary artwork is done in watercolors or digital paints.""" ;
+        in a medium other than pencils or digital line art--for example, if the
+        primary artwork is done in watercolors or digital paints.""" ;
     schema:domainIncludes schema:ComicIssue,
         schema:ComicStory,
         schema:VisualArtwork ;
@@ -17936,8 +17936,8 @@ schema:variableMeasured a rdf:Property ;
 schema:variantCover a rdf:Property ;
     rdfs:label "variantCover" ;
     rdfs:comment """A description of the variant cover
-    	for the issue, if the issue is a variant printing. For example, "Bryan Hitch
-    	Variant Cover" or "2nd Printing Variant".""" ;
+        for the issue, if the issue is a variant printing. For example, "Bryan Hitch
+        Variant Cover" or "2nd Printing Variant".""" ;
     schema:domainIncludes schema:ComicIssue ;
     schema:isPartOf <http://bib.schema.org> ;
     schema:rangeIncludes schema:Text .

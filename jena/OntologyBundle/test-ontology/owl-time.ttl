@@ -526,18 +526,18 @@ In the original OWL-Time the following constraint appeared:
 :TimeZone
   rdf:type owl:Class ;
   rdfs:comment """A Time Zone specifies the amount by which the local time is offset from UTC.
-	A time zone is usually denoted geographically (e.g. Australian Eastern Daylight Time), with a constant value in a given region.
+  A time zone is usually denoted geographically (e.g. Australian Eastern Daylight Time), with a constant value in a given region.
 The region where it applies and the offset from UTC are specified by a locally recognised governing authority."""@en ;
   rdfs:label "Time Zone"@en ;
   skos:definition """A Time Zone specifies the amount by which the local time is offset from UTC.
-	A time zone is usually denoted geographically (e.g. Australian Eastern Daylight Time), with a constant value in a given region.
+  A time zone is usually denoted geographically (e.g. Australian Eastern Daylight Time), with a constant value in a given region.
 The region where it applies and the offset from UTC are specified by a locally recognised governing authority."""@en ;
   skos:historyNote """In the original 2006 version of OWL-Time, the TimeZone class, with several properties corresponding to a specific model of time-zones, was defined in a separate namespace \"http://www.w3.org/2006/timezone#\".
 
 In the current version a class with same local name is put into the main OWL-Time namespace, removing the dependency on the external namespace.
 
 An alignment axiom
-	tzont:TimeZone rdfs:subClassOf time:TimeZone .
+  tzont:TimeZone rdfs:subClassOf time:TimeZone .
 allows data encoded according to the previous version to be consistent with the updated ontology. """ ;
   skos:note """A designated timezone is associated with a geographic region. However, for a particular region the offset from UTC often varies seasonally, and the dates of the changes may vary from year to year. The timezone designation usually changes for the different seasons (e.g. Australian Eastern Standard Time vs. Australian Eastern Daylight Time). Furthermore, the offset for a timezone may change over longer timescales, though its designation might not.
 
@@ -1141,7 +1141,7 @@ The range of this property is not specified, so can be replaced by any specific 
   rdfs:range :TimeZone ;
   skos:historyNote """In the original 2006 version of OWL-Time, the range of time:timeZone was a TimeZone class in a separate namespace \"http://www.w3.org/2006/timezone#\".
 An alignment axiom
-	tzont:TimeZone rdfs:subClassOf time:TimeZone .
+  tzont:TimeZone rdfs:subClassOf time:TimeZone .
 allows data encoded according to the previous version to be consistent with the updated ontology. """ ;
   skos:note """IANA maintains a database of timezones. These are well maintained and generally considered authoritative, but individual items are not available at individual URIs, so cannot be used directly in data expressed using OWL-Time.
 

@@ -351,10 +351,10 @@
     <!-- S32 -->
     <rdfs:range>
       <owl:Class>
-	<owl:unionOf rdf:parseType="Collection">
-	  <owl:Class rdf:about="#Concept"/>
-	  <owl:Class rdf:about="#Collection"/>
-	</owl:unionOf>
+    <owl:unionOf rdf:parseType="Collection">
+      <owl:Class rdf:about="#Concept"/>
+      <owl:Class rdf:about="#Collection"/>
+    </owl:unionOf>
       </owl:Class>
     </rdfs:range>
     <!-- For non-OWL aware applications -->

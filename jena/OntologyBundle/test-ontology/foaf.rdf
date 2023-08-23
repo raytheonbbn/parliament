@@ -5,13 +5,13 @@
 <!--                                                                             -->
 <!-- first we introduce a number of RDF namespaces we will be using... -->
 <rdf:RDF
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-	xmlns:owl="http://www.w3.org/2002/07/owl#"
-	xmlns:vs="http://www.w3.org/2003/06/sw-vocab-status/ns#"
-	xmlns:foaf="http://xmlns.com/foaf/0.1/"
-	xmlns:wot="http://xmlns.com/wot/0.1/"
-	xmlns:dc="http://purl.org/dc/elements/1.1/">
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:owl="http://www.w3.org/2002/07/owl#"
+  xmlns:vs="http://www.w3.org/2003/06/sw-vocab-status/ns#"
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:wot="http://xmlns.com/wot/0.1/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/">
 <!-- Here we describe general characteristics of the FOAF vocabulary ('ontology'). -->
   <owl:Ontology rdf:about="http://xmlns.com/foaf/0.1/" dc:title="Friend of a Friend (FOAF) vocabulary" dc:description="The Friend of a Friend (FOAF) RDF vocabulary, described using W3C RDF Schema and the Web Ontology Language." >
   </owl:Ontology>
@@ -19,19 +19,19 @@
 
   <!-- OWL/RDF interop section - geeks only -->
   <!--  most folk can ignore this lot. the game here is to make FOAF
-  	work with vanilla RDF/RDFS tools, and with the stricter OWL DL
-	profile of OWL. At the moment we're in the OWL Full flavour of OWL.
-	The following are tricks to try have the spec live in both worlds
-	at once. See
-		http://phoebus.cs.man.ac.uk:9999/OWL/Validator
-		http://www.mindswap.org/2003/pellet/demo.shtml
-	...for some tools that help. 					-->
+    work with vanilla RDF/RDFS tools, and with the stricter OWL DL
+  profile of OWL. At the moment we're in the OWL Full flavour of OWL.
+  The following are tricks to try have the spec live in both worlds
+  at once. See
+    http://phoebus.cs.man.ac.uk:9999/OWL/Validator
+    http://www.mindswap.org/2003/pellet/demo.shtml
+  ...for some tools that help. 					-->
   <owl:AnnotationProperty rdf:about="http://xmlns.com/wot/0.1/assurance"/>
   <owl:AnnotationProperty rdf:about="http://xmlns.com/wot/0.1/src_assurance"/>
   <owl:AnnotationProperty rdf:about="http://www.w3.org/2003/06/sw-vocab-status/ns#term_status"/>
   <!--  DC terms are NOT annotation properties in general, so we consider the following
-	claims scoped to this document. They may be removed in future revisions if
-	OWL tools become more flexible. -->
+  claims scoped to this document. They may be removed in future revisions if
+  OWL tools become more flexible. -->
   <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/description"/>
   <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/title"/>
   <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/date"/>
@@ -60,8 +60,8 @@
 <!--    <rdfs:subClassOf><owl:Class rdf:about="http://xmlns.com/wordnet/1.6/Agent"/></rdfs:subClassOf> -->
     <rdfs:subClassOf><owl:Class rdf:about="http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing" rdfs:label="Spatial Thing"/></rdfs:subClassOf>
     <!-- aside:
-	are spatial things always spatially located?
-	Person includes imaginary people... discuss... -->
+  are spatial things always spatially located?
+  Person includes imaginary people... discuss... -->
     <rdfs:isDefinedBy rdf:resource="http://xmlns.com/foaf/0.1/"/>
 
 <!--    <owl:disjointWith rdf:resource="http://xmlns.com/foaf/0.1/Document"/> this was a mistake; tattoo'd people, for example. -->
@@ -324,8 +324,8 @@ we don't want the implied rdfs:domain here.
     <rdfs:isDefinedBy rdf:resource="http://xmlns.com/foaf/0.1/"/>
   </rdf:Property>
 <!-- end of naming properties. See http://rdfweb.org/issues/show_bug.cgi?id=7
-	   for open issue / re-design discussions.
-	-->
+     for open issue / re-design discussions.
+  -->
   <rdf:Property rdf:about="http://xmlns.com/foaf/0.1/phone" vs:term_status="testing" rdfs:label="phone" rdfs:comment="A phone,  specified using fully qualified tel: URI scheme (refs: http://www.w3.org/Addressing/schemes.html#tel).">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:isDefinedBy rdf:resource="http://xmlns.com/foaf/0.1/"/>
@@ -571,8 +571,8 @@ made this thing.">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AnnotationProperty"/>
     <!-- Added to keep OWL DL from bluescreening. DON'T CROSS THE STREAMERS, etc. -->
     <!-- This may get dropped if it means non-DL tools don't expose it as a real property.
-	 Should be fine though; I think only OWL stuff cares about AnnotationProperty.
-	 Dan									 -->
+   Should be fine though; I think only OWL stuff cares about AnnotationProperty.
+   Dan									 -->
 
 <!--    <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Group"/> prose only for now...-->
 <!--    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/> -->
