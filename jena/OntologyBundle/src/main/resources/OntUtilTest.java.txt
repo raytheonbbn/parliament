@@ -24,10 +24,12 @@ public class OntUtilTest {
 	private static final String MIN_PROP_COUNT_SYS_PROP = "minPropCount";
 	private static final String MAX_BNODE_COUNT_SYS_PROP = "maxBlankNodeCount";
 	private static final String COUNT_CLASS_QUERY = """
-		prefix owl: <http://www.w3.org/2002/07/owl#>
-
+		prefix owl:  <http://www.w3.org/2002/07/owl#>
+		prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		
 		select (count(distinct ?cls) as ?count) where {
-			?cls a owl:Class .
+			values ?classClass { rdfs:Class owl:Class }
+			?cls a ?classClass .
 			filter not exists { ?cls a owl:Restriction . }
 		}
 		""";
