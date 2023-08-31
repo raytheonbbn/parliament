@@ -65,20 +65,30 @@ public class PrepareOntologyTask extends DefaultTask {
 		"deleteOntologyNodes.update",
 		"trimStringLiterals.update",
 		"deleteEmptyLiterals.update",
-		"removeOwlThingAsSuperClass.update",
+		"deleteOwlThingSuperClasses.update",
+		"deleteOrphanBlankRestrictions.update",
+		"deleteBlankRestrictionsWithNoConstraint.update",
 	};
 	private static final String[] UPDATES_FOR_MACHINES = {
 		"deleteAnnotationProperties.update",
 	};
 	private static final String[] REPORTS = {
 	};
-	private static final String BLANK_PATTERN_UPDATE = "replaceBlankPatternRestrictions.update";
-	private static final String BLANK_INVERSE_PROP_UPDATE = "replaceBlankInverseProp.update";
-	private static final String BLANK_LIST_UPDATE = "replaceBlankListNodes.update";
-	private static final String BLANK_UNION_DOMAIN_AND_RANGE_UPDATE = "replaceBlankUnionDomainAndRange.update";
-	private static final String BLANK_RESTR_UPDATE = "replaceBlankRestrictions.update";
-	private static final String BLANK_AXIOM_ANN_UPDATE = "replaceBlankAxiomAnnotation.update";
-	private static final String BLANK_GR_OFFERING_UPDATE = "replaceBlankGROffering.update";
+	private static final String[] BLANK_NODE_UPDATES = {
+		"replaceBlankXsdRestrictions.update",
+		"replaceBlankDatatype.update",
+		"replaceBlankShaclDatatype.update",
+		"replaceBlankInverseProp.update",
+		"replaceBlankUnionDomainAndRange.update",
+		"replaceBlankRestrictions.update",
+		"replaceBlankAxiomAnnotation.update",
+		"replaceBlankGROffering.update",
+		"replaceBlankShaclPrefix.update",
+		"replaceBlankShaclInversePath.update",
+		"replaceBlankPropertyShape.update",
+		"replaceBlankSparqlConstraint.update",
+		"replaceBlankListNodes.update",
+	};
 	private static final String COUNT_BLANK_QUERY = "countBlankNodes.sparql";
 	private static final String COUNT_CLASS_QUERY = "countClasses.sparql";
 	private static final String COUNT_PROP_QUERY = "countProperties.sparql";
@@ -193,14 +203,7 @@ public class PrepareOntologyTask extends DefaultTask {
 			}
 
 			combinedModel.setNsPrefix(FILLED_IN_PREFIX.prefix(), FILLED_IN_PREFIX.namespace());
-			runBlankNodeFillers(combinedModel,
-				BLANK_AXIOM_ANN_UPDATE,
-				BLANK_GR_OFFERING_UPDATE,
-				BLANK_INVERSE_PROP_UPDATE,
-				BLANK_PATTERN_UPDATE,
-				BLANK_UNION_DOMAIN_AND_RANGE_UPDATE,
-				BLANK_RESTR_UPDATE,
-				BLANK_LIST_UPDATE);
+			runBlankNodeFillers(combinedModel, BLANK_NODE_UPDATES);
 
 			printOntStats(combinedModel, "machine-readable");
 			writeCombinedOntology(combinedModel, OutputType.FOR_MACHINES);

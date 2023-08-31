@@ -1,3 +1,4 @@
+prefix dct:  <http://purl.org/dc/terms/>
 prefix owl:  <http://www.w3.org/2002/07/owl#>
 prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -7,13 +8,17 @@ delete {
 	?r a owl:Restriction ;
 		owl:onProperty ?prop ;
 		?rPredicate ?rValue ;
-		owl:onClass ?class .
+		owl:onClass ?class ;
+		owl:onDataRange ?dataRange ;
+		dct:description ?description .
 } insert {
 	?restrictionBearer ?incomingPredicate ?rIri .
 	?rIri a owl:Restriction ;
 		owl:onProperty ?prop ;
 		?rPredicate ?rValue ;
-		owl:onClass ?class .
+		owl:onClass ?class ;
+		owl:onDataRange ?dataRange ;
+		dct:description ?description .
 } where {
 	values ?incomingPredicate {
 		rdfs:subClassOf	# the usual case
@@ -37,9 +42,12 @@ delete {
 		owl:onProperty ?prop ;
 		?rPredicate ?rValue .
 	optional { ?r owl:onClass ?class . }
-	filter ( isBlank(?r) && !isBlank(?rValue) )
+	optional { ?r owl:onDataRange ?dataRange . }
+	optional { ?r dct:description ?description . }
+	filter ( isBlank(?r) && !isBlank(?prop) && !isBlank(?rValue) )
 	bind (?_fillNS as ?fillNS)
 	bind ( concat(str(?prop), "\n", str(?rPredicate), "\n", str(?rValue), "\n",
-		if(bound(?class), str(?class), "")) as ?toHash )
+		if(bound(?class), str(?class), ""), "\n",
+		if(bound(?dataRange), str(?dataRange), "")) as ?toHash )
 	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?rIri )
 }

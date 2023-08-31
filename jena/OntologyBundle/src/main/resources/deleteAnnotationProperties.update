@@ -2,24 +2,75 @@ prefix cc:   <http://creativecommons.org/ns#>
 prefix dc:   <http://purl.org/dc/elements/1.1/>
 prefix dct:  <http://purl.org/dc/terms/>
 prefix dul:  <http://www.loa-cnr.it/ontologies/DUL.owl#>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+prefix obo:  <http://purl.obolibrary.org/obo/>
+prefix owl:  <http://www.w3.org/2002/07/owl#>
+prefix prov: <http://www.w3.org/ns/prov#>
+prefix qudt: <http://qudt.org/schema/qudt/>
 prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix vann: <http://purl.org/vocab/vann/>
+prefix vs:   <http://www.w3.org/2003/06/sw-vocab-status/ns#>
+prefix wot:  <http://xmlns.com/wot/0.1/>
 
 delete {
 	?s ?annProp ?o .
 } where {
 	values ?annProp {
-		cc:license
-		dc:creator
-		dc:date
+		dc:contributor
+		dc:description
 		dc:identifier
 		dc:rights
 		dc:source
+		dc:subject
 		dc:title
+		dct:abstract
+		dct:contributor
 		dct:created
+		dct:creator
+		dct:date
+		dct:description
+		dct:license
 		dct:modified
+		dct:rights
+		dct:source
+		dct:subject
+		dct:title
 		dul:mappableTo
+		foaf:membershipClass
+		obo:BFO_0000179
+		obo:BFO_0000180
+		obo:IAO_0000111
+		obo:IAO_0000112
+		obo:IAO_0000115
+		obo:IAO_0000116
+		obo:IAO_0000117
+		obo:IAO_0000118
+		obo:IAO_0000119
+		obo:IAO_0000232
+		obo:IAO_0000412
+		obo:IAO_0000600
+		obo:IAO_0000601
+		obo:IAO_0000602
+		obo:IAO_0010000
+		owl:versionInfo
+		prov:aq
+		prov:category
+		prov:component
+		prov:constraints
+		prov:definition
+		prov:dm
+		prov:editorialNote
+		prov:editorsDefinition
+		prov:inverse
+		prov:n
+		prov:order
+		prov:sharesDefinitionWith
+		prov:specializationOf
+		prov:todo
+		prov:wasRevisionOf
+		qudt:example
 		rdfs:comment
 		rdfs:isDefinedBy
 		#rdfs:label
@@ -34,10 +85,11 @@ delete {
 		skos:note
 		skos:prefLabel
 		skos:scopeNote
-
-		# Not actually declared as annotation properties:
-		dc:contributor
-		dc:description
+		vann:preferredNamespacePrefix
+		vann:preferredNamespaceUri
+		vs:term_status
+		wot:assurance
+		wot:src_assurance
 	}
 	?s ?annProp ?o .
 }

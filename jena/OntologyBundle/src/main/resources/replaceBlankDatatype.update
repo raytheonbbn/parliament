@@ -1,0 +1,29 @@
+prefix owl:  <http://www.w3.org/2002/07/owl#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+delete {
+	?blankDatatypeBearer ?incomingPredicate ?blankDatatype .
+	?blankDatatype a rdfs:Datatype ;
+		owl:onDatatype ?baseDatatype ;
+		owl:withRestrictions ?restrictionsList ;
+		rdfs:isDefinedBy ?isDefinedBy .
+} insert {
+	?blankDatatypeBearer ?incomingPredicate ?datatypeIri .
+	?datatypeIri a rdfs:Datatype ;
+		owl:onDatatype ?baseDatatype ;
+		owl:withRestrictions ?restrictionsList ;
+		rdfs:isDefinedBy ?isDefinedBy .
+} where {
+	values ?incomingPredicate {
+		owl:equivalentClass
+	}
+	?blankDatatypeBearer ?incomingPredicate ?blankDatatype .
+	?blankDatatype a rdfs:Datatype ;
+		owl:onDatatype ?baseDatatype ;
+		owl:withRestrictions ?restrictionsList .
+	optional { ?blankDatatype rdfs:isDefinedBy ?isDefinedBy . }
+	filter ( isBlank(?blankDatatype) && !isBlank(?baseDatatype) && !isBlank(?restrictionsList) )
+	bind (?_fillNS as ?fillNS)
+	bind ( concat(str(?baseDatatype), "\n", str(?restrictionsList)) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?datatypeIri )
+}

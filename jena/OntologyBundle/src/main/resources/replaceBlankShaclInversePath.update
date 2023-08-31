@@ -1,0 +1,16 @@
+prefix sh: <http://www.w3.org/ns/shacl#>
+
+delete {
+	?pathBearer sh:path ?blankPath .
+	?blankPath sh:inversePath ?invPath .
+} insert {
+	?pathBearer sh:path ?pathIri .
+	?pathIri sh:inversePath ?invPath .
+} where {
+	?pathBearer sh:path ?blankPath .
+	?blankPath sh:inversePath ?invPath .
+	filter ( isBlank(?blankPath) && !isBlank(?invPath) )
+	bind (?_fillNS as ?fillNS)
+	bind ( str(?invPath) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?pathIri )
+}

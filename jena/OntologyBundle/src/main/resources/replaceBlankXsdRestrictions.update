@@ -1,0 +1,27 @@
+prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+
+delete {
+	?listNode rdf:first ?restrictionBN .
+	?restrictionBN ?facet ?restrictionValue .
+} insert {
+	?listNode rdf:first ?restrictionIri .
+	?restrictionIri ?facet ?restrictionValue .
+} where {
+	values ?facet {
+		xsd:length
+		xsd:minLength
+		xsd:maxLength
+		xsd:minExclusive
+		xsd:minInclusive
+		xsd:maxExclusive
+		xsd:maxInclusive
+		xsd:pattern
+	}
+	?listNode rdf:first ?restrictionBN .
+	?restrictionBN ?facet ?restrictionValue .
+	filter ( isBlank(?restrictionBN) && !isBlank(?restrictionValue) )
+	bind (?_fillNS as ?fillNS)
+	bind ( str(?restrictionValue) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?restrictionIri )
+}
