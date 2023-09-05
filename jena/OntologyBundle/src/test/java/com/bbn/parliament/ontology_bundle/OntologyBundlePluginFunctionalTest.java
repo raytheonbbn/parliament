@@ -51,7 +51,6 @@ public class OntologyBundlePluginFunctionalTest {
 				//exclude: '**/*-original*'
 			)
 			ontologyIri = 'http://bbn.com/ix/ontology-bundle/functional-test'
-			ontologyVersion = project.version
 			generatedCodePackageName = 'com.bbn.ix.ontology_bundle.functional_test'
 		}
 		""";

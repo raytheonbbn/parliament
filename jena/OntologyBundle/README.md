@@ -28,34 +28,35 @@ but the caller can easily wrap it in an inferencing Model if they wish.)
 
 ## Example Gradle Build Script
 
+This is a minimal example `build.gradle` (written in  Groovy) to bundle an ontology:
+
 ```
 plugins {
 	id 'com.bbn.parliament.ontology_bundle.OntologyBundle'
 }
 
-group = 'com.bbn.parliament.test'
-version = '0.1.0'
+group = 'com.my_company'
+version = '1.0.0'
 
 ontologyBundle {
 	prefixes = [
 		// prefix, class (blank for none), namespace
-		%1$s
 		'owl, , http://www.w3.org/2002/07/owl#',
 		'rdf, , http://www.w3.org/1999/02/22-rdf-syntax-ns#',
 		'rdfs, , http://www.w3.org/2000/01/rdf-schema#',
 		'xsd, , http://www.w3.org/2001/XMLSchema#',
+		'myont, MyOnt, http://my_company.com/my-ontology#',
 	]
-	ontologySources = fileTree(dir: "$projectDir/../../../../test-ontology",
-		includes: [ '%2$s' ],
-		//exclude: '**/*-original*'
+	ontologySources = fileTree(dir: "$projectDir/ontology-files",
+		includes: [ '**/*.ttl', '**/*.rdf', '**/*.owl' ],
+		exclude: '**/*-experimental*'
 	)
-	ontologyIri = 'http://bbn.com/ix/ontology-bundle/functional-test'
-	ontologyVersion = project.version
-	generatedCodePackageName = 'com.bbn.ix.ontology_bundle.functional_test'
+	ontologyIri = 'http://my_company.com/my-ontology'
+	generatedCodePackageName = 'com.my_company.my_ontology'
 }
 ```
 
-## Preparation of the Human- and Machine-Readable Ontologies
+## Preparation of the Human-Readable Ontology
 
 The human-readable ontology file is the result of merging the various input
 ontology files together, with a few changes to make things tidier:
@@ -71,8 +72,9 @@ missing their value or cardinality constraint are deleted.
 - The human-readable ontology file is serialized with the most friendly
 formatting options to make it as readable as possible.
 
-The machine-readable ontology file has two additional changes applied to
-prepare it to be used in a running software system.
+## Preparation of the Machine-Readable Ontology
+
+The machine-readable ontology file applies two additional changes to the human-readable file to prepare it to be used in a running software system.
 
 First, values for a variety of annotation properties whose purpose is
 documentation are deleted, since these are rarely used at run time. Note that

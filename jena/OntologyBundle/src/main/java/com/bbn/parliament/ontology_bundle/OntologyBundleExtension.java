@@ -33,7 +33,6 @@ public class OntologyBundleExtension {
 	private final DirectoryProperty reportDir;
 	private final ConfigurableFileCollection ontologySources;
 	private final Property<String> ontologyIri;
-	private final Property<String> ontologyVersion;
 	private final Property<String> generatedCodePackageName;
 	private final DirectoryProperty generatedJavaDir;
 	private final DirectoryProperty generatedRsrcDir;
@@ -73,7 +72,6 @@ public class OntologyBundleExtension {
 			.convention(buildDir.dir("reports/ontologyBundle"));
 		ontologySources = objFact.fileCollection();
 		ontologyIri = objFact.property(String.class);
-		ontologyVersion = objFact.property(String.class);
 		generatedCodePackageName = objFact.property(String.class);
 		generatedJavaDir = objFact.directoryProperty()
 			.convention(buildDir.dir("generated/main/java"));
@@ -193,21 +191,15 @@ public class OntologyBundleExtension {
 	}
 
 	/**
-	 * The IRI used to identify the bundled ontology as a whole.
+	 * The IRI used to identify the bundled ontology as a whole. The project
+	 * version, if specified, will be added to this as an owl:versionInfo attribute.
+	 * If no IRI is provided, no ontology declaration will be added to the bundled
+	 * ontology.
 	 *
 	 * @return The ontology IRI for the bundled ontology
 	 */
 	public Property<String> getOntologyIri() {
 		return ontologyIri;
-	}
-
-	/**
-	 * The version to be given to the bundled ontology
-	 *
-	 * @return The version of the bundled ontology
-	 */
-	public Property<String> getOntologyVersion() {
-		return ontologyVersion;
 	}
 
 	/**

@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -108,7 +109,6 @@ public class PrepareOntologyTask extends DefaultTask {
 	private RegularFileProperty machineOntFile;
 	private DirectoryProperty reportDir;
 	private Property<String> ontIri;
-	private Property<String> ontVersion;
 	private PrefixFileLoader prefixLoader;
 
 	public PrepareOntologyTask() {
@@ -127,8 +127,6 @@ public class PrepareOntologyTask extends DefaultTask {
 		reportDir.set(ext.getReportDir());
 		ontIri = objFact.property(String.class);
 		ontIri.set(ext.getOntologyIri());
-		ontVersion = objFact.property(String.class);
-		ontVersion.set(ext.getOntologyVersion());
 		prefixLoader = null;
 	}
 
@@ -172,12 +170,6 @@ public class PrepareOntologyTask extends DefaultTask {
 	@Optional
 	public Property<String> getOntologyIri() {
 		return ontIri;
-	}
-
-	@Input
-	@Optional
-	public Property<String> getOntologyVersion() {
-		return ontVersion;
 	}
 
 	@TaskAction
@@ -237,8 +229,9 @@ public class PrepareOntologyTask extends DefaultTask {
 		if (ontIri.isPresent()) {
 			var ont = combinedModel.createResource(combinedModel.expandPrefix(ontIri.get()));
 			combinedModel.add(ont, RDF.type, OWL.Ontology);
-			if (ontVersion.isPresent()) {
-				combinedModel.add(ont, OWL.versionInfo, ontVersion.get());
+			var projectVersion = Objects.toString(getProject().getVersion(), null);
+			if (projectVersion != null && !"unspecified".equals(projectVersion)) {
+				combinedModel.add(ont, OWL.versionInfo, projectVersion);
 			}
 		}
 	}
