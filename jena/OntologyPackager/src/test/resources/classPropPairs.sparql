@@ -1,6 +1,0 @@
-select distinct ?cls ?prop where {
-	?cls rdfs:subClassOf ?r .
-	?r a owl:Restriction ;
-		owl:onProperty ?prop .
-	filter not exists { ?cls a owl:Restriction . }
-}

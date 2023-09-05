@@ -1,9 +1,0 @@
-
-repositories {
-	mavenCentral()
-}
-
-dependencies {
-	api 'org.apache.jena:jena-cmds:3.6.0'
-	implementation 'org.apache.commons:commons-csv:1.5'
-}

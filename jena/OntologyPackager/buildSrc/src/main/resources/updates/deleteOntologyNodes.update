@@ -1,8 +1,0 @@
-prefix owl:  <http://www.w3.org/2002/07/owl#>
-
-delete {
-	?ont ?p ?o .
-} where {
-	?ont a owl:Ontology ;
-		?p ?o .
-}

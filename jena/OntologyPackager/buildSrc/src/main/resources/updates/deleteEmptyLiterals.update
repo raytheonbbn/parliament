@@ -1,6 +1,0 @@
-delete {
-	?s ?p ?str .
-} where {
-	?s ?p ?str .
-	filter ( isLiteral(?str) && str(?str) = "" )
-}
