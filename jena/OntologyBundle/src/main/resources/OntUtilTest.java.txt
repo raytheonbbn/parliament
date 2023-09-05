@@ -4,7 +4,7 @@
 // Copyright (c) 2023, BBN Technologies, Inc.
 // All rights reserved.
 
-package com.bbn.parliament.ontology_bundle;
+package org.semwebcentral.parliament.ontology_bundle;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,7 +17,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
 
-import com.bbn.parliament.ontology_bundle.OntUtil.OntType;
+import org.semwebcentral.parliament.ontology_bundle.OntUtil.OntType;
 
 public class OntUtilTest {
 	private static final String MIN_CLASS_COUNT_SYS_PROP = "minClassCount";

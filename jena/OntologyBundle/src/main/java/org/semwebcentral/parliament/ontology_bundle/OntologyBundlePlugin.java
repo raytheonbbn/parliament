@@ -4,7 +4,7 @@
 // Copyright (c) 2023, BBN Technologies, Inc.
 // All rights reserved.
 
-package com.bbn.parliament.ontology_bundle;
+package org.semwebcentral.parliament.ontology_bundle;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -39,7 +39,8 @@ import org.gradle.api.tasks.testing.Test;
  * but the caller can easily wrap it in an inferencing Model if they wish.)
  * <li>Tests that verify the merged ontology files.
  * </ul>
- * <h1>Preparation of the Human- and Machine-Readable Ontologies
+ * <p>
+ * <b>Preparation of the Human-Readable Ontology</b>
  * <p>
  * The human-readable ontology file is the result of merging the various input
  * ontology files together, with a few changes to make things tidier:
@@ -56,8 +57,10 @@ import org.gradle.api.tasks.testing.Test;
  * formatting options to make it as readable as possible.
  * </ul>
  * <p>
- * The machine-readable ontology file has two additional changes applied to
- * prepare it to be used in a running software system.
+ * <b>Preparation of the Machine-Readable Ontology</b>
+ * <p>
+ * The machine-readable ontology file applies two additional changes to the
+ * human-readable file to prepare it to be used in a running software system.
  * <p>
  * First, values for a variety of annotation properties whose purpose is
  * documentation are deleted, since these are rarely used at run time. Note that
@@ -93,24 +96,26 @@ import org.gradle.api.tasks.testing.Test;
  * nodes remain, please file a bug report <i>that includes your ontology or a
  * snippet of it that reproduces the problem.</i>
  * </ul>
- * <h1>Generation of the Namespace Classes
  * <p>
- * The Ontology Bundle plugin uses Jena's SchemaGen tool
- * ({@link https://jena.apache.org/documentation/tools/schemagen.html}) to
- * create a Java namespace class for each declared namespace whose class name is
- * not blank in the prefixes declaration in the Gradle build script. This tool
- * creates a Java class containing every declared OWL class, property, datatype,
- * and instance in the associated namespace. These classes can be used to
- * eliminate a particularly pernicious type of coding error, namely misspellings
- * of IRIs in the Java code. Furthermore, if you use these classes everywhere in
- * place of hard-coded IRIs and then change an IRI, the Java compiler will show
- * you exactly where you need to make corresponding changes in the code.
+ * <b>Generation of the Namespace Classes</b>
+ * <p>
+ * The Ontology Bundle plugin uses
+ * <a href="https://jena.apache.org/documentation/tools/schemagen.html">Jena's
+ * SchemaGen tool</a> to create a Java namespace class for each declared
+ * namespace whose class name is not blank in the prefixes declaration in the
+ * Gradle build script. This tool creates a Java class containing every declared
+ * OWL class, property, datatype, and instance in the associated namespace.
+ * These classes can be used to eliminate a particularly pernicious type of
+ * coding error, namely misspellings of IRIs in the Java code. Furthermore, if
+ * you use these classes everywhere in place of hard-coded IRIs and then change
+ * an IRI, the Java compiler will show you exactly where you need to make
+ * corresponding changes in the code.
  */
 public class OntologyBundlePlugin implements Plugin<Project> {
-	public static final String EXT_NAME = "ontologyBundle";
-	public static final String PREP_ONT_TASK = "prepareOntology";
-	public static final String NS_CLASSES_TASK = "generateNamespaceClasses";
-	public static final String UTIL_CLASSES_TASK = "generateUtilityClasses";
+	static final String EXT_NAME = "ontologyBundle";
+	static final String PREP_ONT_TASK = "prepareOntology";
+	static final String NS_CLASSES_TASK = "generateNamespaceClasses";
+	static final String UTIL_CLASSES_TASK = "generateUtilityClasses";
 	private static final String MIN_CLASS_COUNT_SYS_PROP = "minClassCount";
 	private static final String MIN_PROP_COUNT_SYS_PROP = "minPropCount";
 	private static final String MAX_BNODE_COUNT_SYS_PROP = "maxBlankNodeCount";

@@ -4,7 +4,7 @@
 // Copyright (c) 2023, BBN Technologies, Inc.
 // All rights reserved.
 
-package com.bbn.parliament.ontology_bundle;
+package org.semwebcentral.parliament.ontology_bundle;
 
 import java.io.File;
 
@@ -23,8 +23,8 @@ import org.gradle.api.provider.Provider;
  * Configuration parameters for the Ontology Bundle plugin.
  */
 public class OntologyBundleExtension {
-	public static final String HUMAN_ONT_DEFAULT_FILE = "OntologyForHumans.ttl";
-	public static final String MACHINE_ONT_DEFAULT_FILE = "OntologyForMachines.ttl";
+	static final String HUMAN_ONT_DEFAULT_FILE = "OntologyForHumans.ttl";
+	static final String MACHINE_ONT_DEFAULT_FILE = "OntologyForMachines.ttl";
 
 	private final Property<String> ontologyForHumansFileName;
 	private final Property<String> ontologyForMachinesFileName;
@@ -145,9 +145,9 @@ public class OntologyBundleExtension {
 	/**
 	 * If the configuration parameters in this class do not provide enough control
 	 * over SchemaGen's generation of the namespace classes, then you may provide
-	 * your own SchemaGen configuration file. See
-	 * {@link https://jena.apache.org/documentation/tools/schemagen.html} for
-	 * details.
+	 * your own SchemaGen configuration file. See the documentation for
+	 * <a href="https://jena.apache.org/documentation/tools/schemagen.html">Jena's
+	 * SchemaGen tool</a> for details.
 	 *
 	 * @return The path to a custom SchemaGen configuration file to use instead of
 	 *         Ontology Bundle's internal default.

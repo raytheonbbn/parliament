@@ -4,7 +4,7 @@
 // Copyright (c) 2023, BBN Technologies, Inc.
 // All rights reserved.
 
-package com.bbn.parliament.ontology_bundle;
+package org.semwebcentral.parliament.ontology_bundle;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,7 +20,7 @@ import org.gradle.api.tasks.TaskAction;
 
 import com.bbn.parliament.util.JavaResource;
 
-public class UtilityCodeGenerator extends DefaultTask {
+class UtilityCodeGenerator extends DefaultTask {
 	private static final String ONT_UTIL_RSRC = "OntUtil.java.txt";
 	private static final String ONT_UTIL_TEST_RSRC = "OntUtilTest.java.txt";
 

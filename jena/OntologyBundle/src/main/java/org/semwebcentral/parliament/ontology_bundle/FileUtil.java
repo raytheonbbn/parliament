@@ -4,7 +4,7 @@
 // Copyright (c) 2023, BBN Technologies, Inc.
 // All rights reserved.
 
-package com.bbn.parliament.ontology_bundle;
+package org.semwebcentral.parliament.ontology_bundle;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FileUtil {
+class FileUtil {
 	private FileUtil() {}	// prevents instantiation
 
 	public static String getFileNameStem(String fileName) {

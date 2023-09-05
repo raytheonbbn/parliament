@@ -4,7 +4,7 @@
 // Copyright (c) 2023, BBN Technologies, Inc.
 // All rights reserved.
 
-package com.bbn.parliament.ontology_bundle;
+package org.semwebcentral.parliament.ontology_bundle;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,7 +57,7 @@ import org.gradle.api.tasks.TaskExecutionException;
 import com.bbn.parliament.util.JavaResource;
 import com.bbn.parliament.util.QuerySolutionStream;
 
-public class PrepareOntologyTask extends DefaultTask {
+class PrepareOntologyTask extends DefaultTask {
 	private static enum OutputType { FOR_HUMANS, FOR_MACHINES }
 
 	private static final PrefixInfo FILLED_IN_PREFIX = new PrefixInfo("fill", null,

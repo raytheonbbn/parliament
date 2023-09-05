@@ -4,9 +4,9 @@
 // Copyright (c) 2023, BBN Technologies, Inc.
 // All rights reserved.
 
-package com.bbn.parliament.ontology_bundle;
+package org.semwebcentral.parliament.ontology_bundle;
 
-public class CommandLineException extends Exception {
+class CommandLineException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	public CommandLineException() {

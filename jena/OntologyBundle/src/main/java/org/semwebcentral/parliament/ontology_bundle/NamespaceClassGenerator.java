@@ -4,7 +4,7 @@
 // Copyright (c) 2023, BBN Technologies, Inc.
 // All rights reserved.
 
-package com.bbn.parliament.ontology_bundle;
+package org.semwebcentral.parliament.ontology_bundle;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,7 +28,7 @@ import org.gradle.api.tasks.TaskExecutionException;
 
 import com.bbn.parliament.util.JavaResource;
 
-public class NamespaceClassGenerator extends DefaultTask {
+class NamespaceClassGenerator extends DefaultTask {
 	private static final String SCHEMAGEN_RSRC_NAME = "schemagenConfig.ttl";
 
 	private ListProperty<String> prefixes;

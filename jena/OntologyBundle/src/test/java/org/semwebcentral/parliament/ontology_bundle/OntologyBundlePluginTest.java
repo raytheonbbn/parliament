@@ -4,7 +4,7 @@
 // Copyright (c) 2023, BBN Technologies, Inc.
 // All rights reserved.
 
-package com.bbn.parliament.ontology_bundle;
+package org.semwebcentral.parliament.ontology_bundle;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -13,7 +13,7 @@ import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.Test;
 
 /**
- * A simple unit test for the 'com.bbn.parliament.ontology_bundle.OntologyBundle' plugin.
+ * A simple unit test for the Ontology Bundle plugin.
  */
 public class OntologyBundlePluginTest {
 	@SuppressWarnings("static-method")
@@ -23,7 +23,7 @@ public class OntologyBundlePluginTest {
 		Project project = ProjectBuilder.builder()
 			.withName("ont-bundle-test")
 			.build();
-		project.getPlugins().apply("com.bbn.parliament.ontology_bundle.ontologyBundle");
+		project.getPlugins().apply("org.semwebcentral.parliament.ontology-bundle");
 
 		// Verify the result
 		assertNotNull(project.getTasks().findByName(OntologyBundlePlugin.PREP_ONT_TASK));

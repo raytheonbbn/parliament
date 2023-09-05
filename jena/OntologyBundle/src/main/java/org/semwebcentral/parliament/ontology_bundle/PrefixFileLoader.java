@@ -4,7 +4,7 @@
 // Copyright (c) 2023, BBN Technologies, Inc.
 // All rights reserved.
 
-package com.bbn.parliament.ontology_bundle;
+package org.semwebcentral.parliament.ontology_bundle;
 
 import java.io.File;
 import java.util.Collections;
@@ -21,7 +21,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.shared.PrefixMapping;
 import org.gradle.api.InvalidUserDataException;
 
-final class PrefixFileLoader {
+class PrefixFileLoader {
 	private final PrefixMapping declaredPrefixMapping;
 	private final Map<String, String> clsNameToNsMap;
 	private final Map<String, String> nsToPfxMap;

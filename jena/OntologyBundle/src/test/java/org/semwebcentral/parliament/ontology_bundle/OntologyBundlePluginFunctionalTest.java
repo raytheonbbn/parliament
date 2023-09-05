@@ -4,7 +4,7 @@
 // Copyright (c) 2023, BBN Technologies, Inc.
 // All rights reserved.
 
-package com.bbn.parliament.ontology_bundle;
+package org.semwebcentral.parliament.ontology_bundle;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -19,7 +19,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 /**
- * A simple functional test for the 'com.bbn.parliament.ontology_bundle.OntologyBundle' plugin.
+ * A simple functional test for the Ontology Bundle plugin.
  */
 public class OntologyBundlePluginFunctionalTest {
 	private static final String SETTINGS_GRADLE = """
@@ -31,10 +31,10 @@ public class OntologyBundlePluginFunctionalTest {
 		""";
 	private static final String BUILD_GRADLE = """
 		plugins {
-			id 'com.bbn.parliament.ontology_bundle.OntologyBundle'
+			id 'org.semwebcentral.parliament.ontology-bundle'
 		}
 
-		group = 'com.bbn.parliament.test'
+		group = 'org.semwebcentral.parliament.test'
 		version = '0.1.0'
 
 		ontologyBundle {
@@ -51,7 +51,7 @@ public class OntologyBundlePluginFunctionalTest {
 				//exclude: '**/*-original*'
 			)
 			ontologyIri = 'http://bbn.com/ix/ontology-bundle/functional-test'
-			generatedCodePackageName = 'com.bbn.ix.ontology_bundle.functional_test'
+			generatedCodePackageName = 'org.semwebcentral.parliament.ontology_bundle.functional_test'
 		}
 		""";
 

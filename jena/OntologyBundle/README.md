@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Ontology Bundle is a Gradle plugin that packages (bundles) an ontology,
+Ontology Bundle is a Gradle plugin that packages (bundles) an OWL ontology,
 possibly spanning many files, into a form that makes it easy to use in a
 Java-based software project. More specifically, a Gradle project that uses
 this plugin takes as input a collection of RDF files (in any RDF
@@ -32,7 +32,7 @@ This is a minimal example `build.gradle` (written in  Groovy) to bundle an ontol
 
 ```
 plugins {
-	id 'com.bbn.parliament.ontology_bundle.OntologyBundle'
+	id 'org.semwebcentral.parliament.ontology-bundle'
 }
 
 group = 'com.my_company'

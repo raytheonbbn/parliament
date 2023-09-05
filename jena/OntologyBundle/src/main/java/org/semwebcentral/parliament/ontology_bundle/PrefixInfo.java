@@ -4,7 +4,7 @@
 // Copyright (c) 2023, BBN Technologies, Inc.
 // All rights reserved.
 
-package com.bbn.parliament.ontology_bundle;
+package org.semwebcentral.parliament.ontology_bundle;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 import org.gradle.api.InvalidUserDataException;
 
-public record PrefixInfo(String prefix, String className, String namespace) {
+record PrefixInfo(String prefix, String className, String namespace) {
 	public static PrefixInfo fromConfigurationLine(String prefixConfigurationLine) {
 		String[] lineSplit = prefixConfigurationLine.split(Pattern.quote(","), 3);
 		if (lineSplit.length != 3) {

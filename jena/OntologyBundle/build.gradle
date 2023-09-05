@@ -1,4 +1,5 @@
 plugins {
+	id 'com.gradle.plugin-publish' version '1.2.1'
 	id 'java-gradle-plugin'
 }
 
@@ -16,14 +17,21 @@ dependencies {
 	testImplementation "$jupiterDependency"
 }
 
+version = '0.1.0'
 sourceCompatibility = '17'
 targetCompatibility = '17'
 
 gradlePlugin {
+	website = 'https://github.com/SemWebCentral/parliament/tree/jena-update/jena/OntologyBundle'
+	vcsUrl = 'https://github.com/SemWebCentral/parliament/tree/jena-update/jena/OntologyBundle'
+
 	plugins {
 		ontologyBundle {
-			id = 'com.bbn.parliament.ontology_bundle.ontologyBundle'
-			implementationClass = 'com.bbn.parliament.ontology_bundle.OntologyBundlePlugin'
+			id = 'org.semwebcentral.parliament.ontology-bundle'
+			displayName = 'Ontology Bundle'
+			description = 'A Gradle plugin that packages (bundles) an OWL ontology into a form that makes it easy to use in a Java-based software project'
+			tags.set([ 'ontology', 'OWL' ])
+			implementationClass = 'org.semwebcentral.parliament.ontology_bundle.OntologyBundlePlugin'
 		}
 	}
 }
@@ -34,7 +42,7 @@ test {
 
 task xlatePrefix(type: JavaExec) {
 	dependsOn compileJava
-	mainClass = 'com.bbn.parliament.ontology_bundle.XlatePrefix'
+	mainClass = 'org.semwebcentral.parliament.ontology_bundle.XlatePrefix'
 	classpath = sourceSets.main.runtimeClasspath
 
 	//systemProperty 'PROP_NAME', "property-value"
