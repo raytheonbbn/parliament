@@ -5,12 +5,7 @@ package com.bbn.parliament.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.MissingResourceException;
 
 /**
@@ -75,8 +70,11 @@ public class JavaResource {
 	 *         be found, the method throws.
 	 */
 	public static String getAsString(String resourceName, Class<?> cls) {
-		URL resourceUrl = cls.getResource(resourceName);
-		return getAsString(resourceUrl, resourceName, cls);
+		try (InputStream is = getAsStream(resourceName, cls)) {
+			return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+		} catch (IOException ex) {
+			throw new UncheckedIOException(ex);
+		}
 	}
 
 	/**
@@ -87,25 +85,10 @@ public class JavaResource {
 	 *         be found, the method throws.
 	 */
 	public static String getAsString(String resourceName) {
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		URL resourceUrl = cl.getResource(resourceName);
-		return getAsString(resourceUrl, resourceName, null);
-	}
-
-	private static String getAsString(URL resourceUrl, String resourceName, Class<?> cls) {
-		try {
-			if (resourceUrl == null) {
-				String message = String.format("Unable to locate resource '%1$s'", resourceName);
-				String clsName = (cls == null) ? null : cls.getCanonicalName();
-				throw new MissingResourceException(message, clsName, resourceName);
-			}
-			Path resourcePath = Paths.get(resourceUrl.toURI());
-			byte[] resourceBytes = Files.readAllBytes(resourcePath);
-			return new String(resourceBytes, StandardCharsets.UTF_8);
+		try (InputStream is = getAsStream(resourceName)) {
+			return new String(is.readAllBytes(), StandardCharsets.UTF_8);
 		} catch (IOException ex) {
 			throw new UncheckedIOException(ex);
-		} catch (URISyntaxException ex) {
-			throw new UncheckedUriSyntaxException(ex);
 		}
 	}
 }

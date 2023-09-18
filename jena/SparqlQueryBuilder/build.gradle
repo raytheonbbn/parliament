@@ -57,18 +57,18 @@ publishing {
 				url = 'https://github.com/SemWebCentral/parliament/tree/main/jena/SparqlQueryBuilder'
 				organization {
 					name = 'Raytheon BBN Technologies'
-					url = 'http://raytheon.com/'
+					url = 'http://bbn.com/'
 				}
 				developers {
 					developer {
 						id = 'mallen'
 						name = 'Matthew Allen'
-						email = 'matthew.allen@raytheon.com'
+						email = 'matthew.allen@rtx.com'
 					}
 					developer {
 						id = 'iemmons'
 						name = 'Ian Emmons'
-						email = 'iemmons@raytheon.com'
+						email = 'iemmons@rtx.com'
 					}
 				}
 			}
@@ -76,6 +76,7 @@ publishing {
 	}
 
 	repositories {
+		mavenLocal()
 		maven {
 			url "${artifactory_contextUrl}/bbn-maven-us-only"
 			credentials {
