@@ -15,13 +15,13 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFLanguages;
 
-public class OntUtil {
+public class OntAccess {
 	public static enum OntType { FOR_HUMANS, FOR_MACHINES }
 
 	public static final String ONT_RSRC_FOR_HUMANS = "OntologyForHumans.ttl";
 	public static final String ONT_RSRC_FOR_MACHINES = "OntologyForMachines.ttl";
 
-	private OntUtil() {}	// prevents instantiation
+	private OntAccess() {}	// prevents instantiation
 
 	public static String getOntResourceName(OntType ontType) {
 		return (ontType == OntType.FOR_HUMANS) ? ONT_RSRC_FOR_HUMANS : ONT_RSRC_FOR_MACHINES;
@@ -29,10 +29,10 @@ public class OntUtil {
 
 	public static InputStream getOntResourceAsStream(OntType ontType) {
 		var rsrcName = getOntResourceName(ontType);
-		var result = OntUtil.class.getResourceAsStream(rsrcName);
+		var result = OntAccess.class.getResourceAsStream(rsrcName);
 		if (result == null) {
 			throw new MissingResourceException("Unable to load ontology resource",
-				OntUtil.class.getName(), rsrcName);
+				OntAccess.class.getName(), rsrcName);
 		}
 		return result;
 	}

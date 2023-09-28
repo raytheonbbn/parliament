@@ -9,23 +9,22 @@ package org.semwebcentral.parliament.ontology_bundle;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.query.ParameterizedSparqlString;
-import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
@@ -33,6 +32,7 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.riot.RDFLanguages;
+import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.update.UpdateExecutionFactory;
 import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.vocabulary.OWL;
@@ -270,38 +270,47 @@ class PrepareOntologyTask extends DefaultTask {
 			var reportFile = new File(reportDir.get().getAsFile(),
 				getFileNameStem(rsrcName) + ".csv");
 			System.out.format("Running report '%1$s'%n", reportFile.getPath());
-			var queryStr = JavaResource.getAsString(rsrcName);
-			try (var qe = QueryExecutionFactory.create(queryStr, combinedModel)) {
-				ResultSet rs = qe.execSelect();
-				List<String> vars = rs.getResultVars();
-				var csvFmt = CSVFormat.Builder.create(CSVFormat.DEFAULT)
-					.setHeader(vars.toArray(new String[0]))
-					.build();
-				try (
-					var wtr = Files.newBufferedWriter(reportFile.toPath(), StandardCharsets.UTF_8);
-					var csv = new CSVPrinter(wtr, csvFmt);
-				) {
-					while (rs.hasNext()) {
-						QuerySolution qs = rs.next();
-						List<String> resultStrings = new ArrayList<>();
-						for (String var : vars) {
-							RDFNode node = qs.get(var);
-							if (node == null) {
-								resultStrings.add("");
-							} else if (node.isAnon()) {
-								resultStrings.add(node.toString());
-							} else if (node.isURIResource()) {
-								resultStrings.add(combinedModel.qnameFor(node.toString()));
-							} else if (node.isLiteral()) {
-								resultStrings.add(node.toString());
-							} else {
-								throw new IllegalStateException("Shouldn't happen");
-							}
-						}
-						csv.printRecord(resultStrings);
-					}
-				}
+			var query = QueryFactory.create(JavaResource.getAsString(rsrcName));
+			List<String> vars = query.getResultVars();
+			var csvFmt = CSVFormat.Builder.create(CSVFormat.DEFAULT)
+				.setHeader(vars.toArray(new String[0]))
+				.build();
+			try (
+				var strm = new QuerySolutionStream(query, combinedModel);
+				var wtr = new FileWriter(reportFile, StandardCharsets.UTF_8);
+				var csv = new CSVPrinter(wtr, csvFmt);
+			) {
+				strm
+					.map(qs -> getSolutionAsStrings(qs, vars, combinedModel))
+					.forEach(solutionStrings -> printCsvRow(solutionStrings, csv));
 			}
+		}
+	}
+
+	private static List<String> getSolutionAsStrings(QuerySolution qs, List<String> vars, Model combinedModel) {
+		return vars.stream()
+			.map(qs::get)
+			.map(node -> getNodeAsString(node, combinedModel))
+			.collect(Collectors.toUnmodifiableList());
+	}
+
+	private static String getNodeAsString(RDFNode node, PrefixMapping pm) {
+		if (node == null) {
+			return "";
+		} else if (node.isAnon() || node.isLiteral()) {
+			return node.toString();
+		} else if (node.isURIResource()) {
+			return pm.qnameFor(node.toString());
+		} else {
+			throw new IllegalStateException("Shouldn't happen");
+		}
+	}
+
+	private static void printCsvRow(List<String> solutionStrings, CSVPrinter csv) {
+		try {
+			csv.printRecord(solutionStrings);
+		} catch (IOException ex) {
+			throw new UncheckedIOException(ex);
 		}
 	}
 

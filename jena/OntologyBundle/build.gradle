@@ -1,6 +1,7 @@
 plugins {
 	id 'com.gradle.plugin-publish' version '1.2.1'
 	id 'java-gradle-plugin'
+	//id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 repositories {
@@ -38,6 +39,12 @@ gradlePlugin {
 
 test {
 	useJUnitPlatform()
+}
+
+publishing {
+	repositories {
+		mavenLocal()
+	}
 }
 
 task xlatePrefix(type: JavaExec) {

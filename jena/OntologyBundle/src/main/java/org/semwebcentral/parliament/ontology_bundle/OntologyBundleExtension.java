@@ -204,7 +204,7 @@ public class OntologyBundleExtension {
 
 	/**
 	 * The Java package name used for the generated Java code. This includes both
-	 * the namespaces classes and the {@code OntUtil} class.
+	 * the namespaces classes and the {@code OntAccess} class.
 	 *
 	 * @return The Java package name for the generated Java code
 	 */

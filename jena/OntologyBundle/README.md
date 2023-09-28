@@ -20,7 +20,7 @@ the terms in the associated vocabulary. For example, if your ontology defines
 a class foo:MyClass, your Java code can refer to that class as Foo.MyClass
 with no possibility of a misspelling of the class IRI. (See below for
 details.)
-- A small Java class, called OntUtil, with convenience methods for loading
+- A small Java class, called `OntAccess`, with convenience methods for loading
 either ontology resource. The resources may be accessed either as an
 InputStream or as an in-memory Jena Model. (This Model is non-inferencing,
 but the caller can easily wrap it in an inferencing Model if they wish.)

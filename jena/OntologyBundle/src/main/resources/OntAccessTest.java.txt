@@ -17,9 +17,9 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
 
-import org.semwebcentral.parliament.ontology_bundle.OntUtil.OntType;
+import org.semwebcentral.parliament.ontology_bundle.OntAccess.OntType;
 
-public class OntUtilTest {
+public class OntAccessTest {
 	private static final String MIN_CLASS_COUNT_SYS_PROP = "minClassCount";
 	private static final String MIN_PROP_COUNT_SYS_PROP = "minPropCount";
 	private static final String MAX_BNODE_COUNT_SYS_PROP = "maxBlankNodeCount";
@@ -78,7 +78,7 @@ public class OntUtilTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void smokeTest() throws IOException {
-		Model model = OntUtil.getOntResourceAsModel(OntType.FOR_MACHINES);
+		Model model = OntAccess.getOntResourceAsModel(OntType.FOR_MACHINES);
 		InfModel infModel = ModelFactory.createRDFSModel(model);
 
 		long minClassCount = Long.parseLong(System.getProperty(MIN_CLASS_COUNT_SYS_PROP, "1"));
@@ -99,8 +99,8 @@ public class OntUtilTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void humanVersusMachineTest() throws IOException {
-		Model humanModel = OntUtil.getOntResourceAsModel(OntType.FOR_HUMANS);
-		Model machineModel = OntUtil.getOntResourceAsModel(OntType.FOR_MACHINES);
+		Model humanModel = OntAccess.getOntResourceAsModel(OntType.FOR_HUMANS);
+		Model machineModel = OntAccess.getOntResourceAsModel(OntType.FOR_MACHINES);
 
 		long humanClassCount = getCount(COUNT_CLASS_QUERY, machineModel);
 		long machineClassCount = getCount(COUNT_CLASS_QUERY, machineModel);

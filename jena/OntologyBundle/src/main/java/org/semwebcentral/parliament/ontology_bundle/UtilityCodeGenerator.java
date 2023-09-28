@@ -21,8 +21,8 @@ import org.gradle.api.tasks.TaskAction;
 import com.bbn.parliament.util.JavaResource;
 
 class UtilityCodeGenerator extends DefaultTask {
-	private static final String ONT_UTIL_RSRC = "OntUtil.java.txt";
-	private static final String ONT_UTIL_TEST_RSRC = "OntUtilTest.java.txt";
+	private static final String ONT_UTIL_RSRC = "OntAccess.java.txt";
+	private static final String ONT_UTIL_TEST_RSRC = "OntAccessTest.java.txt";
 
 	private final Property<String> generatedCodePackageName;
 	private final Property<String> ontologyForHumansFileName;
@@ -72,19 +72,19 @@ class UtilityCodeGenerator extends DefaultTask {
 
 	@TaskAction
 	public void run() {
-		var ontUtilCode = JavaResource.getAsString(ONT_UTIL_RSRC);
+		var ontAccessCode = JavaResource.getAsString(ONT_UTIL_RSRC);
 		var genPackage = generatedCodePackageName.get();
-		ontUtilCode = replace(ontUtilCode, getClass().getPackageName(), genPackage);
-		ontUtilCode = replace(ontUtilCode, OntologyBundleExtension.HUMAN_ONT_DEFAULT_FILE,
+		ontAccessCode = replace(ontAccessCode, getClass().getPackageName(), genPackage);
+		ontAccessCode = replace(ontAccessCode, OntologyBundleExtension.HUMAN_ONT_DEFAULT_FILE,
 			ontologyForHumansFileName.get());
-		ontUtilCode = replace(ontUtilCode, OntologyBundleExtension.MACHINE_ONT_DEFAULT_FILE,
+		ontAccessCode = replace(ontAccessCode, OntologyBundleExtension.MACHINE_ONT_DEFAULT_FILE,
 			ontologyForMachinesFileName.get());
-		writeRsrcAsCodeFile(ontUtilCode, ONT_UTIL_RSRC, genPackage,
+		writeRsrcAsCodeFile(ontAccessCode, ONT_UTIL_RSRC, genPackage,
 			generatedJavaDir);
 
-		var ontUtilTestCode = JavaResource.getAsString(ONT_UTIL_TEST_RSRC);
-		ontUtilTestCode = replace(ontUtilTestCode, getClass().getPackageName(), genPackage);
-		writeRsrcAsCodeFile(ontUtilTestCode, ONT_UTIL_TEST_RSRC, genPackage,
+		var ontAccessTestCode = JavaResource.getAsString(ONT_UTIL_TEST_RSRC);
+		ontAccessTestCode = replace(ontAccessTestCode, getClass().getPackageName(), genPackage);
+		writeRsrcAsCodeFile(ontAccessTestCode, ONT_UTIL_TEST_RSRC, genPackage,
 			generatedTestDir);
 	}
 
