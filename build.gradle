@@ -9,7 +9,7 @@ ext {
 	berkeleyDbJeDependency = 'com.sleepycat:je:18.3.12'
 	commonsCsvDependency = 'org.apache.commons:commons-csv:1.10.0'
 	commonsDbcpDependency = 'commons-dbcp:commons-dbcp:1.4'
-	commonsIoDependency = 'commons-io:commons-io:2.13.0'
+	commonsIoDependency = 'commons-io:commons-io:2.14.0'
 	commonsLangDependency = 'org.apache.commons:commons-lang3:3.13.0'
 	geotoolsEpsgExtensionDependency = "org.geotools:gt-epsg-extension:$geotoolsVersion"
 	geotoolsEpsgHsqlDependency = "org.geotools:gt-epsg-hsql:$geotoolsVersion"

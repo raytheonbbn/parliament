@@ -4,8 +4,6 @@ plugins {
 	id 'java-library'
 }
 
-sourceCompatibility = 17
-targetCompatibility = 17
 version = parliamentVersion
 
 ext {
@@ -63,6 +61,11 @@ sourceSets {
 	}
 }
 
+java {
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
+}
+
 // See https://jena.apache.org/documentation/tools/schemagen.html
 task runSchemagen(type: JavaExec) {
 	inputs.file(configVocabFile)
@@ -111,9 +114,15 @@ artifacts {
 	archives javadocJar
 }
 
-test {
-	useJUnitPlatform()
+testing {
+	suites {
+		test {
+			useJUnitJupiter()
+		}
+	}
+}
 
+test {
 	systemProperty 'java.library.path', "${deployableDir}/bin"
 	systemProperty 'test.data.path', "${depDataDir}"
 }

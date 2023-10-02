@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.ARQ;
 import org.apache.jena.sparql.algebra.Op;
@@ -148,7 +146,7 @@ public class IndexExecutionTest {
 	}
 
 	@Test
-	public void testIndexPatternQuerier2() throws IOException {
+	public void testIndexPatternQuerier2() {
 		@SuppressWarnings("resource")
 		KbGraph defaultGraph = dataset.getDefaultGraph();
 		QueryTestUtil.loadResource("data/data-r2/triple-match/data-01.ttl", defaultGraph);
@@ -183,7 +181,7 @@ public class IndexExecutionTest {
 	}
 
 	@Test
-	public void testIndexPatternQuerier3() throws IOException {
+	public void testIndexPatternQuerier3() {
 		@SuppressWarnings("resource")
 		KbGraph defaultGraph = dataset.getDefaultGraph();
 		QueryTestUtil.loadResource("data/data-r2/triple-match/data-01.ttl", defaultGraph);
@@ -213,7 +211,7 @@ public class IndexExecutionTest {
 	}
 
 	@Test
-	public void testFilterableIndex() throws IOException {
+	public void testFilterableIndex() {
 		@SuppressWarnings("resource")
 		KbGraph defaultGraph = dataset.getDefaultGraph();
 		QueryTestUtil.loadResource("mockdata.ttl", MockIndex.class, defaultGraph);

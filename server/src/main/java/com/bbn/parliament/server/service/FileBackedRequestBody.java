@@ -62,7 +62,10 @@ public class FileBackedRequestBody implements AutoCloseable {
 	public FileBackedRequestBody(ServletRequest request) throws IOException {
 		int threshold = ParliamentBridge.getInstance().getConfiguration().getDeferredFileOutputStreamThreshold();
 		File tmpFile = new File(new ApplicationTemp().getDir(), getTmpFileName());
-		dfos = new DeferredFileOutputStream(threshold, tmpFile);
+		dfos = DeferredFileOutputStream.builder()
+			.setThreshold(threshold)
+			.setFile(tmpFile)
+			.get();
 
 		try (ZipOutputStream zout = new ZipOutputStream(dfos)) {
 			zout.putNextEntry(new ZipEntry(ZIP_ENTRY_NAME));

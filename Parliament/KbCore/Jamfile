@@ -5,7 +5,6 @@
 # All rights reserved.
 
 import common ;
-import h ;
 import make ;
 import os ;
 import path ;

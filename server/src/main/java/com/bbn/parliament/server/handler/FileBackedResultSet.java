@@ -31,10 +31,10 @@ public class FileBackedResultSet {
 	/** Counter used in unique identifier generation. */
 	private static final AtomicLong COUNTER = new AtomicLong(0);
 
-	private DeferredFileOutputStream _dfos = null;
-	private ResultSet _resultSet;
-	private InputStream _underlyingInputStream;
-	private ZipInputStream _input;
+	private DeferredFileOutputStream dfos = null;
+	private ResultSet resultSet;
+	private InputStream underlyingInputStream;
+	private ZipInputStream input;
 
 	/**
 	 * Create a file-backed result set from any ResultSet object.
@@ -46,9 +46,12 @@ public class FileBackedResultSet {
 		String tmpFileName = "resultset_" + UID + "_" + getUniqueId() + ".zip";
 		File tmpFile = new File(tmpDir, tmpFileName);
 
-		_dfos = new DeferredFileOutputStream(threshold, tmpFile);
+		dfos = DeferredFileOutputStream.builder()
+			.setThreshold(threshold)
+			.setFile(tmpFile)
+			.get();
 
-		try (ZipOutputStream zout = new ZipOutputStream(_dfos)) {
+		try (ZipOutputStream zout = new ZipOutputStream(dfos)) {
 			zout.putNextEntry(new ZipEntry("ResultSet.xml"));
 			ResultSetFormatter.outputAsXML(zout, rs);
 			zout.closeEntry();
@@ -57,12 +60,12 @@ public class FileBackedResultSet {
 		}
 
 		try {
-			_underlyingInputStream = _dfos.isInMemory()
-				? new ByteArrayInputStream(_dfos.getData())
-				: new FileInputStream(_dfos.getFile());
-			_input = new ZipInputStream(_underlyingInputStream);
-			_input.getNextEntry();
-			_resultSet = ResultSetFactory.fromXML(_input);
+			underlyingInputStream = dfos.isInMemory()
+				? new ByteArrayInputStream(dfos.getData())
+				: new FileInputStream(dfos.getFile());
+			input = new ZipInputStream(underlyingInputStream);
+			input.getNextEntry();
+			resultSet = ResultSetFactory.fromXML(input);
 		} catch (FileNotFoundException ex) {
 			throw new JenaException("Error opening the backing file for FileBackedResultSet", ex);
 		} catch (IOException ex) {
@@ -71,25 +74,25 @@ public class FileBackedResultSet {
 	}
 
 	public ResultSet getResultSet() {
-		return _resultSet;
+		return resultSet;
 	}
 
 	/** Remove the temporary file (if it exists) */
 	public void delete() {
 		try {
-			if (null != _input) {
-				_input.closeEntry();
-				_input.close();
+			if (null != input) {
+				input.closeEntry();
+				input.close();
 			}
 
-			if (null != _underlyingInputStream) {
-				_underlyingInputStream.close();
+			if (null != underlyingInputStream) {
+				underlyingInputStream.close();
 			}
 		} catch (IOException ex) {
 			throw new JenaException("Error closing FileBackedResultSet InputStream", ex);
 		}
 
-		File tmpFile = (_dfos == null) ? null : _dfos.getFile();
+		File tmpFile = (dfos == null) ? null : dfos.getFile();
 		if (tmpFile != null && tmpFile.exists()) {
 			tmpFile.delete();
 		}

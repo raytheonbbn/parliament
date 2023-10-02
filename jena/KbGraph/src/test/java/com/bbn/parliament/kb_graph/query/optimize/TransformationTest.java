@@ -2,7 +2,6 @@ package com.bbn.parliament.kb_graph.query.optimize;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -54,7 +53,7 @@ public class TransformationTest {
 	@SuppressWarnings("static-method")
 	@ParameterizedTest
 	@MethodSource("generateReorderTransformations")
-	public void testNoTransformation(ReorderTransformation transformation) throws IOException {
+	public void testNoTransformation(ReorderTransformation transformation) {
 		@SuppressWarnings("resource")
 		KbGraph defaultGraph = dataset.getDefaultGraph();
 		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", defaultGraph);
@@ -72,7 +71,7 @@ public class TransformationTest {
 	@SuppressWarnings("static-method")
 	@ParameterizedTest
 	@MethodSource("generateReorderTransformations")
-	public void testSimpleTransformation(ReorderTransformation transformation) throws IOException {
+	public void testSimpleTransformation(ReorderTransformation transformation) {
 		@SuppressWarnings("resource")
 		KbGraph defaultGraph = dataset.getDefaultGraph();
 		QueryTestUtil.loadResource("data/data-r2/triple-match/data-02.ttl", defaultGraph);

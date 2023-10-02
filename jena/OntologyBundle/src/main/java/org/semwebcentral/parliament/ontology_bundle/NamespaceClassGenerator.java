@@ -115,7 +115,7 @@ class NamespaceClassGenerator extends DefaultTask {
 	}
 
 	private File copyConfigRsrcToTempFile() throws IOException {
-		var buildDir = getProject().getBuildDir();
+		var buildDir = getProject().getLayout().getBuildDirectory();
 		var tmpDir = new File(buildDir, "tmp");
 		var tmpFile = new File(tmpDir, SCHEMAGEN_RSRC_NAME);
 		tmpDir.mkdirs();

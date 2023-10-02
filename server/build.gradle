@@ -4,9 +4,6 @@ plugins {
 	id 'java'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
 ext {
 	genJavaDir = file("$buildDir/generated/sources/java")
 	configVocabFile = "${projectDir}/src/main/resources/config-ont.ttl"
@@ -45,10 +42,16 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
-sourceSets {
-	main {
-		java { srcDir genJavaDir }
+java {
+	sourceSets {
+		main {
+			java { srcDir genJavaDir }
+		}
 	}
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
+	withSourcesJar()
+	withJavadocJar()
 }
 
 // See https://jena.apache.org/documentation/tools/schemagen.html
@@ -70,16 +73,10 @@ task runSchemagen(type: JavaExec) {
 
 compileJava.dependsOn runSchemagen
 
-java {
-	withSourcesJar()
-	withJavadocJar()
-}
-
 javadoc {
-	source = sourceSets.main.allJava
+	source = java.sourceSets.main.allJava
 	classpath = configurations.compileClasspath
 	dependsOn runSchemagen
-
 	options
 	{
 		//setMemberLevel JavadocMemberLevel.PUBLIC
@@ -89,7 +86,7 @@ javadoc {
 }
 
 tasks.getByName('sourcesJar') {
-	from sourceSets.main.allSource
+	from java.sourceSets.main.allSource
 	dependsOn runSchemagen
 }
 
@@ -98,13 +95,15 @@ clean {
 	delete "${projectDir}/log"
 }
 
+testing {
+	suites {
+		test {
+			useJUnitJupiter()
+		}
+	}
+}
+
 test {
-	useJUnitPlatform()
-	//maxHeapSize = "2g"	// maximum heap size
-	//jvmArgs '-Xmx1g'	// mem argument for the test JVM
-
-	//def distroDir = targetDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
-
 	systemProperty 'java.library.path', "${deployableDir}/bin"
 	systemProperty 'test.data.path', "${depDataDir}"
 

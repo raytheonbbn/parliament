@@ -19,8 +19,6 @@ dependencies {
 }
 
 version = '0.1.0'
-sourceCompatibility = '17'
-targetCompatibility = '17'
 
 gradlePlugin {
 	website = 'https://github.com/SemWebCentral/parliament/tree/jena-update/jena/OntologyBundle'
@@ -37,8 +35,17 @@ gradlePlugin {
 	}
 }
 
-test {
-	useJUnitPlatform()
+java {
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
+}
+
+testing {
+	suites {
+		test {
+			useJUnitJupiter()
+		}
+	}
 }
 
 publishing {

@@ -5,8 +5,6 @@ plugins {
 	id 'maven-publish'
 }
 
-sourceCompatibility = 17
-targetCompatibility = 17
 version = parliamentVersion
 
 dependencies {
@@ -36,6 +34,11 @@ configurations.all {
 	exclude group: 'xml-apis'
 }
 
+java {
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
+}
+
 task sourcesJar(type: Jar) {
 	archiveClassifier = 'sources'
 	from sourceSets.main.allSource
@@ -63,9 +66,15 @@ artifacts {
 	archives javadocJar
 }
 
-test {
-	useJUnitPlatform()
+testing {
+	suites {
+		test {
+			useJUnitJupiter()
+		}
+	}
+}
 
+test {
 	systemProperty 'java.library.path', "${deployableDir}/bin"
 	systemProperty 'test.data.path', "${depDataDir}"
 }
@@ -103,9 +112,11 @@ publishing {
 
 	repositories {
 		maven {
-			name = 'BbnMavenUsOnly'
-			url = uri('https://artifacts.bbn.com/artifactory/bbn-maven-us-only/')
-			credentials(PasswordCredentials)
+			url "${artifactory_contextUrl}/bbn-maven-us-only"
+			credentials {
+				username = "${artifactory_user}"
+				password = "${artifactory_password}"
+			}
 		}
 	}
 }

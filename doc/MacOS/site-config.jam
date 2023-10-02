@@ -14,7 +14,7 @@ constant BoostVersionAbbrvAlternatives : [ MATCH "([0-9]+_[0-9]+)_0" "([0-9]+_[0
 constant BoostVersionAbbrv : $(BoostVersionAbbrvAlternatives[1]) ;
 constant BdbVersion : [ os.environ BDB_VERSION ] ;
 
-constant Compiler : clang-darwin14 ;
+constant Compiler : clang-darwin15 ;
 
 #constant Arch : x32_64 ;
 #constant Arch : a64 ;

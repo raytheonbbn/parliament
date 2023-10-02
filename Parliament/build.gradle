@@ -5,6 +5,8 @@ plugins {
 	id 'maven-publish'
 }
 
+version = parliamentVersion
+
 ext {
 	jniHeaderIncludeDir = file("$buildDir/generated/sources")
 	jniHeaderGenDir = file("$jniHeaderIncludeDir/parliament/generated")
@@ -54,7 +56,6 @@ configurations.all {
 java {
 	sourceCompatibility = JavaVersion.VERSION_17
 	targetCompatibility = JavaVersion.VERSION_17
-	version = parliamentVersion
 }
 
 compileJava {
@@ -88,10 +89,16 @@ artifacts {
 	archives javadocJar
 }
 
-test {
-	useJUnitPlatform()
-	dependsOn 'fixupSharedLibs', 'copyNativeConfig', 'buildTest'
+testing {
+	suites {
+		test {
+			useJUnitJupiter()
+		}
+	}
+}
 
+test {
+	dependsOn 'fixupSharedLibs', 'copyNativeConfig', 'buildTest'
 	systemProperty 'java.library.path', "${deployableDir}/bin"
 }
 
@@ -186,9 +193,11 @@ publishing {
 
 	repositories {
 		maven {
-			name = 'BbnMavenUsOnly'
-			url = uri('https://artifacts.bbn.com/artifactory/bbn-maven-us-only/')
-			credentials(PasswordCredentials)
+			url "${artifactory_contextUrl}/bbn-maven-us-only"
+			credentials {
+				username = "${artifactory_user}"
+				password = "${artifactory_password}"
+			}
 		}
 	}
 }

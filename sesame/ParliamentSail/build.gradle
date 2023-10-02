@@ -4,8 +4,6 @@ plugins {
 	id 'java-library'
 }
 
-sourceCompatibility = 17
-targetCompatibility = 17
 version = parliamentVersion
 
 dependencies {
@@ -18,6 +16,11 @@ dependencies {
 
 configurations.all {
 	exclude group: 'xml-apis'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
 
 task sourcesJar(type: Jar) {
@@ -47,7 +50,14 @@ artifacts {
 	archives javadocJar
 }
 
+testing {
+	suites {
+		test {
+			useJUnit()
+		}
+	}
+}
+
 test {
-	useJUnit()
 	systemProperty 'java.library.path', "${deployableDir}/bin"
 }
