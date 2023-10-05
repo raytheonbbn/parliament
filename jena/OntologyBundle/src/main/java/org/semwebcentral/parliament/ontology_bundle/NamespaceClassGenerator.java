@@ -25,8 +25,7 @@ import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
-
-import com.bbn.parliament.util.JavaResource;
+import org.semwebcentral.parliament.util.JavaResource;
 
 class NamespaceClassGenerator extends DefaultTask {
 	private static final String SCHEMAGEN_RSRC_NAME = "schemagenConfig.ttl";
@@ -116,7 +115,7 @@ class NamespaceClassGenerator extends DefaultTask {
 
 	private File copyConfigRsrcToTempFile() throws IOException {
 		var buildDir = getProject().getLayout().getBuildDirectory();
-		var tmpDir = new File(buildDir, "tmp");
+		var tmpDir = new File(buildDir.getAsFile().get(), "tmp");
 		var tmpFile = new File(tmpDir, SCHEMAGEN_RSRC_NAME);
 		tmpDir.mkdirs();
 		try (

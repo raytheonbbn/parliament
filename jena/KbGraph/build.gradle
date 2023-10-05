@@ -13,7 +13,7 @@ dependencies {
 	implementation "$slf4jApiDependency"
 	implementation project(':Parliament')
 	implementation project(':jena:ParliamentClient')
-	implementation project(':jena:SparqlQueryBuilder')
+	implementation project(':jena:SparqlQueryBuilderJ3')
 	testImplementation "$jupiterDependency"
 	testImplementation "$logbackDependency"
 	testFixturesImplementation "$jupiterDependency"
@@ -67,6 +67,10 @@ testing {
 test {
 	systemProperty 'java.library.path', "${deployableDir}/bin"
 	systemProperty 'test.data.path', "${depDataDir}"
+}
+
+clean {
+	delete "${projectDir}/kb-data"
 }
 
 publishing {

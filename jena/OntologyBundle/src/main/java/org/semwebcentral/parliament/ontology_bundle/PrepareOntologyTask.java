@@ -53,9 +53,8 @@ import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
-
-import com.bbn.parliament.util.JavaResource;
-import com.bbn.parliament.util.QuerySolutionStream;
+import org.semwebcentral.parliament.util.JavaResource;
+import org.semwebcentral.parliament.util.QuerySolutionStream;
 
 class PrepareOntologyTask extends DefaultTask {
 	private static enum OutputType { FOR_HUMANS, FOR_MACHINES }

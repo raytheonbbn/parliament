@@ -7,7 +7,8 @@ repositories {
 }
 
 dependencies {
-	api "$jenaArqDependency"
+	//api "$jenaArqDependency"
+	api "org.apache.jena:jena-arq:$jena4Version"
 	implementation "$gsonDependency"
 	implementation "$commonsLangDependency"
 	//implementation "$sparqlQueryBuilderDependency"

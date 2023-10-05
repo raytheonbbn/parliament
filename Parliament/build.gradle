@@ -124,6 +124,7 @@ task fixupSharedLibs(dependsOn: 'buildAdminClient') {
 	doLast {
 		def pattern = ~/.*/
 		def replacement = ''
+		def matcher = ''
 		def os = System.getProperty('os.name').toLowerCase()
 		if (os.contains('mac')) {
 			pattern = ~/(?m)^([^,]*),([^,]*),([^,]*)$/
@@ -131,13 +132,14 @@ task fixupSharedLibs(dependsOn: 'buildAdminClient') {
 			// glob to an array, and subsequent expansion of callee gets the first
 			// (and hopefully only) element in the array:
 			replacement = 'callee=($2*) ; install_name_tool -change $3/\\$callee @loader_path/\\$callee $1*'
+			matcher = macOsFixups =~ pattern
 		} else if (os.contains('linux')) {
 			pattern = ~/(?m)^([^\n]*)$/
 			replacement = 'patchelf --set-rpath \'\\$ORIGIN\' $1*'
+			matcher = linuxFixups =~ pattern
 		}
 
 		if (!replacement.isEmpty()) {
-			def matcher = macOsFixups =~ pattern
 			def commands = matcher.replaceAll(replacement)
 			fixupScript.withWriter { writer ->
 				writer.writeLine '#!/bin/bash'
@@ -158,6 +160,12 @@ task copyNativeConfig(type: Copy) {
 	}
 	into "${deployableDir}"
 	includeEmptyDirs = false
+}
+
+clean {
+	delete "${targetDir}"
+	delete "${projectDir}/kb-data"
+	delete "${projectDir}/Test/kb-data"
 }
 
 publishing {

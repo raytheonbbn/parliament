@@ -27,7 +27,7 @@ dependencies {
 	implementation project(':jena:ParliamentClient')
 	implementation project(':jena:KbGraph')
 	implementation project(':jena:NumericIndex')
-	implementation project(':jena:SparqlQueryBuilder')
+	implementation project(':jena:SparqlQueryBuilderJ3')
 	implementation project(':jena:SpatialIndex')
 	implementation project(':jena:TemporalIndex')
 

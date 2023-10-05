@@ -10,7 +10,8 @@ repositories {
 
 dependencies {
 	implementation "$commonsCsvDependency"
-	implementation "$jenaCmdsDependency"
+	//implementation "$jenaCmdsDependency"
+	implementation "org.apache.jena:jena-cmds:$jena4Version"
 	//implementation "$sparqlQueryBuilderDependency"
 	implementation project(':jena:SparqlQueryBuilder')
 

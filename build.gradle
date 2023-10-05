@@ -3,6 +3,7 @@ ext {
 
 	geotoolsVersion = '29.0'
 	jenaVersion = '3.17.0'
+	jena4Version = '4.6.1'
 	jettyVersion = '9.4.36.v20210114'
 	slf4jVersion = '1.7.36'
 

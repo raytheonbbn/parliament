@@ -66,6 +66,10 @@ test {
 	systemProperty 'test.data.path', "${depDataDir}"
 }
 
+clean {
+	delete "${projectDir}/kb-data"
+}
+
 publishing {
 	publications {
 		NumericIndex(MavenPublication) {

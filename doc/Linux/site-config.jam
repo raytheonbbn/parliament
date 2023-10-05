@@ -15,6 +15,7 @@ constant BoostVersionAbbrv : $(BoostVersionAbbrvAlternatives[1]) ;
 constant BdbVersion : [ os.environ BDB_VERSION ] ;
 constant LinuxDistro : [ os.environ LINUX_DISTRO ] ;
 
+constant COMPILER_ubuntu22 : gcc11 ;	# Ubuntu 22.04
 constant COMPILER_ubuntu20 : gcc9 ;		# Ubuntu 20.04
 constant COMPILER_ubuntu19 : gcc9 ;		# Ubuntu 19.10
 constant COMPILER_ubuntu18 : gcc7 ;		# Ubuntu 18.04

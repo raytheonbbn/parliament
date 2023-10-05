@@ -17,8 +17,7 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
-
-import com.bbn.parliament.util.JavaResource;
+import org.semwebcentral.parliament.util.JavaResource;
 
 class UtilityCodeGenerator extends DefaultTask {
 	private static final String ONT_UTIL_RSRC = "OntAccess.java.txt";

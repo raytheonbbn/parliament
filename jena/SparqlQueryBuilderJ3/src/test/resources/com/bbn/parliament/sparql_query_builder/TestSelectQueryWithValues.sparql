@@ -1,0 +1,17 @@
+# Copyright (c) 2019, 2020 Raytheon BBN Technologies Corp.
+
+select ?var1 ?var2 where {
+	{
+		values ?var1 { "markerA" }
+	} union {
+		values ?var1 { ps:markerB }
+	} union {
+		values (?var1 ?var2) {
+			( "markerC" undef )
+		}
+	} union {
+		values (?var1 ?var2) {
+			( "markerD" undef )
+		}
+	}
+}
