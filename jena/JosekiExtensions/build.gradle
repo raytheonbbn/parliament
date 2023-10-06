@@ -46,7 +46,6 @@ dependencies {
 
 	implementation fileTree(dir: "${depDir}/joseki", include: "joseki-3.4.4.jar")
 
-	testImplementation "$jupiterDependency"
 	testImplementation "$logbackDependency"
 	//testImplementation(testFixtures(project(":jena:KbGraph")))
 }

@@ -14,7 +14,6 @@ dependencies {
 	implementation project(':Parliament')
 	implementation project(':jena:ParliamentClient')
 	implementation project(':jena:KbGraph')
-	testImplementation "$junitDependency"
 	testImplementation "$logbackDependency"
 	testImplementation(testFixtures(project(":jena:KbGraph")))
 }

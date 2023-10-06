@@ -45,7 +45,6 @@ def linuxFixups = """\
 dependencies {
 	api "$jenaArqDependency"
 	implementation "$slf4jApiDependency"
-	testImplementation "$jupiterDependency"
 	testImplementation "$logbackDependency"
 }
 

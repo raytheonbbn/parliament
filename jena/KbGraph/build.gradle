@@ -14,9 +14,7 @@ dependencies {
 	implementation project(':Parliament')
 	implementation project(':jena:ParliamentClient')
 	implementation project(':jena:SparqlQueryBuilderJ3')
-	testImplementation "$jupiterDependency"
 	testImplementation "$logbackDependency"
-	testFixturesImplementation "$jupiterDependency"
 	testFixturesImplementation project(':jena:ParliamentClient')
 }
 

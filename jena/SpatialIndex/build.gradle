@@ -25,7 +25,6 @@ dependencies {
 	implementation project(':jena:KbGraph')
 	implementation fileTree(dir: "${depDir}/deegree", include: "*.jar")
 	implementation fileTree(dir: "${depDir}/openmap", include: "*.jar")
-	testImplementation "$jupiterDependency"
 	testImplementation "$logbackDependency"
 	testImplementation(testFixtures(project(":jena:KbGraph")))
 }

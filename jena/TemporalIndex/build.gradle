@@ -13,7 +13,6 @@ dependencies {
 	implementation "$slf4jApiDependency"
 	implementation project(':jena:ParliamentClient')
 	implementation project(':jena:KbGraph')
-	testImplementation "$jupiterDependency"
 	testImplementation "$logbackDependency"
 	testImplementation(testFixtures(project(":jena:KbGraph")))
 }

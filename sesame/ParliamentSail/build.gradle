@@ -10,7 +10,6 @@ dependencies {
 	api "$sesameDependency"
 	implementation project(':Parliament')
 	implementation "$slf4jApiDependency"
-	testImplementation "$junitDependency"
 	testImplementation "$logbackDependency"
 }
 

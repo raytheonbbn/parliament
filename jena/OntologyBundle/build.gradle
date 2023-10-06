@@ -16,7 +16,6 @@ dependencies {
 	implementation project(':jena:SparqlQueryBuilder')
 
 	testImplementation gradleTestKit()
-	testImplementation "$jupiterDependency"
 }
 
 version = '0.1.0'
