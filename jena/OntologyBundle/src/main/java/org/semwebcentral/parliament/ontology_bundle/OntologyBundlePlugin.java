@@ -10,9 +10,12 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.plugins.JvmTestSuitePlugin;
+import org.gradle.api.plugins.jvm.JvmTestSuite;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.testing.Test;
+import org.gradle.testing.base.TestingExtension;
 
 /**
  * Ontology Bundle is a Gradle plugin that packages (bundles) an ontology,
@@ -143,6 +146,14 @@ public class OntologyBundlePlugin implements Plugin<Project> {
 			test.getJava().srcDir(ext.getGeneratedTestDir().get());
 		});
 
+		// Configure the test suite to use JUnit Jupiter:
+		project.getPlugins().withType(JvmTestSuitePlugin.class, jvmTestSuitePlugin -> {
+			var testSuiteExtension = project.getExtensions().findByType(TestingExtension.class);
+			testSuiteExtension.getSuites().withType(JvmTestSuite.class, suite -> {
+				suite.useJUnitJupiter();
+			});
+		});
+
 		// Add our tasks:
 		var tasks = project.getTasks();
 		var prepOntTask = tasks.register(PREP_ONT_TASK, PrepareOntologyTask.class);
@@ -166,7 +177,6 @@ public class OntologyBundlePlugin implements Plugin<Project> {
 
 		// Configure the test task:
 		tasks.withType(Test.class, task -> {
-			task.useJUnitPlatform();
 			task.systemProperty(MIN_CLASS_COUNT_SYS_PROP, "1");
 			task.systemProperty(MIN_PROP_COUNT_SYS_PROP, "1");
 			task.systemProperty(MAX_BNODE_COUNT_SYS_PROP, "0");
@@ -179,8 +189,6 @@ public class OntologyBundlePlugin implements Plugin<Project> {
 			var configs = proj.getConfigurations();
 			var jenaDep = depFact.create(ext.getJenaDependency().get());
 			configs.getByName("api").getDependencies().add(jenaDep);
-			var jupDep = depFact.create(ext.getJunitJupiterDependency().get());
-			configs.getByName("testImplementation").getDependencies().add(jupDep);
 		});
 	}
 }

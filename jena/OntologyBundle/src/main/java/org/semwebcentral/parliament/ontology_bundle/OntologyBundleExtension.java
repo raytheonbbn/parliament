@@ -38,7 +38,6 @@ public class OntologyBundleExtension {
 	private final DirectoryProperty generatedRsrcDir;
 	private final DirectoryProperty generatedTestDir;
 	private final Property<String> jenaVersion;
-	private final Property<String> junitJupiterVersion;
 
 	/**
 	 * A utility method to retrieve the Ontology Bundle extension from the project.
@@ -81,8 +80,6 @@ public class OntologyBundleExtension {
 			.convention(buildDir.dir("generated/test/java"));
 		jenaVersion = objFact.property(String.class)
 			.convention("3.17.0");
-		junitJupiterVersion = objFact.property(String.class)
-			.convention("5.9.2");
 	}
 
 	/**
@@ -279,16 +276,6 @@ public class OntologyBundleExtension {
 	}
 
 	/**
-	 * The version of the Junit Jupiter libraries that the generated tests will use.
-	 * This is set to 5.9.2 by default.
-	 *
-	 * @return The version of the Junit Jupiter libraries used
-	 */
-	public Property<String> getJunitJupiterVersion() {
-		return junitJupiterVersion;
-	}
-
-	/**
 	 * A read-only property specifying the complete Gradle dependency specification
 	 * for the Jena libraries that the generated jar will depend upon.
 	 *
@@ -297,16 +284,5 @@ public class OntologyBundleExtension {
 	public Provider<String> getJenaDependency() {
 		return jenaVersion.map(
 			version -> "org.apache.jena:jena-arq:%1$s".formatted(version));
-	}
-
-	/**
-	 * A read-only property specifying the complete Gradle dependency specification
-	 * for the Junit Jupiter libraries that the generated tests will use.
-	 *
-	 * @return The dependency specification of the Junit Jupiter libraries used
-	 */
-	public Provider<String> getJunitJupiterDependency() {
-		return junitJupiterVersion.map(
-			version -> "org.junit.jupiter:junit-jupiter:%1$s".formatted(version));
 	}
 }
