@@ -12,14 +12,13 @@ import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.sparql.path.Path;
 import org.apache.jena.sparql.path.PathFactory;
-import org.semwebcentral.parliament.sparql_query_builder.PathBuilder;
 
 /**
- * Implements the standard fluent builder pattern for Jena property paths. The
- * correct mental model for using this builder is a reverse Polish notation
- * (RPN) calculator, in other words it uses post-fix ordering of operands and
- * operators. For instance, to produce the property path {@code :foo/:bar/:baz}
- * use this code:
+ * Builds SPARQL property paths in the form of Jena's {@code Path} class using a
+ * fluent API. The correct mental model for using this builder is a reverse
+ * Polish notation (RPN) calculator, in other words it uses post-fix ordering of
+ * operands and operators. For instance, to produce the property path
+ * {@code :foo/:bar/:baz} use this code:
  *
  * <pre><code>
  *    Node fooPredicate = ...
@@ -31,7 +30,8 @@ import org.semwebcentral.parliament.sparql_query_builder.PathBuilder;
  *       .sequence()
  *       .pushIri(bazPredicate)
  *       .sequence()
- *       .build();</code></pre>
+ *       .build();
+ * </code></pre>
  *
  * Most of the methods in this class throw {@code IllegalStateException} in case
  * of error. For instance, the {@code sequence} method will throw if there are

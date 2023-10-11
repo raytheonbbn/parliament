@@ -32,7 +32,7 @@ import org.semwebcentral.parliament.util.JavaResource;
  * Assembles and updates parameterized query snippets. Since the internal
  * implementation relies on Jena's {@link Query}, this only supports
  * manipulating SELECT, ASK, DESCRIBE, and CONSTRUCT type queries, i.e.
- * SPARQL-update is not supported.
+ * SPARQL-Update is not supported.
  *
  * @author mallen
  */

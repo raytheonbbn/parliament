@@ -31,8 +31,9 @@ import org.apache.jena.sparql.expr.ExprVar;
 import org.apache.jena.sparql.expr.NodeValue;
 
 /**
- * A factory class for creating various kinds of Jena Expr objects for use in
- * queries.
+ * A factory class for creating various kinds of FILTER expressions as Jena
+ * {@code Expr} objects for use in SPARQL filters. These are added to a query
+ * through {@code PathBuilder}.
  *
  * @author iemmons
  */

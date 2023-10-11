@@ -17,8 +17,8 @@ import org.apache.jena.sparql.syntax.ElementPathBlock;
 import org.apache.jena.sparql.syntax.ElementTriplesBlock;
 
 /**
- * A factory class for creating various kinds of Jena Element objects for use in
- * queries.
+ * A factory class for creating various kinds of Jena {@code Element} objects
+ * for use in queries.
  *
  * @author iemmons
  */

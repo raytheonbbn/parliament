@@ -29,6 +29,7 @@ ext {
 	postgresqlDependency = 'org.postgresql:postgresql:42.6.0'
 	sesameDependency = 'org.openrdf:sesame:1.2.7'
 	slf4jApiDependency = "org.slf4j:slf4j-api:$slf4jVersion"
+	sparqlQueryBuilderDependency = 'org.semwebcentral.parliament:SparqlQueryBuilder:2.0.0'
 
 	targetDir = file("${rootDir}/target")
 	deployableDir = file("${targetDir}/deployableServer")

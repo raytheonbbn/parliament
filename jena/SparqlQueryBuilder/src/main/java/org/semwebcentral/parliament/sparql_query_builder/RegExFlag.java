@@ -3,8 +3,8 @@
 package org.semwebcentral.parliament.sparql_query_builder;
 
 /**
- * An enumeration of flags that can be used to modify the behavior of a regular
- * expression.
+ * An enumeration of flags that modify the behavior of a regular expressions as
+ * created in the {@code ExprFactory} class.
  *
  * @author iemmons
  */
