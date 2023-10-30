@@ -32,7 +32,7 @@ This is a minimal example `build.gradle` (written in  Groovy) to bundle an ontol
 
 ```
 plugins {
-	id 'org.semwebcentral.parliament.ontology-bundle'
+	id 'com.bbn.parliament.ontology-bundle'
 }
 
 group = 'com.my_company'

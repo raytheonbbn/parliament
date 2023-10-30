@@ -1,0 +1,149 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = XeLaTeX
+% !BIB TS-program = biber
+
+\documentclass[12pt,letterpaper,draft]{article}
+
+\usepackage{parskip}	% Begin paragraphs with empty line, not indent
+\usepackage{xcolor}
+\usepackage{titling}
+\usepackage{fnpct}
+\usepackage{widows-and-orphans}
+%\usepackage[inline]{enumitem}
+\usepackage{acro}
+%\usepackage[final]{graphicx}
+%\usepackage{booktabs}
+%\usepackage{array}
+%\usepackage{ragged2e}
+%\usepackage{colortbl}
+%\usepackage{rotating}
+%\usepackage{marginnote}
+%\usepackage{relsize}
+%\usepackage{fancyhdr}
+%\usepackage{lastpage}
+%\usepackage{lipsum}
+%\usepackage{amsmath}
+%\usepackage{amssymb}
+%\usepackage[retainorgcmds]{IEEEtrantools}
+%\usepackage{skmath}
+%\usepackage{tikz}
+%\usepackage{path}
+%\usepackage{dirtree}
+%\usepackage[firstpage]{draftwatermark}
+%\usepackage{todonotes}
+%\usepackage[T1]{fontenc}		% Enables curly braces in emails within \institute
+\usepackage[style=numeric,backend=biber]{biblatex}
+\usepackage{fontspec,xltxtra,xunicode}
+%\usepackage{iffont}
+%\usepackage{unicode-math}
+\usepackage[final]{hyperref}	% Should be the last use-package command
+
+%\newcommand{\red}[1]{{\color{red}#1}}
+%\newcommand{\paraleader}[1]{\textbf{#1}}
+%\newcommand{\urlcite}[1]{\footnote{\url{#1}}}
+%\newcommand{\headingrule}{\midrule[\heavyrulewidth]}
+%\newcommand{\classmark}{\textbf{\emph{UNCLASSIFIED}}}
+%\newcommand{\themestatement}[1]{\framebox{\parbox{0.97\columnwidth}{\emph{#1}}}}
+
+\input{UserGuide/acronyms.tex}
+\bibliography{UserGuide/references}
+
+\title{\acl{pmnt} Graph Store Protocol Implementation Notes}
+\author{Ian Emmons}
+\date{\today}
+
+\defaultfontfeatures{Mapping=tex-text}
+\setmainfont{Georgia}
+\setsansfont{Verdana}[Scale=MatchLowercase]
+\setmonofont{Menlo}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
+%\setmonofont{Consolas}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
+%\setmonofont{Andale Mono}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
+%\setmathfont{TeX Gyre Bonum Math}
+%\setmathfont{TeX Gyre Pagella Math}
+%\setmathfont{STIX Math}
+%\setmathfont{latinmodern-math.otf}
+
+%\urlstyle{rm}
+\definecolor{hyperlinkcolor}{rgb}{0,0,0.625}
+\hypersetup{
+	final=true,
+	unicode=true,
+	bookmarksnumbered=true,
+	pdftitle={\thetitle},
+	pdfauthor={\theauthor},
+	colorlinks=true,
+	allcolors=hyperlinkcolor
+}
+
+\hyphenation{Arc-GIS Arc-Map}
+\hyphenation{co-ref-er-ence co-ref-er-enc-es}
+\hyphenation{da-ta-base da-ta-bas-es}
+\hyphenation{geo-spa-tial}
+\hyphenation{im-mu-ta-ble}
+\hyphenation{ra-pid-ly}
+\hyphenation{ray-the-on}
+\hyphenation{serv-let serv-lets}
+\hyphenation{trac-ta-ble}
+\hyphenation{war-fight-er war-fight-ers}
+
+\begin{document}
+\acuse{pmnt} % Only long & short forms, never "first appearance"
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+\label{sec:intro}
+
+\autocite{SparqlGraphStoreProtocol}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Limitations and Caveats}
+\label{sec:limitations}
+
+\ac{pmnt} implements only Indirect Graph Identification
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{To-Do List}
+\label{sec:todo}
+
+Graph names MUST be absolute IRIs and the server MUST respond with a 400 Bad Request if not
+
+If the Accept header is not provided with a GET request, the server MUST return one of RDF XML, Turtle, or N-Triples.
+
+For operations involving an RDF payload (PUT and POST):
+\begin{itemize}
+	\item The server MUST parse the RDF payload according to media type specified in the Content-Type header if it is provided in the request.
+
+	\item If the header is not provided, and the implementation has a routine that can guess the type by the content of the resource or via the extension of the file it was loaded from, and such a routine reported that the resource was clearly some other document format and not RDF/XML, then the implementation MAY attempt to parse the document using this format.
+
+	\item Otherwise, if this header is not provided, the server SHOULD attempt to parse the RDF payload as RDF/XML.
+\end{itemize}
+
+in response to operations involving an RDF payload, if the attempt to parse the RDF payload according to the provided Content-Type fails then the server MUST respond with a 400 Bad Request.
+
+A request using an unsupported HTTP verb in conjunction with a malformed or unsupported request syntax MUST receive a response with a 405 Method Not Allowed.
+
+If the RDF graph content identified in the request does not exist in the server, and the operation requires that it does, a 404 Not Found response code MUST be provided in the response.
+
+If a clients issues a POST or PUT with a content type that is not understood by the graph store, the implementation MUST respond with 415 Unsupported Media Type.
+
+GET: In the event that the specified representation format is not supported, a 406 Not Acceptable response code SHOULD be returned.
+
+POST: If the request IRI identifies the underlying Graph Store, the origin server MUST create a new RDF graph comprised of the statements in the RDF payload and return a designated graph IRI associated with the new graph. The new graph IRI should be specified in the Location HTTP header along with a 201 Created code and be different from the request IRI.
+
+
+
+
+\acsetup{
+	list/name=Glossary,
+	list/heading=section}
+\printacronyms
+
+\sloppy
+\printbibliography[heading=bibnumbered]
+
+\end{document}

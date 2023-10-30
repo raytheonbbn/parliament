@@ -42,6 +42,13 @@ publishing {
 				name = 'SPARQL Query Builder'
 				description = "A Java library for manipulating SPARQL queries.${System.lineSeparator}Copyright © 2023 Raytheon BBN Technologies"
 				url = 'https://github.com/SemWebCentral/parliament/tree/jena-update/jena/SparqlQueryBuilder'
+				packaging = 'jar'
+				licenses {
+					license {
+						name = 'The 3-Clause BSD License'
+						url = 'https://opensource.org/license/bsd-3-clause/'
+					}
+				}
 				organization {
 					name = 'Raytheon BBN Technologies'
 					url = 'https://bbn.com/'
@@ -57,6 +64,11 @@ publishing {
 						name = 'Ian Emmons'
 						email = 'iemmons@rtx.com'
 					}
+				}
+				scm {
+					connection = 'scm:git:git@github.com:SemWebCentral/parliament.git'
+					developerConnection = 'scm:git:git@github.com:SemWebCentral/parliament.git'
+					url = 'https://github.com/SemWebCentral/parliament'
 				}
 			}
 		}
