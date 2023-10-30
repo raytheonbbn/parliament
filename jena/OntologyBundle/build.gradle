@@ -5,14 +5,15 @@ plugins {
 
 repositories {
 	mavenCentral()
+	mavenLocal()
 }
 
 dependencies {
 	implementation "$commonsCsvDependency"
 	//implementation "$jenaCmdsDependency"
 	implementation "org.apache.jena:jena-cmds:$jena4Version"
-	//implementation "$sparqlQueryBuilderDependency"
-	implementation project(':jena:SparqlQueryBuilder')
+	implementation "$sparqlQueryBuilderDependency"
+	//implementation project(':jena:SparqlQueryBuilder')
 
 	testImplementation gradleTestKit()
 }
