@@ -64,6 +64,15 @@ public class QName {
 	}
 
 	/**
+	 * Gets the prefix mapping used by this instance of QName.
+	 *
+	 * @return The prefix mapping used by this instance of QName.
+	 */
+	public PrefixMapping getPrefixMapping() {
+		return prefixMapping;
+	}
+
+	/**
 	 * Converts a Q-name to a full IRI using the supplied prefix mapping.
 	 *
 	 * @param qName The Q-name to convert
