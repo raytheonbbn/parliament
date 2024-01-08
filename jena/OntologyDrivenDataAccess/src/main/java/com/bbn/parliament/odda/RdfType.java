@@ -11,8 +11,6 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
 
-import com.bbn.parliament.misc_needing_refactor.QName;
-
 public class RdfType extends RdfProperty {
 	private final Set<RdfTypeInfo> mostSpecificValues;
 
@@ -26,16 +24,15 @@ public class RdfType extends RdfProperty {
 	}
 
 	private void addValueInternal(Resource newType) {
-		RdfTypeInfo newRTI = getOwner().getOntTools().getRdfTypeTools().getTypeInfo(newType);
+		RdfTypeInfo newRTI = owner().entityFactory().rdfTypeTools().typeInfo(newType);
 		if (newRTI == null) {
-			throw new IllegalArgumentException(String.format(
-				"Unrecognized class IRI %1$s", QName.asQName(newType)));
+			throw new IllegalArgumentException("Unrecognized class IRI %1$s".formatted(newType));
 		}
 
 		// Check to see if this new type is implied by one of the types we already have:
 		if (mostSpecificValues.stream().noneMatch(rti -> rti.isSubTypeOf(newType))) {
 			// Now remove any types we already have that are implied by the new one:
-			mostSpecificValues.removeIf(rti -> newRTI.isSubTypeOf(rti.getUri()));
+			mostSpecificValues.removeIf(rti -> newRTI.isSubTypeOf(rti.iri()));
 			mostSpecificValues.add(newRTI);
 		}
 	}
@@ -44,7 +41,7 @@ public class RdfType extends RdfProperty {
 		return mostSpecificValues.stream().anyMatch(ci -> ci.isSubTypeOf(superClass));
 	}
 
-	public Set<RdfTypeInfo> getValues() {
+	public Set<RdfTypeInfo> values() {
 		return Collections.unmodifiableSet(mostSpecificValues);
 	}
 
@@ -52,17 +49,17 @@ public class RdfType extends RdfProperty {
 		return mostSpecificValues.stream();
 	}
 
-	public RdfTypeInfo getFirstValue() {
+	public RdfTypeInfo firstValue() {
 		return mostSpecificValues.stream().findFirst().orElse(null);
 	}
 
 	@Override
 	public void generateRdf(Model model) {
 		if (!mostSpecificValues.isEmpty()) {
-			Resource subject = model.createResource(getOwner().getUri());
+			Resource subject = model.createResource(owner().iri());
 			mostSpecificValues.stream()
-				.map(ci -> model.createResource(ci.getUri()))
-				.forEach(object -> model.add(subject, getPropUri().as(Property.class), object));
+				.map(ci -> model.createResource(ci.iri()))
+				.forEach(object -> model.add(subject, propIri().as(Property.class), object));
 		}
 	}
 

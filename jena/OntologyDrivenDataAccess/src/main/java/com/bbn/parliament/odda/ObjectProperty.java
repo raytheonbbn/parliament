@@ -14,8 +14,8 @@ import org.apache.jena.rdf.model.Resource;
 public class ObjectProperty extends RdfProperty implements Iterable<Entity> {
 	private final Set<Entity> values;
 
-	public ObjectProperty(Entity owner, Resource propUri) {
-		super(owner, propUri);
+	public ObjectProperty(Entity owner, Resource propIri) {
+		super(owner, propIri);
 		values = new TreeSet<>(Entity.COMPARATOR);
 	}
 
@@ -23,7 +23,7 @@ public class ObjectProperty extends RdfProperty implements Iterable<Entity> {
 		values.add(ent);
 	}
 
-	public Set<Entity> getValues() {
+	public Set<Entity> values() {
 		return Collections.unmodifiableSet(values);
 	}
 
@@ -31,16 +31,16 @@ public class ObjectProperty extends RdfProperty implements Iterable<Entity> {
 		return values.stream();
 	}
 
-	public Entity getFirstValue() {
+	public Entity firstValue() {
 		return values.stream().findFirst().orElse(null);
 	}
 
 	@Override
 	public void generateRdf(Model model) {
 		if (!values.isEmpty()) {
-			Resource subject = model.createResource(getOwner().getUri());
+			Resource subject = model.createResource(owner().iri());
 			values.forEach(ent -> {
-				model.add(subject, getPropUri().as(Property.class), model.createResource(ent.getUri()));
+				model.add(subject, propIri().as(Property.class), model.createResource(ent.iri()));
 				ent.generateRdf(model);
 			});
 		}
@@ -61,7 +61,7 @@ public class ObjectProperty extends RdfProperty implements Iterable<Entity> {
 		return super.isValid(validationErrors, model)
 			&& isCardinalityValid(values.size(), validationErrors, model)
 			&& values.stream()
-				.map(ent -> isRangeValid(ent.getUri(), validationErrors, model))
+				.map(ent -> isRangeValid(ent.iri(), validationErrors, model))
 				.reduce(true, (result, element) -> result && element);
 	}
 

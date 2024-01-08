@@ -22,11 +22,11 @@ public class PropInfo {
 		domainTypes = new TreeSet<>();
 	}
 
-	public Resource getProp() {
+	public Resource prop() {
 		return prop;
 	}
 
-	public Resource getPropFamily() {
+	public Resource propFamily() {
 		return propFamily;
 	}
 
@@ -38,7 +38,7 @@ public class PropInfo {
 		return OWL.ObjectProperty.equals(propFamily);
 	}
 
-	public Set<Resource> getDomainTypes() {
+	public Set<Resource> domainTypes() {
 		return Collections.unmodifiableSet(domainTypes);
 	}
 
@@ -48,11 +48,11 @@ public class PropInfo {
 		}
 	}
 
-	public String getJsonFieldName() {
+	public String jsonFieldName() {
 		return jsonFieldName;
 	}
 
-	public void setJsonFieldName(String newValue) {
+	public void jsonFieldName(String newValue) {
 		jsonFieldName = newValue;
 	}
 }

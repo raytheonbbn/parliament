@@ -5,17 +5,16 @@ import java.util.TreeMap;
 
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.shared.PrefixMapping;
 
 import com.bbn.parliament.sparql_query_builder.QueryBuilder;
 
 public class RdfTypeTools {
 	private final Map<Resource, RdfTypeInfo> rdfTypeMap;
 
-	public RdfTypeTools(SparqlEndpointSink sparqlEndpointSink, PrefixMapping prefixMapping) {
+	public RdfTypeTools(EntityFactory entityFactory) {
 		rdfTypeMap = new TreeMap<>();
-		sparqlEndpointSink.runSelectQuery(this::processTypeHierarchyQueryResult, QueryBuilder
-			.fromRsrc("odda/TypeHierarchy.sparql", prefixMapping)
+		entityFactory.kbSink().runSelectQuery(this::processTypeHierarchyQueryResult, QueryBuilder
+			.fromRsrc("odda/TypeHierarchy.sparql", entityFactory.prefixMapping())
 			.asQuery());
 	}
 
@@ -28,15 +27,15 @@ public class RdfTypeTools {
 		}
 	}
 
-	private RdfTypeInfo getOrCreateTypeInfo(QuerySolution qs, String uriVarName, String labelVarName) {
-		Resource uri = qs.getResource(uriVarName);
+	private RdfTypeInfo getOrCreateTypeInfo(QuerySolution qs, String iriVarName, String labelVarName) {
+		Resource iri = qs.getResource(iriVarName);
 		String label = QSUtil.getString(qs, labelVarName);
-		return (uri == null)
+		return (iri == null)
 			? null
-			: rdfTypeMap.computeIfAbsent(uri, key -> new RdfTypeInfo(key, label));
+			: rdfTypeMap.computeIfAbsent(iri, key -> new RdfTypeInfo(key, label));
 	}
 
-	public RdfTypeInfo getTypeInfo(Resource typeUri) {
-		return rdfTypeMap.get(typeUri);
+	public RdfTypeInfo typeInfo(Resource typeIri) {
+		return rdfTypeMap.get(typeIri);
 	}
 }

@@ -16,42 +16,38 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.shared.PrefixMapping;
 
-import com.bbn.parliament.misc_needing_refactor.QName;
 import com.bbn.parliament.sparql_query_builder.QueryBuilder;
 
 public class ValidationTools {
-	private final SparqlEndpointSink kbSink;
-	private final PrefixMapping pm;
+	private final EntityFactory entFact;
 	private final Map<CardinalityKey, Cardinality> cardinalityCache;
 
-	public ValidationTools(SparqlEndpointSink sparqlEndpointSink, PrefixMapping prefixMapping) {
-		kbSink = sparqlEndpointSink;
-		pm = prefixMapping;
+	public ValidationTools(EntityFactory entityFactory) {
+		entFact = ArgCheck.throwIfNull(entityFactory, "entityFactory");
 		cardinalityCache = new ConcurrentSkipListMap<>();
 	}
 
-	public Cardinality getCardinality(Model model, Entity owner, Resource propUri) {
+	public Cardinality cardinality(Model model, Entity owner, Resource propIri) {
 		Cardinality tmpCard = Cardinality.defaultCard();
 		Set<RDFNode> uncachedTypes = new TreeSet<>();
-		for (RdfTypeInfo ownerType : owner.getType().getValues()) {
-			Cardinality card = getCardinalityFromCache(ownerType.getUri(), propUri);
+		for (RdfTypeInfo ownerType : owner.type().values()) {
+			Cardinality card = cardinalityFromCache(ownerType.iri(), propIri);
 			if (card == null) {
-				uncachedTypes.add(ownerType.getUri());
+				uncachedTypes.add(ownerType.iri());
 			} else {
 				tmpCard = Cardinality.intersection(tmpCard, card);
 			}
 		}
 
 		if (!uncachedTypes.isEmpty()) {
-			execQuery(qs -> processCardinalityQueryResult(qs, propUri), model, QueryBuilder
-				.fromRsrc("odda/cardinality.sparql", pm)
+			execQuery(qs -> processCardinalityQueryResult(qs, propIri), model, QueryBuilder
+				.fromRsrc("odda/cardinality.sparql", entFact.prefixMapping())
 				.setValues("subjectType", "subjectTypeMarker", uncachedTypes)
-				.setArg("_property", propUri)
+				.setArg("_property", propIri)
 				.asQuery());
 			for (RDFNode ownerType : uncachedTypes) {
-				Cardinality card = getCardinalityFromCache(ownerType.asResource(), propUri);
+				Cardinality card = cardinalityFromCache(ownerType.asResource(), propIri);
 				if (card != null) {
 					tmpCard = Cardinality.intersection(tmpCard, card);
 				}
@@ -60,16 +56,16 @@ public class ValidationTools {
 		return tmpCard;
 	}
 
-	private Cardinality getCardinalityFromCache(Resource typeUri, Resource propUri) {
-		return cardinalityCache.get(new CardinalityKey(typeUri, propUri));
+	private Cardinality cardinalityFromCache(Resource typeIri, Resource propIri) {
+		return cardinalityCache.get(new CardinalityKey(typeIri, propIri));
 	}
 
-	private void processCardinalityQueryResult(QuerySolution qs, Resource propUri) {
+	private void processCardinalityQueryResult(QuerySolution qs, Resource propIri) {
 		Resource type = qs.getResource("subjectType");
 		Long min = QSUtil.getInteger(qs, "min");
 		Long max = QSUtil.getInteger(qs, "max");
 		Long exact = QSUtil.getInteger(qs, "exact");
-		CardinalityKey cardKey = new CardinalityKey(type, propUri);
+		CardinalityKey cardKey = new CardinalityKey(type, propIri);
 		Cardinality card = cardinalityCache.getOrDefault(cardKey, Cardinality.defaultCard());
 		if (min != null) {
 			card = Cardinality.intersection(card, min, Long.MAX_VALUE);
@@ -83,15 +79,15 @@ public class ValidationTools {
 		cardinalityCache.put(cardKey, card);
 	}
 
-	public boolean isDomainValid(List<String> validationErrors, Model model, Resource entUri, Resource propUri) {
+	public boolean isDomainValid(List<String> validationErrors, Model model, Resource entIri, Resource propIri) {
 		boolean result = true;
-		if (propUri != null) {
+		if (propIri != null) {
 			int rowCount = execQuery(
-				qs -> processDomainQueryResult(qs, validationErrors, entUri, propUri),
+				qs -> processDomainQueryResult(qs, validationErrors, entIri, propIri),
 				model, QueryBuilder
-					.fromRsrc("odda/domain.sparql", pm)
-					.setArg("_property", propUri)
-					.setArg("_entity", entUri)
+					.fromRsrc("odda/domain.sparql", entFact.prefixMapping())
+					.setArg("_property", propIri)
+					.setArg("_entity", entIri)
 					.asQuery());
 			if (rowCount > 0) {
 				result = false;
@@ -100,26 +96,26 @@ public class ValidationTools {
 		return result;
 	}
 
-	private static void processDomainQueryResult(QuerySolution qs, List<String> validationErrors, Resource entUri, Resource propUri) {
+	private void processDomainQueryResult(QuerySolution qs, List<String> validationErrors, Resource entIri, Resource propIri) {
 		Resource violatedDomainClass = qs.getResource("violatedDomain");
 		if (validationErrors != null) {
 			validationErrors.add(String.format("Domain violation on property %1$s: %2$s is not of type %3$s",
-				QName.asQName(propUri), QName.asQName(entUri), QName.asQName(violatedDomainClass)));
+				qnameFor(propIri), qnameFor(entIri), qnameFor(violatedDomainClass)));
 		}
 	}
 
-	public boolean isRangeValid(Resource objectUri, List<String> validationErrors, Model model, Entity entity, Resource propUri) {
+	public boolean isRangeValid(Resource objectIri, List<String> validationErrors, Model model, Entity entity, Resource propIri) {
 		boolean result = true;
-		if (propUri != null) {
-			List<RDFNode> ownerTypes = entity.getType().stream()
-				.map(RdfTypeInfo::getUri)
+		if (propIri != null) {
+			List<RDFNode> ownerTypes = entity.type().stream()
+				.map(RdfTypeInfo::iri)
 				.collect(Collectors.toList());
 			int rowCount = execQuery(
-				qs -> processRangeQueryResult(qs, validationErrors, objectUri, entity.getUri(), propUri),
+				qs -> processRangeQueryResult(qs, validationErrors, objectIri, entity.iri(), propIri),
 				model, QueryBuilder
-					.fromRsrc("odda/range.sparql", pm)
-					.setArg("_property", propUri)
-					.setArg("_object", objectUri)
+					.fromRsrc("odda/range.sparql", entFact.prefixMapping())
+					.setArg("_property", propIri)
+					.setArg("_object", objectIri)
 					.setValues("subjectType", "subjectTypeMarker", ownerTypes)
 					.asQuery());
 			if (rowCount > 0) {
@@ -129,20 +125,20 @@ public class ValidationTools {
 		return result;
 	}
 
-	private static void processRangeQueryResult(QuerySolution qs, List<String> validationErrors,
-		Resource objectUri, Resource entUri, Resource propUri) {
+	private void processRangeQueryResult(QuerySolution qs, List<String> validationErrors,
+		Resource objectIri, Resource entIri, Resource propIri) {
 		Resource violatedRangeClass = qs.getResource("violatedRange");
 		if (validationErrors != null) {
 			validationErrors.add(String.format(
 				"Range violation on property %1$s with subject %2$s: Object %3$s is not of type %4$s",
-				QName.asQName(propUri), QName.asQName(entUri), QName.asQName(objectUri), QName.asQName(violatedRangeClass)));
+				qnameFor(propIri), qnameFor(entIri), qnameFor(objectIri), qnameFor(violatedRangeClass)));
 		}
 	}
 
 	private int execQuery(Consumer<QuerySolution> consumer, Model model, Query query) {
 		int rowCount = 0;
 		if (model == null) {
-			return kbSink.runSelectQuery(consumer, query);
+			return entFact.kbSink().runSelectQuery(consumer, query);
 		} else {
 			try (QueryExecution queryExec = QueryExecutionFactory.create(query, model)) {
 				ResultSet results = queryExec.execSelect();
@@ -153,5 +149,9 @@ public class ValidationTools {
 			}
 			return rowCount;
 		}
+	}
+
+	private String qnameFor(Resource iri) {
+		return entFact.qName().qnameFor(iri);
 	}
 }

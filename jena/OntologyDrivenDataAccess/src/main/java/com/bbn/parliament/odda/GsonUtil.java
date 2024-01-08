@@ -11,8 +11,8 @@ import com.google.gson.stream.JsonWriter;
 public final class GsonUtil {
 	private GsonUtil() {} // prevent instantiation
 
-	public static Gson create(OntologyTools ontTools) {
-		EntityTypeAdapter eta = new EntityTypeAdapter(ontTools);
+	public static Gson create(EntityFactory entityFactory) {
+		EntityTypeAdapter eta = new EntityTypeAdapter(entityFactory);
 		return new GsonBuilder()
 			.registerTypeAdapter(XMLGregorianCalendar.class, new XMLDateTimeTypeAdapter())
 			.registerTypeAdapter(Entity.class, eta)

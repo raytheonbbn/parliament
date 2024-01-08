@@ -10,27 +10,27 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.jena.rdf.model.Resource;
 
 public class RdfTypeInfo implements Comparable<RdfTypeInfo> {
-	private final Resource uri;
+	private final Resource iri;
 	private final String label;
 	private final Set<RdfTypeInfo> declaredSubTypes;
 	private final Set<RdfTypeInfo> declaredSuperTypes;
 
-	public RdfTypeInfo(Resource typeUri, String typeLabel) {
-		uri = typeUri;
+	public RdfTypeInfo(Resource typeIri, String typeLabel) {
+		iri = typeIri;
 		label = typeLabel;
 		declaredSubTypes = new TreeSet<>();
 		declaredSuperTypes = new TreeSet<>();
 	}
 
-	public Resource getUri() {
-		return uri;
+	public Resource iri() {
+		return iri;
 	}
 
-	public String getLabel() {
+	public String label() {
 		return label;
 	}
 
-	public Set<RdfTypeInfo> getDeclaredSuperTypes() {
+	public Set<RdfTypeInfo> declaredSuperTypes() {
 		return Collections.unmodifiableSet(declaredSuperTypes);
 	}
 
@@ -38,7 +38,7 @@ public class RdfTypeInfo implements Comparable<RdfTypeInfo> {
 		declaredSuperTypes.add(newSuperType);
 	}
 
-	public Set<RdfTypeInfo> getDeclaredSubTypes() {
+	public Set<RdfTypeInfo> declaredSubTypes() {
 		return Collections.unmodifiableSet(declaredSubTypes);
 	}
 
@@ -46,14 +46,14 @@ public class RdfTypeInfo implements Comparable<RdfTypeInfo> {
 		declaredSubTypes.add(newSubType);
 	}
 
-	public boolean isSubTypeOf(Resource superTypeUri) {
+	public boolean isSubTypeOf(Resource superTypeIri) {
 		return declaredSuperTypes.stream().anyMatch(rti ->
-		superTypeUri.equals(rti.getUri()) || rti.isSubTypeOf(superTypeUri));
+		superTypeIri.equals(rti.iri()) || rti.isSubTypeOf(superTypeIri));
 	}
 
-	public boolean isSuperTypeOf(Resource subTypeUri) {
+	public boolean isSuperTypeOf(Resource subTypeIri) {
 		return declaredSubTypes.stream().anyMatch(rti ->
-		subTypeUri.equals(rti.getUri()) || rti.isSuperTypeOf(subTypeUri));
+		subTypeIri.equals(rti.iri()) || rti.isSuperTypeOf(subTypeIri));
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class RdfTypeInfo implements Comparable<RdfTypeInfo> {
 			return false;
 		} else {
 			return new EqualsBuilder()
-				.append(uri, ((RdfTypeInfo) rhs).uri)
+				.append(iri, ((RdfTypeInfo) rhs).iri)
 				.isEquals();
 		}
 	}
@@ -72,14 +72,14 @@ public class RdfTypeInfo implements Comparable<RdfTypeInfo> {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(13, 29)
-			.append(uri)
+			.append(iri)
 			.toHashCode();
 	}
 
 	@Override
 	public int compareTo(RdfTypeInfo rhs) {
 		return new CompareToBuilder()
-			.append(uri, rhs.uri)
+			.append(iri, rhs.iri)
 			.toComparison();
 	}
 }

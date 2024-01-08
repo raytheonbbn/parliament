@@ -1,9 +1,16 @@
+// Copyright (c) 2024 Raytheon BBN Technologies Corp.
+
 plugins {
 	id 'java-library'
+	id 'maven-publish'
+	id 'signing'
 }
+
+version = '0.9.0'
 
 repositories {
 	mavenCentral()
+	mavenLocal()
 }
 
 dependencies {
@@ -11,8 +18,8 @@ dependencies {
 	api "org.apache.jena:jena-arq:$jena4Version"
 	implementation "$gsonDependency"
 	implementation "$commonsLangDependency"
-	//implementation "$sparqlQueryBuilderDependency"
-	implementation project(':jena:SparqlQueryBuilder')
+	implementation "$sparqlQueryBuilderDependency"
+	//implementation project(':jena:SparqlQueryBuilder')
 	implementation "$slf4jApiDependency"
 
 	testImplementation "$logbackDependency"
@@ -25,6 +32,8 @@ configurations.all {
 java {
 	sourceCompatibility = JavaVersion.VERSION_17
 	targetCompatibility = JavaVersion.VERSION_17
+	//withJavadocJar()
+	withSourcesJar()
 }
 
 testing {
@@ -33,4 +42,50 @@ testing {
 			useJUnitJupiter()
 		}
 	}
+}
+
+publishing {
+	publications {
+		OntologyDrivenDataAccess(MavenPublication) {
+			from components.java
+			pom {
+				name = 'Ontology-Driven Data Access'
+				description = "A Java-centric data access facility for semantic graph stores.${System.lineSeparator}Copyright © 2024 Raytheon BBN Technologies"
+				url = 'https://github.com/SemWebCentral/parliament/tree/jena-update/jena/OntologyDrivenDataAccess'
+				packaging = 'jar'
+				licenses {
+					license {
+						name = 'The 3-Clause BSD License'
+						url = 'https://opensource.org/license/bsd-3-clause/'
+					}
+				}
+				organization {
+					name = 'Raytheon BBN Technologies'
+					url = 'https://bbn.com/'
+				}
+				developers {
+					developer {
+						id = 'iemmons'
+						name = 'Ian Emmons'
+						email = 'iemmons@rtx.com'
+					}
+				}
+				scm {
+					connection = 'scm:git:git@github.com:SemWebCentral/parliament.git'
+					developerConnection = 'scm:git:git@github.com:SemWebCentral/parliament.git'
+					url = 'https://github.com/SemWebCentral/parliament'
+				}
+			}
+		}
+	}
+
+	repositories {
+		//mavenCentral()
+		mavenLocal()
+	}
+}
+
+signing {
+	//sign publishing.publications.mavenJava
+	sign publishing.publications.OntologyDrivenDataAccess
 }

@@ -11,8 +11,6 @@ import org.apache.jena.vocabulary.XSD;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.misc_needing_refactor.QName;
-
 public final class QSUtil {
 	private static final Logger LOG = LoggerFactory.getLogger(QSUtil.class);
 	public static final DatatypeFactory DT_FACT;
@@ -74,8 +72,8 @@ public final class QSUtil {
 			if (expectedDatatype.getURI().equals(lit.getDatatypeURI())) {
 				result = xgcFromString(lit.getLexicalForm());
 			} else {
-				LOG.warn("Expected RDF literal of type {}, but found PLFA",
-					QName.asQName(expectedDatatype), QName.asQName(lit.getDatatypeURI()));
+				LOG.warn("Expected RDF literal of type {}, but found {}",
+					expectedDatatype, lit.getDatatypeURI());
 			}
 		}
 		return result;

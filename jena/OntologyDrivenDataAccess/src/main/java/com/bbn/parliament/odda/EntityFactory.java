@@ -15,17 +15,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.sparql_query_builder.QueryBuilder;
+import com.bbn.parliament.util.QName;
 import com.google.gson.stream.JsonReader;
 
 public class EntityFactory {
 	private static final Logger LOG = LoggerFactory.getLogger(EntityFactory.class);
 
+	private final Resource rootEntType;
+	private final Resource orderIndex;
+	private final PrefixMapping pm;
+	private final QName qName;
 	private final SparqlEndpointSink kbSink;
-	private final OntologyTools ontTools;
+	private final RdfTypeTools rdfTypeTools;
+	private final RdfPropertyTools rdfPropTools;
+	private final ValidationTools valTools;
 
-	public EntityFactory(Resource rootEntityType, PrefixMapping prefixMapping, SparqlEndpointSink sparqlEndpointSink) {
-		kbSink = sparqlEndpointSink;
-		ontTools = new OntologyTools(rootEntityType, prefixMapping, kbSink);
+	public EntityFactory(Resource rootEntityType, Resource orderIndexPredicate,
+			PrefixMapping prefixMapping, SparqlEndpointSink sparqlEndpointSink) {
+		rootEntType = ArgCheck.throwIfNull(rootEntityType, "rootEntityType");
+		orderIndex = ArgCheck.throwIfNull(orderIndexPredicate, "orderIndexPredicate");
+		pm = ArgCheck.throwIfNull(prefixMapping, "prefixMapping");
+		qName = new QName(pm);
+		kbSink = ArgCheck.throwIfNull(sparqlEndpointSink, "sparqlEndpointSink");
+		rdfTypeTools = new RdfTypeTools(this);
+		rdfPropTools = new RdfPropertyTools(this);
+		valTools = new ValidationTools(this);
 	}
 
 	public Map<Resource, Entity> fetchEntities(Query entitySubQuery) {
@@ -34,7 +48,7 @@ public class EntityFactory {
 
 		int rowCount = kbSink.runSelectQuery(qs -> processEntities(qs, result),
 			QueryBuilder
-				.fromRsrc("odda/GenericEntity.sparql", ontTools.getPrefixMapping())
+				.fromRsrc("odda/GenericEntity.sparql", prefixMapping())
 				.prependSubQuery(entitySubQuery)
 				.asQuery());
 		if (LOG.isErrorEnabled()) {
@@ -47,34 +61,62 @@ public class EntityFactory {
 	}
 
 	private void processEntities(QuerySolution qs, Map<Resource, EntityImpl> result) {
-		Resource entUri = qs.getResource("ent");
-		EntityImpl ent = result.computeIfAbsent(entUri, key -> new EntityImpl(key, ontTools));
-		Resource propUri = qs.getResource("prop");
-		if (RDF.type.equals(propUri)) {
-			ent.getType().addValue(qs.getResource("propValue"));
+		Resource entIri = qs.getResource("ent");
+		EntityImpl ent = result.computeIfAbsent(entIri, key -> new EntityImpl(key, this));
+		Resource propIri = qs.getResource("prop");
+		if (RDF.type.equals(propIri)) {
+			ent.type().addValue(qs.getResource("propValue"));
 		} else {
 			RDFNode node = qs.get("propValue");
 			if (node == null) {
 				LOG.warn("Null ?propValue in entity query (?ent = '{}', >prop = '{}')",
-					ent.getUri(), propUri);
+					ent.iri(), propIri);
 			} else if (node.isAnon()) {
 				LOG.warn("Blank node ?propValue in entity query (?ent = '{}', ?prop = '{}')",
-					ent.getUri(), propUri);
+					ent.iri(), propIri);
 			} else if (node.isLiteral()) {
-				ent.getDTProp(propUri).addValue(node.asLiteral());
+				ent.dtProp(propIri).addValue(node.asLiteral());
 			} else {
 				EntityImpl targetEnt = result.computeIfAbsent(node.asResource(),
-					key -> new EntityImpl(key, ontTools));
-				ent.getObjProp(propUri).addValue(targetEnt);
+					key -> new EntityImpl(key, this));
+				ent.objProp(propIri).addValue(targetEnt);
 			}
 		}
 	}
 
 	public Entity read(JsonReader rdr) {
-		return GsonUtil.create(ontTools).fromJson(rdr, Entity.class);
+		return GsonUtil.create(this).fromJson(rdr, Entity.class);
 	}
 
-	public OntologyTools getOntTools() {
-		return ontTools;
+	public Resource rootEntityType() {
+		return rootEntType;
+	}
+
+	public Resource orderIndexPredicate() {
+		return orderIndex;
+	}
+
+	public PrefixMapping prefixMapping() {
+		return pm;
+	}
+
+	public QName qName() {
+		return qName;
+	}
+
+	public SparqlEndpointSink kbSink() {
+		return kbSink;
+	}
+
+	public RdfTypeTools rdfTypeTools() {
+		return rdfTypeTools;
+	}
+
+	public RdfPropertyTools rdfPropertyTools() {
+		return rdfPropTools;
+	}
+
+	public ValidationTools validationTools() {
+		return valTools;
 	}
 }

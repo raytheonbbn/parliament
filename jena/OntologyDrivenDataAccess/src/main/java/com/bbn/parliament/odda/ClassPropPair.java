@@ -6,35 +6,33 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 
-import com.bbn.parliament.misc_needing_refactor.QName;
-
 public class ClassPropPair implements Comparable<ClassPropPair> {
-	private final Resource rdfClassUri;
-	private final Resource rdfPropUri;
+	private final Resource rdfClassIri;
+	private final Resource rdfPropIri;
 
 	public ClassPropPair(Resource rdfClass, Resource rdfProp) {
-		this.rdfClassUri = rdfClass;
-		this.rdfPropUri = rdfProp;
+		this.rdfClassIri = rdfClass;
+		this.rdfPropIri = rdfProp;
 	}
 
-	public ClassPropPair(String rdfClassUri, String rdfPropUri) {
-		this.rdfClassUri = ResourceFactory.createResource(rdfClassUri);
-		this.rdfPropUri = ResourceFactory.createResource(rdfPropUri);
+	public ClassPropPair(String rdfClassIri, String rdfPropIri) {
+		this.rdfClassIri = ResourceFactory.createResource(rdfClassIri);
+		this.rdfPropIri = ResourceFactory.createResource(rdfPropIri);
 	}
 
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37)
-			.append(rdfClassUri)
-			.append(rdfPropUri)
+			.append(rdfClassIri)
+			.append(rdfPropIri)
 			.toHashCode();
 	}
 
 	@Override
 	public int compareTo(ClassPropPair rhs) {
 		return new CompareToBuilder()
-			.append(rdfClassUri, rhs.rdfClassUri)
-			.append(rdfPropUri, rhs.rdfPropUri)
+			.append(rdfClassIri, rhs.rdfClassIri)
+			.append(rdfPropIri, rhs.rdfPropIri)
 			.toComparison();
 	}
 
@@ -48,15 +46,14 @@ public class ClassPropPair implements Comparable<ClassPropPair> {
 			ClassPropPair other = (ClassPropPair) rhs;
 			return new EqualsBuilder()
 				.appendSuper(super.equals(rhs))
-				.append(rdfClassUri, other.rdfClassUri)
-				.append(rdfPropUri, other.rdfPropUri)
+				.append(rdfClassIri, other.rdfClassIri)
+				.append(rdfPropIri, other.rdfPropIri)
 				.isEquals();
 		}
 	}
 
 	@Override
 	public String toString() {
-		return String.format("ClassPropPair[%1$s, %2$s]",
-			QName.asQName(rdfClassUri), QName.asQName(rdfPropUri));
+		return "ClassPropPair[%1$s, %2$s]".formatted(rdfClassIri, rdfPropIri);
 	}
 }

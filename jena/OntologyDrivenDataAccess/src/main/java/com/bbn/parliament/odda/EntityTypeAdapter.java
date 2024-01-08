@@ -12,43 +12,41 @@ import org.apache.jena.vocabulary.OWL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bbn.parliament.misc_needing_refactor.Dmn;
-import com.bbn.parliament.misc_needing_refactor.QName;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 public class EntityTypeAdapter extends TypeAdapter<Entity> {
-	private static final String URI_JSON_FIELD_NAME = "uri";
-	private static final String TYPE_JSON_FIELD_NAME = "typeUri";
+	private static final String IRI_JSON_FIELD_NAME = "iri";
+	private static final String TYPE_JSON_FIELD_NAME = "typeIri";
 	public static final String LAT_JSON_FIELD_NAME = "latitude";
 	public static final String LON_JSON_FIELD_NAME = "longitude";
 
 	private static final Logger LOG = LoggerFactory.getLogger(EntityTypeAdapter.class);
 
+	private final EntityFactory entFact;
 	private long orderIndexForNextRead;
-	private final OntologyTools ontTools;
 	private final Deque<Entity> entitiesInProgress;	// contains LIFO stack of entities as
 																	// they are being written
 	private final Set<Entity> profilesAlreadyWritten;
 
-	public EntityTypeAdapter(OntologyTools ontologyTools) {
+	public EntityTypeAdapter(EntityFactory entityFactory) {
 		super();
+		entFact = ArgCheck.throwIfNull(entityFactory, "entityFactory");
 		orderIndexForNextRead = 0;
-		ontTools = ArgCheck.throwIfNull(ontologyTools, "ontologyTools");
 		entitiesInProgress = new ArrayDeque<>();
 		profilesAlreadyWritten = new TreeSet<>(Entity.COMPARATOR);
 	}
 
 	// Only for use by ObjectPropertyTypeAdapter:
-	public void setOrderIndexForNextRead(long newValue) {
+	public void orderIndexForNextRead(long newValue) {
 		orderIndexForNextRead = newValue;
 	}
 
 	@Override
 	public Entity read(JsonReader rdr) throws IOException {
-		EntityImpl result = new EntityImpl(null, ontTools);
+		EntityImpl result = new EntityImpl(null, entFact);
 		if (rdr.peek() == JsonToken.BEGIN_OBJECT) {
 			DatatypePropertyTypeAdapter wktAdapter = new DatatypePropertyTypeAdapter(result, Geo.asWKT);
 			DatatypeProperty lat = null;
@@ -68,74 +66,74 @@ public class EntityTypeAdapter extends TypeAdapter<Entity> {
 			rdr.endObject();
 
 			// Set the orderIndex property, if applicable:
-			setOrderIndex(result);
+			orderIndex(result);
 
 			// Special case for the latitude and longitude of Geometry objects:
-			setLatLon(result, lat, lon);
+			latLon(result, lat, lon);
 		} else if (rdr.peek() == JsonToken.STRING) {
-			result.setUri(ResourceFactory.createResource(rdr.nextString()));
+			result.iri(ResourceFactory.createResource(rdr.nextString()));
 		} else {
 			throw new IllegalStateException(String.format(
-				"Expected object or URI in JSON stream at %1$s", rdr.getPath()));
+				"Expected object or IRI in JSON stream at %1$s", rdr.getPath()));
 		}
 		return result;
 	}
 
 	private void readObjectField(JsonReader rdr, EntityImpl result, String fieldName) throws IOException {
-		if (URI_JSON_FIELD_NAME.equals(fieldName)) {
-			result.setUri(ResourceFactory.createResource(rdr.nextString()));
+		if (IRI_JSON_FIELD_NAME.equals(fieldName)) {
+			result.iri(ResourceFactory.createResource(rdr.nextString()));
 		} else if (TYPE_JSON_FIELD_NAME.equals(fieldName)) {
-			result.setType(new RdfTypeTypeAdapter(result).read(rdr));
+			result.type(new RdfTypeTypeAdapter(result).read(rdr));
 		} else {
-			Resource prop = getRdfPropTools().mapJsonFieldToPropUri(fieldName);
+			Resource prop = rdfPropTools().mapJsonFieldToPropIri(fieldName);
 			if (prop == null) {
 				throw new IllegalStateException(String.format(
 					"Unrecognized field name '%1$s' at %2$s", fieldName, rdr.getPath()));
 			}
-			if (getRdfPropTools().isDTProp(prop)) {
+			if (rdfPropTools().isDTProp(prop)) {
 				result.addDTProp(new DatatypePropertyTypeAdapter(result, prop).read(rdr));
-			} else if (getRdfPropTools().isObjProp(prop)) {
+			} else if (rdfPropTools().isObjProp(prop)) {
 				result.addObjProp(new ObjectPropertyTypeAdapter(result, prop, this).read(rdr));
 			} else {
 				throw new IllegalStateException(String.format("Property %1$s is neither an %2$s nor an %3$s",
-					QName.asQName(prop), QName.asQName(OWL.DatatypeProperty), QName.asQName(OWL.ObjectProperty)));
+					qnameFor(prop), qnameFor(OWL.DatatypeProperty), qnameFor(OWL.ObjectProperty)));
 			}
 		}
 	}
 
-	private void setOrderIndex(EntityImpl ent) {
-		PropInfo orderIdxPI = getRdfPropTools().getPropertyInfo(Dmn.orderIndex);
+	private void orderIndex(EntityImpl ent) {
+		PropInfo orderIdxPI = rdfPropTools().propertyInfo(entFact.orderIndexPredicate());
 		// Test whether ent is declared to have the orderIndex property:
-		if (orderIdxPI.getDomainTypes().stream().anyMatch(ent::isOfType)) {
-			DatatypeProperty orderIdxProp = ent.getDTProp(Dmn.orderIndex);
+		if (orderIdxPI.domainTypes().stream().anyMatch(ent::isOfType)) {
+			DatatypeProperty orderIdxProp = ent.dtProp(entFact.orderIndexPredicate());
 			orderIdxProp.clear();
 			orderIdxProp.addValue(new RdfLiteral(orderIndexForNextRead));
 		}
 	}
 
-	private static void setLatLon(EntityImpl ent, DatatypeProperty lat, DatatypeProperty lon) {
+	private void latLon(EntityImpl ent, DatatypeProperty lat, DatatypeProperty lon) {
 		if (ent.isOfType(Geo.Geometry) && (lat != null || lon != null)) {
 			WktLiteralPoint pt = new WktLiteralPoint(
-				getAngleFromDTProp(ent, lat, LAT_JSON_FIELD_NAME),
-				getAngleFromDTProp(ent, lon, LON_JSON_FIELD_NAME));
-			ent.getDTProp(Geo.asWKT).addValue(new RdfLiteral(pt));
+				angleFromDTProp(ent, lat, LAT_JSON_FIELD_NAME),
+				angleFromDTProp(ent, lon, LON_JSON_FIELD_NAME));
+			ent.dtProp(Geo.asWKT).addValue(new RdfLiteral(pt));
 		}
 	}
 
-	private static double getAngleFromDTProp(EntityImpl ent, DatatypeProperty angleProp, String fieldName) {
+	private double angleFromDTProp(EntityImpl ent, DatatypeProperty angleProp, String fieldName) {
 		if (angleProp == null) {
 			throw new IllegalStateException(String.format("Missing %1$s on %2$s",
-				fieldName, QName.asQName(ent.getUri())));
-		} else if (angleProp.getValues().size() != 1) { // NOPMD
+				fieldName, qnameFor(ent.iri())));
+		} else if (angleProp.values().size() != 1) { // NOPMD
 			throw new IllegalStateException(String.format("More than one %1$s on %2$s",
-				fieldName, QName.asQName(ent.getUri())));
+				fieldName, qnameFor(ent.iri())));
 		} else {
-			String angleStr = angleProp.getFirstValue();
+			String angleStr = angleProp.firstValue();
 			try {
 				return Double.parseDouble(angleStr);
 			} catch (NumberFormatException ex) {
 				throw new IllegalStateException(String.format("Bad %1$s on %2$s: '%3$s'",
-					fieldName, QName.asQName(ent.getUri()), angleStr), ex);
+					fieldName, qnameFor(ent.iri()), angleStr), ex);
 			}
 		}
 	}
@@ -144,18 +142,18 @@ public class EntityTypeAdapter extends TypeAdapter<Entity> {
 	public void write(JsonWriter wtr, Entity ent) throws IOException {
 		if (!ent.isFetched()) { // NOPMD
 			@SuppressWarnings({ "resource", "unused" })
-			JsonWriter tmp1 = wtr.value("notfetched:" + ent.getUri().getURI());
+			JsonWriter tmp1 = wtr.value("notfetched:" + ent.iri().getURI());
 		} else if (entitiesInProgress.contains(ent)) {
-			LOG.warn("Writing nested entity to JSON as URI-only: {}", QName.asQName(ent.getUri()));
+			LOG.warn("Writing nested entity to JSON as IRI-only: {}", qnameFor(ent.iri()));
 			@SuppressWarnings({ "resource", "unused" })
-			JsonWriter tmp1 = wtr.value("avoidingrecursion:" + ent.getUri().getURI());
+			JsonWriter tmp1 = wtr.value("avoidingrecursion:" + ent.iri().getURI());
 		} else if (profilesAlreadyWritten.contains(ent)) {
-			LOG.warn("Writing previously-written profile to JSON as URI-only: <{}>", QName.asQName(ent.getUri()));
+			LOG.warn("Writing previously-written profile to JSON as IRI-only: <{}>", qnameFor(ent.iri()));
 			@SuppressWarnings({ "resource", "unused" })
-			JsonWriter tmp1 = wtr.value("avoidingredundancy:" + ent.getUri().getURI());
+			JsonWriter tmp1 = wtr.value("avoidingredundancy:" + ent.iri().getURI());
 		} else {
 			entitiesInProgress.addFirst(ent);
-			if (ent.isOfType(ontTools.getRootEntityType())) {	//TODO: Do we need this test?  Why is this collection named after "profiles"?
+			if (ent.isOfType(entFact.rootEntityType())) {	//TODO: Do we need this test?  Why is this collection named after "profiles"?
 				profilesAlreadyWritten.add(ent);
 			}
 			writeFullEntity(wtr, ent);
@@ -173,34 +171,38 @@ public class EntityTypeAdapter extends TypeAdapter<Entity> {
 		@SuppressWarnings({ "resource", "unused" })
 		JsonWriter tmp1 = wtr.beginObject();
 
-		for (DatatypeProperty prop : ent.getDTProps()) {
-			if (Geo.asWKT.equals(prop.getPropUri())) {
+		for (DatatypeProperty prop : ent.dtProps()) {
+			if (Geo.asWKT.equals(prop.propIri())) {
 				dtPropTA.write(wtr, prop); // Special case for lat-lon on Geometry objects
-			} else if (!Dmn.orderIndex.equals(prop.getPropUri())) {
+			} else if (!entFact.orderIndexPredicate().equals(prop.propIri())) {
 				@SuppressWarnings({ "resource", "unused" })
-				JsonWriter tmp2 = wtr.name(getRdfPropTools().mapPropUriToJsonField(prop.getPropUri(), ent.getType().getValues()));
+				JsonWriter tmp2 = wtr.name(rdfPropTools().mapPropIriToJsonField(prop.propIri(), ent.type().values()));
 				dtPropTA.write(wtr, prop);
 			}
 		}
-		for (ObjectProperty prop : ent.getObjProps()) {
+		for (ObjectProperty prop : ent.objProps()) {
 			@SuppressWarnings({ "resource", "unused" })
-			JsonWriter tmp2 = wtr.name(getRdfPropTools().mapPropUriToJsonField(prop.getPropUri(), ent.getType().getValues()));
+			JsonWriter tmp2 = wtr.name(rdfPropTools().mapPropIriToJsonField(prop.propIri(), ent.type().values()));
 			objPropTA.write(wtr, prop);
 		}
 		@SuppressWarnings({ "resource", "unused" })
 		JsonWriter tmp3 = wtr.name(TYPE_JSON_FIELD_NAME);
-		rdfTypeTA.write(wtr, ent.getType());
+		rdfTypeTA.write(wtr, ent.type());
 
 		@SuppressWarnings({ "resource", "unused" })
-		JsonWriter tmp4 = wtr.name(URI_JSON_FIELD_NAME);
+		JsonWriter tmp4 = wtr.name(IRI_JSON_FIELD_NAME);
 		@SuppressWarnings({ "resource", "unused" })
-		JsonWriter tmp5 = wtr.value(ent.getUri().getURI());
+		JsonWriter tmp5 = wtr.value(ent.iri().getURI());
 
 		@SuppressWarnings({ "resource", "unused" })
 		JsonWriter tmp6 = wtr.endObject();
 	}
 
-	private RdfPropertyTools getRdfPropTools() {
-		return ontTools.getRdfPropertyTools();
+	private RdfPropertyTools rdfPropTools() {
+		return entFact.rdfPropertyTools();
+	}
+
+	private String qnameFor(Resource iri) {
+		return entFact.qName().qnameFor(iri);
 	}
 }

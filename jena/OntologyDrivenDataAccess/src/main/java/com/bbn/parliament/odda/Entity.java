@@ -24,35 +24,35 @@ public interface Entity {
 			result = 1;
 		} else {
 			result = new CompareToBuilder()
-				.append(lhs.getOrderIndex(), rhs.getOrderIndex())
-				.append(lhs.getUri(), rhs.getUri()).build();
+				.append(lhs.orderIndex(), rhs.orderIndex())
+				.append(lhs.iri(), rhs.iri()).build();
 		}
 		return result;
 	};
 
-	Resource getUri();
+	Resource iri();
 
-	void setUri(Resource newValue);
+	void iri(Resource newValue);
 
 	boolean isFetched();
 
-	long getOrderIndex();
+	long orderIndex();
 
-	RdfType getType();
+	RdfType type();
 
-	void setType(RdfType newType);
+	void type(RdfType newType);
 
 	boolean isOfType(Resource type);
 
-	DatatypeProperty getDTProp(Resource prop);
+	DatatypeProperty dtProp(Resource prop);
 
-	Collection<DatatypeProperty> getDTProps();
+	Collection<DatatypeProperty> dtProps();
 
 	void addDTProp(DatatypeProperty newProp);
 
-	ObjectProperty getObjProp(Resource prop);
+	ObjectProperty objProp(Resource prop);
 
-	Collection<ObjectProperty> getObjProps();
+	Collection<ObjectProperty> objProps();
 
 	void addObjProp(ObjectProperty newProp);
 
@@ -62,5 +62,5 @@ public interface Entity {
 
 	String toJson(boolean pretty);
 
-	OntologyTools getOntTools();
+	EntityFactory entityFactory();
 }

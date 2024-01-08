@@ -24,10 +24,10 @@ public class WktLiteralPoint implements Comparable<WktLiteralPoint> {
 		this(point.getLexicalForm(), ResourceFactory.createResource(point.getDatatypeURI()));
 	}
 
-	public WktLiteralPoint(String lexicalForm, Resource datatypeUri) {
-		if (!Geo.wktLiteral.equals(datatypeUri)) {
+	public WktLiteralPoint(String lexicalForm, Resource datatypeIri) {
+		if (!Geo.wktLiteral.equals(datatypeIri)) {
 			throw new IllegalArgumentException(String.format(
-				"Unexpected datatype \"%1$s\" on WKT literal", datatypeUri));
+				"Unexpected datatype \"%1$s\" on WKT literal", datatypeIri));
 		}
 		Matcher matcher = POINT_PATTERN.matcher(lexicalForm);
 		if (!matcher.matches()) {
@@ -52,24 +52,24 @@ public class WktLiteralPoint implements Comparable<WktLiteralPoint> {
 		this.longitude = longitude;
 	}
 
-	public static Resource getDatatypeUri() {
+	public static Resource datatypeIri() {
 		return Geo.wktLiteral;
 	}
 
-	public String getLexicalForm() {
+	public String lexicalForm() {
 		return String.format(POINT_FMT, Double.toString(latitude), Double.toString(longitude));
 	}
 
 	@Override
 	public String toString() {
-		return getLexicalForm();
+		return lexicalForm();
 	}
 
-	public double getLatitude() {
+	public double latitude() {
 		return latitude;
 	}
 
-	public double getLongitude() {
+	public double longitude() {
 		return longitude;
 	}
 

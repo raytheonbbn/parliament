@@ -8,26 +8,24 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 
-import com.bbn.parliament.misc_needing_refactor.QName;
-
 public abstract class RdfProperty implements Comparable<RdfProperty> {
 	@ExcludeFromJson
 	private final Entity owner;
-	private final Resource propUri;
+	private final Resource propIri;
 	private Cardinality cardinality;
 
-	public RdfProperty(Entity owner, Resource propUri) {
+	public RdfProperty(Entity owner, Resource propIri) {
 		this.owner = ArgCheck.throwIfNull(owner, "owner");
-		this.propUri = ArgCheck.throwIfNull(propUri, "propUri");
+		this.propIri = ArgCheck.throwIfNull(propIri, "propIri");
 		cardinality = null; // NOPMD
 	}
 
-	public Entity getOwner() {
+	public Entity owner() {
 		return owner;
 	}
 
-	public Resource getPropUri() {
-		return propUri;
+	public Resource propIri() {
+		return propIri;
 	}
 
 	public abstract void generateRdf(Model model);
@@ -35,46 +33,46 @@ public abstract class RdfProperty implements Comparable<RdfProperty> {
 	public abstract boolean isEmpty();
 
 	public boolean isValid(List<String> validationErrors, Model model) {
-		return getValidationTools().isDomainValid(validationErrors, model,
-			owner.getUri(), propUri);
+		return validationTools().isDomainValid(validationErrors, model,
+			owner.iri(), propIri);
 	}
 
-	public Cardinality getCardinality(Model model) {
-		if (cardinality == null && owner != null && propUri != null) {
-			cardinality = getValidationTools().getCardinality(model, owner, propUri);
+	public Cardinality cardinality(Model model) {
+		if (cardinality == null && owner != null && propIri != null) {
+			cardinality = validationTools().cardinality(model, owner, propIri);
 		}
 		return cardinality;
 	}
 
 	protected boolean maxCardinalityIsOne() {
-		return getCardinality(null).max <= 1;
+		return cardinality(null).max <= 1;
 	}
 
 	/** Use this when a cardinality restriction in the ontology is not present. */
-	public void setCardinality(long minCard, long maxCard) {
+	public void cardinality(long minCard, long maxCard) {
 		cardinality = new Cardinality(minCard, maxCard);
 	}
 
 	protected boolean isCardinalityValid(long actualCardinality, List<String> validationErrors, Model model) {
 		boolean result = true;
-		Cardinality card = getCardinality(model);
+		Cardinality card = cardinality(model);
 		if (actualCardinality < card.min || actualCardinality > card.max) {
 			result = false;
 			if (validationErrors != null) {
-				validationErrors.add(String.format(
-					"%1$s violates the %2$s cardinality constraint on property %3$s: Actual cardinality is %4$d", QName
-						.asQName(owner.getUri()), card, QName.asQName(propUri), actualCardinality));
+				validationErrors.add(
+					"%1$s violates the %2$s cardinality constraint on property %3$s: Actual cardinality is %4$d"
+					.formatted(owner.iri(), card, propIri, actualCardinality));
 			}
 		}
 		return result;
 	}
 
-	protected boolean isRangeValid(Resource objectUri, List<String> validationErrors, Model model) {
-		return getValidationTools().isRangeValid(objectUri, validationErrors, model, owner, propUri);
+	protected boolean isRangeValid(Resource objectIri, List<String> validationErrors, Model model) {
+		return validationTools().isRangeValid(objectIri, validationErrors, model, owner, propIri);
 	}
 
-	private ValidationTools getValidationTools() {
-		return owner.getOntTools().getValidationTools();
+	private ValidationTools validationTools() {
+		return owner.entityFactory().validationTools();
 	}
 
 	@Override
@@ -87,7 +85,7 @@ public abstract class RdfProperty implements Comparable<RdfProperty> {
 			RdfProperty that = (RdfProperty) other;
 			return new EqualsBuilder()
 				.append(owner, that.owner)
-				.append(propUri, that.propUri)
+				.append(propIri, that.propIri)
 				.isEquals();
 
 		}
@@ -97,7 +95,7 @@ public abstract class RdfProperty implements Comparable<RdfProperty> {
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37)
 			.append(owner)
-			.append(propUri)
+			.append(propIri)
 			.toHashCode();
 
 	}
@@ -106,7 +104,7 @@ public abstract class RdfProperty implements Comparable<RdfProperty> {
 	public int compareTo(RdfProperty rhs) {
 		return new CompareToBuilder()
 			.append(owner, rhs.owner)
-			.append(propUri, rhs.propUri)
+			.append(propIri, rhs.propIri)
 			.build();
 	}
 }

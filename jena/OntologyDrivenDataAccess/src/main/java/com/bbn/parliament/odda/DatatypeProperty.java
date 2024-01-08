@@ -15,8 +15,8 @@ import org.apache.jena.rdf.model.Resource;
 public class DatatypeProperty extends RdfProperty implements Iterable<RdfLiteral> {
 	private final Set<RdfLiteral> values;
 
-	public DatatypeProperty(Entity owner, Resource propUri) {
-		super(owner, propUri);
+	public DatatypeProperty(Entity owner, Resource propIri) {
+		super(owner, propIri);
 		values = new TreeSet<>();
 	}
 
@@ -34,7 +34,7 @@ public class DatatypeProperty extends RdfProperty implements Iterable<RdfLiteral
 		values.clear();
 	}
 
-	public Set<RdfLiteral> getValues() {
+	public Set<RdfLiteral> values() {
 		return Collections.unmodifiableSet(values);
 	}
 
@@ -42,9 +42,9 @@ public class DatatypeProperty extends RdfProperty implements Iterable<RdfLiteral
 		return values.stream();
 	}
 
-	public String getFirstValue() {
+	public String firstValue() {
 		return values.stream()
-			.map(RdfLiteral::getLexicalForm)
+			.map(RdfLiteral::lexicalForm)
 			.findFirst()
 			.orElse(null);
 	}
@@ -52,10 +52,10 @@ public class DatatypeProperty extends RdfProperty implements Iterable<RdfLiteral
 	@Override
 	public void generateRdf(Model model) {
 		if (!values.isEmpty()) {
-			Resource subject = model.createResource(getOwner().getUri());
+			Resource subject = model.createResource(owner().iri());
 			values.stream()
-				.map(value -> value.getAsLiteral(model))
-				.forEach(lit -> model.add(subject, getPropUri().as(Property.class), lit));
+				.map(value -> value.asLiteral(model))
+				.forEach(lit -> model.add(subject, propIri().as(Property.class), lit));
 		}
 	}
 

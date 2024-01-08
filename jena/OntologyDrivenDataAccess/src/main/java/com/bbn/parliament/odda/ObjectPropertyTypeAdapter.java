@@ -11,40 +11,40 @@ import com.google.gson.stream.JsonWriter;
 
 public class ObjectPropertyTypeAdapter extends TypeAdapter<ObjectProperty> {
 	private final Entity owner;
-	private final Resource propUri;
+	private final Resource propIri;
 	private final EntityTypeAdapter entTypeAdapter;
 
 	/** For writing */
 	public ObjectPropertyTypeAdapter(EntityTypeAdapter entityTypeAdapter) {
 		super();
 		owner = null;
-		propUri = null;
+		propIri = null;
 		entTypeAdapter = ArgCheck.throwIfNull(entityTypeAdapter, "entityTypeAdapter");
 	}
 
 	/** For reading */
-	public ObjectPropertyTypeAdapter(Entity owner, Resource propUri, EntityTypeAdapter entityTypeAdapter) {
+	public ObjectPropertyTypeAdapter(Entity owner, Resource propIri, EntityTypeAdapter entityTypeAdapter) {
 		super();
 		this.owner = ArgCheck.throwIfNull(owner, "owner");
-		this.propUri = ArgCheck.throwIfNull(propUri, "propUri");
+		this.propIri = ArgCheck.throwIfNull(propIri, "propIri");
 		entTypeAdapter = ArgCheck.throwIfNull(entityTypeAdapter, "entityTypeAdapter");
 	}
 
 	@Override
 	public ObjectProperty read(JsonReader rdr) throws IOException {
-		ObjectProperty result = new ObjectProperty(owner, propUri);
+		ObjectProperty result = new ObjectProperty(owner, propIri);
 		if (rdr.peek() == JsonToken.NULL) {
 			rdr.nextNull();
 		} else if (rdr.peek() == JsonToken.BEGIN_ARRAY) {
 			rdr.beginArray();
 			long orderIndex = -1;
 			while (rdr.peek() != JsonToken.END_ARRAY) {
-				entTypeAdapter.setOrderIndexForNextRead(++orderIndex);
+				entTypeAdapter.orderIndexForNextRead(++orderIndex);
 				result.addValue(entTypeAdapter.read(rdr));
 			}
 			rdr.endArray();
 		} else {
-			entTypeAdapter.setOrderIndexForNextRead(0);
+			entTypeAdapter.orderIndexForNextRead(0);
 			result.addValue(entTypeAdapter.read(rdr));
 		}
 		return result;
@@ -64,7 +64,7 @@ public class ObjectPropertyTypeAdapter extends TypeAdapter<ObjectProperty> {
 				JsonWriter tmp1 = wtr.beginArray();
 			}
 
-			for (Entity ent : prop.getValues()) {
+			for (Entity ent : prop.values()) {
 				entTypeAdapter.write(wtr, ent);
 			}
 

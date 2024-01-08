@@ -53,9 +53,9 @@ public class RdfTypeTypeAdapter extends TypeAdapter<RdfType> {
 				JsonWriter tmp1 = wtr.beginArray();
 			}
 
-			for (RdfTypeInfo value : rdfType.getValues()) {
+			for (RdfTypeInfo value : rdfType.values()) {
 				@SuppressWarnings({ "resource", "unused" })
-				JsonWriter tmp1 = wtr.value(value.getUri().getURI());
+				JsonWriter tmp1 = wtr.value(value.iri().getURI());
 			}
 
 			if (encodeAsArray) {

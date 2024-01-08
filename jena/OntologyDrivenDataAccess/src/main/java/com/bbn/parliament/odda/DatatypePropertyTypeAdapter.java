@@ -11,26 +11,26 @@ import com.google.gson.stream.JsonWriter;
 
 public class DatatypePropertyTypeAdapter extends TypeAdapter<DatatypeProperty> {
 	private final Entity owner;
-	private final Resource propUri;
+	private final Resource propIri;
 
 	/** For writing */
 	public DatatypePropertyTypeAdapter() {
 		super();
 		owner = null;
-		propUri = null;
+		propIri = null;
 	}
 
 	/** For reading */
-	public DatatypePropertyTypeAdapter(Entity owner, Resource propUri) {
+	public DatatypePropertyTypeAdapter(Entity owner, Resource propIri) {
 		super();
 		this.owner = ArgCheck.throwIfNull(owner, "owner");
-		this.propUri = ArgCheck.throwIfNull(propUri, "propUri");
+		this.propIri = ArgCheck.throwIfNull(propIri, "propIri");
 	}
 
 	@Override
 	public DatatypeProperty read(JsonReader rdr) throws IOException {
 		try {
-			DatatypeProperty result = new DatatypeProperty(owner, propUri);
+			DatatypeProperty result = new DatatypeProperty(owner, propIri);
 			if (rdr.peek() == JsonToken.NULL) {
 				rdr.nextNull();
 			} else if (rdr.peek() == JsonToken.BEGIN_ARRAY) {
@@ -55,7 +55,7 @@ public class DatatypePropertyTypeAdapter extends TypeAdapter<DatatypeProperty> {
 			JsonWriter tmp1 = wtr.nullValue();
 		} else {
 			boolean maxCardinalityIsOne = prop.maxCardinalityIsOne();
-			if (Geo.asWKT.equals(prop.getPropUri())) {
+			if (Geo.asWKT.equals(prop.propIri())) {
 				maxCardinalityIsOne = true;
 			}
 			boolean encodeAsArray = prop.size() > 1 || !maxCardinalityIsOne;
@@ -64,7 +64,7 @@ public class DatatypePropertyTypeAdapter extends TypeAdapter<DatatypeProperty> {
 				JsonWriter tmp1 = wtr.beginArray();
 			}
 
-			for (RdfLiteral lit : prop.getValues()) {
+			for (RdfLiteral lit : prop.values()) {
 				lit.writeAsJson(wtr);
 			}
 

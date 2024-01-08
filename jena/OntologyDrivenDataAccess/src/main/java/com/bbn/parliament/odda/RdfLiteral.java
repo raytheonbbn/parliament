@@ -18,7 +18,6 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.vocabulary.XSD;
 
-import com.bbn.parliament.misc_needing_refactor.QName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
@@ -27,7 +26,7 @@ public class RdfLiteral implements Comparable<RdfLiteral> {
 	private static final Map<Resource, LiteralJsonTranslator> ALLOWED_DATATYPES;
 
 	private final String lexicalForm;
-	private final Resource datatypeUri;
+	private final Resource datatypeIri;
 
 	static {
 		ALLOWED_DATATYPES = new HashMap<>();
@@ -40,16 +39,16 @@ public class RdfLiteral implements Comparable<RdfLiteral> {
 		ALLOWED_DATATYPES.put(XSD.xfloat, (wtr, lexicalForm) -> wtr.value(Float.valueOf(lexicalForm)));
 		ALLOWED_DATATYPES.put(XSD.xdouble, (wtr, lexicalForm) -> wtr.value(Double.valueOf(lexicalForm)));
 		ALLOWED_DATATYPES.put(XSD.xboolean, (wtr, lexicalForm) -> wtr.value(Boolean.parseBoolean(lexicalForm)));
-		ALLOWED_DATATYPES.put(WktLiteralPoint.getDatatypeUri(), (wtr, lexicalForm) -> {
-			WktLiteralPoint pt = new WktLiteralPoint(lexicalForm, WktLiteralPoint.getDatatypeUri());
+		ALLOWED_DATATYPES.put(WktLiteralPoint.datatypeIri(), (wtr, lexicalForm) -> {
+			WktLiteralPoint pt = new WktLiteralPoint(lexicalForm, WktLiteralPoint.datatypeIri());
 			@SuppressWarnings({ "resource", "unused" })
 			JsonWriter tmp1 = wtr.name(EntityTypeAdapter.LAT_JSON_FIELD_NAME);
 			@SuppressWarnings({ "resource", "unused" })
-			JsonWriter tmp2 = wtr.value(pt.getLatitude());
+			JsonWriter tmp2 = wtr.value(pt.latitude());
 			@SuppressWarnings({ "resource", "unused" })
 			JsonWriter tmp3 = wtr.name(EntityTypeAdapter.LON_JSON_FIELD_NAME);
 			@SuppressWarnings({ "resource", "unused" })
-			JsonWriter tmp4 = wtr.value(pt.getLongitude());
+			JsonWriter tmp4 = wtr.value(pt.longitude());
 		});
 	}
 
@@ -57,17 +56,17 @@ public class RdfLiteral implements Comparable<RdfLiteral> {
 		ArgCheck.throwIfNull(literal, "literal");
 		lexicalForm = literal.getLexicalForm();
 		ArgCheck.throwIfNull(lexicalForm, "literal.getLexicalForm()");
-		datatypeUri = normalizeDTUri(ResourceFactory.createResource(literal.getDatatypeURI()));
+		datatypeIri = normalizeDtIri(ResourceFactory.createResource(literal.getDatatypeURI()));
 	}
 
 	public RdfLiteral(String lexicalForm, Resource datatype) {
 		this.lexicalForm = lexicalForm;
-		this.datatypeUri = normalizeDTUri(datatype);
+		this.datatypeIri = normalizeDtIri(datatype);
 	}
 
-	public RdfLiteral(String lexicalForm, String datatypeUri) {
+	public RdfLiteral(String lexicalForm, String datatypeIri) {
 		this.lexicalForm = lexicalForm;
-		this.datatypeUri = normalizeDTUri(ResourceFactory.createResource(datatypeUri));
+		this.datatypeIri = normalizeDtIri(ResourceFactory.createResource(datatypeIri));
 	}
 
 	public RdfLiteral(String value) {
@@ -75,11 +74,11 @@ public class RdfLiteral implements Comparable<RdfLiteral> {
 	}
 
 	public RdfLiteral(WktLiteralPoint value) {
-		this(value.getLexicalForm(), WktLiteralPoint.getDatatypeUri());
+		this(value.lexicalForm(), WktLiteralPoint.datatypeIri());
 	}
 
 	public RdfLiteral(XMLGregorianCalendar value) {
-		// Qname.toString() returns {namesapaceUri}localPart NOT namespaceUri#localPart:
+		// Qname.toString() returns {namesapaceIri}localPart NOT namespaceIri#localPart:
 		this(value.toXMLFormat(), String.format("%s#%s",
 			value.getXMLSchemaType().getNamespaceURI(),
 			value.getXMLSchemaType().getLocalPart()));
@@ -110,17 +109,17 @@ public class RdfLiteral implements Comparable<RdfLiteral> {
 		this(Boolean.toString(value), XSD.xboolean);
 	}
 
-	private static Resource normalizeDTUri(Resource dtUri) {
-		Resource result = (dtUri == null) ? XSD.xstring : dtUri;
+	private static Resource normalizeDtIri(Resource dtIri) {
+		Resource result = (dtIri == null) ? XSD.xstring : dtIri;
 		if (!ALLOWED_DATATYPES.containsKey(result)) {
-			String dtList = ALLOWED_DATATYPES.keySet().stream().map(QName::asQName).collect(Collectors.joining(", "));
+			String dtList = ALLOWED_DATATYPES.keySet().stream().map(Resource::getURI).collect(Collectors.joining(", "));
 			throw new IllegalArgumentException(String.format("%1$s is not one of the recognized literal data types %2$s",
-				QName.asQName(result), dtList));
+				result.getURI(), dtList));
 		}
 		return result;
 	}
 
-	public String getLexicalForm() {
+	public String lexicalForm() {
 		return lexicalForm;
 	}
 
@@ -129,7 +128,7 @@ public class RdfLiteral implements Comparable<RdfLiteral> {
 	}
 
 	public WktLiteralPoint asWktLiteral() {
-		return new WktLiteralPoint(lexicalForm, datatypeUri);
+		return new WktLiteralPoint(lexicalForm, datatypeIri);
 	}
 
 	public XMLGregorianCalendar asXMLGregCal() {
@@ -156,28 +155,28 @@ public class RdfLiteral implements Comparable<RdfLiteral> {
 		return Boolean.parseBoolean(lexicalForm);
 	}
 
-	public Resource getDatatypeUri() {
-		return datatypeUri;
+	public Resource datatypeIri() {
+		return datatypeIri;
 	}
 
-	public Literal getAsLiteral(Model model) {
-		return XSD.xstring.equals(datatypeUri)
+	public Literal asLiteral(Model model) {
+		return XSD.xstring.equals(datatypeIri)
 			? model.createTypedLiteral(lexicalForm, (String) null)
-			: model.createTypedLiteral(lexicalForm, datatypeUri.getURI());
+			: model.createTypedLiteral(lexicalForm, datatypeIri.getURI());
 	}
 
 	@Override
 	public String toString() {
-		return XSD.xstring.equals(datatypeUri)
+		return XSD.xstring.equals(datatypeIri)
 			? String.format("\"%1$s\"", lexicalForm)
-			: String.format("\"%1$s\"*%%2$s", lexicalForm, datatypeUri);
+			: String.format("\"%1$s\"*%%2$s", lexicalForm, datatypeIri);
 	}
 
 	// Too clever by half, but the lookup table avoid PMD's cyclomatic complexity limit:
 	public void writeAsJson(JsonWriter wtr) throws IOException {
-		LiteralJsonTranslator translator = ALLOWED_DATATYPES.get(datatypeUri);
+		LiteralJsonTranslator translator = ALLOWED_DATATYPES.get(datatypeIri);
 		if (translator == null) {
-			throw new IOException(String.format("Unrecognized datatype URI: %1$s", QName.asQName(datatypeUri)));
+			throw new IOException("Unrecognized datatype IRI: %1$s".formatted(datatypeIri.getURI()));
 		} else {
 			translator.accept(wtr, lexicalForm);
 		}
@@ -201,7 +200,7 @@ public class RdfLiteral implements Comparable<RdfLiteral> {
 				return new RdfLiteral(QSUtil.DT_FACT.newXMLGregorianCalendar(lexForm));
 			} catch (IllegalArgumentException ex) {
 				try {
-					return new RdfLiteral(new WktLiteralPoint(lexForm, WktLiteralPoint.getDatatypeUri()));
+					return new RdfLiteral(new WktLiteralPoint(lexForm, WktLiteralPoint.datatypeIri()));
 				} catch (IllegalArgumentException ex2) {
 					return new RdfLiteral(lexForm);
 				}
@@ -221,7 +220,7 @@ public class RdfLiteral implements Comparable<RdfLiteral> {
 			RdfLiteral that = (RdfLiteral) other;
 			return new EqualsBuilder()
 				.append(lexicalForm, that.lexicalForm)
-				.append(datatypeUri, that.datatypeUri)
+				.append(datatypeIri, that.datatypeIri)
 				.isEquals();
 		}
 	}
@@ -230,7 +229,7 @@ public class RdfLiteral implements Comparable<RdfLiteral> {
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37)
 			.append(lexicalForm)
-			.append(datatypeUri)
+			.append(datatypeIri)
 			.toHashCode();
 	}
 
@@ -239,7 +238,7 @@ public class RdfLiteral implements Comparable<RdfLiteral> {
 	public int compareTo(RdfLiteral rhs) {
 		return new CompareToBuilder()
 			.append(lexicalForm, rhs.lexicalForm)
-			.append(datatypeUri, rhs.datatypeUri)
+			.append(datatypeIri, rhs.datatypeIri)
 			.build();
 	}
 
