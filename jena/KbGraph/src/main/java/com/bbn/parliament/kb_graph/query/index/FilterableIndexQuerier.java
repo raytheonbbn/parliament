@@ -15,18 +15,18 @@ import org.apache.jena.sparql.expr.E_LessThanOrEqual;
 import org.apache.jena.sparql.expr.E_NotEquals;
 import org.apache.jena.sparql.expr.Expr;
 
-public interface FilterableIndexQuerier extends IndexPatternQuerier {
-	public static final String FILTER_PROP_NAMESPACE = "http://parliament.semwebcentral.org/index/filter#";
+import com.bbn.parliament.kb_graph.Constants;
 
+public interface FilterableIndexQuerier extends IndexPatternQuerier {
 	public static enum FilterPredicate {
 		equals, notEquals, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual;
 
 		public String toUri() {
-			return FILTER_PROP_NAMESPACE + this.name();
+			return Constants.FILTER_PROP_NS + this.name();
 		}
 
 		public static FilterPredicate valueOfNode(Node n) {
-			if (!n.isURI() || !n.getNameSpace().equals(FILTER_PROP_NAMESPACE)) {
+			if (!n.isURI() || !n.getNameSpace().equals(Constants.FILTER_PROP_NS)) {
 				return null;
 			}
 			return valueOf(n.getLocalName());

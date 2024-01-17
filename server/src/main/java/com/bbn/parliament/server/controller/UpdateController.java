@@ -3,8 +3,6 @@ package com.bbn.parliament.server.controller;
 import java.util.List;
 import java.util.Objects;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bbn.parliament.server.exception.BadRequestException;
 import com.bbn.parliament.server.exception.QueryExecutionException;
 import com.bbn.parliament.server.service.UpdateService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Controller for Spring Boot Server. Routes HTTP requests from

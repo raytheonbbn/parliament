@@ -97,7 +97,7 @@ publishing {
 			pom {
 				name = 'Parliament Client Library'
 				description = "A Java library that implements a Parliament index for spatial data.${System.lineSeparator}Copyright © 2023 Raytheon BBN Technologies Corp."
-				url = 'https://github.com/SemWebCentral/parliament/tree/main/jena/SpatialIndex'
+				url = 'https://github.com/raytheonbbn/parliament/tree/main/jena/SpatialIndex'
 				organization {
 					name = 'Raytheon BBN Technologies'
 					url = 'https://bbn.com/'

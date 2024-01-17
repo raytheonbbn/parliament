@@ -1,10 +1,10 @@
 package com.bbn.parliament.server;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 public class ParliamentServletContextListener implements ServletContextListener {
 	private static final Logger LOG = LoggerFactory.getLogger(ParliamentServletContextListener.class);

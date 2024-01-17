@@ -21,8 +21,8 @@ dependencies {
 version = '0.1.0'
 
 gradlePlugin {
-	website = 'https://github.com/SemWebCentral/parliament/tree/jena-update/jena/OntologyBundle'
-	vcsUrl = 'https://github.com/SemWebCentral/parliament/tree/jena-update/jena/OntologyBundle'
+	website = 'https://github.com/raytheonbbn/parliament/tree/jena-update/jena/OntologyBundle'
+	vcsUrl = 'https://github.com/raytheonbbn/parliament/tree/jena-update/jena/OntologyBundle'
 
 	plugins {
 		ontologyBundle {

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -26,6 +25,8 @@ import com.bbn.parliament.server.ParliamentBridge;
 import com.bbn.parliament.server.exception.BadRequestException;
 import com.bbn.parliament.server.exception.ParliamentBridgeException;
 import com.bbn.parliament.server.service.QueryService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Controller for Spring Boot Server. Routes HTTP requests from

@@ -41,7 +41,7 @@ publishing {
 			pom {
 				name = 'SPARQL Query Builder'
 				description = "A Java library for manipulating SPARQL queries.${System.lineSeparator}Copyright © 2023 Raytheon BBN Technologies"
-				url = 'https://github.com/SemWebCentral/parliament/tree/jena-update/jena/SparqlQueryBuilder'
+				url = 'https://github.com/raytheonbbn/parliament/tree/jena-update/jena/SparqlQueryBuilder'
 				packaging = 'jar'
 				licenses {
 					license {
@@ -66,9 +66,9 @@ publishing {
 					}
 				}
 				scm {
-					connection = 'scm:git:git@github.com:SemWebCentral/parliament.git'
-					developerConnection = 'scm:git:git@github.com:SemWebCentral/parliament.git'
-					url = 'https://github.com/SemWebCentral/parliament'
+					connection = 'scm:git:git@github.com:raytheonbbn/parliament.git'
+					developerConnection = 'scm:git:git@github.com:raytheonbbn/parliament.git'
+					url = 'https://github.com/raytheonbbn/parliament'
 				}
 			}
 		}

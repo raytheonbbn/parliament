@@ -8,7 +8,7 @@ command-line argument and a target, like so:
 Here `parliament-distribution` is mandatory and takes one of the following forms:
 
 * The URL of a Parliament release on GitHub, e.g.,
-  https://github.com/SemWebCentral/parliament/releases/download/release-2.8.2/Parliament-v2.8.2-gcc-ubuntu20-64.zip
+  https://github.com/raytheonbbn/parliament/releases/download/release-2.8.2/Parliament-v2.8.2-gcc-ubuntu20-64.zip
 
 * The absolute or relative path to an already-downloaded Parliament release, e.g.,
   somedir/Parliament-v2.8.2-gcc-ubuntu20-64.zip

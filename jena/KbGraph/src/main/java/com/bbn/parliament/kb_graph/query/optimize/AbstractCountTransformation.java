@@ -223,6 +223,6 @@ public abstract class AbstractCountTransformation extends AbstractKbGraphReorder
 		// }
 		// return (int)product;
 		List<TriplePatternCount> tpcs = calculateTriplePatternCounts(pattern.getList());
-		return orderExpressions(tpcs, new ArrayList<Node>(), 1, false, 3).getEstimate();
+		return orderExpressions(tpcs, new ArrayList<>(), 1, false, 3).getEstimate();
 	}
 }

@@ -6,6 +6,14 @@ Version 2.8.2:
 
 * Updated to Boost 1.83.0
 
+* Migrated the Parliament GitHub repository from the SemWebCentral
+  organization to the RaytheonBBN organization. This changed the project URL
+  from 
+    https://github.com/SemWebCentral/parliament
+  to
+    https://github.com/raytheonbbn/parliament
+  although the old URL still redirects to the new one.
+
 
 =================================================
 

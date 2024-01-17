@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.client.StreamUtil;
 import com.bbn.parliament.core.jni.KbConfig;
+import com.bbn.parliament.kb_graph.Constants;
 import com.bbn.parliament.kb_graph.KbGraph;
 import com.bbn.parliament.kb_graph.KbGraphFactory;
 import com.bbn.parliament.kb_graph.KbGraphStore;
@@ -46,7 +47,7 @@ public class ModelManager {
 
 	private static final String AUTO_GRAPH_DIR = "autoGraph-%1$08d";
 	private static final Pattern AUTO_GRAPH_PATTERN = Pattern.compile(
-		Pattern.quote(KbGraphStore.PARLIAMENT_NS) + "autoGraph-([0-9]+)");
+		Pattern.quote(Constants.PARLIAMENT_NS) + "autoGraph-([0-9]+)");
 	private static final Logger LOG = LoggerFactory.getLogger(ModelManager.class);
 
 	private List<ReasonerConfigurationHandler> reasonerHandlers;
@@ -146,7 +147,7 @@ public class ModelManager {
 				.max(Long::compareTo)
 				.orElse(0L);
 			var graphDir = AUTO_GRAPH_DIR.formatted(maxAutoGraphNumber);
-			var graphName = KbGraphStore.PARLIAMENT_NS + graphDir;
+			var graphName = Constants.PARLIAMENT_NS + graphDir;
 			var indexEnabled = IndexFactoryRegistry.getInstance().isIndexingEnabledByDefault();
 			@SuppressWarnings("unused")
 			var m = createAndAddNamedModel(graphName, graphDir, indexEnabled);

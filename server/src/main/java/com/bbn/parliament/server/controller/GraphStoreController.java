@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -30,6 +28,8 @@ import com.bbn.parliament.server.exception.UnsupportedEndpointException;
 import com.bbn.parliament.server.service.DropGraphOption;
 import com.bbn.parliament.server.service.GraphOperation;
 import com.bbn.parliament.server.service.GraphStoreService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Controller for Spring Boot Server. Routes HTTP requests from

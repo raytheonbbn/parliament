@@ -86,7 +86,7 @@ publishing {
 			pom {
 				name = 'Parliament Client Library'
 				description = "A Java library that adapts Parliament's native core to Jena's graph and model classes.${System.lineSeparator}Copyright © 2023 Raytheon BBN Technologies Corp."
-				url = 'https://github.com/SemWebCentral/parliament/tree/main/jena/KbGraph'
+				url = 'https://github.com/raytheonbbn/parliament/tree/main/jena/KbGraph'
 				organization {
 					name = 'Raytheon BBN Technologies'
 					url = 'https://bbn.com/'

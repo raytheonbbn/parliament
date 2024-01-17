@@ -36,7 +36,7 @@ import com.bbn.parliament.kb_graph.index.IndexManager;
  * @author rbattle
  */
 public class EnableIndexing extends PFGraphsAsSubject {
-	public static final String URI = Constants.PFUNCTION_NAMESPACE + "enableIndexing";
+	public static final String URI = Constants.PFUNCTION_NS + "enableIndexing";
 	private static final Logger LOG = LoggerFactory.getLogger(EnableIndexing.class);
 
 	private boolean enabled = false;

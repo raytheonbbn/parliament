@@ -37,7 +37,6 @@ import org.apache.jena.query.ResultSetFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 
-
 /**
  * @author dkolas
  * @author sallen

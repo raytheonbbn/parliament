@@ -44,7 +44,6 @@ import com.bbn.parliament.kb_graph.union.KbUnionGraph;
 import com.bbn.parliament.kb_graph.union.KbUnionableGraph;
 
 public class KbGraphStore extends DatasetGraphTriplesQuads {
-	public static final String PARLIAMENT_NS = "http://parliament.semwebcentral.org/parliament#";
 	public static final Node MASTER_GRAPH = createNode("MasterGraph");
 	public static final Node GRAPH_CLASS = createNode("NamedGraph");
 	public static final Node GRAPH_DIR_PROPERTY = createNode("graphDirectory");
@@ -61,7 +60,7 @@ public class KbGraphStore extends DatasetGraphTriplesQuads {
 	private static final Logger LOG = LoggerFactory.getLogger(KbGraphStore.class);
 
 	private static Node createNode(String localName) {
-		return NodeFactory.createURI(PARLIAMENT_NS + localName);
+		return NodeFactory.createURI(Constants.PARLIAMENT_NS + localName);
 	}
 
 	private KbGraph defaultGraph ;

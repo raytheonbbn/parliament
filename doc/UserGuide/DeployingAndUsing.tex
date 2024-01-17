@@ -10,7 +10,7 @@ There are several ways to use \ac{pmnt}.  By far the most common is as a server 
 
 \ac{pmnt} can also be used with other servlet engines such as Tomcat and Glassfish (see Section~\ref{section-parliament-with-jena-and-tomcat}) or as an in-process library (Section~\ref{section-parliament-in-process}).
 
-Pre-built binaries for common platforms are available on the \ac{pmnt} Web site\urlcite{https://github.com/SemWebCentral/parliament/releases}.  You can also build \ac{pmnt} yourself (see Chapter~\ref{chapter-building-parliament}).
+Pre-built binaries for common platforms are available on the \ac{pmnt} Web site\urlcite{https://github.com/raytheonbbn/parliament/releases}.  You can also build \ac{pmnt} yourself (see Chapter~\ref{chapter-building-parliament}).
 
 This chapter starts with instructions for running a \ac{pmnt} container (Section~\ref{section-std-container-deploy}) and for installing a \ac{pmnt} server (Section~\ref{section-std-server-deploy}), followed by a discussion of the \ac{pmnt} configuration file (Section~\ref{section-configuring-pmnt}).  Then comes a detailed discussion of each of the less common deployment scenarios.  The chapter concludes with a discussion of \acp{pmnt} utilities and some troubleshooting hints (Sections~\ref{section-parliamentadmin-utility} and~\ref{section-troubleshooting}, respectively).
 
@@ -815,7 +815,8 @@ export CATALINA_OPTS="$CATALINA_OPTS -Xmx$JAVA_HEAP_SIZE"
 {\footnotesize\begin{verbatim}
 set JAVA_HEAP_SIZE=512m
 set PMNT_BIN=%CATALINA_HOME%\bin\parliament
-set CATALINA_OPTS=-Djava.library.path=%PMNT_BIN% -Xmx%JAVA_HEAP_SIZE%
+set CATALINA_OPTS=-Djava.library.path=%PMNT_BIN%
+set CATALINA_OPTS=%CATALINA_OPTS% -Xmx%JAVA_HEAP_SIZE%
 \end{verbatim}}
 	Note that you can control the amount of memory set aside for the Java virtual machine by changing \verb|JAVA_HEAP_SIZE| in the scripts above.  While it is important to allow the \ac{jvm} sufficient memory, it is also important to realize that \ac{pmnt} is native code, and therefore does not use the Java heap.  Java programmers are often inclined to set \verb|JAVA_HEAP_SIZE| close to the total memory of the machine, but this will starve \ac{pmnt} of the memory it needs to achieve good performance.  The default values given above, 128 MB and 512 MB, are reasonable values for machines with 4 to 8 GB of total memory.
 
@@ -909,7 +910,7 @@ Naturally, there is some setup required to make this work:
 		\item \path|ParliamentLogConfig.txt|
 	\end{itemize}
 
-	\item To ensure that the \ac{jvm} can find the \acp{dll} or shared libraries at run-time, add their directory to the Java system property \verb|java.library.path|.
+	\item To ensure that the \ac{jvm} can find the \acp{dll} or shared libraries, add their directory to the Java system property \verb|java.library.path|.
 
 	\item On Windows only, install the run-time libraries by running the installer in the \path|RedistributablePackages| subdirectory of your \ac{pmnt} distribution.
 

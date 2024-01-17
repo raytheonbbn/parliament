@@ -2,8 +2,6 @@ package com.bbn.parliament.server.service;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +10,8 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import com.bbn.parliament.server.exception.BadRequestException;
 import com.bbn.parliament.server.handler.QueryHandler;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class QueryService {

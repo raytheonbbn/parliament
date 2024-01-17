@@ -81,7 +81,7 @@ publishing {
 			pom {
 				name = 'Parliament Client Library'
 				description = "A Java library that implements a Parliament index for temporal data.${System.lineSeparator}Copyright © 2023 Raytheon BBN Technologies Corp."
-				url = 'https://github.com/SemWebCentral/parliament/tree/main/jena/TemporalIndex'
+				url = 'https://github.com/raytheonbbn/parliament/tree/main/jena/TemporalIndex'
 				organization {
 					name = 'Raytheon BBN Technologies'
 					url = 'https://bbn.com/'

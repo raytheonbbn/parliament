@@ -20,12 +20,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import javax.servlet.ServletRequest;
-
 import org.apache.commons.io.output.DeferredFileOutputStream;
 import org.springframework.boot.system.ApplicationTemp;
 
 import com.bbn.parliament.server.ParliamentBridge;
+
+import jakarta.servlet.ServletRequest;
 
 /** @author sallen */
 public class FileBackedRequestBody implements AutoCloseable {

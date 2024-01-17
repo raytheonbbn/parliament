@@ -6,8 +6,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +27,8 @@ import com.bbn.parliament.server.graph.ModelManager;
 import com.bbn.parliament.server.handler.GraphExportHandler;
 import com.bbn.parliament.server.handler.InsertHandler;
 import com.bbn.parliament.server.handler.UpdateHandler;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class GraphStoreService {

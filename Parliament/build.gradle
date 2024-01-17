@@ -182,7 +182,7 @@ publishing {
 			pom {
 				name = 'Parliament Client Library'
 				description = "A Java library for accessing Parliament's native code.${System.lineSeparator}Copyright © 2023 Raytheon BBN Technologies Corp."
-				url = 'https://github.com/SemWebCentral/parliament/tree/main/jena/Parliament'
+				url = 'https://github.com/raytheonbbn/parliament/tree/main/jena/Parliament'
 				organization {
 					name = 'Raytheon BBN Technologies'
 					url = 'https://bbn.com/'

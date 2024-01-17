@@ -60,7 +60,7 @@ publishing {
 			pom {
 				name = 'SPARQL Query Builder'
 				description = "A Java library for manipulating SPARQL queries.${System.lineSeparator}Copyright © 2019 Raytheon BBN Technologies Corp."
-				url = 'https://github.com/SemWebCentral/parliament/tree/main/jena/SparqlQueryBuilderJ3'
+				url = 'https://github.com/raytheonbbn/parliament/tree/main/jena/SparqlQueryBuilderJ3'
 				organization {
 					name = 'Raytheon BBN Technologies'
 					url = 'http://bbn.com/'
