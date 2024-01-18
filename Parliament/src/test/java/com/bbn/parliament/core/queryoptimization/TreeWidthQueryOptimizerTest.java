@@ -43,7 +43,7 @@ public class TreeWidthQueryOptimizerTest {
 		constraints.add(constraint3);
 		constraints.add(constraint4);
 
-		TreeWidthQueryOptimizer optimizer = new TreeWidthQueryOptimizer(new ArrayList<Constraint>(), constraints, 3);
+		TreeWidthQueryOptimizer optimizer = new TreeWidthQueryOptimizer(new ArrayList<>(), constraints, 3);
 
 		checkOptimizerResult(new int[]{3,2,1,0}, optimizer.optimizeConstraints());
 	}

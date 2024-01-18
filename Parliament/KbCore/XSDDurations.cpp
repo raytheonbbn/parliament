@@ -195,7 +195,7 @@ time_duration pmnt::XSDDayTimeDuration::buildDuration(const RsrcString& dayTimeD
 			// seconds can have decimal values...
 			s = convertAndClearBuffer<double>(buffer);
 		}
-		else if (!isDigit(*strIt))
+		else if (!isDigit(static_cast<RsrcChar>(*strIt)))
 		{
 			throw Exception("XSDDayTimeDuration parse error");
 		}
@@ -291,7 +291,7 @@ pmnt::int64 pmnt::XSDYearMonthDuration::buildDuration(const RsrcString& yearMonD
 		{
 			m = convertAndClearBuffer<int64>(buffer);
 		}
-		else if (!isDigit(*strIt))
+		else if (!isDigit(static_cast<RsrcChar>(*strIt)))
 		{
 			throw Exception("XSDYearMonthDuration parse error");
 		}

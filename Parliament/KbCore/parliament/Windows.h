@@ -23,13 +23,13 @@
 #	if !defined(NOMINMAX)
 #		define NOMINMAX				// Excludes min() and max() macros
 #	endif
-#	if !defined(_WIN32_WINNT) || _WIN32_WINNT < _WIN32_WINNT_WIN7
+#	if !defined(_WIN32_WINNT) || _WIN32_WINNT < _WIN32_WINNT_WIN10
 #		undef _WIN32_WINNT
-#		define _WIN32_WINNT _WIN32_WINNT_WIN7
+#		define _WIN32_WINNT _WIN32_WINNT_WIN10
 #	endif
-#	if !defined(WINVER) || WINVER < _WIN32_WINNT_WIN7
+#	if !defined(WINVER) || WINVER < _WIN32_WINNT_WIN10
 #		undef WINVER
-#		define WINVER _WIN32_WINNT_WIN7
+#		define WINVER _WIN32_WINNT_WIN10
 #	endif
 #	if defined(UNICODE) && !defined(_UNICODE)
 #		define _UNICODE

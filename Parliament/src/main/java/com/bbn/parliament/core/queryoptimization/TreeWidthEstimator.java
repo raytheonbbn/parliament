@@ -8,6 +8,7 @@ package com.bbn.parliament.core.queryoptimization;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,7 @@ public class TreeWidthEstimator
 		bucketedConstraints = new ArrayList<>();
 		for (int i = 0; i < numVariables; i++)
 		{
-			bucketedConstraints.add(new ArrayList<Constraint>());
+			bucketedConstraints.add(new ArrayList<>());
 		}
 		for (Constraint constraint : constraints)
 		{
@@ -61,7 +62,7 @@ public class TreeWidthEstimator
 	private long calculateEstimate()
 	{
 		iterationCounter = 0;
-		long result = calculateEstimate(0, 1, new ArrayList<Constraint>());
+		long result = calculateEstimate(0, 1, new ArrayList<>());
 		logger.debug("Size: {}, Iteration count: {}", constraints.size(), iterationCounter);
 		return result;
 	}

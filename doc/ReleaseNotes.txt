@@ -4,7 +4,7 @@ Version 2.8.2:
   PARLIAMENT_KB_CONFIG_PATH and PARLIAMENT_LOG_CONFIG_PATH unnecessary
   in most cases.
 
-* Updated to Boost 1.83.0
+* Updated to Boost 1.84.0
 
 * Migrated the Parliament GitHub repository from the SemWebCentral
   organization to the RaytheonBBN organization. This changed the project URL

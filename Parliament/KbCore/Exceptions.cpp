@@ -37,8 +37,15 @@ static auto g_log(pmnt::log::getSource("Exceptions"));
 
 void pmnt::Exception::copyMsg(const char* pMsg) noexcept
 {
+#if defined(PARLIAMENT_GCC)
+#	pragma GCC diagnostic push
+#	pragma GCC diagnostic ignored "-Wstringop-truncation"
+#endif
 	strncpy(data(m_msg), pMsg, size(m_msg));
 	m_msg.back() = '\0';
+#if defined(PARLIAMENT_GCC)
+#	pragma GCC diagnostic pop
+#endif
 }
 
 pmnt::Exception::Exception(const char* pMsg) noexcept :

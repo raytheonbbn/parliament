@@ -42,7 +42,6 @@ using ::std::endl;
 using ::std::make_pair;
 using ::std::make_shared;
 using ::std::make_unique;
-using ::std::move;
 using ::std::ostream;
 using ::std::shared_ptr;
 using ::std::string;
@@ -422,7 +421,7 @@ void pmnt::RuleEngine::checkBuiltinTriggers(ResourceId rsrcId, const Statement& 
 //		{
 //			PMNT_LOG(g_log, log::Level::debug) << "checkStatementAddBinding successful";
 //			pFCNode->getMatchList()[trigger.m_atomIdx] = true;
-//			traverseFwdChainTree(move(pFCNode));
+//			traverseFwdChainTree(::std::move(pFCNode));
 //		}
 //		else
 //		{
@@ -453,7 +452,7 @@ void pmnt::RuleEngine::checkTriggers(const RuleTriggerMap& triggerMap,
 		{
 			PMNT_LOG(g_log, log::Level::debug) << "checkStatementAddBinding successful";
 			pFCNode->getMatchList()[trigger.m_atomIdx] = true;
-			traverseFwdChainTree(move(pFCNode));
+			traverseFwdChainTree(::std::move(pFCNode));
 		}
 		else
 		{
@@ -478,7 +477,7 @@ void pmnt::RuleEngine::addRule(shared_ptr<Rule> pNewRule)
 	{
 		//create fcNode having no bindings and no matched atoms
 		auto fcNode = make_unique<FwdChainNode>(pNewRule);
-		traverseFwdChainTree(move(fcNode));
+		traverseFwdChainTree(::std::move(fcNode));
 	}
 }
 
@@ -557,7 +556,7 @@ void pmnt::RuleEngine::expandFwdChainNode(FwdChainNode& fcNode)
 		pFCNode->getMatchList()[nextAtomIdx] = true;
 		if (checkStatementAddBinding(atom, iter.statement(), pFCNode->getBindingList()))
 		{
-			m_fwdChainList.push_back(move(pFCNode));
+			m_fwdChainList.push_back(::std::move(pFCNode));
 		}
 	}
 
@@ -567,13 +566,13 @@ void pmnt::RuleEngine::expandFwdChainNode(FwdChainNode& fcNode)
 void pmnt::RuleEngine::traverseFwdChainTree(FwdChainNodePtr pRootFCNode)
 {
 	//setup fcNodeList
-	m_fwdChainList.push_back(move(pRootFCNode));
+	m_fwdChainList.push_back(::std::move(pRootFCNode));
 
 	PMNT_LOG(g_log, log::Level::debug) << "traverseFwdChainNode";
 
 	//main fcNode loop
 	while (!m_fwdChainList.empty()) {
-		auto pFCNode = move(m_fwdChainList.back());
+		auto pFCNode = ::std::move(m_fwdChainList.back());
 		m_fwdChainList.pop_back();
 		expandFwdChainNode(*pFCNode);
 	}
