@@ -91,6 +91,24 @@ alias BoostChrono
 		<dll-path>$(BoostLibDir)
 	;
 
+alias BoostContainer	# Used by Boost.JSON
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)container$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)container$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)container$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)container$(Boost64StRlsLibSfx)
+		$(Boost32DyDbgLibPfx)container$(Boost32DyDbgLibSfx)
+		$(Boost32DyRlsLibPfx)container$(Boost32DyRlsLibSfx)
+		$(Boost32StDbgLibPfx)container$(Boost32StDbgLibSfx)
+		$(Boost32StRlsLibPfx)container$(Boost32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+		<link>shared:<define>BOOST_CONTAINER_DYN_LINK
+		<define>_SCL_SECURE_NO_WARNINGS
+		<library-path>$(BoostLibDir)
+		<dll-path>$(BoostLibDir)
+	;
+
 alias BoostFileSystem
 	:	# no sources
 	:	$(Boost64DyDbgLibPfx)filesystem$(Boost64DyDbgLibSfx)

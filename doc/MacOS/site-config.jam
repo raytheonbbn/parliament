@@ -59,6 +59,16 @@ alias BoostChrono
 	:	<include>$(BoostDir)
 	;
 
+alias BoostContainer	# Used by Boost.JSON
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)container$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)container$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)container$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)container$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+	;
+
 alias BoostFileSystem
 	:	# no sources
 	:	$(BoostDyDbgLibPfx)filesystem$(BoostDyDbgLibSfx)
