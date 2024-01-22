@@ -1,7 +1,5 @@
 package com.bbn.parliament.server.controller;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -15,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.bbn.parliament.server.exception.BadRequestException;
@@ -26,8 +23,16 @@ import com.bbn.parliament.server.exception.QueryExecutionException;
 import com.bbn.parliament.server.exception.TrackableException;
 import com.bbn.parliament.server.exception.UnsupportedEndpointException;
 
-//TODO: HttpStatus.REQUEST_TIMEOUT
-
+/*
+ * Note that the base class, ResponseEntityExceptionHandler, has a generic handler
+ * method (first argument types as Exception) that is annotated to handle a sizable
+ * list of exception classes. If you implement a handler here that handles one of
+ * those classes, you will get a "multiple exception handlers defined" error that
+ * prevents the application context from initializing.
+ *
+ * The easy solution is to not handle any of those exceptions here. Harder, but
+ * possible is to override the method in the base class.
+ */
 @ControllerAdvice
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 	private static final Logger LOG = LoggerFactory.getLogger(ControllerAdvisor.class);
@@ -75,31 +80,10 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 	}
 
 	@SuppressWarnings("static-method")
-	@ExceptionHandler(RuntimeException.class)
-	public ResponseEntity<Object> handle(RuntimeException ex, WebRequest req) {
-		return buildResponse(ex, req, HttpStatus.INTERNAL_SERVER_ERROR,
-			"Parliament encountered an error while processing the request");
-	}
-
-	@SuppressWarnings("static-method")
 	@ExceptionHandler(TrackableException.class)
 	public ResponseEntity<Object> handle(TrackableException ex, WebRequest req) {
 		return buildResponse(ex, req, HttpStatus.INTERNAL_SERVER_ERROR,
 			"Parliament encountered an error with Trackable");
-	}
-
-	@SuppressWarnings("static-method")
-	@ExceptionHandler(IOException.class)
-	public ResponseEntity<Object> handle(IOException ex, WebRequest req) {
-		return buildResponse(ex, req, HttpStatus.INTERNAL_SERVER_ERROR,
-			"Parliament encountered an error during IO operations");
-	}
-
-	@SuppressWarnings("static-method")
-	@ExceptionHandler(UncheckedIOException.class)
-	public ResponseEntity<Object> handle(UncheckedIOException ex, WebRequest req) {
-		return buildResponse(ex, req, HttpStatus.INTERNAL_SERVER_ERROR,
-			"Parliament encountered an error during IO operations");
 	}
 
 	@SuppressWarnings("static-method")
@@ -114,12 +98,6 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 	public ResponseEntity<Object> handle(NoAcceptableException ex, WebRequest req) {
 		return buildResponse(ex, req, HttpStatus.NOT_ACCEPTABLE,
 			"Parliament does not support the requested media type(s)");
-	}
-
-	@SuppressWarnings("static-method")
-	@ExceptionHandler(MaxUploadSizeExceededException.class)
-	public ResponseEntity<Object> handle(MaxUploadSizeExceededException ex, WebRequest req) {
-		return buildResponse(ex, req, HttpStatus.BAD_REQUEST, "Maximum upload size exceeded");
 	}
 
 	private static ResponseEntity<Object> buildResponse(Throwable t, WebRequest req,
