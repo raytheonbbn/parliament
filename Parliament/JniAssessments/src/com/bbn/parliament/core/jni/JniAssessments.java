@@ -13,7 +13,7 @@ package com.bbn.parliament.core.jni;
  * (1) To determine how to code a JNI interface in a cross-platform manner, and
  * (2) To understand how to boost the performance of a JNI interface.
  */
-public class JniAssessments
+public class JniAssessments implements AutoCloseable
 {
 	private static final String SHORT_TEST_STR = "Hi!";
 	private static final int NUM_TRIALS = 5;
@@ -43,6 +43,11 @@ public class JniAssessments
 	private JniAssessments(long pObj)
 	{
 		_pObj = pObj;
+	}
+
+	@Override
+	public void close() {
+		finalize();
 	}
 
 	@Override
@@ -132,9 +137,9 @@ public class JniAssessments
 
 	private static void runStringPerformanceTests(String trialLabel, int numIters)
 	{
-		JniAssessments tester = JniAssessments.create();
-		try
+		try (JniAssessments tester = JniAssessments.create())
 		{
+			tester.hashCode();	// Avoids 'never referenced' compiler warning
 			System.out.format("%1$s", trialLabel);
 
 			long start = System.nanoTime();
@@ -176,18 +181,14 @@ public class JniAssessments
 			tput = NANOS_PER_MILLI * numIters / duration;
 			System.out.format(",%1$f", tput);
 		}
-		finally
-		{
-			tester.finalize();
-		}
 		System.out.format("%n");
 	}
 
 	private static void runMethodCallPerformanceTests(String runLabel, int numIters)
 	{
-		JniAssessments tester = JniAssessments.create();
-		try
+		try (JniAssessments tester = JniAssessments.create())
 		{
+			tester.hashCode();	// Avoids 'never referenced' compiler warning
 			System.out.format("%1$s", runLabel);
 
 			@SuppressWarnings("unused")
@@ -218,10 +219,6 @@ public class JniAssessments
 			duration = System.nanoTime() - start;
 			tput = NANOS_PER_MILLI * numIters / duration;
 			System.out.format(",%1$f", tput);
-		}
-		finally
-		{
-			tester.finalize();
 		}
 		System.out.format("%n");
 	}

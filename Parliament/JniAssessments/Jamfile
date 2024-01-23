@@ -6,7 +6,6 @@
 
 import make ;
 import notfile ;
-import os ;
 
 project /KB/JniAssessments ;
 
@@ -14,12 +13,10 @@ explicit RunJniAssessments ;
 notfile RunJniAssessments : @RunJniAssessments : JniAssessments ;
 rule RunJniAssessments
 {
-	SLPath = [ os.shared-library-path-variable ] ;
-	PathSep = [ os.path-separator ] ;
 }
 actions RunJniAssessments
 {
-	env $(SLPath)="$$(SLPath)$(PathSep)$(>:D)" java -cp $(>:D) com.bbn.parliament.core.jni.JniAssessments > ./results.csv
+	java -cp $(>:D)/../../../.. -Djava.library.path=$(>:D) com.bbn.parliament.core.jni.JniAssessments > ./results.csv
 }
 
 lib JniAssessments

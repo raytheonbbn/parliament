@@ -6,7 +6,6 @@
 
 #include "com_bbn_parliament_core_jni_JniAssessments.h"
 #include "CppTestClass.h"
-#include <functional>
 #include <iostream>
 #include <iomanip>
 #include <limits>
@@ -19,33 +18,50 @@
 using namespace ::std;
 using namespace ::bbn::parliament;
 
+static void checkpoint(const char* pFile, int lineNum, const char* pExtra)
+{
+	cout << "Checkpoint in " << pFile << " at line " << lineNum << " with extra info: " << pExtra << endl;
+}
+
+#define CHECKPOINT(extra) checkpoint(__FILE__, __LINE__, extra)
+
+static void assertTrue(const char* pFile, int lineNum, bool condition, const char* pExtra)
+{
+	if (!condition)
+	{
+		cout << "Assertion failure in " << pFile << " at line " << lineNum << endl << "Extra info: " << pExtra << endl;
+	}
+}
+
+#define ASSERT_TRUE(condition) assertTrue(__FILE__, __LINE__, condition, "none")
+#define ASSERT_TRUE_2(condition, extra) assertTrue(__FILE__, __LINE__, condition, extra)
+
 // =================================================================
 
-class JObjectLess : public binary_function<jobject, jobject, bool>
+static JNIEnv* g_pEnv;
+
+class JObjectLess
 {
 public:
-	JObjectLess() : m_pEnv(nullptr) {}
-
-	void setEnv(JNIEnv* pEnv) { m_pEnv = pEnv; }
-
-	// functor for operator<
 	bool operator()(jobject lhs, jobject rhs) const
 	{
-		return (m_pEnv->IsSameObject(lhs, rhs))
+		ASSERT_TRUE(g_pEnv != 0);
+		ASSERT_TRUE(lhs != 0);
+		ASSERT_TRUE(rhs != 0);
+		return (g_pEnv->IsSameObject(lhs, rhs))
 			? false
 			: lhs < rhs;
 	}
-
-private:
-	JNIEnv* m_pEnv;
 };
 
-static JObjectLess g_jObjLess;
-static map<jobject, CppTestClass*, JObjectLess> g_map(g_jObjLess);
+static map<jobject, CppTestClass*, JObjectLess> g_map;
 
 static jclass findClass(JNIEnv* pEnv, const char* pClassName)
 {
+	ASSERT_TRUE(pEnv != 0);
+
 	jclass cls = pEnv->FindClass(pClassName);
+	ASSERT_TRUE_2(cls != 0, pClassName);
 	//if (cls == 0)
 	//{
 	//	throw JavaException();
@@ -55,7 +71,11 @@ static jclass findClass(JNIEnv* pEnv, const char* pClassName)
 
 jobject newObject(JNIEnv* pEnv, jclass cls, const char* pCtorSignature, ...)
 {
+	ASSERT_TRUE(pEnv != 0);
+	ASSERT_TRUE(cls != 0);
+
 	jmethodID methodId = pEnv->GetMethodID(cls, "<init>", pCtorSignature);
+	ASSERT_TRUE(methodId != 0);
 	//if (methodId == 0)
 	//{
 	//	throw JavaException();
@@ -66,6 +86,7 @@ jobject newObject(JNIEnv* pEnv, jclass cls, const char* pCtorSignature, ...)
 	jobject result = pEnv->NewObjectV(cls, methodId, argList);
 	va_end(argList);
 
+	ASSERT_TRUE(result != 0);
 	//if (result == 0)
 	//{
 	//	throw JavaException();
@@ -76,7 +97,11 @@ jobject newObject(JNIEnv* pEnv, jclass cls, const char* pCtorSignature, ...)
 
 static jclass getClassId(JNIEnv* pEnv, jobject obj)
 {
+	ASSERT_TRUE(pEnv != 0);
+	ASSERT_TRUE(obj != 0);
+
 	jclass cls = pEnv->GetObjectClass(obj);
+	ASSERT_TRUE(cls != 0);
 	//if (cls == 0)
 	//{
 	//	throw JavaException();
@@ -87,8 +112,12 @@ static jclass getClassId(JNIEnv* pEnv, jobject obj)
 static jfieldID getFieldId(JNIEnv* pEnv, jobject obj,
 	const char* pFldName, const char* pSignature)
 {
+	ASSERT_TRUE(pEnv != 0);
+	ASSERT_TRUE(obj != 0);
+
 	jclass cls = getClassId(pEnv, obj);
 	jfieldID fid = pEnv->GetFieldID(cls, pFldName, pSignature);
+	ASSERT_TRUE(fid != 0);
 	//if (fid == 0)
 	//{
 	//	throw JavaException();
@@ -100,6 +129,9 @@ static jfieldID getFieldId(JNIEnv* pEnv, jobject obj,
 static inline CppTestClass* testObjPtr(JNIEnv* pEnv, jobject obj)
 {
 	static jfieldID g_fid = 0;
+
+	ASSERT_TRUE(pEnv != 0);
+	ASSERT_TRUE(obj != 0);
 
 	if (g_fid == 0)
 	{
@@ -136,8 +168,8 @@ static string printOctets(const t_char* pStr, size_t strLen)
 	return strm.str();
 }
 
-JNIEXPORT void JNICALL Java_JniAssessments_printJniStringAsHex(JNIEnv* pEnv,
-	jclass cls, jstring str)
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_JniAssessments_printJniStringAsHex(
+	JNIEnv* pEnv, jclass cls, jstring str)
 {
 	jboolean isCopy = JNI_FALSE;
 	size_t strLen = static_cast<size_t>(pEnv->GetStringLength(str));
@@ -161,8 +193,8 @@ JNIEXPORT void JNICALL Java_JniAssessments_printJniStringAsHex(JNIEnv* pEnv,
 	}
 }
 
-JNIEXPORT jboolean JNICALL Java_JniAssessments_testJniStringEncoding(JNIEnv* pEnv,
-	jclass cls, jstring str, jboolean testCriticalStrFunctions, jboolean testWideCharEncoding)
+JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_core_jni_JniAssessments_testJniStringEncoding(
+	JNIEnv* pEnv, jclass cls, jstring str, jboolean testCriticalStrFunctions, jboolean testWideCharEncoding)
 {
 	jboolean isCopy = JNI_FALSE;
 	if (testCriticalStrFunctions == JNI_TRUE)
@@ -203,10 +235,10 @@ void testJniStringCreation(JNIEnv* pEnv, int i, const t_char* pUriPrefix)
 	pEnv->DeleteLocalRef(jstr);
 }
 
-JNIEXPORT void JNICALL Java_JniAssessments_testJniStringCreation(JNIEnv* pEnv,
-	jclass cls, jint numIters, jboolean useUtf16Chars)
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_JniAssessments_testJniStringCreation(
+	JNIEnv* pEnv, jclass cls, jint numIters, jboolean useUtf16Chars)
 {
-	static const char			uriPrefixA[] = "http://example.org/item#";
+	static const char		uriPrefixA[] = "http://example.org/item#";
 	static const Utf16Char	uriPrefixW[] = { 'h', 't', 't', 'p', ':', '/', '/',
 		'e', 'x', 'a', 'm', 'p', 'l', 'e', '.', 'o', 'r', 'g', '/', 'i', 't', 'e', 'm', '#' };
 
@@ -226,45 +258,54 @@ JNIEXPORT void JNICALL Java_JniAssessments_testJniStringCreation(JNIEnv* pEnv,
 	}
 }
 
-JNIEXPORT jobject JNICALL Java_JniAssessments_create(JNIEnv* pEnv, jclass cls)
+JNIEXPORT jobject JNICALL Java_com_bbn_parliament_core_jni_JniAssessments_create(
+	JNIEnv* pEnv, jclass cls)
 {
 	CppTestClass* pCppTestObj = new CppTestClass();
-	jclass clsToAlloc = findClass(pEnv, "JniAssessments");
+	jclass clsToAlloc = findClass(pEnv, "com/bbn/parliament/core/jni/JniAssessments");
 	jobject pResult = newObject(pEnv, clsToAlloc, "(J)V",
 		static_cast<uint64>(reinterpret_cast<uintPtr>(pCppTestObj)));
-	g_jObjLess.setEnv(pEnv);
+	g_pEnv = pEnv;
 	g_map.insert(make_pair(pEnv->NewGlobalRef(pResult), pCppTestObj));
 	return pResult;
 }
 
-JNIEXPORT void JNICALL Java_JniAssessments_dispose(JNIEnv* pEnv, jobject obj)
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_JniAssessments_dispose(
+	JNIEnv* pEnv, jobject obj)
 {
-	g_jObjLess.setEnv(pEnv);
+	ASSERT_TRUE(pEnv != 0);
+	ASSERT_TRUE(obj != 0);
+
+	g_pEnv = pEnv;
 	auto it = g_map.find(obj);
 	if (it != end(g_map))
 	{
 		auto [globalRef, pObj] = *it;
+		ASSERT_TRUE(pObj != 0);
 		g_map.erase(obj);
 		pEnv->DeleteGlobalRef(globalRef);
 		delete pObj;
 	}
 }
 
-JNIEXPORT jdouble JNICALL Java_JniAssessments_testMethod1(JNIEnv* pEnv, jobject obj, jdouble d)
+JNIEXPORT jdouble JNICALL Java_com_bbn_parliament_core_jni_JniAssessments_testMethod1(
+	JNIEnv* pEnv, jobject obj, jdouble d)
 {
 	CppTestClass* pObj = testObjPtr(pEnv, obj);
 	return pObj->accumulate(d);
 }
 
-JNIEXPORT jdouble JNICALL Java_JniAssessments_internalTestMethod2(JNIEnv* pEnv, jobject obj, jlong objPtr, jdouble d)
+JNIEXPORT jdouble JNICALL Java_com_bbn_parliament_core_jni_JniAssessments_internalTestMethod2(
+	JNIEnv* pEnv, jobject obj, jlong objPtr, jdouble d)
 {
 	CppTestClass* pObj = reinterpret_cast<CppTestClass*>(static_cast<intPtr>(objPtr));
 	return pObj->accumulate(d);
 }
 
-JNIEXPORT jdouble JNICALL Java_JniAssessments_testMethod3(JNIEnv* pEnv, jobject obj, jdouble d)
+JNIEXPORT jdouble JNICALL Java_com_bbn_parliament_core_jni_JniAssessments_testMethod3(
+	JNIEnv* pEnv, jobject obj, jdouble d)
 {
-	g_jObjLess.setEnv(pEnv);
+	g_pEnv = pEnv;
 	auto it = g_map.find(obj);
 	if (it == end(g_map))
 	{
