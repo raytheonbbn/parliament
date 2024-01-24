@@ -18,10 +18,11 @@
 using namespace ::std;
 using namespace ::bbn::parliament;
 
-static void checkpoint(const char* pFile, int lineNum, const char* pExtra)
-{
-	cout << "Checkpoint in " << pFile << " at line " << lineNum << " with extra info: " << pExtra << endl;
-}
+//static void checkpoint(const char* pFile, int lineNum, const char* pExtra)
+//{
+//	cout << "Checkpoint in " << pFile << " at line " << lineNum
+//		<< " with extra info: " << pExtra << endl;
+//}
 
 #define CHECKPOINT(extra) checkpoint(__FILE__, __LINE__, extra)
 
@@ -29,7 +30,8 @@ static void assertTrue(const char* pFile, int lineNum, bool condition, const cha
 {
 	if (!condition)
 	{
-		cout << "Assertion failure in " << pFile << " at line " << lineNum << endl << "Extra info: " << pExtra << endl;
+		cout << "Assertion failure in " << pFile << " at line " << lineNum
+			<< endl << "Extra info: " << pExtra << endl;
 	}
 }
 
@@ -271,21 +273,28 @@ JNIEXPORT jobject JNICALL Java_com_bbn_parliament_core_jni_JniAssessments_create
 }
 
 JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_JniAssessments_dispose(
-	JNIEnv* pEnv, jobject obj)
+	JNIEnv* pEnv, jclass cls, jlong nativeObj)
 {
 	ASSERT_TRUE(pEnv != 0);
-	ASSERT_TRUE(obj != 0);
+	ASSERT_TRUE(cls != 0);
+	ASSERT_TRUE(nativeObj != 0);
 
+	jobject theGlobalRef = 0;
+	CppTestClass* pTheObj = nullptr;
 	g_pEnv = pEnv;
-	auto it = g_map.find(obj);
-	if (it != end(g_map))
+	for (auto it = begin(g_map); it != end(g_map); ++it)
 	{
 		auto [globalRef, pObj] = *it;
-		ASSERT_TRUE(pObj != 0);
-		g_map.erase(obj);
-		pEnv->DeleteGlobalRef(globalRef);
-		delete pObj;
+		if (static_cast<jlong>(reinterpret_cast<intPtr>(pObj)) == nativeObj)
+		{
+			theGlobalRef = globalRef;
+			pTheObj = pObj;
+			break;
+		}
 	}
+	g_map.erase(theGlobalRef);
+	pEnv->DeleteGlobalRef(theGlobalRef);
+	delete pTheObj;
 }
 
 JNIEXPORT jdouble JNICALL Java_com_bbn_parliament_core_jni_JniAssessments_testMethod1(

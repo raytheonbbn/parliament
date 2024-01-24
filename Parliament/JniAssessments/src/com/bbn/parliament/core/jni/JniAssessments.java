@@ -6,6 +6,8 @@
 
 package com.bbn.parliament.core.jni;
 
+import java.lang.ref.Cleaner;
+
 /**
  * @author iemmons
  *
@@ -13,19 +15,26 @@ package com.bbn.parliament.core.jni;
  * (1) To determine how to code a JNI interface in a cross-platform manner, and
  * (2) To understand how to boost the performance of a JNI interface.
  */
-public class JniAssessments implements AutoCloseable
-{
+public class JniAssessments implements AutoCloseable {
+	private static record CleanAction(long pObj) implements Runnable {
+		@Override
+		public void run() {
+			JniAssessments.dispose(pObj());
+		}
+	}
+
 	private static final String SHORT_TEST_STR = "Hi!";
 	private static final int NUM_TRIALS = 5;
 	private static final int NUM_WARM_UP_ITERS = 300 * 1000;
 	private static final int NUM_STRING_TEST_ITERS = 10 * 1000 * 1000;
 	private static final int NUM_METHOD_CALL_ITERS = 10 * 1000 * 1000;
 	private static final double NANOS_PER_MILLI = 1000.0 * 1000.0;
+	private static final Cleaner CLEANER = Cleaner.create();
 
 	private long _pObj;
+	private final Cleaner.Cleanable _cleanable;
 
-	static
-	{
+	static {
 		System.loadLibrary("JniAssessments");
 	}
 
@@ -40,41 +49,23 @@ public class JniAssessments implements AutoCloseable
 	public static native JniAssessments create();
 
 	/** Intended only to be called by create(). */
-	private JniAssessments(long pObj)
-	{
+	private JniAssessments(long pObj) {
 		_pObj = pObj;
+		_cleanable = CLEANER.register(this, new CleanAction(pObj));
 	}
 
 	@Override
 	public void close() {
-		finalize();
+		_pObj = 0L;
+		_cleanable.clean();
 	}
 
-	@Override
-	public void finalize()
-	{
-		if (_pObj != 0)
-		{
-			try
-			{
-				dispose();
-			}
-			catch (Throwable ex)
-			{
-				// Do nothing
-			}
-
-			_pObj = 0;
-		}
-	}
-
-	/** Intended only to be called by finalize(). */
-	private native void dispose();
+	/** Intended to be called only by the clean action. */
+	private static native void dispose(long pObj);
 
 	public native double testMethod1(double d);
 
-	public double testMethod2(double d)
-	{
+	public double testMethod2(double d) {
 		return internalTestMethod2(_pObj, d);
 	}
 
@@ -82,8 +73,7 @@ public class JniAssessments implements AutoCloseable
 
 	public native double testMethod3(double d);
 
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		System.out.format("""
 
 			Show Java's string representations forced into C++ char types for the string "%1$s":
@@ -105,8 +95,7 @@ public class JniAssessments implements AutoCloseable
 			,Creating UTF-16 String
 			""");
 		runStringPerformanceTests("Warm-up", NUM_WARM_UP_ITERS);
-		for (int trial = 0; trial < NUM_TRIALS; ++trial)
-		{
+		for (int trial = 0; trial < NUM_TRIALS; ++trial) {
 			String trialLabel = "Run %1$d".formatted(trial);
 			runStringPerformanceTests(trialLabel, NUM_STRING_TEST_ITERS);
 		}
@@ -120,31 +109,27 @@ public class JniAssessments implements AutoCloseable
 			,Pointer via C++ Lookup Table
 			""");
 		runMethodCallPerformanceTests("Warm-up", NUM_WARM_UP_ITERS);
-		for (int trial = 0; trial < NUM_TRIALS; ++trial)
-		{
+		for (int trial = 0; trial < NUM_TRIALS; ++trial) {
 			String trialLabel = "Run %1$d".formatted(trial);
 			runMethodCallPerformanceTests(trialLabel, NUM_METHOD_CALL_ITERS);
 		}
 	}
 
-	private static void testStringMemMgmt(String apiName, boolean testCriticalStrFunctions, boolean testWideCharEncoding)
-	{
+	private static void testStringMemMgmt(String apiName, boolean testCriticalStrFunctions,
+			boolean testWideCharEncoding) {
 		String fmt = testJniStringEncoding("Hello World!", testCriticalStrFunctions, testWideCharEncoding)
 			? "   %1$s returns a copy of the string%n"
 			: "   %1$s does not copy the string%n";
 		System.out.format(fmt, apiName);
 	}
 
-	private static void runStringPerformanceTests(String trialLabel, int numIters)
-	{
-		try (JniAssessments tester = JniAssessments.create())
-		{
+	private static void runStringPerformanceTests(String trialLabel, int numIters) {
+		try (JniAssessments tester = JniAssessments.create()) {
 			tester.hashCode();	// Avoids 'never referenced' compiler warning
 			System.out.format("%1$s", trialLabel);
 
 			long start = System.nanoTime();
-			for (int i = 0; i < numIters; ++i)
-			{
+			for (int i = 0; i < numIters; ++i) {
 				testJniStringEncoding("Hello World!", false, false);
 			}
 			long duration = System.nanoTime() - start;
@@ -152,8 +137,7 @@ public class JniAssessments implements AutoCloseable
 			System.out.format(",%1$f", tput);
 
 			start = System.nanoTime();
-			for (int i = 0; i < numIters; ++i)
-			{
+			for (int i = 0; i < numIters; ++i) {
 				testJniStringEncoding("Hello World!", false, true);
 			}
 			duration = System.nanoTime() - start;
@@ -161,8 +145,7 @@ public class JniAssessments implements AutoCloseable
 			System.out.format(",%1$f", tput);
 
 			start = System.nanoTime();
-			for (int i = 0; i < numIters; ++i)
-			{
+			for (int i = 0; i < numIters; ++i) {
 				testJniStringEncoding("Hello World!", true, true);
 			}
 			duration = System.nanoTime() - start;
@@ -184,18 +167,15 @@ public class JniAssessments implements AutoCloseable
 		System.out.format("%n");
 	}
 
-	private static void runMethodCallPerformanceTests(String runLabel, int numIters)
-	{
-		try (JniAssessments tester = JniAssessments.create())
-		{
+	private static void runMethodCallPerformanceTests(String runLabel, int numIters) {
+		try (JniAssessments tester = JniAssessments.create()) {
 			tester.hashCode();	// Avoids 'never referenced' compiler warning
 			System.out.format("%1$s", runLabel);
 
 			@SuppressWarnings("unused")
 			double result = 0.0;
 			long start = System.nanoTime();
-			for (int i = 0; i < numIters; ++i)
-			{
+			for (int i = 0; i < numIters; ++i) {
 				result = tester.testMethod1(i);
 			}
 			long duration = System.nanoTime() - start;
@@ -203,8 +183,7 @@ public class JniAssessments implements AutoCloseable
 			System.out.format(",%1$f", tput);
 
 			start = System.nanoTime();
-			for (int i = 0; i < numIters; ++i)
-			{
+			for (int i = 0; i < numIters; ++i) {
 				result = tester.testMethod2(i);
 			}
 			duration = System.nanoTime() - start;
@@ -212,8 +191,7 @@ public class JniAssessments implements AutoCloseable
 			System.out.format(",%1$f", tput);
 
 			start = System.nanoTime();
-			for (int i = 0; i < numIters; ++i)
-			{
+			for (int i = 0; i < numIters; ++i) {
 				result = tester.testMethod3(i);
 			}
 			duration = System.nanoTime() - start;
