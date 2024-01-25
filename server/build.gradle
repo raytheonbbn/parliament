@@ -98,7 +98,7 @@ clean {
 testing {
 	suites {
 		test {
-			useJUnitJupiter()
+			useJUnitJupiter("$jupiterVersion")
 		}
 	}
 }

@@ -5,6 +5,7 @@ ext {
 	jenaVersion = '3.17.0'
 	jena4Version = '4.6.1'
 	jettyVersion = '9.4.36.v20210114'
+	jupiterVersion = '5.10.1'
 	slf4jVersion = '2.0.11'
 
 	berkeleyDbJeDependency = 'com.sleepycat:je:18.3.12'
@@ -25,6 +26,7 @@ ext {
 	jenaArqDependency = "org.apache.jena:jena-arq:$jenaVersion"
 	jenaCmdsDependency = "org.apache.jena:jena-cmds:$jenaVersion"
 	jtsDependency = 'org.locationtech.jts:jts-core:1.18.2'
+	jupiterDependency = "org.junit.jupiter:junit-jupiter:$jupiterVersion"
 	logbackDependency = 'ch.qos.logback:logback-classic:1.3.6'
 	postgresqlDependency = 'org.postgresql:postgresql:42.6.0'
 	sesameDependency = 'org.openrdf:sesame:1.2.7'

@@ -15,6 +15,7 @@ dependencies {
 	implementation project(':jena:ParliamentClient')
 	implementation project(':jena:SparqlQueryBuilderJ3')
 	testImplementation "$logbackDependency"
+	testFixturesImplementation "$jupiterDependency"
 	testFixturesImplementation project(':jena:ParliamentClient')
 }
 
@@ -57,7 +58,7 @@ artifacts {
 testing {
 	suites {
 		test {
-			useJUnitJupiter()
+			useJUnitJupiter("$jupiterVersion")
 		}
 	}
 }
