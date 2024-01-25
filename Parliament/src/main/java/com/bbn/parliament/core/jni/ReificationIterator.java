@@ -6,7 +6,7 @@
 
 package com.bbn.parliament.core.jni;
 
-import java.io.Closeable;
+import java.lang.ref.Cleaner;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -15,9 +15,15 @@ import java.util.NoSuchElementException;
  * instantiated by calling the findReification method on that class. In the
  * context of Java Generics, this class can be safely cast to Iterator&lt;Reification&gt;.
  */
-public class ReificationIterator implements Iterator<ReificationIterator.Reification>, Closeable
-{
-	public static class Reification{
+public class ReificationIterator implements Iterator<ReificationIterator.Reification>, AutoCloseable {
+	private static record CleanAction(long pIter) implements Runnable {
+		@Override
+		public void run() {
+			ReificationIterator.dispose(pIter());
+		}
+	}
+
+	public static class Reification {
 		private long statementName;
 		private long subject;
 		private long predicate;
@@ -62,11 +68,7 @@ public class ReificationIterator implements Iterator<ReificationIterator.Reifica
 
 	private static class EmptyIterator extends ReificationIterator {
 		EmptyIterator() {
-			super(0l);
-		}
-
-		@Override
-		public void finalize() {
+			super(0L);	// Clean action will be a no-op, but will not fail
 		}
 
 		@Override
@@ -85,6 +87,7 @@ public class ReificationIterator implements Iterator<ReificationIterator.Reifica
 	}
 
 	private long m_pIter;
+	private final Cleaner.Cleanable m_cleanable;
 
 	static
 	{
@@ -98,6 +101,7 @@ public class ReificationIterator implements Iterator<ReificationIterator.Reifica
 	ReificationIterator(long pIter)
 	{
 		m_pIter = pIter;
+		m_cleanable = CleanerSingleton.inst().register(this, new CleanAction(m_pIter));
 	}
 
 	/**
@@ -107,34 +111,12 @@ public class ReificationIterator implements Iterator<ReificationIterator.Reifica
 	 */
 	@Override
 	public void close() {
-		finalize();
+		m_pIter = 0L;
+		m_cleanable.clean();
 	}
 
-	/**
-	 * Frees the underlying native iterator associated with the instance. This is
-	 * idempotent, so it may be called by application code whenever the
-	 * application is finished with the instance.
-	 */
-	@Override
-	public void finalize()
-	{
-		if (m_pIter != 0)
-		{
-			long pIter = m_pIter;
-			m_pIter = 0;
-			try
-			{
-				dispose(pIter);
-			}
-			catch (Throwable ex)
-			{
-				// Do nothing
-			}
-		}
-	}
-
-	/** Intended only to be called by finalize() -- param MUST be m_pIter. */
-	private native void dispose(long pIter);
+	/** Intended to be called only by the clean action. */
+	private static native void dispose(long pIter);
 
 	/** The standard hasNext() method of the Iterator interface. */
 	@Override

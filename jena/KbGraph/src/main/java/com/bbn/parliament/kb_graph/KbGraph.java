@@ -6,7 +6,6 @@
 
 package com.bbn.parliament.kb_graph;
 
-import java.io.Closeable;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Collections;
@@ -35,7 +34,7 @@ import com.bbn.parliament.kb_graph.index.IndexManager;
 import com.bbn.parliament.kb_graph.union.KbUnionableGraph;
 import com.bbn.parliament.kb_graph.util.NodeUtil;
 
-public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
+public class KbGraph extends GraphBase implements KbUnionableGraph, AutoCloseable {
 	public static final String MAGICAL_BNODE_PREFIX = "~@#$BNODE";
 
 	private static Logger log = LoggerFactory.getLogger(KbGraph.class);
@@ -211,16 +210,11 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 	@Override
 	public void close() {
 		if (!isClosed) {
-			kb.finalize();
+			kb.close();
 			log.debug("KbGraph closed");
 			super.close();
 			isClosed = true;
 		}
-	}
-
-	@Override
-	public void finalize() {
-		close();
 	}
 
 	/**
@@ -315,7 +309,7 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, Closeable {
 
 	@Override
 	public void clear() {
-		kb.finalize();
+		kb.close();
 		kb = null;
 		KbInstance.deleteKb(config, null);
 		nodeIdHash.clear();

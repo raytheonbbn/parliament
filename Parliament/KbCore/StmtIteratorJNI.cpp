@@ -17,12 +17,10 @@ namespace pmnt = ::bbn::parliament;
 static auto g_log(pmnt::log::getSource("StmtIteratorJNI"));
 
 JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_StmtIterator_dispose(
-	JNIEnv* pEnv, jobject /* obj */, jlong iterPtr)
+	JNIEnv* pEnv, jclass /* cls */, jlong nativeObj)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
-		StmtIterator* pIter = reinterpret_cast<StmtIterator*>(
-			static_cast<intPtr>(iterPtr));
-		delete pIter;
+		delete reinterpret_cast<StmtIterator*>(static_cast<intPtr>(nativeObj));
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 

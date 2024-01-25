@@ -12,10 +12,10 @@ import org.junit.jupiter.api.Test;
 
 import com.bbn.parliament.core.jni.KbConfig;
 import com.bbn.parliament.core.jni.KbInstance;
-import com.bbn.parliament.core.jni.ReificationIterator;
-import com.bbn.parliament.core.jni.StmtIterator;
 import com.bbn.parliament.core.jni.KbInstance.CountStmtsResult;
+import com.bbn.parliament.core.jni.ReificationIterator;
 import com.bbn.parliament.core.jni.ReificationIterator.Reification;
+import com.bbn.parliament.core.jni.StmtIterator;
 import com.bbn.parliament.core.jni.StmtIterator.Statement;
 
 /** @author dkolas */
@@ -72,7 +72,7 @@ public class ReificationTest {
 	@AfterEach
 	public void afterEach() {
 		if (kb != null) {
-			kb.finalize();
+			kb.close();
 		}
 		if (config != null) {
 			KbInstance.deleteKb(config, null);
@@ -739,7 +739,7 @@ public class ReificationTest {
 			System.out.print(it.next());
 		}
 		System.out.println();
-		it.finalize();
+		it.close();
 	}
 
 	@SuppressWarnings("unused")
@@ -758,7 +758,7 @@ public class ReificationTest {
 		while(iterator.hasNext()){
 			actuals.add(iterator.next());
 		}
-		iterator.finalize();
+		iterator.close();
 		assertEquals(reifications.length, actuals.size(),
 			"Wrong number of reifications returned (" + reifications.length + " vs " + actuals.size() + ")");
 		for (int i=0; i<reifications.length; i++){
@@ -788,7 +788,7 @@ public class ReificationTest {
 		while(iterator.hasNext()){
 			actuals.add(iterator.next());
 		}
-		iterator.finalize();
+		iterator.close();
 		assertEquals(statements.length, actuals.size(),
 			"Wrong number of statements returned (" + statements.length + " vs " + actuals + ")");
 		for (int i=0; i<statements.length; i++){

@@ -17,12 +17,10 @@ namespace pmnt = ::bbn::parliament;
 static auto g_log(pmnt::log::getSource("ReificationIteratorJNI"));
 
 JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_ReificationIterator_dispose(
-	JNIEnv* pEnv, jobject /* obj */, jlong iterPtr)
+	JNIEnv* pEnv, jclass /* cls */, jlong nativeObj)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
-		ReificationIterator* pIter = reinterpret_cast<ReificationIterator*>(
-			static_cast<intPtr>(iterPtr));
-		delete pIter;
+		delete reinterpret_cast<ReificationIterator*>(static_cast<intPtr>(nativeObj));
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 

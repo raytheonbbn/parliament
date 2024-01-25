@@ -6,7 +6,7 @@
 
 package com.bbn.parliament.core.jni;
 
-import java.io.Closeable;
+import java.lang.ref.Cleaner;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -21,7 +21,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * implementation.  See the methods resetQueryCanceledFlag and getQueryCanceledFlag
  * for details.
  */
-public class StmtIterator implements Iterator<StmtIterator.Statement>, Closeable {
+public class StmtIterator implements Iterator<StmtIterator.Statement>, AutoCloseable {
+	private static record CleanAction(long pIter) implements Runnable {
+		@Override
+		public void run() {
+			StmtIterator.dispose(pIter());
+		}
+	}
+
 	public static class Statement {
 		private long subject;
 		private long predicate;
@@ -85,6 +92,7 @@ public class StmtIterator implements Iterator<StmtIterator.Statement>, Closeable
 		};
 
 	private long m_pIter;
+	private final Cleaner.Cleanable m_cleanable;
 
 	static {
 		LibraryLoader.loadLibraries();
@@ -96,6 +104,7 @@ public class StmtIterator implements Iterator<StmtIterator.Statement>, Closeable
 	 */
 	private StmtIterator(long pIter) {
 		m_pIter = pIter;
+		m_cleanable = CleanerSingleton.inst().register(this, new CleanAction(m_pIter));
 	}
 
 	/**
@@ -105,29 +114,12 @@ public class StmtIterator implements Iterator<StmtIterator.Statement>, Closeable
 	 */
 	@Override
 	public void close() {
-		finalize();
+		m_pIter = 0L;
+		m_cleanable.clean();
 	}
 
-	/**
-	 * Frees the underlying native iterator associated with the instance. This
-	 * is idempotent, so it may be called by application code whenever the
-	 * application is finished with the instance.
-	 */
-	@Override
-	public void finalize() {
-		if (m_pIter != 0) {
-			long pIter = m_pIter;
-			m_pIter = 0;
-			try {
-				dispose(pIter);
-			} catch (Throwable ex) {
-				// Do nothing
-			}
-		}
-	}
-
-	/** Intended only to be called by finalize() -- param MUST be m_pIter. */
-	private native void dispose(long pIter);
+	/** Intended to be called only by the clean action. */
+	private static native void dispose(long pIter);
 
 	/** The standard hasNext() method of the Iterator interface. */
 	@Override

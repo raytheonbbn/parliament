@@ -6,12 +6,19 @@
 
 package com.bbn.parliament.core.jni;
 
-import java.io.Closeable;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.ref.Cleaner;
 
 /** Parliament's JNI Interface */
-public class KbInstance implements Closeable {
+public class KbInstance implements AutoCloseable {
+	private static record CleanAction(long pKb) implements Runnable {
+		@Override
+		public void run() {
+			KbInstance.dispose(pKb());
+		}
+	}
+
 	/**
 	 * The return value of the countStmts() method, used to work around Java's
 	 * lack of "out" parameters.
@@ -118,7 +125,8 @@ public class KbInstance implements Closeable {
 	/** Instructs a statement iterator to skip non-literal statements. */
 	public static final int SKIP_NON_LITERAL_STMT_ITER_FLAG = tempInit();
 
-	private long m_pKb = 0;
+	private long m_pKb;
+	private final Cleaner.Cleanable m_cleanable;
 
 	static {
 		LibraryLoader.loadLibraries();
@@ -141,46 +149,28 @@ public class KbInstance implements Closeable {
 
 	/** Creates or opens a KB. */
 	public KbInstance(KbConfig config) throws Throwable {
-		init(config);
+		m_pKb = init(config);
+		m_cleanable = CleanerSingleton.inst().register(this, new CleanAction(m_pKb));
 	}
 
 	/** Intended only to be called by the KbInstance instance ctor. */
-	private native void init(KbConfig config);
+	private static native long init(KbConfig config);
 
 	/**
 	 * Frees system resources associated with the KB instance, and closes all KB
 	 * files. This is idempotent, so it may be called by application code
 	 * whenever the application is finished with the instance. (This is highly
-	 * recommended, as an un-finalized instance holds significant system
+	 * recommended, as an unclosed instance holds significant system
 	 * resources and prevents others from opening the KB.)
 	 */
 	@Override
 	public void close() {
-		finalize();
+		m_pKb = 0L;
+		m_cleanable.clean();
 	}
 
-	/**
-	 * Frees system resources associated with the KB instance, and closes all KB
-	 * files. This is idempotent, so it may be called by application code
-	 * whenever the application is finished with the instance. (This is highly
-	 * recommended, as an un-finalized instance holds significant system
-	 * resources and prevents others from opening the KB.)
-	 */
-	@Override
-	public void finalize() {
-		if (m_pKb != 0) {
-			try {
-				dispose();
-			} catch (Throwable ex) {
-				// Do nothing
-			}
-
-			m_pKb = 0;
-		}
-	}
-
-	/** Intended only to be called by finalize(). */
-	private native void dispose();
+	/** Intended to be called only by the clean action. */
+	private static native void dispose(long pKb);
 
 	public static native String getVersion();
 

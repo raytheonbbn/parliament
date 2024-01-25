@@ -13,7 +13,7 @@ import org.apache.jena.util.iterator.NiceIterator;
 import com.bbn.parliament.core.jni.StmtIterator;
 import com.bbn.parliament.core.jni.StmtIterator.Statement;
 
-public class KbTripleIterator extends NiceIterator<Triple> {
+public class KbTripleIterator extends NiceIterator<Triple> implements AutoCloseable {
 	private StmtIterator si;
 	private KbGraph graph;
 	private Triple lastTriple;
@@ -27,7 +27,7 @@ public class KbTripleIterator extends NiceIterator<Triple> {
 	@Override
 	public void close() {
 		super.close();
-		si.finalize();
+		si.close();
 	}
 
 	@Override

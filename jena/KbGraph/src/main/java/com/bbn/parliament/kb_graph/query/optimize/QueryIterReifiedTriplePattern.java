@@ -154,11 +154,12 @@ public class QueryIterReifiedTriplePattern extends QueryIterRepeatApply
 			return r ;
 		}
 
+		// Called for a super-class's close() method:
 		@Override
 		protected void closeIterator()
 		{
 			if ( reificationIterator != null ){
-				reificationIterator.finalize();
+				reificationIterator.close();
 			}
 			reificationIterator = null ;
 		}
