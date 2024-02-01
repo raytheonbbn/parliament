@@ -3,7 +3,6 @@ package com.bbn.parliament.jena.joseki.bridge.tracker;
 import java.beans.ConstructorProperties;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Observable;
 
 import com.bbn.parliament.jena.joseki.bridge.tracker.management.TrackableMXBean;
 

@@ -4,14 +4,13 @@ import java.beans.ConstructorProperties;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Observable;
 
 import com.bbn.parliament.server.exception.DataFormatException;
 import com.bbn.parliament.server.exception.MissingGraphException;
 import com.bbn.parliament.server.exception.TrackableException;
 import com.bbn.parliament.server.tracker.management.TrackableMXBean;
 
-public abstract class Trackable extends Observable implements TrackableMXBean, Comparable<Trackable> {
+public abstract class Trackable implements TrackableMXBean, Comparable<Trackable> {
 	private final Object _statusLock = new Object();
 	protected final long _id;
 	protected final String _creator;
@@ -121,11 +120,14 @@ public abstract class Trackable extends Observable implements TrackableMXBean, C
 	}
 
 	protected void setStatus(Status status) {
+		boolean hasStatusChanged;
 		synchronized (_statusLock) {
+			hasStatusChanged = (_status != status);
 			_status = status;
-			setChanged();
 		}
-		notifyObservers(_status);
+		if (hasStatusChanged) {
+			Tracker.getInstance().updateOnTrackableStatusChange(this, status);
+		}
 	}
 
 	@Override

@@ -20,7 +20,6 @@ public class TrackerService {
 	@SuppressWarnings("static-method")
 	public StreamingResponseBody getTrackables() {
 		Tracker tracker = Tracker.getInstance();
-		@SuppressWarnings("null")
 		List<TrackableDTO> trackables = tracker.getTrackableIDs().stream()
 			.map(tracker::getTrackable)
 			.filter(Objects::nonNull)

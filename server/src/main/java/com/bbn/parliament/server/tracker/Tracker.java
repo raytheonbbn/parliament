@@ -2,11 +2,9 @@ package com.bbn.parliament.server.tracker;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -25,7 +23,7 @@ import com.bbn.parliament.server.tracker.management.TrackerManagement;
  *
  * @author rbattle
  */
-public class Tracker implements Observer {
+public class Tracker {
 	private static final long SHUTDOWN_TIMEOUT = 8 * 1000; // in milliseconds
 	private static final Tracker INSTANCE = new Tracker();
 	private static final AtomicLong LAST_TRACKER_ISSUED = new AtomicLong(0);
@@ -42,7 +40,7 @@ public class Tracker implements Observer {
 
 	private Tracker() {
 		_trackablesLock = new Object();
-		_trackables = new HashMap<>();
+		_trackables = new ConcurrentHashMap<>();
 		_shuttingDown = false;
 	}
 
@@ -63,7 +61,6 @@ public class Tracker implements Observer {
 		synchronized (_trackablesLock) {
 			_trackables.put(t.getId(), t);
 			TrackerManagement.register(getName(t), t);
-			t.addObserver(this);
 		}
 	}
 
@@ -220,11 +217,14 @@ public class Tracker implements Observer {
 		}
 	}
 
-	@Override
-	public void update(Observable o, Object arg) {
-		if (o instanceof Trackable t && arg instanceof Status s
-			&& (s == Status.FINISHED || s == Status.CANCELLED || s == Status.ERROR)) {
-			unregisterTrackable(t);
+	public void updateOnTrackableStatusChange(Trackable trackable, Status newStatus) {
+		switch (newStatus) {
+		case FINISHED, CANCELLED, ERROR:
+			unregisterTrackable(trackable);
+			break;
+		default:
+			// Do nothing
+			break;
 		}
 	}
 }
