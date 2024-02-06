@@ -111,7 +111,7 @@ public class KbOpExecutorDAWGTest {
 		""";
 	private static final File DAWG_ROOT_DIR = new File("data/data-r2");
 	private static final Pattern FILE_URI_FIXER = Pattern.compile("^(file:/)([^/].*)$");
-	private static final Pattern FILE_URI_FIXER_2 = Pattern.compile("^(file:///[A-Za-z]):(.*)$");
+	//private static final Pattern FILE_URI_FIXER_2 = Pattern.compile("^(file:///[A-Za-z]):(.*)$");
 	private static final Logger LOG = LoggerFactory.getLogger(KbOpExecutorDAWGTest.class);
 
 	private TestingDataset dataset = null;
@@ -177,10 +177,11 @@ public class KbOpExecutorDAWGTest {
 			if (m.matches()) {
 				uri = m.replaceAll("$1//$2");
 			}
-			Matcher m2 = FILE_URI_FIXER_2.matcher(uri);
-			if (m2.matches()) {
-				uri = m2.replaceAll("$1%3A$2");
-			}
+			// Escaping colons (after drive letters on Windows) was once required, but no longer:
+			//Matcher m2 = FILE_URI_FIXER_2.matcher(uri);
+			//if (m2.matches()) {
+			//	uri = m2.replaceAll("$1%3A$2");
+			//}
 			LOG.debug("Graph URI for test '{}' is '{}'", me.getName(), uri);
 			@SuppressWarnings("resource")
 			KbGraph namedGraph = dataset.getNamedGraph(uri);

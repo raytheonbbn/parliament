@@ -215,7 +215,7 @@ public class OntologyBundlePluginFunctionalTest {
 		assertTrue(result.getOutput().contains("Generating %1$s.java".formatted(genClassName)));
 		assertTrue(result.getOutput().contains("BUILD SUCCESSFUL in"));
 		assertTrue(Pattern
-			.compile("(?m)^Writing [a-zA-Z0-9_]+ file '.*/OntologyForMachines\\.ttl'$")
+			.compile("(?m)^Writing [a-zA-Z0-9_]+ file '.*OntologyForMachines\\.ttl'$")
 			.matcher(result.getOutput())
 			.find());
 	}

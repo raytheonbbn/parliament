@@ -23,7 +23,7 @@ You will need an appropriate C++ compiler for each operating system on which you
 		\toprule
 		\textbf{Operating System} & \textbf{Compiler} & \textbf{Toolset} \\
 		\headingrule
-		Windows 10 (32- and 64-bit) & Visual Studio 2019 & msvc-14.2 \\
+		Windows 10 (32- and 64-bit) & Visual Studio 2022 & msvc-14.3 \\
 		\midrule
 		Mac OS X 10.15 Catalina (64-bit) & Xcode 12.4 & clang \\
 		\midrule
@@ -164,7 +164,7 @@ define=BOOST_LOG_WITHOUT_IPC define=BOOST_LOG_WITHOUT_DEBUG_OUTPUT
 define=BOOST_TEST_ALTERNATIVE_INIT_API
 define=BOOST_LOG_WITHOUT_SYSLOG toolset=msvc address-model=32,64
 architecture=x86 variant=debug,release link=shared,static
-runtime-link=shared cxxflags=/std:c++17 stage
+runtime-link=shared cxxflags=/std:c++20 stage
 \end{verbatim}}
 
 This will build the libraries in \path|stage-msvc/lib|.  The following commands will delete intermediate build products to save disk space:
@@ -192,7 +192,7 @@ define=BOOST_LOG_USE_STD_REGEX define=BOOST_LOG_WITHOUT_SYSLOG
 define=BOOST_LOG_WITHOUT_IPC define=BOOST_TEST_ALTERNATIVE_INIT_API
 toolset=clang address-model=64 architecture=x86
 variant=debug,release link=shared,static runtime-link=shared
-cxxflags="-std=c++17" linkflags="-std=c++17" stage
+cxxflags="-std=c++20" linkflags="-std=c++20" stage
 \end{verbatim}}
 
 This will build the libraries in \path|stage-clang/lib|.  The following commands will delete intermediate build products to save disk space:
@@ -245,8 +245,8 @@ b2 -q -j5 --disable-icu --ignore-site-config --layout=versioned
 define=BOOST_LOG_USE_STD_REGEX define=BOOST_LOG_WITHOUT_SYSLOG
 define=BOOST_LOG_WITHOUT_IPC define=BOOST_TEST_ALTERNATIVE_INIT_API
 toolset=gcc address-model=64 architecture=x86 variant=debug,release
-link=shared,static runtime-link=shared cxxflags=-std=c++17
-linkflags=-std=c++17 stage
+link=shared,static runtime-link=shared cxxflags=-std=c++20
+linkflags=-std=c++20 stage
 \end{verbatim}}
 
 This will build the libraries in \path|stage-gcc-$LINUX_DISTRO/lib|.  Run these commands will delete intermediate build products to save disk space:
@@ -300,15 +300,15 @@ Next we need to configure Boost.Build so that it can build \ac{pmnt}.  Start by 
 		\label{boost-test-log-level-values}
 	\end{table}
 
-	\item\verb|VS_ROOT|: \emph{(Windows only)} The root of your Visual Studio installation.  Usually \path|C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\|.
+	\item\verb|VS_ROOT|: \emph{(Windows only)} The root of your Visual Studio installation.  Usually \path|C:\Program Files\Microsoft Visual Studio\2022\Community\VC\|.
 
 	\item\verb|VS_BAT_PATH_32|: \emph{(Windows only)} The path to the batch file that sets up the environment for 32-bit builds.  Typically this is \path|%VS_ROOT%Auxiliary\Build\vcvarsamd64_x86.bat|.
 
 	\item\verb|VS_BAT_PATH_64|: \emph{(Windows only)} The path to the batch file that sets up the environment for 64-bit builds.  Typically this is \path|%VS_ROOT%Auxiliary\Build\vcvars64.bat|.
 
-	\item\verb|VS_REDIST_PATH_32|: \emph{(Windows only)} The path to the 32-bit redistributables installer.  Typically this is \path|%VS_ROOT%Redist\MSVC\14.27.29016\vc_redist.x86.exe|.
+	\item\verb|VS_REDIST_PATH_32|: \emph{(Windows only)} The path to the 32-bit redistributables installer.  Typically this is \path|%VS_ROOT%Redist\MSVC\v143\vc_redist.x86.exe|.
 
-	\item\verb|VS_REDIST_PATH_64|: \emph{(Windows only)} The path to the 64-bit redistributables installer.  Typically this is \path|%VS_ROOT%Redist\MSVC\14.27.29016\vc_redist.x64.exe|.
+	\item\verb|VS_REDIST_PATH_64|: \emph{(Windows only)} The path to the 64-bit redistributables installer.  Typically this is \path|%VS_ROOT%Redist\MSVC\v143\vc_redist.x64.exe|.
 \end{itemize}
 
 Next we create two Boost.Build configuration files, \path|site-config.jam| and \path|user-config.jam|.  Boost.Build reads these files on startup.  The two are separate so that the first one can be installed and maintained by a system administrator, and the second by the individual user.  These files can be placed in a number of locations. Table~\ref{boost-build-config-search} explains where Boost.Build searches to find these files.

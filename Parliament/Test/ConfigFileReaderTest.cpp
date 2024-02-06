@@ -71,8 +71,9 @@ BOOST_AUTO_TEST_CASE(getConfigFilePathTest)
 {
 	{	// Check the fallback, where the config file is in the current working directory:
 		EnvVarReset envVarReset(k_testEnvVarName, _T(""));
-		BOOST_CHECK_EQUAL(k_testConfigFileName,
-			ConfigFileReader::testGetConfigFilePath(k_testEnvVarName, k_testConfigFileName));
+		BOOST_CHECK_EQUAL(convertTCharToUtf8(k_testConfigFileName),
+			convertTCharToUtf8(ConfigFileReader::testGetConfigFilePath(
+				k_testEnvVarName, k_testConfigFileName).native()));
 	}
 	{	// Check that setting the env var works:
 		auto envVarValue = bfs::current_path();

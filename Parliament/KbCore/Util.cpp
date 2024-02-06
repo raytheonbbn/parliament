@@ -9,6 +9,7 @@
 #include "parliament/Exceptions.h"
 #include "parliament/Log.h"
 #include "parliament/Types.h"
+#include "parliament/UnicodeIterator.h"
 #include "parliament/Version.h"
 #include "parliament/Windows.h"
 
@@ -78,7 +79,7 @@ pmnt::TString pmnt::tGetEnvVar(const TChar* pVarName)
 			{
 				auto errMsg = str(format{
 					"GetEnvironmentVariable error: var = '%1%', numChars = %2%, error code = %3%"}
-						% pVarName % numChars % errCode);
+						% convertTCharToUtf8(pVarName) % numChars % errCode);
 				PMNT_LOG(g_log, log::Level::error) << errMsg;
 				throw Exception(errMsg);
 			}

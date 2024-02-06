@@ -6,6 +6,11 @@ Version 2.8.2:
 
 * Updated to Boost 1.84.0
 
+* Updated to Visual Studio 2022 (14.3)
+
+* Migrated build infrastructure on all platforms from the C++17 standard
+  to C++20.
+
 * Migrated the Parliament GitHub repository from the SemWebCentral
   organization to the RaytheonBBN organization. This changed the project URL
   from 

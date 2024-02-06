@@ -91,9 +91,9 @@ static path getCurrentDllFilePath()
 	if (!::GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
 		reinterpret_cast<LPCWSTR>(getCurrentDllFilePath), &hModule))
 	{
-		throwSystemException(::GetLastError(), __FILE__, __LINE__, format{
-			"Unable to retrieve the handle of the current module"
-			" (error code %1%, file %2%, line %3%)"});
+		auto fmt = format{"Unable to retrieve the handle of the current module"
+			" (error code %1%, file %2%, line %3%)"};
+		throwSystemException(::GetLastError(), __FILE__, __LINE__, fmt);
 	}
 
 	for (DWORD bufferLen = MAX_PATH;; bufferLen += MAX_PATH)
@@ -102,9 +102,9 @@ static path getCurrentDllFilePath()
 		DWORD retVal = ::GetModuleFileNameW(hModule, &buffer[0], bufferLen);
 		if (retVal == 0)
 		{
-			throwSystemException(::GetLastError(), __FILE__, __LINE__, format{
-				"Unable to retrieve the module file name"
-				" (error code %1%, file %2%, line %3%)"});
+			auto fmt = format{"Unable to retrieve the module file name"
+				" (error code %1%, file %2%, line %3%)"};
+			throwSystemException(::GetLastError(), __FILE__, __LINE__, fmt);
 		}
 		else if (retVal < bufferLen)
 		{
@@ -122,9 +122,10 @@ static void addDirToDllPath(const path& dir)
 #if defined(PARLIAMENT_WINDOWS)
 	if (!SetDllDirectoryW(dir.c_str()))
 	{
-		throwSystemException(::GetLastError(), __FILE__, __LINE__, format{
-			"Unable to set DLL search path %1%"
-			" (error code %2%, file %3%, line %4%)"} % dir.generic_string());
+		auto fmt = format{"Unable to set DLL search path %1%"
+			" (error code %2%, file %3%, line %4%)"};
+		throwSystemException(::GetLastError(), __FILE__, __LINE__,
+			fmt % dir.generic_string());
 	}
 #endif
 }
@@ -134,9 +135,9 @@ static void resetDllPath()
 #if defined(PARLIAMENT_WINDOWS)
 	if (!SetDllDirectoryW(nullptr))
 	{
-		throwSystemException(::GetLastError(), __FILE__, __LINE__, format{
-			"Unable to reset DLL search path"
-			" (error code %1%, file %2%, line %3%)"});
+		auto fmt = format{"Unable to reset DLL search path"
+			" (error code %1%, file %2%, line %3%)"};
+		throwSystemException(::GetLastError(), __FILE__, __LINE__, fmt);
 	}
 #endif
 }
