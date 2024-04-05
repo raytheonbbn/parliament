@@ -79,6 +79,14 @@ public:
 	UsageException(const ::boost::format& fmt) : Exception(fmt) {}
 };
 
+class NON_WINDOWS_PARLIAMENT_EXPORT NumericConversionException : public Exception
+{
+public:
+	NumericConversionException(const char* pMsg) noexcept : Exception(pMsg) {}
+	NumericConversionException(const ::std::string& msg) noexcept : Exception(msg) {}
+	NumericConversionException(const ::boost::format& fmt) : Exception(fmt) {}
+};
+
 }	// namespace end
 
 #endif // !PARLIAMENT_EXCEPTIONS_H_INCLUDED

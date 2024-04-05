@@ -37,7 +37,9 @@ namespace bfs = ::boost::filesystem;
 namespace pmnt = ::bbn::parliament;
 
 using ::boost::format;
+using ::std::errc;
 using ::std::string;
+using ::std::string_view;
 using ::std::unique_ptr;
 
 static auto g_log(pmnt::log::getSource("Util"));
@@ -147,6 +149,26 @@ bfs::path pmnt::getCurrentDllFilePath()
 	unique_ptr<char, decltype(deleter)> pPath(pRawPtr, deleter);
 	return pPath.get();
 #endif
+}
+
+
+void pmnt::numericConversionErrorCheck(string_view str, const char* pNextChar, errc errCode)
+{
+	if (errCode == errc::invalid_argument)
+	{
+		throw NumericConversionException(
+			format{"'%1%' is not a number"} % str);
+	}
+	else if (errCode == errc::result_out_of_range)
+	{
+		throw NumericConversionException(
+			format{"Result out of range: '%1%'"} % str);
+	}
+	else if (errCode == errc() && pNextChar != end(str))	// TODO: Not sure this should be an error
+	{
+		throw NumericConversionException(
+			format{"String contains non-number at the end: '%1%'"} % str);
+	}
 }
 
 
