@@ -94,4 +94,88 @@ BOOST_AUTO_TEST_CASE(testGetEnv)
 #endif
 }
 
+#if !defined(__cpp_lib_to_chars)
+static constexpr string_view k_badLexicalCastErrMsg = "bad lexical cast: "
+	"source type value could not be interpreted as target";
+#endif
+
+BOOST_AUTO_TEST_CASE(testNumericConversion)
+{
+	//BOOST_CHECK_EQUAL(static_cast<char>(-73), strTo<char>("-73"));
+	BOOST_CHECK_EQUAL(static_cast<short>(-73), strTo<short>("-73"));
+	BOOST_CHECK_EQUAL(static_cast<int>(-73), strTo<int>("-73"));
+	BOOST_CHECK_EQUAL(static_cast<long>(-73), strTo<long>("-73"));
+	BOOST_CHECK_EQUAL(static_cast<long long>(-73), strTo<long long>("-73"));
+
+	//BOOST_CHECK_EQUAL(static_cast<unsigned char>(73), strTo<unsigned char>("73"));
+	BOOST_CHECK_EQUAL(static_cast<unsigned short>(73), strTo<unsigned short>("73"));
+	BOOST_CHECK_EQUAL(static_cast<unsigned int>(73), strTo<unsigned int>("73"));
+	BOOST_CHECK_EQUAL(static_cast<unsigned long>(73), strTo<unsigned long>("73"));
+	BOOST_CHECK_EQUAL(static_cast<unsigned long long>(73), strTo<unsigned long long>("73"));
+
+	//BOOST_CHECK_EQUAL(static_cast<int>(73), strTo<int>(" 73"));
+	//BOOST_CHECK_EQUAL(static_cast<int>(73), strTo<int>("73 "));
+	//BOOST_CHECK_EQUAL(static_cast<int>(73), strTo<int>(" 73 "));
+
+	BOOST_CHECK_EQUAL(static_cast<float>(73.5), strTo<float>("73.5"));
+	BOOST_CHECK_EQUAL(static_cast<double>(73.5), strTo<double>("73.5"));
+	BOOST_CHECK_EQUAL(static_cast<long double>(73.5), strTo<long double>("73.5"));
+
+	try
+	{
+		strTo<int>("xyzzy");
+		BOOST_FAIL("Failed to throw");
+	}
+	catch (const NumericConversionException& ex)
+	{
+#if defined(__cpp_lib_to_chars)
+		BOOST_CHECK_EQUAL("'xyzzy' is not a number", ex.what());
+#else
+		BOOST_CHECK_EQUAL(k_badLexicalCastErrMsg, ex.what());
+#endif
+	}
+
+#if defined(__cpp_lib_to_chars)
+	try
+	{
+		strTo<unsigned int>("-1");
+		BOOST_FAIL("Failed to throw");
+	}
+	catch (const NumericConversionException& ex)
+	{
+		BOOST_CHECK_EQUAL("Result out of range: '-1'", ex.what());
+	}
+#else
+	BOOST_CHECK_EQUAL(static_cast<unsigned int>(-1), strTo<unsigned int>("-1"));
+#endif
+
+	try
+	{
+		strTo<short>("66000");
+		BOOST_FAIL("Failed to throw");
+	}
+	catch (const NumericConversionException& ex)
+	{
+#if defined(__cpp_lib_to_chars)
+		BOOST_CHECK_EQUAL("Result out of range: '66000'", ex.what());
+#else
+		BOOST_CHECK_EQUAL(k_badLexicalCastErrMsg, ex.what());
+#endif
+	}
+
+	try
+	{
+		strTo<int>("73 cm");
+		BOOST_FAIL("Failed to throw");
+	}
+	catch (const NumericConversionException& ex)
+	{
+#if defined(__cpp_lib_to_chars)
+		BOOST_CHECK_EQUAL("String contains non-number at the end: '73 cm'", ex.what());
+#else
+		BOOST_CHECK_EQUAL(k_badLexicalCastErrMsg, ex.what());
+#endif
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()

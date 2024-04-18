@@ -10,6 +10,11 @@
 #include "parliament/Types.h"
 
 #include <boost/filesystem/path.hpp>
+#if !defined(__cpp_lib_to_chars)
+#	include <boost/lexical_cast.hpp>
+#	include "parliament/Exceptions.h"
+#endif
+#include <charconv>
 #include <iterator>
 #include <memory>
 #include <string>
@@ -26,6 +31,28 @@ namespace bbn::parliament
 PARLIAMENT_EXPORT ::std::string getKbVersion();	// Parliament version number
 PARLIAMENT_EXPORT TString tGetEnvVar(const TChar* pVarName);
 PARLIAMENT_EXPORT ::boost::filesystem::path getCurrentDllFilePath();
+PARLIAMENT_EXPORT void numericConversionErrorCheck(::std::string_view str,
+	const char* pNextChar, ::std::errc errCode);
+
+template<typename TargetType>
+TargetType strTo(::std::string_view str)
+{
+	TargetType number{};
+#if defined(__cpp_lib_to_chars)
+	auto [pNextChar, errCode] = ::std::from_chars(begin(str), end(str), number);
+	numericConversionErrorCheck(str, pNextChar, errCode);
+#else
+	try
+	{
+		number = ::boost::lexical_cast<TargetType>(str);
+	}
+	catch (const ::boost::bad_lexical_cast& ex)
+	{
+		throw NumericConversionException(ex.what());
+	}
+#endif
+	return number;
+}
 
 
 
