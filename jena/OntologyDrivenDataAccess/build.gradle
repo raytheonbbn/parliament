@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Raytheon BBN Technologies Corp.
+// Copyright (c) 2024 RTX BBN Technologies Corp.
 
 plugins {
 	id 'java-library'
@@ -50,8 +50,8 @@ publishing {
 			from components.java
 			pom {
 				name = 'Ontology-Driven Data Access'
-				description = "A Java-centric data access facility for semantic graph stores.${System.lineSeparator}Copyright © 2024 Raytheon BBN Technologies"
-				url = 'https://github.com/raytheonbbn/parliament/tree/jena-update/jena/OntologyDrivenDataAccess'
+				description = "A Java-centric data access facility for semantic graph stores.${System.lineSeparator}Copyright © 2024 RTX BBN Technologies"
+				url = "https://github.com/${githubOrg}/parliament/tree/jena-update/jena/OntologyDrivenDataAccess"
 				packaging = 'jar'
 				licenses {
 					license {
@@ -60,7 +60,7 @@ publishing {
 					}
 				}
 				organization {
-					name = 'Raytheon BBN Technologies'
+					name = 'RTX BBN Technologies'
 					url = 'https://bbn.com/'
 				}
 				developers {
@@ -71,9 +71,9 @@ publishing {
 					}
 				}
 				scm {
-					connection = 'scm:git:git@github.com:raytheonbbn/parliament.git'
-					developerConnection = 'scm:git:git@github.com:raytheonbbn/parliament.git'
-					url = 'https://github.com/raytheonbbn/parliament'
+					connection = "scm:git:git@github.com:${githubOrg}/parliament.git"
+					developerConnection = "scm:git:git@github.com:${githubOrg}/parliament.git"
+					url = "https://github.com/${githubOrg}/parliament"
 				}
 			}
 		}

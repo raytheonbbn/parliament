@@ -33,6 +33,8 @@ ext {
 	slf4jApiDependency = "org.slf4j:slf4j-api:$slf4jVersion"
 	sparqlQueryBuilderDependency = 'com.bbn.parliament:SparqlQueryBuilder:2.0.1'
 
+	githubOrg = 'raytheonbbn'
+
 	targetDir = file("${rootDir}/target")
 	deployableDir = file("${targetDir}/deployableServer")
 	depDir = file("${rootDir}/dependencies")
@@ -40,8 +42,6 @@ ext {
 }
 
 allprojects {
-	apply plugin: 'eclipse'
-
 	group = 'com.bbn.parliament'
 	version = '2.8.2-SNAPSHOT'
 

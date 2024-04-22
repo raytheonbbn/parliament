@@ -1,6 +1,6 @@
 BSD 3-Clause License
 
-Copyright (c) 2001-2019, Raytheon BBN Technologies, Inc.
+Copyright (c) 2001-2024, RTX BBN Technologies, Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

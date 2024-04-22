@@ -44,9 +44,7 @@
 %\usepackage{todonotes}
 %\usepackage[T1]{fontenc}		% Enables curly braces in emails within \institute
 \usepackage[style=numeric,backref,backend=biber]{biblatex}
-\usepackage{fontspec,xltxtra,xunicode}
-\usepackage{iffont}
-\usepackage{unicode-math}
+\usepackage{fontspec,xltxtra,xunicode,unicode-math,iffont}
 \usepackage[unicode,final]{hyperref}	% Should be the last use-package command
 \def\UrlBreaks{\do\/\do-}
 
@@ -54,9 +52,10 @@
 %\newcommand{\paraleader}[1]{\textbf{#1}}
 \newcommand{\urlcite}[1]{\footnote{\url{#1}}}
 \newcommand{\headingrule}{\midrule[\heavyrulewidth]}
-%\newcommand{\classmark}{\textbf{\emph{UNCLASSIFIED}}}
 %\newcommand{\themestatement}[1]{\framebox{\parbox{0.97\columnwidth}{\emph{#1}}}}
-\newcommand{\icm}[1]{}
+\newcommand{\githubOrg}{raytheonbbn}
+\newcommand{\boostversion}[1]{1{#1}84{#1}0}
+\newcommand{\lmdbversion}{0.9.31}
 
 \input{acronyms.tex}
 \bibliography{references}
@@ -75,12 +74,12 @@
 \settofirstfound{\mainfont}{Georgia,TeX Gyre Bonum}
 \settofirstfound{\sansfont}{Verdana,TeX Gyre Heros}
 \settofirstfound{\monofont}{Menlo,Andale Mono,Lucida Console,Courier New}
-\settofirstfound{\mathfont}{Cambria Math,TeX Gyre Bonum Math,STIX Math}
+\settofirstfound{\mathfont}{TeX Gyre Bonum Math,STIX Math}
 \defaultfontfeatures{Mapping=tex-text}
-\setmainfont{Georgia}
-\setsansfont{Verdana}[Scale=MatchLowercase]
-\setmonofont{\monofont}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
 \setmathfont{\mathfont}
+\setmainfont{\mainfont}
+\setsansfont{\sansfont}[Scale=MatchLowercase]
+\setmonofont{\monofont}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
 
 \fvset{tabsize=3}
 

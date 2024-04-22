@@ -10,4 +10,4 @@ SPARQL-update is not supported.
 
 Adapted from code written by Matt Allen.
 
-Copyright (c) 2019, 2020 Raytheon BBN Technologies Corp.
+Copyright (c) 2019, 2020 RTX BBN Technologies Corp.

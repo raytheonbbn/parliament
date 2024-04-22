@@ -36,80 +36,68 @@ public abstract class EphemeralGeometry extends Geometry {
 	/** {@inheritDoc} */
 	@Override
 	public void apply(CoordinateFilter filter) {
-		// TODO Auto-generated method stub
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void apply(CoordinateSequenceFilter filter) {
-		// TODO Auto-generated method stub
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void apply(GeometryFilter filter) {
-		// TODO Auto-generated method stub
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void apply(GeometryComponentFilter filter) {
-		// TODO Auto-generated method stub
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	protected int compareToSameClass(Object o) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	protected int compareToSameClass(Object o, CoordinateSequenceComparator comp) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	protected Envelope computeEnvelopeInternal() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public boolean equalsExact(Geometry other, double tolerance) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Geometry getBoundary() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public int getBoundaryDimension() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Coordinate getCoordinate() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Coordinate[] getCoordinates() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -122,34 +110,29 @@ public abstract class EphemeralGeometry extends Geometry {
 	/** {@inheritDoc} */
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void normalize() {
-		// TODO Auto-generated method stub
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public String getGeometryType() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public int getNumPoints() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Geometry reverse() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2019, 2020 Raytheon BBN Technologies Corp.
+// Copyright (c) 2019, 2020 RTX BBN Technologies Corp.
 
 plugins {
 	id 'java-library'
@@ -59,10 +59,10 @@ publishing {
 
 			pom {
 				name = 'SPARQL Query Builder'
-				description = "A Java library for manipulating SPARQL queries.${System.lineSeparator}Copyright © 2019 Raytheon BBN Technologies Corp."
-				url = 'https://github.com/raytheonbbn/parliament/tree/main/jena/SparqlQueryBuilderJ3'
+				description = "A Java library for manipulating SPARQL queries.${System.lineSeparator}Copyright © 2019 RTX BBN Technologies Corp."
+				url = "https://github.com/${githubOrg}/parliament/tree/main/jena/SparqlQueryBuilderJ3"
 				organization {
-					name = 'Raytheon BBN Technologies'
+					name = 'RTX BBN Technologies'
 					url = 'http://bbn.com/'
 				}
 				developers {

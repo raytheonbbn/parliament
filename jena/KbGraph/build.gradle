@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Raytheon BBN Technologies Corp.
+// Copyright (c) 2023 RTX BBN Technologies Corp.
 
 plugins {
 	id 'java-library'
@@ -86,10 +86,10 @@ publishing {
 
 			pom {
 				name = 'Parliament Client Library'
-				description = "A Java library that adapts Parliament's native core to Jena's graph and model classes.${System.lineSeparator}Copyright © 2023 Raytheon BBN Technologies Corp."
-				url = 'https://github.com/raytheonbbn/parliament/tree/main/jena/KbGraph'
+				description = "A Java library that adapts Parliament's native core to Jena's graph and model classes.${System.lineSeparator}Copyright © 2023 RTX BBN Technologies Corp."
+				url = "https://github.com/${githubOrg}/parliament/tree/main/jena/KbGraph"
 				organization {
-					name = 'Raytheon BBN Technologies'
+					name = 'RTX BBN Technologies'
 					url = 'https://bbn.com/'
 				}
 				developers {

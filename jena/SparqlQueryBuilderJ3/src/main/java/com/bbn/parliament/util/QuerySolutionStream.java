@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2023 Raytheon BBN Technologies
+// Copyright (c) 2019-2023 RTX BBN Technologies
 // All rights reserved.
 
 package com.bbn.parliament.util;

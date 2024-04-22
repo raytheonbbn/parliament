@@ -53,11 +53,11 @@ You will need Apache Ant version 1.10.12 or later\urlcite{http://ant.apache.org/
 
 Once you have these prerequisites installed, you can clone the \ac{pmnt} code base from here:
 \begin{quote}
-	\url{https://github.com/raytheonbbn/parliament}
+	\url{https://github.com/\githubOrg/parliament}
 \end{quote}
 Because GitHub limits repository size, \acp{pmnt} does not include larger binary files that are required by the build.  To supply these, download this archive:
 \begin{quote}\sloppy
-	\url{https://github.com/raytheonbbn/parliament/releases/download/dependencies-«latest-date»/parliament-dependencies-«latest-date».zip}
+	\url{https://github.com/\githubOrg/parliament/releases/download/dependencies-«latest-date»/parliament-dependencies-«latest-date».zip}
 \end{quote}
 and expand it in the \path|dependencies| subdirectory of your clone.  (You can find the latest date by viewing the Releases page for \ac{pmnt} on GitHub.)
 
@@ -69,6 +69,46 @@ The \ac{pmnt} code base includes Eclipse projects for all of its Java and C++ co
 To setup Eclipse, you need one of the 2021 (or later) quarterly releases of the Eclipse \ac{ide} for Java Developers, plus the \ac{cdt}.  One way to acquire this set of components is to download the Eclipse \ac{ide} for Java\urlcite{http://www.eclipse.org/}, install it, and use its ``Install New Software'' menu item to download and install the \ac{cdt}.  The procedure for this changes a bit between Eclipse releases, but you can find instructions on the \ac{cdt} web site\urlcite{http://www.eclipse.org/cdt/}.
 
 To use Eclipse with your \ac{pmnt} working copy, first choose (or create) an Eclipse workspace.  Then import all existing projects from within your \ac{pmnt} working copy.  To do so, choose Import from the File menu and select ``Existing Projects into Workspace'' under the General category.  Press the Next button, and enter the root directory of your \ac{pmnt} working copy in the ``Select root directory'' box.  Press the Select All button, make sure that ``Copy projects into workspace'' is unchecked, and press the Finish button.  At this point all of the \ac{pmnt} projects will be displayed in the Package Explorer view.
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Building \acs*{lmdb}}
+\label{sec:BuildingLMDB}
+
+\ac{pmnt} uses \ac{lmdb}\urlcite{http://www.lmdb.tech/doc/}, an embedded database manager from the OpenLDAP Project\urlcite{https://www.openldap.org/project/}.  \ac{lmdb} is licensed under BSD-style license called the OpenLDAP Public License\urlcite{https://www.openldap.org/software/release/license.html}.  The following procedures are based on \ac{lmdb} version \lmdbversion.
+
+\subsection{Building \ac{lmdb} for Windows}
+
+\subsection{Building \ac{lmdb} for Macintosh}
+
+Navigate to the releases page of \acp{lmdb} GitHub site\urlcite{https://github.com/LMDB/lmdb/releases}. Click the Tags button and download version \lmdbversion. Expand the archive in a convenient location and switch to the \path|libraries/liblmdb| subdirectory. Issue this command:
+\begin{verbatim}
+make XCFLAGS="-arch x86_64,arm64" CC=clang SOEXT=.dylib \
+   prefix=lmdb-0.9.31 install
+\end{verbatim}
+Then install the built library files like so:
+\begin{verbatim}
+sudo cp -R lmdb-0.9.31 /opt
+\end{verbatim}
+
+
+
+The \verb|CFLAGS| setting above causes the build to produce universal binaries.  Once you have built and installed Berkeley DB, define the following environment variable so that the \ac{pmnt} build infrastructure can find the libraries:
+\begin{verbatim}
+export LMDB_HOME=/opt/lmdb-0.9.31
+\end{verbatim}
+
+\subsection{Building \ac{lmdb} for Linux}
+
+
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Building Berkeley DB}
@@ -132,16 +172,16 @@ We emphasize libraries that work well with the C++ Standard Library. Boost libra
 We aim to establish ``existing practice'' and provide reference implementations so that Boost libraries are suitable for eventual standardization. Ten Boost libraries are already included in the \href{http://www.open-std.org/jtc1/sc22/wg21/}{C++ Standards Committee's} Library Technical Report (\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1745.pdf}{TR1}) and in the new C++11 Standard.  C++11 also includes several more Boost libraries in addition to those from TR1.  More Boost libraries are proposed for standardization in C++17.
 \end{quote}
 
-To get started, download the Boost source distribution (version 1.84.0 or later) from the Boost web site.  Unpack this to a handy location on your disk.  This location may be anywhere you like.  Define this environment variable pointing there:
+To get started, download the Boost source distribution (version \boostversion{.} or later) from the Boost web site.  Unpack this to a handy location on your disk.  This location may be anywhere you like.  Define this environment variable pointing there:
 
 {
 	%\renewcommand{\arraystretch}{1.5}
 	\renewcommand{\tabcolsep}{0pt}
 	\begin{tabular}{l@{\hspace{2em}}l}
-		\verb|set BOOST_ROOT=C:\boost_1_84_0|
-			& (on Windows)\\
-		\verb|export BOOST_ROOT=~/boost_1_84_0|
+		\texttt{export BOOST\_ROOT=\char`~/boost\_\boostversion{\_}}
 			& (on Macintosh and Linux)\\
+		\texttt{set BOOST\_ROOT=C:\textbackslash{}boost\_\boostversion{\_}}
+			& (on Windows)\\
 	\end{tabular}
 }
 

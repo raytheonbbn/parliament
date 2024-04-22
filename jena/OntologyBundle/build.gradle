@@ -1,34 +1,33 @@
 plugins {
-	id 'com.gradle.plugin-publish' version '1.2.1'
 	id 'java-gradle-plugin'
+	id 'com.gradle.plugin-publish' version '1.2.1'
+	id 'signing'
+	//id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
 repositories {
 	mavenCentral()
-	mavenLocal()
 }
 
 dependencies {
 	implementation "$commonsCsvDependency"
-	//implementation "$jenaCmdsDependency"
 	implementation "org.apache.jena:jena-cmds:$jena4Version"
 	implementation "$sparqlQueryBuilderDependency"
-	//implementation project(':jena:SparqlQueryBuilder')
 
 	testImplementation gradleTestKit()
 }
 
-version = '0.1.0'
+version = '1.0.0'
 
 gradlePlugin {
-	website = 'https://github.com/raytheonbbn/parliament/tree/jena-update/jena/OntologyBundle'
-	vcsUrl = 'https://github.com/raytheonbbn/parliament/tree/jena-update/jena/OntologyBundle'
+	website = "https://github.com/${githubOrg}/parliament/tree/jena-update/jena/OntologyBundle"
+	vcsUrl = "https://github.com/${githubOrg}/parliament/tree/jena-update/jena/OntologyBundle"
 
 	plugins {
 		ontologyBundle {
 			id = 'com.bbn.parliament.ontology-bundle'
 			displayName = 'Ontology Bundle'
-			description = 'A Gradle plugin that packages (bundles) an OWL ontology into a form that makes it easy to use in a Java-based software project'
+			description = 'A Gradle plugin to package (bundle) an OWL ontology in a jar to make it easy to use in Java-based software projects'
 			tags.set([ 'ontology', 'OWL', 'RDF', 'Semantic Web' ])
 			implementationClass = 'com.bbn.parliament.ontology_bundle.OntologyBundlePlugin'
 		}

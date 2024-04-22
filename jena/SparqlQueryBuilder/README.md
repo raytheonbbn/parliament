@@ -10,4 +10,4 @@ CONSTRUCT queries, i.e., SPARQL-update is not supported.
 
 Adapted from code written by Matt Allen.
 
-Copyright (c) 2019, 2020, 2023 Raytheon BBN Technologies Corp.
+Copyright (c) 2019, 2020, 2023 RTX BBN Technologies Corp.

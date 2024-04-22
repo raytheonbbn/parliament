@@ -1,4 +1,4 @@
-// Copyright (c) 2019, 2020, 2023 Raytheon BBN Technologies Corp.
+// Copyright (c) 2019, 2020, 2023 RTX BBN Technologies Corp.
 
 plugins {
 	id 'java-library'
@@ -40,8 +40,8 @@ publishing {
 			from components.java
 			pom {
 				name = 'SPARQL Query Builder'
-				description = "A Java library for manipulating SPARQL queries.${System.lineSeparator}Copyright © 2023 Raytheon BBN Technologies"
-				url = 'https://github.com/raytheonbbn/parliament/tree/jena-update/jena/SparqlQueryBuilder'
+				description = "A Java library for manipulating SPARQL queries.${System.lineSeparator}Copyright © 2023 RTX BBN Technologies"
+				url = "https://github.com/${githubOrg}/parliament/tree/jena-update/jena/SparqlQueryBuilder"
 				packaging = 'jar'
 				licenses {
 					license {
@@ -50,7 +50,7 @@ publishing {
 					}
 				}
 				organization {
-					name = 'Raytheon BBN Technologies'
+					name = 'RTX BBN Technologies'
 					url = 'https://bbn.com/'
 				}
 				developers {
@@ -66,21 +66,27 @@ publishing {
 					}
 				}
 				scm {
-					connection = 'scm:git:git@github.com:raytheonbbn/parliament.git'
-					developerConnection = 'scm:git:git@github.com:raytheonbbn/parliament.git'
-					url = 'https://github.com/raytheonbbn/parliament'
+					connection = "scm:git:git@github.com:${githubOrg}/parliament.git"
+					developerConnection = "scm:git:git@github.com:${githubOrg}/parliament.git"
+					url = "https://github.com/${githubOrg}/parliament"
 				}
 			}
 		}
 	}
 
 	repositories {
-		//mavenCentral()
-		mavenLocal()
+		maven {
+			name = 'SonatypeOssrhRepo'
+			url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+			credentials {
+				username "$sonatypeOssrhUser"
+				password "$sonatypeOssrhPassword"
+			}
+		}
+		//mavenLocal()
 	}
 }
 
 signing {
-	//sign publishing.publications.mavenJava
 	sign publishing.publications.SparqlQueryBuilder
 }

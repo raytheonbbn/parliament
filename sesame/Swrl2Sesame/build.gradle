@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Raytheon BBN Technologies Corp.
+// Copyright (c) 2023 RTX BBN Technologies Corp.
 
 plugins {
 	id 'java-library'
