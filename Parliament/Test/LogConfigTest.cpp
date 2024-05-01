@@ -76,11 +76,11 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultFileContainsDefaults)
 	BOOST_CHECK_EQUAL(defaults.logFileMinFreeSpace(), c.logFileMinFreeSpace());
 	BOOST_CHECK_EQUAL(defaults.logFileRotationTimePoint(), c.logFileRotationTimePoint());
 	BOOST_CHECK_EQUAL(defaults.logLevel(), c.logLevel());
-	BOOST_CHECK_EQUAL(defaults.logChannelLevels().size(), c.logChannelLevels().size());
+	BOOST_CHECK_EQUAL(size(defaults.logChannelLevels()), size(c.logChannelLevels()));
 	BOOST_CHECK(equal(begin(defaults.logChannelLevels()), end(defaults.logChannelLevels()), begin(c.logChannelLevels())));
 }
 
-static constexpr auto k_validTestConfig = u8R"~~~(
+static constexpr auto k_validTestConfig = R"~~~(
 # Parameters file for the Parliament core DLL
  	 # Parameters file for the Parliament core DLL
 
@@ -133,12 +133,12 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 	::std::map<string, string> expected;
 	expected["KbInstance"] = "ALL";
 	expected["StringToId"] = "ALL";
-	BOOST_CHECK_EQUAL(expected.size(), c.logChannelLevels().size());
+	BOOST_CHECK_EQUAL(size(expected), size(c.logChannelLevels()));
 	BOOST_CHECK(equal(begin(expected), end(expected), begin(c.logChannelLevels())));
 }
 
 // Note that the key 'logToFileMessedUp' is bad:
-static constexpr auto k_invalidTestConfig = u8R"~~~(
+static constexpr auto k_invalidTestConfig = R"~~~(
 # Parameters file for the Parliament core DLL
 
 logToConsole             = yes

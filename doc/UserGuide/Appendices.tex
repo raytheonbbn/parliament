@@ -13,7 +13,7 @@ This appendix is provided primarily to guide the developer who needs to update t
 \begin{enumerate}
 \item\label{step-download}Unzip the source code distribution for Berkeley DB version 5.3.28 to a directory of your choice on your local disk.  Unless otherwise specified, all paths mentioned below are relative to this location.
 
-\item In Visual Studio 2019, open this solution file:
+\item In Visual Studio 2022, open this solution file:
 	\begin{verbatim}
    build_windows\Berkeley_DB_vs2010.sln
 	\end{verbatim}
@@ -63,7 +63,7 @@ This appendix is provided primarily to guide the developer who needs to update t
 		\dirtree{.1 dependencies.
 			.2 bdb.
 			.3 include.
-			.3 msvc-14.2.
+			.3 msvc-14.3.
 			.4 32.
 			.4 64.
 		}
@@ -72,7 +72,7 @@ This appendix is provided primarily to guide the developer who needs to update t
 	\label{fig:bdbDirTree}
 \end{figure}
 
-\item Copy these files into the \path|msvc-14.2\32| directory created in Step~\ref{step-creates-dirs} above:
+\item Copy these files into the \path|msvc-14.3\32| directory created in Step~\ref{step-creates-dirs} above:
 \begin{verbatim}
    build_windows\Win32\Debug\libdb53d.dll
    build_windows\Win32\Debug\libdb53d.lib
@@ -82,7 +82,7 @@ This appendix is provided primarily to guide the developer who needs to update t
    build_windows\Win32\Release\libdb53.pdb
 \end{verbatim}
 
-\item Copy these files into the \path|msvc-14.2\64| directory created in Step~\ref{step-creates-dirs} above:
+\item Copy these files into the \path|msvc-14.3\64| directory created in Step~\ref{step-creates-dirs} above:
 \begin{verbatim}
    build_windows\x64\Debug\libdb53d.dll
    build_windows\x64\Debug\libdb53d.lib
@@ -101,7 +101,7 @@ This appendix is provided primarily to guide the developer who needs to update t
 \begin{verbatim}
    parliament-dependencies-YYYY-MM-DD.zip
 \end{verbatim}
-with the current date in the obvious location.
+using the current date in place of \path|YYYY-MM-DD|.
 
 \item Tag the repository with a command like the following:
 \begin{verbatim}

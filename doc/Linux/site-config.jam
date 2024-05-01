@@ -15,6 +15,7 @@ constant BoostVersionAbbrv : $(BoostVersionAbbrvAlternatives[1]) ;
 constant BdbVersion : [ os.environ BDB_VERSION ] ;
 constant LinuxDistro : [ os.environ LINUX_DISTRO ] ;
 
+constant COMPILER_ubuntu22 : gcc11 ;	# Ubuntu 22.04
 constant COMPILER_ubuntu20 : gcc9 ;		# Ubuntu 20.04
 constant COMPILER_ubuntu19 : gcc9 ;		# Ubuntu 19.10
 constant COMPILER_ubuntu18 : gcc7 ;		# Ubuntu 18.04
@@ -23,6 +24,7 @@ constant COMPILER_ubuntu16 : gcc54 ;	# Ubuntu 16.04
 constant COMPILER_centos7  : gcc48 ;	# CentOS 7
 constant COMPILER_centos8  : gcc8 ;		# CentOS 8
 constant COMPILER_rhel8    : gcc8 ;		# RHEL 8
+constant COMPILER_rhel9    : gcc11 ;	# RHEL 9
 constant COMPILER : $(COMPILER_$(LinuxDistro)) ;
 
 constant BoostPfx : <source>$(BoostDir)/stage-gcc-$(LinuxDistro)/lib/libboost_ ;
@@ -76,6 +78,20 @@ alias BoostChrono
 		$(Boost32DyRlsLibPfx)chrono$(Boost32DyRlsLibSfx)
 		$(Boost32StDbgLibPfx)chrono$(Boost32StDbgLibSfx)
 		$(Boost32StRlsLibPfx)chrono$(Boost32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+	;
+
+alias BoostContainer	# Used by Boost.JSON
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)container$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)container$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)container$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)container$(Boost64StRlsLibSfx)
+		$(Boost32DyDbgLibPfx)container$(Boost32DyDbgLibSfx)
+		$(Boost32DyRlsLibPfx)container$(Boost32DyRlsLibSfx)
+		$(Boost32StDbgLibPfx)container$(Boost32StDbgLibSfx)
+		$(Boost32StRlsLibPfx)container$(Boost32StRlsLibSfx)
 	:	# no default build
 	:	<include>$(BoostDir)
 	;

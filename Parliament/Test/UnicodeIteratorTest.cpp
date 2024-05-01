@@ -26,7 +26,7 @@ struct TestCase
 {
 	const char*			m_pUtf8Input;
 	const Utf16Char*	m_pUtf16Input;
-	const uint32*		m_pExpectedResult;
+	const Utf32Char*	m_pExpectedResult;
 };
 
 // Required to make BOOST_DATA_TEST_CASE happy:
@@ -531,7 +531,7 @@ BOOST_AUTO_TEST_SUITE(UnicodeIteratorTestSuite)
 
 template <typename t_char, typename t_FwdIter>
 void goodInputTestHelper(UnicodeIterator<t_char, t_FwdIter> iter, UnicodeIterator<t_char, t_FwdIter> end,
-	const uint32* pExpectedResult, bool strictConversion)
+	const Utf32Char* pExpectedResult, bool strictConversion)
 {
 	BOOST_REQUIRE((strictConversion && iter.canThrow()) || (!strictConversion && !iter.canThrow()));
 	BOOST_REQUIRE(!iter.errorOccurred() && !end.errorOccurred());

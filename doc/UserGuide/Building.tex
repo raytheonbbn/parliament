@@ -23,7 +23,7 @@ You will need an appropriate C++ compiler for each operating system on which you
 		\toprule
 		\textbf{Operating System} & \textbf{Compiler} & \textbf{Toolset} \\
 		\headingrule
-		Windows 10 (32- and 64-bit) & Visual Studio 2019 & msvc-14.2 \\
+		Windows 10 (32- and 64-bit) & Visual Studio 2022 & msvc-14.3 \\
 		\midrule
 		Mac OS X 10.15 Catalina (64-bit) & Xcode 12.4 & clang \\
 		\midrule
@@ -53,11 +53,11 @@ You will need Apache Ant version 1.10.12 or later\urlcite{http://ant.apache.org/
 
 Once you have these prerequisites installed, you can clone the \ac{pmnt} code base from here:
 \begin{quote}
-	\url{https://github.com/SemWebCentral/parliament}
+	\url{https://github.com/\githubOrg/parliament}
 \end{quote}
 Because GitHub limits repository size, \acp{pmnt} does not include larger binary files that are required by the build.  To supply these, download this archive:
 \begin{quote}\sloppy
-	\url{https://github.com/SemWebCentral/parliament/releases/download/dependencies-«latest-date»/parliament-dependencies-«latest-date».zip}
+	\url{https://github.com/\githubOrg/parliament/releases/download/dependencies-«latest-date»/parliament-dependencies-«latest-date».zip}
 \end{quote}
 and expand it in the \path|dependencies| subdirectory of your clone.  (You can find the latest date by viewing the Releases page for \ac{pmnt} on GitHub.)
 
@@ -69,6 +69,46 @@ The \ac{pmnt} code base includes Eclipse projects for all of its Java and C++ co
 To setup Eclipse, you need one of the 2021 (or later) quarterly releases of the Eclipse \ac{ide} for Java Developers, plus the \ac{cdt}.  One way to acquire this set of components is to download the Eclipse \ac{ide} for Java\urlcite{http://www.eclipse.org/}, install it, and use its ``Install New Software'' menu item to download and install the \ac{cdt}.  The procedure for this changes a bit between Eclipse releases, but you can find instructions on the \ac{cdt} web site\urlcite{http://www.eclipse.org/cdt/}.
 
 To use Eclipse with your \ac{pmnt} working copy, first choose (or create) an Eclipse workspace.  Then import all existing projects from within your \ac{pmnt} working copy.  To do so, choose Import from the File menu and select ``Existing Projects into Workspace'' under the General category.  Press the Next button, and enter the root directory of your \ac{pmnt} working copy in the ``Select root directory'' box.  Press the Select All button, make sure that ``Copy projects into workspace'' is unchecked, and press the Finish button.  At this point all of the \ac{pmnt} projects will be displayed in the Package Explorer view.
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Building \acs*{lmdb}}
+\label{sec:BuildingLMDB}
+
+\ac{pmnt} uses \ac{lmdb}\urlcite{http://www.lmdb.tech/doc/}, an embedded database manager from the OpenLDAP Project\urlcite{https://www.openldap.org/project/}.  \ac{lmdb} is licensed under BSD-style license called the OpenLDAP Public License\urlcite{https://www.openldap.org/software/release/license.html}.  The following procedures are based on \ac{lmdb} version \lmdbversion.
+
+\subsection{Building \ac{lmdb} for Windows}
+
+\subsection{Building \ac{lmdb} for Macintosh}
+
+Navigate to the releases page of \acp{lmdb} GitHub site\urlcite{https://github.com/LMDB/lmdb/releases}. Click the Tags button and download version \lmdbversion. Expand the archive in a convenient location and switch to the \path|libraries/liblmdb| subdirectory. Issue this command:
+\begin{verbatim}
+make XCFLAGS="-arch x86_64,arm64" CC=clang SOEXT=.dylib \
+   prefix=lmdb-0.9.31 install
+\end{verbatim}
+Then install the built library files like so:
+\begin{verbatim}
+sudo cp -R lmdb-0.9.31 /opt
+\end{verbatim}
+
+
+
+The \verb|CFLAGS| setting above causes the build to produce universal binaries.  Once you have built and installed Berkeley DB, define the following environment variable so that the \ac{pmnt} build infrastructure can find the libraries:
+\begin{verbatim}
+export LMDB_HOME=/opt/lmdb-0.9.31
+\end{verbatim}
+
+\subsection{Building \ac{lmdb} for Linux}
+
+
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Building Berkeley DB}
@@ -132,16 +172,16 @@ We emphasize libraries that work well with the C++ Standard Library. Boost libra
 We aim to establish ``existing practice'' and provide reference implementations so that Boost libraries are suitable for eventual standardization. Ten Boost libraries are already included in the \href{http://www.open-std.org/jtc1/sc22/wg21/}{C++ Standards Committee's} Library Technical Report (\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1745.pdf}{TR1}) and in the new C++11 Standard.  C++11 also includes several more Boost libraries in addition to those from TR1.  More Boost libraries are proposed for standardization in C++17.
 \end{quote}
 
-To get started, download the Boost source distribution (version 1.80.0 or later) from the Boost web site.  Unpack this to a handy location on your disk.  This location may be anywhere you like.  Define this environment variable pointing there:
+To get started, download the Boost source distribution (version \boostversion{.} or later) from the Boost web site.  Unpack this to a handy location on your disk.  This location may be anywhere you like.  Define this environment variable pointing there:
 
 {
 	%\renewcommand{\arraystretch}{1.5}
 	\renewcommand{\tabcolsep}{0pt}
 	\begin{tabular}{l@{\hspace{2em}}l}
-		\verb|set BOOST_ROOT=C:\boost_1_80_0|
-			& (on Windows)\\
-		\verb|export BOOST_ROOT=~/boost_1_80_0|
+		\texttt{export BOOST\_ROOT=\char`~/boost\_\boostversion{\_}}
 			& (on Macintosh and Linux)\\
+		\texttt{set BOOST\_ROOT=C:\textbackslash{}boost\_\boostversion{\_}}
+			& (on Windows)\\
 	\end{tabular}
 }
 
@@ -164,7 +204,7 @@ define=BOOST_LOG_WITHOUT_IPC define=BOOST_LOG_WITHOUT_DEBUG_OUTPUT
 define=BOOST_TEST_ALTERNATIVE_INIT_API
 define=BOOST_LOG_WITHOUT_SYSLOG toolset=msvc address-model=32,64
 architecture=x86 variant=debug,release link=shared,static
-runtime-link=shared cxxflags=/std:c++17 stage
+runtime-link=shared cxxflags=/std:c++20 stage
 \end{verbatim}}
 
 This will build the libraries in \path|stage-msvc/lib|.  The following commands will delete intermediate build products to save disk space:
@@ -192,7 +232,7 @@ define=BOOST_LOG_USE_STD_REGEX define=BOOST_LOG_WITHOUT_SYSLOG
 define=BOOST_LOG_WITHOUT_IPC define=BOOST_TEST_ALTERNATIVE_INIT_API
 toolset=clang address-model=64 architecture=x86
 variant=debug,release link=shared,static runtime-link=shared
-cxxflags="-std=c++17" linkflags="-std=c++17" stage
+cxxflags="-std=c++20" linkflags="-std=c++20" stage
 \end{verbatim}}
 
 This will build the libraries in \path|stage-clang/lib|.  The following commands will delete intermediate build products to save disk space:
@@ -245,8 +285,8 @@ b2 -q -j5 --disable-icu --ignore-site-config --layout=versioned
 define=BOOST_LOG_USE_STD_REGEX define=BOOST_LOG_WITHOUT_SYSLOG
 define=BOOST_LOG_WITHOUT_IPC define=BOOST_TEST_ALTERNATIVE_INIT_API
 toolset=gcc address-model=64 architecture=x86 variant=debug,release
-link=shared,static runtime-link=shared cxxflags=-std=c++17
-linkflags=-std=c++17 stage
+link=shared,static runtime-link=shared cxxflags=-std=c++20
+linkflags=-std=c++20 stage
 \end{verbatim}}
 
 This will build the libraries in \path|stage-gcc-$LINUX_DISTRO/lib|.  Run these commands will delete intermediate build products to save disk space:
@@ -300,15 +340,15 @@ Next we need to configure Boost.Build so that it can build \ac{pmnt}.  Start by 
 		\label{boost-test-log-level-values}
 	\end{table}
 
-	\item\verb|VS_ROOT|: \emph{(Windows only)} The root of your Visual Studio installation.  Usually \path|C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\|.
+	\item\verb|VS_ROOT|: \emph{(Windows only)} The root of your Visual Studio installation.  Usually \path|C:\Program Files\Microsoft Visual Studio\2022\Community\VC\|.
 
 	\item\verb|VS_BAT_PATH_32|: \emph{(Windows only)} The path to the batch file that sets up the environment for 32-bit builds.  Typically this is \path|%VS_ROOT%Auxiliary\Build\vcvarsamd64_x86.bat|.
 
 	\item\verb|VS_BAT_PATH_64|: \emph{(Windows only)} The path to the batch file that sets up the environment for 64-bit builds.  Typically this is \path|%VS_ROOT%Auxiliary\Build\vcvars64.bat|.
 
-	\item\verb|VS_REDIST_PATH_32|: \emph{(Windows only)} The path to the 32-bit redistributables installer.  Typically this is \path|%VS_ROOT%Redist\MSVC\14.27.29016\vc_redist.x86.exe|.
+	\item\verb|VS_REDIST_PATH_32|: \emph{(Windows only)} The path to the 32-bit redistributables installer.  Typically this is \path|%VS_ROOT%Redist\MSVC\v143\vc_redist.x86.exe|.
 
-	\item\verb|VS_REDIST_PATH_64|: \emph{(Windows only)} The path to the 64-bit redistributables installer.  Typically this is \path|%VS_ROOT%Redist\MSVC\14.27.29016\vc_redist.x64.exe|.
+	\item\verb|VS_REDIST_PATH_64|: \emph{(Windows only)} The path to the 64-bit redistributables installer.  Typically this is \path|%VS_ROOT%Redist\MSVC\v143\vc_redist.x64.exe|.
 \end{itemize}
 
 Next we create two Boost.Build configuration files, \path|site-config.jam| and \path|user-config.jam|.  Boost.Build reads these files on startup.  The two are separate so that the first one can be installed and maintained by a system administrator, and the second by the individual user.  These files can be placed in a number of locations. Table~\ref{boost-build-config-search} explains where Boost.Build searches to find these files.

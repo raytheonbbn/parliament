@@ -14,7 +14,7 @@ constant BoostVersionAbbrvAlternatives : [ MATCH "([0-9]+_[0-9]+)_0" "([0-9]+_[0
 constant BoostVersionAbbrv : $(BoostVersionAbbrvAlternatives[1]) ;
 constant BdbVersion : [ os.environ BDB_VERSION ] ;
 
-constant Compiler : clang-darwin14 ;
+constant Compiler : clang-darwin15 ;
 
 #constant Arch : x32_64 ;
 #constant Arch : a64 ;
@@ -55,6 +55,16 @@ alias BoostChrono
 		$(BoostDyRlsLibPfx)chrono$(BoostDyRlsLibSfx)
 		$(BoostStDbgLibPfx)chrono$(BoostStDbgLibSfx)
 		$(BoostStRlsLibPfx)chrono$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+	;
+
+alias BoostContainer	# Used by Boost.JSON
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)container$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)container$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)container$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)container$(BoostStRlsLibSfx)
 	:	# no default build
 	:	<include>$(BoostDir)
 	;

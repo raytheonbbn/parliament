@@ -42,7 +42,6 @@ using ::std::endl;
 using ::std::make_pair;
 using ::std::make_shared;
 using ::std::make_unique;
-using ::std::move;
 using ::std::ostream;
 using ::std::shared_ptr;
 using ::std::string;
@@ -81,19 +80,19 @@ void pmnt::RuleAtom::print(ostream& s, const KbInstance* pKB) const
 bool pmnt::SWRLBuiltinRuleAtom::evaluate(KbInstance* pKB, BindingList& bindingList) const
 {
 	const auto argCountLimits = getArgCountLimits();
-	if (getAtomSlotList().size() < argCountLimits.m_min)
+	if (size(getAtomSlotList()) < argCountLimits.m_min)
 	{
 		PMNT_LOG(g_log, log::Level::warn) << format(
 			"SWRL built-in '%1%' requires at least %2% arguments, but has only %3%")
-			% convertFromRsrcChar(m_id) % argCountLimits.m_min % getAtomSlotList().size();
+			% convertFromRsrcChar(m_id) % argCountLimits.m_min % size(getAtomSlotList());
 		return false;
 	}
 	else if (argCountLimits.m_max != ArgCountLimits::k_unbounded
-		&& getAtomSlotList().size() > argCountLimits.m_max)
+		&& size(getAtomSlotList()) > argCountLimits.m_max)
 	{
 		PMNT_LOG(g_log, log::Level::warn) << format(
 			"SWRL built-in '%1%' takes at most %2% arguments, but has %3%")
-			% convertFromRsrcChar(m_id) % argCountLimits.m_max % getAtomSlotList().size();
+			% convertFromRsrcChar(m_id) % argCountLimits.m_max % size(getAtomSlotList());
 		return false;
 	}
 
@@ -334,7 +333,7 @@ void pmnt::RuleEngine::setTriggers(RuleIndex ruleIdx)
 	}
 
 	PMNT_LOG(g_log, log::Level::debug) << format("Setting triggers for %1% atoms")
-		% m_ruleList[ruleIdx]->getBody().size();
+		% size(m_ruleList[ruleIdx]->getBody());
 
 	auto beginIt = cbegin(m_ruleList[ruleIdx]->getBody());
 	auto endIt = cend(m_ruleList[ruleIdx]->getBody());
@@ -422,7 +421,7 @@ void pmnt::RuleEngine::checkBuiltinTriggers(ResourceId rsrcId, const Statement& 
 //		{
 //			PMNT_LOG(g_log, log::Level::debug) << "checkStatementAddBinding successful";
 //			pFCNode->getMatchList()[trigger.m_atomIdx] = true;
-//			traverseFwdChainTree(move(pFCNode));
+//			traverseFwdChainTree(::std::move(pFCNode));
 //		}
 //		else
 //		{
@@ -453,7 +452,7 @@ void pmnt::RuleEngine::checkTriggers(const RuleTriggerMap& triggerMap,
 		{
 			PMNT_LOG(g_log, log::Level::debug) << "checkStatementAddBinding successful";
 			pFCNode->getMatchList()[trigger.m_atomIdx] = true;
-			traverseFwdChainTree(move(pFCNode));
+			traverseFwdChainTree(::std::move(pFCNode));
 		}
 		else
 		{
@@ -478,7 +477,7 @@ void pmnt::RuleEngine::addRule(shared_ptr<Rule> pNewRule)
 	{
 		//create fcNode having no bindings and no matched atoms
 		auto fcNode = make_unique<FwdChainNode>(pNewRule);
-		traverseFwdChainTree(move(fcNode));
+		traverseFwdChainTree(::std::move(fcNode));
 	}
 }
 
@@ -557,7 +556,7 @@ void pmnt::RuleEngine::expandFwdChainNode(FwdChainNode& fcNode)
 		pFCNode->getMatchList()[nextAtomIdx] = true;
 		if (checkStatementAddBinding(atom, iter.statement(), pFCNode->getBindingList()))
 		{
-			m_fwdChainList.push_back(move(pFCNode));
+			m_fwdChainList.push_back(::std::move(pFCNode));
 		}
 	}
 
@@ -567,13 +566,13 @@ void pmnt::RuleEngine::expandFwdChainNode(FwdChainNode& fcNode)
 void pmnt::RuleEngine::traverseFwdChainTree(FwdChainNodePtr pRootFCNode)
 {
 	//setup fcNodeList
-	m_fwdChainList.push_back(move(pRootFCNode));
+	m_fwdChainList.push_back(::std::move(pRootFCNode));
 
 	PMNT_LOG(g_log, log::Level::debug) << "traverseFwdChainNode";
 
 	//main fcNode loop
 	while (!m_fwdChainList.empty()) {
-		auto pFCNode = move(m_fwdChainList.back());
+		auto pFCNode = ::std::move(m_fwdChainList.back());
 		m_fwdChainList.pop_back();
 		expandFwdChainNode(*pFCNode);
 	}

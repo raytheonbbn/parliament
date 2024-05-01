@@ -516,6 +516,15 @@
 			<os family="mac"/>
 		</condition>
 
+		<!-- Fixes a bug in jsvc code (see https://bugs.gentoo.org/918912). -->
+		<exec executable="sed" dir="${untarPath}/unix/native">
+			<arg value="-E"/>
+			<arg value="-i"/>
+			<arg value=".bak"/>
+			<arg value="s~act.sa_handler = controller;~act.sa_sigaction = controller;~"/>
+			<arg value="jsvc-unix.c"/>
+		</exec>
+
 		<chmod file="${untarPath}/unix/configure" perm="ugo+rx"
 			osfamily="unix" verbose="true"/>
 		<exec executable="./configure" dir="${untarPath}/unix">

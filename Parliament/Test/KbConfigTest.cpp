@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultFileContainsDefaults)
 	BOOST_CHECK_EQUAL(defaults.inferOwlThing(), c.inferOwlThing());
 }
 
-static constexpr auto k_validTestConfig = u8R"~~~(
+static constexpr auto k_validTestConfig = R"~~~(
 # Parameters file for the Parliament core DLL
  	 # Parameters file for the Parliament core DLL
 
@@ -234,7 +234,7 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 }
 
 // Note that the key 'stmtFileNameMessedUp' is bad:
-static constexpr auto k_invalidTestConfig = u8R"~~~(
+static constexpr auto k_invalidTestConfig = R"~~~(
 # Parameters file for the Parliament core DLL
 
 kbDirectoryPath      = ./subdir

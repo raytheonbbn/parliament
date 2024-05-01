@@ -45,10 +45,8 @@ using uintPtr	= ::std::uintptr_t;
 // (Note that we use char and ::std::string for UTF-8.)
 // ===========================================================================
 
-//TODO: Once the std lib implements streams for char16_t and char32_t, change these to
-// these types.  Also requires many casts for the unsigned-to-signed switch.
-using Utf16Char = uint16;
-using Utf32Char = uint32;
+using Utf16Char = char16_t;
+using Utf32Char = char32_t;
 
 using Utf16StringView = ::std::basic_string_view<Utf16Char>;
 using Utf32StringView = ::std::basic_string_view<Utf32Char>;

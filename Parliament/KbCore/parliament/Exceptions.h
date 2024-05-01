@@ -44,7 +44,7 @@ public:
 	PARLIAMENT_EXPORT Exception& operator=(const Exception& rhs) noexcept;
 	PARLIAMENT_EXPORT ~Exception() override;
 
-	const char* what() const noexcept override { return m_msg.data(); }
+	const char* what() const noexcept override { return data(m_msg); }
 
 	PARLIAMENT_EXPORT static SysErrCode getSysErrCode() noexcept;
 	PARLIAMENT_EXPORT static ::std::string getSysErrMsg(SysErrCode errCode);
@@ -77,6 +77,14 @@ public:
 	UsageException(const char* pMsg) noexcept : Exception(pMsg) {}
 	UsageException(const ::std::string& msg) noexcept : Exception(msg) {}
 	UsageException(const ::boost::format& fmt) : Exception(fmt) {}
+};
+
+class NON_WINDOWS_PARLIAMENT_EXPORT NumericConversionException : public Exception
+{
+public:
+	NumericConversionException(const char* pMsg) noexcept : Exception(pMsg) {}
+	NumericConversionException(const ::std::string& msg) noexcept : Exception(msg) {}
+	NumericConversionException(const ::boost::format& fmt) : Exception(fmt) {}
 };
 
 }	// namespace end

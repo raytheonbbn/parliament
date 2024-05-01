@@ -92,7 +92,7 @@ inline const char* JStringAccessor<char>::getStringChars(JNIEnv* pEnv, jstring s
 template<>
 inline const Utf16Char* JStringAccessor<Utf16Char>::getStringChars(JNIEnv* pEnv, jstring str, jboolean& isCopy)
 {
-	return pEnv->GetStringCritical(str, &isCopy);
+	return reinterpret_cast<const Utf16Char*>(pEnv->GetStringCritical(str, &isCopy));
 }
 
 template<>
@@ -104,7 +104,7 @@ inline void JStringAccessor<char>::releaseStringChars(JNIEnv* pEnv, jstring str,
 template<>
 inline void JStringAccessor<Utf16Char>::releaseStringChars(JNIEnv* pEnv, jstring str, const Utf16Char* pStr)
 {
-	pEnv->ReleaseStringCritical(str, pStr);
+	pEnv->ReleaseStringCritical(str, reinterpret_cast<const jchar*>(pStr));
 }
 
 template<>
@@ -233,7 +233,7 @@ inline jstring JNIHelper::newString(JNIEnv* pEnv, const char* pStr)
 template<>
 inline jstring JNIHelper::newString(JNIEnv* pEnv, const Utf16Char* pStr)
 {
-	return pEnv->NewString(pStr,
+	return pEnv->NewString(reinterpret_cast<const jchar*>(pStr),
 		static_cast<jsize>(::std::char_traits<Utf16Char>::length(pStr)));
 }
 

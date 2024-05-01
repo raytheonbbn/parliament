@@ -14,7 +14,8 @@ constant BoostVersionAbbrvAlternatives : [ MATCH "([0-9]+_[0-9]+)_0" "([0-9]+_[0
 constant BoostVersionAbbrv : $(BoostVersionAbbrvAlternatives[1]) ;
 constant BdbVersion : [ os.environ BDB_VERSION ] ;
 
-constant COMPILER : vc142 ;
+constant COMPILER : vc143 ;
+#constant COMPILER : vc142 ;
 #constant COMPILER : vc141 ;
 #constant COMPILER : vc140 ;
 #constant COMPILER : vc120 ;
@@ -22,7 +23,8 @@ constant COMPILER : vc142 ;
 #constant COMPILER : vc100 ;
 #constant COMPILER : vc90 ;
 
-constant BdbLibDir : $(BdbDir)/msvc-14.2 ;
+constant BdbLibDir : $(BdbDir)/msvc-14.3 ;
+#constant BdbLibDir : $(BdbDir)/msvc-14.2 ;
 
 constant BoostLibDir : $(BoostDir)/stage-msvc/lib ;
 
@@ -86,6 +88,24 @@ alias BoostChrono
 	:	# no default build
 	:	<include>$(BoostDir)
 		<link>shared:<define>BOOST_CHRONO_DYN_LINK
+		<define>_SCL_SECURE_NO_WARNINGS
+		<library-path>$(BoostLibDir)
+		<dll-path>$(BoostLibDir)
+	;
+
+alias BoostContainer	# Used by Boost.JSON
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)container$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)container$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)container$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)container$(Boost64StRlsLibSfx)
+		$(Boost32DyDbgLibPfx)container$(Boost32DyDbgLibSfx)
+		$(Boost32DyRlsLibPfx)container$(Boost32DyRlsLibSfx)
+		$(Boost32StDbgLibPfx)container$(Boost32StDbgLibSfx)
+		$(Boost32StRlsLibPfx)container$(Boost32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+		<link>shared:<define>BOOST_CONTAINER_DYN_LINK
 		<define>_SCL_SECURE_NO_WARNINGS
 		<library-path>$(BoostLibDir)
 		<dll-path>$(BoostLibDir)
