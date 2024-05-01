@@ -1,0 +1,92 @@
+# Parliament is licensed under the BSD License from the Open Source
+# Initiative, http://www.opensource.org/licenses/bsd-license.php
+#
+# Copyright (c) 2024, BBN Technologies, Inc.
+# All rights reserved.
+
+# b2 -q toolset=clang address-model=64 architecture=arm+x86 variant=release
+
+#import os ;
+
+project /LMDB
+	: build-dir bb-bin
+	: default-build release
+	;
+
+constant Version : 0.9.31 ;
+path-constant DestDir : lmdb-$(Version) ;
+path-constant BinDir : $(DestDir)/bin ;
+path-constant LibDir : $(DestDir)/lib ;
+path-constant IncludeDir : $(DestDir)/include ;
+path-constant DocDir : $(DestDir)/share/man/man1 ;
+path-constant SrcDir : lmdb-LMDB_$(Version)/libraries/liblmdb ;
+
+#InstallLocation = [ os.environ NATIVE_CODE_INSTALL_DIR ] ;
+#InstallLocation ?= $(JamRootDir)/target/drop-box ;
+
+alias install : headers docs install-lmdb-lib install-lmdb-exe ;
+
+install headers
+	: $(SrcDir)/lmdb.h
+	: <location>$(IncludeDir)
+	;
+
+install docs
+	: [ glob $(SrcDir)/*.1 ]
+	: <location>$(DocDir)
+	;
+
+install install-lmdb-lib
+	:	lmdb/<link>static lmdb/<link>shared
+	:	<location>$(LibDir)
+	:	# default build
+	:	# usage requirements
+	;
+
+install install-lmdb-exe
+	:	mdb_stat mdb_copy mdb_dump mdb_load
+	:	<location>$(BinDir)
+	:	# default build
+	:	# usage requirements
+	;
+
+lib lmdb
+	:	$(SrcDir)/mdb.c $(SrcDir)/midl.c
+	:	<include>.
+		<visibility>hidden
+		<threading>multi
+	:	# default build
+	:	<include>.
+	;
+
+exe mdb_stat
+	:	$(SrcDir)/mdb_stat.c
+		/LMDB//lmdb/<link>static
+	:	<include>.
+		<visibility>hidden
+		<threading>multi
+	;
+
+exe mdb_copy
+	:	$(SrcDir)/mdb_copy.c
+		/LMDB//lmdb/<link>static
+	:	<include>.
+		<visibility>hidden
+		<threading>multi
+	;
+
+exe mdb_dump
+	:	$(SrcDir)/mdb_dump.c
+		/LMDB//lmdb/<link>static
+	:	<include>.
+		<visibility>hidden
+		<threading>multi
+	;
+
+exe mdb_load
+	:	$(SrcDir)/mdb_load.c
+		/LMDB//lmdb/<link>static
+	:	<include>.
+		<visibility>hidden
+		<threading>multi
+	;
