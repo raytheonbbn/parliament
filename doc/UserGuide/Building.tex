@@ -71,34 +71,6 @@ To setup Eclipse, you need one of the 2021 (or later) quarterly releases of the 
 To use Eclipse with your \ac{pmnt} working copy, first choose (or create) an Eclipse workspace.  Then import all existing projects from within your \ac{pmnt} working copy.  To do so, choose Import from the File menu and select ``Existing Projects into Workspace'' under the General category.  Press the Next button, and enter the root directory of your \ac{pmnt} working copy in the ``Select root directory'' box.  Press the Select All button, make sure that ``Copy projects into workspace'' is unchecked, and press the Finish button.  At this point all of the \ac{pmnt} projects will be displayed in the Package Explorer view.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Building \acs*{lmdb}}
-\label{sec:BuildingLMDB}
-
-\ac{pmnt} uses \ac{lmdb}\urlcite{http://www.lmdb.tech/doc/}, an embedded database manager from the OpenLDAP Project\urlcite{https://www.openldap.org/project/}.  \ac{lmdb} is licensed under a BSD-style license called the OpenLDAP Public License\urlcite{https://www.openldap.org/software/release/license.html}.  The following procedures are based on \ac{lmdb} version \lmdbversion.
-
-Navigate to the releases page of \acp{lmdb} GitHub site\urlcite{https://github.com/LMDB/lmdb/releases}. Click the Tags button and download version \lmdbversion. Switch to the \path|lmdb| directory of your \ac{pmnt} working copy and expand the archive there. Issue these commands:
-
-{
-	%\renewcommand{\arraystretch}{1.5}
-	\renewcommand{\tabcolsep}{0pt}
-	\begin{tabular}{p{8cm}@{\hspace{2em}}l}
-		\texttt{b2 address-model=64 \textbackslash{}\newline
-				\hspace*{2em}architecture=arm+x86 release}
-			& (on Macintosh)\\
-		\texttt{b2 release}
-			& (on Linux and Windows)\\
-	\end{tabular}
-}
-
-Then install the built library files like so:
-
-\texttt{sudo cp -R lmdb-\lmdbversion{} /opt}
-
-Once you have built and installed Berkeley DB, define the following environment variable so that the \ac{pmnt} build infrastructure can find the libraries:
-
-\texttt{export LMDB\_HOME=/opt/lmdb-\lmdbversion}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Building Berkeley DB}
 \label{sec:BuildingBerkeleyDB}
 
@@ -371,6 +343,57 @@ Next we create two Boost.Build configuration files, \path|site-config.jam| and \
 Some people prefer to keep these files together with their Boost.Build installation, placing them in \verb|BOOST_BUILD_PATH|.  There are example \path|site-config.jam| and \path|user-config.jam| files in that directory, and so you will have to replace (or rename) them if you choose this option.  Others prefer to separate the configuration files from the Boost.Build installation so that they can update to a new version of Boost.Build without having to first save \path|site-config.jam| and \path|user-config.jam| and then restore them after the update is complete.  On Windows, using the \verb|HOME| location requires defining the environment variable \verb|HOME|, because Windows does not define it by default.
 
 Within your working copy of the \ac{pmnt} repository, in the directories \path|doc/MacOS|, \path|doc/Windows|, and \path|doc/Linux|, you will find example configuration files for Macintosh, Windows, and Linux respectively that you can copy and customize.  The most important customization that you need to make is to remove (or comment out) any lines in \path|user-config.jam| for compiler versions that you have not installed.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Building \acs*{lmdb}}
+\label{sec:BuildingLMDB}
+
+\ac{pmnt} uses \ac{lmdb}\urlcite{http://www.lmdb.tech/doc/}, an embedded database manager from the OpenLDAP Project\urlcite{https://www.openldap.org/project/}.  \ac{lmdb} is licensed under the BSD-style OpenLDAP Public License\urlcite{https://www.openldap.org/software/release/license.html}.  The following procedures are based on \ac{lmdb} version \lmdbversion.
+
+\ac{lmdb} naturally has its own build infrastructure, but it is awkward to use on Windows, and does not produce universal ARM+X86 executables on Mac OS, so \ac{pmnt} includes a build of its own for \ac{lmdb}. This section details how to use it to create \ac{lmdb} libraries for use with \ac{pmnt}.
+
+Navigate to the releases page of \acp{lmdb} GitHub site\urlcite{https://github.com/LMDB/lmdb/releases}. Click the Tags button and download version \lmdbversion. Switch to the \path|lmdb| directory of your \ac{pmnt} working copy and expand the archive there. Issue this command:
+
+{
+	%\renewcommand{\arraystretch}{1.5}
+	\renewcommand{\tabcolsep}{0pt}
+	\begin{tabular}{p{8cm}@{\hspace{2em}}l}
+		\texttt{b2 address-model=64 \textbackslash{}\newline
+				\hspace*{2em}architecture=arm+x86 release}
+			& (Macintosh)\\
+		\texttt{b2 release}
+			& (Linux or Windows)\\
+	\end{tabular}
+}
+
+Then install the built library files like so:
+
+{
+	%\renewcommand{\arraystretch}{1.5}
+	\renewcommand{\tabcolsep}{0pt}
+	\begin{tabular}{p{8cm}@{\hspace{2em}}l}
+		\texttt{sudo cp -R lmdb-\lmdbversion{} /opt}
+			& (Macintosh or Linux)\\
+		\texttt{xcopy /e/i lmdb-\lmdbversion{} \textbackslash{}\newline
+				\hspace*{2em}\%APPDATA\%\textbackslash{}lmdb-\lmdbversion}
+			& (Windows)\\
+	\end{tabular}
+}
+
+Once you have installed Berkeley DB, define the following environment variable so that \acp{pmnt} build infrastructure can find the libraries:
+
+{
+	%\renewcommand{\arraystretch}{1.5}
+	\renewcommand{\tabcolsep}{0pt}
+	\begin{tabular}{p{8cm}@{\hspace{2em}}l}
+		\texttt{export LMDB\_HOME=/opt/lmdb-\lmdbversion}
+			& (Macintosh or Linux)\\
+		\texttt{set LMDB\_HOME=\%APPDATA\%\textbackslash{}lmdb-\lmdbversion}
+			& (Windows)\\
+	\end{tabular}
+}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Building \ac{pmnt} Itself}
