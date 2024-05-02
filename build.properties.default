@@ -25,9 +25,11 @@ nativeBuildParams=toolset=msvc address-model=64 variant=release
 nativeBuildParams=toolset=msvc address-model=32 variant=release
 
 #nativeBuildParams=toolset=clang address-model=64 architecture=arm+x86 variant=debug
-#nativeBuildParams=toolset=clang address-model=64 architecture=arm+x86 variant=release
+nativeBuildParams=toolset=clang address-model=64 architecture=arm+x86 variant=release
 #nativeBuildParams=toolset=clang address-model=64 architecture=x86 variant=debug
-nativeBuildParams=toolset=clang address-model=64 architecture=x86 variant=release
+#nativeBuildParams=toolset=clang address-model=64 architecture=x86 variant=release
+#nativeBuildParams=toolset=clang address-model=64 architecture=arm variant=debug
+#nativeBuildParams=toolset=clang address-model=64 architecture=arm variant=release
 
 #nativeBuildParams=toolset=gcc address-model=64 variant=debug
 nativeBuildParams=toolset=gcc address-model=64 variant=release
