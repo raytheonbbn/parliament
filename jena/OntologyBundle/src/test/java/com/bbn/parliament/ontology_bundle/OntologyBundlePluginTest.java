@@ -23,7 +23,7 @@ public class OntologyBundlePluginTest {
 		Project project = ProjectBuilder.builder()
 			.withName("ont-bundle-test")
 			.build();
-		project.getPlugins().apply("com.bbn.parliament.ontology-bundle");
+		project.getPlugins().apply("com.bbn.parliament.OntologyBundle");
 
 		// Verify the result
 		assertNotNull(project.getTasks().findByName(OntologyBundlePlugin.PREP_ONT_TASK));

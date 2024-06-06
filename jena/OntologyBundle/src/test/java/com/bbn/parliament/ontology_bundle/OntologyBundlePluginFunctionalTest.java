@@ -31,13 +31,13 @@ public class OntologyBundlePluginFunctionalTest {
 		""";
 	private static final String BUILD_GRADLE = """
 		plugins {
-			id 'com.bbn.parliament.ontology-bundle'
+			id 'com.bbn.parliament.OntologyBundle'
 		}
 
 		group = 'com.bbn.parliament.test'
 		version = '0.1.0'
 
-		ontologyBundle {
+		OntologyBundle {
 			prefixes = [
 				// prefix, class (blank for none), namespace
 				%1$s
@@ -50,7 +50,7 @@ public class OntologyBundlePluginFunctionalTest {
 				includes: [ '%2$s' ],
 				//exclude: '**/*-original*'
 			)
-			ontologyIri = 'http://bbn.com/ix/ontology-bundle/functional-test'
+			ontologyIri = 'http://bbn.com/ix/OntologyBundle/FunctionalTest'
 			generatedCodePackageName = 'com.bbn.parliament.ontology_bundle.functional_test'
 		}
 		""";

@@ -68,7 +68,7 @@ public class OntologyBundleExtension {
 		prefixes = objFact.listProperty(String.class);
 		schemagenConfigFile = objFact.fileProperty();
 		reportDir = objFact.directoryProperty()
-			.convention(buildDir.dir("reports/ontologyBundle"));
+			.convention(buildDir.dir("reports/OntologyBundle"));
 		ontologySources = objFact.fileCollection();
 		ontologyIri = objFact.property(String.class);
 		generatedCodePackageName = objFact.property(String.class);
@@ -155,7 +155,7 @@ public class OntologyBundleExtension {
 
 	/**
 	 * The directory into which Ontology Bundle will generate reports. By default,
-	 * this is set to {@code build/reports/ontologyBundle} relative to the project
+	 * this is set to {@code build/reports/OntologyBundle} relative to the project
 	 * directory.
 	 *
 	 * @return The directory used for reporting
@@ -169,7 +169,7 @@ public class OntologyBundleExtension {
 	 * powerful facilities for specifying this conveniently. For instance:
 	 *
 	 * <pre>{@code
-	 *    ontologyBundle {
+	 *    OntologyBundle {
 	 *       ...
 	 *
 	 *       ontologySources = fileTree(dir: "$projectDir/../../../../test-ontology",

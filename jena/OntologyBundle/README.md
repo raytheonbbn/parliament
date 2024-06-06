@@ -32,13 +32,13 @@ This is a minimal example `build.gradle` (written in  Groovy) to bundle an ontol
 
 ```
 plugins {
-	id 'com.bbn.parliament.ontology-bundle'
+	id 'com.bbn.parliament.OntologyBundle'
 }
 
 group = 'com.my_company'
 version = '1.0.0'
 
-ontologyBundle {
+OntologyBundle {
 	prefixes = [
 		// prefix, class (blank for none), namespace
 		'owl, , http://www.w3.org/2002/07/owl#',

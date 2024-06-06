@@ -46,13 +46,13 @@ import org.gradle.testing.base.TestingExtension;
  * <b>Example Gradle Build Script</b>
  * <pre>{@code
  *    plugins {
- *       id 'com.bbn.parliament.ontology-bundle'
+ *       id 'com.bbn.parliament.OntologyBundle'
  *    }
  *
  *    group = 'com.my_company'
  *    version = '1.0.0'
  *
- *    ontologyBundle {
+ *    OntologyBundle {
  *       prefixes = [
  *          // prefix, class (blank for none), namespace
  *          'owl, , http://www.w3.org/2002/07/owl#',
@@ -142,7 +142,7 @@ import org.gradle.testing.base.TestingExtension;
  * corresponding changes in the code.
  */
 public class OntologyBundlePlugin implements Plugin<Project> {
-	static final String EXT_NAME = "ontologyBundle";
+	static final String EXT_NAME = "OntologyBundle";
 	static final String PREP_ONT_TASK = "prepareOntology";
 	static final String NS_CLASSES_TASK = "generateNamespaceClasses";
 	static final String UTIL_CLASSES_TASK = "generateUtilityClasses";
