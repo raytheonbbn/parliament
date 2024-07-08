@@ -60,6 +60,7 @@ import com.bbn.parliament.util.QuerySolutionStream;
 class PrepareOntologyTask extends DefaultTask {
 	private static enum OutputType { FOR_HUMANS, FOR_MACHINES }
 
+	private static final boolean ENABLE_DEBUG_OUTPUT = false;
 	private static final PrefixInfo FILLED_IN_PREFIX = new PrefixInfo("fill", null,
 		"http://parliament.semwebcentral.org/filled-in-blank-node#");
 	private static final String[] UPDATES_FOR_HUMANS = {
@@ -207,13 +208,14 @@ class PrepareOntologyTask extends DefaultTask {
 	private Model combineSourceFiles() throws IOException {
 		var combinedModel = ModelFactory.createDefaultModel();
 		prefixLoader.addDeclaredPrefixesTo(combinedModel);
+		System.out.format("Reading %1$d files:%n", srcFiles.getFiles().size());
 		for (var f : srcFiles.getFiles()) {
 			var lang = RDFLanguages.filenameToLang(f.getName());
 			if (lang == null) {
-				System.out.format("Unrecognized RDF serialization: '%1$s'%n", f.getPath());
+				System.out.format("   Unrecognized RDF serialization: '%1$s'%n", f.getPath());
 				continue;
 			}
-			System.out.format("Reading %1$s file '%2$s'%n", lang.getName(), f.getPath());
+			System.out.format("   %1$s as %2$s%n", f.getPath(), lang.getName());
 			try (InputStream in = new FileInputStream(f)) {
 				var inputModel = ModelFactory.createDefaultModel();
 				inputModel.read(in, null, lang.getName());
@@ -243,8 +245,10 @@ class PrepareOntologyTask extends DefaultTask {
 			}
 			long newBlankNodeCount = getCount(combinedModel, COUNT_BLANK_QUERY);
 			if (newBlankNodeCount < blankNodeCount) {
-				System.out.format("Reduced blank node count from %1$d to %2$d%n",
-					blankNodeCount, newBlankNodeCount);
+				if (ENABLE_DEBUG_OUTPUT) {
+					System.out.format("Reduced blank node count from %1$d to %2$d%n",
+						blankNodeCount, newBlankNodeCount);
+				}
 				blankNodeCount = newBlankNodeCount;
 			} else {
 				break;
@@ -253,7 +257,9 @@ class PrepareOntologyTask extends DefaultTask {
 	}
 
 	private static void runUpdate(Model combinedModel, String rsrcName) {
-		System.out.format("Running update '%1$s'%n", rsrcName);
+		if (ENABLE_DEBUG_OUTPUT) {
+			System.out.format("Running update '%1$s'%n", rsrcName);
+		}
 		var update = new ParameterizedSparqlString(JavaResource.getAsString(rsrcName));
 		update.setIri("_fillNS", FILLED_IN_PREFIX.namespace());
 		var updateReq = UpdateFactory.create(update.toString());
@@ -269,7 +275,9 @@ class PrepareOntologyTask extends DefaultTask {
 		for (String rsrcName : REPORTS) {
 			var reportFile = new File(reportDir.get().getAsFile(),
 				getFileNameStem(rsrcName) + ".csv");
-			System.out.format("Running report '%1$s'%n", reportFile.getPath());
+			if (ENABLE_DEBUG_OUTPUT) {
+				System.out.format("Running report '%1$s'%n", reportFile.getPath());
+			}
 			var query = QueryFactory.create(JavaResource.getAsString(rsrcName));
 			List<String> vars = query.getResultVars();
 			var csvFmt = CSVFormat.Builder.create(CSVFormat.DEFAULT)
