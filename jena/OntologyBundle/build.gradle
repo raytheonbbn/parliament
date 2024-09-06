@@ -1,8 +1,39 @@
+/*
+** To publish to the Gradle plugin portal:
+**
+**		gw publishPlugins --validate-only
+**		gw publishPlugins
+**
+** To publish to Maven Central:
+**
+**		gw publishOntologyBundlePublicationToSonatypeOssrhRepoRepository
+**		Log into oss.sonatype.org (OSSRH)
+**		Click on Staging Repositories
+**		Inspect the publication
+**		Click Close
+**		Check the email for vulnerabilities
+**		Check under Activity for errors
+**		If none, click Release
+**
+**		Note: We should run this target as well:
+**			publishOntologyBundlePluginMarkerMavenPublicationToSonatypeOssrhRepoRepository
+**		but that fails the oss.sonatype.org validation rules because the additional pom
+**		file has no project URL, license, SCM URL, or developer information.
+*/
+
 plugins {
 	id 'java-gradle-plugin'
-	id 'com.gradle.plugin-publish' version '1.2.1'
+	id 'com.gradle.plugin-publish' version '1.2.2'
 	id 'signing'
 	//id "com.github.johnrengelman.shadow" version "8.1.1"
+}
+
+ext {
+	projectDescription = '''\
+		A Gradle plugin to package (or bundle) an OWL ontology in a jar
+		to make it easy to use in Java-based software projects.
+		Copyright © 2023, 2024 RTX BBN Technologies'''.stripIndent()
+	projectUrl = "https://github.com/${githubOrg}/parliament/tree/jena-update/jena/OntologyBundle"
 }
 
 repositories {
@@ -17,17 +48,17 @@ dependencies {
 	testImplementation gradleTestKit()
 }
 
-version = '1.0.1'
+version = '1.0.2'
 
 gradlePlugin {
-	website = "https://github.com/${githubOrg}/parliament/tree/jena-update/jena/OntologyBundle"
-	vcsUrl = "https://github.com/${githubOrg}/parliament/tree/jena-update/jena/OntologyBundle"
+	website = projectUrl
+	vcsUrl = projectUrl
 
 	plugins {
 		OntologyBundle {
 			id = 'com.bbn.parliament.OntologyBundle'
 			displayName = 'Ontology Bundle'
-			description = 'A Gradle plugin to package (bundle) an OWL ontology in a jar to make it easy to use in Java-based software projects'
+			description = projectDescription
 			tags.set([ 'ontology', 'OWL', 'RDF', 'Knowledge Graph', 'Semantic Graph', 'Semantic Web' ])
 			implementationClass = 'com.bbn.parliament.ontology_bundle.OntologyBundlePlugin'
 		}
@@ -48,9 +79,54 @@ testing {
 }
 
 publishing {
-	repositories {
-		mavenLocal()
+	publications {
+		OntologyBundle(MavenPublication) {
+			from components.java
+			pom {
+				name = 'Ontology Bundle'
+				description = projectDescription
+				url = projectUrl
+				packaging = 'jar'
+				licenses {
+					license {
+						name = 'The 3-Clause BSD License'
+						url = 'https://opensource.org/license/bsd-3-clause/'
+					}
+				}
+				organization {
+					name = 'RTX BBN Technologies'
+					url = 'https://bbn.com/'
+				}
+				developers {
+					developer {
+						id = 'iemmons'
+						name = 'Ian Emmons'
+						email = 'iemmons@rtx.com'
+					}
+				}
+				scm {
+					connection = "scm:git:git@github.com:${githubOrg}/parliament.git"
+					developerConnection = "scm:git:git@github.com:${githubOrg}/parliament.git"
+					url = "https://github.com/${githubOrg}/parliament"
+				}
+			}
+		}
 	}
+
+	repositories {
+		maven {
+			name = 'SonatypeOssrhRepo'
+			url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+			credentials {
+				username "$sonatypeOssrhUser"
+				password "$sonatypeOssrhPassword"
+			}
+		}
+	}
+}
+
+signing {
+	sign publishing.publications.OntologyBundle
 }
 
 task xlatePrefix(type: JavaExec) {
