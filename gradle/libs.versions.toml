@@ -1,0 +1,41 @@
+# https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
+
+[versions]
+gtVer = "29.0"
+jenaVer = "3.17.0"
+jena4Ver = "4.9.0"
+jettyVer = "9.4.36.v20210114"
+jupiterVer = "5.10.1"
+slf4jVer = "2.0.16"
+
+[libraries]
+berkeleyDbJe = "com.sleepycat:je:18.3.12"
+commonsCsv = "org.apache.commons:commons-csv:1.11.0"
+commonsDbcp = "commons-dbcp:commons-dbcp:1.4"
+commonsIo = "commons-io:commons-io:2.14.0"
+commonsLang = "org.apache.commons:commons-lang3:3.13.0"
+geotoolsEpsgExt = { module = "org.geotools:gt-epsg-extension", version.ref = "gtVer" }
+geotoolsEpsgHsql = { module = "org.geotools:gt-epsg-hsql", version.ref = "gtVer" }
+geotoolsEpsgWkt = { module = "org.geotools:gt-epsg-wkt", version.ref = "gtVer" }
+geotoolsReferencing = { module = "org.geotools:gt-referencing", version.ref = "gtVer" }
+geotoolsXsdCore = { module = "org.geotools.xsd:gt-xsd-core", version.ref = "gtVer" }
+geotoolsXsdGml = { module = "org.geotools.xsd:gt-xsd-gml3", version.ref = "gtVer" }
+geotoolsXsdKml = { module = "org.geotools.xsd:gt-xsd-kml", version.ref = "gtVer" }
+gson = "com.google.code.gson:gson:2.10.1"
+httpClient = "org.apache.httpcomponents:httpclient:4.5.14"
+jclOverSlf4j = { module = "org.slf4j:jcl-over-slf4j", version.ref = "slf4jVer" }
+jenaArq = { module = "org.apache.jena:jena-arq", version.ref = "jenaVer" }
+jenaCmds = { module = "org.apache.jena:jena-cmds", version.ref = "jenaVer" }
+jts = "org.locationtech.jts:jts-core:1.18.2"
+jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jupiterVer" }
+logback = "ch.qos.logback:logback-classic:1.5.7"
+postgresql = "org.postgresql:postgresql:42.6.0"
+queryBuilder = "com.bbn.parliament:SparqlQueryBuilder:2.0.3"
+sesame = "org.openrdf:sesame:1.2.7"
+slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4jVer" }
+
+[bundles]
+#groovy = ["groovy-core", "groovy-json", "groovy-nio"]
+
+[plugins]
+#ontologyBundle = "com.bbn.parliament.OntologyBundle:1.0.1"

@@ -18,7 +18,25 @@
 **		Note: We should run this target as well:
 **			publishOntologyBundlePluginMarkerMavenPublicationToSonatypeOssrhRepoRepository
 **		but that fails the oss.sonatype.org validation rules because the additional pom
-**		file has no project URL, license, SCM URL, or developer information.
+**		file has no project URL, license, SCM URL, or developer information. To get around
+**		this, use this task:
+**			publishOntologyBundlePluginMarkerMavenPublicationToMavenLocal
+**		instead, retrieve the POM file from here:
+**			~/.m2/repository/com/bbn/parliament/OntologyBundle/com.bbn.parliament.OntologyBundle.gradle.plugin/1.0.2
+**		and install it into MavenLocal on the target machineusing this command:
+**			mvn install:install-file -Dfile=<path-to-pomfile> -DpomFile=<path-to-pomfile>
+**
+**		Alternate (sneaky) way:
+**
+**		gw publishOntologyBundlePublicationToSonatypeOssrhRepoRepository
+**		Log into oss.sonatype.org (OSSRH)
+**		Click on Staging Repositories
+**		Inspect the publication
+**		Click Close
+**		Check the email for vulnerabilities
+**		Check under Activity for errors
+**		If none, gw publishOntologyBundlePluginMarkerMavenPublicationToSonatypeOssrhRepoRepository
+**		click Release
 */
 
 plugins {
@@ -48,7 +66,7 @@ dependencies {
 	testImplementation gradleTestKit()
 }
 
-version = '1.0.2'
+version = '1.0.3'
 
 gradlePlugin {
 	website = projectUrl
