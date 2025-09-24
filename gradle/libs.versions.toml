@@ -26,6 +26,7 @@ httpClient = "org.apache.httpcomponents:httpclient:4.5.14"
 jclOverSlf4j = { module = "org.slf4j:jcl-over-slf4j", version.ref = "slf4jVer" }
 jenaArq = { module = "org.apache.jena:jena-arq", version.ref = "jenaVer" }
 jenaCmds = { module = "org.apache.jena:jena-cmds", version.ref = "jenaVer" }
+jena4Cmds = { module = "org.apache.jena:jena-cmds", version.ref = "jena4Ver" }
 jts = "org.locationtech.jts:jts-core:1.18.2"
 jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jupiterVer" }
 logback = "ch.qos.logback:logback-classic:1.5.7"
@@ -38,4 +39,4 @@ slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4jVer" }
 #groovy = ["groovy-core", "groovy-json", "groovy-nio"]
 
 [plugins]
-#ontologyBundle = "com.bbn.parliament.OntologyBundle:1.0.1"
+#ontologyBundle = "com.bbn.parliament.OntologyBundle:1.0.3"
