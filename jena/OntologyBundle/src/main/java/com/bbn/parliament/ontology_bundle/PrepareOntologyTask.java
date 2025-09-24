@@ -19,25 +19,28 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.query.ParameterizedSparqlString;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
-import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.riot.RDFLanguages;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.update.UpdateExecutionFactory;
 import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.RegularFileProperty;
@@ -54,8 +57,8 @@ import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
 
-import com.bbn.parliament.util.JavaResource;
 import com.bbn.parliament.util.QuerySolutionStream;
+import com.bbn.parliament.util.JavaResource;
 
 class PrepareOntologyTask extends DefaultTask {
 	private static enum OutputType { FOR_HUMANS, FOR_MACHINES }
@@ -104,6 +107,7 @@ class PrepareOntologyTask extends DefaultTask {
 			%6$d blank nodes
 		""";
 
+	private Project proj;
 	private FileCollection srcFiles;
 	private ListProperty<String> prefixes;
 	private RegularFileProperty humanOntFile;
@@ -113,8 +117,8 @@ class PrepareOntologyTask extends DefaultTask {
 	private PrefixFileLoader prefixLoader;
 
 	public PrepareOntologyTask() {
-		var objFact = getProject().getObjects();
-		var ext = OntologyBundleExtension.getExtension(getProject());
+		var objFact = getProj().getObjects();
+		var ext = OntologyBundleExtension.getExtension(getProj());
 		srcFiles = ext.getOntologySources();
 		prefixes = objFact.listProperty(String.class);
 		prefixes.set(ext.getPrefixes());
@@ -129,6 +133,11 @@ class PrepareOntologyTask extends DefaultTask {
 		ontIri = objFact.property(String.class);
 		ontIri.set(ext.getOntologyIri());
 		prefixLoader = null;
+	}
+
+	@Inject
+	public Project getProj() {
+		return proj;
 	}
 
 	@SkipWhenEmpty
@@ -231,7 +240,7 @@ class PrepareOntologyTask extends DefaultTask {
 		if (ontIri.isPresent()) {
 			var ont = combinedModel.createResource(combinedModel.expandPrefix(ontIri.get()));
 			combinedModel.add(ont, RDF.type, OWL.Ontology);
-			var projectVersion = Objects.toString(getProject().getVersion(), null);
+			var projectVersion = Objects.toString(getProj().getVersion(), null);
 			if (projectVersion != null && !"unspecified".equals(projectVersion)) {
 				combinedModel.add(ont, OWL.versionInfo, projectVersion);
 			}

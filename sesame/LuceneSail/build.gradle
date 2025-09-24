@@ -45,7 +45,7 @@ javadoc {
 	}
 }
 
-artifacts {
-	archives sourcesJar
-	archives javadocJar
+tasks.named("assemble") {
+	dependsOn(sourcesJar)
+	dependsOn(javadocJar)
 }

@@ -9,7 +9,10 @@ package com.bbn.parliament.ontology_bundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
 import org.gradle.api.DefaultTask;
+import org.gradle.api.Project;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
@@ -24,11 +27,17 @@ class UtilityCodeGenerator extends DefaultTask {
 	private static final String ONT_UTIL_RSRC = "OntAccess.java.txt";
 	private static final String ONT_UTIL_TEST_RSRC = "OntAccessTest.java.txt";
 
+	private Project proj;
 	private final Property<String> generatedCodePackageName;
 	private final Property<String> ontologyForHumansFileName;
 	private final Property<String> ontologyForMachinesFileName;
 	private final DirectoryProperty generatedJavaDir;
 	private final DirectoryProperty generatedTestDir;
+
+	@Inject
+	public Project getProj() {
+		return proj;
+	}
 
 	@Input
 	public Property<String> getGeneratedCodePackageName() {
@@ -56,8 +65,8 @@ class UtilityCodeGenerator extends DefaultTask {
 	}
 
 	public UtilityCodeGenerator() {
-		var objFact = getProject().getObjects();
-		var ext = OntologyBundleExtension.getExtension(getProject());
+		var objFact = getProj().getObjects();
+		var ext = OntologyBundleExtension.getExtension(getProj());
 		generatedCodePackageName = objFact.property(String.class);
 		generatedCodePackageName.set(ext.getGeneratedCodePackageName());
 		ontologyForHumansFileName = objFact.property(String.class);

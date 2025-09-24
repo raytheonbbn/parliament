@@ -13,8 +13,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import org.apache.jena.riot.RDFLanguages;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.ListProperty;
@@ -31,6 +34,7 @@ import com.bbn.parliament.util.JavaResource;
 class NamespaceClassGenerator extends DefaultTask {
 	private static final String SCHEMAGEN_RSRC_NAME = "schemagenConfig.ttl";
 
+	private Project proj;
 	private ListProperty<String> prefixes;
 	private RegularFileProperty schemagenConfig;
 	private RegularFileProperty ontFile;
@@ -38,8 +42,8 @@ class NamespaceClassGenerator extends DefaultTask {
 	private Property<String> generatedCodePackageName;
 
 	public NamespaceClassGenerator() {
-		var objFact = getProject().getObjects();
-		var ext = OntologyBundleExtension.getExtension(getProject());
+		var objFact = getProj().getObjects();
+		var ext = OntologyBundleExtension.getExtension(getProj());
 		prefixes = objFact.listProperty(String.class);
 		prefixes.set(ext.getPrefixes());
 		schemagenConfig = objFact.fileProperty();
@@ -50,6 +54,11 @@ class NamespaceClassGenerator extends DefaultTask {
 		outputDir.fileProvider(ext.getGeneratedJavaDir());
 		generatedCodePackageName = objFact.property(String.class);
 		generatedCodePackageName.set(ext.getGeneratedCodePackageName());
+	}
+
+	@Inject
+	public Project getProj() {
+		return proj;
 	}
 
 	@Input
@@ -115,7 +124,7 @@ class NamespaceClassGenerator extends DefaultTask {
 	}
 
 	private File copyConfigRsrcToTempFile() throws IOException {
-		var buildDir = getProject().getLayout().getBuildDirectory();
+		var buildDir = getProj().getLayout().getBuildDirectory();
 		var tmpDir = new File(buildDir.getAsFile().get(), "tmp");
 		var tmpFile = new File(tmpDir, SCHEMAGEN_RSRC_NAME);
 		tmpDir.mkdirs();

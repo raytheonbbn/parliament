@@ -59,9 +59,9 @@ repositories {
 }
 
 dependencies {
-	implementation "$commonsCsvDependency"
-	implementation "org.apache.jena:jena-cmds:$jena4Version"
-	implementation "$sparqlQueryBuilderDependency"
+	implementation libs.commonsCsv
+	implementation libs.jena4Cmds
+	implementation libs.queryBuilder
 
 	testImplementation gradleTestKit()
 }
@@ -77,15 +77,16 @@ gradlePlugin {
 			id = 'com.bbn.parliament.OntologyBundle'
 			displayName = 'Ontology Bundle'
 			description = projectDescription
-			tags.set([ 'ontology', 'OWL', 'RDF', 'Knowledge Graph', 'Semantic Graph', 'Semantic Web' ])
+			tags = [ 'ontology', 'OWL', 'RDF', 'Knowledge Graph', 'Semantic Graph', 'Semantic Web' ]
 			implementationClass = 'com.bbn.parliament.ontology_bundle.OntologyBundlePlugin'
 		}
 	}
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
 }
 
 testing {
@@ -136,8 +137,8 @@ publishing {
 			name = 'SonatypeOssrhRepo'
 			url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
 			credentials {
-				username "$sonatypeOssrhUser"
-				password "$sonatypeOssrhPassword"
+				username = "$sonatypeOssrhUser"
+				password = "$sonatypeOssrhPassword"
 			}
 		}
 	}

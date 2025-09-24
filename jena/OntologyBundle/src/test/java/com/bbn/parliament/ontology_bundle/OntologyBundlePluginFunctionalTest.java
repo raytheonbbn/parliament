@@ -207,7 +207,7 @@ public class OntologyBundlePluginFunctionalTest {
 		BuildResult result = GradleRunner.create()
 			.forwardOutput()
 			.withPluginClasspath()
-			.withArguments("clean", "build")
+			.withArguments("--warning-mode", "all", "clean", "build")
 			.withProjectDir(testProjectDir)
 			.build();
 

@@ -79,8 +79,8 @@ publishing {
 			name = 'SonatypeOssrhRepo'
 			url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
 			credentials {
-				username "$sonatypeOssrhUser"
-				password "$sonatypeOssrhPassword"
+				username = "$sonatypeOssrhUser"
+				password = "$sonatypeOssrhPassword"
 			}
 		}
 		//mavenLocal()

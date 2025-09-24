@@ -32,9 +32,9 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 	from javadoc.destinationDir
 }
 
-artifacts {
-	archives sourcesJar
-	archives javadocJar
+tasks.named("assemble") {
+	dependsOn(sourcesJar)
+	dependsOn(javadocJar)
 }
 
 testing {
@@ -84,7 +84,7 @@ publishing {
 	repositories {
 		mavenLocal()
 		maven {
-			url "${artifactory_contextUrl}/bbn-maven-us-only"
+			url = "${artifactory_contextUrl}/bbn-maven-us-only"
 			credentials {
 				username = "${artifactory_user}"
 				password = "${artifactory_password}"
