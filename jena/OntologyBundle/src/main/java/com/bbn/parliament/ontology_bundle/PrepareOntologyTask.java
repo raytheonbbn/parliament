@@ -40,10 +40,10 @@ import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.gradle.api.DefaultTask;
-import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
@@ -107,7 +107,8 @@ class PrepareOntologyTask extends DefaultTask {
 			%6$d blank nodes
 		""";
 
-	private Project proj;
+	private ObjectFactory objFact;
+	private Object projectVersion;
 	private FileCollection srcFiles;
 	private ListProperty<String> prefixes;
 	private RegularFileProperty humanOntFile;
@@ -117,27 +118,27 @@ class PrepareOntologyTask extends DefaultTask {
 	private PrefixFileLoader prefixLoader;
 
 	public PrepareOntologyTask() {
-		var objFact = getProj().getObjects();
-		var ext = OntologyBundleExtension.getExtension(getProj());
+		var ext = OntologyBundlePlugin.getExtension();
+		projectVersion = ext.getProjectVersion();
 		srcFiles = ext.getOntologySources();
-		prefixes = objFact.listProperty(String.class);
+		prefixes = getObjFact().listProperty(String.class);
 		prefixes.set(ext.getPrefixes());
 
-		humanOntFile = objFact.fileProperty();
+		humanOntFile = getObjFact().fileProperty();
 		humanOntFile.fileProvider(ext.getOntologyForHumansFile());
-		machineOntFile = objFact.fileProperty();
+		machineOntFile = getObjFact().fileProperty();
 		machineOntFile.fileProvider(ext.getOntologyForMachinesFile());
 
-		reportDir = objFact.directoryProperty();
+		reportDir = getObjFact().directoryProperty();
 		reportDir.set(ext.getReportDir());
-		ontIri = objFact.property(String.class);
+		ontIri = getObjFact().property(String.class);
 		ontIri.set(ext.getOntologyIri());
 		prefixLoader = null;
 	}
 
 	@Inject
-	public Project getProj() {
-		return proj;
+	public ObjectFactory getObjFact() {
+		return objFact;
 	}
 
 	@SkipWhenEmpty
@@ -240,9 +241,9 @@ class PrepareOntologyTask extends DefaultTask {
 		if (ontIri.isPresent()) {
 			var ont = combinedModel.createResource(combinedModel.expandPrefix(ontIri.get()));
 			combinedModel.add(ont, RDF.type, OWL.Ontology);
-			var projectVersion = Objects.toString(getProj().getVersion(), null);
-			if (projectVersion != null && !"unspecified".equals(projectVersion)) {
-				combinedModel.add(ont, OWL.versionInfo, projectVersion);
+			var projectVerStr = Objects.toString(projectVersion, null);
+			if (projectVerStr != null && !"unspecified".equals(projectVerStr)) {
+				combinedModel.add(ont, OWL.versionInfo, projectVerStr);
 			}
 		}
 	}

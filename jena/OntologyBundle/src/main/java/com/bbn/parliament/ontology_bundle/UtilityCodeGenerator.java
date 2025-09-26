@@ -12,9 +12,9 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import org.gradle.api.DefaultTask;
-import org.gradle.api.Project;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
@@ -27,7 +27,7 @@ class UtilityCodeGenerator extends DefaultTask {
 	private static final String ONT_UTIL_RSRC = "OntAccess.java.txt";
 	private static final String ONT_UTIL_TEST_RSRC = "OntAccessTest.java.txt";
 
-	private Project proj;
+	private ObjectFactory objFact;
 	private final Property<String> generatedCodePackageName;
 	private final Property<String> ontologyForHumansFileName;
 	private final Property<String> ontologyForMachinesFileName;
@@ -35,8 +35,8 @@ class UtilityCodeGenerator extends DefaultTask {
 	private final DirectoryProperty generatedTestDir;
 
 	@Inject
-	public Project getProj() {
-		return proj;
+	public ObjectFactory getObjFact() {
+		return objFact;
 	}
 
 	@Input
@@ -65,17 +65,16 @@ class UtilityCodeGenerator extends DefaultTask {
 	}
 
 	public UtilityCodeGenerator() {
-		var objFact = getProj().getObjects();
-		var ext = OntologyBundleExtension.getExtension(getProj());
-		generatedCodePackageName = objFact.property(String.class);
+		var ext = OntologyBundlePlugin.getExtension();
+		generatedCodePackageName = getObjFact().property(String.class);
 		generatedCodePackageName.set(ext.getGeneratedCodePackageName());
-		ontologyForHumansFileName = objFact.property(String.class);
+		ontologyForHumansFileName = getObjFact().property(String.class);
 		ontologyForHumansFileName.set(ext.getOntologyForHumansFileName());
-		ontologyForMachinesFileName = objFact.property(String.class);
+		ontologyForMachinesFileName = getObjFact().property(String.class);
 		ontologyForMachinesFileName.set(ext.getOntologyForMachinesFileName());
-		generatedJavaDir = objFact.directoryProperty();
+		generatedJavaDir = getObjFact().directoryProperty();
 		generatedJavaDir.fileProvider(ext.getGeneratedJavaDir());
-		generatedTestDir = objFact.directoryProperty();
+		generatedTestDir = getObjFact().directoryProperty();
 		generatedTestDir.fileProvider(ext.getGeneratedTestDir());
 	}
 

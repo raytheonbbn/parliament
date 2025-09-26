@@ -26,6 +26,8 @@ public class OntologyBundleExtension {
 	static final String HUMAN_ONT_DEFAULT_FILE = "OntologyForHumans.ttl";
 	static final String MACHINE_ONT_DEFAULT_FILE = "OntologyForMachines.ttl";
 
+	private final Object projectVersion;
+	private final DirectoryProperty buildDir;
 	private final Property<String> ontologyForHumansFileName;
 	private final Property<String> ontologyForMachinesFileName;
 	private final ListProperty<String> prefixes;
@@ -40,18 +42,6 @@ public class OntologyBundleExtension {
 	private final Property<String> jenaVersion;
 
 	/**
-	 * A utility method to retrieve the Ontology Bundle extension from the project.
-	 *
-	 * @param project The Gradle project from which to retrieve the extension
-	 * @return The extension object
-	 */
-	public static OntologyBundleExtension getExtension(Project project) {
-		return project
-			.getExtensions()
-			.getByType(OntologyBundleExtension.class);
-	}
-
-	/**
 	 * Initializes an Ontology Bundle extension object and sets conventions.
 	 *
 	 * @param project The Gradle project, typically injected by Gradle
@@ -59,8 +49,8 @@ public class OntologyBundleExtension {
 	 */
 	@Inject
 	public OntologyBundleExtension(Project project, ObjectFactory objFact) {
-		var buildDir = project.getLayout().getBuildDirectory();
-
+		projectVersion = project.getVersion();
+		buildDir = project.getLayout().getBuildDirectory();
 		ontologyForHumansFileName = objFact.property(String.class)
 			.convention(HUMAN_ONT_DEFAULT_FILE);
 		ontologyForMachinesFileName = objFact.property(String.class)
@@ -80,6 +70,24 @@ public class OntologyBundleExtension {
 			.convention(buildDir.dir("generated/test/java"));
 		jenaVersion = objFact.property(String.class)
 			.convention("3.17.0");
+	}
+
+	/**
+	 * The project version set in the project that is using this plugin.
+	 *
+	 * @return The project version. Never returns null. Default is "unspecified".
+	 */
+	public Object getProjectVersion() {
+		return projectVersion;
+	}
+
+	/**
+	 * The project's build directory
+	 *
+	 * @return The project's build directory
+	 */
+	public DirectoryProperty getBuildDir() {
+		return buildDir;
 	}
 
 	/**

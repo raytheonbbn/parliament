@@ -20,6 +20,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
@@ -34,7 +35,8 @@ import com.bbn.parliament.util.JavaResource;
 class NamespaceClassGenerator extends DefaultTask {
 	private static final String SCHEMAGEN_RSRC_NAME = "schemagenConfig.ttl";
 
-	private Project proj;
+	private ObjectFactory objFact;
+	private DirectoryProperty buildDir;
 	private ListProperty<String> prefixes;
 	private RegularFileProperty schemagenConfig;
 	private RegularFileProperty ontFile;
@@ -42,23 +44,23 @@ class NamespaceClassGenerator extends DefaultTask {
 	private Property<String> generatedCodePackageName;
 
 	public NamespaceClassGenerator() {
-		var objFact = getProj().getObjects();
-		var ext = OntologyBundleExtension.getExtension(getProj());
-		prefixes = objFact.listProperty(String.class);
+		var ext = OntologyBundlePlugin.getExtension();
+		buildDir = ext.getBuildDir();
+		prefixes = getObjFact().listProperty(String.class);
 		prefixes.set(ext.getPrefixes());
-		schemagenConfig = objFact.fileProperty();
+		schemagenConfig = getObjFact().fileProperty();
 		schemagenConfig.set(ext.getSchemagenConfigFile());
-		ontFile = objFact.fileProperty();
+		ontFile = getObjFact().fileProperty();
 		ontFile.fileProvider(ext.getOntologyForHumansFile());
-		outputDir = objFact.directoryProperty();
+		outputDir = getObjFact().directoryProperty();
 		outputDir.fileProvider(ext.getGeneratedJavaDir());
-		generatedCodePackageName = objFact.property(String.class);
+		generatedCodePackageName = getObjFact().property(String.class);
 		generatedCodePackageName.set(ext.getGeneratedCodePackageName());
 	}
 
 	@Inject
-	public Project getProj() {
-		return proj;
+	public ObjectFactory getObjFact() {
+		return objFact;
 	}
 
 	@Input
@@ -124,7 +126,6 @@ class NamespaceClassGenerator extends DefaultTask {
 	}
 
 	private File copyConfigRsrcToTempFile() throws IOException {
-		var buildDir = getProj().getLayout().getBuildDirectory();
 		var tmpDir = new File(buildDir.getAsFile().get(), "tmp");
 		var tmpFile = new File(tmpDir, SCHEMAGEN_RSRC_NAME);
 		tmpDir.mkdirs();

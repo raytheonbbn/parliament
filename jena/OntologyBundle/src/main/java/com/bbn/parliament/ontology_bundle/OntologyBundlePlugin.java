@@ -150,10 +150,21 @@ public class OntologyBundlePlugin implements Plugin<Project> {
 	private static final String MIN_PROP_COUNT_SYS_PROP = "minPropCount";
 	private static final String MAX_BNODE_COUNT_SYS_PROP = "maxBlankNodeCount";
 
+	private static OntologyBundleExtension extension = null;
+
+	/**
+	 * A utility method to retrieve the Ontology Bundle extension from the plugin.
+	 *
+	 * @return The extension object
+	 */
+	public static OntologyBundleExtension getExtension() {
+		return extension;
+	}
+
 	@Override
 	public void apply(Project project) {
 		// Add our extension:
-		var ext = project.getExtensions().create(EXT_NAME, OntologyBundleExtension.class);
+		extension = project.getExtensions().create(EXT_NAME, OntologyBundleExtension.class);
 
 		if (!project.getPlugins().hasPlugin("java")
 				&& !project.getPlugins().hasPlugin("java-library")
@@ -166,11 +177,11 @@ public class OntologyBundlePlugin implements Plugin<Project> {
 			var javaExtension = project.getExtensions().findByType(JavaPluginExtension.class);
 
 			var main = javaExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-			main.getJava().srcDir(ext.getGeneratedJavaDir().get());
-			main.getResources().srcDir(ext.getGeneratedRsrcDir().get());
+			main.getJava().srcDir(extension.getGeneratedJavaDir().get());
+			main.getResources().srcDir(extension.getGeneratedRsrcDir().get());
 
 			var test = javaExtension.getSourceSets().getByName(SourceSet.TEST_SOURCE_SET_NAME);
-			test.getJava().srcDir(ext.getGeneratedTestDir().get());
+			test.getJava().srcDir(extension.getGeneratedTestDir().get());
 		});
 
 		// Configure the test suite to use JUnit Jupiter:
@@ -214,7 +225,7 @@ public class OntologyBundlePlugin implements Plugin<Project> {
 
 			var depFact = proj.getDependencyFactory();
 			var configs = proj.getConfigurations();
-			var jenaDep = depFact.create(ext.getJenaDependency().get());
+			var jenaDep = depFact.create(extension.getJenaDependency().get());
 			configs.getByName("api").getDependencies().add(jenaDep);
 		});
 	}
