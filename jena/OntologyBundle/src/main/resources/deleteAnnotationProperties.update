@@ -1,9 +1,13 @@
 prefix cc:   <http://creativecommons.org/ns#>
+prefix cco:  <http://www.ontologyrepository.com/CommonCoreOntologies/>
 prefix dc:   <http://purl.org/dc/elements/1.1/>
 prefix dct:  <http://purl.org/dc/terms/>
 prefix dul:  <http://www.loa-cnr.it/ontologies/DUL.owl#>
 prefix foaf: <http://xmlns.com/foaf/0.1/>
+prefix iof-av: <https://spec.industrialontologies.org/ontology/core/meta/AnnotationVocabulary/>
 prefix obo:  <http://purl.obolibrary.org/obo/>
+prefix oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+prefix ont-template: <https://ontologyhub.rtx.com/OntologyTemplate#>
 prefix owl:  <http://www.w3.org/2002/07/owl#>
 prefix prov: <http://www.w3.org/ns/prov#>
 prefix qudt: <http://qudt.org/schema/qudt/>
@@ -18,31 +22,72 @@ delete {
 	?s ?annProp ?o .
 } where {
 	values ?annProp {
+		cco:alternative_label
+		cco:definition
+		cco:definition_source
+		cco:elucidation
+		cco:example_of_usage
+		cco:is_curated_in_ontology
 		dc:contributor
+		dc:creator
 		dc:description
 		dc:identifier
+		dc:license
+		dc:member
 		dc:rights
 		dc:source
 		dc:subject
 		dc:title
 		dct:abstract
+		dct:bibliographicCitation
 		dct:contributor
 		dct:created
 		dct:creator
 		dct:date
 		dct:description
+		dct:issued
 		dct:license
 		dct:modified
+		dct:publisher
+		dct:references
 		dct:rights
 		dct:source
 		dct:subject
 		dct:title
 		dul:mappableTo
+		foaf:homepage
+		foaf:mbox
 		foaf:membershipClass
+		iof-av:abbreviation
+		iof-av:acronym
+		iof-av:adaptedFrom
+		iof-av:copyright
+		iof-av:counterExample
+		iof-av:directSource
+		iof-av:elucidation
+		iof-av:excerptedFrom
+		iof-av:explanatoryNote
+		iof-av:firstOrderLogicAxiom
+		iof-av:firstOrderLogicDefinition
+		iof-av:isPrimitive
+		iof-av:logicAxiom
+		iof-av:logicDefinition
+		iof-av:maintainer
+		iof-av:maturity
+		iof-av:naturalLanguageDefinition
+		iof-av:primitiveRationale
+		iof-av:replacedBy
+		iof-av:semiFormalNaturalLanguageAxiom
+		iof-av:semiFormalNaturalLanguageDefinition
+		iof-av:subjectMatterExpertExplanation
+		iof-av:symbol
+		iof-av:synonym
+		iof-av:usageNote
 		obo:BFO_0000179
 		obo:BFO_0000180
 		obo:IAO_0000111
 		obo:IAO_0000112
+		obo:IAO_0000114
 		obo:IAO_0000115
 		obo:IAO_0000116
 		obo:IAO_0000117
@@ -54,6 +99,11 @@ delete {
 		obo:IAO_0000601
 		obo:IAO_0000602
 		obo:IAO_0010000
+		obo:RO_0001900
+		obo:RO_0040042
+		oboInOwl:hasExactSynonym
+		oboInOwl:inSubset
+		ont-template:Publish
 		owl:versionInfo
 		prov:aq
 		prov:category

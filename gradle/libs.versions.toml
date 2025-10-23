@@ -39,4 +39,4 @@ slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4jVer" }
 #groovy = ["groovy-core", "groovy-json", "groovy-nio"]
 
 [plugins]
-#ontologyBundle = "com.bbn.parliament.OntologyBundle:1.0.5"
+#ontologyBundle = "com.bbn.parliament.OntologyBundle:1.0.6"

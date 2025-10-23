@@ -1,12 +1,15 @@
-prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix owl:  <http://www.w3.org/2002/07/owl#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 delete {
 	?s ?p ?unionOrIntersectionCls .
 	?unionOrIntersectionCls a owl:Class ;
+		rdfs:subClassOf ?superCls ;
 		?unionOrIntersectionOf ?clsList .
 } insert {
 	?s ?p ?newUnionOrIntersectionCls .
 	?newUnionOrIntersectionCls a owl:Class ;
+		rdfs:subClassOf ?superCls ;
 		?unionOrIntersectionOf ?clsList .
 } where {
 	values ?unionOrIntersectionOf {
@@ -14,11 +17,27 @@ delete {
 		owl:intersectionOf
 	}
 
-	?s ?p ?unionOrIntersectionCls .
 	?unionOrIntersectionCls ?unionOrIntersectionOf ?clsList .
+	optional {
+		?s ?p ?unionOrIntersectionCls .
+		filter ( !( ?s = ?unionOrIntersectionCls && ?p = rdfs:subClassOf ) )
+	}
 	optional { ?unionOrIntersectionCls a owl:Class . }
-	filter ( isBlank(?unionOrIntersectionCls) && !isBlank(?clsList) )
+	optional {
+		?unionOrIntersectionCls rdfs:subClassOf ?superCls .
+		filter ( ?unionOrIntersectionCls != ?superCls )
+		filter not exists {
+			?unionOrIntersectionCls rdfs:subClassOf ?someOtherType .
+			?someOtherType rdfs:subClassOf ?superCls .
+			filter ( ?unionOrIntersectionCls != ?someOtherType )
+			filter ( ?someOtherType != ?superCls )
+		}
+	}
+	filter ( isBlank(?unionOrIntersectionCls) )
+	filter ( !isBlank(?clsList) )
+	filter ( !bound(?superCls) || !isBlank(?superCls) )
 	bind (?_fillNS as ?fillNS)
-	bind ( concat(str(?unionOrIntersectionOf), "\n", str(?clsList)) as ?toHash )
+	bind ( concat(str(?unionOrIntersectionOf), "\n", str(?clsList), "\n",
+		if(bound(?superCls), str(?superCls), "")) as ?toHash )
 	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?newUnionOrIntersectionCls )
 }

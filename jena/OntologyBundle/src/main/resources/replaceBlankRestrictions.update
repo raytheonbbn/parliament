@@ -24,6 +24,7 @@ delete {
 		rdfs:subClassOf	# the usual case
 		rdf:first			# for restrictions in lists
 		owl:equivalentClass
+		owl:someValuesFrom
 	}
 	values ?rPredicate {
 		owl:allValuesFrom

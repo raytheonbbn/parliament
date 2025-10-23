@@ -84,6 +84,8 @@ class PrepareOntologyTask extends DefaultTask {
 		"replaceBlankDatatype.update",
 		"replaceBlankShaclDatatype.update",
 		"replaceBlankInverseProp.update",
+		"replaceBlankComplementOf.update",
+		"replaceAllDisjointClasses.update",
 		"replaceBlankUnionDomainAndRange.update",
 		"replaceBlankRestrictions.update",
 		"replaceBlankAxiomAnnotation.update",

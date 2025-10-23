@@ -1,0 +1,19 @@
+prefix owl: <http://www.w3.org/2002/07/owl#>
+
+delete {
+	?s ?p ?complementCls .
+	?complementCls a owl:Class ;
+		owl:complementOf ?cls .
+} insert {
+	?s ?p ?newComplementCls .
+	?newComplementCls a owl:Class ;
+		owl:complementOf ?cls .
+} where {
+	?s ?p ?complementCls .
+	?complementCls owl:complementOf ?cls .
+	optional { ?complementCls a owl:Class . }
+	filter ( isBlank(?complementCls) && !isBlank(?cls) )
+	bind (?_fillNS as ?fillNS)
+	bind ( concat("owl:complementOf", "\n", str(?cls)) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?newComplementCls )
+}
