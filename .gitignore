@@ -4,9 +4,10 @@ indexes/
 lib/
 log/
 parliament-test.log
-/.gradle/
-/.project
-/.settings/
+.gradle/
+.project
+.settings/
+.vscode/
 /build.properties
 /dependencies/
 
@@ -24,6 +25,9 @@ parliament-test.log
 /doc/**/*.synctex.gz
 /doc/**/*.synctex(busy)
 /doc/**/*.toc
+/doc/DynamicLibraryDependencies.pdf
+/doc/HowToRelease.pdf
+/doc/ImplementationChoices.pdf
 
 /jena/JosekiExtensions/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab/
 /jena/JenaGraph/*.log*

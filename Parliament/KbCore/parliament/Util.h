@@ -8,6 +8,7 @@
 #define PARLIAMENT_UTIL_H_INCLUDED
 
 #include "parliament/Types.h"
+#include "parliament/Windows.h"
 
 #include <boost/filesystem/path.hpp>
 #if !defined(__cpp_lib_to_chars)
@@ -183,6 +184,14 @@ private:
 	HiResTime	m_start;
 	HiResTime	m_stop;
 };
+
+
+
+// ===========================================================================
+// OS Information Functions
+// ===========================================================================
+
+size_t getVmPageSize();
 
 }	// namespace end
 

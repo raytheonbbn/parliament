@@ -34,12 +34,20 @@ static auto g_log(pmnt::log::getSource("Exceptions"));
 #endif
 
 
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
+#endif
 
 void pmnt::Exception::copyMsg(const char* pMsg) noexcept
 {
 	strncpy(m_msg.data(), pMsg, m_msg.size());
 	m_msg.back() = '\0';
 }
+
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
 pmnt::Exception::Exception(const char* pMsg) noexcept :
 	exception(),

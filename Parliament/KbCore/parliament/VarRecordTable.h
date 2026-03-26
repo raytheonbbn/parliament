@@ -37,8 +37,7 @@ public:
 		{ return m_fixRecTbl.recordCount() == 0; }
 	const RsrcChar* getRecordAt(size_t recordOffset) const
 		{ return &m_fixRecTbl.getRecordAt(recordOffset); }
-	size_t pushBack(const RsrcChar* pStr, size_t strLen);
-	size_t pushBack(const RsrcChar* pStr);
+	size_t pushBack(RsrcStringView str);
 	void sync()
 		{ m_fixRecTbl.sync(); }
 	void releaseExcessCapacity()

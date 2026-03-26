@@ -3,22 +3,25 @@ import os ;
 
 project site-config ;
 
-path-constant BdbDir : [ os.environ BDB_HOME ] ;
 path-constant BoostDir : [ os.environ BOOST_ROOT ] ;
 path-constant JavaDir : [ os.environ JAVA_HOME ] ;
+path-constant rocksdbDir : [ os.environ ROCKSDB_HOME ] ;
+path-constant gflagsDir : [ os.environ GFLAGS_HOME ] ;
+path-constant snappyDir : [ os.environ SNAPPY_HOME ] ;
+path-constant lz4Dir : [ os.environ LZ4_HOME ] ;
+path-constant zstdDir : [ os.environ ZSTD_HOME ] ;
 
 constant BoostVersion : [ os.environ BOOST_VERSION ] ;
 constant BoostVersionComponents : [ MATCH "([0-9]+)_([0-9]+)_([0-9]+)" : $(BoostVersion) ] ;
 constant BoostVersionDotted : $(BoostVersionComponents:J=.) ;
 constant BoostVersionAbbrvAlternatives : [ MATCH "([0-9]+_[0-9]+)_0" "([0-9]+_[0-9]+_[0-9]+)" : $(BoostVersion) ] ;
 constant BoostVersionAbbrv : $(BoostVersionAbbrvAlternatives[1]) ;
-constant BdbVersion : [ os.environ BDB_VERSION ] ;
 
-constant Compiler : clang-darwin15 ;
+constant Compiler : clang-darwin17 ;
 
-#constant Arch : x32_64 ;
-#constant Arch : a64 ;
-constant Arch : x64 ;
+# One of a64 or x64:
+#constant Arch : [ os.environ BOOST_ARCHITECTURE ] ;
+constant Arch : "a64" ;
 
 constant BoostPfx : <source>$(BoostDir)/stage-clang/lib/libboost_ ;
 
@@ -69,6 +72,16 @@ alias BoostContainer	# Used by Boost.JSON
 	:	<include>$(BoostDir)
 	;
 
+alias BoostDateTime
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)date_time$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)date_time$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)date_time$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)date_time$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+	;
+
 alias BoostFileSystem
 	:	# no sources
 	:	$(BoostDyDbgLibPfx)filesystem$(BoostDyDbgLibSfx)
@@ -103,6 +116,26 @@ alias BoostLogSetup
 		<define>BOOST_LOG_NO_SHORTHAND_NAMES
 	;
 
+alias BoostRegex
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)regex$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)regex$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)regex$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)regex$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+	;
+
+alias BoostSerialization
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)serialization$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)serialization$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)serialization$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)serialization$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+	;
+
 alias BoostThread
 	:	# no sources
 	:	$(BoostDyDbgLibPfx)thread$(BoostDyDbgLibSfx)
@@ -133,9 +166,58 @@ alias JavaJNI
 		<include>$(JavaDir)/include/darwin
 	;
 
-alias BerkeleyDB
-	:	$(BdbDir)/lib/libdb-$(BdbVersion).dylib
-	:	# no requirements
+alias rocksdb
+	:	# no sources
+	:	<link>shared:<source>$(rocksdbDir)/lib/librocksdb.10.10.dylib
+		<link>static:<source>$(rocksdbDir)/lib/librocksdb.a
 	:	# no default build
-	:	<include>$(BdbDir)/include
+	:	<include>$(rocksdbDir)/include
+	;
+
+alias gflags	# dependency of rocksdb
+	:	# no sources
+	:	<link>shared:<source>$(gflagsDir)/lib/libgflags.2.3.dylib
+		<link>static:<source>$(gflagsDir)/lib/libgflags.a
+	:	# no default build
+	:	<include>$(gflagsDir)/include
+	;
+
+alias snappy	# dependency of rocksdb
+	:	# no sources
+	:	<link>shared:<source>$(snappyDir)/lib/libsnappy.dylib
+		<link>static:<source>$(snappyDir)/lib/libsnappy.a
+	:	# no default build
+	:	<include>$(snappyDir)/include
+	;
+
+alias lz4	# dependency of rocksdb
+	:	# no sources
+	:	<link>shared:<source>$(lz4Dir)/lib/liblz4.1.dylib
+		<link>static:<source>$(lz4Dir)/lib/liblz4.a
+	:	# no default build
+	:	<include>$(lz4Dir)/include
+	;
+
+alias zstd	# dependency of rocksdb
+	:	# no sources
+	:	<link>shared:<source>$(zstdDir)/lib/libzstd.1.dylib
+		<link>static:<source>$(zstdDir)/lib/libzstd.a
+	:	# no default build
+	:	<include>$(zstdDir)/include
+	;
+
+alias bz2	# dependency of rocksdb
+	:	# no sources
+	:	# no build properties
+	:	# no default build
+	:	<include>/usr/include
+		<linkflags>"-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lbz2"
+	;
+
+alias z	# dependency of rocksdb
+	:	# no sources
+	:	# no build properties
+	:	# no default build
+	:	<include>/usr/include
+		<linkflags>"-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lz"
 	;

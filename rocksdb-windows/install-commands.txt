@@ -1,0 +1,15 @@
+vcpkg install --triplet x64-windows
+vcpkg install --triplet x64-windows-static
+vcpkg install --triplet x86-windows
+vcpkg install --triplet x86-windows-static
+
+vcpkg install --triplet arm64-windows
+vcpkg install --triplet arm64-windows-static
+
+Search: vcpkg output directory structure
+https://learn.microsoft.com/en-us/vcpkg/reference/installation-tree-layout
+https://app.studyraid.com/en/read/11777/373526/understanding-the-vcpkg-directory-structure
+https://github.com/MicrosoftDocs/vcpkg-docs/blob/main/vcpkg/reference/installation-tree-layout.md
+
+https://github.com/NoviCker/vcpkg/blob/main/docs/commands/common-options.md
+--x-install-root=<path-to-vcpkg_installed>

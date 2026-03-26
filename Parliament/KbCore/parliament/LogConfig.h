@@ -14,6 +14,7 @@
 #include <functional>
 #include <map>
 #include <string>
+#include <string_view>
 
 namespace bbn::parliament
 {
@@ -112,14 +113,14 @@ public:
 		{ return m_logChannelLevel; }
 	void clearLogChannelLevel()
 		{ m_logChannelLevel.clear(); }
-	void addLogChannelLevel(const ::std::string& channel, const ::std::string& level)
-		{ m_logChannelLevel[channel] = level; }
+	void addLogChannelLevel(::std::string_view channel, ::std::string_view level)
+		{ m_logChannelLevel[::std::string{channel}] = level; }
 
 private:
-	using EntryHandler = ::std::function<void(const ::std::string&, uint32, LogConfig&)>;
+	using EntryHandler = ::std::function<void(::std::string_view, uint32, LogConfig&)>;
 	using ConfigEntryMap = ::std::map<::std::string, EntryHandler>;	// Maps key to handler
 
-	static Path convertUtf8ToLogPath(const ::std::string& value);
+	static Path convertUtf8ToLogPath(::std::string_view value);
 
 	// Implementation note:  It may strike you as odd that this is an instance member
 	// rather than a static member as in KbConfig.  The reason is that unlike KbConfig,

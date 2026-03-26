@@ -22,6 +22,7 @@
 #		define _GNU_SOURCE
 #	endif
 #	include <dlfcn.h>
+#	include <unistd.h>
 #endif
 
 #if defined(PARLIAMENT_MACOS)
@@ -240,5 +241,22 @@ pmnt::uint64 pmnt::HiResTimer::getUnitsPerSec()
 	return 1000 * 1000 * 1000;
 #else
 	return 1 * 1000 * 1000;
+#endif
+}
+
+
+
+// ===========================================================================
+// OS Information Functions
+// ===========================================================================
+
+size_t pmnt::getVmPageSize()
+{
+#if defined(PARLIAMENT_WINDOWS)
+	SYSTEM_INFO sysInfo;
+	::GetSystemInfo(&sysInfo);
+	return sysInfo.dwPageSize;
+#else
+	return ::getpagesize();
 #endif
 }

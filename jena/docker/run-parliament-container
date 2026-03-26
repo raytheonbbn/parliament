@@ -12,6 +12,6 @@ image_os=ubuntu
 #	parliament-$version-$image_os /bin/bash
 
 docker run -d -p 80:8089 --name=parliament-$image_os \
-	--env PARLIAMENT_JAVA_HEAP_SIZE=640m --env PARLIAMENT_BDB_CACHE_SIZE=1g,1 \
+	--env PARLIAMENT_JAVA_HEAP_SIZE=640m \
 	--mount $mount_option,dst=/var/parliament-data \
 	parliament-$version-$image_os

@@ -38,9 +38,7 @@ public:
 	// may throw ::boost::bad_lexical_cast
 	static double convertToDouble(const RsrcString& lexicalForm, const RsrcString& datatypeUri);
 
-	static LiteralComponents parseLiteral(const RsrcString& literal);
-	static LiteralComponents parseLiteral(const RsrcChar* pLiteral);
-	static LiteralComponents parseLiteral(const RsrcChar* pBegin, const RsrcChar* pEnd);
+	static LiteralComponents parseLiteral(RsrcStringView literal);
 
 	static RsrcString composePlainLiteral(const RsrcString& lexicalForm);
 	static RsrcString composeTypedLiteral(const RsrcString& lexicalForm, const RsrcString& typeIRI);
@@ -56,10 +54,6 @@ private:
 	static bool initUriToEnumMap();
 	static void unsynchronizedInitUriToEnumMap();
 	static double defaultConversion(const RsrcString& lexicalForm);
-
-	// ConstBidiIter is assumed to dereference to RsrcChar:
-	template <typename ConstBidiIter>
-	static LiteralComponents parseLiteralImpl(ConstBidiIter first, ConstBidiIter last);
 
 	static UriToEnumMap g_uriToEnumMap;
 	static const bool k_ensureMapInit;

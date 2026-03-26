@@ -40,9 +40,9 @@
 #	else
 #		error GNU C++ (GCC) is not supported on this platform.
 #	endif
-#	if defined(__x86_64__) || defined(__amd64__) || defined(__ppc64__) || defined(__sparcv9)
+#	if defined(__x86_64__) || defined(__amd64__) || defined(__aarch64__) || defined(__ppc64__) || defined(__sparcv9)
 #		define PARLIAMENT_64BITS
-#	elif defined(__i386__) || defined(__ppc__) || defined(__sparc__)
+#	elif defined(__i386__) || defined(__aarch__) || defined(__ppc__) || defined(__sparc__)
 #		define PARLIAMENT_32BITS
 #	else
 #		error GNU C++ (GCC) is not supported on this hardware architecture.

@@ -74,7 +74,7 @@ struct KbInstance::Impl
 		m_uriTbl(m_config.uriTableFilePath(), m_config.readOnly(),
 			m_config.initialRsrcCapacity() * m_config.avgRsrcLen(),
 			m_config.rsrcGrowthIncrement() * m_config.avgRsrcLen(), m_config.rsrcGrowthFactor()),
-		m_uriToRsrcId(m_config.uriToIntFilePath(), m_config.bdbCacheSize(), m_config.readOnly()),
+		m_uriToRsrcId(m_config),
 		m_rsrcTbl(m_config.rsrcFilePath(), m_config.readOnly(), m_config.initialRsrcCapacity(),
 			m_config.rsrcGrowthIncrement(), m_config.rsrcGrowthFactor()),
 		m_stmtTbl(m_config.stmtFilePath(), m_config.readOnly(), m_config.initialStmtCapacity(),

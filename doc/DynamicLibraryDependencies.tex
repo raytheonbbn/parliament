@@ -1,0 +1,184 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = XeLaTeX
+% !BIB TS-program = biber
+%%% !TEX useTabs
+
+\documentclass[12pt,letterpaper,draft]{article}
+
+\usepackage{parskip}	% Begin paragraphs with empty line, not indent
+\usepackage{xcolor}
+\usepackage{titling}
+\usepackage{fnpct}
+\usepackage{widows-and-orphans}
+%\usepackage[inline]{enumitem}
+%\usepackage{acro}
+%\usepackage[final]{graphicx}
+%\usepackage{booktabs}
+%\usepackage{array}
+%\usepackage{ragged2e}
+%\usepackage{colortbl}
+%\usepackage{marginnote}
+%\usepackage{relsize}
+%\usepackage{fancyhdr}
+%\usepackage{lastpage}
+%\usepackage{lipsum}
+%\usepackage{fvextra}
+%\usepackage{amsmath}
+%\usepackage{amssymb}
+%\usepackage[retainorgcmds]{IEEEtrantools}
+%\usepackage{skmath}
+%\usepackage{tikz}
+%\usepackage{ffcode}
+%\usepackage{path}
+\usepackage{dirtree}
+%\usepackage[firstpage]{draftwatermark}
+%\usepackage{todonotes}
+%\usepackage{markdown}
+%\usepackage{secretx}
+\usepackage[style=numeric,backref,backend=biber]{biblatex}
+\usepackage{fontspec,xltxtra,xunicode}
+%\usepackage{iffont}
+%\usepackage{unicode-math}
+\usepackage[final]{hyperref}	% Should be the last use-package command
+
+%\newcommand{\red}[1]{{\color{red}#1}}
+%\newcommand{\paraleader}[1]{\textbf{#1}}
+%\newcommand{\urlcite}[1]{\footnote{\url{#1}}}
+%\newcommand{\headingrule}{\midrule[\heavyrulewidth]}
+%\newcommand{\themestatement}[1]{\framebox{\parbox{0.97\columnwidth}{\emph{#1}}}}
+
+\title{Parliament Dynamic Library Dependencies}
+\author{Ian Emmons}
+\date{\today}
+%\setlength{\droptitle}{-50pt}
+
+\defaultfontfeatures{Mapping=tex-text}
+\setmainfont{Georgia}
+\setsansfont{Verdana}[Scale=MatchLowercase]
+\setmonofont{Menlo}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
+%\setmonofont{Consolas}[Scale=MatchLowercase,PunctuationSpace=WordSpace,Mapping=]
+%\setmathfont{TeX Gyre Bonum Math}
+
+%\urlstyle{rm}
+\definecolor{hyperlinkcolor}{rgb}{0,0,0.625}
+\hypersetup{
+	final=true,
+	unicode=true,
+	bookmarksnumbered=true,
+	pdftitle={\thetitle},
+	pdfauthor={\theauthor},
+	colorlinks=true,
+	allcolors=hyperlinkcolor
+}
+
+\hyphenation{Arc-GIS Arc-Map}
+\hyphenation{co-ref-er-ence co-ref-er-enc-es}
+\hyphenation{da-ta-base da-ta-bas-es}
+\hyphenation{geo-spa-tial}
+\hyphenation{im-mu-ta-ble}
+\hyphenation{ra-pid-ly}
+\hyphenation{ray-the-on}
+\hyphenation{serv-let serv-lets}
+\hyphenation{trac-ta-ble}
+\hyphenation{war-fight-er war-fight-ers}
+
+\begin{document}
+\maketitle
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+\label{sec:intro}
+
+Figure~\ref{fig:DynLibDepsUbuntu} shows the hierarchy of dynamic library dependencies of Parliament on Ubuntu Linux, while Figure~\ref{fig:DynLibDepsMacOS} shows the dependencies on Mac OS.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}[t]{3in}
+	%\footnotesize
+	%\small
+	%\setlength{\DTbaselineskip}{1.9ex}
+	\dirtree{%
+		.1 ParliamentAdmin.
+			.2 libboost\_filesystem.
+			.2 libParliament.
+				.3 libboost\_filesystem.
+				.3 libboost\_log.
+					.4 libboost\_filesystem.
+					.4 libboost\_thread.
+				.3 libboost\_thread.
+				.3 librocksdb.
+					.4 libbz2.
+					.4 libgflags.
+					.4 liblz4.
+						.5 libxxhash.
+					.4 libsnappy.
+					.4 libz.
+					.4 libzstd.
+					.4 libxxhash.
+	}
+	\end{minipage}
+	\caption{Hierarchy of Dynamic Library Dependencies on Ubuntu Linux}
+	\label{fig:DynLibDepsUbuntu}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}[t]{3in}
+	%\footnotesize
+	\small
+	\setlength{\DTbaselineskip}{1.9ex}
+	\dirtree{%
+		.1 ParliamentAdmin.
+			.2 libboost\_filesystem.
+			.2 libParliament.
+				.3 libboost\_atomic.
+				.3 libboost\_chrono.
+				.3 libboost\_container.
+				.3 libboost\_date\_time.
+				.3 libboost\_filesystem.
+				.3 libgflags.
+				.3 libboost\_log.
+					.4 libboost\_atomic.
+					.4 libboost\_chrono.
+					.4 libboost\_container.
+					.4 libboost\_date\_time.
+					.4 libboost\_filesystem.
+					.4 libboost\_regex.
+					.4 libboost\_thread.
+						.5 libboost\_atomic.
+						.5 libboost\_chrono.
+						.5 libboost\_container.
+						.5 libboost\_date\_time.
+				.3 libboost\_log\_setup.
+					.4 libboost\_atomic.
+					.4 libboost\_chrono.
+					.4 libboost\_container.
+					.4 libboost\_date\_time.
+					.4 libboost\_filesystem.
+					.4 libboost\_log.
+						.5 (above).
+					.4 libboost\_regex.
+					.4 libboost\_serialization.
+					.4 libboost\_thread.
+						.5 (above).
+				.3 libboost\_regex.
+				.3 libboost\_serialization.
+				.3 libboost\_thread.
+					.4 (above).
+				.3 liblz4.
+				.3 librocksdb.
+					.4 libgflags.
+					.4 liblz4.
+					.4 (libsnappy).
+					.4 libzstd.
+				.3 (libsnappy).
+				.3 libzstd.
+	}
+	\end{minipage}
+	\caption{Hierarchy of Dynamic Library Dependencies on Mac OS}
+	\label{fig:DynLibDepsMacOS}
+\end{figure}
+
+\end{document}

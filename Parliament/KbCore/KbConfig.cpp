@@ -22,9 +22,11 @@ namespace ba = ::boost::algorithm;
 
 using ::boost::format;
 using ::std::string;
+using ::std::string_view;
 
 static ::boost::once_flag g_onceInitFlag = BOOST_ONCE_INIT;
 static auto g_log = pmnt::log::getSource("KbConfig");
+static constexpr pmnt::TChar k_bdbCacheSizeOptName[] = _T("bdbCacheSize");
 static constexpr pmnt::TChar k_bdbCacheSizeVarName[] = _T("PARLIAMENT_BDB_CACHE_SIZE");
 pmnt::KbConfig::ConfigEntryMap pmnt::KbConfig::g_ceMap;
 bool pmnt::KbConfig::g_isConfigEntryMapInitialized = pmnt::KbConfig::initConfigEntryMap();
@@ -37,100 +39,103 @@ bool pmnt::KbConfig::initConfigEntryMap()
 
 void pmnt::KbConfig::unsynchronizedInitConfigEntryMap()
 {
-	g_ceMap["kbDirectoryPath"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["kbDirectoryPath"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.kbDirectoryPath(convertUtf8ToPath(value)); };
-	g_ceMap["stmtFileName"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["stmtFileName"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_stmtFileName = value; };
-	g_ceMap["rsrcFileName"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["rsrcFileName"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_rsrcFileName = value; };
-	g_ceMap["uriTableFileName"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["uriTableFileName"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_uriTableFileName = value; };
-	g_ceMap["uriToIntFileName"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["uriToIntFileName"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_uriToIntFileName = value; };
-	g_ceMap["stmtToIdFileName"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["stmtToIdFileName"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{
 			PMNT_LOG(g_log, log::Level::warn)
 				<< "The 'stmtToIdFileName' configuration option is ignored "
 					"and can be deleted from your configuration file";
 		};
-	g_ceMap["readOnly"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["readOnly"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_readOnly = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["fileSyncTimerDelay"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["fileSyncTimerDelay"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_fileSyncTimerDelay = ConfigFileReader::parseUnsigned(value, lineNum); };
-	g_ceMap["keepDupStmtIdx"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["keepDupStmtIdx"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{
 			PMNT_LOG(g_log, log::Level::warn)
 				<< "The 'keepDupStmtIdx' configuration option is ignored "
 					"and can be deleted from your configuration file";
 		};
-	g_ceMap["initialRsrcCapacity"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["initialRsrcCapacity"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_initialRsrcCapacity = ConfigFileReader::parseUnsigned(value, lineNum); };
-	g_ceMap["avgRsrcLen"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["avgRsrcLen"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_avgRsrcLen = ConfigFileReader::parseUnsigned(value, lineNum); };
-	g_ceMap["rsrcGrowthIncrement"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["rsrcGrowthIncrement"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_rsrcGrowthIncrement = ConfigFileReader::parseUnsigned(value, lineNum); };
-	g_ceMap["rsrcGrowthFactor"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["rsrcGrowthFactor"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_rsrcGrowthFactor = ConfigFileReader::parseDouble(value, lineNum); };
-	g_ceMap["initialStmtCapacity"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["initialStmtCapacity"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_initialStmtCapacity = ConfigFileReader::parseUnsigned(value, lineNum); };
-	g_ceMap["stmtGrowthIncrement"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["stmtGrowthIncrement"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_stmtGrowthIncrement = ConfigFileReader::parseUnsigned(value, lineNum); };
-	g_ceMap["stmtGrowthFactor"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["stmtGrowthFactor"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_stmtGrowthFactor = ConfigFileReader::parseDouble(value, lineNum); };
-	g_ceMap["bdbCacheSize"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap[k_bdbCacheSizeOptName] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{
 			auto envVarValue = convertTCharToUtf8(tGetEnvVar(k_bdbCacheSizeVarName));
 			if (!envVarValue.empty())
 			{
-				c.m_bdbCacheSize = envVarValue;
-				PMNT_LOG(g_log, log::Level::info)
-					<< "The '" << convertTCharToUtf8(k_bdbCacheSizeVarName) << "' environment"
-						" variable overrode the corresponding value in the configuration file";
+				PMNT_LOG(g_log, log::Level::warn)
+					<< "The '" << convertTCharToUtf8(k_bdbCacheSizeOptName) << "' configuration"
+						" option and the '" << convertTCharToUtf8(k_bdbCacheSizeVarName) << "'"
+						" environment variable are ignored and can be deleted from your"
+						" configuration file and environment, respectively";
 			}
 			else
 			{
-				c.m_bdbCacheSize = value;
+				PMNT_LOG(g_log, log::Level::warn)
+					<< "The '" << convertTCharToUtf8(k_bdbCacheSizeOptName) << "' configuration"
+						" option is ignored and can be deleted from your configuration file";
 			}
 		};
-	g_ceMap["normalizeTypedStringLiterals"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["normalizeTypedStringLiterals"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_normalizeTypedStringLiterals = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["TimeoutDuration"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["TimeoutDuration"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_timeoutDuration = ConfigFileReader::parseUnsigned(value, lineNum); };
-	g_ceMap["TimeoutUnit"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["TimeoutUnit"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.timeoutUnit(value); };
-	g_ceMap["runAllRulesAtStartup"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["runAllRulesAtStartup"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_runAllRulesAtStartup = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["enableSWRLRuleEngine"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["enableSWRLRuleEngine"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_enableSWRLRuleEngine = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["SubclassRule"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["SubclassRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_isSubclassRuleOn = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["SubpropertyRule"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["SubpropertyRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_isSubpropertyRuleOn = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["DomainRule"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["DomainRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_isDomainRuleOn = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["RangeRule"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["RangeRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_isRangeRuleOn = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["EquivalentClassRule"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["EquivalentClassRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_isEquivalentClassRuleOn = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["EquivalentPropRule"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["EquivalentPropRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_isEquivalentPropRuleOn = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["InverseOfRule"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["InverseOfRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_isInverseOfRuleOn = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["SymmetricPropRule"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["SymmetricPropRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_isSymmetricPropRuleOn = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["FunctionalPropRule"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["FunctionalPropRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_isFunctionalPropRuleOn = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["InvFunctionalPropRule"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["InvFunctionalPropRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_isInvFunctionalPropRuleOn = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["TransitivePropRule"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["TransitivePropRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_isTransitivePropRuleOn = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["inferRdfsClass"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["inferRdfsClass"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_inferRdfsClass = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["inferOwlClass"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["inferOwlClass"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_inferOwlClass = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["inferRdfsResource"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["inferRdfsResource"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_inferRdfsResource = ConfigFileReader::parseBool(value, lineNum); };
-	g_ceMap["inferOwlThing"] = [](const string& value, uint32 lineNum, KbConfig& c)
+	g_ceMap["inferOwlThing"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_inferOwlThing = ConfigFileReader::parseBool(value, lineNum); };
 }
 
@@ -149,7 +154,6 @@ pmnt::KbConfig::KbConfig() :
 	m_initialStmtCapacity(500000),
 	m_stmtGrowthIncrement(1000000),
 	m_stmtGrowthFactor(0),
-	m_bdbCacheSize("512m,1"),
 	m_normalizeTypedStringLiterals(true),
 	m_timeoutDuration(5),
 	m_timeoutUnit(TimeUnit::k_min),
@@ -182,9 +186,9 @@ pmnt::KbConfig::~KbConfig() = default;
 void pmnt::KbConfig::readFromFile()
 {
 	ConfigFileReader::readFile(ConfigKind::k_kb,
-		[pKbConfig = this](const string& key, const string& value, uint32 lineNum)
+		[pKbConfig = this](string_view key, string_view value, uint32 lineNum)
 		{
-			auto it = pKbConfig->g_ceMap.find(key);
+			auto it = pKbConfig->g_ceMap.find(string{key});
 			if (it == end(pKbConfig->g_ceMap))
 			{
 				throw Exception(format(
@@ -253,7 +257,7 @@ string pmnt::KbConfig::javaTimeoutUnit() const
 	}
 }
 
-void pmnt::KbConfig::timeoutUnit(const string& newValue) {
+void pmnt::KbConfig::timeoutUnit(string_view newValue) {
 	if (ba::iequals(newValue, "NANOSECONDS"))
 	{
 		m_timeoutUnit = TimeUnit::k_nanoSec;

@@ -14,6 +14,7 @@
 #include <fstream>
 #include <functional>
 #include <string>
+#include <string_view>
 #include <utility>
 
 namespace bbn::parliament
@@ -28,16 +29,16 @@ class ConfigFileReader
 {
 public:
 	using Path = ::boost::filesystem::path;
-	using LineHandler = ::std::function<void(const ::std::string& /* key */,
-		const ::std::string& /* value */, uint32 /* line # */)>;
+	using LineHandler = ::std::function<void(::std::string_view /* key */,
+		::std::string_view /* value */, uint32 /* line # */)>;
 
 	static void readFile(ConfigKind configKind, LineHandler lineHandler);
 
-	static ::std::pair<::std::string, ::std::string> getKeyValueFromLine(
-		const ::std::string& line, uint32 lineNum);
-	static size_t parseUnsigned(const ::std::string& s, uint32 lineNum);
-	static double parseDouble(const ::std::string& s, uint32 lineNum);
-	static bool parseBool(const ::std::string& s, uint32 lineNum);
+	static ::std::pair<::std::string_view, ::std::string_view> getKeyValueFromLine(
+		::std::string_view line, uint32 lineNum);
+	static size_t parseUnsigned(::std::string_view s, uint32 lineNum);
+	static double parseDouble(::std::string_view s, uint32 lineNum);
+	static bool parseBool(::std::string_view s, uint32 lineNum);
 
 #if defined(PARLIAMENT_UNIT_TEST)
 	static Path testGetConfigFilePath(const TChar* pEnvVarName, const TChar* pDefaultConfigFileName)

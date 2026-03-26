@@ -13,6 +13,7 @@
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/format.hpp>
+#include <charconv>
 #include <regex>
 #include <string>
 
@@ -23,11 +24,13 @@ namespace pmnt = ::bbn::parliament;
 using ::boost::format;
 using ::std::begin;
 using ::std::end;
+using ::std::from_chars;
 using ::std::getline;
 using ::std::ifstream;
 using ::std::make_pair;
 using ::std::pair;
 using ::std::string;
+using ::std::string_view;
 using TRegex = ::std::basic_regex<pmnt::TChar>;
 using TSMatch = ::std::match_results<pmnt::TString::const_iterator>;
 
@@ -149,8 +152,8 @@ bool pmnt::ConfigFileReader::isBlankOrCommentLine(const string& line)
 	return firstNonBlankPos == string::npos || line[firstNonBlankPos] == '#';
 }
 
-pair<string, string> pmnt::ConfigFileReader::getKeyValueFromLine(
-	const string& line, uint32 lineNum)
+pair<string_view, string_view> pmnt::ConfigFileReader::getKeyValueFromLine(
+	string_view line, uint32 lineNum)
 {
 	string::size_type equalsPos = line.find_first_of('=');
 	if (equalsPos == string::npos)
@@ -167,45 +170,57 @@ pair<string, string> pmnt::ConfigFileReader::getKeyValueFromLine(
 	}
 }
 
-size_t pmnt::ConfigFileReader::parseUnsigned(const string& str, uint32 lineNum)
+size_t pmnt::ConfigFileReader::parseUnsigned(string_view str, uint32 lineNum)
 {
-	string str2 = ba::trim_copy(str);
-	char* pEnd;
-	size_t result = strtoul(str2.c_str(), &pEnd, 10);
-	if (str2.length() == 0 || str2[0] == '-' || *pEnd != '\0')
+	auto trimmedStr = ba::trim_copy(str);
+	size_t result = 0;
+	auto retCode = from_chars(cbegin(trimmedStr), cend(trimmedStr), result);
+	if (trimmedStr.length() == 0 || retCode.ec != std::errc{} || retCode.ptr != cend(trimmedStr))
 	{
-		throw Exception(format("Ill-formed integer '%1%' on line %2%") % str2 % lineNum);
+		throw Exception(format("Ill-formed integer '%1%' on line %2%") % trimmedStr % lineNum);
 	}
 	return result;
 }
 
-double pmnt::ConfigFileReader::parseDouble(const string& str, uint32 lineNum)
+double pmnt::ConfigFileReader::parseDouble(string_view str, uint32 lineNum)
 {
-	string str2 = ba::trim_copy(str);
-	char* pEnd;
-	double result = strtod(str2.c_str(), &pEnd);
-	if (str2.length() == 0 || *pEnd != '\0')
+	// from_chars isn't supported by Apple Clang until macOS 26.0
+#ifdef COMPILER_SUPPORTS_FROM_CHARS
+	auto trimmedStr = ba::trim_copy(str);
+	double result = 0;
+	auto retCode = from_chars(cbegin(trimmedStr), cend(trimmedStr), result);
+	if (trimmedStr.length() == 0 || retCode.ec != std::errc{} || retCode.ptr != cend(trimmedStr))
 	{
-		throw Exception(format("Ill-formed number '%1%' on line %2%") % str2 % lineNum);
+		throw Exception(format("Ill-formed number '%1%' on line %2%") % trimmedStr % lineNum);
 	}
 	return result;
+#else
+	auto trimmedStr = string{ba::trim_copy(str)};	// convert so pEnd test will work
+	char* pEnd;
+	double result = strtod(trimmedStr.c_str(), &pEnd);
+	if (trimmedStr.length() == 0 || *pEnd != '\0')
+	{
+		throw Exception(format("Ill-formed number '%1%' on line %2%") % trimmedStr % lineNum);
+	}
+	return result;
+#endif
 }
 
 template<typename T, ::std::size_t N>
-static bool doesAnyMatch(const string& exemplar, T(&matchList)[N])
+static bool doesAnyMatch(string_view exemplar, T(&matchList)[N])
 {
 	return ::std::any_of(begin(matchList), end(matchList),
 		[&exemplar](const char*const pStr) { return ba::iequals(exemplar, pStr); });
 }
 
-bool pmnt::ConfigFileReader::parseBool(const string& str, uint32 lineNum)
+bool pmnt::ConfigFileReader::parseBool(string_view str, uint32 lineNum)
 {
-	string s2 = ba::trim_copy(str);
-	if (doesAnyMatch(s2, k_trueBoolValues))
+	auto trimmedStr = ba::trim_copy(str);
+	if (doesAnyMatch(trimmedStr, k_trueBoolValues))
 	{
 		return true;
 	}
-	else if (doesAnyMatch(s2, k_falseBoolValues))
+	else if (doesAnyMatch(trimmedStr, k_falseBoolValues))
 	{
 		return false;
 	}

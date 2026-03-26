@@ -5,6 +5,7 @@
 // All rights reserved.
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/filesystem/directory.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/test/unit_test.hpp>

@@ -33,7 +33,6 @@
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/darwin&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/win32&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${env_var:BDB_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Parliament/KbCore}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.381369236" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++17" valueType="enumerated"/>
@@ -100,7 +99,6 @@
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/darwin&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/win32&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${env_var:BDB_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Parliament/KbCore}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.1943560140" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++17" valueType="enumerated"/>
@@ -180,7 +178,6 @@
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/darwin&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/win32&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${env_var:BDB_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Parliament/KbCore}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.928054476" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++17" valueType="enumerated"/>
@@ -247,7 +244,6 @@
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/darwin&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:JAVA_HOME}/include/win32&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${env_var:BDB_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Parliament/KbCore}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.36262296" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++17" valueType="enumerated"/>

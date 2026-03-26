@@ -45,21 +45,32 @@ lib FixupParliamentPath
 
 lib Parliament
 	:	[ glob *.cpp : FixupParliamentPath.cpp Utf8StaticInitGen.cpp ]
-		/site-config//BerkeleyDB
 		/site-config//BoostHeaderOnlyLibraries
 		/site-config//BoostAtomic
 		/site-config//BoostChrono
+		/site-config//BoostContainer
+		/site-config//BoostDateTime
 		/site-config//BoostFileSystem
 		/site-config//BoostLog
 		/site-config//BoostLogSetup
+		/site-config//BoostRegex
+		/site-config//BoostSerialization
 		/site-config//BoostThread
 		/site-config//JavaJNI
+		/site-config//rocksdb
+		/site-config//gflags
+		/site-config//lz4
+		/site-config//zstd
 		Parliament.jar
 	:	<include>.
 		<define>BUILDING_KBCORE
 		<visibility>hidden
 		<threading>multi
 		<os>NT:<source>Version.rc
+		<os>LINUX:<source>/site-config//bz2
+		<os>LINUX:<source>/site-config//snappy
+		<os>LINUX:<source>/site-config//xxhash
+		<os>LINUX:<source>/site-config//z
 		<os>LINUX:<source>/KB//DynamicLinkLib
 		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_KbConfig.h
 		<implicit-dependency>parliament/generated/com_bbn_parliament_jni_KbInstance.h

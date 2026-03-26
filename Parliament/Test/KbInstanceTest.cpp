@@ -252,9 +252,9 @@ BOOST_DATA_TEST_CASE(
 
 	ResourceId rdfType = kb.uriToRsrcId(rdfTypeUri, false, false);
 	BOOST_CHECK_EQUAL(rdfType, k_nullRsrcId);
-	rdfType = kb.uriToRsrcId(rdfTypeUri.c_str(), rdfTypeUri.length(), false, true);
+	rdfType = kb.uriToRsrcId(rdfTypeUri, false, true);
 	BOOST_CHECK_NE(rdfType, k_nullRsrcId);
-	ResourceId rdfType2 = kb.uriToRsrcId(rdfTypeUri.c_str(), false, false);
+	ResourceId rdfType2 = kb.uriToRsrcId(rdfTypeUri, false, false);
 	BOOST_CHECK_EQUAL(rdfType, rdfType2);
 	rdfType2 = kb.uriToRsrcId(rdfTypeUri, false, true);
 	BOOST_CHECK_EQUAL(rdfType, rdfType2);

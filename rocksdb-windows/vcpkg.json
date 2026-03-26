@@ -1,0 +1,18 @@
+{
+	"builtin-baseline": "fc349a7b35348173d4d24621ae04ad80e2375957",
+	"dependencies": [
+		{
+			"name": "rocksdb",
+			"features": [
+				"bzip2",
+				"lz4",
+				"snappy",
+				"zlib",
+				"zstd"
+			]
+		}
+	],
+	"overrides": [
+		{ "name": "rocksdb", "version": "10.10.1" }
+	]
+}
