@@ -232,7 +232,7 @@ The main points to check for are (a) that the dynamic library contains two archi
 To build RocksDB on Linux, upgrade your gcc compiler to at least version 11 to get C++20 support. Next, use the package manager to install RocksDB's dependencies. On Ubuntu, this looks like so:
 {\small\begin{verbatim}
 sudo apt install libgflags-dev libsnappy-dev zlib1g-dev libbz2-dev \
-   liblz4-dev libzstd-dev
+   liblz4-dev libzstd-dev libxxhash-dev
 \end{verbatim}}
 
 Now execute the following commands from the root directory of the expanded RocksDB release:
