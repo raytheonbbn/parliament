@@ -1,7 +1,9 @@
-
 import os ;
 
 project site-config ;
+
+path-constant MacSdkDir : "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr" ;
+#path-constant MacSdkDir : "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr" ;
 
 path-constant BoostDir : [ os.environ BOOST_ROOT ] ;
 path-constant JavaDir : [ os.environ JAVA_HOME ] ;
@@ -210,14 +212,14 @@ alias bz2	# dependency of rocksdb
 	:	# no sources
 	:	# no build properties
 	:	# no default build
-	:	<include>/usr/include
-		<linkflags>"-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lbz2"
+	:	<include>$(MacSdkDir)/include
+		<linkflags>"-L$(MacSdkDir)/lib -lbz2"
 	;
 
 alias z	# dependency of rocksdb
 	:	# no sources
 	:	# no build properties
 	:	# no default build
-	:	<include>/usr/include
-		<linkflags>"-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lz"
+	:	<include>$(MacSdkDir)/include
+		<linkflags>"-L$(MacSdkDir)/lib -lz"
 	;
