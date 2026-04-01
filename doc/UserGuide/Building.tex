@@ -81,7 +81,7 @@ To use Eclipse with your \ac{pmnt} working copy, first choose (or create) an Ecl
 \subsection{Building RocksDB on Windows}
 \label{sec:BuildingRocksDBOnWindows}
 
-On Windows, we use Microsoft's \path|vcpkg| package manager to download and create the RocksDB library and its dependencies. In your working copy, chnage to the \path|rocksdb-windows| directory. If you are running Windows on an Intel- or AMD-based machine, issue these commands from a Visual Studio terminal:
+On Windows, we use Microsoft's \path|vcpkg| package manager to download and create the RocksDB library and its dependencies. In your working copy, change to the \path|rocksdb-windows| directory. If you are running Windows on an Intel- or AMD-based machine, issue these commands from a Visual Studio terminal:
 
 \begin{verbatim}
 vcpkg install --triplet x64-windows
@@ -100,6 +100,8 @@ vcpkg install --triplet arm64-windows-static
 \end{verbatim}
 
 \red{[Something about setting up environment variables or \path|site-config.jam|.]}
+
+Start the Developer Command Prompt window that is a part of Visual Studio installation. Run the build commands from within the Developer Command Prompt window to have paths to the compiler and runtime libraries set.
 
 
 \subsection{Building RocksDB on Macintosh}

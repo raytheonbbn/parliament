@@ -26,23 +26,23 @@ https://github.com/NoviCker/vcpkg/blob/main/docs/commands/common-options.md
 				<antcall target="runVcPkg">
 					<param name="triplet" value="arm64-windows"/>
 				</antcall>
-				<antcall target="runVcPkg">
+				<!-- antcall target="runVcPkg">
 					<param name="triplet" value="arm64-windows-static"/>
-				</antcall>
+				</antcall -->
 			</then>
 			<else>
 				<antcall target="runVcPkg">
 					<param name="triplet" value="x64-windows"/>
 				</antcall>
-				<antcall target="runVcPkg">
+				<!-- antcall target="runVcPkg">
 					<param name="triplet" value="x64-windows-static"/>
-				</antcall>
-				<antcall target="runVcPkg">
+				</antcall -->
+				<!-- antcall target="runVcPkg">
 					<param name="triplet" value="x86-windows"/>
-				</antcall>
-				<antcall target="runVcPkg">
+				</antcall -->
+				<!-- antcall target="runVcPkg">
 					<param name="triplet" value="x86-windows-static"/>
-				</antcall>
+				</antcall -->
 			</else>
 		</if>
 	</target>

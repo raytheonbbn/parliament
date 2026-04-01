@@ -126,6 +126,28 @@ alias BoostContainer	# Used by Boost.JSON
 		<dll-path>$(BoostLibDir)
 	;
 
+alias BoostDateTime
+	:	# no sources
+	:	$(BoostA64DyDbgLibPfx)date_time$(BoostA64DyDbgLibSfx)
+		$(BoostA64DyRlsLibPfx)date_time$(BoostA64DyRlsLibSfx)
+		$(BoostA64StDbgLibPfx)date_time$(BoostA64StDbgLibSfx)
+		$(BoostA64StRlsLibPfx)date_time$(BoostA64StRlsLibSfx)
+		$(BoostX64DyDbgLibPfx)date_time$(BoostX64DyDbgLibSfx)
+		$(BoostX64DyRlsLibPfx)date_time$(BoostX64DyRlsLibSfx)
+		$(BoostX64StDbgLibPfx)date_time$(BoostX64StDbgLibSfx)
+		$(BoostX64StRlsLibPfx)date_time$(BoostX64StRlsLibSfx)
+		$(BoostX32DyDbgLibPfx)date_time$(BoostX32DyDbgLibSfx)
+		$(BoostX32DyRlsLibPfx)date_time$(BoostX32DyRlsLibSfx)
+		$(BoostX32StDbgLibPfx)date_time$(BoostX32StDbgLibSfx)
+		$(BoostX32StRlsLibPfx)date_time$(BoostX32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+		<link>shared:<define>BOOST_DATE_TIME_DYN_LINK
+		<define>_SCL_SECURE_NO_WARNINGS
+		<library-path>$(BoostLibDir)
+		<dll-path>$(BoostLibDir)
+	;
+
 alias BoostFileSystem
 	:	# no sources
 	:	$(BoostA64DyDbgLibPfx)filesystem$(BoostA64DyDbgLibSfx)
