@@ -81,8 +81,8 @@ static void throwException(JNIEnv* pEnv, const exception& ex)
 static void throwSystemException(int errCode, const char* pFile, int line,
 	string_view msg)
 {
-	var fullMsg = msg + format(" (error code {0}}, file {1}}, line {2}})",
-		errCode, pFile, line);
+	auto fullMsg = format("{0} (error code {1}, file {2}, line {3})",
+		msg, errCode, pFile, line);
 	throw system_error{errCode, system_category(), fullMsg};
 }
 #endif
