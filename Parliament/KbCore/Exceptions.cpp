@@ -37,21 +37,12 @@ static auto g_log(pmnt::log::getSource("Exceptions"));
 #endif
 
 
-// #if defined(__GNUC__) && !defined(__clang__)
-// #pragma GCC diagnostic push
-// #pragma GCC diagnostic ignored "-Wstringop-truncation"
-// #endif
-
 void pmnt::Exception::copyMsg(string_view msg) noexcept
 {
 	auto numCharsCopied = msg.copy(m_msg.data(), m_msg.size());
 	numCharsCopied = min(m_msg.size() - 1, numCharsCopied);
 	m_msg[numCharsCopied] = '\0';
 }
-
-// #if defined(__GNUC__) && !defined(__clang__)
-// #pragma GCC diagnostic pop
-// #endif
 
 pmnt::Exception::Exception(string_view msg) noexcept :
 	exception(),
