@@ -152,7 +152,6 @@ bfs::path pmnt::getCurrentDllFilePath()
 #endif
 }
 
-
 void pmnt::numericConversionErrorCheck(string_view str, const char* pNextChar, errc errCode)
 {
 	if (errCode == errc::invalid_argument)
@@ -165,7 +164,7 @@ void pmnt::numericConversionErrorCheck(string_view str, const char* pNextChar, e
 		throw NumericConversionException(
 			format{"Result out of range: '%1%'"} % str);
 	}
-	else if (errCode == errc() && pNextChar != end(str))	// TODO: Not sure this should be an error
+	else if (errCode == errc{} && pNextChar != castSVIter(cend(str)))	// TODO: Not sure this should be an error
 	{
 		throw NumericConversionException(
 			format{"String contains non-number at the end: '%1%'"} % str);

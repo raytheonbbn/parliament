@@ -69,8 +69,8 @@ private:
 	static auto nullValue() -> value_type
 		{ return ::std::make_pair(value_type::first_type{}, k_nullRsrcId); }
 	static auto createIterator(RocksDBPtr::pointer pDb) -> RocksDBIterPtr::pointer;
-	static inline auto checkKeySizeDivisibleByCharSize(uint32 keySize) -> void;
-	static inline auto checkValueSize(uint32 valueSize) -> void;
+	static inline auto checkKeySizeDivisibleByCharSize(size_t keySize) -> void;
+	static inline auto checkValueSize(size_t valueSize) -> void;
 
 	auto setIteratorPosition() -> void;
 	auto advanceIterator() -> void;

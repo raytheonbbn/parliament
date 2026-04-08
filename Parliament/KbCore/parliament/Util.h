@@ -35,12 +35,27 @@ PARLIAMENT_EXPORT ::boost::filesystem::path getCurrentDllFilePath();
 PARLIAMENT_EXPORT void numericConversionErrorCheck(::std::string_view str,
 	const char* pNextChar, ::std::errc errCode);
 
+// Needed in strTo below because Microsoft's implementation of from_chars doesn't
+// support string_view iterators, even though the C++17 standard allows it.
+#if defined(PARLIAMENT_WINDOWS)
+inline const char* castSVIter(::std::string_view::const_iterator it)
+{
+	return &(*it);
+}
+#else
+inline ::std::string_view::const_iterator castSVIter(::std::string_view::const_iterator it)
+{
+	return it;
+}
+#endif
+
 template<typename TargetType>
 TargetType strTo(::std::string_view str)
 {
 	TargetType number{};
 #if defined(__cpp_lib_to_chars)
-	auto [pNextChar, errCode] = ::std::from_chars(begin(str), end(str), number);
+	auto [pNextChar, errCode] = ::std::from_chars(
+		castSVIter(cbegin(str)), castSVIter(cend(str)), number);
 	numericConversionErrorCheck(str, pNextChar, errCode);
 #else
 	try

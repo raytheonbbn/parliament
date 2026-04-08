@@ -128,7 +128,7 @@ auto pmnt::StrToIdEntryIterator::setIteratorPosition() -> void
 	}
 }
 
-auto pmnt::StrToIdEntryIterator::checkKeySizeDivisibleByCharSize(uint32 keySize) -> void
+auto pmnt::StrToIdEntryIterator::checkKeySizeDivisibleByCharSize(size_t keySize) -> void
 {
 	if constexpr (sizeof(value_type::first_type::value_type) > 1)
 	{
@@ -141,7 +141,7 @@ auto pmnt::StrToIdEntryIterator::checkKeySizeDivisibleByCharSize(uint32 keySize)
 	}
 }
 
-auto pmnt::StrToIdEntryIterator::checkValueSize(uint32 valueSize) -> void
+auto pmnt::StrToIdEntryIterator::checkValueSize(size_t valueSize) -> void
 {
 	if (valueSize != sizeof(value_type::second_type))
 	{

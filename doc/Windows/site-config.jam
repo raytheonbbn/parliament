@@ -4,6 +4,7 @@ project site-config ;
 
 path-constant BoostDir : [ os.environ BOOST_ROOT ] ;
 path-constant JavaDir : [ os.environ JAVA_HOME ] ;
+path-constant DepsDir : [ os.environ PARLIAMENT_DEPENDENCIES ] ;
 
 constant BoostVersion : [ os.environ BOOST_VERSION ] ;
 constant BoostVersionComponents : [ MATCH "([0-9]+)_([0-9]+)_([0-9]+)" : $(BoostVersion) ] ;
@@ -21,7 +22,7 @@ constant COMPILER : vc143 ;
 #constant COMPILER : vc100 ;
 #constant COMPILER : vc90 ;
 
-constant BoostLibDir : $(BoostDir)/stage-msvc/lib ;
+path-constant BoostLibDir : $(BoostDir)/stage-msvc/lib ;
 
 constant BoostDyPfx : <source>$(BoostLibDir)/boost_ ;
 constant BoostStPfx : <source>$(BoostLibDir)/libboost_ ;
@@ -211,6 +212,50 @@ alias BoostLogSetup
 	:	<include>$(BoostDir)
 		<link>shared:<define>BOOST_LOG_DYN_LINK
 		<define>BOOST_LOG_NO_SHORTHAND_NAMES
+		<define>_SCL_SECURE_NO_WARNINGS
+		<library-path>$(BoostLibDir)
+		<dll-path>$(BoostLibDir)
+	;
+
+alias BoostRegex
+	:	# no sources
+	:	$(BoostA64DyDbgLibPfx)regex$(BoostA64DyDbgLibSfx)
+		$(BoostA64DyRlsLibPfx)regex$(BoostA64DyRlsLibSfx)
+		$(BoostA64StDbgLibPfx)regex$(BoostA64StDbgLibSfx)
+		$(BoostA64StRlsLibPfx)regex$(BoostA64StRlsLibSfx)
+		$(BoostX64DyDbgLibPfx)regex$(BoostX64DyDbgLibSfx)
+		$(BoostX64DyRlsLibPfx)regex$(BoostX64DyRlsLibSfx)
+		$(BoostX64StDbgLibPfx)regex$(BoostX64StDbgLibSfx)
+		$(BoostX64StRlsLibPfx)regex$(BoostX64StRlsLibSfx)
+		$(BoostX32DyDbgLibPfx)regex$(BoostX32DyDbgLibSfx)
+		$(BoostX32DyRlsLibPfx)regex$(BoostX32DyRlsLibSfx)
+		$(BoostX32StDbgLibPfx)regex$(BoostX32StDbgLibSfx)
+		$(BoostX32StRlsLibPfx)regex$(BoostX32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+		<link>shared:<define>BOOST_REGEX_DYN_LINK
+		<define>_SCL_SECURE_NO_WARNINGS
+		<library-path>$(BoostLibDir)
+		<dll-path>$(BoostLibDir)
+	;
+
+alias BoostSerialization
+	:	# no sources
+	:	$(BoostA64DyDbgLibPfx)serialization$(BoostA64DyDbgLibSfx)
+		$(BoostA64DyRlsLibPfx)serialization$(BoostA64DyRlsLibSfx)
+		$(BoostA64StDbgLibPfx)serialization$(BoostA64StDbgLibSfx)
+		$(BoostA64StRlsLibPfx)serialization$(BoostA64StRlsLibSfx)
+		$(BoostX64DyDbgLibPfx)serialization$(BoostX64DyDbgLibSfx)
+		$(BoostX64DyRlsLibPfx)serialization$(BoostX64DyRlsLibSfx)
+		$(BoostX64StDbgLibPfx)serialization$(BoostX64StDbgLibSfx)
+		$(BoostX64StRlsLibPfx)serialization$(BoostX64StRlsLibSfx)
+		$(BoostX32DyDbgLibPfx)serialization$(BoostX32DyDbgLibSfx)
+		$(BoostX32DyRlsLibPfx)serialization$(BoostX32DyRlsLibSfx)
+		$(BoostX32StDbgLibPfx)serialization$(BoostX32StDbgLibSfx)
+		$(BoostX32StRlsLibPfx)serialization$(BoostX32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+		<link>shared:<define>BOOST_SERIALIZATION_DYN_LINK
 		<define>_SCL_SECURE_NO_WARNINGS
 		<library-path>$(BoostLibDir)
 		<dll-path>$(BoostLibDir)

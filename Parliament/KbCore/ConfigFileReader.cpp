@@ -170,12 +170,26 @@ pair<string_view, string_view> pmnt::ConfigFileReader::getKeyValueFromLine(
 	}
 }
 
+// This function is needed because Microsoft's implementation of from_chars
+// doesn't support string_view iterators, even though the C++17 standard allows it.
+#if defined(PARLIAMENT_WINDOWS)
+inline static const char* castSVIter(string_view::const_iterator it)
+{
+	return &(*it);
+}
+#else
+inline static string_view::const_iterator castSVIter(string_view::const_iterator it)
+{
+	return it;
+}
+#endif
+
 size_t pmnt::ConfigFileReader::parseUnsigned(string_view str, uint32 lineNum)
 {
 	auto trimmedStr = ba::trim_copy(str);
 	size_t result = 0;
-	auto retCode = from_chars(cbegin(trimmedStr), cend(trimmedStr), result);
-	if (trimmedStr.length() == 0 || retCode.ec != std::errc{} || retCode.ptr != cend(trimmedStr))
+	auto retCode = from_chars(castSVIter(cbegin(trimmedStr)), castSVIter(cend(trimmedStr)), result);
+	if (trimmedStr.length() == 0 || retCode.ec != std::errc{} || retCode.ptr != castSVIter(cend(trimmedStr)))
 	{
 		throw Exception(format("Ill-formed integer '%1%' on line %2%") % trimmedStr % lineNum);
 	}

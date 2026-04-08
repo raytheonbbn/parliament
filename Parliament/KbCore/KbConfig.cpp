@@ -26,7 +26,7 @@ using ::std::string_view;
 
 static ::boost::once_flag g_onceInitFlag = BOOST_ONCE_INIT;
 static auto g_log = pmnt::log::getSource("KbConfig");
-static constexpr pmnt::TChar k_bdbCacheSizeOptName[] = _T("bdbCacheSize");
+static constexpr char k_bdbCacheSizeOptName[] = "bdbCacheSize";
 static constexpr pmnt::TChar k_bdbCacheSizeVarName[] = _T("PARLIAMENT_BDB_CACHE_SIZE");
 pmnt::KbConfig::ConfigEntryMap pmnt::KbConfig::g_ceMap;
 bool pmnt::KbConfig::g_isConfigEntryMapInitialized = pmnt::KbConfig::initConfigEntryMap();
@@ -85,7 +85,7 @@ void pmnt::KbConfig::unsynchronizedInitConfigEntryMap()
 			if (!envVarValue.empty())
 			{
 				PMNT_LOG(g_log, log::Level::warn)
-					<< "The '" << convertTCharToUtf8(k_bdbCacheSizeOptName) << "' configuration"
+					<< "The '" << k_bdbCacheSizeOptName << "' configuration"
 						" option and the '" << convertTCharToUtf8(k_bdbCacheSizeVarName) << "'"
 						" environment variable are ignored and can be deleted from your"
 						" configuration file and environment, respectively";
@@ -93,7 +93,7 @@ void pmnt::KbConfig::unsynchronizedInitConfigEntryMap()
 			else
 			{
 				PMNT_LOG(g_log, log::Level::warn)
-					<< "The '" << convertTCharToUtf8(k_bdbCacheSizeOptName) << "' configuration"
+					<< "The '" << k_bdbCacheSizeOptName << "' configuration"
 						" option is ignored and can be deleted from your configuration file";
 			}
 		};
