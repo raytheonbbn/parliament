@@ -177,7 +177,7 @@ pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteral(RsrcStringView literal)
 		auto langIt = langSepIt;
 		advance(langIt, k_langSep.size());
 		if (any_of(langIt, last, [](RsrcChar ch){
-			return ch < 'a' && ch > 'z' && ch < 'A' && ch > 'Z' && ch != '-'; }))
+			return !((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '-'); }))
 		{
 			throw Exception(format("Language tag contains disallowed characters: %1%")
 				% convertFromRsrcChar(RsrcString(first, last)));
