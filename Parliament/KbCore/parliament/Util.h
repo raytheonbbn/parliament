@@ -30,7 +30,7 @@ namespace bbn::parliament
 {
 
 PARLIAMENT_EXPORT ::std::string getKbVersion();	// Parliament version number
-PARLIAMENT_EXPORT TString tGetEnvVar(const TChar* pVarName);
+PARLIAMENT_EXPORT TString tGetEnvVar(TStringView varName);
 PARLIAMENT_EXPORT ::boost::filesystem::path getCurrentDllFilePath();
 PARLIAMENT_EXPORT void numericConversionErrorCheck(::std::string_view str,
 	const char* pNextChar, ::std::errc errCode);

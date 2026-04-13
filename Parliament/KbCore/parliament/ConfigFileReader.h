@@ -41,8 +41,8 @@ public:
 	static bool parseBool(::std::string_view s, uint32 lineNum);
 
 #if defined(PARLIAMENT_UNIT_TEST)
-	static Path testGetConfigFilePath(const TChar* pEnvVarName, const TChar* pDefaultConfigFileName)
-		{ return getConfigFilePath(pEnvVarName, pDefaultConfigFileName); }
+	static Path testGetConfigFilePath(TStringView envVarName, TStringView defaultConfigFileName)
+		{ return getConfigFilePath(envVarName, defaultConfigFileName); }
 	static bool testIsBlankOrCommentLine(const ::std::string& line)
 		{ return isBlankOrCommentLine(line); }
 #endif
@@ -51,7 +51,7 @@ private:
 	static ::std::ifstream openFile(ConfigKind configKind);
 	static ::std::pair<const TChar*, const TChar*> getEnvVarAndFileName(
 		ConfigKind configKind);
-	static Path getConfigFilePath(const TChar* pEnvVarName, const TChar* pDefaultConfigFileName);
+	static Path getConfigFilePath(TStringView envVarName, TStringView defaultConfigFileName);
 	static bool isBlankOrCommentLine(const ::std::string& line);
 };
 

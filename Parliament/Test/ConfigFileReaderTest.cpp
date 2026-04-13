@@ -64,8 +64,8 @@ static bfs::path getRunningDllFilePath()
 
 BOOST_AUTO_TEST_SUITE(ConfigFileReaderTestSuite)
 
-static constexpr TChar k_testEnvVarName[] = _T("TEST_CONFIG_PATH");
-static constexpr TChar k_testConfigFileName[] = _T("test-config.txt");
+static constexpr TStringView k_testEnvVarName{_T("TEST_CONFIG_PATH")};
+static constexpr TStringView k_testConfigFileName{_T("test-config.txt")};
 
 BOOST_AUTO_TEST_CASE(getConfigFilePathTest)
 {

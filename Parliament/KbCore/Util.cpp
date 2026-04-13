@@ -58,8 +58,9 @@ string pmnt::getKbVersion()
 	return PARLIAMENT_VERSION_STRING;
 }
 
-pmnt::TString pmnt::tGetEnvVar(const TChar* pVarName)
+pmnt::TString pmnt::tGetEnvVar(TStringView varName)
 {
+	auto varNameStr = TString{varName};
 #if defined(PARLIAMENT_WINDOWS)
 #if defined(PARLIAMENT_UNIT_TEST)
 	constexpr size_t k_bufferIncrement = 8;	// Force a retry with enlarged buffer at test time
@@ -70,7 +71,7 @@ pmnt::TString pmnt::tGetEnvVar(const TChar* pVarName)
 	{
 		::std::vector<TChar> buffer(bufferSize, _T('\0'));
 
-		DWORD numChars = ::GetEnvironmentVariable(pVarName, &(buffer[0]), bufferSize);
+		DWORD numChars = ::GetEnvironmentVariable(varNameStr.c_str(), &(buffer[0]), bufferSize);
 		auto errCode = Exception::getSysErrCode();
 		if (numChars == 0)
 		{
@@ -82,7 +83,7 @@ pmnt::TString pmnt::tGetEnvVar(const TChar* pVarName)
 			{
 				auto errMsg = str(format{
 					"GetEnvironmentVariable error: var = '%1%', numChars = %2%, error code = %3%"}
-						% convertTCharToUtf8(pVarName) % numChars % errCode);
+						% convertTCharToUtf8(varName) % numChars % errCode);
 				PMNT_LOG(g_log, log::Level::error) << errMsg;
 				throw Exception(errMsg);
 			}
@@ -97,7 +98,7 @@ pmnt::TString pmnt::tGetEnvVar(const TChar* pVarName)
 		}
 	}
 #else
-	const TChar* pEnvVarValue = ::getenv(pVarName);
+	const TChar* pEnvVarValue = ::getenv(varNameStr.c_str());
 	return (pEnvVarValue == nullptr) ? TString() : TString(pEnvVarValue);
 #endif
 }

@@ -54,7 +54,7 @@ private:
 class EnvVarReset
 {
 public:
-	EnvVarReset(const TString& envVarName, const TString& newEnvVarValue);
+	EnvVarReset(TStringView envVarName, TStringView newEnvVarValue);
 	EnvVarReset(const EnvVarReset&) = delete;
 	EnvVarReset& operator=(const EnvVarReset&) = delete;
 	EnvVarReset(EnvVarReset&&) = delete;

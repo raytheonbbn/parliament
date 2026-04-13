@@ -100,10 +100,10 @@ pair<const pmnt::TChar*, const pmnt::TChar*> pmnt::ConfigFileReader::getEnvVarAn
 	}
 }
 
-bfs::path pmnt::ConfigFileReader::getConfigFilePath(const TChar* pEnvVarName,
-	const TChar* pDefaultConfigFileName)
+bfs::path pmnt::ConfigFileReader::getConfigFilePath(TStringView envVarName,
+	TStringView defaultConfigFileName)
 {
-	auto envVarValue = tGetEnvVar(pEnvVarName);
+	auto envVarValue = tGetEnvVar(envVarName);
 	auto configFile = bfs::path(envVarValue);
 	if (!envVarValue.empty() && exists(configFile) && is_regular_file(configFile))
 	{
@@ -111,7 +111,7 @@ bfs::path pmnt::ConfigFileReader::getConfigFilePath(const TChar* pEnvVarName,
 	}
 
 	auto configDir = getCurrentDllFilePath().parent_path();
-	configFile = configDir / pDefaultConfigFileName;
+	configFile = configDir / defaultConfigFileName;
 	if (exists(configFile) && is_regular_file(configFile))
 	{
 		return configFile;
@@ -128,7 +128,7 @@ bfs::path pmnt::ConfigFileReader::getConfigFilePath(const TChar* pEnvVarName,
 			if (configDir.filename().native() == TString(_T("target")))
 			{
 				testConfigDir /= _T("test-bin");
-				auto testConfigFile = testConfigDir / pDefaultConfigFileName;
+				auto testConfigFile = testConfigDir / defaultConfigFileName;
 				if (exists(testConfigFile) && is_regular_file(testConfigFile))
 				{
 					return testConfigFile;
@@ -136,14 +136,14 @@ bfs::path pmnt::ConfigFileReader::getConfigFilePath(const TChar* pEnvVarName,
 			}
 		}
 
-		configFile = configDir / pDefaultConfigFileName;
+		configFile = configDir / defaultConfigFileName;
 		if (exists(configFile) && is_regular_file(configFile))
 		{
 			return configFile;
 		}
 	}
 
-	return pDefaultConfigFileName;
+	return defaultConfigFileName;
 }
 
 bool pmnt::ConfigFileReader::isBlankOrCommentLine(const string& line)

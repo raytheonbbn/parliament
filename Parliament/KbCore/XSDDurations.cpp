@@ -56,7 +56,7 @@ static inline bool isDigit(pmnt::Utf32Char ch)
 {
 	for (auto p = k_numericChars; *p != '\0'; ++p)
 	{
-		if (ch == *p)
+		if (ch == static_cast<unsigned char>(*p))
 		{
 			return true;
 		}
