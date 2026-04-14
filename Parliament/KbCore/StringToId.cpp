@@ -195,7 +195,7 @@ pmnt::StringToId::StringToId(const KbConfig& config) :
 {
 }
 
-auto pmnt::StringToId::createDb(const KbConfig& config) -> RocksDBPtr::pointer
+auto pmnt::StringToId::createDb(const KbConfig& config) -> RocksDBPtr
 {
 	auto rocksDbPath = config.uriToIntFilePath();
 	if (is_regular_file(rocksDbPath))
@@ -203,8 +203,8 @@ auto pmnt::StringToId::createDb(const KbConfig& config) -> RocksDBPtr::pointer
 		throw pmnt::Exception(format(
 			"Parliament's URI-to-Int table '%1%' exists, but is a regular file rather "
 			"than a directory. Is this a Parliament instance from an older version of "
-			"Parliament? If so, see Section 2.2.2, 'Upgrading an Existing Installation' "
-			"in the Parliament User Guide for the data migration procedure.")
+			"Parliament? If so, see Parliament User Guide, Section 2.2.2, 'Upgrading "
+			"an Existing Installation,' for the data migration procedure.")
 			% rocksDbPath.generic_string());
 	}
 	else if (!exists(rocksDbPath))
@@ -212,10 +212,10 @@ auto pmnt::StringToId::createDb(const KbConfig& config) -> RocksDBPtr::pointer
 		create_directories(rocksDbPath);
 	}
 
-	auto pDB = static_cast<RocksDBPtr::pointer>(nullptr);
+	RocksDBPtr pDB;
 	rdb::Options options;
 	options.create_if_missing = true;
-	auto status = rdb::DB::Open(options, pathAsUtf8(rocksDbPath).c_str(), &pDB);
+	auto status = rdb::DB::Open(options, pathAsUtf8(rocksDbPath), &pDB);
 	throwOnError(status, "Unable to open RocksDB database");
 	return pDB;
 }

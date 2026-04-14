@@ -29,7 +29,6 @@ install distribution
 
 lib FixupParliamentPath
 	:	DllMain.cpp FixupParliamentPath.cpp
-		/site-config//BoostHeaderOnlyLibraries
 		/site-config//JavaJNI
 		# Parliament.jar
 	:	<include>.
@@ -67,6 +66,9 @@ lib Parliament
 		<visibility>hidden
 		<threading>multi
 		<os>NT:<source>Version.rc
+		<os>NT:<source>/site-config//bz2
+		<os>NT:<source>/site-config//snappy
+		<os>NT:<source>/site-config//z
 		<os>LINUX:<source>/site-config//bz2
 		<os>LINUX:<source>/site-config//snappy
 		<os>LINUX:<source>/site-config//xxhash

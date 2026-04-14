@@ -116,7 +116,7 @@ public:
 		{ return StrToIdEntryIterator{}; }
 
 private:
-	static auto createDb(const KbConfig& config) -> RocksDBPtr::pointer;
+	static auto createDb(const KbConfig& config) -> RocksDBPtr;
 	auto checkWritable() const -> void;
 
 	KbConfig		m_config;

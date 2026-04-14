@@ -1,5 +1,5 @@
 {
-	"builtin-baseline": "ffffe619563988cbcfda2b8db2c142654d12eaf5",
+	"builtin-baseline": "b21ff8f3cadbd8e0b175b49be2dd9202f1f208f4",
 	"dependencies": [
 		{
 			"name": "rocksdb",
@@ -16,6 +16,6 @@
 		}
 	],
 	"overrides": [
-		{ "name": "rocksdb", "version": "10.10.1" }
+		{ "name": "rocksdb", "version": "11.0.4" }
 	]
 }

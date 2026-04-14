@@ -35,6 +35,7 @@ using ::std::ostream;
 using ::std::pair;
 using ::std::string;
 using ::std::string_view;
+using ::std::unique_ptr;
 using ::std::vector;
 
 static const RsrcString			k_testKey1		= convertToRsrcChar("Hello World!");
@@ -92,7 +93,7 @@ BOOST_AUTO_TEST_CASE(testStringToIdCorrectness)
 	}
 
 	{
-		rocksdb::DB* pDB = nullptr;
+		unique_ptr<rocksdb::DB> pDB;
 		rocksdb::Options options;
 		options.create_if_missing = true;
 		auto status = rocksdb::DB::Open(options,
@@ -113,8 +114,6 @@ BOOST_AUTO_TEST_CASE(testStringToIdCorrectness)
 		BOOST_CHECK_EQUAL(1u, contents.size());
 		BOOST_CHECK_EQUAL(k_testKey1, contents[0].first);
 		BOOST_CHECK_EQUAL(k_testValue1, contents[0].second);
-
-		delete pDB;
 	}
 }
 
