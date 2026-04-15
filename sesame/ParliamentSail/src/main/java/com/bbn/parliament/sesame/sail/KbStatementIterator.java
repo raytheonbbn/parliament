@@ -43,7 +43,7 @@ public class KbStatementIterator implements StatementIterator
 	{
 		if (_iter != null)
 		{
-			_iter.finalize();
+			_iter.close();
 			_iter = null;
 		}
 		if (_syncSail != null)

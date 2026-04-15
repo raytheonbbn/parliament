@@ -113,7 +113,7 @@ public class KbRdfSource implements RdfSource, ValueFactory
 	@Override
 	public void shutDown()
 	{
-		_kb.finalize();
+		_kb.close();
 	}
 
 	@Override

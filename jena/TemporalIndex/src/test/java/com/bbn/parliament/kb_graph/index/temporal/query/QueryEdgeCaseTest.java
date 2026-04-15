@@ -95,9 +95,9 @@ public class QueryEdgeCaseTest {
 		}
 	}
 
+	/** Tests the query processor's ability to filter through irrelevant triples with similar subjects */
 	@SuppressWarnings("static-method")
 	@Test
-	/** Tests the query processor's ability to filter through irrelevant triples with similar subjects */
 	public void testIndexFilter() {
 		String query = COMMON_PREFIXES + """
 				select distinct ?thing where {
@@ -114,9 +114,9 @@ public class QueryEdgeCaseTest {
 		}
 	}
 
+	/** Tests the query processor's ability to filter through irrelevant triples with similar subjects */
 	@SuppressWarnings("static-method")
 	@Test
-	/** Tests the query processor's ability to filter through irrelevant triples with similar subjects */
 	public void PartialIndexQueryTest() {
 		String query = COMMON_PREFIXES + """
 				select distinct ?thing where {

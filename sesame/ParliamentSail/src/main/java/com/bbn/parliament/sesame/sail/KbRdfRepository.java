@@ -169,7 +169,7 @@ public class KbRdfRepository extends KbRdfSource implements RdfRepository
 			throw new SailUpdateException("no transaction started.");
 		}
 
-		getKb().finalize();
+		getKb().close();
 		KbInstance.deleteKb(getConfig(), getDirectory());
 
 		try
