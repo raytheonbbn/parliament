@@ -53,7 +53,6 @@ install install-lmdb-exe
 lib lmdb
 	:	$(SrcDir)/mdb.c $(SrcDir)/midl.c
 	:	<include>.
-		<visibility>hidden
 		<threading>multi
 	:	# default build
 	:	<include>.

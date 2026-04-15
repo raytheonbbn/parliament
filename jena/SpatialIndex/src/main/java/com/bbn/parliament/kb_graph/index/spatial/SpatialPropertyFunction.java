@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
@@ -19,23 +20,21 @@ import org.apache.jena.sparql.engine.iterator.QueryIterCommonParent;
 import org.apache.jena.sparql.engine.iterator.QueryIterRepeatApply;
 import org.apache.jena.sparql.util.IterLib;
 import org.apache.jena.util.iterator.NiceIterator;
+import org.deegree.io.quadtree.IndexException;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.kb_graph.index.spatial.standard.SpatialGeometryFactory;
 import com.bbn.parliament.kb_graph.index.spatial.standard.data.BufferedGeometry;
 import com.bbn.parliament.kb_graph.index.spatial.standard.data.FloatingCircle;
-import com.bbn.parliament.kb_graph.index.IndexException;
-import com.bbn.parliament.kb_graph.index.Record;
 import com.bbn.parliament.kb_graph.query.index.QueryCache;
-import com.bbn.parliament.kb_graph.query.index.operand.Operand;
 import com.bbn.parliament.kb_graph.query.index.operand.OperandFactory;
 import com.bbn.parliament.kb_graph.query.index.pfunction.EstimableIndexPropertyFunction;
+
+import sun.jvm.hotspot.asm.Operand;
 
 public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geometry> {
 	private static final Logger LOG = LoggerFactory.getLogger(SpatialPropertyFunction.class);
@@ -116,10 +115,17 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 		}
 	}
 
-	protected QueryIterator bindExtentsForFloatingExtents(
-		List<Geometry> extents, Node rootNode, FloatingCircle floater,
-		boolean floatingSubject, SpatialIndex spIndex, Binding binding,
-		ExecutionContext context) {
+	protected QueryIterator bindExtentsForFloatingExtents(List<Geometry> extents,
+		Node rootNode, FloatingCircle floater, boolean floatingSubject, SpatialIndex spIndex,
+		Binding binding, ExecutionContext context) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("bindExtentsForFloatingExtents - Root node: {}", rootNode);
+			LOG.debug("bindExtentsForFloatingExtents - Floater radius: {}", floater.getRadius());
+			LOG.debug("bindExtentsForFloatingExtents - extents ({}): \n   {}", extents.size(),
+				extents.stream()
+					.map(Object::toString)
+					.collect(Collectors.joining("\n   ")));
+		}
 		if (floater.getRadius() <= 0.0) {
 			LOG.info("no results for 0 radius");
 			return IterLib.noResults(context);

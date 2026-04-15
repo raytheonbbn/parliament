@@ -17,7 +17,7 @@
 
 \usepackage{parskip}				% Begin paragraphs with empty line, not indent
 \usepackage{xcolor}
-\usepackage{fancyvrb}
+\usepackage{fvextra}
 \usepackage{titling}
 \usepackage{fnpct}
 \usepackage[inline]{enumitem}
@@ -54,7 +54,7 @@
 \newcommand{\headingrule}{\midrule[\heavyrulewidth]}
 %\newcommand{\themestatement}[1]{\framebox{\parbox{0.97\columnwidth}{\emph{#1}}}}
 \newcommand{\githubOrg}{raytheonbbn}
-\newcommand{\boostversion}[1]{1{#1}84{#1}0}
+\newcommand{\boostversion}[1]{1{#1}85{#1}0}
 \newcommand{\lmdbversion}{0.9.31}
 
 \input{acronyms.tex}
@@ -126,7 +126,7 @@
 
 \frontmatter
 \input{TitlePage.tex}
-\mainmatter
+\mainmatter\write128{Start of main material: \the\ReadonlyShipoutCounter.}
 
 \input{Introduction.tex}
 \input{DeployingAndUsing.tex}

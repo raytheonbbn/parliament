@@ -52,6 +52,7 @@ public class BufferedGeometry extends EphemeralGeometry {
 			WGS84_CRS = CRS.decode("EPSG:4326");
 		} catch (FactoryException ex) {
 			LOG.error("Exception while initializing WGS84 CRS:", ex);
+			throw new IllegalStateException("Exception while initializing WGS84 CRS", ex);
 		}
 	}
 
@@ -60,8 +61,7 @@ public class BufferedGeometry extends EphemeralGeometry {
 		this.extent = extent;
 	}
 
-	public BufferedGeometry(GeometryFactory factory, Geometry extent,
-		double distance) {
+	public BufferedGeometry(GeometryFactory factory, Geometry extent, double distance) {
 		super(factory);
 		this.extent = extent;
 		this.distance = distance;
@@ -119,7 +119,7 @@ public class BufferedGeometry extends EphemeralGeometry {
 			try {
 				JTS.checkCoordinatesRange(buffered, DefaultGeographicCRS.WGS84);
 				buffer = buffered;
-			} catch (PointOutsideEnvelopeException e) {
+			} catch (PointOutsideEnvelopeException ex) {
 				canReproject = false;
 			}
 			if (!canReproject) {
@@ -171,7 +171,7 @@ public class BufferedGeometry extends EphemeralGeometry {
 							degrees = new int[] { -90, -60, -30, 0 };
 							break;
 						default:
-							throw new RuntimeException("Invalid index");
+							throw new IllegalStateException("Invalid index");
 						}
 
 						if (CRS.getAxisOrder(DefaultGeographicCRS.WGS84).equals(AxisOrder.NORTH_EAST)) {
@@ -216,24 +216,18 @@ public class BufferedGeometry extends EphemeralGeometry {
 	}
 
 	private static Geometry projectAndBuffer(Geometry extent, double distance,
-		CoordinateReferenceSystem destination)
-			throws FactoryException, MismatchedDimensionException, TransformException {
-		LOG.debug("Transforming: {} from {} to {}",
-			new Object[] { extent.getEnvelope(),
-				WGS84_CRS.getName().getCode(),
-				destination.getName().getCode() });
-		MathTransform transform = CRS.findMathTransform(WGS84_CRS, destination);
-		MathTransform reverseTransform = transform.inverse();
+		CoordinateReferenceSystem destCrs) throws FactoryException, TransformException {
+		LOG.debug("Transforming: {} from {} to {}", extent.getEnvelope(),
+			WGS84_CRS.getName().getCode(), destCrs.getName().getCode());
+		MathTransform transform = CRS.findMathTransform(WGS84_CRS, destCrs);
 		Geometry targetGeometry = JTS.transform(extent, transform);
-
 		BufferOp op = new BufferOp(targetGeometry, BUFFER_PARAMS);
-
 		Geometry buffered = op.getResultGeometry(distance);
-		return JTS.transform(buffered, reverseTransform);
+		return JTS.transform(buffered, transform.inverse());
 	}
 
-	private static Geometry projectAndBufferPoly(Geometry geom, double distance, CoordinateReferenceSystem origCRS)
-		throws FactoryException, MismatchedDimensionException, TransformException {
+	private static Geometry projectAndBufferPoly(Geometry geom, double distance,
+		CoordinateReferenceSystem origCRS) throws FactoryException, TransformException {
 		Geometry pGeom = geom.getEnvelope();
 		LOG.debug("Transforming: {} from {} to {}", pGeom,
 			WGS84_CRS.getName().getCode(), origCRS.getName().getCode());

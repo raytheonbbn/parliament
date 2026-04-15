@@ -390,9 +390,13 @@ public class FloatingExtentsTestMethods extends SpatialTestDataset {
 	}
 
 	private static final String EXTENTS_SMALL_CIRCLE_QUERY = """
-		select distinct ?reg1 ?reg2 where {
+		select distinct ?building1 ?building2 where {
 			?circle a gml:Circle ;
 				gml:radius "0.000000000005"^^xsd:double .
+			?building1 a example:SpatialThing ;
+				 georss:where ?reg1 .
+			?building2 a example:SpatialThing ;
+				 georss:where ?reg2 .
 			(?reg1 ?reg2) rcc:part ?circle .
 			# ?reg2 rcc:part ?circle .
 			filter(?reg1 != ?reg2)
