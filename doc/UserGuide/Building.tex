@@ -70,54 +70,212 @@ To setup Eclipse, you need one of the 2021 (or later) quarterly releases of the 
 
 To use Eclipse with your \ac{pmnt} working copy, first choose (or create) an Eclipse workspace.  Then import all existing projects from within your \ac{pmnt} working copy.  To do so, choose Import from the File menu and select ``Existing Projects into Workspace'' under the General category.  Press the Next button, and enter the root directory of your \ac{pmnt} working copy in the ``Select root directory'' box.  Press the Select All button, make sure that ``Copy projects into workspace'' is unchecked, and press the Finish button.  At this point all of the \ac{pmnt} projects will be displayed in the Package Explorer view.
 
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Building Berkeley DB}
-\label{sec:BuildingBerkeleyDB}
+\section{Building RocksDB}
+\label{sec:BuildingRocksDB}
 
-\ac{pmnt} uses Berkeley DB (often abbreviated BDB), an embedded database manager from Oracle\urlcite{http://www.oracle.com/us/products/database/berkeley-db/}.  Because \ac{pmnt} is open source, this use of Berkeley DB also falls under an open source license.  The following procedures are based on BDB version 5.3.28.
+\ac{pmnt} uses RocksDB\urlcite{https://rocksdb.org/}, an embedded persistent key-value store from Meta. RocksDB is dual-licensed under both the GPLv2 and Apache 2.0 Licenses.  The following procedures are based on RocksDB version \rocksdbversion.
 
-%Note that \ac{pmnt} versions 2.7.6 through 2.7.9 was released with Berkeley DB 6.1, but we have rolled back to 5.3 because Oracle sneakily changed their open source license from a BSD-like license to AGPL, which is too restrictive for our purposes.
+\subsection{Building RocksDB on Windows}
+\label{sec:BuildingRocksDBOnWindows}
 
-\subsection{Building BDB for Windows}
+On Windows, we use Microsoft's \path|vcpkg| package manager to download and create the RocksDB library and its dependencies. In your working copy, change to the \path|rocksdb-windows| directory. If you are running Windows on an Intel- or AMD-based machine, issue these commands from a Visual Studio terminal:
 
-The build infrastructure for Berkeley DB is not particularly friendly for Windows.  Therefore, the \ac{pmnt} dependencies archive includes pre-built Berkeley DB libraries (both 32- and 64-bit).  If you need to update the pre-built libraries, e.g., for a new version of Berkeley DB or to build with a different compiler, see Appendix~\ref{chapter-building-bdb-for-windows}.
-
-Define the following environment variables so that the \ac{pmnt} build infrastructure can find the libraries:
 \begin{verbatim}
-BDB_VERSION=53
-BDB_HOME=«dir»/dependencies/bdb
+vcpkg install --triplet x64-windows
+vcpkg install --triplet x64-windows-static
+vcpkg install --triplet x86-windows
+vcpkg install --triplet x86-windows-static
 \end{verbatim}
-where \path|«dir»| is the absolute path of your \ac{pmnt} working copy.
 
+This takes a while to execute, so maybe pop a pizza in the oven.
 
-\subsection{Building BDB for Macintosh}
+If you are running Windows on an ARM-based machine, issue these commands instead:
 
-On Macintosh, Berkeley DB follows the usual pattern of software based on the autoconf/automake/libtool suite.  Specifically, expand the BDB distribution archive file.  In the file \path|src/dbinc/atomic.h|, replace all instances of \verb|__atomic_compare_exchange| with \verb|__atomic_compare_exchange_db|, \texttt{cd} to the \path|build_unix| subdirectory, and issue the following commands:
 \begin{verbatim}
-env CC=clang CFLAGS="-fvisibility=default -arch x86_64"
-     ../dist/configure --enable-posixmutexes
+vcpkg install --triplet arm64-windows
+vcpkg install --triplet arm64-windows-static
+\end{verbatim}
+
+\red{[Something about setting up environment variables or \path|site-config.jam|.]}
+
+Start the Developer Command Prompt window that is a part of Visual Studio installation. Run the build commands from within the Developer Command Prompt window to have paths to the compiler and runtime libraries set.
+
+
+\subsection{Building RocksDB on Macintosh}
+\label{sec:BuildingRocksDBOnMacintosh}
+
+On Mac OS, RocksDB and its dependencies are installable via HomeBrew. However, Parliament wants universal binaries, which we need to build ourselves. This section details alternate instructions to create RocksDB libraries for use with \ac{pmnt}, starting with RocksDB's dependencies. To build RocksDB on Macintosh, first be sure you are using the latest version of Xcode (since RocksDB requires C++20 support) and install CMake\urlcite{https://cmake.org/}.
+
+\subsubsection{Building Snappy}
+\label{sec:BuildingSnappy}
+
+Snappy\urlcite{https://github.com/google/snappy} is an optional dependency of RocksDB. Because its build infrastructure cannot support universal binaries, we omit it.
+
+\subsubsection{Building GFlags}
+\label{sec:BuildingGFlags}
+
+Download GFlags\urlcite{https://gflags.github.io/gflags/} version 2.3.0 and then execute these commands:
+
+{\small\begin{verbatim}
+tar xf gflags-2.3.0.tar.gz
+cd gflags-2.3.0
+cmake -S . -B build-cmake -DCMAKE_INSTALL_PREFIX=/opt/gflags-2.3.0 \
+   -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=ON \
+   -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
+cd build-cmake
 make
 sudo make install
-\end{verbatim}
-The \verb|CFLAGS| setting above causes the build to produce universal binaries.  You can tidy up after the build with the command \verb|make realclean|.  Once you have built and installed Berkeley DB, define the following environment variables so that the \ac{pmnt} build infrastructure can find the libraries:
-\begin{verbatim}
-BDB_VERSION=5.3
-BDB_HOME=/usr/local/BerkeleyDB.5.3
-\end{verbatim}
+\end{verbatim}}
 
-\subsection{Building BDB for Linux}
+\subsubsection{Building LZ4}
+\label{sec:BuildingLZ4}
 
-On Linux, Berkeley DB follows the usual pattern of software based on the autoconf/automake/libtool suite.  Specifically, expand the BDB distribution archive file.  In the file \path|src/dbinc/atomic.h|, replace all instances of \verb|__atomic_compare_exchange| with \verb|__atomic_compare_exchange_db|, \texttt{cd} to the \path|build_unix| subdirectory, and issue the following commands:
-\begin{verbatim}
-env CFLAGS="-m64" ../dist/configure
-make
-sudo make install
-\end{verbatim}
-You can tidy up after the build with the command \verb|make realclean|.  Once you have built and installed Berkeley DB, define the following environment variables so that the \ac{pmnt} build infrastructure can find the libraries:
-\begin{verbatim}
-BDB_VERSION=5.3
-BDB_HOME=/usr/local/BerkeleyDB.5.3
-\end{verbatim}
+Download LZ4\urlcite{https://github.com/lz4/lz4} version 1.10.0 and then execute these commands:
+
+{\small\begin{verbatim}
+tar xf lz4-1.10.0.tar.gz
+cd lz4-1.10.0
+make PREFIX=/opt/lz4-1.10.0 CFLAGS="-arch x86_64 -arch arm64" \
+   LDFLAGS="-arch x86_64 -arch arm64 -dynamiclib"
+sudo make install PREFIX=/opt/lz4-1.10.0
+\end{verbatim}}
+
+\subsubsection{Building ZStd}
+\label{sec:BuildingZStd}
+
+Download ZStd\urlcite{https://github.com/facebook/zstd} version 1.5.7 and then execute these commands:
+
+{\small\begin{verbatim}
+untar xf zstd-1.5.7.tar.gz
+cd zstd-1.5.7
+make PREFIX=/opt/zstd-1.5.7 CFLAGS="-arch x86_64 -arch arm64" \
+   LDFLAGS="-arch x86_64 -arch arm64 -dynamiclib"
+sudo make install PREFIX=/opt/zstd-1.5.7
+\end{verbatim}}
+
+\subsubsection{Building RocksDB Itself}
+\label{sec:BuildingRocksDBItself}
+
+Define the following environment variables so that the builds can find the headers and libraries:
+{\small\begin{verbatim}
+export GFLAGS_HOME=/opt/gflags-2.3.0
+export LZ4_HOME=/opt/lz4-1.10.0
+export ROCKSDB_HOME=/opt/rocksdb-10.10.1
+export ZSTD_HOME=/opt/zstd-1.5.7
+\end{verbatim}}
+
+Now download and expand the source code archive for RocksDB version \rocksdbversion{} from the releases page of the RocksDB GitHub site\urlcite{https://github.com/facebook/rocksdb/releases}. Change line 1395 of util/compression.cc from this:
+
+{\small\begin{verbatim}
+Status ExtractUncompressedSize(Args& args) override {
+\end{verbatim}}
+
+to this:
+
+{\small\begin{verbatim}
+Status ExtractUncompressedSize([[maybe_unused]] Args& args) \
+   override {
+\end{verbatim}}
+
+On lines 292, 307, 317, 327, 340, 353, 366, and 381 of the file \path|build_tools/build_detect_platform|, replace ``-x'' with ``-c -x''. In addition, on line 381 replace ``-o /dev/null'' with ``-o test.o''.
+
+Comment out lines 355, 356, 360, 363, and 364 of \path|Makefile| by prefixing them with \texttt{\#}.
+
+Execute these commands:
+
+{\small\begin{verbatim}
+make static_lib shared_lib PREFIX=/opt/rocksdb-10.10.1 \
+   SKIP_DEPENDS=1 EXTRA_CXXFLAGS="-arch x86_64 -arch arm64 \
+   -I${GFLAGS_HOME}/include -I${LZ4_HOME}/include \
+   -I${ZSTD_HOME}/include" EXTRA_LDFLAGS="-arch x86_64 -arch arm64 \
+   -dynamiclib -L${GFLAGS_HOME}/lib -L${LZ4_HOME}/lib \
+   -L${ZSTD_HOME}/lib"
+sudo make install PREFIX=/opt/rocksdb-10.10.1 SKIP_DEPENDS=1
+\end{verbatim}}
+
+Finally, run this test on the resulting dynamic library to be sure the build worked correctly:
+
+{\small\begin{verbatim}
+otool -L $ROCKSDB_HOME/lib/librocksdb.10.10.1.dylib
+\end{verbatim}}
+
+This should result in output like the following:
+
+{\small\begin{verbatim}
+.../librocksdb.10.10.1.dylib (architecture x86_64):
+   librocksdb.10.10.dylib ...
+   @rpath/libgflags.2.3.dylib ...
+   /usr/lib/libz.1.dylib ...
+   /usr/lib/libbz2.1.0.dylib ...
+   /opt/lz4-1.10.0/lib/liblz4.1.dylib ...
+   /opt/zstd-1.5.7/lib/libzstd.1.dylib ...
+   /usr/lib/libc++.1.dylib ...
+   /usr/lib/libSystem.B.dylib ...
+.../librocksdb.10.10.1.dylib (architecture arm64):
+   librocksdb.10.10.dylib ...
+   @rpath/libgflags.2.3.dylib ...
+   /usr/lib/libz.1.dylib ...
+   /usr/lib/libbz2.1.0.dylib ...
+   /opt/lz4-1.10.0/lib/liblz4.1.dylib ...
+   /opt/zstd-1.5.7/lib/libzstd.1.dylib ...
+   /usr/lib/libc++.1.dylib ...
+   /usr/lib/libSystem.B.dylib ...
+\end{verbatim}}
+
+The main points to check for are (a) that the dynamic library contains two architectures (i.e., it is a universal binary) and (b) that all of the optional dependencies (GFlags, LibZ, LibBZ2, LZ4, and ZStd) are linked in.
+
+
+\subsection{Building RocksDB on Linux}
+\label{sec:BuildingRocksDBOnLinux}
+
+To build RocksDB on Linux, upgrade your gcc compiler to at least version 11 to get C++20 support. Next, use the package manager to install RocksDB's dependencies. On Ubuntu, this looks like so:
+{\small\begin{verbatim}
+sudo apt install libgflags-dev libsnappy-dev zlib1g-dev libbz2-dev \
+   liblz4-dev libzstd-dev libxxhash-dev
+\end{verbatim}}
+
+Now execute the following commands from the root directory of the expanded RocksDB release:
+
+{\small\begin{verbatim}
+make static_lib shared_lib PREFIX=/opt/rocksdb-10.10.1 \
+   SKIP_DEPENDS=1
+sudo make install PREFIX=/opt/rocksdb-10.10.1 SKIP_DEPENDS=1
+\end{verbatim}}
+
+Define the following environment variable so that the \ac{pmnt} build can find the headers and libraries:
+{\small\begin{verbatim}
+export ROCKSDB_HOME=/opt/rocksdb-10.10.1
+\end{verbatim}}
+
+Finally, run this test on the resulting dynamic library to be sure the build worked correctly:
+
+{\small\begin{verbatim}
+ldd $ROCKSDB_HOME/lib/librocksdb.so.10.10.1
+\end{verbatim}}
+
+This should result in output like the following:
+
+{\small\begin{verbatim}
+   /lib/ld-linux-aarch64.so.1 ...
+   libbz2.so.1.0 ...
+   libc.so.6 ...
+   libgcc_s.so.1 ...
+   libgflags.so.2.2 ...
+   liblz4.so.1 ...
+   libm.so.6 ...
+   libsnappy.so.1 ...
+   libstdc++.so.6 ...
+   libxxhash.so.0 ...
+   libz.so.1 ...
+   libzstd.so.1 ...
+   linux-vdso.so.1 ...
+\end{verbatim}}
+
+The main point to check is that all of the optional dependencies (GFlags, LibZ, LibBZ2, LZ4, and ZStd) are linked in.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Building the Boost Libraries}
@@ -266,10 +424,6 @@ Next we need to configure Boost.Build so that it can build \ac{pmnt}.  Start by 
 
 	\item\verb|JAVA_HOME|: The location of your JDK installation, which must be version 8 or higher.
 
-	\item\verb|BDB_VERSION|: As described above in Section~\ref{sec:BuildingBerkeleyDB}.
-
-	\item\verb|BDB_HOME|: As described above in Section~\ref{sec:BuildingBerkeleyDB}.
-
 	\item\verb|BOOST_VERSION|: The version of Boost (currently 1\_80\_0).
 
 	\item\verb|BOOST_ROOT|: As described above in Section~\ref{sec:BuildingBoost}.
@@ -344,55 +498,6 @@ Some people prefer to keep these files together with their Boost.Build installat
 
 Within your working copy of the \ac{pmnt} repository, in the directories \path|doc/MacOS|, \path|doc/Windows|, and \path|doc/Linux|, you will find example configuration files for Macintosh, Windows, and Linux respectively that you can copy and customize.  The most important customization that you need to make is to remove (or comment out) any lines in \path|user-config.jam| for compiler versions that you have not installed.
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Building \acs*{lmdb}}
-\label{sec:BuildingLMDB}
-
-\ac{pmnt} uses \ac{lmdb}\urlcite{http://www.lmdb.tech/doc/}, an embedded database manager from the OpenLDAP Project\urlcite{https://www.openldap.org/project/}.  \ac{lmdb} is licensed under the BSD-style OpenLDAP Public License\urlcite{https://www.openldap.org/software/release/license.html}.  The following procedures are based on \ac{lmdb} version \lmdbversion.
-
-\ac{lmdb} naturally has its own build infrastructure, but it is awkward to use on Windows, and does not produce universal ARM+X86 executables on Mac OS, so \ac{pmnt} includes a build of its own for \ac{lmdb}. This section details how to use it to create \ac{lmdb} libraries for use with \ac{pmnt}.
-
-Navigate to the releases page of \acp{lmdb} GitHub site\urlcite{https://github.com/LMDB/lmdb/releases}. Click the Tags button and download version \lmdbversion. Switch to the \path|lmdb| directory of your \ac{pmnt} working copy and expand the archive there. Issue this command:
-
-{
-	%\renewcommand{\arraystretch}{1.5}
-	\renewcommand{\tabcolsep}{0pt}
-	\begin{tabular}{p{8cm}@{\hspace{2em}}l}
-		\texttt{b2 address-model=64 \textbackslash{}\newline
-				\hspace*{2em}architecture=arm+x86 release}
-			& (Macintosh)\\
-		\texttt{b2 release}
-			& (Linux or Windows)\\
-	\end{tabular}
-}
-
-Then install the built library files like so:
-
-{
-	%\renewcommand{\arraystretch}{1.5}
-	\renewcommand{\tabcolsep}{0pt}
-	\begin{tabular}{p{8cm}@{\hspace{2em}}l}
-		\texttt{sudo cp -R lmdb-\lmdbversion{} /opt}
-			& (Macintosh or Linux)\\
-		\texttt{xcopy /e/i lmdb-\lmdbversion{} \textbackslash{}\newline
-				\hspace*{2em}\%APPDATA\%\textbackslash{}lmdb-\lmdbversion}
-			& (Windows)\\
-	\end{tabular}
-}
-
-Once you have installed Berkeley DB, define the following environment variable so that \acp{pmnt} build infrastructure can find the libraries:
-
-{
-	%\renewcommand{\arraystretch}{1.5}
-	\renewcommand{\tabcolsep}{0pt}
-	\begin{tabular}{p{8cm}@{\hspace{2em}}l}
-		\texttt{export LMDB\_HOME=/opt/lmdb-\lmdbversion}
-			& (Macintosh or Linux)\\
-		\texttt{set LMDB\_HOME=\%APPDATA\%\textbackslash{}lmdb-\lmdbversion}
-			& (Windows)\\
-	\end{tabular}
-}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -22,6 +22,7 @@
 #		define _GNU_SOURCE
 #	endif
 #	include <dlfcn.h>
+#	include <unistd.h>
 #endif
 
 #if defined(PARLIAMENT_MACOS)
@@ -57,8 +58,9 @@ string pmnt::getKbVersion()
 	return PARLIAMENT_VERSION_STRING;
 }
 
-pmnt::TString pmnt::tGetEnvVar(const TChar* pVarName)
+pmnt::TString pmnt::tGetEnvVar(TStringView varName)
 {
+	auto varNameStr = TString{varName};
 #if defined(PARLIAMENT_WINDOWS)
 #if defined(PARLIAMENT_UNIT_TEST)
 	constexpr size_t k_bufferIncrement = 8;	// Force a retry with enlarged buffer at test time
@@ -69,7 +71,7 @@ pmnt::TString pmnt::tGetEnvVar(const TChar* pVarName)
 	{
 		::std::vector<TChar> buffer(bufferSize, _T('\0'));
 
-		DWORD numChars = ::GetEnvironmentVariable(pVarName, &(buffer[0]), bufferSize);
+		DWORD numChars = ::GetEnvironmentVariable(varNameStr.c_str(), &(buffer[0]), bufferSize);
 		auto errCode = Exception::getSysErrCode();
 		if (numChars == 0)
 		{
@@ -81,7 +83,7 @@ pmnt::TString pmnt::tGetEnvVar(const TChar* pVarName)
 			{
 				auto errMsg = str(format{
 					"GetEnvironmentVariable error: var = '%1%', numChars = %2%, error code = %3%"}
-						% convertTCharToUtf8(pVarName) % numChars % errCode);
+						% convertTCharToUtf8(varName) % numChars % errCode);
 				PMNT_LOG(g_log, log::Level::error) << errMsg;
 				throw Exception(errMsg);
 			}
@@ -96,7 +98,7 @@ pmnt::TString pmnt::tGetEnvVar(const TChar* pVarName)
 		}
 	}
 #else
-	const TChar* pEnvVarValue = ::getenv(pVarName);
+	const TChar* pEnvVarValue = ::getenv(varNameStr.c_str());
 	return (pEnvVarValue == nullptr) ? TString() : TString(pEnvVarValue);
 #endif
 }
@@ -151,7 +153,6 @@ bfs::path pmnt::getCurrentDllFilePath()
 #endif
 }
 
-
 void pmnt::numericConversionErrorCheck(string_view str, const char* pNextChar, errc errCode)
 {
 	if (errCode == errc::invalid_argument)
@@ -164,7 +165,7 @@ void pmnt::numericConversionErrorCheck(string_view str, const char* pNextChar, e
 		throw NumericConversionException(
 			format{"Result out of range: '%1%'"} % str);
 	}
-	else if (errCode == errc() && pNextChar != end(str))	// TODO: Not sure this should be an error
+	else if (errCode == errc{} && pNextChar != castSVIter(cend(str)))	// TODO: Not sure this should be an error
 	{
 		throw NumericConversionException(
 			format{"String contains non-number at the end: '%1%'"} % str);
@@ -240,5 +241,22 @@ pmnt::uint64 pmnt::HiResTimer::getUnitsPerSec()
 	return 1000 * 1000 * 1000;
 #else
 	return 1 * 1000 * 1000;
+#endif
+}
+
+
+
+// ===========================================================================
+// OS Information Functions
+// ===========================================================================
+
+size_t pmnt::getVmPageSize()
+{
+#if defined(PARLIAMENT_WINDOWS)
+	SYSTEM_INFO sysInfo;
+	::GetSystemInfo(&sysInfo);
+	return sysInfo.dwPageSize;
+#else
+	return ::getpagesize();
 #endif
 }

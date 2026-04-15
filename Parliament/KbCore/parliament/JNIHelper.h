@@ -13,6 +13,7 @@
 #include <iterator>
 #include <streambuf>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <jni.h>
 
@@ -28,6 +29,8 @@ template<typename t_char>
 class JStringAccessor
 {
 public:
+	using StrView = ::std::basic_string_view<t_char>;
+
 	JStringAccessor(JNIEnv* pEnv, jstring str) :
 	m_pEnv(pEnv),
 	m_str(str),
@@ -56,6 +59,13 @@ public:
 			releaseStringChars(m_pEnv, m_str, m_pStr);
 			m_pStr = nullptr;
 		}
+	}
+
+	StrView strView() const
+	{
+		return (m_str != 0 && m_pStr != nullptr)
+			? StrView{m_pStr, static_cast<StrView::size_type>(m_size)}
+			: StrView{};
 	}
 
 	const t_char* begin() const

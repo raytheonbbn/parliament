@@ -32,9 +32,7 @@ allprojects {
 subprojects {
 	repositories {
 		maven {
-			name = 'BbnMavenUsOnly'
-			url = uri('https://artifacts.bbn.com/artifactory/bbn-maven-us-only/')
-			credentials(PasswordCredentials)
+			url = uri('https://repo.osgeo.org/repository/release/')
 		}
 		mavenCentral()
 	}

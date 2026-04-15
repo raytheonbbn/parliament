@@ -6,6 +6,6 @@
 using clang
 	: # version
 	: # c++-compile-command
-	:	<cxxflags>"-std=c++17"
-		<linkflags>"-std=c++17 -headerpad_max_install_names"
+	:	<cxxflags>"-std=c++20 -DBOOST_LOG_WITHOUT_ASIO"
+		<linkflags>"-std=c++20 -headerpad_max_install_names"
 	;

@@ -44,7 +44,9 @@
 
 	<target name="resolve" depends="resolveUpToDateCheck" unless="isResolveUpToDate">
 		<ivy:retrieve type="jar,bundle,native-src"/>
-		<ivy:report todir="${reportsDir}/ivy"/>
+		<ivy:report todir="${reportsDir}/ivy" xsl="true" xml="true" graph="false" dot="false"/>
+		<ivy:report todir="${reportsDir}/ivy" outputpattern="[organisation]-[module]-[conf].csv"
+			xslfile="${ivyDir}/dependency-csv.xslt" xsl="true" xml="false" graph="false" dot="false"/>
 		<touch file="lib/LastResolvePerformedAt.txt" mkdirs="true"/>
 	</target>
 

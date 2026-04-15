@@ -95,6 +95,7 @@ BOOST_AUTO_TEST_CASE(testGetEnv)
 }
 
 #if !defined(__cpp_lib_to_chars)
+#	warning "__cpp_lib_to_chars not defined -- using boost::lexical_cast instead"
 static constexpr string_view k_badLexicalCastErrMsg = "bad lexical cast: "
 	"source type value could not be interpreted as target";
 #endif
@@ -143,7 +144,8 @@ BOOST_AUTO_TEST_CASE(testNumericConversion)
 	}
 	catch (const NumericConversionException& ex)
 	{
-		BOOST_CHECK_EQUAL("Result out of range: '-1'", ex.what());
+		BOOST_CHECK((string_view{ex.what()} == "Result out of range: '-1'")
+			|| (string_view{ex.what()} == "'-1' is not a number"));
 	}
 #else
 	BOOST_CHECK_EQUAL(static_cast<unsigned int>(-1), strTo<unsigned int>("-1"));

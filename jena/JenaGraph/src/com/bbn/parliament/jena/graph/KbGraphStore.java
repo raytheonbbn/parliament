@@ -21,6 +21,7 @@ import com.bbn.parliament.jena.graph.union.KbUnionGraph;
 import com.bbn.parliament.jena.graph.union.KbUnionableGraph;
 import com.bbn.parliament.jena.joseki.client.StreamUtil;
 import com.bbn.parliament.jni.KbConfig;
+import com.bbn.parliament.jni.KbInstance;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -327,15 +328,8 @@ public class KbGraphStore extends DatasetGraphMap implements GraphStore {
 		// Delete the files
 		if (isKbGraph) {
 			KbConfig config = ((KbGraph)toReturn).getConfig();
-			File kbDir = new File(config.m_kbDirectoryPath);
-			(new File(kbDir, config.m_rsrcFileName)).delete();
-			(new File(kbDir, config.m_stmtFileName)).delete();
-			(new File(kbDir, config.m_uriTableFileName)).delete();
-			(new File(kbDir, config.m_uriToIntFileName)).delete();
-
-			if (!isDefaultGraphName(graphName)) {
-				deleteDirectory(kbDir);
-			}
+			var isDefaultGraph = isDefaultGraphName(graphName);
+			KbInstance.deleteKb(config, null, !isDefaultGraph);
 		}
 	}
 

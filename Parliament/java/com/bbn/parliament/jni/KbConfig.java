@@ -80,15 +80,6 @@ public class KbConfig {
 	 */
 	public double  m_stmtGrowthFactor;
 
-	/**
-	 * The amount of memory to be devoted to the Berkeley DB cache.  The portion before
-	 * the comma is the total cache size (with a k for kilobytes, m for megabytes, g for
-	 * gigabytes).  The portion after the comma specifies how many segments the memory
-	 * should be broken across, for compatibility with systems that limit the size of
-	 * single memory allocations.
-	 */
-	public String  m_bdbCacheSize;
-
 	/** Whether to translate typed string literals to plain literals */
 	public boolean m_normalizeTypedStringLiterals;
 

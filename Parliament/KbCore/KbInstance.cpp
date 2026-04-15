@@ -4,15 +4,9 @@
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
 
-//TODO: Add capability to load a new KB from an N-Triples file
-//TODO: Allow new statement handlers written in Java
-//TODO: Add code to arrange owl:sameAs (and similar) sub-graphs so as to have a star topology so that query processing is minimized.
 //TODO: Add iterators over the resources (e.g., all resources that are used as subjects, or all resources matching a pattern)
 //TODO: Re-think statement deletion semantics
 //TODO: Re-order write operations so as to minimize the bad consequences of process termination (i.e., file corruption)
-//TODO: Support ACID transactions
-//TODO: Implement a DB_ENV->memp_trickle background thread
-//TODO: Experiment to see if file fragmentation is causing bad BDB performance
 //TODO: Store resource strings in less space
 
 #include "parliament/KbInstanceImpl.h"
@@ -216,41 +210,32 @@ void pmnt::KbInstance::releaseExcessCapacity()
 	m_pi->m_rsrcTbl.releaseExcessCapacity();
 }
 
-pmnt::ResourceId pmnt::KbInstance::uriToRsrcId(
-	const RsrcChar* pUri, size_t uriLen, bool isLiteral, bool createIfMissing)
+pmnt::ResourceId pmnt::KbInstance::uriToRsrcId(RsrcStringView uri, bool isLiteral, bool createIfMissing)
 {
-	if (pUri == nullptr)
-	{
-		throw Exception("Error:  Null URI passed to KbInstance::uriToRsrcId()");
-	}
-
 	RsrcString normalizedLiteral;
 	if (isLiteral && m_pi->m_config.normalizeTypedStringLiterals())
 	{
-		PMNT_LOG(g_log, log::Level::debug) << format{"Normalizing '%1%'"}
-			% convertFromRsrcChar(RsrcString(pUri, pUri + uriLen));
-		auto [lexicalForm, datatypeUri, langTag] = LiteralUtils::parseLiteral(pUri, pUri + uriLen);
+		PMNT_LOG(g_log, log::Level::debug) << format{"Normalizing '%1%'"} % convertFromRsrcChar(uri);
+		auto [lexicalForm, datatypeUri, langTag] = LiteralUtils::parseLiteral(uri);
 		PMNT_LOG(g_log, log::Level::debug) << format{"     parse: lex form = '%1%', dtype = '%2%', lang = '%3%'"}
 			% convertFromRsrcChar(lexicalForm) % convertFromRsrcChar(datatypeUri) % convertFromRsrcChar(langTag);
 		if (datatypeUri == LiteralUtils::k_plainLiteralDatatype)
 		{
 			normalizedLiteral = LiteralUtils::composePlainLiteral(lexicalForm);
-			pUri = normalizedLiteral.c_str();
-			uriLen = normalizedLiteral.length();
+			uri = normalizedLiteral;
 			PMNT_LOG(g_log, log::Level::debug) << format{"         as '%1%'"}
 				% convertFromRsrcChar(normalizedLiteral);
 		}
 		else if (!langTag.empty())
 		{
 			normalizedLiteral = LiteralUtils::composeLangLiteral(lexicalForm, langTag);
-			pUri = normalizedLiteral.c_str();
-			uriLen = normalizedLiteral.length();
+			uri = normalizedLiteral;
 			PMNT_LOG(g_log, log::Level::debug) << format{"         as '%1%'"}
 				% convertFromRsrcChar(normalizedLiteral);
 		}
 	}
 
-	ResourceId result = m_pi->m_uriToRsrcId.find(pUri, uriLen);
+	ResourceId result = m_pi->m_uriToRsrcId.find(uri);
 	if (createIfMissing && result == k_nullRsrcId)
 	{
 		ensureNotReadOnly("KbInstance::uriToRsrcId");
@@ -263,27 +248,17 @@ pmnt::ResourceId pmnt::KbInstance::uriToRsrcId(
 		rsrc.setFlag(ResourceFlags::k_rsrcFlagLiteral, isLiteral);
 
 		// Insert URI in m_pi->m_uriTbl and link it to the KbRsrc
-		rsrc.m_uriOffset = m_pi->m_uriTbl.pushBack(pUri, uriLen);
+		rsrc.m_uriOffset = m_pi->m_uriTbl.pushBack(uri);
 
 		// Insert the KbRsrc in the file
 		m_pi->m_rsrcTbl.pushBack(rsrc);
 
 		// Map the uri to the resource id
-		m_pi->m_uriToRsrcId.insert(pUri, uriLen, rsrcId);
+		m_pi->m_uriToRsrcId.insert(uri, rsrcId);
 
 		result = rsrcId;
 	}
 	return result;
-}
-
-pmnt::ResourceId pmnt::KbInstance::uriToRsrcId(
-	const RsrcChar* pUri, bool isLiteral, bool createIfMissing)
-{
-	if (pUri == nullptr)
-	{
-		throw Exception("Error:  Null URI passed to KbInstance::uriToRsrcId()");
-	}
-	return uriToRsrcId(pUri, char_traits<RsrcChar>::length(pUri), isLiteral, createIfMissing);
 }
 
 const pmnt::RsrcChar* pmnt::KbInstance::rsrcIdToUri(ResourceId rsrcId) const
@@ -1355,7 +1330,7 @@ string pmnt::KbInstance::formatRsrcUri(ResourceId rsrcId, bool includeRsrcId) co
 void pmnt::KbInstance::deleteKb(const KbConfig& cfg, bool deleteContainingDir)
 {
 	remove(cfg.uriTableFilePath());
-	remove(cfg.uriToIntFilePath());
+	remove_all(cfg.uriToIntFilePath());
 	remove(cfg.stmtFilePath());
 	remove(cfg.rsrcFilePath());
 

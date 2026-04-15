@@ -16,26 +16,26 @@
 #include "parliament/UriLib.h"
 #include "parliament/Util.h"
 
+#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <fstream>
+#include <format>
 #include <iostream>
 #include <iomanip>
-
-#include <boost/algorithm/string/case_conv.hpp>
 
 namespace bfs = ::boost::filesystem;
 namespace pmnt = ::bbn::parliament;
 
+using ::boost::algorithm::to_lower_copy;
 using ::std::cout;
 using ::std::endl;
 using ::std::exception;
+using ::std::format;
 using ::std::ios_base;
 using ::std::setw;
 using ::std::string;
 using ::std::string_view;
-using ::boost::algorithm::to_lower_copy;
-using ::boost::format;
 
 #if defined(PARLIAMENT_WINDOWS)
 const char pmnt::KbAdmin::k_soi[]	= "/";	// Short Option Introducer
@@ -254,8 +254,8 @@ pmnt::KbAdmin::KbAdmin(uint32 numArgs, const char*const* argList) :
 		{
 			if (m_exportFilePath.size() > 0)
 			{
-				throw UsageException(format{"Error:  Two file names specified:  %1% and %2%"}
-					% argList[i] % m_exportFilePath);
+				throw UsageException(format("Error:  Two file names specified: {0} and {1}",
+					argList[i], m_exportFilePath.generic_string()));
 			}
 			m_exportFilePath = argList[i];
 		}
@@ -285,7 +285,7 @@ pmnt::KbAdmin::KbAdmin(uint32 numArgs, const char*const* argList) :
 		}
 		else
 		{
-			throw UsageException(format{"Error:  Unrecognized option:  %1%"} % argList[i]);
+			throw UsageException(format("Error:  Unrecognized option: {0}", argList[i]));
 		}
 	}
 
@@ -582,13 +582,13 @@ void pmnt::KbAdmin::exportKB(KbInstance& kb)
 {
 	if (exists(m_exportFilePath))
 	{
-		throw Exception(format{"Error:  File \"%1%\" already exists"} % m_exportFilePath);
+		throw Exception(format("Error:  File \"{0}\" already exists", m_exportFilePath.generic_string()));
 	}
 
 	bfs::ofstream s(m_exportFilePath, ios_base::out);
 	if (!s)
 	{
-		throw Exception(format{"Error:  Unable to open file \"%1%\""} % m_exportFilePath);
+		throw Exception(format("Error:  Unable to open file \"{0}\"", m_exportFilePath.generic_string()));
 	}
 
 	kb.dumpKbAsNTriples(s, m_infStmtAction, m_delStmtAction);

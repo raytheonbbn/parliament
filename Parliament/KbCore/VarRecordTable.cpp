@@ -18,15 +18,10 @@ using ::std::vector;
 
 static const pmnt::RsrcChar k_zero = 0;
 
-size_t pmnt::VarRecordTable::pushBack(const RsrcChar* pStr, size_t strLen)
+size_t pmnt::VarRecordTable::pushBack(RsrcStringView str)
 {
-	if (pStr == nullptr)
-	{
-		throw Exception("Error:  Null string pointer passed to VarRecordTable::pushBack()");
-	}
-
 	// Add the character sequence to the file:
-	const RsrcChar* pRecord = m_fixRecTbl.pushBack(pStr, strLen);
+	const RsrcChar* pRecord = m_fixRecTbl.pushBack(str.data(), str.length());
 
 	// Compute the offset of the record sequence (it is important to do this
 	// before the next statement, because the next statement could cause a file
@@ -34,18 +29,6 @@ size_t pmnt::VarRecordTable::pushBack(const RsrcChar* pStr, size_t strLen)
 	size_t result = pRecord - &m_fixRecTbl.getRecordAt(0);
 
 	// Add a terminating null:
-	m_fixRecTbl.pushBack(&k_zero, 1);
+	m_fixRecTbl.pushBack(k_zero);
 	return result;
-}
-
-size_t pmnt::VarRecordTable::pushBack(const RsrcChar* pStr)
-{
-	if (pStr == nullptr)
-	{
-		throw Exception("Error:  Null string pointer passed to VarRecordTable::pushBack()");
-	}
-
-	size_t numCharsToPush = char_traits<RsrcChar>::length(pStr) + 1;
-	const RsrcChar* pRecord = m_fixRecTbl.pushBack(pStr, numCharsToPush);
-	return pRecord - &m_fixRecTbl.getRecordAt(0);
 }

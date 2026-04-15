@@ -12,19 +12,34 @@ project /KB/Test ;
 path-constant TestDir : . ;
 path-constant KbCoreDir : ../KbCore ;
 
-run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
-		[ glob $(KbCoreDir)/*.cpp : $(KbCoreDir)/*JNI*.cpp $(KbCoreDir)/DllMain.cpp $(KbCoreDir)/FixupParliamentPath.cpp $(KbCoreDir)/Utf8StaticInitGen.cpp ]
-		/site-config//BerkeleyDB
+run [ glob *.cpp glob $(KbCoreDir)/*.cpp :
+			UnicodeTestCaseGen.cpp
+			$(KbCoreDir)/*JNI*.cpp
+			$(KbCoreDir)/DllMain.cpp
+			$(KbCoreDir)/FixupParliamentPath.cpp
+			$(KbCoreDir)/Utf8StaticInitGen.cpp ]
 		/site-config//BoostHeaderOnlyLibraries
 		/site-config//BoostAtomic/<link>static
 		/site-config//BoostChrono/<link>static
+		/site-config//BoostContainer/<link>static
+		/site-config//BoostDateTime/<link>static
 		/site-config//BoostFileSystem/<link>static
 		/site-config//BoostLog/<link>static
 		/site-config//BoostLogSetup/<link>static
+		/site-config//BoostRegex/<link>static
+		/site-config//BoostSerialization/<link>static
 		/site-config//BoostThread/<link>static
 		/site-config//BoostUnitTest/<link>static
+		/site-config//rocksdb/<link>static
+		/site-config//gflags/<link>static
+		/site-config//lz4/<link>static
+		/site-config//zstd/<link>static
+		/site-config//bz2
+		/site-config//z
 	:	# arguments
 		#--list_content
+		#--run_test=StringToIdTestSuite/testStringToIdCorrectness
+		#--run_test=StringToIdTestSuite/testStrToIdEntryIterator
 		#--run_test=KbInstanceTestSuite/testByQuickOverview
 		#--run_test=InferenceStressTestSuite/inferenceStressTest
 		#--run_test=DeftTestSuite/testDeftLoad
@@ -36,6 +51,8 @@ run [ glob *.cpp : UnicodeTestCaseGen.cpp ]
 		<define>PARLIAMENT_UNIT_TEST
 		<visibility>hidden
 		<threading>multi
+		<os>LINUX:<source>/site-config//snappy/<link>static
+		<os>LINUX:<source>/site-config//xxhash/<link>static
 		<os>LINUX:<source>/KB//DynamicLinkLib
 		<dependency>$(TestDir)/ParliamentKbConfig.txt
 		<dependency>$(TestDir)/ParliamentLogConfig.txt

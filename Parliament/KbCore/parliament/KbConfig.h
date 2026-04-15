@@ -47,28 +47,28 @@ public:
 	Path stmtFilePath() const;
 	::std::string stmtFileName() const
 		{ return m_stmtFileName; }
-	void stmtFileName(const ::std::string& newValue)
+	void stmtFileName(::std::string_view newValue)
 		{ m_stmtFileName = newValue; }
 
 	// Name of the memory-mapped resource file
 	Path rsrcFilePath() const;
 	::std::string rsrcFileName() const
 		{ return m_rsrcFileName; }
-	void rsrcFileName(const ::std::string& newValue)
+	void rsrcFileName(::std::string_view newValue)
 		{ m_rsrcFileName = newValue; }
 
 	// Name of the memory-mapped URI string file
 	Path uriTableFilePath() const;
 	::std::string uriTableFileName() const
 		{ return m_uriTableFileName; }
-	void uriTableFileName(const ::std::string& newValue)
+	void uriTableFileName(::std::string_view newValue)
 		{ m_uriTableFileName = newValue; }
 
 	// Name of the Berkeley DB URI-to-rsrcId file
 	Path uriToIntFilePath() const;
 	::std::string uriToIntFileName() const
 		{ return m_uriToIntFileName; }
-	void uriToIntFileName(const ::std::string& newValue)
+	void uriToIntFileName(::std::string_view newValue)
 		{ m_uriToIntFileName = newValue; }
 
 	// Whether to open the KB in read-only mode.
@@ -126,12 +126,6 @@ public:
 	void stmtGrowthFactor(double newValue)
 		{ m_stmtGrowthFactor = newValue; }
 
-	// Size of the Berkeley DB cache
-	::std::string bdbCacheSize() const
-		{ return m_bdbCacheSize; }
-	void bdbCacheSize(const ::std::string& newValue)
-		{ m_bdbCacheSize = newValue; }
-
 	// Whether to enforce equivalence of plain and typed string literals.
 	bool normalizeTypedStringLiterals() const
 		{ return m_normalizeTypedStringLiterals; }
@@ -148,7 +142,7 @@ public:
 	TimeUnit timeoutUnit() const
 		{ return m_timeoutUnit; }
 	::std::string javaTimeoutUnit() const;
-	void timeoutUnit(const ::std::string& newValue);
+	void timeoutUnit(::std::string_view newValue);
 
 	// Whether to ensure all entailments at startup, or assume entailments are correct from previous runs.
 	bool runAllRulesAtStartup() const
@@ -261,7 +255,7 @@ public:
 	const KbConfig& ensureKbDirExists() const;
 
 private:
-	using EntryHandler = ::std::function<void(const ::std::string&, uint32, KbConfig&)>;
+	using EntryHandler = ::std::function<void(::std::string_view, uint32, KbConfig&)>;
 	using ConfigEntryMap = ::std::map<::std::string, EntryHandler>;	// Maps key to handler
 
 	static bool initConfigEntryMap();
@@ -285,7 +279,6 @@ private:
 	size_t			m_initialStmtCapacity;
 	size_t			m_stmtGrowthIncrement;
 	double			m_stmtGrowthFactor;
-	::std::string	m_bdbCacheSize;
 
 	bool				m_normalizeTypedStringLiterals;
 

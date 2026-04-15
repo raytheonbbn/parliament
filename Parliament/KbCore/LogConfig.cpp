@@ -17,6 +17,7 @@ namespace pmnt = ::bbn::parliament;
 
 using ::boost::format;
 using ::std::string;
+using ::std::string_view;
 
 pmnt::LogConfig::LogConfig() :
 	m_ceMap(),
@@ -34,31 +35,31 @@ pmnt::LogConfig::LogConfig() :
 	m_logLevel("INFO"),
 	m_logChannelLevel()
 {
-	m_ceMap["logToConsole"] = [](const string& value, uint32 lineNum, LogConfig& c)
+	m_ceMap["logToConsole"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logToConsole = ConfigFileReader::parseBool(value, lineNum); };
-	m_ceMap["logConsoleAsynchronous"] = [](const string& value, uint32 lineNum, LogConfig& c)
+	m_ceMap["logConsoleAsynchronous"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logConsoleAsynchronous = ConfigFileReader::parseBool(value, lineNum); };
-	m_ceMap["logConsoleAutoFlush"] = [](const string& value, uint32 lineNum, LogConfig& c)
+	m_ceMap["logConsoleAutoFlush"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logConsoleAutoFlush = ConfigFileReader::parseBool(value, lineNum); };
-	m_ceMap["logToFile"] = [](const string& value, uint32 lineNum, LogConfig& c)
+	m_ceMap["logToFile"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logToFile = ConfigFileReader::parseBool(value, lineNum); };
-	m_ceMap["logFilePath"] = [](const string& value, uint32 lineNum, LogConfig& c)
+	m_ceMap["logFilePath"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logFilePath = convertUtf8ToLogPath(value); };
-	m_ceMap["logFileAsynchronous"] = [](const string& value, uint32 lineNum, LogConfig& c)
+	m_ceMap["logFileAsynchronous"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logFileAsynchronous = ConfigFileReader::parseBool(value, lineNum); };
-	m_ceMap["logFileAutoFlush"] = [](const string& value, uint32 lineNum, LogConfig& c)
+	m_ceMap["logFileAutoFlush"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logFileAutoFlush = ConfigFileReader::parseBool(value, lineNum); };
-	m_ceMap["logFileRotationSize"] = [](const string& value, uint32 lineNum, LogConfig& c)
+	m_ceMap["logFileRotationSize"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logFileRotationSize = ConfigFileReader::parseUnsigned(value, lineNum); };
-	m_ceMap["logFileMaxAccumSize"] = [](const string& value, uint32 lineNum, LogConfig& c)
+	m_ceMap["logFileMaxAccumSize"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logFileMaxAccumSize = ConfigFileReader::parseUnsigned(value, lineNum); };
-	m_ceMap["logFileMinFreeSpace"] = [](const string& value, uint32 lineNum, LogConfig& c)
+	m_ceMap["logFileMinFreeSpace"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logFileMinFreeSpace = ConfigFileReader::parseUnsigned(value, lineNum); };
-	m_ceMap["logFileRotationTimePoint"] = [](const string& value, uint32 lineNum, LogConfig& c)
+	m_ceMap["logFileRotationTimePoint"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logFileRotationTimePoint = value; };
-	m_ceMap["logLevel"] = [](const string& value, uint32 lineNum, LogConfig& c)
+	m_ceMap["logLevel"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logLevel = value; };
-	m_ceMap["logChannelLevel"] = [](const string& value, uint32 lineNum, LogConfig& c)
+	m_ceMap["logChannelLevel"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{
 			auto [ channel, logLevel ] = ConfigFileReader::getKeyValueFromLine(value, lineNum);
 			c.addLogChannelLevel(channel, logLevel);
@@ -74,9 +75,9 @@ pmnt::LogConfig::~LogConfig() = default;
 void pmnt::LogConfig::readFromFile()
 {
 	ConfigFileReader::readFile(ConfigKind::k_log,
-		[pLogConfig = this](const string& key, const string& value, uint32 lineNum)
+		[pLogConfig = this](string_view key, string_view value, uint32 lineNum)
 		{
-			auto it = pLogConfig->m_ceMap.find(key);
+			auto it = pLogConfig->m_ceMap.find(string{key});
 			if (it == end(pLogConfig->m_ceMap))
 			{
 				throw Exception(format(
@@ -90,7 +91,7 @@ void pmnt::LogConfig::readFromFile()
 		});
 }
 
-pmnt::LogConfig::Path pmnt::LogConfig::convertUtf8ToLogPath(const string& value)
+pmnt::LogConfig::Path pmnt::LogConfig::convertUtf8ToLogPath(string_view value)
 {
 	auto result = convertUtf8ToPath(value);
 	if (result.is_absolute())
@@ -100,7 +101,7 @@ pmnt::LogConfig::Path pmnt::LogConfig::convertUtf8ToLogPath(const string& value)
 
 	Path logBasePath;
 	ConfigFileReader::readFile(ConfigKind::k_kb,
-		[pKbDirPath = &logBasePath](const string& key, const string& value, uint32 lineNum)
+		[pKbDirPath = &logBasePath](string_view key, string_view value, uint32 lineNum)
 		{
 			if (key == "kbDirectoryPath")
 			{

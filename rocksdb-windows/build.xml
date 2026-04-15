@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+Search: vcpkg output directory structure
+https://learn.microsoft.com/en-us/vcpkg/reference/installation-tree-layout
+https://app.studyraid.com/en/read/11777/373526/understanding-the-vcpkg-directory-structure
+https://github.com/MicrosoftDocs/vcpkg-docs/blob/main/vcpkg/reference/installation-tree-layout.md
+
+https://github.com/NoviCker/vcpkg/blob/main/docs/commands/common-options.md
+-->
+<project name="RocksDBWindows" default="installDependencies" xmlns:ivy="antlib:org.apache.ivy.ant">
+	<description>Installs RocksDB and related dependencies pon Windows.</description>
+
+	<import file="${basedir}/../build-common.xml"/>
+
+	<target name="testWhetherIsWindows">
+		<condition property="isOsWindows">
+			<os family="windows"/>
+		</condition>
+	</target>
+
+	<target name="installDependencies" depends="testWhetherIsWindows" if="isOsWindows">
+		<if>
+			<equals arg1="${env.PROCESSOR_ARCHITECTURE}" arg2="ARM64"/>
+			<then>
+				<antcall target="runVcPkg">
+					<param name="triplet" value="arm64-windows"/>
+				</antcall>
+				<!-- antcall target="runVcPkg">
+					<param name="triplet" value="arm64-windows-static"/>
+				</antcall -->
+			</then>
+			<else>
+				<antcall target="runVcPkg">
+					<param name="triplet" value="x64-windows"/>
+				</antcall>
+				<!-- antcall target="runVcPkg">
+					<param name="triplet" value="x64-windows-static"/>
+				</antcall -->
+				<!-- antcall target="runVcPkg">
+					<param name="triplet" value="x86-windows"/>
+				</antcall -->
+				<!-- antcall target="runVcPkg">
+					<param name="triplet" value="x86-windows-static"/>
+				</antcall -->
+			</else>
+		</if>
+	</target>
+
+	<!-- Expects triplet to be set -->
+	<target name="runVcPkg">
+		<exec executable="vcpkg" dir="${basedir}" failonerror="true">
+			<arg value="install"/>
+			<arg value="--triplet=${triplet}"/>
+			<arg value="--x-install-root=${parliamentDependenciesDir}/vcpkg_installed"/>
+		</exec>
+	</target>
+</project>

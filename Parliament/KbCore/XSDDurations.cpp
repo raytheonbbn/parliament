@@ -24,7 +24,7 @@ using ::std::string;
 
 
 
-static const auto k_numericChars = pmnt::convertToRsrcChar("0123456789.");
+static constexpr auto k_numericChars = "0123456789.";
 static const auto k_literalStart = pmnt::convertToRsrcChar("\"");
 static const auto k_dayTimeDurationLiteralEnd = pmnt::convertToRsrcChar(
 	"\"^^http://www.w3.org/2001/XMLSchema#dayTimeDuration");
@@ -52,9 +52,16 @@ T convertAndClearBuffer(pmnt::Utf32String& buffer)
 	}
 }
 
-static inline bool isDigit(pmnt::RsrcChar ch)
+static inline bool isDigit(pmnt::Utf32Char ch)
 {
-	return k_numericChars.find(ch) != pmnt::RsrcString::npos;
+	for (auto p = k_numericChars; *p != '\0'; ++p)
+	{
+		if (ch == static_cast<unsigned char>(*p))
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 // ==============================================================

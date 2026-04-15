@@ -55,7 +55,6 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultCtor)
 	BOOST_CHECK_EQUAL(500000u, defaults.initialStmtCapacity());
 	BOOST_CHECK_EQUAL(1000000u, defaults.stmtGrowthIncrement());
 	BOOST_CHECK_EQUAL(0.0, defaults.stmtGrowthFactor());
-	BOOST_CHECK_EQUAL(string("512m,1"), defaults.bdbCacheSize());
 
 	BOOST_CHECK_EQUAL(true, defaults.normalizeTypedStringLiterals());
 
@@ -104,7 +103,6 @@ BOOST_AUTO_TEST_CASE(testConfigDefaultFileContainsDefaults)
 	BOOST_CHECK_EQUAL(defaults.initialStmtCapacity(), c.initialStmtCapacity());
 	BOOST_CHECK_EQUAL(defaults.stmtGrowthIncrement(), c.stmtGrowthIncrement());
 	BOOST_CHECK_EQUAL(defaults.stmtGrowthFactor(), c.stmtGrowthFactor());
-	BOOST_CHECK_EQUAL(defaults.bdbCacheSize(), c.bdbCacheSize());
 	BOOST_CHECK_EQUAL(defaults.normalizeTypedStringLiterals(), c.normalizeTypedStringLiterals());
 
 	BOOST_CHECK_EQUAL(defaults.timeoutDuration(), c.timeoutDuration());
@@ -150,7 +148,6 @@ rsrcGrowthFactor     = 2
 initialStmtCapacity  = 500 	 
 stmtGrowthIncrement  = 1000
 stmtGrowthFactor     = 2
-bdbCacheSize         = 512m,2
 normalizeTypedStringLiterals = no
 
 TimeoutDuration = 200
@@ -206,7 +203,6 @@ BOOST_AUTO_TEST_CASE(testConfigReadFromFile)
 	BOOST_CHECK_EQUAL(500u, c.initialStmtCapacity());
 	BOOST_CHECK_EQUAL(1000u, c.stmtGrowthIncrement());
 	BOOST_CHECK_EQUAL(2.0, c.stmtGrowthFactor());
-	BOOST_CHECK_EQUAL(string("512m,2"), c.bdbCacheSize());
 	BOOST_CHECK_EQUAL(false, c.normalizeTypedStringLiterals());
 
 	BOOST_CHECK_EQUAL(200u, c.timeoutDuration());
@@ -252,7 +248,6 @@ rsrcGrowthFactor     = 2
 initialStmtCapacity  = 500
 stmtGrowthIncrement  = 1000
 stmtGrowthFactor     = 2
-bdbCacheSize         = 512m,2
 normalizeTypedStringLiterals = no
 
 TimeoutDuration = 200

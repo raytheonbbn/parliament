@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(testVarRecordTableBug1381)
 	// Insert a tiny string that fits within the file's capacity so that
 	// the file will not grow:
 	RsrcString testData1(1, 'i');
-	size_t offset1 = vrt.pushBack(testData1.c_str(), testData1.length());
+	size_t offset1 = vrt.pushBack(testData1);
 	const RsrcChar* pBase = vrt.getRecordAt(0);
 	BOOST_CHECK_EQUAL(0u, offset1);
 
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(testVarRecordTableBug1381)
 	// factor is very large, we can expect that the file will be re-mapped at
 	// a different base address, which is what triggers the bug.
 	RsrcString testData2(k_initialSize - testData1.length() - 1, 'i');
-	size_t offset2 = vrt.pushBack(testData2.c_str(), testData2.length());
+	size_t offset2 = vrt.pushBack(testData2);
 	BOOST_CHECK_EQUAL(offset1 + testData1.length() + 1, offset2);
 
 	// Check that the file actually did get re-mapped at a different base

@@ -11,6 +11,7 @@
 #include "parliament/Log.h"
 
 #include <boost/algorithm/string/trim.hpp>
+#include <algorithm>
 #include <cstring>
 
 #if defined(PARLIAMENT_WINDOWS)
@@ -26,7 +27,9 @@ namespace pmnt = ::bbn::parliament;
 using ::boost::algorithm::trim_copy;
 using ::boost::format;
 using ::std::exception;
+using ::std::min;
 using ::std::string;
+using ::std::string_view;
 using ::std::strncpy;
 
 #if defined(PARLIAMENT_WINDOWS)
@@ -34,32 +37,25 @@ static auto g_log(pmnt::log::getSource("Exceptions"));
 #endif
 
 
-
-void pmnt::Exception::copyMsg(const char* pMsg) noexcept
+void pmnt::Exception::copyMsg(string_view msg) noexcept
 {
-	strncpy(m_msg.data(), pMsg, m_msg.size());
-	m_msg.back() = '\0';
+	auto numCharsCopied = msg.copy(m_msg.data(), m_msg.size());
+	numCharsCopied = min(m_msg.size() - 1, numCharsCopied);
+	m_msg[numCharsCopied] = '\0';
 }
 
-pmnt::Exception::Exception(const char* pMsg) noexcept :
+pmnt::Exception::Exception(string_view msg) noexcept :
 	exception(),
 	m_msg()
 {
-	copyMsg(pMsg);
-}
-
-pmnt::Exception::Exception(const string& msg) noexcept :
-	exception(),
-	m_msg()
-{
-	copyMsg(msg.c_str());
+	copyMsg(msg);
 }
 
 pmnt::Exception::Exception(const format& fmt) :
 	exception(),
 	m_msg()
 {
-	copyMsg(str(fmt).c_str());
+	copyMsg(str(fmt));
 }
 
 pmnt::Exception::Exception(const Exception& rhs) noexcept :
