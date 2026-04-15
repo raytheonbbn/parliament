@@ -2,6 +2,14 @@
 .gradle/
 bin/
 build/
+indexes/
+lib/
+log/
+parliament-test.log
+.gradle/
+.project
+.settings/
+.vscode/
 /build.properties
 /dependencies/
 
@@ -24,9 +32,14 @@ build/
 /doc/**/*.synctex.gz
 /doc/**/*.synctex(busy)
 /doc/**/*.toc
+/doc/DynamicLibraryDependencies.pdf
+/doc/HowToRelease.pdf
+/doc/ImplementationChoices.pdf
 
 /jena/JosekiExtensions/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab/
 *.log*
+/jena/JenaGraph/kb-data/
+/jena/JenaGraph/test-kb-data/
 /Parliament/AdminClient/.settings/language.settings.xml
 /Parliament/AdminClient/Debug_with_Linux GCC/
 /Parliament/AdminClient/Debug_with_MacOSX GCC/
@@ -39,4 +52,6 @@ build/
 /Parliament/Test/Debug_with_MacOSX GCC/
 /Parliament/Test/ParliamentKbConfig.txt
 /Parliament/Test/ParliamentLogConfig.txt
+/Parliament/Test/test-kb-data/
+/server/test-kb-data/
 /target/

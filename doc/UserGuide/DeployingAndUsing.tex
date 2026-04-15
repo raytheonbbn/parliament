@@ -29,7 +29,6 @@ To run the container, use this command (with line breaks added for readability):
 docker run -d -p 80:8089 --name=parliament-«version»
    --mount type=volume,src=parliament-data,dst=/var/parliament-data
    --env PARLIAMENT_JAVA_HEAP_SIZE=512m
-   --env PARLIAMENT_BDB_CACHE_SIZE=512m,1
    idemmons/parliament:«version»
 \end{verbatim}
 }
@@ -42,7 +41,6 @@ Alternately, Docker can store \acp{pmnt} data files and logs in a local director
 docker run -d -p 80:8089 --name=parliament-«version»
    --mount type=bind,src=/host/directory,dst=/var/parliament-data
    --env PARLIAMENT_JAVA_HEAP_SIZE=512m
-   --env PARLIAMENT_BDB_CACHE_SIZE=512m,1
    idemmons/parliament:«version»
 \end{verbatim}
 }
@@ -498,21 +496,18 @@ The section begins with a how-to for common configuration tasks, followed by a m
 
 \emph{Setting the query timeout:} See the \texttt{TimeoutDuration} and \texttt{TimeoutUnit} settings in Section~\ref{section-main-config}.
 
-\emph{Memory configuration:} Because \ac{pmnt} uses four separate pools of memory, finding the optimal configuration is not easy.  These four pools of memory are:
+\emph{Memory configuration:} \ac{pmnt} uses three separate pools of memory:
 \begin{itemize}[noitemsep]
 	\item The Java heap (to configure, see Section~\ref{section-pmnt-startup-script})
-	\item Berkeley DB's cache (configured via the \texttt{bdbCacheSize} setting discussed in Section~\ref{section-main-config})
 	\item The demand-paged cache maintained by the operating system for memory-mapped files (not configurable)
 	\item The C++ heap (not configurable)
 \end{itemize}
+
 Achieving the right balance between these pools of memory is tricky, but here are a few guidelines:
-
 \begin{itemize}
-	\item Don't make the Java heap too big. Many Java programmers are accustomed to setting their Java heap as large as possible, but for \ac{pmnt}, the Java heap is not as important as the Berkeley DB cache and the memory-mapped files.
+	\item Don't make the Java heap too big. Many Java programmers are accustomed to setting their Java heap as large as possible, but for \ac{pmnt}, the Java heap is not as important as the memory-mapped files.
 
-	\item The Berkeley DB cache size is probably the most important setting for achieving good performance.  Do not be afraid to experiment with values much larger than the default.
-
-	\item The sum of the Java heap size and the Berkeley DB cache size should be significantly less than the total memory available, in order to leave sufficient memory for the memory-mapped files.
+	\item The Java heap size should be significantly less than the total memory available, in order to leave sufficient memory for the memory-mapped files.
 \end{itemize}
 
 \emph{Concurrency:} \ac{pmnt} has a many readers/single writer model of concurrency.  In other words, if \ac{pmnt} receives several requests at once, and all of them are read-only requests (such as a query), then \ac{pmnt} will execute those requests in parallel.  Whenever \ac{pmnt} receives a request that requires writing (such as an insert, a \ac{sparql} Update, or a graph creation), that request will wait until all other executing requests are finished, and then it will execute. And while it is executing, all other requests (read or write) will wait in the queue until it is finished.
@@ -559,7 +554,7 @@ The recognized settings are as follows:
 
 	\item[uriTableFileName] The name of the memory-mapped file containing resource strings (URIs and literals). \emph{Default: \path|uris.mem|}
 
-	\item[uriToIntFileName] The name of the file containing the mapping from numeric resource identifiers to resource strings.  This file is managed by Berkeley DB. \emph{Default: \path|u2i.db|}
+	\item[uriToIntFileName] The name of the file containing the mapping from numeric resource identifiers to resource strings.  This file is managed by RocksDB. \emph{Default: \path|u2i.db|}
 
 	\item[stmtToIdFileName] This obsolete setting is now ignored.  It indicated the name of a file that mapped tuples of numeric resource identifiers to numeric statement identifiers.  This file was omitted by default, and was included only if the setting ``keepDupStmtIdx'' was turned on.  The default value was \path|stmt2id.db|.  If your configuration had ``keepDupStmtIdx'' turned off, then you can safely delete these two settings from your configuration file.  If it was turned on, then delete the file named by this setting and then delete these two settings from your configuration file.
 
@@ -583,7 +578,7 @@ The recognized settings are as follows:
 
 	\item[stmtGrowthFactor] The factor by which \ac{pmnt} increases the size of the statement table when it runs out of space in the file.  If this is less than or equal to one, then geometric growth of the statement table is disabled, in which case stmtGrowthIncrement must be at least one (see above).  Note that this is a decimal number that should be formatted according to your locale, e.g., ``1.1`` in the US or ``1,1'' in Europe. \emph{Default: ``0''}
 
-	\item[bdbCacheSize] The amount of memory to be devoted to the Berkeley DB cache.  The portion before the comma is the total cache size (with a k for kilobytes, m for megabytes, g for gigabytes).  The portion after the comma specifies how many segments the memory should be broken across, for compatibility with systems that limit the size of single memory allocations.  On systems with 4 to 8 GB of memory, ``512m,1'' seems to be a reasonable setting. \emph{Default: ``512m,1''}
+	\item[bdbCacheSize] This obsolete setting is now ignored.
 
 	\item[normalizeTypedStringLiterals] Instructs \ac{pmnt} to convert typed string literals to plain literals, both upon insert and at query time, as mandated in \ac{rdf} 1.1.  In \ac{pmnt} versions before the implementation of this option (versions~2.7.9 and prior), the behavior was as if the option were set to ``no''.  Therefore, if you are migrating a \ac{pmnt} installation originally created with one of these older versions to a newer version, you must do one of two things:
 	\begin{enumerate}
@@ -941,7 +936,7 @@ Because \ac{pmnt} is most often used within a Java environment, the most common 
 
 	\item When the \ac{jvm} loads the \ac{pmnt} \ac{dll}, \ac{pmnt} itself loads several other \acp{dll}.  Even if the \ac{jvm} is able to load \ac{pmnt}, an unsatisfied link error will result if \ac{pmnt} cannot load one of its subsidiary \acp{dll}.  Furthermore, the error message accompanying the unsatisfied link error usually does not indicate which \ac{dll} caused the load failure.  The subsidiary \acp{dll} fall into the following three categories:
 	\begin{itemize}
-		\item The Berkeley DB and Boost \acp{dll}:  In the deployment procedures detailed in this document, these \acp{dll} should reside in the same location as \ac{pmnt} itself.
+		\item The Boost and RocksDB \acp{dll}:  In the deployment procedures detailed in this document, these \acp{dll} should reside in the same location as \ac{pmnt} itself.
 		\item The C and C++ run-time libraries:  On Unix-like systems these should be available automatically.  On Windows you may need to install the Visual Studio run-time libraries.  You can find installers for these in the \path|RedistributablePackages| subdirectory of your binary distribution of \ac{pmnt}.
 		\item Various operating system \acp{dll}:  These are rarely a problem, because the OS needs to be able to find these to function.
 	\end{itemize}

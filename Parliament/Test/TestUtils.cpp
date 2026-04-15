@@ -64,10 +64,10 @@ pmnt::KbDeleter::~KbDeleter()
 	KbInstance::deleteKb(m_config, m_deleteContainingDir);
 }
 
-pmnt::EnvVarReset::EnvVarReset(const TString& envVarName, const TString& newEnvVarValue) :
+pmnt::EnvVarReset::EnvVarReset(TStringView envVarName, TStringView newEnvVarValue) :
 	m_envVarName(envVarName),
 	m_newEnvVarValue(newEnvVarValue),
-	m_oldEnvVarValue(tGetEnvVar(envVarName.c_str())),
+	m_oldEnvVarValue(tGetEnvVar(envVarName)),
 	m_resetOnDestruct(true)
 {
 	tSetEnvVar(m_envVarName, m_newEnvVarValue);

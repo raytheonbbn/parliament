@@ -49,10 +49,7 @@ public:
 		/* out */ double& pctUnusedRsrcCapacity, /* out */ double& pctUnusedStmtCapacity) const;
 	PARLIAMENT_EXPORT void releaseExcessCapacity();
 
-	PARLIAMENT_EXPORT ResourceId uriToRsrcId(const RsrcChar* pUri, size_t uriLen, bool isLiteral, bool createIfMissing);
-	PARLIAMENT_EXPORT ResourceId uriToRsrcId(const RsrcChar* pUri, bool isLiteral, bool createIfMissing);
-	ResourceId uriToRsrcId(const RsrcString& uri, bool isLiteral, bool createIfMissing)
-		{ return uriToRsrcId(uri.c_str(), uri.length(), isLiteral, createIfMissing); }
+	PARLIAMENT_EXPORT ResourceId uriToRsrcId(RsrcStringView uri, bool isLiteral, bool createIfMissing);
 	PARLIAMENT_EXPORT const RsrcChar* rsrcIdToUri(ResourceId rsrcId) const;
 	PARLIAMENT_EXPORT ResourceId createAnonymousRsrc();
 

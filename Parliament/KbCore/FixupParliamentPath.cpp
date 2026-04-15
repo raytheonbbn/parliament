@@ -7,9 +7,10 @@
 #include "parliament/generated/com_bbn_parliament_core_jni_LibraryLoader.h"
 #include "parliament/Windows.h"
 
-#include <boost/format.hpp>
 #include <filesystem>
+#include <format>
 #include <string>
+#include <string_view>
 #include <system_error>
 #include <vector>
 
@@ -31,10 +32,11 @@
 		/* Do nothing to return to the JVM. */	\
 	}
 
-using ::boost::format;
 using ::std::exception;
 using ::std::filesystem::path;
+using ::std::format;
 using ::std::string;
+using ::std::string_view;
 using ::std::system_category;
 using ::std::system_error;
 using ::std::vector;
@@ -77,10 +79,11 @@ static void throwException(JNIEnv* pEnv, const exception& ex)
 
 #if defined(PARLIAMENT_WINDOWS)
 static void throwSystemException(int errCode, const char* pFile, int line,
-	format& fmt)
+	string_view msg)
 {
-	throw system_error{errCode, system_category(),
-		str(fmt % errCode % pFile % line)};
+	auto fullMsg = format("{0} (error code {1}, file {2}, line {3})",
+		msg, errCode, pFile, line);
+	throw system_error{errCode, system_category(), fullMsg};
 }
 #endif
 
@@ -91,9 +94,8 @@ static path getCurrentDllFilePath()
 	if (!::GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
 		reinterpret_cast<LPCWSTR>(getCurrentDllFilePath), &hModule))
 	{
-		auto fmt = format{"Unable to retrieve the handle of the current module"
-			" (error code %1%, file %2%, line %3%)"};
-		throwSystemException(::GetLastError(), __FILE__, __LINE__, fmt);
+		throwSystemException(::GetLastError(), __FILE__, __LINE__,
+			"Unable to retrieve the handle of the current module");
 	}
 
 	for (DWORD bufferLen = MAX_PATH;; bufferLen += MAX_PATH)
@@ -102,9 +104,8 @@ static path getCurrentDllFilePath()
 		DWORD retVal = ::GetModuleFileNameW(hModule, &buffer[0], bufferLen);
 		if (retVal == 0)
 		{
-			auto fmt = format{"Unable to retrieve the module file name"
-				" (error code %1%, file %2%, line %3%)"};
-			throwSystemException(::GetLastError(), __FILE__, __LINE__, fmt);
+			throwSystemException(::GetLastError(), __FILE__, __LINE__,
+				"Unable to retrieve the module file name");
 		}
 		else if (retVal < bufferLen)
 		{
@@ -122,10 +123,8 @@ static void addDirToDllPath(const path& dir)
 #if defined(PARLIAMENT_WINDOWS)
 	if (!SetDllDirectoryW(dir.c_str()))
 	{
-		auto fmt = format{"Unable to set DLL search path %1%"
-			" (error code %2%, file %3%, line %4%)"};
 		throwSystemException(::GetLastError(), __FILE__, __LINE__,
-			fmt % dir.generic_string());
+			format("Unable to set DLL search path {0}", dir.generic_string()));
 	}
 #endif
 }
@@ -135,9 +134,8 @@ static void resetDllPath()
 #if defined(PARLIAMENT_WINDOWS)
 	if (!SetDllDirectoryW(nullptr))
 	{
-		auto fmt = format{"Unable to reset DLL search path"
-			" (error code %1%, file %2%, line %3%)"};
-		throwSystemException(::GetLastError(), __FILE__, __LINE__, fmt);
+		throwSystemException(::GetLastError(), __FILE__, __LINE__,
+			"Unable to reset DLL search path");
 	}
 #endif
 }

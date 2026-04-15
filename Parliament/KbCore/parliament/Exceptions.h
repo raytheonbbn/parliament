@@ -13,6 +13,7 @@
 #include <array>
 #include <exception>
 #include <string>
+#include <string_view>
 
 #include <boost/format.hpp>
 
@@ -37,8 +38,7 @@ using SysErrCode = int;
 class NON_WINDOWS_PARLIAMENT_EXPORT Exception : public ::std::exception
 {
 public:
-	PARLIAMENT_EXPORT Exception(const char* pMsg) noexcept;
-	PARLIAMENT_EXPORT Exception(const ::std::string& msg) noexcept;
+	PARLIAMENT_EXPORT Exception(::std::string_view msg) noexcept;
 	PARLIAMENT_EXPORT Exception(const ::boost::format& fmt);
 	PARLIAMENT_EXPORT Exception(const Exception& rhs) noexcept;
 	PARLIAMENT_EXPORT Exception& operator=(const Exception& rhs) noexcept;
@@ -50,7 +50,7 @@ public:
 	PARLIAMENT_EXPORT static ::std::string getSysErrMsg(SysErrCode errCode);
 
 private:
-	inline void copyMsg(const char* pMsg) noexcept;
+	inline void copyMsg(::std::string_view msg) noexcept;
 
 	::std::array<char, 384> m_msg;
 };
@@ -58,32 +58,28 @@ private:
 class NON_WINDOWS_PARLIAMENT_EXPORT UnicodeException : public Exception
 {
 public:
-	UnicodeException(const char* pMsg) noexcept : Exception(pMsg) {}
-	UnicodeException(const ::std::string& msg) noexcept : Exception(msg) {}
+	UnicodeException(::std::string_view msg) noexcept : Exception(msg) {}
 	UnicodeException(const ::boost::format& fmt) : Exception(fmt) {}
 };
 
 class NON_WINDOWS_PARLIAMENT_EXPORT UnimplementedException : public Exception
 {
 public:
-	UnimplementedException(const char* pMsg) noexcept : Exception(pMsg) {}
-	UnimplementedException(const ::std::string& msg) noexcept : Exception(msg) {}
+	UnimplementedException(::std::string_view msg) noexcept : Exception(msg) {}
 	UnimplementedException(const ::boost::format& fmt) : Exception(fmt) {}
 };
 
 class NON_WINDOWS_PARLIAMENT_EXPORT UsageException : public Exception
 {
 public:
-	UsageException(const char* pMsg) noexcept : Exception(pMsg) {}
-	UsageException(const ::std::string& msg) noexcept : Exception(msg) {}
+	UsageException(::std::string_view msg) noexcept : Exception(msg) {}
 	UsageException(const ::boost::format& fmt) : Exception(fmt) {}
 };
 
 class NON_WINDOWS_PARLIAMENT_EXPORT NumericConversionException : public Exception
 {
 public:
-	NumericConversionException(const char* pMsg) noexcept : Exception(pMsg) {}
-	NumericConversionException(const ::std::string& msg) noexcept : Exception(msg) {}
+	NumericConversionException(::std::string_view msg) noexcept : Exception(msg) {}
 	NumericConversionException(const ::boost::format& fmt) : Exception(fmt) {}
 };
 

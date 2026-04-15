@@ -91,8 +91,7 @@ static void assignJavaConfigToCppConfig(KbConfig& config, JNIEnv* pEnv, jobject 
 	config.rsrcGrowthFactor(				JNIHelper::getDoubleFld(pEnv, obj,	"m_rsrcGrowthFactor"));
 	config.initialStmtCapacity(				JNIHelper::getSizeTFld(pEnv, obj,	"m_initialStmtCapacity"));
 	config.stmtGrowthIncrement(				JNIHelper::getSizeTFld(pEnv, obj,	"m_stmtGrowthIncrement"));
-	config.stmtGrowthFactor(				JNIHelper::getDoubleFld(pEnv, obj,	"m_stmtGrowthFactor"));
-	config.bdbCacheSize(					JNIHelper::getStringFld(pEnv, obj,	"m_bdbCacheSize"));
+	config.stmtGrowthFactor(					JNIHelper::getDoubleFld(pEnv, obj,	"m_stmtGrowthFactor"));
 	config.normalizeTypedStringLiterals(	JNIHelper::getBooleanFld(pEnv, obj,	"m_normalizeTypedStringLiterals"));
 	config.timeoutDuration(					JNIHelper::getSizeTFld(pEnv, obj,	"m_timeoutDuration"));
 	config.timeoutUnit(						JNIHelper::getTimeoutUnitFld(pEnv, obj));
@@ -408,7 +407,7 @@ JNIEXPORT jlong JNICALL Java_com_bbn_parliament_core_jni_KbInstance_uriToRsrcId(
 		{
 			KbInstance* pKb = kbPtr(pEnv, obj);
 			JStringAccessor<RsrcChar> accessor(pEnv, uri);
-			result = static_cast<jlong>(pKb->uriToRsrcId(accessor.begin(), size(accessor), !!isLiteral, !!createIfMissing));
+			result = static_cast<jlong>(pKb->uriToRsrcId(accessor.strView(), !!isLiteral, !!createIfMissing));
 		}
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 	return result;

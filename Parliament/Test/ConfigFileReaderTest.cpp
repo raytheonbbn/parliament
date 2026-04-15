@@ -64,16 +64,15 @@ static bfs::path getRunningDllFilePath()
 
 BOOST_AUTO_TEST_SUITE(ConfigFileReaderTestSuite)
 
-static constexpr TChar k_testEnvVarName[] = _T("TEST_CONFIG_PATH");
-static constexpr TChar k_testConfigFileName[] = _T("test-config.txt");
+static constexpr TStringView k_testEnvVarName{_T("TEST_CONFIG_PATH")};
+static constexpr TStringView k_testConfigFileName{_T("test-config.txt")};
 
 BOOST_AUTO_TEST_CASE(getConfigFilePathTest)
 {
 	{	// Check the fallback, where the config file is in the current working directory:
 		EnvVarReset envVarReset(k_testEnvVarName, _T(""));
-		BOOST_CHECK_EQUAL(convertTCharToUtf8(k_testConfigFileName),
-			convertTCharToUtf8(ConfigFileReader::testGetConfigFilePath(
-				k_testEnvVarName, k_testConfigFileName).native()));
+		BOOST_CHECK_EQUAL(bfs::path{k_testConfigFileName},
+			ConfigFileReader::testGetConfigFilePath(k_testEnvVarName, k_testConfigFileName));
 	}
 	{	// Check that setting the env var works:
 		auto envVarValue = bfs::current_path();

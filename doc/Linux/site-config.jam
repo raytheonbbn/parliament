@@ -1,20 +1,20 @@
-
 import os ;
 
 project site-config ;
 
-path-constant BdbDir : [ os.environ BDB_HOME ] ;
 path-constant BoostDir : [ os.environ BOOST_ROOT ] ;
 path-constant JavaDir : [ os.environ JAVA_HOME ] ;
+path-constant rocksdbDir : [ os.environ ROCKSDB_HOME ] ;
 
 constant BoostVersion : [ os.environ BOOST_VERSION ] ;
 constant BoostVersionComponents : [ MATCH "([0-9]+)_([0-9]+)_([0-9]+)" : $(BoostVersion) ] ;
 constant BoostVersionDotted : $(BoostVersionComponents:J=.) ;
 constant BoostVersionAbbrvAlternatives : [ MATCH "([0-9]+_[0-9]+)_0" "([0-9]+_[0-9]+_[0-9]+)" : $(BoostVersion) ] ;
 constant BoostVersionAbbrv : $(BoostVersionAbbrvAlternatives[1]) ;
-constant BdbVersion : [ os.environ BDB_VERSION ] ;
 constant LinuxDistro : [ os.environ LINUX_DISTRO ] ;
 
+constant COMPILER_ubuntu25 : gcc15 ;   # Ubuntu 25.10
+constant COMPILER_ubuntu24 : gcc13 ;	# Ubuntu 24.04
 constant COMPILER_ubuntu22 : gcc11 ;	# Ubuntu 22.04
 constant COMPILER_ubuntu20 : gcc9 ;		# Ubuntu 20.04
 constant COMPILER_ubuntu19 : gcc9 ;		# Ubuntu 19.10
@@ -27,25 +27,21 @@ constant COMPILER_rhel8    : gcc8 ;		# RHEL 8
 constant COMPILER_rhel9    : gcc11 ;	# RHEL 9
 constant COMPILER : $(COMPILER_$(LinuxDistro)) ;
 
+# One of a64 or x64:
+constant Arch : [ os.environ BOOST_ARCHITECTURE ] ;
+constant UsrLib : [ os.environ UBUNTU_USR_LIB ] ;
+
 constant BoostPfx : <source>$(BoostDir)/stage-gcc-$(LinuxDistro)/lib/libboost_ ;
 
 constant Boost64DyDbgLibPfx : <address-model>64,<link>shared,<variant>debug\:$(BoostPfx) ;
 constant Boost64DyRlsLibPfx : <address-model>64,<link>shared,<variant>release\:$(BoostPfx) ;
 constant Boost64StDbgLibPfx : <address-model>64,<link>static,<variant>debug\:$(BoostPfx) ;
 constant Boost64StRlsLibPfx : <address-model>64,<link>static,<variant>release\:$(BoostPfx) ;
-constant Boost32DyDbgLibPfx : <address-model>32,<link>shared,<variant>debug\:$(BoostPfx) ;
-constant Boost32DyRlsLibPfx : <address-model>32,<link>shared,<variant>release\:$(BoostPfx) ;
-constant Boost32StDbgLibPfx : <address-model>32,<link>static,<variant>debug\:$(BoostPfx) ;
-constant Boost32StRlsLibPfx : <address-model>32,<link>static,<variant>release\:$(BoostPfx) ;
 
-constant Boost64DyDbgLibSfx : -$(COMPILER)-mt-d-x64-$(BoostVersionAbbrv).so.$(BoostVersionDotted) ;
-constant Boost64DyRlsLibSfx : -$(COMPILER)-mt-x64-$(BoostVersionAbbrv).so.$(BoostVersionDotted) ;
-constant Boost64StDbgLibSfx : -$(COMPILER)-mt-d-x64-$(BoostVersionAbbrv).a ;
-constant Boost64StRlsLibSfx : -$(COMPILER)-mt-x64-$(BoostVersionAbbrv).a ;
-constant Boost32DyDbgLibSfx : -$(COMPILER)-mt-d-x32-$(BoostVersionAbbrv).so.$(BoostVersionDotted) ;
-constant Boost32DyRlsLibSfx : -$(COMPILER)-mt-x32-$(BoostVersionAbbrv).so.$(BoostVersionDotted) ;
-constant Boost32StDbgLibSfx : -$(COMPILER)-mt-d-x32-$(BoostVersionAbbrv).a ;
-constant Boost32StRlsLibSfx : -$(COMPILER)-mt-x32-$(BoostVersionAbbrv).a ;
+constant Boost64DyDbgLibSfx : -$(COMPILER)-mt-d-$(Arch)-$(BoostVersionAbbrv).so.$(BoostVersionDotted) ;
+constant Boost64DyRlsLibSfx : -$(COMPILER)-mt-$(Arch)-$(BoostVersionAbbrv).so.$(BoostVersionDotted) ;
+constant Boost64StDbgLibSfx : -$(COMPILER)-mt-d-$(Arch)-$(BoostVersionAbbrv).a ;
+constant Boost64StRlsLibSfx : -$(COMPILER)-mt-$(Arch)-$(BoostVersionAbbrv).a ;
 
 alias BoostHeaderOnlyLibraries
 	:	# no sources
@@ -60,10 +56,6 @@ alias BoostAtomic
 		$(Boost64DyRlsLibPfx)atomic$(Boost64DyRlsLibSfx)
 		$(Boost64StDbgLibPfx)atomic$(Boost64StDbgLibSfx)
 		$(Boost64StRlsLibPfx)atomic$(Boost64StRlsLibSfx)
-		$(Boost32DyDbgLibPfx)atomic$(Boost32DyDbgLibSfx)
-		$(Boost32DyRlsLibPfx)atomic$(Boost32DyRlsLibSfx)
-		$(Boost32StDbgLibPfx)atomic$(Boost32StDbgLibSfx)
-		$(Boost32StRlsLibPfx)atomic$(Boost32StRlsLibSfx)
 	:	# no default build
 	:	<include>$(BoostDir)
 	;
@@ -74,10 +66,26 @@ alias BoostChrono
 		$(Boost64DyRlsLibPfx)chrono$(Boost64DyRlsLibSfx)
 		$(Boost64StDbgLibPfx)chrono$(Boost64StDbgLibSfx)
 		$(Boost64StRlsLibPfx)chrono$(Boost64StRlsLibSfx)
-		$(Boost32DyDbgLibPfx)chrono$(Boost32DyDbgLibSfx)
-		$(Boost32DyRlsLibPfx)chrono$(Boost32DyRlsLibSfx)
-		$(Boost32StDbgLibPfx)chrono$(Boost32StDbgLibSfx)
-		$(Boost32StRlsLibPfx)chrono$(Boost32StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+	;
+
+alias BoostContainer	# Used by Boost.JSON
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)container$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)container$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)container$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)container$(Boost64StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+	;
+
+alias BoostDateTime
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)date_time$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)date_time$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)date_time$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)date_time$(Boost64StRlsLibSfx)
 	:	# no default build
 	:	<include>$(BoostDir)
 	;
@@ -102,10 +110,6 @@ alias BoostFileSystem
 		$(Boost64DyRlsLibPfx)filesystem$(Boost64DyRlsLibSfx)
 		$(Boost64StDbgLibPfx)filesystem$(Boost64StDbgLibSfx)
 		$(Boost64StRlsLibPfx)filesystem$(Boost64StRlsLibSfx)
-		$(Boost32DyDbgLibPfx)filesystem$(Boost32DyDbgLibSfx)
-		$(Boost32DyRlsLibPfx)filesystem$(Boost32DyRlsLibSfx)
-		$(Boost32StDbgLibPfx)filesystem$(Boost32StDbgLibSfx)
-		$(Boost32StRlsLibPfx)filesystem$(Boost32StRlsLibSfx)
 	:	# no default build
 	:	<include>$(BoostDir)
 	;
@@ -116,10 +120,6 @@ alias BoostLog
 		$(Boost64DyRlsLibPfx)log$(Boost64DyRlsLibSfx)
 		$(Boost64StDbgLibPfx)log$(Boost64StDbgLibSfx)
 		$(Boost64StRlsLibPfx)log$(Boost64StRlsLibSfx)
-		$(Boost32DyDbgLibPfx)log$(Boost32DyDbgLibSfx)
-		$(Boost32DyRlsLibPfx)log$(Boost32DyRlsLibSfx)
-		$(Boost32StDbgLibPfx)log$(Boost32StDbgLibSfx)
-		$(Boost32StRlsLibPfx)log$(Boost32StRlsLibSfx)
 	:	# no default build
 	:	<include>$(BoostDir)
 		<link>shared:<define>BOOST_LOG_DYN_LINK
@@ -132,14 +132,30 @@ alias BoostLogSetup
 		$(Boost64DyRlsLibPfx)log_setup$(Boost64DyRlsLibSfx)
 		$(Boost64StDbgLibPfx)log_setup$(Boost64StDbgLibSfx)
 		$(Boost64StRlsLibPfx)log_setup$(Boost64StRlsLibSfx)
-		$(Boost32DyDbgLibPfx)log_setup$(Boost32DyDbgLibSfx)
-		$(Boost32DyRlsLibPfx)log_setup$(Boost32DyRlsLibSfx)
-		$(Boost32StDbgLibPfx)log_setup$(Boost32StDbgLibSfx)
-		$(Boost32StRlsLibPfx)log_setup$(Boost32StRlsLibSfx)
 	:	# no default build
 	:	<include>$(BoostDir)
 		<link>shared:<define>BOOST_LOG_DYN_LINK
 		<define>BOOST_LOG_NO_SHORTHAND_NAMES
+	;
+
+alias BoostRegex
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)regex$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)regex$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)regex$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)regex$(Boost64StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+	;
+
+alias BoostSerialization
+	:	# no sources
+	:	$(Boost64DyDbgLibPfx)serialization$(Boost64DyDbgLibSfx)
+		$(Boost64DyRlsLibPfx)serialization$(Boost64DyRlsLibSfx)
+		$(Boost64StDbgLibPfx)serialization$(Boost64StDbgLibSfx)
+		$(Boost64StRlsLibPfx)serialization$(Boost64StRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
 	;
 
 alias BoostThread
@@ -148,10 +164,6 @@ alias BoostThread
 		$(Boost64DyRlsLibPfx)thread$(Boost64DyRlsLibSfx)
 		$(Boost64StDbgLibPfx)thread$(Boost64StDbgLibSfx)
 		$(Boost64StRlsLibPfx)thread$(Boost64StRlsLibSfx)
-		$(Boost32DyDbgLibPfx)thread$(Boost32DyDbgLibSfx)
-		$(Boost32DyRlsLibPfx)thread$(Boost32DyRlsLibSfx)
-		$(Boost32StDbgLibPfx)thread$(Boost32StDbgLibSfx)
-		$(Boost32StRlsLibPfx)thread$(Boost32StRlsLibSfx)
 	:	# no default build
 	:	<include>$(BoostDir)
 	;
@@ -162,13 +174,9 @@ alias BoostUnitTest
 		$(Boost64DyRlsLibPfx)unit_test_framework$(Boost64DyRlsLibSfx)
 		$(Boost64StDbgLibPfx)unit_test_framework$(Boost64StDbgLibSfx)
 		$(Boost64StRlsLibPfx)unit_test_framework$(Boost64StRlsLibSfx)
-		$(Boost32DyDbgLibPfx)unit_test_framework$(Boost32DyDbgLibSfx)
-		$(Boost32DyRlsLibPfx)unit_test_framework$(Boost32DyRlsLibSfx)
-		$(Boost32StDbgLibPfx)unit_test_framework$(Boost32StDbgLibSfx)
-		$(Boost32StRlsLibPfx)unit_test_framework$(Boost32StRlsLibSfx)
 	:	# no default build
 	:	<include>$(BoostDir)
-		<define>BOOST_TEST_ALTERNATIVE_INIT_API
+		<link>static:<define>BOOST_TEST_ALTERNATIVE_INIT_API
 		<link>shared:<define>BOOST_TEST_DYN_LINK
 	;
 
@@ -180,9 +188,66 @@ alias JavaJNI
 		<include>$(JavaDir)/include/linux
 	;
 
-alias BerkeleyDB
+alias rocksdb
 	:	# no sources
-	:	<source>$(BdbDir)/lib/libdb-$(BdbVersion).so
+	:	<link>shared:<source>$(rocksdbDir)/lib/librocksdb.so.10.10
+		<link>static:<source>$(rocksdbDir)/lib/librocksdb.a
 	:	# no default build
-	:	<include>$(BdbDir)/include
+	:	<include>$(rocksdbDir)/include
+	;
+
+alias gflags	# dependency of rocksdb
+	:	# no sources
+	:	<link>shared:<source>$(UsrLib)/libgflags.so.2.2
+		<link>static:<source>$(UsrLib)/libgflags.a
+	:	# no default build
+	:	<include>/usr/include
+	;
+
+alias snappy	# dependency of rocksdb
+	:	# no sources
+	:	<link>shared:<source>$(UsrLib)/libsnappy.so.1
+		<link>static:<source>$(UsrLib)/libsnappy.a
+	:	# no default build
+	:	<include>/usr/include
+	;
+
+alias lz4	# dependency of rocksdb
+	:	# no sources
+	:	<link>shared:<source>$(UsrLib)/liblz4.so.1
+		<link>static:<source>$(UsrLib)/liblz4.a
+	:	# no default build
+	:	<include>/usr/include
+	;
+
+alias zstd	# dependency of rocksdb
+	:	# no sources
+	:	<link>shared:<source>$(UsrLib)/libzstd.so.1
+		<link>static:<source>$(UsrLib)/libzstd.a
+	:	# no default build
+	:	<include>/usr/include
+	;
+
+alias bz2	# dependency of rocksdb
+	:	# no sources
+	:	<link>shared:<source>$(UsrLib)/libbz2.so.1.0
+		<link>static:<source>$(UsrLib)/libbz2.a
+	:	# no default build
+	:	<include>/usr/include
+	;
+
+alias z	# dependency of rocksdb
+	:	# no sources
+	:	<link>shared:<source>$(UsrLib)/libz.so.1
+		<link>static:<source>$(UsrLib)/libz.a
+	:	# no default build
+	:	<include>/usr/include
+	;
+
+alias xxhash	# dependency of rocksdb
+	:	# no sources
+	:	<link>shared:<source>$(UsrLib)/libxxhash.so.0
+		<link>static:<source>$(UsrLib)/libxxhash.a
+	:	# no default build
+	:	<include>/usr/include
 	;

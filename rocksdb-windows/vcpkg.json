@@ -1,0 +1,21 @@
+{
+	"builtin-baseline": "b21ff8f3cadbd8e0b175b49be2dd9202f1f208f4",
+	"dependencies": [
+		{
+			"name": "rocksdb",
+			"features": [
+				"bzip2",
+				"lz4",
+				"snappy",
+				"zlib",
+				"zstd"
+			]
+		},
+		{
+			"name": "gflags"
+		}
+	],
+	"overrides": [
+		{ "name": "rocksdb", "version": "11.0.4" }
+	]
+}

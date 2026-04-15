@@ -6,7 +6,6 @@
 % !TEX tabbedFile{Introduction.tex}
 % !TEX tabbedFile{DeployingAndUsing.tex}
 % !TEX tabbedFile{Building.tex}
-% !TEX tabbedFile{Appendices.tex}
 % !TEX tabbedFile{acronyms.tex}
 
 \documentclass[12pt,letterpaper,openany,oneside,draft]{book}
@@ -39,7 +38,7 @@
 %\usepackage{skmath}
 %\usepackage{tikz}
 \usepackage{path}
-\usepackage{dirtree}
+%\usepackage{dirtree}
 %\usepackage[firstpage]{draftwatermark}
 %\usepackage{todonotes}
 %\usepackage[T1]{fontenc}		% Enables curly braces in emails within \institute
@@ -48,14 +47,14 @@
 \usepackage[unicode,final]{hyperref}	% Should be the last use-package command
 \def\UrlBreaks{\do\/\do-}
 
-%\newcommand{\red}[1]{{\color{red}#1}}
+\newcommand{\red}[1]{{\color{red}#1}}
 %\newcommand{\paraleader}[1]{\textbf{#1}}
 \newcommand{\urlcite}[1]{\footnote{\url{#1}}}
 \newcommand{\headingrule}{\midrule[\heavyrulewidth]}
 %\newcommand{\themestatement}[1]{\framebox{\parbox{0.97\columnwidth}{\emph{#1}}}}
 \newcommand{\githubOrg}{raytheonbbn}
-\newcommand{\boostversion}[1]{1{#1}85{#1}0}
-\newcommand{\lmdbversion}{0.9.31}
+\newcommand{\boostversion}[1]{1{#1}90{#1}0}
+\newcommand{\rocksdbversion}{10.10.1}
 
 \input{acronyms.tex}
 \bibliography{references}
@@ -134,8 +133,6 @@
 
 %\backmatter
 \appendix
-
-\input{Appendices.tex}
 
 \acsetup{
 	list/name=Glossary,

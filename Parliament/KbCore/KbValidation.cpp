@@ -382,14 +382,14 @@ bool pmnt::KbInstance::validateStrToIdMapping(ostream& s) const
 {
 	using RsrcIdList = ::std::vector<ResourceId>;
 	using RsrcIdPairList = ::std::vector< ::std::pair<ResourceId, ResourceId> >;
-	using StrRsrcIdPairList = ::std::vector< ::std::pair< RsrcString, ResourceId> >;
+	using StrRsrcIdPairList = ::std::vector< ::std::pair<RsrcString, ResourceId> >;
 
-	RsrcIdList rsrcsMissingFromBdb;
-	RsrcIdPairList resourcesMisdirectedInBdb;
-	RsrcIdList wildRsrcIdsInBdb;
-	StrRsrcIdPairList bdbRsrcsThatDontMatchRsrcTbl;
+	RsrcIdList rsrcsMissingFromRocksDB;
+	RsrcIdPairList resourcesMisdirectedInRocksDB;
+	RsrcIdList wildRsrcIdsInRocksDB;
+	StrRsrcIdPairList rocksDBRsrcsThatDontMatchRsrcTbl;
 
-	// Check each rsrc table entry against the BDB table:
+	// Check each rsrc table entry against the RocksDB table:
 	ResourceId numRsrcs = rsrcCount();
 	for (ResourceId rsrcId = 0; rsrcId < numRsrcs; ++rsrcId)
 	{
@@ -400,49 +400,46 @@ bool pmnt::KbInstance::validateStrToIdMapping(ostream& s) const
 			ResourceId rsrcId2 = m_pi->m_uriToRsrcId.find(pRsrcStr);
 			if (rsrcId2 == k_nullRsrcId)
 			{
-				rsrcsMissingFromBdb.push_back(rsrcId);
+				rsrcsMissingFromRocksDB.push_back(rsrcId);
 			}
 			else if (rsrcId2 != rsrcId)
 			{
-				resourcesMisdirectedInBdb.push_back(make_pair(rsrcId, rsrcId2));
+				resourcesMisdirectedInRocksDB.push_back(make_pair(rsrcId, rsrcId2));
 			}
 		}
 	}
 
-	// Check each BDB entry against the rsrc table:
+	// Check each RocksDB entry against the rsrc table:
 	for (auto it = cbegin(m_pi->m_uriToRsrcId); it != cend(m_pi->m_uriToRsrcId); ++it)
 	{
-		const RsrcChar* pStr1 = it->first;
+		RsrcStringView str1 = it->first;
 		ResourceId rsrcId = it->second;
 		if (rsrcId >= numRsrcs) //TODO: Check valid flag
 		{
-			wildRsrcIdsInBdb.push_back(rsrcId);
+			wildRsrcIdsInRocksDB.push_back(rsrcId);
 		}
 		else
 		{
 			//TODO: Check for anonymous
-			const RsrcChar* pStr2 = rsrcIdToUri(rsrcId);
-			size_t len1 = char_traits<RsrcChar>::length(pStr1);
-			size_t len2 = char_traits<RsrcChar>::length(pStr2);
-			if (len1 != len2 || char_traits<RsrcChar>::compare(pStr1, pStr2, len1) != 0)
+			if (str1 != rsrcIdToUri(rsrcId))
 			{
-				bdbRsrcsThatDontMatchRsrcTbl.push_back(make_pair(pStr1, rsrcId));
+				rocksDBRsrcsThatDontMatchRsrcTbl.push_back(make_pair(RsrcString{str1}, rsrcId));
 			}
 		}
 	}
 
-	// Report rsrcs missing from BDB:
-	if (!rsrcsMissingFromBdb.empty())
+	// Report rsrcs missing from RocksDB:
+	if (!rsrcsMissingFromRocksDB.empty())
 	{
-		s << endl << "Resource IDs that are missing from BDB:" << endl;
+		s << endl << "Resource IDs that are missing from RocksDB:" << endl;
 	}
-	for (auto it = cbegin(rsrcsMissingFromBdb); it != cend(rsrcsMissingFromBdb); ++it)
+	for (auto it = cbegin(rsrcsMissingFromRocksDB); it != cend(rsrcsMissingFromRocksDB); ++it)
 	{
 		s << "   " << *it << " <" << rsrcIdToUri(*it) << ">" << endl;
 	}
 
-	return rsrcsMissingFromBdb.empty()
-		&& resourcesMisdirectedInBdb.empty()
-		&& wildRsrcIdsInBdb.empty()
-		&& bdbRsrcsThatDontMatchRsrcTbl.empty();
+	return rsrcsMissingFromRocksDB.empty()
+		&& resourcesMisdirectedInRocksDB.empty()
+		&& wildRsrcIdsInRocksDB.empty()
+		&& rocksDBRsrcsThatDontMatchRsrcTbl.empty();
 }

@@ -69,7 +69,9 @@ public class KbUnionGraphTest {
 
 	@AfterEach
 	public void afterEach() {
-		graphStore.clear();
+		if (graphStore != null) {
+			graphStore.clear();
+		}
 	}
 
 	private static Model loadModel(String rsrcName) throws IOException {

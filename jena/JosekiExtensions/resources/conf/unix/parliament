@@ -114,6 +114,7 @@ else
 	#EXEC="$EXEC -debug"
 fi
 
+EXEC="$EXEC -Djdk.xml.enableExtensionFunctions=true"
 EXEC="$EXEC -Xmx${PARLIAMENT_JAVA_HEAP_SIZE:=$DEFAULT_JAVA_HEAP_SIZE}"
 EXEC="$EXEC -cp $CLASSPATH:$PMNT_DIR/lib/* -Dlog.path.base=$KB_DIR"
 EXEC="$EXEC -Dlog4j.configuration=file:$PMNT_DIR/conf/log4j.$LOG4J_CONFIG.properties"

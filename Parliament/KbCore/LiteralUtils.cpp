@@ -138,9 +138,11 @@ double pmnt::LiteralUtils::defaultConversion(const RsrcString& lexicalForm)
 	return lexical_cast<double>(convertFromRsrcChar(lexicalForm));
 }
 
-template <typename ConstBidiIter>
-pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteralImpl(ConstBidiIter first, ConstBidiIter last)
+pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteral(RsrcStringView literal)
 {
+	auto first = cbegin(literal);
+	auto last = cend(literal);
+
 	if (search(first, last, cbegin(k_quote), cend(k_quote)) != first)
 	{
 		throw Exception(format("Literal does not begin with a double quote: %1%")
@@ -175,7 +177,7 @@ pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteralImpl(ConstBidiIter first
 		auto langIt = langSepIt;
 		advance(langIt, size(k_langSep));
 		if (any_of(langIt, last, [](RsrcChar ch){
-			return ch < 'a' && ch > 'z' && ch < 'A' && ch > 'Z' && ch != '-'; }))
+			return !((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '-'); }))
 		{
 			throw Exception(format("Language tag contains disallowed characters: %1%")
 				% convertFromRsrcChar(RsrcString(first, last)));
@@ -187,21 +189,6 @@ pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteralImpl(ConstBidiIter first
 
 	throw Exception(format("Literal does not have the expected format: %1%")
 		% convertFromRsrcChar(RsrcString(first, last)));
-}
-
-pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteral(const RsrcString& literal)
-{
-	return parseLiteralImpl(cbegin(literal), cend(literal));
-}
-
-pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteral(const RsrcChar* pLiteral)
-{
-	return parseLiteralImpl(pLiteral, pLiteral + char_traits<RsrcChar>::length(pLiteral));
-}
-
-pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteral(const RsrcChar* pBegin, const RsrcChar* pEnd)
-{
-	return parseLiteralImpl(pBegin, pEnd);
 }
 
 pmnt::RsrcString pmnt::LiteralUtils::composePlainLiteral(const RsrcString& lexicalForm)

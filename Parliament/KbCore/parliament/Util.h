@@ -8,6 +8,7 @@
 #define PARLIAMENT_UTIL_H_INCLUDED
 
 #include "parliament/Types.h"
+#include "parliament/Windows.h"
 
 #include <boost/filesystem/path.hpp>
 #if !defined(__cpp_lib_to_chars)
@@ -29,17 +30,32 @@ namespace bbn::parliament
 {
 
 PARLIAMENT_EXPORT ::std::string getKbVersion();	// Parliament version number
-PARLIAMENT_EXPORT TString tGetEnvVar(const TChar* pVarName);
+PARLIAMENT_EXPORT TString tGetEnvVar(TStringView varName);
 PARLIAMENT_EXPORT ::boost::filesystem::path getCurrentDllFilePath();
 PARLIAMENT_EXPORT void numericConversionErrorCheck(::std::string_view str,
 	const char* pNextChar, ::std::errc errCode);
+
+// Needed in strTo below because Microsoft's implementation of from_chars doesn't
+// support string_view iterators, even though the C++17 standard allows it.
+#if defined(PARLIAMENT_WINDOWS)
+inline const char* castSVIter(::std::string_view::const_iterator it)
+{
+	return &(*it);
+}
+#else
+inline ::std::string_view::const_iterator castSVIter(::std::string_view::const_iterator it)
+{
+	return it;
+}
+#endif
 
 template<typename TargetType>
 TargetType strTo(::std::string_view str)
 {
 	TargetType number{};
 #if defined(__cpp_lib_to_chars)
-	auto [pNextChar, errCode] = ::std::from_chars(begin(str), end(str), number);
+	auto [pNextChar, errCode] = ::std::from_chars(
+		castSVIter(cbegin(str)), castSVIter(cend(str)), number);
 	numericConversionErrorCheck(str, pNextChar, errCode);
 #else
 	try
@@ -183,6 +199,14 @@ private:
 	HiResTime	m_start;
 	HiResTime	m_stop;
 };
+
+
+
+// ===========================================================================
+// OS Information Functions
+// ===========================================================================
+
+size_t getVmPageSize();
 
 }	// namespace end
 

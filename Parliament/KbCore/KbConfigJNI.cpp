@@ -39,7 +39,6 @@ static void assignCppConfigToJavaConfig(JNIEnv* pEnv, jobject obj, const KbConfi
 	JNIHelper::setLongFld(pEnv, obj,		"m_initialStmtCapacity",			config.initialStmtCapacity());
 	JNIHelper::setLongFld(pEnv, obj,		"m_stmtGrowthIncrement",			config.stmtGrowthIncrement());
 	JNIHelper::setDoubleFld(pEnv, obj,	"m_stmtGrowthFactor",				config.stmtGrowthFactor());
-	JNIHelper::setStringFld(pEnv, obj,	"m_bdbCacheSize",						config.bdbCacheSize());
 	JNIHelper::setBooleanFld(pEnv, obj,	"m_normalizeTypedStringLiterals",config.normalizeTypedStringLiterals());
 	JNIHelper::setLongFld(pEnv, obj,		"m_timeoutDuration",					config.timeoutDuration());
 	JNIHelper::setTimeoutUnitFld(pEnv, obj,										config.javaTimeoutUnit().c_str());
