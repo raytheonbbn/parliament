@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +24,7 @@ import com.bbn.parliament.server.exception.BadRequestException;
 import com.bbn.parliament.server.exception.ParliamentBridgeException;
 import com.bbn.parliament.server.service.QueryService;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

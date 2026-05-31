@@ -148,6 +148,7 @@ public class KbInstance implements AutoCloseable {
 	private static native void initStatic();
 
 	/** Creates or opens a KB. */
+	@SuppressWarnings("this-escape")
 	public KbInstance(KbConfig config) throws Throwable {
 		m_pKb = init(config);
 		m_cleanable = CleanerSingleton.inst().register(this, new CleanAction(m_pKb));

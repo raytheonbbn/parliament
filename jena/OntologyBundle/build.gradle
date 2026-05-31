@@ -41,7 +41,7 @@
 
 plugins {
 	id 'java-gradle-plugin'
-	id 'com.gradle.plugin-publish' version '2.0.0'
+	alias(libs.plugins.gradlePluginPublish)
 	id 'signing'
 	//id "com.github.johnrengelman.shadow" version "8.1.1"
 }
@@ -60,7 +60,7 @@ repositories {
 
 dependencies {
 	implementation libs.commonsCsv
-	implementation libs.jena4Cmds
+	implementation libs.jenaCmds
 	implementation libs.queryBuilder
 
 	testImplementation gradleTestKit()
@@ -84,15 +84,17 @@ gradlePlugin {
 }
 
 java {
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(25)
 	}
 }
 
 testing {
 	suites {
 		test {
-			useJUnitJupiter("$jupiterVersion")
+			useJUnitJupiter(libs.versions.jupiterVer)
 		}
 	}
 }

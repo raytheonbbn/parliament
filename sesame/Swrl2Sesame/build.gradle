@@ -7,7 +7,7 @@ plugins {
 version = parliamentVersion
 
 dependencies {
-	implementation "$sesameDependency"
+	implementation libs.sesame
 	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3'
 	implementation project(':sesame:ParliamentSail')
 	implementation fileTree(dir: "${depDir}/swrl-jaxb", include: "*.jar")
@@ -18,8 +18,11 @@ configurations.all {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
 }
 
 task sourcesJar(type: Jar) {

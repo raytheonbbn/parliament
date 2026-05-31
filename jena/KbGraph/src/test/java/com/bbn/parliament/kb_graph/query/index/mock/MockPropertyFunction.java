@@ -12,8 +12,7 @@ import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.ExecutionContext;
 import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.engine.binding.Binding;
-import org.apache.jena.sparql.engine.binding.BindingFactory;
-import org.apache.jena.sparql.engine.binding.BindingMap;
+import org.apache.jena.sparql.engine.binding.BindingBuilder;
 import org.apache.jena.sparql.engine.iterator.QueryIterPlainWrapper;
 import org.apache.jena.sparql.util.IterLib;
 
@@ -49,19 +48,18 @@ public class MockPropertyFunction extends IndexPropertyFunction<Integer> {
 			if (null == obj) {
 				return IterLib.noResults(context);
 			}
-			BindingMap b = BindingFactory.create(binding);
-			b.add(Var.alloc(object), ResourceFactory.createTypedLiteral(1)
-				.asNode());
+			var b = BindingBuilder.create(binding)
+				.add(Var.alloc(object), ResourceFactory.createTypedLiteral(1).asNode())
+				.build();
 			return IterLib.result(b, context);
 		} else if (subject.isVariable()) {
 			List<Binding> bindings = new ArrayList<>();
 			for (int i = 0; i < 5; i++) {
-				BindingMap b = BindingFactory.create(binding);
-				b.add(Var.alloc(object), ResourceFactory.createTypedLiteral(1)
-					.asNode());
-				bindings.add(b);
+				bindings.add(BindingBuilder.create(binding)
+					.add(Var.alloc(object), ResourceFactory.createTypedLiteral(1).asNode())
+					.build());
 			}
-			return new QueryIterPlainWrapper(bindings.iterator(), context);
+			return QueryIterPlainWrapper.create(bindings.iterator(), context);
 		} else {
 			return IterLib.noResults(context);
 		}

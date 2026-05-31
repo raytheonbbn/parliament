@@ -11,13 +11,13 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import org.apache.jena.datatypes.DatatypeFormatException;
+import org.geotools.api.referencing.ReferenceIdentifier;
 import org.geotools.gml3.GMLConfiguration;
 import org.geotools.metadata.iso.citation.Citations;
 import org.geotools.referencing.crs.AbstractCRS;
 import org.geotools.xsd.Encoder;
 import org.geotools.xsd.Parser;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.referencing.ReferenceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,25 +1,21 @@
-pluginManagement {
-	plugins {
-		id 'org.springframework.boot' version '3.2.2'
-		id 'io.spring.dependency-management' version '1.1.4'
-	}
-}
-
 rootProject.name = 'kb'
 
+// In the order in which they should be built:
 include 'Parliament',
-	'jena:JosekiExtensions',
-	'jena:KbGraph',
-	'jena:NumericIndex',
-	'jena:OntologyBundle',
-	'jena:OntologyDrivenDataAccess',
 	'jena:ParliamentClient',
 	'jena:SparqlQueryBuilder',
-	'jena:SparqlQueryBuilderJ3',
-	'jena:SpatialIndex',
+	'jena:OntologyBundle',
+	'jena:OntologyDrivenDataAccess',
+	'jena:KbGraph',
+	'jena:NumericIndex',
 	'jena:TemporalIndex',
-	'jena:TemporalIndexOld',
+	'jena:SpatialIndex',
 	'server',
+
+	// Preserved as legacy code:
+	'jena:SparqlQueryBuilderJ3',
+	'jena:TemporalIndexOld',
+	'jena:JosekiExtensions',
 	'sesame:CSameAsSail',
 	'sesame:LuceneSail',
 	'sesame:ParliamentSail',

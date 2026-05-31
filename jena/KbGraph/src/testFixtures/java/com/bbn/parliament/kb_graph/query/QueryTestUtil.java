@@ -33,9 +33,9 @@ public class QueryTestUtil {
 		while (results.hasNext()) {
 			seen.add(results.nextBinding());
 		}
-		QueryIterator qIter = new QueryIterPlainWrapper(seen.iterator());
+		QueryIterator qIter = QueryIterPlainWrapper.create(seen.iterator());
 		Model m = ModelFactory.createDefaultModel();
-		ResultSet rs = new ResultSetStream(results.getResultVars(), m, qIter);
+		ResultSet rs = ResultSetStream.create(results.getResultVars(), m, qIter);
 		return ResultSetFactory.makeRewindable(rs);
 	}
 

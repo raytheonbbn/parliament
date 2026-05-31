@@ -296,8 +296,8 @@ public class ReificationTest {
 			seen.add(b);
 			x.add(b);
 		}
-		QueryIterator qIter = new QueryIterPlainWrapper(x.iterator());
-		ResultSet rs = new ResultSetStream(results.getResultVars(),
+		QueryIterator qIter = QueryIterPlainWrapper.create(x.iterator());
+		ResultSet rs = ResultSetStream.create(results.getResultVars(),
 				ModelFactory.createDefaultModel(), qIter);
 		return ResultSetFactory.makeRewindable(rs);
 	}

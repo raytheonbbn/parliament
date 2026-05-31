@@ -10,6 +10,9 @@ public class ReifiedTriple extends Triple {
 
 	private Node name;
 
+	// Fixing the deprecation of the Triple ctor turns out to be quite difficult.
+	// See the documentation in my failed attempt to do this in the class
+	// ReifiedTriples (plural).
 	public ReifiedTriple(Node name, Node s, Node p, Node o){
 		super(s, p, o);
 		this.name = name;

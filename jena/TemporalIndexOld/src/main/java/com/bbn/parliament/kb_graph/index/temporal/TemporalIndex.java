@@ -26,6 +26,7 @@ public abstract class TemporalIndex implements QueryableIndex<TemporalExtent> {
 	protected QueryCache<TemporalExtent> cache;
 	protected boolean alwaysUseFirst = false;
 
+	@SuppressWarnings("this-escape")
 	public TemporalIndex(Graph graph, Properties configuration) {
 		this.graph = graph;
 		this.configuration = configuration;

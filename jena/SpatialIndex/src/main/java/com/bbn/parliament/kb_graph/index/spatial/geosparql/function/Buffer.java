@@ -8,15 +8,15 @@ import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.sparql.function.FunctionEnv;
 import org.apache.jena.vocabulary.XSD;
+import org.geotools.api.geometry.MismatchedDimensionException;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 
 import com.bbn.parliament.kb_graph.index.spatial.geosparql.datatypes.GeoSPARQLLiteral;
 import com.bbn.parliament.kb_graph.index.spatial.geosparql.vocabulary.UOM;
@@ -50,7 +50,7 @@ public class Buffer extends SingleGeometrySpatialFunction {
 			MathTransform inverse;
 
 			try {
-				int srid = SpatialGeometryFactory.UTMZoneSRID(buffered.getEnvelope());
+				int srid = SpatialGeometryFactory.utmZoneSrid(buffered.getEnvelope());
 				destination = CRS.decode("EPSG:" + srid);
 				boolean valid = false;
 				if (null != destination) {

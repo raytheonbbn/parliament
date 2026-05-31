@@ -20,6 +20,7 @@ import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.engine.iterator.QueryIterRepeatApply;
 import org.apache.jena.sparql.engine.iterator.QueryIterTriplePattern;
+import org.apache.jena.sparql.engine.main.QC;
 import org.apache.jena.sparql.util.IterLib;
 
 import com.bbn.parliament.kb_graph.KbGraph;
@@ -110,18 +111,18 @@ public class ReorderQueryIterTriplePattern extends QueryIterRepeatApply {
 
 		// create the return iterator
 		for (Triple t : triples) {
-			if (t instanceof ReifiedTriple reifT){
+			if (t instanceof ReifiedTriple reifT) {
 				ret = new QueryIterReifiedTriplePattern(ret, reifT, getExecContext());
-			}else{
-				ret = new QueryIterTriplePattern(ret, t, getExecContext());
+			} else {
+				ret = QC.execute(ret, t, getExecContext());
 			}
 		}
 		return ret;
 	}
 
 	/**
-	 * We need our own version of the substitute method, because some of the triples could
-	 * be ReifiedTriples
+	 * We need our own version of the substitute method, because some of the triples
+	 * could be reified.
 	 *
 	 * @return a basic pattern with the new variables substituted
 	 */
@@ -138,36 +139,30 @@ public class ReorderQueryIterTriplePattern extends QueryIterRepeatApply {
 	}
 
 	public static Triple substitute(Triple triple, Binding binding) {
-		if (isNotNeeded(binding))
+		if (isNotNeeded(binding)) {
 			return triple;
+		}
 
 		ReifiedTriple rTriple = (triple instanceof ReifiedTriple reifTriple)
 			? reifTriple : null;
 
+		var s = triple.getSubject();
+		var p = triple.getPredicate();
+		var o = triple.getObject();
+		var name = (rTriple != null) ? rTriple.getName() : null;
 
-		Node s = triple.getSubject();
-		Node p = triple.getPredicate();
-		Node o = triple.getObject();
-		Node name = null;
-		if (rTriple != null){
-			name = rTriple.getName();
-		}
-
-		Node s1 = Substitute.substitute(s, binding);
-		Node p1 = Substitute.substitute(p, binding);
-		Node o1 = Substitute.substitute(o, binding);
-
-		Node name1 = null;
-		if (rTriple != null){
-			name1 = Substitute.substitute(name, binding);
-		}
+		var s1 = Substitute.substitute(s, binding);
+		var p1 = Substitute.substitute(p, binding);
+		var o1 = Substitute.substitute(o, binding);
+		var name1 = (rTriple != null) ? Substitute.substitute(name, binding) : null;
 
 		Triple t = triple;
-		if (rTriple == null){
-			if (s1 != s || p1 != p || o1 != o)
-				t = new Triple(s1, p1, o1);
-		}else{
-			if (s1 != s || p1 != p || o1 != o || name1 != name){
+		if (rTriple == null) {
+			if (s1 != s || p1 != p || o1 != o) {
+				t = Triple.create(s1, p1, o1);
+			}
+		} else {
+			if (s1 != s || p1 != p || o1 != o || name1 != name) {
 				t = new ReifiedTriple(name1, s1, p1, o1);
 			}
 		}

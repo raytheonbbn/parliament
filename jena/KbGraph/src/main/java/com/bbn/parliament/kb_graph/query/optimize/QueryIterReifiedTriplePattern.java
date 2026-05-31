@@ -8,8 +8,7 @@ import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.ExecutionContext;
 import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.engine.binding.Binding;
-import org.apache.jena.sparql.engine.binding.BindingFactory;
-import org.apache.jena.sparql.engine.binding.BindingMap;
+import org.apache.jena.sparql.engine.binding.BindingBuilder;
 import org.apache.jena.sparql.engine.iterator.QueryIter;
 import org.apache.jena.sparql.engine.iterator.QueryIterRepeatApply;
 
@@ -89,7 +88,7 @@ public class QueryIterReifiedTriplePattern extends QueryIterRepeatApply
 
 		private Binding mapper(ReifiedTriple r)
 		{
-			BindingMap results = BindingFactory.create(binding) ;
+			BindingBuilder results = BindingBuilder.create(binding);
 
 			if ( ! insert(s, r.getSubject(), results) )
 				return null ;
@@ -100,10 +99,10 @@ public class QueryIterReifiedTriplePattern extends QueryIterRepeatApply
 			if ( !insert(name, r.getName(), results)){
 				return null;
 			}
-			return results ;
+			return results.build() ;
 		}
 
-		private static boolean insert(Node inputNode, Node outputNode, BindingMap results)
+		private static boolean insert(Node inputNode, Node outputNode, BindingBuilder results)
 		{
 			if ( ! Var.isVar(inputNode) )
 				return true ;

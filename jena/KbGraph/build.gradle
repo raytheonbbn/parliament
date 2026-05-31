@@ -9,13 +9,13 @@ plugins {
 version = parliamentVersion
 
 dependencies {
-	api "$jenaArqDependency"
-	implementation "$slf4jApiDependency"
+	api libs.jenaArq
+	implementation libs.slf4jApi
 	implementation project(':Parliament')
 	implementation project(':jena:ParliamentClient')
-	implementation project(':jena:SparqlQueryBuilderJ3')
-	testImplementation "$logbackDependency"
-	testFixturesImplementation "$jupiterDependency"
+	implementation project(':jena:SparqlQueryBuilder')
+	testImplementation libs.logback
+	testFixturesImplementation libs.jupiter
 	testFixturesImplementation project(':jena:ParliamentClient')
 }
 
@@ -24,8 +24,11 @@ configurations.all {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
 }
 
 task sourcesJar(type: Jar) {
@@ -58,7 +61,7 @@ tasks.named("assemble") {
 testing {
 	suites {
 		test {
-			useJUnitJupiter("$jupiterVersion")
+			useJUnitJupiter(libs.versions.jupiterVer)
 		}
 	}
 }

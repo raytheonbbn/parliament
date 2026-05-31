@@ -8,8 +8,7 @@ import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.ExecutionContext;
 import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.engine.binding.Binding;
-import org.apache.jena.sparql.engine.binding.BindingFactory;
-import org.apache.jena.sparql.engine.binding.BindingMap;
+import org.apache.jena.sparql.engine.binding.BindingBuilder;
 import org.apache.jena.sparql.engine.iterator.QueryIter;
 import org.apache.jena.sparql.engine.iterator.QueryIterRepeatApply;
 import org.apache.jena.sparql.expr.E_GreaterThan;
@@ -125,10 +124,10 @@ public class RangeIndexQueryIterator<T extends Comparable<T>> extends QueryIterR
 			}
 
 			if (valid) {
-				BindingMap b = BindingFactory.create(binding);
-				b.add(var, ResourceFactory.createTypedLiteral(record.getValue())
-					.asNode());
-				return IterLib.result(b, getExecContext());
+				var newBinding = BindingBuilder.create(binding)
+					.add(var, ResourceFactory.createTypedLiteral(record.getValue()).asNode())
+					.build();
+				return IterLib.result(newBinding, getExecContext());
 			}
 			return IterLib.noResults(getExecContext());
 		}
@@ -155,12 +154,11 @@ public class RangeIndexQueryIterator<T extends Comparable<T>> extends QueryIterR
 		@Override
 		protected Binding moveToNextBinding() {
 			Record<T> record = iterator.next();
-			BindingMap eb = BindingFactory.create(binding);
 			Var var = varFirst ? expr.getArg1().asVar() : expr.getArg2().asVar();
-			eb.add(resourceVar, record.getKey());
-			eb.add(var, ResourceFactory.createTypedLiteral(record.getValue())
-				.asNode());
-			return eb;
+			return BindingBuilder.create(binding)
+				.add(resourceVar, record.getKey())
+				.add(var, ResourceFactory.createTypedLiteral(record.getValue()).asNode())
+				.build();
 		}
 
 		@Override

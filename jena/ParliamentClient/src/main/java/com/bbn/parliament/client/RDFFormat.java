@@ -33,7 +33,7 @@ public enum RDFFormat {
 	TURTLE(true, Lang.TURTLE,
 		new String[]{ "Turtle", "TTL" },
 		new String[]{ "ttl" },
-		new String[]{ "text/turtle", "application/turtle", "application/x-turtle" }),
+		new String[]{ "text/turtle", "application/turtle" }),
 
 	/** N-Triples format */
 	NTRIPLES(true, Lang.NTRIPLES,

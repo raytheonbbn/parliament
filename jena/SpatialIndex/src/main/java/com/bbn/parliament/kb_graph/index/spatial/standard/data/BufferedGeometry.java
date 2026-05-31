@@ -9,6 +9,11 @@ package com.bbn.parliament.kb_graph.index.spatial.standard.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.geotools.api.geometry.MismatchedDimensionException;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.CRS.AxisOrder;
@@ -24,11 +29,6 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.operation.buffer.BufferOp;
 import org.locationtech.jts.operation.buffer.BufferParameters;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +105,7 @@ public class BufferedGeometry extends EphemeralGeometry {
 			return null;
 		}
 		CoordinateReferenceSystem destCRS = null;
-		int srid = SpatialGeometryFactory.UTMZoneSRID(extent.getEnvelope());
+		int srid = SpatialGeometryFactory.utmZoneSrid(extent.getEnvelope());
 
 		try {
 			destCRS = CRS.decode("EPSG:" + srid, true);

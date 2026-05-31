@@ -22,6 +22,7 @@ public class IndexSubPatternPropertyFunction<T> extends IndexSubPattern {
 	protected List<Node> objects;
 	protected Node predicate;
 
+	@SuppressWarnings("this-escape")
 	public IndexSubPatternPropertyFunction(IndexPropertyFunction<T> function,
 		Node predicate, List<Node> subjects, List<Node> objects, Map<Node, Operand<T>> operands) {
 		this.function = function;

@@ -17,6 +17,7 @@ import org.locationtech.jts.io.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bbn.parliament.kb_graph.index.Record;
 import com.bbn.parliament.kb_graph.index.spatial.GeometryRecord;
 import com.bbn.parliament.kb_graph.index.spatial.Operation;
 import com.bbn.parliament.kb_graph.index.spatial.Profile;
@@ -24,7 +25,6 @@ import com.bbn.parliament.kb_graph.index.spatial.SpatialIndex;
 import com.bbn.parliament.kb_graph.index.spatial.SpatialIndexException;
 import com.bbn.parliament.kb_graph.index.spatial.persistence.NodeData;
 import com.bbn.parliament.kb_graph.index.spatial.persistence.NodeKey;
-import com.bbn.parliament.kb_graph.index.Record;
 import com.bbn.parliament.kb_graph.util.FileUtil;
 import com.bbn.parliament.kb_graph.util.NodeUtil;
 
@@ -111,7 +111,7 @@ public class RTreeIndex extends SpatialIndex {
 		createTree();
 	}
 
-	static HyperBoundingBox createBoundingBox(SpatialIndex index, Geometry g)
+	static HyperBoundingBox createBoundingBox(@SuppressWarnings("unused") SpatialIndex index, Geometry g)
 		throws SpatialIndexException {
 		Geometry targetGeometry = g;
 		Envelope e = targetGeometry.getEnvelopeInternal();

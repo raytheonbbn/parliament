@@ -6,6 +6,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.Strictness;
 import com.google.gson.stream.JsonWriter;
 
 public final class GsonUtil {
@@ -29,7 +30,7 @@ public final class GsonUtil {
 
 	public static JsonWriter createJsonWriter(Writer writer, boolean pretty) {
 		JsonWriter jsonWriter = new JsonWriter(writer);
-		jsonWriter.setLenient(true);
+		jsonWriter.setStrictness(Strictness.LENIENT);
 		jsonWriter.setSerializeNulls(false);
 		jsonWriter.setHtmlSafe(true);
 		if (pretty) {

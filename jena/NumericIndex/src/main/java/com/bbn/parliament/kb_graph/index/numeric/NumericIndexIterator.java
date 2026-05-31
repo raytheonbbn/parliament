@@ -22,9 +22,7 @@ import com.sleepycat.je.SecondaryDatabase;
  * @author rbattle
  * @param <T> the type of data that is indexed.
  */
-public class NumericIndexIterator<T extends Number & Comparable<T>>
-implements ClosableIterator<Record<T>> {
-
+public class NumericIndexIterator<T extends Number & Comparable<T>> implements ClosableIterator<Record<T>> {
 	private T start;
 	private T end;
 
@@ -45,6 +43,7 @@ implements ClosableIterator<Record<T>> {
 	 * @param start the minimum value
 	 * @param end the maximum value
 	 */
+	@SuppressWarnings("this-escape")
 	public NumericIndexIterator(NumericIndex<T> index, T start, T end) {
 		this.closed = false;
 
@@ -77,10 +76,8 @@ implements ClosableIterator<Record<T>> {
 					preparedForNext = true;
 				}
 			}
-		} catch (DatabaseException e) {
-			throw new RuntimeException(
-				"Error with database while setting up iterator.",
-				e);
+		} catch (DatabaseException ex) {
+			throw new RuntimeException("Error with database while setting up iterator.", ex);
 		}
 	}
 
@@ -138,8 +135,8 @@ implements ClosableIterator<Record<T>> {
 			preparedForNext = true;
 			close();
 			current = null;
-		} catch (DatabaseException e) {
-			throw new RuntimeException("Problem querying the database", e);
+		} catch (DatabaseException ex) {
+			throw new RuntimeException("Problem querying the database", ex);
 		}
 
 		return false;
@@ -175,8 +172,7 @@ implements ClosableIterator<Record<T>> {
 	/** Check if the iterator is closed. If it is, throw an unsupported operation exception. */
 	private void checkClosed() {
 		if (closed) {
-			throw new UnsupportedOperationException(
-				"Cannot iterate over a closed iterator");
+			throw new UnsupportedOperationException("Cannot iterate over a closed iterator");
 		}
 	}
 

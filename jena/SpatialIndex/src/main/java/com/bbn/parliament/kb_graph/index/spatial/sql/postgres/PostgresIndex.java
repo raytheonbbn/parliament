@@ -89,12 +89,6 @@ public class PostgresIndex extends SQLGeometryIndex {
 
 	/** {@inheritDoc} */
 	@Override
-	protected void doInitialize() {
-
-	}
-
-	/** {@inheritDoc} */
-	@Override
 	public void indexOpenSQL() throws SpatialIndexException {
 		createPersistanceTable();
 		LOG.debug("Created persistance table");

@@ -18,6 +18,7 @@ public class IndexSubPatternBGP extends IndexSubPattern implements EstimablePatt
 		this.querier = querier;
 	}
 
+	@SuppressWarnings("this-escape")
 	public IndexSubPatternBGP(IndexPatternQuerier querier, BasicPattern triples) {
 		this.querier = querier;
 		addAll(triples);

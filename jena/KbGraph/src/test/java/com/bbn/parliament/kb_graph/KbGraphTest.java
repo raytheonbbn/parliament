@@ -13,8 +13,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.apache.jena.graph.Factory;
 import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphMemFactory;
 import org.apache.jena.graph.GraphUtil;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Node_Literal;
@@ -175,7 +175,7 @@ public class KbGraphTest {
 	 * <code>s</code> in the fashion of <code>graphAdd()</code>.
 	 */
 	private static final Graph graphWith(String s) {
-		Graph g = Factory.createGraphMem();
+		Graph g = GraphMemFactory.createGraphMem();
 		g.getPrefixMapping().setNsPrefixes(PrefixMapping.Extended);
 		return graphAdd(g, s);
 	}
@@ -186,7 +186,7 @@ public class KbGraphTest {
 	}
 
 	private static Graph copy(Graph g) {
-		Graph result = Factory.createDefaultGraph();
+		Graph result = GraphMemFactory.createDefaultGraph();
 		GraphUtil.addInto(result, g);
 		return result;
 	}

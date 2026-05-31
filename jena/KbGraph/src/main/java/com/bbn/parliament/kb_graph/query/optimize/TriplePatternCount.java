@@ -21,6 +21,6 @@ class TriplePatternCount {
 
 	@Override
 	public String toString() {
-		return triple.toString() + "Count: " + count + " Estimate: " + estimate;
+		return "%1$s, Count: %2$d, Estimate: %3$d".formatted(triple, count, estimate);
 	}
 }

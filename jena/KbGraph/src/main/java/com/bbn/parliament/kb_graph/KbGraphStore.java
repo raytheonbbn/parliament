@@ -27,6 +27,8 @@ import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.TxnType;
 import org.apache.jena.reasoner.InfGraph;
 import org.apache.jena.riot.other.G;
+import org.apache.jena.riot.system.PrefixMap;
+import org.apache.jena.riot.system.PrefixMapFactory;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.core.DatasetGraphTriplesQuads;
 import org.apache.jena.sparql.core.DatasetImpl;
@@ -213,6 +215,11 @@ public class KbGraphStore extends DatasetGraphTriplesQuads {
 	}
 
 	@Override
+	public PrefixMap prefixes() {
+		return PrefixMapFactory.emptyPrefixMap();
+	}
+
+	@Override
 	public KbGraph getDefaultGraph() {
 		return defaultGraph;
 	}
@@ -231,7 +238,7 @@ public class KbGraphStore extends DatasetGraphTriplesQuads {
 		if (Quad.isDefaultGraph(graphNode)) {
 			return defaultGraph;
 		}
-		return graphs.computeIfAbsent(graphNode, key -> KbGraphFactory.createNamedGraph());
+		return graphs.computeIfAbsent(graphNode, _ -> KbGraphFactory.createNamedGraph());
 	}
 
 	@Override

@@ -13,8 +13,7 @@ import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.ExecutionContext;
 import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.engine.binding.Binding;
-import org.apache.jena.sparql.engine.binding.BindingFactory;
-import org.apache.jena.sparql.engine.binding.BindingMap;
+import org.apache.jena.sparql.engine.binding.BindingBuilder;
 import org.apache.jena.sparql.engine.iterator.QueryIterPlainWrapper;
 import org.apache.jena.sparql.engine.iterator.QueryIterRepeatApply;
 import org.apache.jena.sparql.util.IterLib;
@@ -56,24 +55,24 @@ public class MockPatternQuerier implements IndexPatternQuerier {
 				BasicPattern bgp = Substitute.substitute(pattern, binding);
 				List<Binding> bindings = new ArrayList<>();
 				for (int i = 0; i < numItems; i++) {
-					BindingMap b = BindingFactory.create(binding);
+					var bb = BindingBuilder.create(binding);
 					boolean changed = false;
 					for (Triple t : bgp) {
 						if (t.getSubject().isVariable()) {
-							b.add(Var.alloc(t.getSubject()), NodeFactory.createBlankNode(BlankNodeId.create("node" + (counter++))));
+							bb.add(Var.alloc(t.getSubject()), NodeFactory.createBlankNode(BlankNodeId.create("node" + (counter++))));
 							changed = true;
 						}
 						if (t.getObject().isVariable()) {
-							b.add(Var.alloc(t.getObject()), NodeFactory.createBlankNode(BlankNodeId.create("node" + (counter++))));
+							bb.add(Var.alloc(t.getObject()), NodeFactory.createBlankNode(BlankNodeId.create("node" + (counter++))));
 							changed = true;
 						}
 					}
 					if (changed) {
-						bindings.add(b);
+						bindings.add(bb.build());
 					}
 				}
 				if (bindings.size() > 0) {
-					return new QueryIterPlainWrapper(bindings.iterator(), context);
+					return QueryIterPlainWrapper.create(bindings.iterator(), context);
 				} else {
 					return IterLib.result(binding, context);
 				}

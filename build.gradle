@@ -1,38 +1,5 @@
 ext {
 	parliamentVersion = '2.8.2'
-
-	geotoolsVersion = '29.0'
-	jenaVersion = '3.17.0'
-	jena4Version = '4.9.0'
-	jettyVersion = '9.4.36.v20210114'
-	jupiterVersion = '5.10.1'
-	slf4jVersion = '2.0.16'
-
-	berkeleyDbJeDependency = 'com.sleepycat:je:18.3.12'
-	commonsCsvDependency = 'org.apache.commons:commons-csv:1.11.0'
-	commonsDbcpDependency = 'commons-dbcp:commons-dbcp:1.4'
-	commonsIoDependency = 'commons-io:commons-io:2.14.0'
-	commonsLangDependency = 'org.apache.commons:commons-lang3:3.13.0'
-	geotoolsEpsgExtensionDependency = "org.geotools:gt-epsg-extension:$geotoolsVersion"
-	geotoolsEpsgHsqlDependency = "org.geotools:gt-epsg-hsql:$geotoolsVersion"
-	geotoolsEpsgWktDependency = "org.geotools:gt-epsg-wkt:$geotoolsVersion"
-	geotoolsReferencingDependency = "org.geotools:gt-referencing:$geotoolsVersion"
-	geotoolsXsdCoreDependency = "org.geotools.xsd:gt-xsd-core:$geotoolsVersion"
-	geotoolsXsdGmlDependency = "org.geotools.xsd:gt-xsd-gml3:$geotoolsVersion"
-	geotoolsXsdKmlDependency = "org.geotools.xsd:gt-xsd-kml:$geotoolsVersion"
-	gsonDependency = 'com.google.code.gson:gson:2.10.1'
-	httpClientDependency = 'org.apache.httpcomponents:httpclient:4.5.14'
-	jclOverSlf4j = "org.slf4j:jcl-over-slf4j:$slf4jVersion"
-	jenaArqDependency = "org.apache.jena:jena-arq:$jenaVersion"
-	jenaCmdsDependency = "org.apache.jena:jena-cmds:$jenaVersion"
-	jtsDependency = 'org.locationtech.jts:jts-core:1.18.2'
-	jupiterDependency = "org.junit.jupiter:junit-jupiter:$jupiterVersion"
-	logbackDependency = 'ch.qos.logback:logback-classic:1.5.7'
-	postgresqlDependency = 'org.postgresql:postgresql:42.6.0'
-	sesameDependency = 'org.openrdf:sesame:1.2.7'
-	slf4jApiDependency = "org.slf4j:slf4j-api:$slf4jVersion"
-	sparqlQueryBuilderDependency = 'com.bbn.parliament:SparqlQueryBuilder:2.0.3'
-
 	githubOrg = 'raytheonbbn'
 
 	targetDir = file("${rootDir}/target")
@@ -43,7 +10,7 @@ ext {
 
 allprojects {
 	group = 'com.bbn.parliament'
-	version = '2.8.2-SNAPSHOT'
+	version = "${parliamentVersion}-SNAPSHOT"
 
 	tasks.withType(JavaCompile).all {
 		options.compilerArgs.add('-Xlint:all')

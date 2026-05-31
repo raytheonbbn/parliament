@@ -8,10 +8,10 @@ plugins {
 version = parliamentVersion
 
 dependencies {
-	api "$jenaArqDependency"
-	implementation "$httpClientDependency"
-	implementation "$slf4jApiDependency"
-	testImplementation "$logbackDependency"
+	api libs.jenaArq
+	implementation libs.httpClient
+	implementation libs.slf4jApi
+	testImplementation libs.logback
 }
 
 configurations.all {
@@ -19,8 +19,11 @@ configurations.all {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
 }
 
 task sourcesJar(type: Jar) {
@@ -53,7 +56,7 @@ tasks.named("assemble") {
 testing {
 	suites {
 		test {
-			useJUnitJupiter("$jupiterVersion")
+			useJUnitJupiter(libs.versions.jupiterVer)
 		}
 	}
 }

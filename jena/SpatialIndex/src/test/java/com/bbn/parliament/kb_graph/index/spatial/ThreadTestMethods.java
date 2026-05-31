@@ -92,62 +92,60 @@ public class ThreadTestMethods extends SpatialTestDataset {
 	private void startThreadTest(String query, int amount, int poolSize) {
 		LOG.debug("Starting test");
 		LOG.debug("Index size {}", getIndex().size());
+
 		long maxTimeOut = 450000 * 1000;
 		int corePoolSize = poolSize;
 		int maximumSize = corePoolSize + 1;
 		long keepAliveTime = 5000L;
-
-		List<ThreadQuery> threads = new ArrayList<>(corePoolSize);
-
-		ThreadPoolExecutor tpe = new ThreadPoolExecutor(
-			corePoolSize + 1,
-			maximumSize,
-			keepAliveTime,
-			TimeUnit.MILLISECONDS,
-			new LinkedBlockingQueue<Runnable>());
-
-		Dataset ds = getDataset();
-		for (int i = 0; i < corePoolSize; i++) {
-			ThreadQuery tq = new ThreadQuery(query, ds);
-			threads.add(tq);
-			tpe.execute(tq);
-		}
-
 		final AtomicBoolean finished = new AtomicBoolean(false);
 
-		long startTime = System.currentTimeMillis();
-		while (!finished.get()) {
-			if (System.currentTimeMillis() - startTime > maxTimeOut) {
-				fail("Did not finish");
-				return;
-			}
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
+		try (var tpe = new ThreadPoolExecutor(
+				corePoolSize + 1,
+				maximumSize,
+				keepAliveTime,
+				TimeUnit.MILLISECONDS,
+				new LinkedBlockingQueue<>())) {
+			List<ThreadQuery> threads = new ArrayList<>(corePoolSize);
+			Dataset ds = getDataset();
+			for (int i = 0; i < corePoolSize; i++) {
+				ThreadQuery tq = new ThreadQuery(query, ds);
+				threads.add(tq);
+				tpe.execute(tq);
 			}
 
-			boolean isfinished = true;
-			// LOG.info("Threads size: {}", threads.size());
+			long startTime = System.currentTimeMillis();
+			while (!finished.get()) {
+				if (System.currentTimeMillis() - startTime > maxTimeOut) {
+					fail("Did not finish");
+					return;
+				}
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
 
-			for (ThreadQuery tq : threads) {
-				if (null == tq) {
-					LOG.info("null..wtf");
-					continue;
-				}
-				if (tq.isFinished()) {
-					assertEquals(amount, tq.getCount(),
-						"Thread #%1$d invalid count".formatted(tq.getThreadId()));
-				}
-				isfinished = (tq.isFinished()) && isfinished;
+				boolean isfinished = true;
+				// LOG.info("Threads size: {}", threads.size());
 
-				if (!isfinished) {
-					// LOG.info(tq.getThreadId() + " not finished");
-					continue;
+				for (ThreadQuery tq : threads) {
+					if (null == tq) {
+						LOG.info("null..wtf");
+						continue;
+					}
+					if (tq.isFinished()) {
+						assertEquals(amount, tq.getCount(),
+							"Thread #%1$d invalid count".formatted(tq.getThreadId()));
+					}
+					isfinished = (tq.isFinished()) && isfinished;
+
+					if (!isfinished) {
+						// LOG.info(tq.getThreadId() + " not finished");
+						continue;
+					}
 				}
+				finished.set(isfinished);
 			}
-			finished.set(isfinished);
 		}
-		tpe.shutdown();
 
 		assertTrue(finished.get());
 	}
@@ -170,7 +168,7 @@ public class ThreadTestMethods extends SpatialTestDataset {
 		/** {@inheritDoc} */
 		@Override
 		public void run() {
-			id = new AtomicLong(Thread.currentThread().getId());
+			id = new AtomicLong(Thread.currentThread().threadId());
 			LOG.debug("{} Start", getThreadId());
 
 			try (var qExec = SpatialTestDataset.performQuery(ds, queryStr)) {

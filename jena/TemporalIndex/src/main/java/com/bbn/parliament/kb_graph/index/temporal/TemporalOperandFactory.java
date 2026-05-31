@@ -85,7 +85,7 @@ public class TemporalOperandFactory extends OperandFactoryBase<TemporalExtent> {
 	@Override
 	public Operand<TemporalExtent> createOperand(Node rootNode,
 			BasicPattern pattern, Binding binding) {
-		return createOperand(rootNode, pattern, binding, new ArrayList<Triple>());
+		return createOperand(rootNode, pattern, binding, new ArrayList<>());
 	}
 
 	/**

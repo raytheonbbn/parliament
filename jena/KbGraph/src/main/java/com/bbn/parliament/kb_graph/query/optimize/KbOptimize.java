@@ -15,7 +15,7 @@ import org.apache.jena.sparql.algebra.optimize.TransformFilterConjunction;
 import org.apache.jena.sparql.algebra.optimize.TransformFilterDisjunction;
 import org.apache.jena.sparql.algebra.optimize.TransformFilterEquality;
 import org.apache.jena.sparql.algebra.optimize.TransformJoinStrategy;
-import org.apache.jena.sparql.algebra.optimize.TransformPathFlattern;
+import org.apache.jena.sparql.algebra.optimize.TransformPathFlatten;
 import org.apache.jena.sparql.algebra.optimize.TransformPropertyFunction;
 import org.apache.jena.sparql.util.Context;
 import org.slf4j.Logger;
@@ -123,7 +123,7 @@ public class KbOptimize implements Rewrite {
 				new TransformFilterPlacementWithOptional(), op);
 		}
 
-		op = apply("Path flattening", new TransformPathFlattern(), op);
+		op = apply("Path flattening", new TransformPathFlatten(), op);
 		// Mark
 
 		return op;

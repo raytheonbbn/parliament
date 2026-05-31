@@ -85,6 +85,7 @@ public abstract class NumericIndex<T extends Number & Comparable<T>>
 	 * @param indexDir the directory to store the index
 	 * @param recordFactory the record factory used to create records
 	 */
+	@SuppressWarnings("this-escape")
 	public NumericIndex(String predicate, String indexDir,
 		NumericRecordFactory<T> recordFactory) {
 		this.recordFactory = recordFactory;

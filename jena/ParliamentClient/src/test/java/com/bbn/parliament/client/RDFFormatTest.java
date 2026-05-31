@@ -155,7 +155,7 @@ public class RDFFormatTest {
 		return Stream.of(
 			Arguments.of(RDFFormat.RDFXML,	"application/rdf+xml"),
 			Arguments.of(RDFFormat.TURTLE,	"   text/turtle ; charset=\"UTF-8\""),
-			Arguments.of(RDFFormat.TURTLE,	"application/X-TURTLE"),
+			Arguments.of(RDFFormat.TURTLE,	"application/TURTLE"),
 			Arguments.of(RDFFormat.NTRIPLES,	"application/n-triples"),
 			Arguments.of(RDFFormat.NTRIPLES,	"TEXT/PLAIN; charset=us-ascii"),
 			Arguments.of(RDFFormat.N3,			"text/n3"),

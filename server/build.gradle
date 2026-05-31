@@ -1,7 +1,7 @@
 plugins {
-	id 'org.springframework.boot'
-	id 'io.spring.dependency-management'
 	id 'java-library'
+	alias(libs.plugins.springBoot)
+	alias(libs.plugins.springDepMgmt)
 }
 
 ext {
@@ -20,22 +20,22 @@ configurations {
 dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-	schemagen "$jenaCmdsDependency"
+	schemagen libs.jenaCmds
 	schemagen 'org.apache.logging.log4j:log4j-slf4j-impl:2.20.0'
 
 	implementation project(':Parliament')
 	implementation project(':jena:ParliamentClient')
 	implementation project(':jena:KbGraph')
 	implementation project(':jena:NumericIndex')
-	implementation project(':jena:SparqlQueryBuilderJ3')
+	implementation project(':jena:SparqlQueryBuilder')
 	implementation project(':jena:SpatialIndex')
 	implementation project(':jena:TemporalIndex')
 
-	implementation "$commonsCsvDependency"
-	implementation "$commonsIoDependency"
-	implementation "$commonsLangDependency"
-	implementation "$jenaArqDependency"
-	implementation "$slf4jApiDependency"
+	implementation libs.commonsCsv
+	implementation libs.commonsIo
+	implementation libs.commonsLang
+	implementation libs.jenaArq
+	implementation libs.slf4jApi
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -48,8 +48,11 @@ java {
 			java { srcDir genJavaDir }
 		}
 	}
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
 	withSourcesJar()
 	withJavadocJar()
 }
@@ -98,7 +101,7 @@ clean {
 testing {
 	suites {
 		test {
-			useJUnitJupiter("$jupiterVersion")
+			useJUnitJupiter(libs.versions.jupiterVer)
 		}
 	}
 }

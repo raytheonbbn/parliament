@@ -22,7 +22,7 @@ import java.util.zip.ZipFile;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.QueryCancelledException;
-import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -239,8 +239,11 @@ public class ComplexUnionGraphTest {
 	private static long timedCount(String modelName, int queryNum, String query, Model model) {
 		long start = System.currentTimeMillis();
 		long count = 0;
-		try (var qe = QueryExecutionFactory.create(query, model)) {
-			qe.setTimeout(30, TimeUnit.SECONDS);
+		try (var qe = QueryExecution.create()
+				.model(model)
+				.query(query)
+				.timeout(30, TimeUnit.SECONDS)
+				.build()) {
 			ResultSet results = qe.execSelect();
 			while (results.hasNext()) {
 				results.next();

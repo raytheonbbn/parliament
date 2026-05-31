@@ -13,6 +13,7 @@ ext {
 	configVocabDir = configVocabPackage.replaceAll(/\./, '/')
 	configVocabClassNm = 'ConfigOnt'
 	configVocabSource = "${genJavaDir}/${configVocabDir}/${configVocabClassNm}.java"
+	jettyVersion = '9.4.36.v20210114'
 }
 
 configurations {
@@ -20,10 +21,10 @@ configurations {
 }
 
 dependencies {
-	schemagen "$jenaCmdsDependency"
+	schemagen libs.jena3Cmds
 	schemagen 'org.apache.logging.log4j:log4j-slf4j-impl:2.20.0'
 
-	implementation "$jenaArqDependency"
+	implementation libs.jena3Arq
 	implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
 	implementation "org.eclipse.jetty:jetty-security:$jettyVersion"
 	implementation "org.eclipse.jetty:jetty-servlet:$jettyVersion"
@@ -36,9 +37,9 @@ dependencies {
 	implementation "org.eclipse.jetty:jetty-jmx:$jettyVersion"
 	implementation 'javax.servlet:javax.servlet-api:3.1.0'
 	implementation 'commons-fileupload:commons-fileupload:1.5'
-	implementation "$httpClientDependency"
+	implementation libs.httpClient
 	implementation 'com.github.jsonld-java:jsonld-java:0.8.3'
-	implementation "$slf4jApiDependency"
+	implementation libs.slf4jApi
 
 	implementation project(':Parliament')
 	implementation project(':jena:ParliamentClient')
@@ -46,7 +47,7 @@ dependencies {
 
 	implementation fileTree(dir: "${depDir}/joseki", include: "joseki-3.4.4.jar")
 
-	testImplementation "$logbackDependency"
+	testImplementation libs.logback
 	//testImplementation(testFixtures(project(":jena:KbGraph")))
 }
 
@@ -61,8 +62,11 @@ sourceSets {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
 }
 
 // See https://jena.apache.org/documentation/tools/schemagen.html
@@ -116,7 +120,7 @@ tasks.named("assemble") {
 testing {
 	suites {
 		test {
-			useJUnitJupiter("$jupiterVersion")
+			useJUnitJupiter(libs.versions.jupiterVer)
 		}
 	}
 }

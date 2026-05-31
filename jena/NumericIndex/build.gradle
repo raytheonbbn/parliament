@@ -8,11 +8,11 @@ plugins {
 version = parliamentVersion
 
 dependencies {
-	implementation "$berkeleyDbJeDependency"
-	implementation "$jenaArqDependency"
-	implementation "$slf4jApiDependency"
+	implementation libs.berkeleyDbJe
+	implementation libs.jenaArq
+	implementation libs.slf4jApi
 	implementation project(':jena:KbGraph')
-	testImplementation "$logbackDependency"
+	testImplementation libs.logback
 	testImplementation(testFixtures(project(":jena:KbGraph")))
 }
 
@@ -21,8 +21,11 @@ configurations.all {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
 }
 
 task sourcesJar(type: Jar) {
@@ -55,7 +58,7 @@ tasks.named("assemble") {
 testing {
 	suites {
 		test {
-			useJUnitJupiter("$jupiterVersion")
+			useJUnitJupiter(libs.versions.jupiterVer)
 		}
 	}
 }

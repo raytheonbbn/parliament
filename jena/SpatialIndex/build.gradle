@@ -8,24 +8,24 @@ plugins {
 version = parliamentVersion
 
 dependencies {
-	implementation "$berkeleyDbJeDependency"
-	implementation "$commonsDbcpDependency"
-	implementation "$geotoolsEpsgExtensionDependency"
-	implementation "$geotoolsEpsgHsqlDependency"
-	implementation "$geotoolsEpsgWktDependency"
-	implementation "$geotoolsReferencingDependency"
-	implementation "$geotoolsXsdCoreDependency"
-	implementation "$geotoolsXsdGmlDependency"
-	implementation "$geotoolsXsdKmlDependency"
-	implementation "$jenaArqDependency"
-	implementation "$jtsDependency"
-	implementation "$postgresqlDependency"
-	implementation "$slf4jApiDependency"
+	implementation libs.berkeleyDbJe
+	implementation libs.commonsDbcp
+	implementation libs.geotoolsEpsgExt
+	implementation libs.geotoolsEpsgHsql
+	implementation libs.geotoolsEpsgWkt
+	implementation libs.geotoolsReferencing
+	implementation libs.geotoolsXsdCore
+	implementation libs.geotoolsXsdGml
+	implementation libs.geotoolsXsdKml
+	implementation libs.jenaArq
+	implementation libs.jts
+	implementation libs.postgresql
+	implementation libs.slf4jApi
 	implementation project(':jena:ParliamentClient')
 	implementation project(':jena:KbGraph')
 	implementation fileTree(dir: "${depDir}/deegree", include: "*.jar")
 	implementation fileTree(dir: "${depDir}/openmap", include: "*.jar")
-	testImplementation "$logbackDependency"
+	testImplementation libs.logback
 	testImplementation(testFixtures(project(":jena:KbGraph")))
 }
 
@@ -34,8 +34,11 @@ configurations.all {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
 }
 
 task sourcesJar(type: Jar) {
@@ -68,7 +71,7 @@ tasks.named("assemble") {
 testing {
 	suites {
 		test {
-			useJUnitJupiter("$jupiterVersion")
+			useJUnitJupiter(libs.versions.jupiterVer)
 		}
 	}
 }

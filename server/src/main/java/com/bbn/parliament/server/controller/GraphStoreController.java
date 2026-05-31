@@ -52,7 +52,7 @@ public class GraphStoreController {
 	//HEAD mapping automatically supported by GET mapping
 	@GetMapping(value = ENDPOINT, params = "default")
 	public ResponseEntity<StreamingResponseBody> getDefaultGraph(
-		@RequestParam(value = "default") String defaultGraph,
+		@RequestParam(value = "default") @SuppressWarnings("unused") String defaultGraph,
 		@RequestParam(value = "format", required = false) String format,
 		@RequestHeader HttpHeaders headers,
 		HttpServletRequest request) {
@@ -73,7 +73,7 @@ public class GraphStoreController {
 
 	@DeleteMapping(value = ENDPOINT, params = "default")
 	public void deleteDefaultGraph(
-		@RequestParam(value = "default") String defaultGraph,
+		@RequestParam(value = "default") @SuppressWarnings("unused") String defaultGraph,
 		HttpServletRequest request)
 		throws QueryExecutionException, MissingGraphException {
 
@@ -94,7 +94,7 @@ public class GraphStoreController {
 	@PostMapping(value = ENDPOINT, params = "default")
 	public ResponseEntity<String> insertIntoDefaultGraph(
 		@RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
-		@RequestParam(value = "default") String defaultGraph,
+		@RequestParam(value = "default") @SuppressWarnings("unused") String defaultGraph,
 		HttpServletRequest request)
 		throws TrackableException, DataFormatException, MissingGraphException, IOException,
 		QueryExecutionException {
@@ -117,7 +117,7 @@ public class GraphStoreController {
 
 	@PostMapping(value = ENDPOINT, params = "default", consumes = "multipart/form-data")
 	public ResponseEntity<String> insertIntoDefaultGraph(
-		@RequestParam(value = "default") String defaultGraph,
+		@RequestParam(value = "default") @SuppressWarnings("unused") String defaultGraph,
 		HttpServletRequest request,
 		@RequestPart(value = "file") MultipartFile[] files)
 		throws TrackableException, DataFormatException, MissingGraphException, IOException,
@@ -142,7 +142,7 @@ public class GraphStoreController {
 	@PutMapping(value = ENDPOINT, params = "default")
 	public ResponseEntity<String> replaceDefaultGraph(
 		@RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
-		@RequestParam(value = "default") String defaultGraph,
+		@RequestParam(value = "default") @SuppressWarnings("unused") String defaultGraph,
 		HttpServletRequest request) throws QueryExecutionException,
 		TrackableException, DataFormatException, MissingGraphException, IOException {
 
@@ -163,8 +163,8 @@ public class GraphStoreController {
 
 	@PutMapping(value = ENDPOINT, params = "default", consumes = "multipart/form-data")
 	public ResponseEntity<String> replaceDefaultGraph(
-		@RequestHeader(name = HttpHeaders.CONTENT_TYPE, required = false) Optional<String> contentType,
-		@RequestParam(value = "default") String defaultGraph,
+		@RequestHeader(name = HttpHeaders.CONTENT_TYPE, required = false) @SuppressWarnings("unused") Optional<String> contentType,
+		@RequestParam(value = "default") @SuppressWarnings("unused") String defaultGraph,
 		HttpServletRequest request,
 		@RequestPart(value = "file") MultipartFile[] files) throws QueryExecutionException,
 		TrackableException, DataFormatException, MissingGraphException, IOException {
@@ -175,7 +175,7 @@ public class GraphStoreController {
 
 	@PutMapping(value = ENDPOINT, params = "graph", consumes = "multipart/form-data")
 	public ResponseEntity<String> replaceNamedGraph(
-		@RequestHeader(name = HttpHeaders.CONTENT_TYPE, required = false) Optional<String> contentType,
+		@RequestHeader(name = HttpHeaders.CONTENT_TYPE, required = false) @SuppressWarnings("unused") Optional<String> contentType,
 		@RequestParam(value = "graph") String graphUri,
 		HttpServletRequest request,
 		@RequestPart(value = "file") MultipartFile[] files) throws QueryExecutionException,
@@ -187,7 +187,8 @@ public class GraphStoreController {
 
 	@SuppressWarnings("static-method")
 	@PatchMapping(value = ENDPOINT, params = "default")
-	public void updateDefaultGraph(@RequestParam(value = "default") String defaultGraph) {
+	public void updateDefaultGraph(
+		@RequestParam(value = "default") @SuppressWarnings("unused") String defaultGraph) {
 		throw new UnsupportedEndpointException("""
 			The PATCH method is unsupported on this endpoint. Please use the \
 			SPARQL Update endpoint instead.""");
@@ -195,7 +196,8 @@ public class GraphStoreController {
 
 	@SuppressWarnings("static-method")
 	@PatchMapping(value = ENDPOINT, params = "graph")
-	public void updateNamedGraph(@RequestParam(value = "graph") String graphUri) {
+	public void updateNamedGraph(
+		@RequestParam(value = "graph") @SuppressWarnings("unused") String graphUri) {
 		throw new UnsupportedEndpointException("""
 			The PATCH method is unsupported on this endpoint. Please use the \
 			SPARQL Update endpoint instead.""");

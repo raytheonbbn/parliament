@@ -21,7 +21,7 @@ public class GeoSPARQLOperandFactory extends OperandFactoryBase<Geometry> {
 	/** {@inheritDoc} */
 	@Override
 	public Operand<Geometry> createOperand(Node rootNode, BasicPattern pattern, Binding binding) {
-		return createOperand(rootNode, pattern, binding, new ArrayList<Triple>());
+		return createOperand(rootNode, pattern, binding, new ArrayList<>());
 	}
 
 	private static boolean containsOGCType(List<String> types) {
@@ -81,8 +81,9 @@ public class GeoSPARQLOperandFactory extends OperandFactoryBase<Geometry> {
 		return new Operand<>(rootNode, extent, usedTriples);
 	}
 
-	private static Geometry process(Node rootNode, BasicPattern triples, Binding binding,
-		List<Triple> usedTriples, String predicateURI, String literalDataTypeURI) {
+	private static Geometry process(@SuppressWarnings("unused") Node rootNode,
+		BasicPattern triples, Binding binding, List<Triple> usedTriples,
+		String predicateURI, String literalDataTypeURI) {
 		for (Triple t : triples) {
 			if (t.getPredicate().hasURI(predicateURI)) {
 				Node object = t.getObject();

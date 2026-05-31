@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2023 RTX BBN Technologies
+// Copyright (c) 2019-2026 RTX BBN Technologies
 // All rights reserved.
 
 package com.bbn.parliament.util;
@@ -30,7 +30,6 @@ import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ParameterizedSparqlString;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
@@ -38,36 +37,30 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.exec.http.QueryExecutionHTTP;
 import org.apache.jena.sparql.exec.http.QuerySendMode;
 
-/**
- * An implementation of Stream&lt;QuerySolution&gt; that converts a Jena
- * QueryExecution into a stream of QuerySolution objects. Note that this class
- * should always be instantiated via a try-with-resources statement to ensure
- * proper closure of the underlying QueryExecution.
- *
- * @author iemmons
- */
+/// An implementation of Stream&lt;QuerySolution&gt; that converts a Jena
+/// QueryExecution into a stream of QuerySolution objects. Note that this class
+/// should always be instantiated via a try-with-resources statement to ensure
+/// proper closure of the underlying QueryExecution.
+///
+/// @author iemmons
 public class QuerySolutionStream implements Stream<QuerySolution> {
 	private transient final QueryExecution qe;
 	private transient final Stream<QuerySolution> underlyingStream;
 
-	/**
-	 * Creates an AutoCloseable stream of QuerySolution objects by calling
-	 * {@code QueryExecutionFactory.sparqlService(service, queryStr)}
-	 *
-	 * @param queryStr The query to execute
-	 * @param service The service against which to execute the query
-	 */
+	/// Executes a query, returning the results as an {@code AutoCloseable} stream
+	/// of {@code QuerySolution} objects.
+	///
+	/// @param queryStr The query to execute
+	/// @param service  The service against which to execute the query
 	public QuerySolutionStream(String queryStr, String service) {
 		this(QueryFactory.create(queryStr), service);
 	}
 
-	/**
-	 * Creates an AutoCloseable stream of QuerySolution objects by calling
-	 * {@code QueryExecutionFactory.sparqlService(service, query)}
-	 *
-	 * @param query The query to execute
-	 * @param service The service against which to execute the query
-	 */
+	/// Executes a query, returning the results as an {@code AutoCloseable} stream
+	/// of {@code QuerySolution} objects.
+	///
+	/// @param query   The query to execute
+	/// @param service The service against which to execute the query
 	@SuppressWarnings("resource")
 	public QuerySolutionStream(Query query, String service) {
 		this(QueryExecutionHTTP.newBuilder()
@@ -77,96 +70,98 @@ public class QuerySolutionStream implements Stream<QuerySolution> {
 			.build());
 	}
 
-	/**
-	 * Creates an AutoCloseable stream of QuerySolution objects by calling
-	 * {@code QueryExecutionFactory.sparqlService(service, query)}
-	 *
-	 * @param pss The ParameterizedSparqlString containing the query to execute
-	 * @param service The service against which to execute the query
-	 */
+	/// Executes a query, returning the results as an {@code AutoCloseable} stream
+	/// of {@code QuerySolution} objects.
+	///
+	/// @param pss The ParameterizedSparqlString containing the query to execute
+	/// @param service The service against which to execute the query
 	public QuerySolutionStream(ParameterizedSparqlString pss, String service) {
 		this(QueryFactory.create(pss.asQuery()), service);
 	}
 
-	/**
-	 * Creates an AutoCloseable stream of QuerySolution objects by calling
-	 * {@code QueryExecutionFactory.create(queryStr, dataset)}
-	 *
-	 * @param queryStr The query to execute
-	 * @param dataset The dataset against which to execute the query
-	 */
+	/// Executes a query, returning the results as an {@code AutoCloseable} stream
+	/// of {@code QuerySolution} objects.
+	///
+	/// @param queryStr The query to execute
+	/// @param dataset The dataset against which to execute the query
 	@SuppressWarnings("resource")
 	public QuerySolutionStream(String queryStr, Dataset dataset) {
-		this(QueryExecutionFactory.create(queryStr, dataset));
+		this(QueryExecution.create()
+			.query(queryStr)
+			.dataset(dataset)
+			.build());
 	}
 
-	/**
-	 * Creates an AutoCloseable stream of QuerySolution objects by calling
-	 * {@code QueryExecutionFactory.create(query, dataset)}
-	 *
-	 * @param query The query to execute
-	 * @param dataset The dataset against which to execute the query
-	 */
+	/// Executes a query, returning the results as an {@code AutoCloseable} stream
+	/// of {@code QuerySolution} objects.
+	///
+	/// @param query The query to execute
+	/// @param dataset The dataset against which to execute the query
 	@SuppressWarnings("resource")
 	public QuerySolutionStream(Query query, Dataset dataset) {
-		this(QueryExecutionFactory.create(query, dataset));
+		this(QueryExecution.create()
+			.query(query)
+			.dataset(dataset)
+			.build());
 	}
 
-	/**
-	 * Creates an AutoCloseable stream of QuerySolution objects by calling
-	 * {@code QueryExecutionFactory.create(query, dataset)}
-	 *
-	 * @param pss The ParameterizedSparqlString containing the query to execute
-	 * @param dataset The dataset against which to execute the query
-	 */
+	/// Executes a query, returning the results as an {@code AutoCloseable} stream
+	/// of {@code QuerySolution} objects.
+	///
+	/// @param pss The ParameterizedSparqlString containing the query to execute
+	/// @param dataset The dataset against which to execute the query
 	@SuppressWarnings("resource")
 	public QuerySolutionStream(ParameterizedSparqlString pss, Dataset dataset) {
-		this(QueryExecutionFactory.create(pss.asQuery(), dataset));
+		this(QueryExecution.create()
+			.query(pss.asQuery())
+			.dataset(dataset)
+			.build());
 	}
 
-	/**
-	 * Creates an AutoCloseable stream of QuerySolution objects by calling
-	 * {@code QueryExecutionFactory.create(queryStr, model)}
-	 *
-	 * @param queryStr The query to execute
-	 * @param model The model against which to execute the query
-	 */
+	/// Executes a query, returning the results as an {@code AutoCloseable} stream
+	/// of {@code QuerySolution} objects.
+	///
+	/// @param queryStr The query to execute
+	/// @param model The model against which to execute the query
 	@SuppressWarnings("resource")
 	public QuerySolutionStream(String queryStr, Model model) {
-		this(QueryExecutionFactory.create(queryStr, model));
+		this(QueryExecution.create()
+			.query(queryStr)
+			.model(model)
+			.build());
 	}
 
-	/**
-	 * Creates an AutoCloseable stream of QuerySolution objects by calling
-	 * {@code QueryExecutionFactory.create(query, model)}
-	 *
-	 * @param query The query to execute
-	 * @param model The model against which to execute the query
-	 */
+	/// Executes a query, returning the results as an {@code AutoCloseable} stream
+	/// of {@code QuerySolution} objects.
+	///
+	/// @param query The query to execute
+	/// @param model The model against which to execute the query
 	@SuppressWarnings("resource")
 	public QuerySolutionStream(Query query, Model model) {
-		this(QueryExecutionFactory.create(query, model));
+		this(QueryExecution.create()
+			.query(query)
+			.model(model)
+			.build());
 	}
 
-	/**
-	 * Creates an AutoCloseable stream of QuerySolution objects by calling
-	 * {@code QueryExecutionFactory.create(query, model)}
-	 *
-	 * @param pss The ParameterizedSparqlString containing the query to execute
-	 * @param model The model against which to execute the query
-	 */
+	/// Executes a query, returning the results as an {@code AutoCloseable} stream
+	/// of {@code QuerySolution} objects.
+	///
+	/// @param pss The ParameterizedSparqlString containing the query to execute
+	/// @param model The model against which to execute the query
 	@SuppressWarnings("resource")
 	public QuerySolutionStream(ParameterizedSparqlString pss, Model model) {
-		this(QueryExecutionFactory.create(pss.asQuery(), model));
+		this(QueryExecution.create()
+			.query(pss.asQuery())
+			.model(model)
+			.build());
 	}
 
-	/**
-	 * Creates an AutoCloseable stream of QuerySolution objects that wraps its
-	 * argument
-	 *
-	 * @param queryExecution The QueryExecution object from which the stream of
-	 *                       QuerySolution objects is obtained
-	 */
+	/// Converts a {@code QueryExecution} into an {@code AutoCloseable} stream of
+	/// {@code QuerySolution} objects.
+	///
+	/// @param queryExecution The QueryExecution object from which the stream of
+	///                       QuerySolution objects is obtained
 	public QuerySolutionStream(QueryExecution queryExecution) {
 		qe = queryExecution;
 		ResultSet rs = qe.execSelect();

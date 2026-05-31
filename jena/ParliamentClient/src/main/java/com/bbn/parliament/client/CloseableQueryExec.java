@@ -196,4 +196,9 @@ public class CloseableQueryExec implements QueryExecution {
 	public void setInitialBinding(Binding binding) {
 		qe.setInitialBinding(binding);
 	}
+
+	@Override
+	public String getQueryString() {
+		return qe.getQueryString();
+	}
 }

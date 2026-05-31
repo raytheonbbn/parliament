@@ -7,12 +7,11 @@ import org.apache.jena.graph.Triple;
 
 
 class OrderExpressionResult {
-	private List<Triple> _expressionList;
-	private long _estimate;
-	private List<Node> _boundVariables;
+	private final List<Triple> _expressionList;
+	private final long _estimate;
+	private final List<Node> _boundVariables;
 
-	OrderExpressionResult(List<Triple> expressionList,
-		long estimate, List<Node> boundVariables) {
+	OrderExpressionResult(List<Triple> expressionList, long estimate, List<Node> boundVariables) {
 		_expressionList = expressionList;
 		_estimate = estimate;
 		_boundVariables = boundVariables;

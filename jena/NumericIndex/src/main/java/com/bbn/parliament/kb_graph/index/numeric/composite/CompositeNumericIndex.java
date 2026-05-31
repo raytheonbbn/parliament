@@ -21,8 +21,8 @@ import com.bbn.parliament.kb_graph.index.IndexBase;
 import com.bbn.parliament.kb_graph.index.IndexException;
 import com.bbn.parliament.kb_graph.index.IndexManager;
 import com.bbn.parliament.kb_graph.index.Record;
-import com.bbn.parliament.kb_graph.index.RecordFactory;
 import com.bbn.parliament.kb_graph.index.Record.TripleRecord;
+import com.bbn.parliament.kb_graph.index.RecordFactory;
 import com.bbn.parliament.kb_graph.index.numeric.NumericIndex;
 import com.bbn.parliament.kb_graph.index.numeric.NumericIndexFactory;
 import com.bbn.parliament.kb_graph.query.index.IndexPatternQuerierManager;
@@ -52,6 +52,7 @@ public class CompositeNumericIndex extends IndexBase<Number> implements Composit
 	 * @param graphName the name of the graph
 	 * @param indexDir the directory to store the indexes.
 	 */
+	@SuppressWarnings("this-escape")
 	public CompositeNumericIndex(Graph graph, Node graphName, String indexDir) {
 		this.graph = graph;
 		this.graphName = graphName;

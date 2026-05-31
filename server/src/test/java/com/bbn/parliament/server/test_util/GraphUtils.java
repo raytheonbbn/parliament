@@ -22,12 +22,13 @@ import org.apache.jena.atlas.web.ContentType;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
-import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFLanguages;
 import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.exec.http.QueryExecutionHTTP;
+import org.apache.jena.sparql.exec.http.UpdateExecutionHTTP;
 import org.apache.jena.sparql.modify.request.QuadDataAcc;
 import org.apache.jena.sparql.modify.request.UpdateDataDelete;
 import org.apache.jena.sparql.modify.request.UpdateDataInsert;
@@ -74,27 +75,31 @@ public class GraphUtils {
 	public static boolean doAskQuery(String sparqlUrl, String queryFmt, Object... args) {
 		String query = queryFmt.formatted(args);
 		LOG.debug("askquery: {}", query);
-		try (var qe = QueryExecutionFactory.sparqlService(sparqlUrl, query)) {
+		try (var qe = QueryExecutionHTTP.service(sparqlUrl)
+				.query(query)
+				.build()) {
 			return qe.execAsk();
 		}
 	}
 
 	public static Model doConstructQuery(String sparqlUrl, String queryFmt, Object... args) {
 		String query = queryFmt.formatted(args);
-		try (var qe = QueryExecutionFactory.sparqlService(sparqlUrl, query)) {
+		try (var qe = QueryExecutionHTTP.service(sparqlUrl)
+			.query(query)
+			.build()) {
 			return qe.execConstruct();
 		}
 	}
 
 	public static void doUpdate(String updateUrl, String queryFmt, Object... args) {
 		UpdateRequest ur = UpdateFactory.create(queryFmt.formatted(args));
-		UpdateExecutionFactory.createRemote(ur, updateUrl).execute();
+		UpdateExecutionHTTP.service(updateUrl).update(ur).build().execute();
 	}
 
 	public static void insert(String updateUrl, String sub, String pred, Node obj, String graphName) {
 		QuadDataAcc qd = createQuadData(sub, pred, obj, graphName);
 		UpdateDataInsert update = new UpdateDataInsert(qd);
-		UpdateExecutionFactory.createRemote(update, updateUrl).execute();
+		UpdateExecutionHTTP.service(updateUrl).update(update).build().execute();
 	}
 
 	public static String doSelectToCsv(String sparqlUrl, String query) {
@@ -113,7 +118,7 @@ public class GraphUtils {
 		Node p = NodeFactory.createURI(pred);
 		QuadDataAcc qd = new QuadDataAcc();
 		if (StringUtils.isBlank(graphName)) {
-			qd.addTriple(new Triple(s, p, obj));
+			qd.addTriple(Triple.create(s, p, obj));
 		} else {
 			qd.addQuad(new Quad(NodeFactory.createURI(graphName), s, p, obj));
 		}
@@ -314,6 +319,7 @@ public class GraphUtils {
 		return getReponseAsString(request).statusCode();
 	}
 
+	@SuppressWarnings("resource")
 	private static HttpResponse<InputStream> getReponseAsStream(HttpRequest request) {
 		return HttpClient.newHttpClient()
 				.sendAsync(request, HttpResponse.BodyHandlers.ofInputStream())
@@ -321,6 +327,7 @@ public class GraphUtils {
 	}
 
 	private static HttpResponse<String> getReponseAsString(HttpRequest request) {
+		@SuppressWarnings("resource")
 		HttpResponse<String> response = HttpClient.newHttpClient()
 			.sendAsync(request, HttpResponse.BodyHandlers.ofString())
 			.join();

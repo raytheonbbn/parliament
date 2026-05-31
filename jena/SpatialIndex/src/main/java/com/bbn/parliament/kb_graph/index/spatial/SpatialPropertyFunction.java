@@ -13,8 +13,7 @@ import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.ExecutionContext;
 import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.engine.binding.Binding;
-import org.apache.jena.sparql.engine.binding.BindingFactory;
-import org.apache.jena.sparql.engine.binding.BindingMap;
+import org.apache.jena.sparql.engine.binding.BindingBuilder;
 import org.apache.jena.sparql.engine.iterator.QueryIter;
 import org.apache.jena.sparql.engine.iterator.QueryIterCommonParent;
 import org.apache.jena.sparql.engine.iterator.QueryIterRepeatApply;
@@ -230,7 +229,8 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 		}
 	}
 
-	protected long estimateSelectivity(Geometry geometry, boolean isSubject) {
+	protected long estimateSelectivity(Geometry geometry,
+			@SuppressWarnings("unused") boolean isSubject) {
 		return getIndex().estimate(geometry, opToExecute);
 	}
 
@@ -357,28 +357,28 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 
 		Operand<Geometry> op = operands.get(node);
 		Geometry extent = (null == op) ? null : op.getRepresentation();
-		BindingMap b = BindingFactory.create(binding);
+		var bb = BindingBuilder.create(binding);
 		if (null != extent) {
-			updateBinding(b, node, extent);
+			updateBinding(bb, node, extent);
 		}
-		updateBinding(b, operands);
+		updateBinding(bb, operands);
 		if (extent instanceof FloatingCircle) {
-			return processFloatingCircle(node, args, b, operands, isSubject, context);
+			return processFloatingCircle(node, args, bb.build(), operands, isSubject, context);
 		} else if (null != extent && allBound) {
-			return processGeometries(List.of(node), args, b, operands, isSubject, context);
+			return processGeometries(List.of(node), args, bb.build(), operands, isSubject, context);
 		} else {
 			return IterLib.noResults(context);
 		}
 
 	}
 
-	protected void updateBinding(BindingMap binding, Node node, Geometry extent) {
+	protected void updateBinding(BindingBuilder bb, Node node, Geometry extent) {
 		if (null == extent) {
 			return;
 		}
 		if (node.isVariable()) {
 			Var v = Var.alloc(node);
-			if (binding.contains(v)) {
+			if (bb.contains(v)) {
 				return;
 			}
 			Node blank = index.getQueryCache().getBlankNodeMap().get(v);
@@ -386,15 +386,14 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 				blank = NodeFactory.createBlankNode();
 				index.getQueryCache().getBlankNodeMap().put(v, blank);
 			}
-			binding.add(v, blank);
+			bb.add(v, blank);
 			index.getQueryCache().put(blank, extent);
 		}
 	}
 
-	protected void updateBinding(BindingMap binding,
-		Map<Node, Operand<Geometry>> operands) {
+	protected void updateBinding(BindingBuilder bb, Map<Node, Operand<Geometry>> operands) {
 		for (Map.Entry<Node, Operand<Geometry>> op : operands.entrySet()) {
-			updateBinding(binding, op.getKey(), op.getValue().getRepresentation());
+			updateBinding(bb, op.getKey(), op.getValue().getRepresentation());
 		}
 	}
 
@@ -430,7 +429,7 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 				"Cannot have a floating circle as subject and object for: " + getUri());
 		}
 
-		BindingMap b = BindingFactory.create(binding);
+		var bb = BindingBuilder.create(binding);
 		if (extent1 instanceof BufferedGeometry buffer) {
 			extent1 = buffer.getBufferedGeometry();
 			if (null == extent1) {	// no buffer
@@ -443,21 +442,21 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 				return IterLib.noResults(context);
 			}
 		}
-		updateBinding(b, op1.getRootNode(), extent1);
-		updateBinding(b, op2.getRootNode(), extent2);
-		updateBinding(b, operands);
+		updateBinding(bb, op1.getRootNode(), extent1);
+		updateBinding(bb, op2.getRootNode(), extent2);
+		updateBinding(bb, operands);
 		if (extent1 instanceof FloatingCircle) {
-			return processFloatingCircle(subject, List.of(object), b, operands, true, context);
+			return processFloatingCircle(subject, List.of(object), bb.build(), operands, true, context);
 		} else if (extent2 instanceof FloatingCircle) {
-			return processFloatingCircle(object, List.of(subject), b, operands, false, context);
+			return processFloatingCircle(object, List.of(subject), bb.build(), operands, false, context);
 		} else if (null != extent1 && null != extent2) {
-			return processGeometries(List.of(subject), List.of(object), b, operands, true, context);
+			return processGeometries(List.of(subject), List.of(object), bb.build(), operands, true, context);
 		}
 
 		// either extent1, extent2, or both are unbound
 		QueryIterator input = performOperation(extent1, extent2, subject, object,
 			context);
-		return new QueryIterCommonParent(input, b, context);
+		return new QueryIterCommonParent(input, bb.build(), context);
 
 	}
 
@@ -489,7 +488,7 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 			}
 		}
 		if (valid) {
-			Binding newResult = BindingFactory.create(binding);
+			var newResult = BindingBuilder.create(binding);
 			List<Node> allNodes = new ArrayList<>(subjects.size() + objects.size());
 			allNodes.addAll(subjects);
 			allNodes.addAll(objects);
@@ -503,7 +502,7 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 					}
 				}
 			}
-			return IterLib.result(newResult, context);
+			return IterLib.result(newResult.build(), context);
 		}
 		return IterLib.noResults(context);
 	}
@@ -513,7 +512,7 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 		Map<Node, Operand<Geometry>> operands, boolean floatingSubject,
 		ExecutionContext context) {
 
-		BindingMap results = BindingFactory.create(binding);
+		var results = BindingBuilder.create(binding);
 
 		Operand<Geometry> op = operands.get(node);
 		Geometry extent = op.getRepresentation();
@@ -550,7 +549,8 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 		QueryIterator result = null;
 
 		if (unbound.size() > 0) {
-			QueryIterator input = IterLib.result(results, context);
+			var resultsBinding = results.build();
+			QueryIterator input = IterLib.result(resultsBinding, context);
 			boolean first = true;
 			for (Node n : unbound) {
 				if (first) {
@@ -566,7 +566,7 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 						context);
 				}
 			}
-			return new QueryIterCommonParent(result, results, context);
+			return new QueryIterCommonParent(result, resultsBinding, context);
 		}
 
 		boolean valid = true;
@@ -587,7 +587,7 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 		}
 		QueryIterator ret = null;
 		if (valid) {
-			ret = IterLib.result(results, context);
+			ret = IterLib.result(results.build(), context);
 		} else {
 			ret = IterLib.noResults(context);
 		}
@@ -597,7 +597,7 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 	protected class FloatingGeometryIterator extends QueryIter {
 		private Iterator<Record<Geometry>> underlyingIterator;
 		private Node nodeToBind;
-		private BindingMap nextElement;
+		private BindingBuilder nextElement;
 		private FloatingCircle myFloater;
 		private List<Geometry> myExtents;
 		private boolean hasBeenHasNexted = true;
@@ -607,12 +607,8 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 		private QueryCache<Geometry> queryCache;
 
 		public FloatingGeometryIterator(Iterator<Record<Geometry>> underlyingIterator,
-			Binding binding, Node nodeToBind,
-			FloatingCircle floater,
-			List<Geometry> extents,
-			boolean floatingSubject,
-			QueryCache<Geometry> queryCache,
-			ExecutionContext context) {
+			Binding binding, Node nodeToBind, FloatingCircle floater, List<Geometry> extents,
+			boolean floatingSubject, QueryCache<Geometry> queryCache, ExecutionContext context) {
 			super(context);
 			this.underlyingIterator = underlyingIterator;
 			this.binding = binding;
@@ -634,7 +630,7 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 				Record<Geometry> next = underlyingIterator.next();
 				if (testFloatingExtent(next.getValue(), myExtents, myFloater,
 					floatingSubject)) {
-					nextElement = BindingFactory.create(binding);
+					nextElement = BindingBuilder.create(binding);
 					nextElement.add(Var.alloc(nodeToBind), next.getKey());
 					queryCache.put(next.getKey(), next.getValue());
 
@@ -655,7 +651,7 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 				}
 			}
 			hasBeenHasNexted = true;
-			Binding b = nextElement;
+			Binding b = nextElement.build();
 			nextElement = null;
 			return b;
 		}
@@ -693,9 +689,10 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 
 		@Override
 		public Binding moveToNextBinding() {
-			BindingMap result = BindingFactory.create();
 			Record<Geometry> next = underlyingIterator.next();
-			result.add(variableNode, next.getKey());
+			var result = BindingBuilder.create()
+				.add(variableNode, next.getKey())
+				.build();
 			queryCache.put(next.getKey(), next.getValue());
 			return result;
 		}
@@ -719,13 +716,9 @@ public class SpatialPropertyFunction extends EstimableIndexPropertyFunction<Geom
 		private FloatingCircle circle;
 		private boolean floatingSubject;
 
-		public ExtentRepeatApplyIterator(SpatialIndex spIndex, Node rootNode,
-			FloatingCircle circle,
-			List<Geometry> extents,
-			List<Node> unbound,
-			boolean floatingSubject,
-			QueryIterator input,
-			ExecutionContext context) {
+		public ExtentRepeatApplyIterator(@SuppressWarnings("unused") SpatialIndex spIndex,
+			Node rootNode, FloatingCircle circle, List<Geometry> extents, List<Node> unbound,
+			boolean floatingSubject, QueryIterator input, ExecutionContext context) {
 			super(input, context);
 			this.rootNode = rootNode;
 			this.circle = circle;

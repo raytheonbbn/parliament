@@ -111,7 +111,7 @@ public class SpatialTestDataset {
 		graphStore.initialize();
 
 		model = ModelFactory.createModelForGraph(graph);
-		clearKb();
+		clearKb(model);
 	}
 
 	// Call from @AfterAll
@@ -146,8 +146,12 @@ public class SpatialTestDataset {
 		return result;
 	}
 
+	private static void clearKb(Model kbModel) {
+		kbModel.removeAll();
+	}
+
 	public void clearKb() {
-		model.removeAll();
+		clearKb(model);
 	}
 
 	public void loadData(String rsrcName) {

@@ -33,7 +33,7 @@ import com.bbn.parliament.kb_graph.index.IndexManager;
 import com.bbn.parliament.kb_graph.index.Record;
 
 public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoCloseable {
-	public enum IndexUnderTest { DEFAULT_GRAPH, NAMED_GRAPH }
+	public static enum IndexUnderTest { DEFAULT_GRAPH, NAMED_GRAPH }
 
 	private static final Logger LOG = LoggerFactory.getLogger(IndexTestMethods.class);
 	private static final Node NAMED_GRAPH_NAME = NodeFactory.createURI("http://example.org/testGraph");
@@ -42,7 +42,6 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 	private KbGraphStore store;
 	private Model defaultModel;
 	private Model namedModel;
-	private IndexFactory<T, I> indexFactory;
 	private T defaultGraphIndex;
 	private T namedGraphIndex;
 
@@ -54,6 +53,7 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 	// =============== Setup/Teardown Methods ===============
 
 	// Call from @BeforeEach
+	@SuppressWarnings("this-escape")
 	public IndexTestMethods() {
 		if (KB_DIR.exists() && !KB_DIR.isDirectory()) {
 			throw new RuntimeException("%1$s exists but is not a directory"
@@ -75,11 +75,10 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 		defaultModel = ModelFactory.createModelForGraph(defaultGraph);
 		namedModel = ModelFactory.createModelForGraph(namedGraph);
 
-		indexFactory = getIndexFactory();
-		IndexFactoryRegistry.getInstance().register(indexFactory);
+		IndexFactoryRegistry.getInstance().register(getIndexFactory());
 
-		defaultGraphIndex = IndexManager.getInstance().createAndRegister(defaultGraph, null, indexFactory);
-		namedGraphIndex = IndexManager.getInstance().createAndRegister(namedGraph, NAMED_GRAPH_NAME, indexFactory);
+		defaultGraphIndex = IndexManager.getInstance().createAndRegister(defaultGraph, null, getIndexFactory());
+		namedGraphIndex = IndexManager.getInstance().createAndRegister(namedGraph, NAMED_GRAPH_NAME, getIndexFactory());
 
 		try {
 			defaultGraphIndex.open();
@@ -100,7 +99,6 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 		store = null;
 		defaultModel = null;
 		namedModel = null;
-		indexFactory = null;
 		defaultGraphIndex = null;
 		namedGraphIndex = null;
 	}
@@ -123,7 +121,6 @@ public abstract class IndexTestMethods<T extends Index<I>, I> implements AutoClo
 			: store.getGraph(NAMED_GRAPH_NAME);
 	}
 
-	@SuppressWarnings("static-method")
 	public Node getGraphName(IndexUnderTest iut) {
 		return (iut == IndexUnderTest.DEFAULT_GRAPH)
 			? null

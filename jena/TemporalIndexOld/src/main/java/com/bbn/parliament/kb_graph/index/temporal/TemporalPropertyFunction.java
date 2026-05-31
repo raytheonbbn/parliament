@@ -14,8 +14,7 @@ import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.ExecutionContext;
 import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.engine.binding.Binding;
-import org.apache.jena.sparql.engine.binding.BindingFactory;
-import org.apache.jena.sparql.engine.binding.BindingMap;
+import org.apache.jena.sparql.engine.binding.BindingBuilder;
 import org.apache.jena.sparql.engine.iterator.QueryIter;
 import org.apache.jena.sparql.engine.iterator.QueryIterCommonParent;
 import org.apache.jena.sparql.pfunction.PropFuncArg;
@@ -137,10 +136,10 @@ public abstract class TemporalPropertyFunction<I extends TemporalIndex>
 				index.getQueryCache(), context);
 			return new QueryIterCommonParent(result, binding, context);
 		} else if (testExtents(extent1, extent2)) {
-			BindingMap newResultBinding = BindingFactory.create(binding);
+			var newResultBinding = BindingBuilder.create(binding);
 			addToBinding(newResultBinding, node1, extent1);
 			addToBinding(newResultBinding, node2, extent2);
-			return IterLib.result(newResultBinding, context);
+			return IterLib.result(newResultBinding.build(), context);
 		} else {
 			return IterLib.noResults(context);
 		}
@@ -151,11 +150,11 @@ public abstract class TemporalPropertyFunction<I extends TemporalIndex>
 		return (operand == null) ? null : operand.getRepresentation();
 	}
 
-	private void addToBinding(BindingMap binding, Node node, TemporalExtent extent) {
+	private void addToBinding(BindingBuilder bb, Node node, TemporalExtent extent) {
 		if (node.isVariable()) {
 			Var var = Var.alloc(node);
-			if (!binding.contains(var)) {
-				binding.add(var, node);
+			if (!bb.contains(var)) {
+				bb.add(var, node);
 			}
 			index.getQueryCache().put(node, extent);
 		}
@@ -216,11 +215,11 @@ public abstract class TemporalPropertyFunction<I extends TemporalIndex>
 
 		@Override
 		protected Binding moveToNextBinding() {
-			BindingMap binding = BindingFactory.create();
+			var bb = BindingBuilder.create();
 			Record<TemporalExtent> r = internal.next();
-			binding.add(var, r.getKey());
+			bb.add(var, r.getKey());
 			queryCache.put(r.getKey(), r.getValue());
-			return binding;
+			return bb.build();
 		}
 
 		@Override
@@ -285,17 +284,17 @@ public abstract class TemporalPropertyFunction<I extends TemporalIndex>
 
 		@Override
 		protected Binding moveToNextBinding() {
-			BindingMap binding = BindingFactory.create();
+			var bb = BindingBuilder.create();
 			Record<TemporalExtent> ext2Record = ext2Iter.next();
-			binding.add(var1, ext1Record.getKey());
-			binding.add(var2, ext2Record.getKey());
+			bb.add(var1, ext1Record.getKey());
+			bb.add(var2, ext2Record.getKey());
 			queryCache.put(ext1Record.getKey(), ext1Record.getValue());
 			queryCache.put(ext2Record.getKey(), ext2Record.getValue());
 			log.trace("returned binding for var1:  '{}', '{}', '{}'",
 				new Object[] { var1, ext1Record.getKey(), ext1Record.getValue() });
 			log.trace("returned binding for var2:  '{}', '{}', '{}'",
 				new Object[] { var2, ext2Record.getKey(), ext2Record.getValue() });
-			return binding;
+			return bb.build();
 		}
 
 		@Override

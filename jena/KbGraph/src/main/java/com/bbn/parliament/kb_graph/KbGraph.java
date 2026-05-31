@@ -41,7 +41,6 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, AutoCloseabl
 	private KbInstance kb;
 	private KbConfig config;
 	private boolean isClosed;
-	// private NodeIdHash nodeIdHash;
 	private Map<Node, Long> nodeIdHash;
 	private OptimizationMethod optimizationMethod;
 
@@ -74,7 +73,6 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, AutoCloseabl
 		this.config = config;
 		this.relativeDirectory = relativeDirectory;
 		isClosed = false;
-		// nodeIdHash = new NodeIdHash(100);
 		nodeIdHash = Collections.synchronizedMap(new LRUHash(1000));
 		this.optimizationMethod = optMethod;
 	}
@@ -261,44 +259,14 @@ public class KbGraph extends GraphBase implements KbUnionableGraph, AutoCloseabl
 			return true;
 		}
 
-		@Deprecated
-		@Override
-		public boolean addAllowed(boolean everyTriple) {
-			return true;
-		}
-
-		@Deprecated
-		@Override
-		public boolean canBeEmpty() {
-			return true;
-		}
-
 		@Override
 		public boolean deleteAllowed() {
-			return true;
-		}
-
-		@Deprecated
-		@Override
-		public boolean deleteAllowed(boolean everyTriple) {
-			return true;
-		}
-
-		@Deprecated
-		@Override
-		public boolean findContractSafe() {
 			return true;
 		}
 
 		@Override
 		public boolean handlesLiteralTyping() {
 			return false;
-		}
-
-		@Deprecated
-		@Override
-		public boolean iteratorRemoveAllowed() {
-			return true;
 		}
 
 		@Override

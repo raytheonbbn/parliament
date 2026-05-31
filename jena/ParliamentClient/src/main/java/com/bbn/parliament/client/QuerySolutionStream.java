@@ -34,9 +34,12 @@ import org.apache.jena.query.ParameterizedSparqlString;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.sparql.exec.http.QueryExecutionHTTP;
+import org.apache.jena.sparql.exec.http.QuerySendMode;
 
 /**
  * An implementation of Stream&lt;QuerySolution&gt; that converts a Jena
@@ -57,9 +60,8 @@ public class QuerySolutionStream implements Stream<QuerySolution> {
 	 * @param queryStr The query to execute
 	 * @param service The service against which to execute the query
 	 */
-	@SuppressWarnings("resource")
 	public QuerySolutionStream(String queryStr, String service) {
-		this(QueryExecutionFactory.sparqlService(service, queryStr));
+		this(QueryFactory.create(queryStr), service);
 	}
 
 	/**
@@ -71,7 +73,11 @@ public class QuerySolutionStream implements Stream<QuerySolution> {
 	 */
 	@SuppressWarnings("resource")
 	public QuerySolutionStream(Query query, String service) {
-		this(QueryExecutionFactory.sparqlService(service, query));
+		this(QueryExecutionHTTP.newBuilder()
+			.endpoint(service)
+			.sendMode(QuerySendMode.asPostForm)
+			.query(query)
+			.build());
 	}
 
 	/**
@@ -81,9 +87,8 @@ public class QuerySolutionStream implements Stream<QuerySolution> {
 	 * @param pss The ParameterizedSparqlString containing the query to execute
 	 * @param service The service against which to execute the query
 	 */
-	@SuppressWarnings("resource")
 	public QuerySolutionStream(ParameterizedSparqlString pss, String service) {
-		this(QueryExecutionFactory.sparqlService(service, pss.asQuery()));
+		this(QueryFactory.create(pss.asQuery()), service);
 	}
 
 	/**

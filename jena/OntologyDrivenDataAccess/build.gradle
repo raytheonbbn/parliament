@@ -14,15 +14,14 @@ repositories {
 }
 
 dependencies {
-	//api "$jenaArqDependency"
-	api "org.apache.jena:jena-arq:$jena4Version"
-	implementation "$gsonDependency"
-	implementation "$commonsLangDependency"
-	implementation "$sparqlQueryBuilderDependency"
+	api libs.jenaArq
+	implementation libs.gson
+	implementation libs.commonsLang
+	implementation libs.queryBuilder
 	//implementation project(':jena:SparqlQueryBuilder')
-	implementation "$slf4jApiDependency"
+	implementation libs.slf4jApi
 
-	testImplementation "$logbackDependency"
+	testImplementation libs.logback
 }
 
 configurations.all {
@@ -30,8 +29,11 @@ configurations.all {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
 	//withJavadocJar()
 	withSourcesJar()
 }
@@ -39,7 +41,7 @@ java {
 testing {
 	suites {
 		test {
-			useJUnitJupiter("$jupiterVersion")
+			useJUnitJupiter(libs.versions.jupiterVer)
 		}
 	}
 }

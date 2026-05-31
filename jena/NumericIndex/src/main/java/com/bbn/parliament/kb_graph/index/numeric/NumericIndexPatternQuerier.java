@@ -10,8 +10,7 @@ import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.ExecutionContext;
 import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.engine.binding.Binding;
-import org.apache.jena.sparql.engine.binding.BindingFactory;
-import org.apache.jena.sparql.engine.binding.BindingMap;
+import org.apache.jena.sparql.engine.binding.BindingBuilder;
 import org.apache.jena.sparql.engine.iterator.QueryIter;
 import org.apache.jena.sparql.engine.iterator.QueryIterRepeatApply;
 import org.apache.jena.sparql.util.IterLib;
@@ -112,12 +111,11 @@ implements IndexPatternQuerier {
 					} else if (s.isURI() && o.isVariable()) {
 						// lookup the value
 						Record<T> rec = index.find(s);
-						BindingMap b = BindingFactory.create(binding);
 						if (null != rec) {
-							b.add(Var.alloc(o),
-								ResourceFactory.createTypedLiteral(rec.getValue())
-								.asNode());
-							qi = IterLib.result(b, getExecContext());
+							var bb = BindingBuilder.create(binding)
+								.add(Var.alloc(o),
+									ResourceFactory.createTypedLiteral(rec.getValue()).asNode());
+							qi = IterLib.result(bb.build(), getExecContext());
 						} else {
 							qi = IterLib.noResults(getExecContext());
 							break;
@@ -177,20 +175,16 @@ implements IndexPatternQuerier {
 		@Override
 		protected Binding moveToNextBinding() {
 			Record<T> rec = iterator.next();
-			BindingMap b = null;
-			if (null != binding) {
-				b = BindingFactory.create(binding);
-			} else {
-				b = BindingFactory.create();
-			}
+			var bb = (null != binding)
+				? BindingBuilder.create(binding)
+				: BindingBuilder.create();
 			if (null != subject) {
-				b.add(subject, rec.getKey());
+				bb.add(subject, rec.getKey());
 			}
 			if (null != object) {
-				b.add(object, ResourceFactory.createTypedLiteral(rec.getValue())
-					.asNode());
+				bb.add(object, ResourceFactory.createTypedLiteral(rec.getValue()).asNode());
 			}
-			return b;
+			return bb.build();
 		}
 
 		/** {@inheritDoc} */

@@ -169,7 +169,8 @@ public class SolverUtil {
 		}
 		for (Node name : reifications.keySet()){
 			Node[] reification = reifications.get(name);
-			result.add(new ReifiedTriple(name,reification[0],reification[1], reification[2]));
+			result.add(new ReifiedTriple(
+				name, reification[0], reification[1], reification[2]));
 		}
 		return result;
 	}

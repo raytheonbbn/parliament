@@ -30,7 +30,7 @@
 %\usepackage{tikz}
 %\usepackage{ffcode}
 %\usepackage{path}
-\usepackage{dirtree}
+\usepackage{dirtreex}
 %\usepackage[firstpage]{draftwatermark}
 %\usepackage{todonotes}
 %\usepackage{markdown}
@@ -71,16 +71,9 @@
 	allcolors=hyperlinkcolor
 }
 
-\hyphenation{Arc-GIS Arc-Map}
-\hyphenation{co-ref-er-ence co-ref-er-enc-es}
-\hyphenation{da-ta-base da-ta-bas-es}
-\hyphenation{geo-spa-tial}
 \hyphenation{im-mu-ta-ble}
 \hyphenation{ra-pid-ly}
-\hyphenation{ray-the-on}
-\hyphenation{serv-let serv-lets}
 \hyphenation{trac-ta-ble}
-\hyphenation{war-fight-er war-fight-ers}
 
 \begin{document}
 \maketitle
@@ -88,97 +81,104 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Introduction}
-\label{sec:intro}
+\section{Linux}
+\label{sec:linux}
 
-Figure~\ref{fig:DynLibDepsUbuntu} shows the hierarchy of dynamic library dependencies of Parliament on Ubuntu Linux, while Figure~\ref{fig:DynLibDepsMacOS} shows the dependencies on Mac OS.
+This is the hierarchy of Parliament's shared library dependencies on Linux (specifically on Ubuntu):
 
-\begin{figure}[htbp]
-	\centering
-	\begin{minipage}[t]{3in}
-	%\footnotesize
-	%\small
-	%\setlength{\DTbaselineskip}{1.9ex}
-	\dirtree{%
-		.1 ParliamentAdmin.
-			.2 libboost\_filesystem.
-			.2 libParliament.
-				.3 libboost\_filesystem.
-				.3 libboost\_log.
-					.4 libboost\_filesystem.
-					.4 libboost\_thread.
-				.3 libboost\_thread.
-				.3 librocksdb.
-					.4 libbz2.
-					.4 libgflags.
-					.4 liblz4.
-						.5 libxxhash.
-					.4 libsnappy.
-					.4 libz.
-					.4 libzstd.
-					.4 libxxhash.
+\begin{dirtreex}[box=false,elbow radius=3pt]
+	\dir{ParliamentAdmin}{}{
+		\file{libboost\_filesystem}{}
+		\dir{libParliament}{}{
+			\file{libboost\_filesystem}{}
+			\dir{libboost\_log}{}{
+				\file{libboost\_filesystem}{}
+				\file{libboost\_thread}{}
+			}
+			\file{libboost\_thread}{}
+			\dir{librocksdb}{}{
+				\file{libbz2}{}
+				\file{libgflags}{}
+				\dir{liblz4}{}{
+					\file{libxxhash}{}
+				}
+				\file{libsnappy}{}
+				\file{libz}{}
+				\file{libzstd}{}
+				\file{libxxhash}{}
+			}
+		}
 	}
-	\end{minipage}
-	\caption{Hierarchy of Dynamic Library Dependencies on Ubuntu Linux}
-	\label{fig:DynLibDepsUbuntu}
-\end{figure}
+\end{dirtreex}
 
-\begin{figure}[htbp]
-	\centering
-	\begin{minipage}[t]{3in}
-	%\footnotesize
-	\small
-	\setlength{\DTbaselineskip}{1.9ex}
-	\dirtree{%
-		.1 ParliamentAdmin.
-			.2 libboost\_filesystem.
-			.2 libParliament.
-				.3 libboost\_atomic.
-				.3 libboost\_chrono.
-				.3 libboost\_container.
-				.3 libboost\_date\_time.
-				.3 libboost\_filesystem.
-				.3 libgflags.
-				.3 libboost\_log.
-					.4 libboost\_atomic.
-					.4 libboost\_chrono.
-					.4 libboost\_container.
-					.4 libboost\_date\_time.
-					.4 libboost\_filesystem.
-					.4 libboost\_regex.
-					.4 libboost\_thread.
-						.5 libboost\_atomic.
-						.5 libboost\_chrono.
-						.5 libboost\_container.
-						.5 libboost\_date\_time.
-				.3 libboost\_log\_setup.
-					.4 libboost\_atomic.
-					.4 libboost\_chrono.
-					.4 libboost\_container.
-					.4 libboost\_date\_time.
-					.4 libboost\_filesystem.
-					.4 libboost\_log.
-						.5 (above).
-					.4 libboost\_regex.
-					.4 libboost\_serialization.
-					.4 libboost\_thread.
-						.5 (above).
-				.3 libboost\_regex.
-				.3 libboost\_serialization.
-				.3 libboost\_thread.
-					.4 (above).
-				.3 liblz4.
-				.3 librocksdb.
-					.4 libgflags.
-					.4 liblz4.
-					.4 (libsnappy).
-					.4 libzstd.
-				.3 (libsnappy).
-				.3 libzstd.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Macintosh}
+\label{macOS}
+
+Here the dependency hierarchy on Mac OS:
+
+%\footnotesize
+%\small
+%\tiny
+\begin{dirtreex}[box=false,
+		elbow radius=3pt,
+		fontsize=\small]
+	\dir{ParliamentAdmin}{}{
+		\file{libboost\_filesystem}{}
+		\dir{libParliament}{}{
+			\file{libboost\_atomic}{}
+			\file{libboost\_chrono}{}
+			\file{libboost\_container}{}
+			\file{libboost\_date\_time}{}
+			\file{libboost\_filesystem}{}
+			\file{libgflags}{}
+			\dir{libboost\_log}{}{
+				\file{libboost\_atomic}{}
+				\file{libboost\_chrono}{}
+				\file{libboost\_container}{}
+				\file{libboost\_date\_time}{}
+				\file{libboost\_filesystem}{}
+				\file{libboost\_regex}{}
+				\dir{libboost\_thread}{}{
+					\file{libboost\_atomic}{}
+					\file{libboost\_chrono}{}
+					\file{libboost\_container}{}
+					\file{libboost\_date\_time}{}
+				}
+			}
+			\dir{libboost\_log\_setup}{}{
+				\file{libboost\_atomic}{}
+				\file{libboost\_chrono}{}
+				\file{libboost\_container}{}
+				\file{libboost\_date\_time}{}
+				\file{libboost\_filesystem}{}
+				\dir{libboost\_log}{}{
+					\file{(above)}{}
+				}
+				\file{libboost\_regex}{}
+				\file{libboost\_serialization}{}
+				\dir{libboost\_thread}{}{
+					\file{(above)}{}
+				}
+			}
+			\file{libboost\_regex}{}
+			\file{libboost\_serialization}{}
+			\dir{libboost\_thread}{}{
+				\file{(above)}{}
+			}
+			\file{liblz4}{}
+			\dir{librocksdb}{}{
+				\file{libgflags}{}
+				\file{liblz4}{}
+				\file{(libsnappy)}{}
+				\file{libzstd}{}
+			}
+			\file{(libsnappy)}{}
+			\file{libzstd}{}
+		}
 	}
-	\end{minipage}
-	\caption{Hierarchy of Dynamic Library Dependencies on Mac OS}
-	\label{fig:DynLibDepsMacOS}
-\end{figure}
+\end{dirtreex}
 
 \end{document}

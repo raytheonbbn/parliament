@@ -31,7 +31,7 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 	public Operand<Geometry> createOperand(Node rootNode,
 		BasicPattern pattern, Binding binding) {
 		return createOperand(rootNode, pattern, binding,
-			new ArrayList<Triple>());
+			new ArrayList<>());
 	}
 
 	private Operand<Geometry> createOperand(Node rootNode,
@@ -120,8 +120,8 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 		return null;
 	}
 
-	private static Point extractPoint(Node rootNode, BasicPattern rootPattern,
-		Binding binding, List<Triple> usedTriples) {
+	private static Point extractPoint(@SuppressWarnings("unused") Node rootNode,
+		BasicPattern rootPattern, Binding binding, List<Triple> usedTriples) {
 
 		for (Triple t : rootPattern) {
 			Node predicate = t.getPredicate();
@@ -157,8 +157,8 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 		return null;
 	}
 
-	private static LineString extractLineString(Node rootNode, BasicPattern rootPattern,
-		Binding binding, List<Triple> usedTriples) {
+	private static LineString extractLineString(@SuppressWarnings("unused") Node rootNode,
+		BasicPattern rootPattern, Binding binding, List<Triple> usedTriples) {
 
 		for (Triple t : rootPattern) {
 			if (!t.getPredicate().isURI()) {
@@ -189,8 +189,9 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 		return null;
 	}
 
-	private Polygon extractPolygon(Node rootNode, BasicPattern rootPattern,
-		BasicPattern pattern, Binding binding, List<Triple> usedTriples) {
+	private Polygon extractPolygon(@SuppressWarnings("unused") Node rootNode,
+		BasicPattern rootPattern, BasicPattern pattern, Binding binding,
+		List<Triple> usedTriples) {
 		LinearRing exterior = null;
 		List<LinearRing> interior = new ArrayList<>();
 		for (Triple t : rootPattern) {
@@ -249,8 +250,8 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 		return null;
 	}
 
-	private static LinearRing extractLinearRing(Node rootNode, BasicPattern rootPattern,
-		Binding binding, List<Triple> usedTriples) {
+	private static LinearRing extractLinearRing(@SuppressWarnings("unused") Node rootNode,
+		BasicPattern rootPattern, Binding binding, List<Triple> usedTriples) {
 		for (Triple t : rootPattern) {
 			Node predicate = t.getPredicate();
 			if (!predicate.isURI()) {
@@ -289,8 +290,8 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 		return null;
 	}
 
-	private static Geometry extractCircle(Node rootNode, BasicPattern rootPattern,
-		Binding binding, List<Triple> usedTriples) {
+	private static Geometry extractCircle(@SuppressWarnings("unused") Node rootNode,
+		BasicPattern rootPattern, Binding binding, List<Triple> usedTriples) {
 		double radius = 0.0;
 		String pos = null;
 		boolean hasRadius = false;
@@ -359,8 +360,9 @@ public class SpatialOperandFactory extends OperandFactoryBase<Geometry> {
 	}
 
 	/** Try to bind a buffer to the operator. */
-	private BufferedGeometry extractBuffer(Node rootNode, BasicPattern rootPattern,
-		BasicPattern pattern, Binding binding, List<Triple> usedTriples) {
+	private BufferedGeometry extractBuffer(@SuppressWarnings("unused") Node rootNode,
+		BasicPattern rootPattern, BasicPattern pattern, Binding binding,
+		List<Triple> usedTriples) {
 
 		double distance = 0.0;
 		boolean hasDistance = false;

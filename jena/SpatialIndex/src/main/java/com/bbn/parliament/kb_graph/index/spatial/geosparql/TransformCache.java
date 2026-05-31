@@ -3,10 +3,10 @@ package com.bbn.parliament.kb_graph.index.spatial.geosparql;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.operation.MathTransform;
 import org.geotools.referencing.CRS;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 
 public class TransformCache {
 	private static final int CACHE_SIZE = 10;

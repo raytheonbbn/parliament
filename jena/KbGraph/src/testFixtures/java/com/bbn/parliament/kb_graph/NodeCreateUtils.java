@@ -86,7 +86,8 @@ public class NodeCreateUtils {
 		}
 		char first = x.charAt(0);
 		if (first == '\'' || first == '\"') {
-			return NodeFactory.createLiteral(newString(pm, first, x));
+			var ll = newString(pm, first, x);
+			return NodeFactory.createLiteral(ll.getLexicalForm(), ll.language(), ll.getDatatype());
 		} else if (Character.isDigit(first)) {
 			return NodeFactory.createLiteral(x, "", XSDDatatype.XSDinteger);
 		} else if (first == '_') {
@@ -100,7 +101,9 @@ public class NodeCreateUtils {
 		} else {
 			int colon = x.indexOf(':');
 			String d = pm.getNsPrefixURI("");
-			return colon < 0 ? NodeFactory.createURI((d == null ? "eh:/" : d) + x) : NodeFactory.createURI(pm.expandPrefix(x));
+			return (colon < 0)
+				? NodeFactory.createURI((d == null ? "eh:/" : d) + x)
+				: NodeFactory.createURI(pm.expandPrefix(x));
 		}
 	}
 

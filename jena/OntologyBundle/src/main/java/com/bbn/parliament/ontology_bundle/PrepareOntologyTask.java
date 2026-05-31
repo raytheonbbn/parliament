@@ -27,13 +27,13 @@ import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.query.ParameterizedSparqlString;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.riot.RDFLanguages;
-import org.apache.jena.riot.Lang;
 import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.update.UpdateExecutionFactory;
 import org.apache.jena.update.UpdateFactory;
@@ -57,8 +57,8 @@ import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
 
-import com.bbn.parliament.util.QuerySolutionStream;
 import com.bbn.parliament.util.JavaResource;
+import com.bbn.parliament.util.QuerySolutionStream;
 
 class PrepareOntologyTask extends DefaultTask {
 	private static enum OutputType { FOR_HUMANS, FOR_MACHINES }
@@ -294,7 +294,7 @@ class PrepareOntologyTask extends DefaultTask {
 			List<String> vars = query.getResultVars();
 			var csvFmt = CSVFormat.Builder.create(CSVFormat.DEFAULT)
 				.setHeader(vars.toArray(new String[0]))
-				.build();
+				.get();
 			try (
 				var strm = new QuerySolutionStream(query, combinedModel);
 				var wtr = new FileWriter(reportFile, StandardCharsets.UTF_8);

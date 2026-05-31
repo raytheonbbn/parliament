@@ -74,7 +74,7 @@
 		</delete>
 	</target>
 
-	<target name="resolveAll" description="Force an Ivy resolve on all sub-projects">
+	<target name="resolveAllForce" description="Force an Ivy resolve on all sub-projects">
 		<ant dir="${basedir}/Parliament" target="resolveAlways" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JosekiExtensions" target="resolveAlways" inheritAll="false"/>
 		<ant dir="${basedir}/jena/KbGraph" target="resolveAlways" inheritAll="false"/>

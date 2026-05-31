@@ -16,15 +16,15 @@ import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
 import org.locationtech.jts.io.WKBWriter;
 
-import com.bbn.parliament.kb_graph.index.spatial.persistence.NodeData;
-import com.bbn.parliament.kb_graph.index.spatial.persistence.NodeIdKeyCreator;
-import com.bbn.parliament.kb_graph.index.spatial.persistence.NodeKey;
-import com.bbn.parliament.kb_graph.index.spatial.standard.SpatialGeometryFactory;
 import com.bbn.parliament.kb_graph.index.IndexBase;
 import com.bbn.parliament.kb_graph.index.IndexException;
 import com.bbn.parliament.kb_graph.index.QueryableIndex;
 import com.bbn.parliament.kb_graph.index.Record;
 import com.bbn.parliament.kb_graph.index.RecordFactory;
+import com.bbn.parliament.kb_graph.index.spatial.persistence.NodeData;
+import com.bbn.parliament.kb_graph.index.spatial.persistence.NodeIdKeyCreator;
+import com.bbn.parliament.kb_graph.index.spatial.persistence.NodeKey;
+import com.bbn.parliament.kb_graph.index.spatial.standard.SpatialGeometryFactory;
 import com.bbn.parliament.kb_graph.query.PrefixRegistry;
 import com.bbn.parliament.kb_graph.query.index.QueryCache;
 import com.bbn.parliament.kb_graph.util.FileUtil;
@@ -294,7 +294,7 @@ public abstract class SpatialIndex extends IndexBase<Geometry> implements Querya
 		return doAdd(r, null);
 	}
 
-	private final boolean doAdd(Record<Geometry> r, Transaction t) {
+	private final boolean doAdd(Record<Geometry> r, @SuppressWarnings("unused") Transaction t) {
 		synchronized (lock) {
 			String n = NodeUtil.getStringRepresentation(r.getKey());
 			NodeKey key = new NodeKey(n);

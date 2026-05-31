@@ -2,10 +2,10 @@ package com.bbn.parliament.server.tracker;
 
 import java.beans.ConstructorProperties;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
@@ -19,12 +19,10 @@ import com.bbn.parliament.core.jni.KbConfig;
 import com.bbn.parliament.server.exception.TrackableException;
 import com.bbn.parliament.server.graph.ModelManager;
 
-/**
- * A trackable query. Currently the only Trackable object that can be canceled.
- * Canceling aborts the query execution.
- *
- * @author rbattle
- */
+/// A trackable query. Currently the only Trackable object that can be canceled.
+/// Canceling aborts the query execution.
+///
+/// @author rbattle
 public class TrackableQuery extends Trackable {
 	private static final Logger LOG = LoggerFactory.getLogger(TrackableQuery.class);
 
@@ -54,8 +52,8 @@ public class TrackableQuery extends Trackable {
 			if (isRunning()) {
 				try {
 					cancel();
-				} catch (TrackableException e) {
-					LOG.error("While releasing, error while canceling query.", e);
+				} catch (TrackableException ex) {
+					LOG.error("While releasing, error while canceling query.", ex);
 				}
 			}
 			if (!isCancelled()) {
@@ -65,17 +63,18 @@ public class TrackableQuery extends Trackable {
 	}
 
 	private void createQueryExecution() {
-		if (query.hasDatasetDescription()) {
-			qExec = QueryExecutionFactory.create(query);
-		} else {
-			qExec = QueryExecutionFactory.create(query, ModelManager.inst().getDataset());
-		}
 		KbConfig cfg = ModelManager.inst().getDefaultGraphConfig();
-		qExec.setTimeout(cfg.m_timeoutDuration, cfg.m_timeoutUnit);
+		var qExecBuilder = QueryExecution.create()
+			.query(query)
+			.timeout(cfg.m_timeoutDuration, cfg.m_timeoutUnit);
+		if (!query.hasDatasetDescription()) {
+			qExecBuilder.dataset(ModelManager.inst().getDataset());
+		}
+		qExec = qExecBuilder.build();
 
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Created query execution # {} of type {}", getId(), qExec
-				.getClass().getName());
+			LOG.debug("Created query execution # {} of type {}",
+				getId(), qExec.getClass().getName());
 		}
 	}
 
@@ -139,12 +138,10 @@ public class TrackableQuery extends Trackable {
 		return query.toString();
 	}
 
-	/**
-	 * A result set that sets the status of the TrackableQuery to finished when
-	 * there are no more results.
-	 *
-	 * @author rbattle
-	 */
+	/// A result set that sets the status of the TrackableQuery to finished when
+	/// there are no more results.
+	///
+	/// @author rbattle
 	private class TrackableResultSet implements ResultSet {
 		private ResultSet base;
 
@@ -172,9 +169,9 @@ public class TrackableQuery extends Trackable {
 			boolean ret = false;
 			try {
 				ret = base.hasNext();
-			} catch (RuntimeException e) {
+			} catch (RuntimeException ex) {
 				setError();
-				throw e;
+				throw ex;
 			}
 			// if no results, update the status for the website
 			if (!ret) {
@@ -188,9 +185,9 @@ public class TrackableQuery extends Trackable {
 			QuerySolution next = null;
 			try {
 				next = base.next();
-			} catch (RuntimeException e) {
+			} catch (RuntimeException ex) {
 				setError();
-				throw e;
+				throw ex;
 			}
 
 			return next;
@@ -201,9 +198,9 @@ public class TrackableQuery extends Trackable {
 			Binding next = null;
 			try {
 				next = base.nextBinding();
-			} catch (RuntimeException e) {
+			} catch (RuntimeException ex) {
 				setError();
-				throw e;
+				throw ex;
 			}
 			return next;
 		}
@@ -213,9 +210,9 @@ public class TrackableQuery extends Trackable {
 			QuerySolution next = null;
 			try {
 				next = base.nextSolution();
-			} catch (RuntimeException e) {
+			} catch (RuntimeException ex) {
 				setError();
-				throw e;
+				throw ex;
 			}
 			return next;
 		}
@@ -224,9 +221,29 @@ public class TrackableQuery extends Trackable {
 		public void remove() {
 			try {
 				base.remove();
-			} catch (RuntimeException e) {
+			} catch (RuntimeException ex) {
 				setError();
-				throw e;
+				throw ex;
+			}
+		}
+
+		@Override
+		public void forEachRemaining(Consumer<? super QuerySolution> action) {
+			try {
+				base.forEachRemaining(action);
+			} catch (RuntimeException ex) {
+				setError();
+				throw ex;
+			}
+		}
+
+		@Override
+		public void close() {
+			try {
+				base.close();
+			} catch (RuntimeException ex) {
+				setError();
+				throw ex;
 			}
 		}
 	}

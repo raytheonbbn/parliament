@@ -1,5 +1,9 @@
 // Copyright (c) 2023-2024 RTX BBN Technologies Corp.
 
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.util.regex.Matcher
+
 plugins {
 	id 'java-library'
 	id 'maven-publish'
@@ -11,28 +15,51 @@ ext {
 	jniHeaderIncludeDir = file("$buildDir/generated/sources")
 	jniHeaderGenDir = file("$jniHeaderIncludeDir/parliament/generated")
 	fixupScript = file("$buildDir/generated/fixup.sh")
+	buildProps = file("${rootDir}/build.properties")
+	defaultBuildProps = file("${rootDir}/build.properties.default")
 }
 
 // caller,callee,calleeDir
 def macOsFixups = """\
-	ParliamentAdmin,libboost_filesystem-,@rpath
-	ParliamentAdmin,libParliament,@rpath
-	libParliament,libdb-,${System.getenv('BDB_HOME')}/lib
-	libParliament,libboost_atomic-,@rpath
-	libParliament,libboost_chrono-,@rpath
-	libParliament,libboost_filesystem-,@rpath
-	libParliament,libboost_log-,@rpath
-	libParliament,libboost_log_setup-,@rpath
-	libParliament,libboost_thread-,@rpath
-	libboost_log_setup-,libboost_atomic-,@rpath
-	libboost_log_setup-,libboost_chrono-,@rpath
-	libboost_log_setup-,libboost_filesystem-,@rpath
-	libboost_log_setup-,libboost_log-,@rpath
-	libboost_log_setup-,libboost_thread-,@rpath
-	libboost_log-,libboost_atomic-,@rpath
-	libboost_log-,libboost_chrono-,@rpath
-	libboost_log-,libboost_filesystem-,@rpath
-	libboost_log-,libboost_thread-,@rpath""".stripIndent()
+	ParliamentAdmin,libboost_filesystem-,@rpath/
+	ParliamentAdmin,libParliament,@rpath/
+	libParliament,libboost_atomic-,@rpath/
+	libParliament,libboost_chrono-,@rpath/
+	libParliament,libboost_container-,@rpath/
+	libParliament,libboost_date_time-,@rpath/
+	libParliament,libboost_filesystem-,@rpath/
+	libParliament,libgflags,@rpath/
+	libParliament,libboost_log-,@rpath/
+	libParliament,libboost_log_setup-,@rpath/
+	libParliament,libboost_regex-,@rpath/
+	libParliament,libboost_serialization-,@rpath/
+	libParliament,libboost_thread-,@rpath/
+	libParliament,liblz4,${System.getenv('LZ4_HOME')}/lib/
+	libParliament,librocksdb,
+	libParliament,libzstd,${System.getenv('ZSTD_HOME')}/lib/
+	libboost_log_setup-,libboost_atomic-,@rpath/
+	libboost_log_setup-,libboost_chrono-,@rpath/
+	libboost_log_setup-,libboost_container-,@rpath/
+	libboost_log_setup-,libboost_date_time-,@rpath/
+	libboost_log_setup-,libboost_filesystem-,@rpath/
+	libboost_log_setup-,libboost_log-,@rpath/
+	libboost_log_setup-,libboost_regex-,@rpath/
+	libboost_log_setup-,libboost_serialization-,@rpath/
+	libboost_log_setup-,libboost_thread-,@rpath/
+	libboost_log-,libboost_atomic-,@rpath/
+	libboost_log-,libboost_chrono-,@rpath/
+	libboost_log-,libboost_container-,@rpath/
+	libboost_log-,libboost_date_time-,@rpath/
+	libboost_log-,libboost_filesystem-,@rpath/
+	libboost_log-,libboost_regex-,@rpath/
+	libboost_log-,libboost_thread-,@rpath/
+	libboost_thread-,libboost_atomic-,@rpath/
+	libboost_thread-,libboost_chrono-,@rpath/
+	libboost_thread-,libboost_container-,@rpath/
+	libboost_thread-,libboost_date_time-,@rpath/
+	librocksdb,libgflags,@rpath/
+	librocksdb,liblz4,${System.getenv('LZ4_HOME')}/lib/
+	librocksdb,libzstd,${System.getenv('ZSTD_HOME')}/lib/""".stripIndent()
 
 // caller
 def linuxFixups = """\
@@ -40,12 +67,13 @@ def linuxFixups = """\
 	libParliament
 	libboost_log_setup-
 	libboost_log-
-	libboost_filesystem-""".stripIndent()
+	librocksdb
+	liblz4""".stripIndent()
 
 dependencies {
-	api "$jenaArqDependency"
-	implementation "$slf4jApiDependency"
-	testImplementation "$logbackDependency"
+	api libs.jenaArq
+	implementation libs.slf4jApi
+	testImplementation libs.logback
 }
 
 configurations.all {
@@ -53,12 +81,15 @@ configurations.all {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
 }
 
 compileJava {
-	options.compilerArgs << '-h' << "$jniHeaderGenDir"
+	options.headerOutputDirectory = jniHeaderGenDir
 }
 
 task sourcesJar(type: Jar) {
@@ -91,7 +122,7 @@ tasks.named("assemble") {
 testing {
 	suites {
 		test {
-			useJUnitJupiter("$jupiterVersion")
+			useJUnitJupiter(libs.versions.jupiterVer)
 		}
 	}
 }
@@ -101,25 +132,74 @@ test {
 	systemProperty 'java.library.path', "${deployableDir}/bin"
 }
 
+String getToolSet() {
+	def os = System.getProperty('os.name').toLowerCase()
+	if (os.contains('windows')) {
+		return 'msvc'
+	} else if (os.contains('mac')) {
+		return 'clang'
+	} else {
+		return 'gcc'
+	}
+}
+
+String[] getB2CommandLine() {
+	def p = ~'^nativeBuildParams[ \t]*=(.*)$'
+	def toolSet = getToolSet()
+	def propsFile = buildProps.exists() ? buildProps : defaultBuildProps
+	List<String[]> paramsList = Files.lines(propsFile.toPath(), StandardCharsets.UTF_8)
+		.map(String::strip)
+		.map(p::matcher)
+		.filter(Matcher::matches)
+		.map(m -> m.group(1))
+		.map(String::strip)
+		.filter(str -> str.contains(toolSet))
+		.map(str -> str.split(" +"))
+		.toList();
+	if (paramsList.size() < 1) {
+		throw new GradleException("Unable to find a build parameter set in $propsFile")
+	} else if (paramsList.size() > 1) {
+		println("Warning: Multiple build parameter sets are active in $propsFile")
+	}
+	def params = new ArrayList<String>();
+	params.add('b2');
+	params.add('-q');
+	params.addAll(List.of(paramsList.getFirst()))
+	return params.toArray(new String[0])
+}
+
 task buildTest(type:Exec) {
-	commandLine 'b2', '-q', '-j8', 'address-model=64', 'variant=release'
+	commandLine getB2CommandLine()
 	workingDir "$projectDir/Test"
 }
 
-task buildAdminClient(type:Exec, dependsOn: 'buildKbCore') {
-	commandLine 'b2', '-q', '-j8', 'address-model=64', 'variant=release'
-	workingDir "$projectDir/AdminClient"
-	environment 'NATIVE_CODE_INSTALL_DIR', "${deployableDir}/bin"
-}
-
-task buildKbCore(type:Exec, dependsOn: compileJava) {
-	commandLine 'b2', '-q', '-j8', 'address-model=64', 'variant=release'
+task buildKbCore(type:Exec, dependsOn: 'compileJava') {
+	commandLine getB2CommandLine()
 	workingDir "$projectDir/KbCore"
 	environment 'GENERATED_JNI_HEADER_DIR', "$jniHeaderIncludeDir"
 	environment 'NATIVE_CODE_INSTALL_DIR', "${deployableDir}/bin"
 }
 
-task fixupSharedLibs(dependsOn: 'buildAdminClient') {
+task buildAdminClient(type:Exec, dependsOn: 'buildKbCore') {
+	commandLine getB2CommandLine()
+	workingDir "$projectDir/AdminClient"
+	environment 'NATIVE_CODE_INSTALL_DIR', "${deployableDir}/bin"
+}
+
+task fixupSharedLibs(dependsOn: 'createFixupSharedLibsScript', type: Exec) {
+	onlyIf("Running on Mac OS or Linux") {
+		def os = System.getProperty('os.name').toLowerCase()
+		os.contains('mac') || os.contains('linux')
+	}
+	executable = 'bash'
+	args = ['-c', ". $fixupScript"]
+	workingDir "${deployableDir}/bin"
+	//standardOutput = System.out
+	//errorOutput = System.err
+	//ignoreExitValue = false
+}
+
+task createFixupSharedLibsScript(dependsOn: 'buildAdminClient') {
 	doLast {
 		def pattern = ~/.*/
 		def replacement = ''
@@ -130,7 +210,7 @@ task fixupSharedLibs(dependsOn: 'buildAdminClient') {
 			// The parenthesis around the callee value cause the evaluation of the
 			// glob to an array, and subsequent expansion of callee gets the first
 			// (and hopefully only) element in the array:
-			replacement = 'callee=($2*) ; install_name_tool -change $3/\\$callee @loader_path/\\$callee $1*'
+			replacement = 'callee=($2*) ; install_name_tool -change $3\\$callee @loader_path/\\$callee $1*'
 			matcher = macOsFixups =~ pattern
 		} else if (os.contains('linux')) {
 			pattern = ~/(?m)^([^\n]*)$/
@@ -144,10 +224,6 @@ task fixupSharedLibs(dependsOn: 'buildAdminClient') {
 				writer.writeLine '#!/bin/bash'
 				writer.writeLine ''
 				writer.writeLine commands
-			}
-			exec {
-				commandLine 'bash', '-c', ". $fixupScript"
-				workingDir "${deployableDir}/bin"
 			}
 		}
 	}

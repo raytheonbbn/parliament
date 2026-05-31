@@ -66,7 +66,8 @@ public class KbUpdateEngine extends UpdateEngineBase {
 	public UpdateSink getUpdateSink() {
 		if (updateSink == null) {
 			var worker = new KbUpdateEngineWorker((KbGraphStore) datasetGraph, inputBinding, context);
-			updateSink = new UpdateVisitorSink(worker);
+			//TODO: I just added the two nulls to match the new constructor in Jena V4. Are they correct?
+			updateSink = new UpdateVisitorSink(worker, null, null);
 		}
 		return updateSink;
 	}

@@ -20,7 +20,7 @@ public class StandardProfile implements Profile {
 	private OperationFactory operationFactory;
 	private SpatialPropertyFunctionFactory pfuncFactory;
 
-	public StandardProfile(Properties props, Graph graph) {
+	public StandardProfile(@SuppressWarnings("unused") Properties props, Graph graph) {
 		this.recordFactory = new StandardRecordFactory(graph);
 		this.operationFactory = new StandardOperationFactory();
 		this.pfuncFactory = new SpatialPropertyFunctionFactory(operationFactory, SpatialOperandFactory.class);

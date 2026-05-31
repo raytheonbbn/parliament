@@ -21,29 +21,27 @@ public abstract class SQLGeometryIndex extends SpatialIndex {
 	protected static Logger LOG = LoggerFactory.getLogger(SQLGeometryIndex.class);
 
 	protected PersistentStore store;
+	protected String tableName;
 	private String jdbcUrl;
 	private String userName;
 	private String password;
-	protected String tableName;
 
-	public SQLGeometryIndex(Profile profile, Properties configuration, String cleanGraphName, String indexDir) {
+	@SuppressWarnings("this-escape")
+	public SQLGeometryIndex(Profile profile, Properties configuration,
+			String cleanGraphName, String indexDir) {
 		super(profile, configuration, indexDir);
-		initialize(cleanGraphName);
-	}
-
-	protected void initialize(String cleanGraphName) throws SpatialIndexException {
+		store = null;
 		tableName = cleanGraphName;
+		jdbcUrl = configuration.getProperty(Constants.JDBC_URL);
 		userName = configuration.getProperty(Constants.USERNAME);
 		password = configuration.getProperty(Constants.PASSWORD);
-		jdbcUrl = configuration.getProperty(Constants.JDBC_URL);
 
-		if (jdbcUrl == null) {
-			throw new SpatialIndexException(this, "Property '" + Constants.JDBC_URL + "' must be set.");
+		if (jdbcUrl == null || jdbcUrl.isBlank()) {
+			throw new SpatialIndexException(this,
+				"Property '%1$s' must be set.".formatted(Constants.JDBC_URL));
 		}
-		doInitialize();
 	}
 
-	protected abstract void doInitialize();
 	protected abstract void indexOpenSQL();
 
 	public String getTableName() {

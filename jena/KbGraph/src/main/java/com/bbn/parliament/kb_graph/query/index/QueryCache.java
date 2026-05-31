@@ -12,7 +12,7 @@ public class QueryCache<T> extends LinkedHashMap<Node, T> {
 	private static final long serialVersionUID = 1L;
 
 	int maxSize;
-	private Map<Var, Node> blankNodeMap;
+	private LinkedHashMap<Var, Node> blankNodeMap;
 
 	public QueryCache(int size) {
 		super(size);

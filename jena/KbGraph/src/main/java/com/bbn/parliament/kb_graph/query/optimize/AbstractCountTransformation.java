@@ -2,6 +2,7 @@ package com.bbn.parliament.kb_graph.query.optimize;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
@@ -34,59 +35,57 @@ public abstract class AbstractCountTransformation extends AbstractKbGraphReorder
 	protected List<Triple> orderByCounts(List<Triple> triples,
 		List<Node> boundVariables, long currentResultSetEstimate,
 		boolean useNewOrderingHeuristic) {
-		// compute counts based on constant values
-
-		List<TriplePatternCount> triplePatterns = calculateTriplePatternCounts(triples);
+		// compute counts based on constant values:
+		var tpCounts = calculateTriplePatternCounts(triples);
 
 		long start = System.currentTimeMillis();
 		LOG.debug("Beginning Graph Ordering");
-		OrderExpressionResult orderExpressionResult = orderExpressions(triplePatterns,
+		var orderExpressionResult = orderExpressions(tpCounts,
 			boundVariables,
 			currentResultSetEstimate,
 			useNewOrderingHeuristic,
 			Integer.MAX_VALUE);
 
-		long end = System.currentTimeMillis() - start;
-		LOG.debug("Ending Graph Ordering, took {} ms", end);
-		LOG.debug("Result: {}", orderExpressionResult);
+		if (LOG.isDebugEnabled()) {
+			long duration = System.currentTimeMillis() - start;
+			LOG.debug("Ending Graph Ordering, took {} ms", duration);
+			LOG.debug("Result: {}", orderExpressionResult);
+		}
 		return orderExpressionResult.getExpressionList();
 	}
 
-	protected List<TriplePatternCount> calculateTriplePatternCounts(
-		List<Triple> triples) {
-		List<TriplePatternCount> triplePatterns = new ArrayList<>();
-		LOG.debug("Beginning Count Outputs");
-		for (Triple tp : triples) {
-			long min = getTripleMinimum(tp);
-
-			TriplePatternCount tpc = new TriplePatternCount(tp, min);
-			triplePatterns.add(tpc);
-			LOG.debug("TripleCount: {}", tpc);
+	protected List<TriplePatternCount> calculateTriplePatternCounts(List<Triple> triples) {
+		var tpCounts = triples.stream()
+			.map(tp -> new TriplePatternCount(tp, getTripleMinimum(tp)))
+			.collect(Collectors.toCollection(ArrayList::new));
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Beginning Count Outputs");
+			tpCounts.forEach(tpc -> LOG.debug("   TripleCount: {}", tpc));
+			LOG.debug("Ending Count Outputs");
 		}
-		LOG.debug("Ending Count Outputs");
-		return triplePatterns;
+		return tpCounts;
 	}
 
 	protected long getTripleMinimum(Triple tp) {
 		long min = Long.MAX_VALUE;
 
-		if (!isPartOfReification(tp)){
+		if (!isPartOfReification(tp)) {
 			min = checkVar(min, tp.getSubject(), 1);
 			min = checkVar(min, tp.getPredicate(), 2);
 			min = checkVar(min, tp.getObject(), 3);
-			if (tp instanceof ReifiedTriple reifTriple) {
-				min = checkVar(min, reifTriple.getName(),3);
+			if (tp instanceof ReifiedTriple rtp) {
+				min = checkVar(min, rtp.getName(), 3);
 			}
-		}else{
+		} else {
 			min = checkVar(min, tp.getSubject(), 3);
-			if (tp.getPredicate().getURI().equals(RDF.subject.getURI())){
-				min = checkVar(min, tp.getObject(),1);
+			if (tp.getPredicate().equals(RDF.Nodes.subject)) {
+				min = checkVar(min, tp.getObject(), 1);
 			}
-			if (tp.getPredicate().getURI().equals(RDF.predicate.getURI())){
-				min = checkVar(min, tp.getObject(),2);
+			if (tp.getPredicate().equals(RDF.Nodes.predicate)) {
+				min = checkVar(min, tp.getObject(), 2);
 			}
-			if (tp.getPredicate().getURI().equals(RDF.object.getURI())){
-				min = checkVar(min, tp.getObject(),3);
+			if (tp.getPredicate().equals(RDF.Nodes.object)) {
+				min = checkVar(min, tp.getObject(), 3);
 			}
 			//if rdf:type rdf:Statement, don't need to do anything
 		}
@@ -94,17 +93,15 @@ public abstract class AbstractCountTransformation extends AbstractKbGraphReorder
 	}
 
 	private static boolean isPartOfReification(Triple tp) {
-		if ((tp instanceof ReifiedTriple) || !tp.getPredicate().isConcrete()) {
+		if (tp instanceof ReifiedTriple || !tp.getPredicate().isConcrete()) {
 			return false;
 		}
-		String pURI = tp.getPredicate().getURI();
-		if (pURI.equals(RDF.subject.getURI()) || pURI.equals(RDF.predicate.getURI())
-			|| pURI.equals(RDF.object.getURI()) || (pURI.equals(RDF.type.getURI())
-				&& tp.getObject().isConcrete() && tp.getObject().isURI()
-				&& tp.getObject().getURI().equals(RDF.Statement.getURI()))) {
-			return true;
-		}
-		return false;
+		var pred = tp.getPredicate();
+		return pred.equals(RDF.Nodes.subject)
+			|| pred.equals(RDF.Nodes.predicate)
+			|| pred.equals(RDF.Nodes.object)
+			|| (pred.equals(RDF.Nodes.type)
+				&& tp.getObject().equals(RDF.Nodes.Statement));
 	}
 
 	protected static OrderExpressionResult orderExpressions(
@@ -120,19 +117,14 @@ public abstract class AbstractCountTransformation extends AbstractKbGraphReorder
 				boundVariables,
 				currentEstimate,
 				useNewOrderingHeuristic);
-			if (tpc.estimate > 0) {
-				currentEstimate = tpc.estimate;
-			} else {
-				currentEstimate = 1;
-			}
+			currentEstimate = (tpc.estimate > 0) ? tpc.estimate : 1;
 			boundVariables.addAll(OptimizeUtil.getVariables(tpc.triple));
 			result.add(tpc.triple);
 			triplePatterns.remove(tpc);
-			triplesAdded++;
+			++triplesAdded;
 		}
 
-		return new OrderExpressionResult(result, currentEstimate,
-			boundVariables);
+		return new OrderExpressionResult(result, currentEstimate, boundVariables);
 	}
 
 	private static TriplePatternCount findNextTriplePatternCount(
@@ -140,16 +132,13 @@ public abstract class AbstractCountTransformation extends AbstractKbGraphReorder
 		long currentResultSetEstimate, boolean useNewOrderingHeuristic) {
 		TriplePatternCount minTriplePatternCount = triplePatterns.get(0);
 		if (!useNewOrderingHeuristic) {
-			setEstimate(minTriplePatternCount, boundVariables,
-				currentResultSetEstimate);
+			setEstimate(minTriplePatternCount, boundVariables, currentResultSetEstimate);
 		} else {
-			newSetEstimate(minTriplePatternCount, boundVariables,
-				currentResultSetEstimate);
+			newSetEstimate(minTriplePatternCount, boundVariables, currentResultSetEstimate);
 		}
 		for (int i = 1; i < triplePatterns.size(); i++) {
 			TriplePatternCount triplePatternCount = triplePatterns.get(i);
-			setEstimate(triplePatternCount, boundVariables,
-				currentResultSetEstimate);
+			setEstimate(triplePatternCount, boundVariables, currentResultSetEstimate);
 			if (triplePatternCount.estimate < minTriplePatternCount.estimate) {
 				minTriplePatternCount = triplePatternCount;
 			}

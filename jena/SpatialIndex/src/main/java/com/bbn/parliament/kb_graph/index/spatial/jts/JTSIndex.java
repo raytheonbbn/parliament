@@ -41,7 +41,7 @@ public class JTSIndex extends com.bbn.parliament.kb_graph.index.spatial.SpatialI
 		initialize(configuration, indexDir);
 	}
 
-	private static void initialize(Properties properties, String indexDir) {
+	private static void initialize(@SuppressWarnings("unused") Properties properties, String indexDir) {
 		File indexFile = new File(indexDir);
 		if (!indexFile.exists()) {
 			indexFile.mkdirs();
@@ -88,7 +88,7 @@ public class JTSIndex extends com.bbn.parliament.kb_graph.index.spatial.SpatialI
 		Geometry extent = r.getValue();
 		synchronized (indexLock) {
 			index.insert(extent.getEnvelopeInternal(), extent);
-			extentsToNodes.computeIfAbsent(extent.toText(), k -> new ArrayList<>()).add(node);
+			extentsToNodes.computeIfAbsent(extent.toText(), _ -> new ArrayList<>()).add(node);
 			return true;
 		}
 	}

@@ -22,8 +22,7 @@ import com.sleepycat.je.SecondaryCursor;
 import com.sleepycat.je.SecondaryDatabase;
 
 /** @author dkolas */
-public class PersistentTemporalExtentIterator implements
-ClosableIterator<Record<TemporalExtent>> {
+public class PersistentTemporalExtentIterator implements ClosableIterator<Record<TemporalExtent>> {
 	private long minStart;
 	private long minEnd;
 	private long maxStart;
@@ -50,6 +49,7 @@ ClosableIterator<Record<TemporalExtent>> {
 
 	private boolean closed = false;
 
+	@SuppressWarnings("this-escape")
 	public PersistentTemporalExtentIterator(PersistentTemporalIndex index,
 		long minStart, long maxStart,
 		long minEnd, long maxEnd) {

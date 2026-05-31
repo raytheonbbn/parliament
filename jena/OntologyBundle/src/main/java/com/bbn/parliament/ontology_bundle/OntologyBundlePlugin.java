@@ -161,6 +161,11 @@ public class OntologyBundlePlugin implements Plugin<Project> {
 		return extension;
 	}
 
+	/// Default constructor for the OntologyBundlePlugin class
+	public OntologyBundlePlugin() {
+		// Do nothing
+	}
+
 	@Override
 	public void apply(Project project) {
 		// Add our extension:

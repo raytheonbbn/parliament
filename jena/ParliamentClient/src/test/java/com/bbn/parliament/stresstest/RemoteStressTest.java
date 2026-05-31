@@ -6,58 +6,45 @@
 
 package com.bbn.parliament.stresstest;
 
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import com.bbn.parliament.client.RemoteModel;
 
 /** @author jlerner */
-public class RemoteStressTest extends AbstractStressTest
-{
-	private static final String PROP_SPARQL_URL       = "remote.server.sparql.url";
-	private static final String PROP_BULK_URL         = "remote.server.bulk.url";
-	//private static final String WATERMARK_STATEMENT   = "<http://foo> <http://doowacky> <http://bar> .";
-	//private static final String WATERMARK_QUERY       = "CONSTRUCT * FROM {<http://foo>} <http://doowacky> {<http://bar>}";
+public class RemoteStressTest extends AbstractStressTest {
+	private static final String PROP_SPARQL_URL = "remote.server.sparql.url";
+	private static final String PROP_BULK_URL   = "remote.server.bulk.url";
 
 	private RemoteModel _repository;
 
-	public RemoteStressTest(int numThreads, int numThreadLoops,
-		int writerPercentage)
-	{
+	public RemoteStressTest(int numThreads, int numThreadLoops, int writerPercentage) {
 		super(numThreads, numThreadLoops, writerPercentage);
 	}
 
-	public RemoteStressTest(int numThreads, int numThreadLoops,
-		int writerPercentage, boolean csv)
-	{
+	public RemoteStressTest(int numThreads, int numThreadLoops, int writerPercentage,
+		boolean csv) {
+
 		super(numThreads, numThreadLoops, writerPercentage, csv);
 	}
 
 	@Override
-	protected void cleanupTestRepository()
-	{
-		if (getWriterPercentage() > 0)
-		{
-			try
-			{
+	protected void cleanupTestRepository() {
+		if (getWriterPercentage() > 0) {
+			try {
 				System.out.println("Clearing remote repository");
-				//_repository.clear(new DummyAdminListener());
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-		else
-		{
+		} else {
 			System.out.println("Skipping remote repository clear, since there were no writers.");
 		}
 	}
 
 	@Override
-	protected RemoteModel prepareTestRepository() throws Exception
-	{
-		URL sparqlUrl = new URL(getProperties().getProperty(PROP_SPARQL_URL));
-		URL bulkUrl = new URL(getProperties().getProperty(PROP_BULK_URL));
+	protected RemoteModel prepareTestRepository() throws URISyntaxException {
+		var sparqlUrl = new URI(getProperties().getProperty(PROP_SPARQL_URL));
+		var bulkUrl = new URI(getProperties().getProperty(PROP_BULK_URL));
 		_repository = new RemoteModel(sparqlUrl.toString(), bulkUrl.toString());
 
 		return _repository;

@@ -15,6 +15,8 @@ import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.PrecisionModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.kb_graph.index.spatial.standard.data.BufferedGeometry;
 import com.bbn.parliament.kb_graph.index.spatial.standard.data.FloatingCircle;
@@ -24,6 +26,7 @@ public class SpatialGeometryFactory {
 		PrecisionModel.FLOATING);
 	public static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(
 		PRECISION_MODEL, com.bbn.parliament.kb_graph.index.spatial.Constants.WGS84_SRID);
+	private static final Logger LOG = LoggerFactory.getLogger(SpatialGeometryFactory.class);
 
 	public static Coordinate getCoordinateFromPos(String pos) {
 		if (null == pos) {
@@ -40,12 +43,10 @@ public class SpatialGeometryFactory {
 		return c;
 	}
 
-	/**
-	 * Get coordinates from the position list.
-	 *
-	 * @param posList the position list
-	 * @return the coordinate representation of the string.
-	 */
+	/// Get coordinates from the position list.
+	///
+	/// @param posList the position list
+	/// @return the coordinate representation of the string
 	public static Coordinate[] getCoordinatesFromPosList(String posList) {
 		String[] degrees = posList.split(" ");
 		if (degrees.length % 2 != 0) {
@@ -71,13 +72,11 @@ public class SpatialGeometryFactory {
 		return n;
 	}
 
-	/**
-	 * Converts an array of coordinates into a ring by ensuring that the first
-	 * and last coordinate are the same.
-	 *
-	 * @param coords the coordinates
-	 * @return a ring of coordinates.
-	 */
+	/// Converts an array of coordinates into a ring by ensuring that the first and
+	/// last coordinate are the same.
+	///
+	/// @param coords the array of coordinates
+	/// @return a ring of coordinates
 	public static Coordinate[] makeRing(Coordinate[] coords) {
 		Coordinate[] ret = coords;
 		if (!(ret[0].equals(ret[ret.length - 1]))) {
@@ -218,50 +217,38 @@ public class SpatialGeometryFactory {
 		return geom;
 	}
 
-	/**
-	 * Get the UTM Zone SRID for a given geometry
-	 *
-	 * @param geometry the geometry to lookup.
-	 * @return the geometry's UTM SRID
-	 */
-	public static int UTMZoneSRID(Geometry geometry) {
+	/// Get the UTM Zone SRID for a given geometry
+	///
+	/// @param geometry the geometry to lookup
+	/// @return the geometry's UTM SRID
+	public static int utmZoneSrid(Geometry geometry) {
 		Point p = geometry.getCentroid();
-		int srid = 0;
 		double lat = p.getY();
 		double lon = p.getX();
 
-		if (lat > 0) {
-			srid = 32600;
-		} else {
-			srid = 32700;
-		}
+		// The min function ensures that longitude 180.00 is in zone 60:
+		int zone = Math.min(60, (int) Math.floor((lon + 186d) / 6d));
 
-		double zone = Math.floor(((lon + 186d)) / 6);
-
-		// make sure longitude 180.00 is in zone 60
-		if (((Double) lon).equals(180D)) {
-			zone = 60;
-		}
-
-		// special zone for Norway
-		if (lat >= 56D && lat < 64D && lon >= 3D && lon <= 12D) {
+		if (lat >= 56d && lat < 64d && lon >= 3d && lon <= 12d) {
+			// Special zone for Norway:
 			zone = 32;
-		}
-
-		// special zones for Svalbard
-		if (lat >= 72D && lat < 84D) {
-			if (lon >= 0D && lon < 9D) {
+		} else if (lat >= 72d && lat < 84d) {
+			// Special zones for Svalbard:
+			if (lon >= 0d && lon < 9d) {
 				zone = 31;
-			} else if (lon >= 9D && lon < 21D) {
+			} else if (lon >= 9d && lon < 21d) {
 				zone = 33;
-			} else if (lon >= 21D && lon < 33D) {
+			} else if (lon >= 21d && lon < 33d) {
 				zone = 35;
-			} else if (lon >= 33D && lon < 42D) {
+			} else if (lon >= 33d && lon < 42d) {
 				zone = 37;
 			}
 		}
-		srid += zone;
 
+		int srid = (lat > 0)
+			? 32600
+			: 32700;
+		srid += zone;
 		return srid;
 	}
 }

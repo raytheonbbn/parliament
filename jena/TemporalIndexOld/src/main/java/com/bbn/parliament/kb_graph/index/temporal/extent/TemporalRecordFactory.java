@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.bbn.parliament.kb_graph.index.temporal.extent;
 
 import java.util.ArrayList;

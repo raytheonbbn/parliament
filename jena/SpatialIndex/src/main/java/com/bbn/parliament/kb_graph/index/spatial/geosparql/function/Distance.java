@@ -7,6 +7,11 @@ import org.apache.jena.query.QueryExecException;
 import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.sparql.function.FunctionEnv;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.NoSuchAuthorityCodeException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.GeodeticCalculator;
@@ -14,11 +19,6 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.operation.distance.DistanceOp;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 
 import com.bbn.parliament.kb_graph.index.spatial.geosparql.datatypes.GeoSPARQLLiteral;
 import com.bbn.parliament.kb_graph.index.spatial.geosparql.vocabulary.UOM;
@@ -48,8 +48,8 @@ public class Distance extends DoubleGeometrySpatialFunction {
 		Node unitsNode = units.getNode();
 		if (UOM.Nodes.metre.equals(unitsNode)) {
 			// transform to UTM zones
-			int srid1 = SpatialGeometryFactory.UTMZoneSRID(m1.getEnvelope());
-			int srid2 = SpatialGeometryFactory.UTMZoneSRID(m2.getEnvelope());
+			int srid1 = SpatialGeometryFactory.utmZoneSrid(m1.getEnvelope());
+			int srid2 = SpatialGeometryFactory.utmZoneSrid(m2.getEnvelope());
 			try {
 				if (srid1 == srid2) {
 					destination = CRS.decode("EPSG:" + srid1);
