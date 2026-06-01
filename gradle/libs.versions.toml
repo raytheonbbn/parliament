@@ -3,7 +3,7 @@
 [versions]
 gtVer = "34.4"
 jena3Ver = "3.17.0"
-# Note: If you change jenaVer, you should probably also change it in
+# Note: If you change jenaVer, you should probably also change it (in 2 places) in
 # OntologyBundle/src/main/java/com/bbn/parliament/ontology_bundle/OntologyBundleExtension.java
 jenaVer = "4.10.0"
 jupiterVer = "6.1.0"
@@ -15,6 +15,7 @@ commonsCsv = "org.apache.commons:commons-csv:1.14.1"
 commonsDbcp = "commons-dbcp:commons-dbcp:1.4"
 commonsIo = "commons-io:commons-io:2.22.0"
 commonsLang = "org.apache.commons:commons-lang3:3.20.0"
+findBugs = "com.google.code.findbugs:annotations:3.0.1u2"
 geotoolsEpsgExt = { module = "org.geotools:gt-epsg-extension", version.ref = "gtVer" }		# gt2-
 geotoolsEpsgHsql = { module = "org.geotools:gt-epsg-hsql", version.ref = "gtVer" }			# gt2-
 geotoolsEpsgWkt = { module = "org.geotools:gt-epsg-wkt", version.ref = "gtVer" }				# gt2-

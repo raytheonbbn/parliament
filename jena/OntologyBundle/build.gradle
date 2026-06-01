@@ -59,6 +59,7 @@ repositories {
 }
 
 dependencies {
+	compileOnly libs.findBugs
 	implementation libs.commonsCsv
 	implementation libs.jenaCmds
 	implementation libs.queryBuilder

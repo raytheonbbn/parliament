@@ -69,7 +69,7 @@ public class OntologyBundleExtension {
 		generatedTestDir = objFact.directoryProperty()
 			.convention(buildDir.dir("generated/test/java"));
 		jenaVersion = objFact.property(String.class)
-			.convention("4.9.0");
+			.convention("4.10.0");
 	}
 
 	/**
@@ -275,7 +275,7 @@ public class OntologyBundleExtension {
 
 	/**
 	 * The version of the Jena libraries that the generated jar will depend upon.
-	 * This is set to 4.9.0 by default.
+	 * This is set to 4.10.0 by default.
 	 *
 	 * @return The version of the Jena libraries used
 	 */
