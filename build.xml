@@ -53,9 +53,14 @@
 		<delete dir="${basedir}/jena/ParliamentClient/bin"/>
 		<delete dir="${basedir}/jena/NumericIndex/bin"/>
 		<delete dir="${basedir}/jena/SparqlQueryBuilder/bin"/>
+		<delete dir="${basedir}/jena/SparqlQueryBuilderJ3/bin"/>
 		<delete dir="${basedir}/jena/SpatialIndex/bin"/>
 		<delete dir="${basedir}/jena/TemporalIndex/bin"/>
+		<delete dir="${basedir}/jena/TemporalIndex/indexes"/>
+		<delete dir="${basedir}/jena/TemporalIndex/kb-data"/>
 		<delete dir="${basedir}/jena/TemporalIndexOld/bin"/>
+		<delete dir="${basedir}/jena/TemporalIndexOld/indexes"/>
+		<delete dir="${basedir}/jena/TemporalIndexOld/kb-data"/>
 		<delete dir="${basedir}/Parliament/bin"/>
 		<delete dir="${basedir}/Parliament/JniAssessments/bin"/>
 		<delete file="${basedir}/Parliament/AdminClient/.settings/language.settings.xml"/>
