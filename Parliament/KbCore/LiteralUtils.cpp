@@ -13,15 +13,12 @@
 #include <algorithm>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/thread/once.hpp>
 #include <iterator>
 
 namespace pmnt = ::bbn::parliament;
 
-using ::boost::bad_lexical_cast;
 using ::boost::format;
-using ::boost::lexical_cast;
 using ::boost::numeric_cast;
 using ::std::advance;
 using ::std::any_of;
@@ -60,11 +57,11 @@ void pmnt::LiteralUtils::unsynchronizedInitUriToEnumMap()
 	UriLib ul;
 
 	auto notConvertible = [](const RsrcString& lexicalForm) -> double
-		{ throw bad_lexical_cast(); };
+		{ throw NumericConversionException("Unable to convert string to numeric"); };
 	auto int64Converter = [](const RsrcString& lexicalForm)
-		{ return numeric_cast<double>(lexical_cast<int64>(convertFromRsrcChar(lexicalForm))); };
+		{ return numeric_cast<double>(strTo<int64>(convertFromRsrcChar(lexicalForm))); };
 	auto uint64Converter = [](const RsrcString& lexicalForm)
-		{ return numeric_cast<double>(lexical_cast<uint64>(convertFromRsrcChar(lexicalForm))); };
+		{ return numeric_cast<double>(strTo<uint64>(convertFromRsrcChar(lexicalForm))); };
 
 	g_uriToEnumMap[ul.m_ptIntervalLiteral.strNoCache()] = notConvertible;
 
@@ -80,7 +77,7 @@ void pmnt::LiteralUtils::unsynchronizedInitUriToEnumMap()
 	g_uriToEnumMap[ul.m_xsdBase64Binary.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdBoolean.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdByte.strNoCache()] = [](const RsrcString& lexicalForm)
-		{ return numeric_cast<double>(lexical_cast<int8>(convertFromRsrcChar(lexicalForm))); };
+		{ return numeric_cast<double>(strTo<int8>(convertFromRsrcChar(lexicalForm))); };
 	g_uriToEnumMap[ul.m_xsdDate.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdDateTime.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdDateTimeStamp.strNoCache()] = notConvertible;
@@ -89,7 +86,7 @@ void pmnt::LiteralUtils::unsynchronizedInitUriToEnumMap()
 	g_uriToEnumMap[ul.m_xsdDouble.strNoCache()] = defaultConversion;
 	g_uriToEnumMap[ul.m_xsdDuration.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdFloat.strNoCache()] = [](const RsrcString& lexicalForm)
-		{ return numeric_cast<double>(lexical_cast<float>(convertFromRsrcChar(lexicalForm))); };
+		{ return numeric_cast<double>(strTo<float>(convertFromRsrcChar(lexicalForm))); };
 	g_uriToEnumMap[ul.m_xsdGDay.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdGMonth.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdGMonthDay.strNoCache()] = notConvertible;
@@ -97,7 +94,7 @@ void pmnt::LiteralUtils::unsynchronizedInitUriToEnumMap()
 	g_uriToEnumMap[ul.m_xsdGYearMonth.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdHexBinary.strNoCache()] = notConvertible;	// Questionable
 	g_uriToEnumMap[ul.m_xsdInt.strNoCache()] = [](const RsrcString& lexicalForm)
-		{ return numeric_cast<double>(lexical_cast<int32>(convertFromRsrcChar(lexicalForm))); };
+		{ return numeric_cast<double>(strTo<int32>(convertFromRsrcChar(lexicalForm))); };
 	g_uriToEnumMap[ul.m_xsdInteger.strNoCache()] = int64Converter;
 	g_uriToEnumMap[ul.m_xsdLanguage.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdLong.strNoCache()] = int64Converter;
@@ -110,17 +107,17 @@ void pmnt::LiteralUtils::unsynchronizedInitUriToEnumMap()
 	g_uriToEnumMap[ul.m_xsdNormalizedString.strNoCache()] = defaultConversion;
 	g_uriToEnumMap[ul.m_xsdPositiveInteger.strNoCache()] = uint64Converter;
 	g_uriToEnumMap[ul.m_xsdShort.strNoCache()] = [](const RsrcString& lexicalForm)
-		{ return numeric_cast<double>(lexical_cast<int16>(convertFromRsrcChar(lexicalForm))); };
+		{ return numeric_cast<double>(strTo<int16>(convertFromRsrcChar(lexicalForm))); };
 	g_uriToEnumMap[ul.m_xsdString.strNoCache()] = defaultConversion;
 	g_uriToEnumMap[ul.m_xsdTime.strNoCache()] = notConvertible;
 	g_uriToEnumMap[ul.m_xsdToken.strNoCache()] = defaultConversion;
 	g_uriToEnumMap[ul.m_xsdUnsignedByte.strNoCache()] = [](const RsrcString& lexicalForm)
-		{ return numeric_cast<double>(lexical_cast<uint8>(convertFromRsrcChar(lexicalForm))); };
+		{ return numeric_cast<double>(strTo<uint8>(convertFromRsrcChar(lexicalForm))); };
 	g_uriToEnumMap[ul.m_xsdUnsignedInt.strNoCache()] = [](const RsrcString& lexicalForm)
-		{ return numeric_cast<double>(lexical_cast<uint32>(convertFromRsrcChar(lexicalForm))); };
+		{ return numeric_cast<double>(strTo<uint32>(convertFromRsrcChar(lexicalForm))); };
 	g_uriToEnumMap[ul.m_xsdUnsignedLong.strNoCache()] = uint64Converter;
 	g_uriToEnumMap[ul.m_xsdUnsignedShort.strNoCache()] = [](const RsrcString& lexicalForm)
-		{ return numeric_cast<double>(lexical_cast<uint16>(convertFromRsrcChar(lexicalForm))); };
+		{ return numeric_cast<double>(strTo<uint16>(convertFromRsrcChar(lexicalForm))); };
 	g_uriToEnumMap[ul.m_xsdYearMonthDuration.strNoCache()] = notConvertible;
 }
 
@@ -135,7 +132,7 @@ double pmnt::LiteralUtils::convertToDouble(const RsrcString& lexicalForm,
 
 double pmnt::LiteralUtils::defaultConversion(const RsrcString& lexicalForm)
 {
-	return lexical_cast<double>(convertFromRsrcChar(lexicalForm));
+	return strTo<double>(convertFromRsrcChar(lexicalForm));
 }
 
 pmnt::LiteralComponents pmnt::LiteralUtils::parseLiteral(RsrcStringView literal)

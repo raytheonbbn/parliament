@@ -19,11 +19,11 @@
 #include "parliament/StmtIterator.h"
 #include "parliament/SWRLRuleBuilder.h"
 #include "parliament/UnicodeIterator.h"
+#include "parliament/Util.h"
 
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
 #include <iterator>
 #include <memory>
 #include <ostream>
@@ -33,7 +33,6 @@
 namespace pmnt = ::bbn::parliament;
 
 using ::boost::format;
-using ::boost::lexical_cast;
 using ::boost::numeric_cast;
 using ::std::begin;
 using ::std::distance;
@@ -197,7 +196,7 @@ double pmnt::SWRLBuiltinRuleAtom::getDoubleFromLiteralStr(const RsrcChar* pLiter
 			return LiteralUtils::convertToDouble(lexicalForm, datatypeUri);
 		}
 	}
-	catch (const ::boost::bad_lexical_cast& ex)
+	catch (const NumericConversionException& ex)
 	{
 		auto fmt = format("Unable to convert SWRL built-in argument '%1%' to double:  %2%")
 			% pLiteral % ex.what();

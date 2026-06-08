@@ -35,7 +35,7 @@ public:
 	static bool isKnownRdfDatatype(const RsrcString& datatypeUri)
 		{ return g_uriToEnumMap.find(datatypeUri) != end(g_uriToEnumMap); }
 
-	// may throw ::boost::bad_lexical_cast
+	// may throw NumericConversionException
 	static double convertToDouble(const RsrcString& lexicalForm, const RsrcString& datatypeUri);
 
 	static LiteralComponents parseLiteral(RsrcStringView literal);

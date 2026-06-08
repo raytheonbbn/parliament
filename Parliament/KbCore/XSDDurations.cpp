@@ -7,9 +7,9 @@
 #include "parliament/XSDDurations.h"
 #include "parliament/Exceptions.h"
 #include "parliament/UnicodeIterator.h"
+#include "parliament/Util.h"
 
 #include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
 #include <cmath>
 #include <iterator>
 #include <sstream>
@@ -17,7 +17,6 @@
 namespace pmnt = ::bbn::parliament;
 
 using ::boost::format;
-using ::boost::lexical_cast;
 using ::boost::posix_time::time_duration;
 using ::std::ostringstream;
 using ::std::string;
@@ -44,9 +43,9 @@ T convertAndClearBuffer(pmnt::Utf32String& buffer)
 	{
 		auto utf8Buffer = pmnt::convertUtf32ToUtf8(cbegin(buffer), cend(buffer));
 		buffer.clear();
-		return lexical_cast<T>(utf8Buffer);
+		return pmnt::strTo<T>(utf8Buffer);
 	}
-	catch (const ::boost::bad_lexical_cast& ex)
+	catch (const pmnt::NumericConversionException& ex)
 	{
 		throw pmnt::Exception(format("Unable to parse duration string: %1%") % ex.what());
 	}

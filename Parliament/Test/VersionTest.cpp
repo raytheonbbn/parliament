@@ -4,7 +4,6 @@
 // Copyright (c) 2017, BBN Technologies, Inc.
 // All rights reserved.
 
-#include <boost/lexical_cast.hpp>
 #include <boost/test/unit_test.hpp>
 #include <iterator>
 #include <regex>
@@ -12,10 +11,10 @@
 #include <vector>
 
 #include "parliament/Types.h"
+#include "parliament/Util.h"
 #include "parliament/Version.h"
 
 using namespace ::bbn::parliament;
-using ::boost::lexical_cast;
 using ::std::equal;
 using ::std::regex;
 using ::std::smatch;
@@ -43,7 +42,7 @@ BOOST_AUTO_TEST_CASE(testVersionNumber)
 	auto parsedVersions = vector<int>{};
 	for (size_t i = 1; i < size(captures); ++i)
 	{
-		parsedVersions.push_back(lexical_cast<int>(captures[i].str()));
+		parsedVersions.push_back(strTo<int>(captures[i].str()));
 	}
 
 	BOOST_CHECK_EQUAL(size(verArray), size(parsedVersions));

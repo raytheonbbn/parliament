@@ -12,7 +12,6 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/core/null_deleter.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/sinks/async_frontend.hpp>
 #include <boost/log/sinks/text_file_backend.hpp>
@@ -41,7 +40,6 @@ namespace expr = ::boost::log::expressions;
 namespace keywd = ::boost::log::keywords;
 
 using ::boost::format;
-using ::boost::lexical_cast;
 using ::boost::make_iterator_range;
 using ::boost::make_shared;
 using ::boost::posix_time::ptime;
@@ -135,9 +133,9 @@ static RotationAtTimePoint rotTimeFromString(const string& rotTime)
 	{
 		try
 		{
-			auto hours = lexical_cast<uint16>(captures[1].str());
-			auto minutes = lexical_cast<uint16>(captures[2].str());
-			auto seconds = lexical_cast<uint16>(captures[3].str());
+			auto hours = strTo<uint16>(captures[1].str());
+			auto minutes = strTo<uint16>(captures[2].str());
+			auto seconds = strTo<uint16>(captures[3].str());
 			if (isInBounds(hours, 23, "hours")
 				&& isInBounds(minutes, 59, "minutes")
 				&& isInBounds(seconds, 59, "seconds"))
@@ -148,7 +146,7 @@ static RotationAtTimePoint rotTimeFromString(const string& rotTime)
 					static_cast<unsigned char>(seconds));
 			}
 		}
-		catch (const ::boost::bad_lexical_cast& ex)
+		catch (const NumericConversionException& ex)
 		{
 			format fmt{"Numeric conversion error in logFileRotationTimePoint option string \"%1%\":  %2%"};
 			cerr << (fmt % rotTime % ex.what()) << endl;
