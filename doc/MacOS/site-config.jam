@@ -19,7 +19,7 @@ constant BoostVersionDotted : $(BoostVersionComponents:J=.) ;
 constant BoostVersionAbbrvAlternatives : [ MATCH "([0-9]+_[0-9]+)_0" "([0-9]+_[0-9]+_[0-9]+)" : $(BoostVersion) ] ;
 constant BoostVersionAbbrv : $(BoostVersionAbbrvAlternatives[1]) ;
 
-constant Compiler : clang-darwin17 ;
+constant Compiler : clang-darwin21 ;
 
 # One of a64 or x64:
 #constant Arch : [ os.environ BOOST_ARCHITECTURE ] ;
@@ -50,6 +50,16 @@ alias BoostAtomic
 		$(BoostDyRlsLibPfx)atomic$(BoostDyRlsLibSfx)
 		$(BoostStDbgLibPfx)atomic$(BoostStDbgLibSfx)
 		$(BoostStRlsLibPfx)atomic$(BoostStRlsLibSfx)
+	:	# no default build
+	:	<include>$(BoostDir)
+	;
+
+alias BoostCharConv
+	:	# no sources
+	:	$(BoostDyDbgLibPfx)charconv$(BoostDyDbgLibSfx)
+		$(BoostDyRlsLibPfx)charconv$(BoostDyRlsLibSfx)
+		$(BoostStDbgLibPfx)charconv$(BoostStDbgLibSfx)
+		$(BoostStRlsLibPfx)charconv$(BoostStRlsLibSfx)
 	:	# no default build
 	:	<include>$(BoostDir)
 	;

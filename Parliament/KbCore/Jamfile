@@ -64,6 +64,7 @@ lib Parliament
 		<define>BUILDING_KBCORE
 		<visibility>hidden
 		<threading>multi
+		<os>MACOSX:<source>/site-config//BoostCharConv
 		<os>NT:<source>Version.rc
 		<os>NT:<source>/site-config//bz2
 		<os>NT:<source>/site-config//snappy

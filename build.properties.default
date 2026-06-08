@@ -19,22 +19,22 @@ kbSailStressTestDataDir=data
 #    clang for clang on MacOS 10.7 and later
 #    gcc for GCC on CentOS or Ubuntu Linux
 
-#nativeBuildParams=toolset=msvc address-model=64 architecture=arm variant=debug
-#nativeBuildParams=toolset=msvc address-model=64 architecture=arm variant=release
-#nativeBuildParams=toolset=msvc address-model=64 architecture=x86 variant=debug
-nativeBuildParams=toolset=msvc address-model=64 architecture=x86 variant=release
-#nativeBuildParams=toolset=msvc address-model=32 architecture=x86 variant=debug
-#nativeBuildParams=toolset=msvc address-model=32 architecture=x86 variant=release
+#nativeBuildParams=cxxstd=20 toolset=msvc address-model=64 architecture=arm variant=debug
+#nativeBuildParams=cxxstd=20 toolset=msvc address-model=64 architecture=arm variant=release
+#nativeBuildParams=cxxstd=20 toolset=msvc address-model=64 architecture=x86 variant=debug
+nativeBuildParams=cxxstd=20 toolset=msvc address-model=64 architecture=x86 variant=release
+#nativeBuildParams=cxxstd=20 toolset=msvc address-model=32 architecture=x86 variant=debug
+#nativeBuildParams=cxxstd=20 toolset=msvc address-model=32 architecture=x86 variant=release
 
-#nativeBuildParams=toolset=clang address-model=64 architecture=arm+x86 variant=debug
-nativeBuildParams=toolset=clang address-model=64 architecture=arm+x86 variant=release
-#nativeBuildParams=toolset=clang address-model=64 architecture=x86 variant=debug
-#nativeBuildParams=toolset=clang address-model=64 architecture=x86 variant=release
-#nativeBuildParams=toolset=clang address-model=64 architecture=arm variant=debug
-#nativeBuildParams=toolset=clang address-model=64 architecture=arm variant=release
+#nativeBuildParams=cxxstd=20 toolset=clang address-model=64 architecture=arm+x86 variant=debug
+nativeBuildParams=cxxstd=20 toolset=clang address-model=64 architecture=arm+x86 variant=release
+#nativeBuildParams=cxxstd=20 toolset=clang address-model=64 architecture=x86 variant=debug
+#nativeBuildParams=cxxstd=20 toolset=clang address-model=64 architecture=x86 variant=release
+#nativeBuildParams=cxxstd=20 toolset=clang address-model=64 architecture=arm variant=debug
+#nativeBuildParams=cxxstd=20 toolset=clang address-model=64 architecture=arm variant=release
 
-#nativeBuildParams=toolset=gcc address-model=64 variant=debug
-nativeBuildParams=toolset=gcc address-model=64 variant=release
+#nativeBuildParams=cxxstd=20 toolset=gcc address-model=64 variant=debug
+nativeBuildParams=cxxstd=20 toolset=gcc address-model=64 variant=release
 
 #################################################
 # Uncomment this line to cause the build to skip the native unit tests.  (Only

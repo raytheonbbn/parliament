@@ -135,87 +135,11 @@ BOOST_DATA_TEST_CASE(
 
 // =========================================================================
 
-struct ParseUnsignedTestCase
-{
-	const char*	m_pInputStr;
-	bool			m_shouldThrow;
-	size_t		m_expectedResult;
-};
-
-static ostream& operator<<(ostream& os, const ParseUnsignedTestCase& tc)
-{
-	os << "Input string '" << tc.m_pInputStr << "'";
-	return os;
-}
-
-static const ParseUnsignedTestCase k_parseUnsignedTestCases[] =
-	{
-		{ "a 37",	true,		0u },
-		{ "37 a",	true,		0u },
-		{ "-37",		true,		0u },
-		{ " 37 ",	false,	37u },
-	};
-
-BOOST_DATA_TEST_CASE(
-	parseUnsignedTest,
-	bdata::make(k_parseUnsignedTestCases),
-	tc)
-{
-	if (tc.m_shouldThrow)
-	{
-		BOOST_CHECK_THROW(ConfigFileReader::parseUnsigned(tc.m_pInputStr, 1), Exception);
-	}
-	else
-	{
-		BOOST_CHECK_EQUAL(tc.m_expectedResult, ConfigFileReader::parseUnsigned(tc.m_pInputStr, 1));
-	}
-}
-
-// =========================================================================
-
-struct ParseDoubleTestCase
-{
-	const char*	m_pInputStr;
-	bool			m_shouldThrow;
-	double		m_expectedResult;
-};
-
-static ostream& operator<<(ostream& os, const ParseDoubleTestCase& tc)
-{
-	os << "Input string '" << tc.m_pInputStr << "'";
-	return os;
-}
-
-static const ParseDoubleTestCase k_parseDoubleTestCases[] =
-	{
-		{ "a 37.9",	true,		0.0 },
-		{ "37.9 a",	true,		0.0 },
-		{ "-37.9",	false,	-37.9 },
-		{ " 37.9 ",	false,	37.9 },
-	};
-
-BOOST_DATA_TEST_CASE(
-	parseDoubleTest,
-	bdata::make(k_parseDoubleTestCases),
-	tc)
-{
-	if (tc.m_shouldThrow)
-	{
-		BOOST_CHECK_THROW(ConfigFileReader::parseDouble(tc.m_pInputStr, 1), Exception);
-	}
-	else
-	{
-		BOOST_CHECK_EQUAL(tc.m_expectedResult, ConfigFileReader::parseDouble(tc.m_pInputStr, 1));
-	}
-}
-
-// =========================================================================
-
 struct ParseBoolTestCase
 {
 	const char*	m_pInputStr;
-	bool			m_shouldThrow;
-	bool			m_expectedResult;
+	bool		m_shouldThrow;
+	bool		m_expectedResult;
 };
 
 static ostream& operator<<(ostream& os, const ParseBoolTestCase& tc)
@@ -231,8 +155,8 @@ static const ParseBoolTestCase k_parseBoolTestCases[] =
 		{ "TRUE",			false,	true },
 		{ "t",				false,	true },
 		{ "T",				false,	true },
-		{ "yes",				false,	true },
-		{ "YES",				false,	true },
+		{ "yes",			false,	true },
+		{ "YES",			false,	true },
 		{ "y",				false,	true },
 		{ "Y",				false,	true },
 		{ "on",				false,	true },
@@ -244,10 +168,10 @@ static const ParseBoolTestCase k_parseBoolTestCases[] =
 		{ "F",				false,	false },
 		{ "no",				false,	false },
 		{ "n",				false,	false },
-		{ "off",				false,	false },
+		{ "off",			false,	false },
 		{ "0",				false,	false },
-		{ "affirmative",	true,		false },
-		{ "",					true,		false },
+		{ "affirmative",	true,	false },
+		{ "",				true,	false },
 	};
 
 BOOST_DATA_TEST_CASE(

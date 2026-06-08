@@ -24,6 +24,7 @@ def macOsFixups = """\
 	ParliamentAdmin,libboost_filesystem-,@rpath/
 	ParliamentAdmin,libParliament,@rpath/
 	libParliament,libboost_atomic-,@rpath/
+	libParliament,libboost_charconv-,@rpath/
 	libParliament,libboost_chrono-,@rpath/
 	libParliament,libboost_container-,@rpath/
 	libParliament,libboost_date_time-,@rpath/

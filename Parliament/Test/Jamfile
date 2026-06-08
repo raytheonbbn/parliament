@@ -51,6 +51,7 @@ run [ glob *.cpp glob $(KbCoreDir)/*.cpp :
 		<define>PARLIAMENT_UNIT_TEST
 		<visibility>hidden
 		<threading>multi
+		<os>MACOSX:<source>/site-config//BoostCharConv/<link>static
 		<os>LINUX:<source>/site-config//snappy/<link>static
 		<os>LINUX:<source>/site-config//xxhash/<link>static
 		<os>LINUX:<source>/KB//DynamicLinkLib

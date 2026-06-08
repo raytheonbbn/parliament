@@ -11,12 +11,13 @@
 #include "parliament/Windows.h"
 
 #include <boost/filesystem/path.hpp>
-#if !defined(__cpp_lib_to_chars)
-#	include <boost/lexical_cast.hpp>
-#	include "parliament/Exceptions.h"
+#if defined(__cpp_lib_to_chars) && (__cpp_lib_to_chars >= 201611L)
+#	include <charconv>
+#else
+#	include <boost/charconv.hpp>
 #endif
-#include <charconv>
 #include <iterator>
+#include <limits>
 #include <memory>
 #include <string>
 #include <string_view>
@@ -33,7 +34,7 @@ PARLIAMENT_EXPORT ::std::string getKbVersion();	// Parliament version number
 PARLIAMENT_EXPORT TString tGetEnvVar(TStringView varName);
 PARLIAMENT_EXPORT ::boost::filesystem::path getCurrentDllFilePath();
 PARLIAMENT_EXPORT void numericConversionErrorCheck(::std::string_view str,
-	const char* pNextChar, ::std::errc errCode);
+	const char* pNextChar, ::std::errc errCode, size_t lineNum);
 
 // Needed in strTo below because Microsoft's implementation of from_chars doesn't
 // support string_view iterators, even though the C++17 standard allows it.
@@ -50,23 +51,18 @@ inline ::std::string_view::const_iterator castSVIter(::std::string_view::const_i
 #endif
 
 template<typename TargetType>
-TargetType strTo(::std::string_view str)
+TargetType strTo(::std::string_view str, size_t lineNum = ::std::numeric_limits<size_t>::max())
 {
-	TargetType number{};
-#if defined(__cpp_lib_to_chars)
-	auto [pNextChar, errCode] = ::std::from_chars(
-		castSVIter(cbegin(str)), castSVIter(cend(str)), number);
-	numericConversionErrorCheck(str, pNextChar, errCode);
+#if defined(__cpp_lib_to_chars) && (__cpp_lib_to_chars >= 201611L)
+	using ::std::from_chars;
 #else
-	try
-	{
-		number = ::boost::lexical_cast<TargetType>(str);
-	}
-	catch (const ::boost::bad_lexical_cast& ex)
-	{
-		throw NumericConversionException(ex.what());
-	}
+	using ::boost::charconv::from_chars;
 #endif
+
+	TargetType number{};
+	auto [pNextChar, errCode] = from_chars(
+		castSVIter(cbegin(str)), castSVIter(cend(str)), number);
+	numericConversionErrorCheck(str, pNextChar, errCode, lineNum);
 	return number;
 }
 

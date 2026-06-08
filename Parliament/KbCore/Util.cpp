@@ -39,6 +39,7 @@ namespace pmnt = ::bbn::parliament;
 
 using ::boost::format;
 using ::std::errc;
+using ::std::numeric_limits;
 using ::std::string;
 using ::std::string_view;
 using ::std::unique_ptr;
@@ -153,22 +154,46 @@ bfs::path pmnt::getCurrentDllFilePath()
 #endif
 }
 
-void pmnt::numericConversionErrorCheck(string_view str, const char* pNextChar, errc errCode)
+void pmnt::numericConversionErrorCheck(string_view str, const char* pNextChar, errc errCode, size_t lineNum)
 {
 	if (errCode == errc::invalid_argument)
 	{
-		throw NumericConversionException(
-			format{"'%1%' is not a number"} % str);
+		if (lineNum == numeric_limits<size_t>::max())
+		{
+			throw NumericConversionException(
+				format{"'%1%' is not a number"} % str);
+		}
+		else
+		{
+			throw NumericConversionException(
+				format{"'%1%' is not a number (see line number %2%)"} % str % lineNum);
+		}
 	}
 	else if (errCode == errc::result_out_of_range)
 	{
-		throw NumericConversionException(
-			format{"Result out of range: '%1%'"} % str);
+		if (lineNum == numeric_limits<size_t>::max())
+		{
+			throw NumericConversionException(
+				format{"Result out of range: '%1%'"} % str);
+		}
+		else
+		{
+			throw NumericConversionException(
+				format{"Result out of range: '%1%' (see line number %2%)"} % str % lineNum);
+		}
 	}
 	else if (errCode == errc{} && pNextChar != castSVIter(cend(str)))	// TODO: Not sure this should be an error
 	{
-		throw NumericConversionException(
-			format{"String contains non-number at the end: '%1%'"} % str);
+		if (lineNum == numeric_limits<size_t>::max())
+		{
+			throw NumericConversionException(
+				format{"String contains non-number at the end: '%1%'"} % str);
+		}
+		else
+		{
+			throw NumericConversionException(
+				format{"String contains non-number at the end: '%1%' (see line number %2%)"} % str % lineNum);
+		}
 	}
 }
 

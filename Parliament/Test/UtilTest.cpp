@@ -94,10 +94,8 @@ BOOST_AUTO_TEST_CASE(testGetEnv)
 #endif
 }
 
-#if !defined(__cpp_lib_to_chars)
-#	warning "__cpp_lib_to_chars not defined -- using boost::lexical_cast instead"
-static constexpr string_view k_badLexicalCastErrMsg = "bad lexical cast: "
-	"source type value could not be interpreted as target";
+#if !defined(__cpp_lib_to_chars) && (__cpp_lib_to_chars >= 201611L)
+#	warning "__cpp_lib_to_chars not defined -- using boost::charconv instead"
 #endif
 
 BOOST_AUTO_TEST_CASE(testNumericConversion)
@@ -129,14 +127,19 @@ BOOST_AUTO_TEST_CASE(testNumericConversion)
 	}
 	catch (const NumericConversionException& ex)
 	{
-#if defined(__cpp_lib_to_chars)
 		BOOST_CHECK_EQUAL("'xyzzy' is not a number", ex.what());
-#else
-		BOOST_CHECK_EQUAL(k_badLexicalCastErrMsg, ex.what());
-#endif
 	}
 
-#if defined(__cpp_lib_to_chars)
+	try
+	{
+		strTo<int>("xyzzy", 3);
+		BOOST_FAIL("Failed to throw");
+	}
+	catch (const NumericConversionException& ex)
+	{
+		BOOST_CHECK_EQUAL("'xyzzy' is not a number (see line number 3)", ex.what());
+	}
+
 	try
 	{
 		strTo<unsigned int>("-1");
@@ -144,12 +147,18 @@ BOOST_AUTO_TEST_CASE(testNumericConversion)
 	}
 	catch (const NumericConversionException& ex)
 	{
-		BOOST_CHECK((string_view{ex.what()} == "Result out of range: '-1'")
-			|| (string_view{ex.what()} == "'-1' is not a number"));
+		BOOST_CHECK_EQUAL("'-1' is not a number", ex.what());
 	}
-#else
-	BOOST_CHECK_EQUAL(static_cast<unsigned int>(-1), strTo<unsigned int>("-1"));
-#endif
+
+	try
+	{
+		strTo<unsigned int>("-1", 3);
+		BOOST_FAIL("Failed to throw");
+	}
+	catch (const NumericConversionException& ex)
+	{
+		BOOST_CHECK_EQUAL("'-1' is not a number (see line number 3)", ex.what());
+	}
 
 	try
 	{
@@ -158,11 +167,17 @@ BOOST_AUTO_TEST_CASE(testNumericConversion)
 	}
 	catch (const NumericConversionException& ex)
 	{
-#if defined(__cpp_lib_to_chars)
 		BOOST_CHECK_EQUAL("Result out of range: '66000'", ex.what());
-#else
-		BOOST_CHECK_EQUAL(k_badLexicalCastErrMsg, ex.what());
-#endif
+	}
+
+	try
+	{
+		strTo<short>("66000", 3);
+		BOOST_FAIL("Failed to throw");
+	}
+	catch (const NumericConversionException& ex)
+	{
+		BOOST_CHECK_EQUAL("Result out of range: '66000' (see line number 3)", ex.what());
 	}
 
 	try
@@ -172,11 +187,17 @@ BOOST_AUTO_TEST_CASE(testNumericConversion)
 	}
 	catch (const NumericConversionException& ex)
 	{
-#if defined(__cpp_lib_to_chars)
 		BOOST_CHECK_EQUAL("String contains non-number at the end: '73 cm'", ex.what());
-#else
-		BOOST_CHECK_EQUAL(k_badLexicalCastErrMsg, ex.what());
-#endif
+	}
+
+	try
+	{
+		strTo<int>("73 cm", 3);
+		BOOST_FAIL("Failed to throw");
+	}
+	catch (const NumericConversionException& ex)
+	{
+		BOOST_CHECK_EQUAL("String contains non-number at the end: '73 cm' (see line number 3)", ex.what());
 	}
 }
 

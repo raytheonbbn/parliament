@@ -58,7 +58,7 @@ void pmnt::KbConfig::unsynchronizedInitConfigEntryMap()
 	g_ceMap["readOnly"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_readOnly = ConfigFileReader::parseBool(value, lineNum); };
 	g_ceMap["fileSyncTimerDelay"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_fileSyncTimerDelay = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_fileSyncTimerDelay = strTo<size_t>(value, lineNum); };
 	g_ceMap["keepDupStmtIdx"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{
 			PMNT_LOG(g_log, log::Level::warn)
@@ -66,19 +66,19 @@ void pmnt::KbConfig::unsynchronizedInitConfigEntryMap()
 					"and can be deleted from your configuration file";
 		};
 	g_ceMap["initialRsrcCapacity"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_initialRsrcCapacity = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_initialRsrcCapacity = strTo<size_t>(value, lineNum); };
 	g_ceMap["avgRsrcLen"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_avgRsrcLen = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_avgRsrcLen = strTo<size_t>(value, lineNum); };
 	g_ceMap["rsrcGrowthIncrement"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_rsrcGrowthIncrement = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_rsrcGrowthIncrement = strTo<size_t>(value, lineNum); };
 	g_ceMap["rsrcGrowthFactor"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_rsrcGrowthFactor = ConfigFileReader::parseDouble(value, lineNum); };
+		{ c.m_rsrcGrowthFactor = strTo<double>(value, lineNum); };
 	g_ceMap["initialStmtCapacity"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_initialStmtCapacity = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_initialStmtCapacity = strTo<size_t>(value, lineNum); };
 	g_ceMap["stmtGrowthIncrement"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_stmtGrowthIncrement = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_stmtGrowthIncrement = strTo<size_t>(value, lineNum); };
 	g_ceMap["stmtGrowthFactor"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_stmtGrowthFactor = ConfigFileReader::parseDouble(value, lineNum); };
+		{ c.m_stmtGrowthFactor = strTo<double>(value, lineNum); };
 	g_ceMap[k_bdbCacheSizeOptName] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{
 			auto envVarValue = convertTCharToUtf8(tGetEnvVar(k_bdbCacheSizeVarName));
@@ -100,7 +100,7 @@ void pmnt::KbConfig::unsynchronizedInitConfigEntryMap()
 	g_ceMap["normalizeTypedStringLiterals"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.m_normalizeTypedStringLiterals = ConfigFileReader::parseBool(value, lineNum); };
 	g_ceMap["TimeoutDuration"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_timeoutDuration = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_timeoutDuration = strTo<size_t>(value, lineNum); };
 	g_ceMap["TimeoutUnit"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.timeoutUnit(value); };
 	g_ceMap["runAllRulesAtStartup"] = [](string_view value, uint32 lineNum, KbConfig& c)

@@ -50,11 +50,11 @@ pmnt::LogConfig::LogConfig() :
 	m_ceMap["logFileAutoFlush"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logFileAutoFlush = ConfigFileReader::parseBool(value, lineNum); };
 	m_ceMap["logFileRotationSize"] = [](string_view value, uint32 lineNum, LogConfig& c)
-		{ c.m_logFileRotationSize = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_logFileRotationSize = strTo<size_t>(value, lineNum); };
 	m_ceMap["logFileMaxAccumSize"] = [](string_view value, uint32 lineNum, LogConfig& c)
-		{ c.m_logFileMaxAccumSize = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_logFileMaxAccumSize = strTo<size_t>(value, lineNum); };
 	m_ceMap["logFileMinFreeSpace"] = [](string_view value, uint32 lineNum, LogConfig& c)
-		{ c.m_logFileMinFreeSpace = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_logFileMinFreeSpace = strTo<size_t>(value, lineNum); };
 	m_ceMap["logFileRotationTimePoint"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logFileRotationTimePoint = value; };
 	m_ceMap["logLevel"] = [](string_view value, uint32 lineNum, LogConfig& c)
