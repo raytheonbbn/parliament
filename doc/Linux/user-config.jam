@@ -3,9 +3,9 @@ import os ;
 
 constant LinuxDistro : [ os.environ LINUX_DISTRO ] ;
 
+constant FLAGS_ubuntu26 : <cxxflags>"-Wall" ;
 constant FLAGS_ubuntu25 : <cxxflags>"-Wall" ;
 constant FLAGS_ubuntu24 : <cxxflags>"-Wall" ;
-constant FLAGS_ubuntu22 : <cxxflags>"-Wall" ;
 constant FLAGS_rhel9    : <cxxflags>"-Wall" <linkflags>"-lstdc++fs" ;
 
 
