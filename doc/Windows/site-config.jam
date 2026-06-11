@@ -53,6 +53,36 @@ constant BoostX32DyRlsLibSfx : -$(COMPILER)-mt-x32-$(BoostVersionAbbrv).dll ;
 constant BoostX32StDbgLibSfx : -$(COMPILER)-mt-gd-x32-$(BoostVersionAbbrv).lib ;
 constant BoostX32StRlsLibSfx : -$(COMPILER)-mt-x32-$(BoostVersionAbbrv).lib ;
 
+path-constant VcPkgA64 : $(DepsDir)/vcpkg_installed/arm64-windows ;
+path-constant VcPkgX64 : $(DepsDir)/vcpkg_installed/x64-windows ;
+
+constant VcPkgA64DbgDllPfx : <architecture>arm,<address-model>64,<link>shared,<variant>debug\:<source>$(VcPkgA64)/debug/bin ;
+constant VcPkgA64RlsDllPfx : <architecture>arm,<address-model>64,<link>shared,<variant>release\:<source>$(VcPkgA64)/bin ;
+constant VcPkgX64DbgDllPfx : <architecture>x86,<address-model>64,<link>shared,<variant>debug\:<source>$(VcPkgX64)/debug/bin ;
+constant VcPkgX64RlsDllPfx : <architecture>x86,<address-model>64,<link>shared,<variant>release\:<source>$(VcPkgX64)/bin ;
+
+constant VcPkgA64DyDbgLibPfx : <architecture>arm,<address-model>64,<link>shared,<variant>debug\:<source>$(VcPkgA64)/debug/lib ;
+constant VcPkgA64StDbgLibPfx : <architecture>arm,<address-model>64,<link>static,<variant>debug\:<source>$(VcPkgA64)/debug/lib ;
+constant VcPkgA64DyRlsLibPfx : <architecture>arm,<address-model>64,<link>shared,<variant>release\:<source>$(VcPkgA64)/lib ;
+constant VcPkgA64StRlsLibPfx : <architecture>arm,<address-model>64,<link>static,<variant>release\:<source>$(VcPkgA64)/lib ;
+constant VcPkgX64DyDbgLibPfx : <architecture>x86,<address-model>64,<link>shared,<variant>debug\:<source>$(VcPkgX64)/debug/lib ;
+constant VcPkgX64StDbgLibPfx : <architecture>x86,<address-model>64,<link>static,<variant>debug\:<source>$(VcPkgX64)/debug/lib ;
+constant VcPkgX64DyRlsLibPfx : <architecture>x86,<address-model>64,<link>shared,<variant>release\:<source>$(VcPkgX64)/lib ;
+constant VcPkgX64StRlsLibPfx : <architecture>x86,<address-model>64,<link>static,<variant>release\:<source>$(VcPkgX64)/lib ;
+
+constant VcPkgA64Include : <architecture>arm,<address-model>64\:<include>$(VcPkgA64)/include ;
+constant VcPkgX64Include : <architecture>x86,<address-model>64\:<include>$(VcPkgX64)/include ;
+
+constant VcPkgA64DbgLibPath : <architecture>arm,<address-model>64,<variant>debug\:<library-path>$(VcPkgA64)/debug/lib ;
+constant VcPkgA64RlsLibPath : <architecture>arm,<address-model>64,<variant>release\:<library-path>$(VcPkgA64)/lib ;
+constant VcPkgX64DbgLibPath : <architecture>x86,<address-model>64,<variant>debug\:<library-path>$(VcPkgX64)/debug/lib ;
+constant VcPkgX64RlsLibPath : <architecture>x86,<address-model>64,<variant>release\:<library-path>$(VcPkgX64)/lib ;
+
+constant VcPkgA64DbgDllPath : <architecture>arm,<address-model>64,<variant>debug\:<dll-path>$(VcPkgA64)/debug/bin ;
+constant VcPkgA64RlsDllPath : <architecture>arm,<address-model>64,<variant>release\:<dll-path>$(VcPkgA64)/bin ;
+constant VcPkgX64DbgDllPath : <architecture>x86,<address-model>64,<variant>debug\:<dll-path>$(VcPkgX64)/debug/bin ;
+constant VcPkgX64RlsDllPath : <architecture>x86,<address-model>64,<variant>release\:<dll-path>$(VcPkgX64)/bin ;
+
 alias BoostHeaderOnlyLibraries
 	:	# no sources
 	:	# no build requirements
@@ -312,4 +342,194 @@ alias JavaJNI
 	:	# no default build
 	:	<include>"$(JavaDir)/include"
 		<include>"$(JavaDir)/include/win32"
+	;
+
+alias bz2	# dependency of rocksdb
+	:	# no sources
+	:	$(VcPkgA64DbgDllPfx)/bz2d.dll
+		$(VcPkgA64RlsDllPfx)/bz2.dll
+		$(VcPkgX64DbgDllPfx)/bz2d.dll
+		$(VcPkgX64RlsDllPfx)/bz2.dll
+		$(VcPkgA64DyDbgLibPfx)/bz2d.lib
+		$(VcPkgA64StDbgLibPfx)/bz2d.lib
+		$(VcPkgA64DyRlsLibPfx)/bz2.lib
+		$(VcPkgA64StRlsLibPfx)/bz2.lib
+		$(VcPkgX64DyDbgLibPfx)/bz2d.lib
+		$(VcPkgX64StDbgLibPfx)/bz2d.lib
+		$(VcPkgX64DyRlsLibPfx)/bz2.lib
+		$(VcPkgX64StRlsLibPfx)/bz2.lib
+	:	# no default build
+	:	$(VcPkgA64Include)
+		$(VcPkgX64Include)
+		$(VcPkgA64DbgLibPath)
+		$(VcPkgA64RlsLibPath)
+		$(VcPkgX64DbgLibPath)
+		$(VcPkgX64RlsLibPath)
+		$(VcPkgA64DbgDllPath)
+		$(VcPkgA64RlsDllPath)
+		$(VcPkgX64DbgDllPath)
+		$(VcPkgX64RlsDllPath)
+	;
+
+alias gflags	# dependency of rocksdb
+	:	# no sources
+	:	$(VcPkgA64DbgDllPfx)/gflags_debug.dll
+		$(VcPkgA64RlsDllPfx)/gflags.dll
+		$(VcPkgX64DbgDllPfx)/gflags_debug.dll
+		$(VcPkgX64RlsDllPfx)/gflags.dll
+		$(VcPkgA64DyDbgLibPfx)/gflags_debug.lib
+		$(VcPkgA64StDbgLibPfx)/gflags_debug.lib
+		$(VcPkgA64DyRlsLibPfx)/gflags.lib
+		$(VcPkgA64StRlsLibPfx)/gflags.lib
+		$(VcPkgX64DyDbgLibPfx)/gflags_debug.lib
+		$(VcPkgX64StDbgLibPfx)/gflags_debug.lib
+		$(VcPkgX64DyRlsLibPfx)/gflags.lib
+		$(VcPkgX64StRlsLibPfx)/gflags.lib
+	:	# no default build
+	:	$(VcPkgA64Include)
+		$(VcPkgX64Include)
+		$(VcPkgA64DbgLibPath)
+		$(VcPkgA64RlsLibPath)
+		$(VcPkgX64DbgLibPath)
+		$(VcPkgX64RlsLibPath)
+		$(VcPkgA64DbgDllPath)
+		$(VcPkgA64RlsDllPath)
+		$(VcPkgX64DbgDllPath)
+		$(VcPkgX64RlsDllPath)
+	;
+
+alias lz4	# dependency of rocksdb
+	:	# no sources
+	:	$(VcPkgA64DbgDllPfx)/lz4d.dll
+		$(VcPkgA64RlsDllPfx)/lz4.dll
+		$(VcPkgX64DbgDllPfx)/lz4d.dll
+		$(VcPkgX64RlsDllPfx)/lz4.dll
+		$(VcPkgA64DyDbgLibPfx)/lz4d.lib
+		$(VcPkgA64StDbgLibPfx)/lz4d.lib
+		$(VcPkgA64DyRlsLibPfx)/lz4.lib
+		$(VcPkgA64StRlsLibPfx)/lz4.lib
+		$(VcPkgX64DyDbgLibPfx)/lz4d.lib
+		$(VcPkgX64StDbgLibPfx)/lz4d.lib
+		$(VcPkgX64DyRlsLibPfx)/lz4.lib
+		$(VcPkgX64StRlsLibPfx)/lz4.lib
+	:	# no default build
+	:	$(VcPkgA64Include)
+		$(VcPkgX64Include)
+		$(VcPkgA64DbgLibPath)
+		$(VcPkgA64RlsLibPath)
+		$(VcPkgX64DbgLibPath)
+		$(VcPkgX64RlsLibPath)
+		$(VcPkgA64DbgDllPath)
+		$(VcPkgA64RlsDllPath)
+		$(VcPkgX64DbgDllPath)
+		$(VcPkgX64RlsDllPath)
+	;
+
+alias rocksdb
+	:	# no sources
+	:	$(VcPkgA64DbgDllPfx)/rocksdb-sharedd.dll
+		$(VcPkgA64RlsDllPfx)/rocksdb-shared.dll
+		$(VcPkgX64DbgDllPfx)/rocksdb-sharedd.dll
+		$(VcPkgX64RlsDllPfx)/rocksdb-shared.dll
+		$(VcPkgA64DyDbgLibPfx)/rocksdb-sharedd.lib
+		$(VcPkgA64StDbgLibPfx)/rocksdbd.lib
+		$(VcPkgA64DyRlsLibPfx)/rocksdb-shared.lib
+		$(VcPkgA64StRlsLibPfx)/rocksdb.lib
+		$(VcPkgX64DyDbgLibPfx)/rocksdb-sharedd.lib
+		$(VcPkgX64StDbgLibPfx)/rocksdbd.lib
+		$(VcPkgX64DyRlsLibPfx)/rocksdb-shared.lib
+		$(VcPkgX64StRlsLibPfx)/rocksdb.lib
+	:	# no default build
+	:	$(VcPkgA64Include)
+		$(VcPkgX64Include)
+		$(VcPkgA64DbgLibPath)
+		$(VcPkgA64RlsLibPath)
+		$(VcPkgX64DbgLibPath)
+		$(VcPkgX64RlsLibPath)
+		$(VcPkgA64DbgDllPath)
+		$(VcPkgA64RlsDllPath)
+		$(VcPkgX64DbgDllPath)
+		$(VcPkgX64RlsDllPath)
+		<link>shared:<define>ROCKSDB_DLL
+	;
+
+alias snappy	# dependency of rocksdb
+	:	# no sources
+	:	$(VcPkgA64DbgDllPfx)/snappy.dll
+		$(VcPkgA64RlsDllPfx)/snappy.dll
+		$(VcPkgX64DbgDllPfx)/snappy.dll
+		$(VcPkgX64RlsDllPfx)/snappy.dll
+		$(VcPkgA64DyDbgLibPfx)/snappy.lib
+		$(VcPkgA64StDbgLibPfx)/snappy.lib
+		$(VcPkgA64DyRlsLibPfx)/snappy.lib
+		$(VcPkgA64StRlsLibPfx)/snappy.lib
+		$(VcPkgX64DyDbgLibPfx)/snappy.lib
+		$(VcPkgX64StDbgLibPfx)/snappy.lib
+		$(VcPkgX64DyRlsLibPfx)/snappy.lib
+		$(VcPkgX64StRlsLibPfx)/snappy.lib
+	:	# no default build
+	:	$(VcPkgA64Include)
+		$(VcPkgX64Include)
+		$(VcPkgA64DbgLibPath)
+		$(VcPkgA64RlsLibPath)
+		$(VcPkgX64DbgLibPath)
+		$(VcPkgX64RlsLibPath)
+		$(VcPkgA64DbgDllPath)
+		$(VcPkgA64RlsDllPath)
+		$(VcPkgX64DbgDllPath)
+		$(VcPkgX64RlsDllPath)
+	;
+
+alias z	# dependency of rocksdb
+	:	# no sources
+	:	$(VcPkgA64DbgDllPfx)/zlibd1.dll
+		$(VcPkgA64RlsDllPfx)/zlib1.dll
+		$(VcPkgX64DbgDllPfx)/zlibd1.dll
+		$(VcPkgX64RlsDllPfx)/zlib1.dll
+		$(VcPkgA64DyDbgLibPfx)/zlibd.lib
+		$(VcPkgA64StDbgLibPfx)/zlibd.lib
+		$(VcPkgA64DyRlsLibPfx)/zlib.lib
+		$(VcPkgA64StRlsLibPfx)/zlib.lib
+		$(VcPkgX64DyDbgLibPfx)/zlibd.lib
+		$(VcPkgX64StDbgLibPfx)/zlibd.lib
+		$(VcPkgX64DyRlsLibPfx)/zlib.lib
+		$(VcPkgX64StRlsLibPfx)/zlib.lib
+	:	# no default build
+	:	$(VcPkgA64Include)
+		$(VcPkgX64Include)
+		$(VcPkgA64DbgLibPath)
+		$(VcPkgA64RlsLibPath)
+		$(VcPkgX64DbgLibPath)
+		$(VcPkgX64RlsLibPath)
+		$(VcPkgA64DbgDllPath)
+		$(VcPkgA64RlsDllPath)
+		$(VcPkgX64DbgDllPath)
+		$(VcPkgX64RlsDllPath)
+	;
+
+alias zstd	# dependency of rocksdb
+	:	# no sources
+	:	$(VcPkgA64DbgDllPfx)/zstd.dll
+		$(VcPkgA64RlsDllPfx)/zstd.dll
+		$(VcPkgX64DbgDllPfx)/zstd.dll
+		$(VcPkgX64RlsDllPfx)/zstd.dll
+		$(VcPkgA64DyDbgLibPfx)/zstd.lib
+		$(VcPkgA64StDbgLibPfx)/zstd.lib
+		$(VcPkgA64DyRlsLibPfx)/zstd.lib
+		$(VcPkgA64StRlsLibPfx)/zstd.lib
+		$(VcPkgX64DyDbgLibPfx)/zstd.lib
+		$(VcPkgX64StDbgLibPfx)/zstd.lib
+		$(VcPkgX64DyRlsLibPfx)/zstd.lib
+		$(VcPkgX64StRlsLibPfx)/zstd.lib
+	:	# no default build
+	:	$(VcPkgA64Include)
+		$(VcPkgX64Include)
+		$(VcPkgA64DbgLibPath)
+		$(VcPkgA64RlsLibPath)
+		$(VcPkgX64DbgLibPath)
+		$(VcPkgX64RlsLibPath)
+		$(VcPkgA64DbgDllPath)
+		$(VcPkgA64RlsDllPath)
+		$(VcPkgX64DbgDllPath)
+		$(VcPkgX64RlsDllPath)
 	;
