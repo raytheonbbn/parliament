@@ -10,14 +10,8 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/test_case.hpp>
-#include <fstream>
-#include <iterator>
-#include <map>
 #include <ostream>
-#include <string>
-#include <system_error>
 #include "parliament/ConfigFileReader.h"
-#include "parliament/Exceptions.h"
 #include "parliament/Windows.h"
 #include "parliament/CharacterLiteral.h"
 #include "parliament/UnicodeIterator.h"
@@ -32,11 +26,7 @@ namespace bfs = ::boost::filesystem;
 
 using namespace ::bbn::parliament;
 using ::std::array;
-using ::std::endl;
-using ::std::equal;
-using ::std::ofstream;
 using ::std::ostream;
-using ::std::string;
 
 // =========================================================================
 
@@ -131,62 +121,6 @@ BOOST_DATA_TEST_CASE(
 	tc)
 {
 	BOOST_CHECK(ConfigFileReader::testIsBlankOrCommentLine(tc.m_pInputStr) == tc.m_expectedResult);
-}
-
-// =========================================================================
-
-struct ParseBoolTestCase
-{
-	const char*	m_pInputStr;
-	bool		m_shouldThrow;
-	bool		m_expectedResult;
-};
-
-static ostream& operator<<(ostream& os, const ParseBoolTestCase& tc)
-{
-	os << "Input string '" << tc.m_pInputStr << "'";
-	return os;
-}
-
-static const ParseBoolTestCase k_parseBoolTestCases[] =
-	{
-		{ "true",			false,	true },
-		{ "trUe",			false,	true },
-		{ "TRUE",			false,	true },
-		{ "t",				false,	true },
-		{ "T",				false,	true },
-		{ "yes",			false,	true },
-		{ "YES",			false,	true },
-		{ "y",				false,	true },
-		{ "Y",				false,	true },
-		{ "on",				false,	true },
-		{ "1",				false,	true },
-		{ " false",			false,	false },
-		{ "FALSE ",			false,	false },
-		{ " \tfaLSe ",		false,	false },
-		{ "f",				false,	false },
-		{ "F",				false,	false },
-		{ "no",				false,	false },
-		{ "n",				false,	false },
-		{ "off",			false,	false },
-		{ "0",				false,	false },
-		{ "affirmative",	true,	false },
-		{ "",				true,	false },
-	};
-
-BOOST_DATA_TEST_CASE(
-	parseBoolTest,
-	bdata::make(k_parseBoolTestCases),
-	tc)
-{
-	if (tc.m_shouldThrow)
-	{
-		BOOST_CHECK_THROW(ConfigFileReader::parseBool(tc.m_pInputStr, 1), Exception);
-	}
-	else
-	{
-		BOOST_CHECK_EQUAL(tc.m_expectedResult, ConfigFileReader::parseBool(tc.m_pInputStr, 1));
-	}
 }
 
 BOOST_AUTO_TEST_SUITE_END()

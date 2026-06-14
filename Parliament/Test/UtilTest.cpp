@@ -8,8 +8,10 @@
 #include <boost/range/iterator_range.hpp>
 #include <boost/range/numeric.hpp>
 #include <boost/test/unit_test.hpp>
+#include <boost/test/data/test_case.hpp>
 #include <algorithm>
 #include <iterator>
+#include <ostream>
 #include <string>
 #include <string_view>
 #include "parliament/Exceptions.h"
@@ -23,11 +25,14 @@
 #	include <unistd.h>
 #endif
 
+namespace bdata = ::boost::unit_test::data;
+
 using namespace ::bbn::parliament;
 using ::boost::filesystem::current_path;
 using ::boost::filesystem::path;
 using ::boost::make_iterator_range;
 using ::std::count;
+using ::std::ostream;
 using ::std::string;
 using ::std::string_view;
 
@@ -198,6 +203,62 @@ BOOST_AUTO_TEST_CASE(testNumericConversion)
 	catch (const NumericConversionException& ex)
 	{
 		BOOST_CHECK_EQUAL("String contains non-number at the end: '73 cm' (see line number 3)", ex.what());
+	}
+}
+
+// =========================================================================
+
+struct BoolConvTestCase
+{
+	const char*	m_pInputStr;
+	bool		m_shouldThrow;
+	bool		m_expectedResult;
+};
+
+static ostream& operator<<(ostream& os, const BoolConvTestCase& tc)
+{
+	os << "Input string '" << tc.m_pInputStr << "'";
+	return os;
+}
+
+static const BoolConvTestCase k_boolConvTestCases[] =
+	{
+		{ "true",			false,	true },
+		{ "trUe",			false,	true },
+		{ "TRUE",			false,	true },
+		{ "t",				false,	true },
+		{ "T",				false,	true },
+		{ "yes",			false,	true },
+		{ "YES",			false,	true },
+		{ "y",				false,	true },
+		{ "Y",				false,	true },
+		{ "on",				false,	true },
+		{ "1",				false,	true },
+		{ "false",			false,	false },
+		{ "FALSE",			false,	false },
+		{ "faLSe",			false,	false },
+		{ "f",				false,	false },
+		{ "F",				false,	false },
+		{ "no",				false,	false },
+		{ "n",				false,	false },
+		{ "off",			false,	false },
+		{ "0",				false,	false },
+		{ "affirmative",	true,	false },
+		{ "",				true,	false },
+	};
+
+BOOST_DATA_TEST_CASE(
+	testBooleanConversion,
+	bdata::make(k_boolConvTestCases),
+	tc)
+{
+	if (tc.m_shouldThrow)
+	{
+		BOOST_CHECK_THROW(strTo<bool>(tc.m_pInputStr, 1), Exception);
+	}
+	else
+	{
+		BOOST_CHECK_EQUAL(tc.m_expectedResult, strTo<bool>(tc.m_pInputStr, 1));
 	}
 }
 

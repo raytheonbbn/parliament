@@ -13,6 +13,7 @@
 #include "parliament/Version.h"
 #include "parliament/Windows.h"
 
+#include <boost/algorithm/string/predicate.hpp>
 #include <memory>
 #include <string>
 #include <vector>
@@ -34,15 +35,21 @@
 #	include <sys/time.h>
 #endif
 
+namespace ba = ::boost::algorithm;
 namespace bfs = ::boost::filesystem;
 namespace pmnt = ::bbn::parliament;
 
 using ::boost::format;
+using ::std::begin;
+using ::std::end;
 using ::std::errc;
 using ::std::numeric_limits;
 using ::std::string;
 using ::std::string_view;
 using ::std::unique_ptr;
+
+static constexpr const char*const k_trueBoolValues[] = { "true", "t", "yes", "y", "on", "1" };
+static constexpr const char*const k_falseBoolValues[] = { "false", "f", "no", "n", "off", "0" };
 
 static auto g_log(pmnt::log::getSource("Util"));
 
@@ -193,6 +200,40 @@ void pmnt::numericConversionErrorCheck(string_view str, const char* pNextChar, e
 		{
 			throw NumericConversionException(
 				format{"String contains non-number at the end: '%1%' (see line number %2%)"} % str % lineNum);
+		}
+	}
+}
+
+template<typename T, ::std::size_t N>
+static bool doesAnyMatch(string_view exemplar, T(&matchList)[N])
+{
+	return ::std::any_of(begin(matchList), end(matchList),
+		[&exemplar](const char*const pStr) { return ba::iequals(exemplar, pStr); });
+}
+
+
+template <>
+bool pmnt::strTo<bool>(string_view str, size_t lineNum)
+{
+	if (doesAnyMatch(str, k_trueBoolValues))
+	{
+		return true;
+	}
+	else if (doesAnyMatch(str, k_falseBoolValues))
+	{
+		return false;
+	}
+	else
+	{
+		if (lineNum == numeric_limits<size_t>::max())
+		{
+			throw NumericConversionException(
+				format("Ill-formed Boolean value '%1%'") % str);
+		}
+		else
+		{
+			throw NumericConversionException(
+				format("Ill-formed Boolean value '%1%' on line %2%") % str % lineNum);
 		}
 	}
 }

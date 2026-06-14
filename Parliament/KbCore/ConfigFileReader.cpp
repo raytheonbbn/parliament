@@ -9,7 +9,6 @@
 #include "parliament/Exceptions.h"
 #include "parliament/Util.h"
 
-#include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/format.hpp>
@@ -21,8 +20,6 @@ namespace bfs = ::boost::filesystem;
 namespace pmnt = ::bbn::parliament;
 
 using ::boost::format;
-using ::std::begin;
-using ::std::end;
 using ::std::getline;
 using ::std::ifstream;
 using ::std::make_pair;
@@ -32,8 +29,6 @@ using ::std::string_view;
 using TRegex = ::std::basic_regex<pmnt::TChar>;
 using TSMatch = ::std::match_results<pmnt::TString::const_iterator>;
 
-static constexpr const char*const k_trueBoolValues[] = { "true", "t", "yes", "y", "on", "1" };
-static constexpr const char*const k_falseBoolValues[] = { "false", "f", "no", "n", "off", "0" };
 static constexpr pmnt::TChar k_pmntDirRegExStr[] = _T(
 	"^parliament-[0-9]+\\.[0-9]+\\.[0-9]+-((win)|(mac)|(ubuntu[0-9]+)|(rhel[0-9]+))(-d)?-((32)|(64))$");
 
@@ -165,29 +160,5 @@ pair<string_view, string_view> pmnt::ConfigFileReader::getKeyValueFromLine(
 			(equalsPos == line.length())
 				? string{}
 				: ba::trim_copy(line.substr(equalsPos + 1)));
-	}
-}
-
-template<typename T, ::std::size_t N>
-static bool doesAnyMatch(string_view exemplar, T(&matchList)[N])
-{
-	return ::std::any_of(begin(matchList), end(matchList),
-		[&exemplar](const char*const pStr) { return ba::iequals(exemplar, pStr); });
-}
-
-bool pmnt::ConfigFileReader::parseBool(string_view str, uint32 lineNum)
-{
-	auto trimmedStr = ba::trim_copy(str);
-	if (doesAnyMatch(trimmedStr, k_trueBoolValues))
-	{
-		return true;
-	}
-	else if (doesAnyMatch(trimmedStr, k_falseBoolValues))
-	{
-		return false;
-	}
-	else
-	{
-		throw Exception(format("Ill-formed Boolean value '%1%' on line %2%") % str % lineNum);
 	}
 }

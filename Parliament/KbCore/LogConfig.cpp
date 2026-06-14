@@ -36,19 +36,19 @@ pmnt::LogConfig::LogConfig() :
 	m_logChannelLevel()
 {
 	m_ceMap["logToConsole"] = [](string_view value, uint32 lineNum, LogConfig& c)
-		{ c.m_logToConsole = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_logToConsole = strTo<bool>(value, lineNum); };
 	m_ceMap["logConsoleAsynchronous"] = [](string_view value, uint32 lineNum, LogConfig& c)
-		{ c.m_logConsoleAsynchronous = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_logConsoleAsynchronous = strTo<bool>(value, lineNum); };
 	m_ceMap["logConsoleAutoFlush"] = [](string_view value, uint32 lineNum, LogConfig& c)
-		{ c.m_logConsoleAutoFlush = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_logConsoleAutoFlush = strTo<bool>(value, lineNum); };
 	m_ceMap["logToFile"] = [](string_view value, uint32 lineNum, LogConfig& c)
-		{ c.m_logToFile = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_logToFile = strTo<bool>(value, lineNum); };
 	m_ceMap["logFilePath"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logFilePath = convertUtf8ToLogPath(value); };
 	m_ceMap["logFileAsynchronous"] = [](string_view value, uint32 lineNum, LogConfig& c)
-		{ c.m_logFileAsynchronous = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_logFileAsynchronous = strTo<bool>(value, lineNum); };
 	m_ceMap["logFileAutoFlush"] = [](string_view value, uint32 lineNum, LogConfig& c)
-		{ c.m_logFileAutoFlush = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_logFileAutoFlush = strTo<bool>(value, lineNum); };
 	m_ceMap["logFileRotationSize"] = [](string_view value, uint32 lineNum, LogConfig& c)
 		{ c.m_logFileRotationSize = strTo<size_t>(value, lineNum); };
 	m_ceMap["logFileMaxAccumSize"] = [](string_view value, uint32 lineNum, LogConfig& c)

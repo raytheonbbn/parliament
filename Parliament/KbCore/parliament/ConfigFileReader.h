@@ -36,7 +36,6 @@ public:
 
 	static ::std::pair<::std::string_view, ::std::string_view> getKeyValueFromLine(
 		::std::string_view line, uint32 lineNum);
-	static bool parseBool(::std::string_view s, uint32 lineNum);
 
 #if defined(PARLIAMENT_UNIT_TEST)
 	static Path testGetConfigFilePath(TStringView envVarName, TStringView defaultConfigFileName)

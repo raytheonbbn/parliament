@@ -66,6 +66,9 @@ TargetType strTo(::std::string_view str, size_t lineNum = ::std::numeric_limits<
 	return number;
 }
 
+template <> PARLIAMENT_EXPORT
+bool strTo<bool>(::std::string_view str, size_t lineNum);
+
 
 
 // ===========================================================================
