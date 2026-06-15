@@ -22,8 +22,6 @@ import java.io.PipedOutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
@@ -100,9 +98,9 @@ public class RemoteModel {
 	 * Issue update query to the remote KB
 	 *
 	 * @param updateQuery A SPARQL/Update query string
-	 * @throws IOException, URISyntaxException
+	 * @throws IOException
 	 */
-	public void updateQuery(String updateQuery) throws IOException, URISyntaxException
+	public void updateQuery(String updateQuery) throws IOException
 	{
 		Map<String, Object> params = new HashMap<>();
 		params.putAll(_defaultParams);
@@ -117,9 +115,9 @@ public class RemoteModel {
 	 * Issue update query to the remote KB
 	 *
 	 * @param updateQuery A SPARQL/Update query object
-	 * @throws IOException, URISyntaxException
+	 * @throws IOException
 	 */
-	public void updateQuery(Query updateQuery) throws IOException, URISyntaxException
+	public void updateQuery(Query updateQuery) throws IOException
 	{
 		updateQuery(updateQuery.toString());
 	}
@@ -129,10 +127,10 @@ public class RemoteModel {
 	 *
 	 * @param selectQuery the query to execute
 	 * @return the ResultSet answer.
-	 * @throws IOException, URISyntaxException
+	 * @throws IOException
 	 */
 	@SuppressWarnings("resource")
-	public ResultSet selectQuery(String selectQuery) throws IOException, URISyntaxException {
+	public ResultSet selectQuery(String selectQuery) throws IOException {
 		Map<String, Object> params = new HashMap<>();
 		params.putAll(_defaultParams);
 		params.put("query", selectQuery);
@@ -145,9 +143,9 @@ public class RemoteModel {
 	 *
 	 * @param selectQuery the query to execute
 	 * @return the ResultSet answer.
-	 * @throws IOException, URISyntaxException
+	 * @throws IOException
 	 */
-	public ResultSet selectQuery(Query selectQuery) throws IOException, URISyntaxException {
+	public ResultSet selectQuery(Query selectQuery) throws IOException {
 		return selectQuery(selectQuery.toString());
 	}
 
@@ -156,9 +154,9 @@ public class RemoteModel {
 	 *
 	 * @param askQuery The query to execute, in compiled Jena form
 	 * @return the boolean answer to the query
-	 * @throws IOException, URISyntaxException
+	 * @throws IOException
 	 */
-	public boolean askQuery(Query askQuery) throws IOException, URISyntaxException {
+	public boolean askQuery(Query askQuery) throws IOException {
 		return askQuery(askQuery.toString());
 	}
 
@@ -167,9 +165,9 @@ public class RemoteModel {
 	 *
 	 * @param askQuery The query to execute, in String form
 	 * @return the boolean answer to the query
-	 * @throws IOException, URISyntaxException
+	 * @throws IOException
 	 */
-	public boolean askQuery(String askQuery) throws IOException, URISyntaxException {
+	public boolean askQuery(String askQuery) throws IOException {
 		Map<String, Object> params = new HashMap<>();
 		params.putAll(_defaultParams);
 		params.put("query", askQuery);
@@ -195,9 +193,9 @@ public class RemoteModel {
 	 *
 	 * @param constructQuery the query to execute
 	 * @return the Model answer.
-	 * @throws IOException, URISyntaxException
+	 * @throws IOException
 	 */
-	public Model constructQuery(String constructQuery) throws IOException, URISyntaxException {
+	public Model constructQuery(String constructQuery) throws IOException {
 		Map<String, Object> params = new HashMap<>();
 		params.putAll(_defaultParams);
 		params.put("query", constructQuery);
@@ -213,9 +211,9 @@ public class RemoteModel {
 	 *
 	 * @param constructQuery the query to execute
 	 * @return the Model answer.
-	 * @throws IOException, URISyntaxException
+	 * @throws IOException
 	 */
-	public Model constructQuery(Query constructQuery) throws IOException, URISyntaxException {
+	public Model constructQuery(Query constructQuery) throws IOException {
 		return constructQuery(constructQuery.toString());
 	}
 
@@ -230,7 +228,7 @@ public class RemoteModel {
 	 * @return The number of statements inserted
 	 */
 	public long insertStatements(String serializedStatements, RDFFormat format, String base,
-		boolean verifyData) throws IOException, URISyntaxException {
+		boolean verifyData) throws IOException {
 		return internalInsertStatements(serializedStatements, format, base, "", verifyData);
 	}
 
@@ -245,7 +243,7 @@ public class RemoteModel {
 	 * @return The number of statements inserted
 	 */
 	public long insertStatements(String serializedStatements, String format, String base,
-		boolean verifyData) throws IOException, URISyntaxException {
+		boolean verifyData) throws IOException {
 		return internalInsertStatements(serializedStatements,
 			RDFFormat.parseJenaFormatString(format), base, "", verifyData);
 	}
@@ -262,7 +260,7 @@ public class RemoteModel {
 	 * @return The number of statements inserted
 	 */
 	public long insertStatements(String serializedStatements, RDFFormat format, String base,
-		String namedGraphURI, boolean verifyData) throws IOException, URISyntaxException {
+		String namedGraphURI, boolean verifyData) throws IOException {
 		return internalInsertStatements(serializedStatements, format, base, namedGraphURI, verifyData);
 	}
 
@@ -278,7 +276,7 @@ public class RemoteModel {
 	 * @return The number of statements inserted
 	 */
 	public long insertStatements(String serializedStatements, String format, String base,
-		String namedGraphURI, boolean verifyData) throws IOException, URISyntaxException {
+		String namedGraphURI, boolean verifyData) throws IOException {
 		return internalInsertStatements(serializedStatements,
 			RDFFormat.parseJenaFormatString(format), base, namedGraphURI, verifyData);
 	}
@@ -295,7 +293,7 @@ public class RemoteModel {
 	 * @return The number of statements inserted
 	 */
 	public long insertStatements(InputStream serializedStatements, RDFFormat format,
-		String base, boolean verifyData) throws IOException, URISyntaxException {
+		String base, boolean verifyData) throws IOException {
 		return internalInsertStatements(serializedStatements, format, base, "", verifyData);
 	}
 
@@ -311,7 +309,7 @@ public class RemoteModel {
 	 * @return The number of statements inserted
 	 */
 	public long insertStatements(InputStream serializedStatements, String format,
-		String base, boolean verifyData) throws IOException, URISyntaxException {
+		String base, boolean verifyData) throws IOException {
 		return internalInsertStatements(serializedStatements,
 			RDFFormat.parseJenaFormatString(format), base, "", verifyData);
 	}
@@ -329,7 +327,7 @@ public class RemoteModel {
 	 * @return The number of statements inserted
 	 */
 	public long insertStatements(InputStream serializedStatements, RDFFormat format,
-		String base, String namedGraphURI, boolean verifyData) throws IOException, URISyntaxException {
+		String base, String namedGraphURI, boolean verifyData) throws IOException {
 		return internalInsertStatements(serializedStatements, format, base, namedGraphURI, verifyData);
 	}
 
@@ -346,7 +344,7 @@ public class RemoteModel {
 	 * @return The number of statements inserted
 	 */
 	public long insertStatements(InputStream serializedStatements, String format,
-		String base, String namedGraphURI, boolean verifyData) throws IOException, URISyntaxException {
+		String base, String namedGraphURI, boolean verifyData) throws IOException {
 		return internalInsertStatements(serializedStatements,
 			RDFFormat.parseJenaFormatString(format), base, namedGraphURI, verifyData);
 	}
@@ -357,7 +355,7 @@ public class RemoteModel {
 	 * @param model A Jena Model containing the statements to be inserted.
 	 * @return The number of statements inserted
 	 */
-	public long insertStatements(Model model) throws IOException, URISyntaxException {
+	public long insertStatements(Model model) throws IOException {
 		return insertStatements(model, "");
 	}
 
@@ -368,7 +366,7 @@ public class RemoteModel {
 	 * @param namedGraphURI The uri of the graph to insert into
 	 * @return The number of statements inserted
 	 */
-	public long insertStatements(final Model model, String namedGraphURI) throws IOException, URISyntaxException {
+	public long insertStatements(final Model model, String namedGraphURI) throws IOException {
 		RDFFormat format = RDFFormat.NTRIPLES;
 		// Pipes can be tricky.  Both in and out must be created in the main thread to prevent
 		// the main thread reading before the pipe has been connected.  Also, the worker thread must
@@ -402,10 +400,10 @@ public class RemoteModel {
 	 * The base URI may be null if there are no relative URIs to convert.
 	 * @param namedGraphURI The uri of the graph to insert into
 	 * @return The number of statements inserted
-	 * @throws IOException, URISyntaxException
+	 * @throws IOException
 	 */
 	protected long internalInsertStatements(Object serializedStatements, RDFFormat format,
-		String base, String namedGraphURI, boolean verifyData) throws IOException, URISyntaxException {
+		String base, String namedGraphURI, boolean verifyData) throws IOException {
 		Map<String, Object> params = new HashMap<>();
 		if (format != null) {
 			params.put("dataFormat", format);
@@ -450,7 +448,7 @@ public class RemoteModel {
 	 * @param format Format of the data.
 	 */
 	public void deleteStatements(String serializedStatements, RDFFormat format)
-		throws IOException, URISyntaxException {
+		throws IOException {
 		deleteStatements(serializedStatements, format, "");
 	}
 
@@ -461,7 +459,7 @@ public class RemoteModel {
 	 * @param format Format of the data.
 	 */
 	public void deleteStatements(String serializedStatements, String format)
-		throws IOException, URISyntaxException {
+		throws IOException {
 		deleteStatements(serializedStatements, RDFFormat.parseJenaFormatString(format), "");
 	}
 
@@ -473,7 +471,7 @@ public class RemoteModel {
 	 * @param format Format of the data.
 	 */
 	public void deleteStatements(InputStream serializedStatements, RDFFormat format)
-		throws IOException, URISyntaxException {
+		throws IOException {
 		deleteStatements(serializedStatements, format, "");
 	}
 
@@ -485,7 +483,7 @@ public class RemoteModel {
 	 * @param format Format of the data.
 	 */
 	public void deleteStatements(InputStream serializedStatements, String format)
-		throws IOException, URISyntaxException {
+		throws IOException {
 		deleteStatements(serializedStatements, RDFFormat.parseJenaFormatString(format), "");
 	}
 
@@ -497,7 +495,7 @@ public class RemoteModel {
 	 * @param namedGraphURI The URI of the graph to delete from
 	 */
 	public void deleteStatements(String serializedStatements, RDFFormat format,
-		String namedGraphURI) throws IOException, URISyntaxException {
+		String namedGraphURI) throws IOException {
 		InputStream in = new ByteArrayInputStream(serializedStatements.getBytes());
 		deleteStatements(in, format, namedGraphURI);
 	}
@@ -510,7 +508,7 @@ public class RemoteModel {
 	 * @param namedGraphURI The URI of the graph to delete from
 	 */
 	public void deleteStatements(String serializedStatements, String format,
-		String namedGraphURI) throws IOException, URISyntaxException {
+		String namedGraphURI) throws IOException {
 		deleteStatements(serializedStatements, RDFFormat.parseJenaFormatString(format),
 			namedGraphURI);
 	}
@@ -524,7 +522,7 @@ public class RemoteModel {
 	 * @param namedGraphURI The uri of the graph to delete from
 	 */
 	public void deleteStatements(InputStream serializedStatements, RDFFormat format,
-		String namedGraphURI) throws IOException, URISyntaxException {
+		String namedGraphURI) throws IOException {
 		Model tempModel = ModelFactory.createDefaultModel();
 		tempModel.read(serializedStatements, "", format.toString());
 		deleteStatements(tempModel, namedGraphURI);
@@ -537,10 +535,10 @@ public class RemoteModel {
 	 *        serialized form
 	 * @param format Format of the data.
 	 * @param namedGraphURI The uri of the graph to delete from
-	 * @throws IOException, URISyntaxException
+	 * @throws IOException
 	 */
 	public void deleteStatements(InputStream serializedStatements, String format,
-		String namedGraphURI) throws IOException, URISyntaxException {
+		String namedGraphURI) throws IOException {
 		deleteStatements(serializedStatements, RDFFormat.parseJenaFormatString(format),
 			namedGraphURI);
 	}
@@ -550,7 +548,7 @@ public class RemoteModel {
 	 *
 	 * @param model A Jena Model containing the statements to be deleted.
 	 */
-	public void deleteStatements(Model model) throws IOException, URISyntaxException {
+	public void deleteStatements(Model model) throws IOException {
 		deleteStatements(model, "");
 	}
 
@@ -560,7 +558,7 @@ public class RemoteModel {
 	 * @param model A Jena Model containing the statements to be deleted.
 	 * @param namedGraphURI The uri of the graph to delete from
 	 */
-	public void deleteStatements(Model model, String namedGraphURI) throws IOException, URISyntaxException {
+	public void deleteStatements(Model model, String namedGraphURI) throws IOException {
 		StringWriter wtr = new StringWriter();
 
 		wtr.write("delete data { ");
@@ -588,7 +586,7 @@ public class RemoteModel {
 	 *
 	 * @param namedGraphURI The uri of the named graph to create
 	 */
-	public void createNamedGraph(String namedGraphURI) throws IOException, URISyntaxException {
+	public void createNamedGraph(String namedGraphURI) throws IOException {
 		createNamedGraph(namedGraphURI, false);
 	}
 
@@ -600,7 +598,7 @@ public class RemoteModel {
 	 * the URI already exists unless the SILENT is set to true, then no error is generated
 	 * and execution of the sequence of SPARQL/Update operations continues.
 	 */
-	public void createNamedGraph(String namedGraphURI, boolean silent) throws IOException, URISyntaxException {
+	public void createNamedGraph(String namedGraphURI, boolean silent) throws IOException {
 		String query = "create %1$s graph <%2$s>".formatted(silent ? "silent" : "", namedGraphURI);
 		this.updateQuery(query);
 	}
@@ -610,7 +608,7 @@ public class RemoteModel {
 	 *
 	 * @param namedGraphURI The uri of the named graph to drop
 	 */
-	public void dropNamedGraph(String namedGraphURI) throws IOException, URISyntaxException {
+	public void dropNamedGraph(String namedGraphURI) throws IOException {
 		dropNamedGraph(namedGraphURI, false);
 	}
 
@@ -622,7 +620,7 @@ public class RemoteModel {
 	 * if the specified named graph does not exist. If SILENT is true, this error is ignored
 	 * and execution of a sequence of SPARQL/Update operations continues.
 	 */
-	public void dropNamedGraph(String namedGraphURI, boolean silent) throws IOException, URISyntaxException {
+	public void dropNamedGraph(String namedGraphURI, boolean silent) throws IOException {
 		String query = "drop %1$s graph <%2$s>".formatted(silent ? "silent" : "", namedGraphURI);
 		this.updateQuery(query);
 	}
@@ -635,7 +633,7 @@ public class RemoteModel {
 	 * @param rightGraphURI The second named graph in the union
 	 */
 	public void createNamedUnionGraph(String namedUnionGraphURI,
-		String leftGraphURI, String rightGraphURI) throws IOException, URISyntaxException {
+		String leftGraphURI, String rightGraphURI) throws IOException {
 
 		String query = """
 			prefix parPF: <java:com.bbn.parliament.server.pfunction.>
@@ -651,7 +649,7 @@ public class RemoteModel {
 	 *
 	 * @return an Iterator of Strings representing uris for the named graphs
 	 */
-	public Iterator<String> getAvailableNamedGraphs() throws IOException, URISyntaxException {
+	public Iterator<String> getAvailableNamedGraphs() throws IOException {
 		String query = "SELECT ?g WHERE { GRAPH ?g { } }";
 
 		ResultSet results = selectQuery(query);
@@ -664,7 +662,7 @@ public class RemoteModel {
 	 *
 	 * @param namedGraphURI URI of the named graph to clear
 	 */
-	public void clear(String namedGraphURI) throws IOException, URISyntaxException {
+	public void clear(String namedGraphURI) throws IOException {
 		Map<String, Object> params = new HashMap<>();
 		params.put(P_GRAPH, namedGraphURI);
 		params.put(P_PERFORM_CLEAR, "yes");
@@ -676,7 +674,7 @@ public class RemoteModel {
 	}
 
 	/** Clears the entire repository. */
-	public void clearAll() throws IOException, URISyntaxException {
+	public void clearAll() throws IOException {
 		Map<String, Object> params = new HashMap<>();
 		params.put(P_CLEAR_ALL, "yes");
 		params.put(P_PERFORM_CLEAR, "yes");
@@ -697,7 +695,7 @@ public class RemoteModel {
 	 * @param zipFile File to write to.
 	 * @param format Format of the data.
 	 */
-	public void exportRepository(File zipFile, RDFFormat format) throws IOException, URISyntaxException {
+	public void exportRepository(File zipFile, RDFFormat format) throws IOException {
 		try (OutputStream os = new FileOutputStream(zipFile)) {
 			exportRepository(os, format);
 		}
@@ -714,7 +712,7 @@ public class RemoteModel {
 	 * @param zipFileOutputStream Stream to write to.
 	 * @param format Format of the data.
 	 */
-	public void exportRepository(OutputStream zipFileOutputStream, RDFFormat format) throws IOException, URISyntaxException {
+	public void exportRepository(OutputStream zipFileOutputStream, RDFFormat format) throws IOException {
 		Map<String, Object> params = new HashMap<>();
 		params.put("exportAll", "yes");
 		params.put("dataFormat", format.toString());
@@ -743,7 +741,7 @@ public class RemoteModel {
 	 *
 	 * @param zipFile File to read from.
 	 */
-	public void importRepository(File zipFile) throws IOException, URISyntaxException {
+	public void importRepository(File zipFile) throws IOException {
 		try (InputStream is = new FileInputStream(zipFile)) {
 			importRepository(is);
 		}
@@ -762,7 +760,7 @@ public class RemoteModel {
 	 *
 	 * @param zipFileInputStream Stream to read from.
 	 */
-	public long importRepository(InputStream zipFileInputStream) throws IOException, URISyntaxException {
+	public long importRepository(InputStream zipFileInputStream) throws IOException {
 		Map<String, Object> params = new HashMap<>();
 		params.put("import", "yes");
 		params.put("statements", zipFileInputStream);
@@ -792,14 +790,14 @@ public class RemoteModel {
 	}
 
 	private InputStream sendBulkRequest(Map<String, Object> params, String service,
-		boolean multipart) throws IOException, URISyntaxException {
+		boolean multipart) throws IOException {
 
 		String separator = _bulkEndpointUrl.endsWith("/") ? "" : "/";
 		return sendRequest(params, _bulkEndpointUrl + separator + service, multipart);
 	}
 
 	public InputStream sendRequest(Map<String, Object> params
-		) throws IOException, URISyntaxException {
+		) throws IOException {
 
 		return sendRequest(params, _sparqlEndpointUrl, false);
 	}
@@ -815,13 +813,13 @@ public class RemoteModel {
 	 * @return An InputStream containing the data that was returned by the server.
 	 * @throws IOException In case of an error in the request or in the processing of
 	 * it by the server.
-	 * @throws IOException, URISyntaxException
+	 * @throws IOException
 	 */
 	private InputStream sendRequest(Map<String, Object> params, String endpointUrl,
-		boolean multipart) throws IOException, IOException, URISyntaxException {
+		boolean multipart) throws IOException {
 
 		// Create the connection
-		HttpURLConnection conn = (HttpURLConnection) new URI(endpointUrl).toURL().openConnection();
+		HttpURLConnection conn = (HttpURLConnection) UrlUtil.openConnection(endpointUrl);
 		HttpClientUtil.setAcceptGZIPEncoding(conn);
 
 		if (multipart) {

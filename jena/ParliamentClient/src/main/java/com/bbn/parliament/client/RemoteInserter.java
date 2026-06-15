@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFLanguages;
@@ -86,7 +85,7 @@ public class RemoteInserter {
 		}
 	}
 
-	private void run() throws IOException, URISyntaxException {
+	private void run() throws IOException {
 		try (InputStream in = new FileInputStream(inputFile)) {
 			RemoteModel remote = new RemoteModel(sparqlEndPointUrl, bulkEndPointUrl);
 			long numStmts = remote.insertStatements(in, inputFormat.getName(), null, graphName, true);

@@ -8,7 +8,6 @@ package com.bbn.parliament.stresstest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -508,10 +507,10 @@ public abstract class AbstractStressTest
 				_repository.insertStatements(toAdd.toString(), Lang.NTRIPLES.getName(), null, true);
 				_totalThreadElapsedTime += (System.nanoTime() - startTime);
 			}
-			catch (IOException | URISyntaxException e)
+			catch (IOException ex)
 			{
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ex.printStackTrace();
 			}
 		}
 

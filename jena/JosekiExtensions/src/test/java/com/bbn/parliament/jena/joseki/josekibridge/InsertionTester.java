@@ -7,14 +7,9 @@ package com.bbn.parliament.jena.joseki.josekibridge;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +20,7 @@ import java.util.stream.Collectors;
 import org.apache.jena.vocabulary.RDF;
 
 import com.bbn.parliament.client.RemoteModel;
+import com.bbn.parliament.client.UrlUtil;
 import com.bbn.parliament.kb_graph.KbGraphStore;
 
 /** @author dkolas */
@@ -68,28 +64,28 @@ public class InsertionTester {
 		sendRequest(params);
 	}
 
-	private static void sendRequest(Map<String, String> params) throws IOException{
+	private static void sendRequest(Map<String, String> params) throws IOException {
 		// Construct data
-		String data = params.entrySet().stream()
+		var data = params.entrySet().stream()
 			.map(InsertionTester::encodeMapEntry)
 			.collect(Collectors.joining("&"));
 
 		// Send data
-		URL url = new URL(RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL.formatted("localhost", 8089));
-		URLConnection conn = url.openConnection();
+		var urlStr = RemoteModel.DEFAULT_SPARQL_ENDPOINT_URL.formatted("localhost", 8089);
+		URLConnection conn = UrlUtil.openConnection(urlStr);
 		conn.setDoOutput(true);
 		try (
-			OutputStream ostrm = conn.getOutputStream();
-			Writer wtr = new OutputStreamWriter(ostrm, StandardCharsets.UTF_8);
+			var ostrm = conn.getOutputStream();
+			var wtr = new OutputStreamWriter(ostrm, StandardCharsets.UTF_8);
 		) {
 			wtr.write(data);
 			wtr.flush();
 
 			// Get the response
 			try (
-				InputStream istrm = conn.getInputStream();
-				Reader iStrmRdr = new InputStreamReader(istrm, StandardCharsets.UTF_8);
-				BufferedReader rdr = new BufferedReader(iStrmRdr);
+				var istrm = conn.getInputStream();
+				var iStrmRdr = new InputStreamReader(istrm, StandardCharsets.UTF_8);
+				var rdr = new BufferedReader(iStrmRdr);
 			) {
 				rdr.lines().forEach(line -> System.out.println(line));
 			}

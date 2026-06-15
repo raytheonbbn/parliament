@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.jena.datatypes.xsd.XSDDatatype;
-import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
@@ -36,6 +35,9 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFLanguages;
+import org.apache.jena.sparql.exec.http.QueryExecutionHTTP;
+import org.apache.jena.sparql.exec.http.QuerySendMode;
+import org.apache.jena.sparql.exec.http.UpdateExecutionHTTP;
 import org.apache.jena.sparql.modify.request.QuadDataAcc;
 import org.apache.jena.sparql.modify.request.UpdateDataInsert;
 import org.apache.jena.update.UpdateExecutionFactory;
@@ -177,7 +179,12 @@ public class ParliamentServerTestCase {
 	private static Set<String> getAvailableNamedGraphs() {
 		Set<String> result = new HashSet<>();
 		String q = "select distinct ?g where { graph ?g { } }";
-		try (var qe = QueryExecutionFactory.sparqlService(SPARQL_URL, q)) {
+
+		try (var qe = QueryExecutionHTTP.newBuilder()
+				.endpoint(SPARQL_URL)
+				.sendMode(QuerySendMode.asPostForm)
+				.query(q)
+				.build()) {
 			ResultSet rs = qe.execSelect();
 			while (rs.hasNext()) {
 				QuerySolution qs = rs.next();
@@ -492,7 +499,11 @@ public class ParliamentServerTestCase {
 	}
 
 	private static ResultSet doQuery(String queryFmt, Object... args) {
-		try (var qe = QueryExecutionFactory.sparqlService(SPARQL_URL, queryFmt.formatted(args))) {
+		try (var qe = QueryExecutionHTTP.newBuilder()
+				.endpoint(SPARQL_URL)
+				.sendMode(QuerySendMode.asPostForm)
+				.query(queryFmt.formatted(args))
+				.build()) {
 			return qe.execSelect();
 		}
 	}
@@ -526,7 +537,10 @@ public class ParliamentServerTestCase {
 
 	private static void doUpdate(String queryFmt, Object... args) {
 		UpdateRequest ur = UpdateFactory.create(queryFmt.formatted(args));
-		UpdateProcessor exec = UpdateExecutionFactory.createRemote(ur, SPARQL_URL);
+		var exec = UpdateExecutionHTTP.create()
+			.update(ur)
+			.endpoint(SPARQL_URL)
+			.build();
 		executeUpdate(exec);
 	}
 

@@ -32,6 +32,8 @@ import javax.xml.transform.stream.StreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bbn.parliament.client.UrlUtil;
+
 /**
  * This servlet filter will apply XSL transformations on the server instead of the browser
  * if it can locate them on the local http server.
@@ -86,7 +88,7 @@ public class XSLTFilter implements Filter {
 			}
 			if (null == styleURL) {
 				try {
-					styleURL = new URL(styleSheet);
+					styleURL = UrlUtil.create(styleSheet);
 					if (!urlExists(styleURL)) {
 						styleURL = null;
 					}

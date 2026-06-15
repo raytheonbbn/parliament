@@ -2,10 +2,10 @@ package com.bbn.parliament.jena.joseki.bridge.tracker;
 
 import java.beans.ConstructorProperties;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
@@ -66,20 +66,20 @@ public class TrackableQuery extends Trackable {
 	}
 
 	private void createQueryExecution() {
-		if (_query.hasDatasetDescription()) {
-			_qExec = QueryExecutionFactory.create(_query);
-		} else {
-			_qExec = QueryExecutionFactory.create(_query, ModelManager.inst().getDataset());
-		}
 		KbConfig cfg = ModelManager.inst().getDefaultGraphConfig();
-		_qExec.setTimeout(cfg.m_timeoutDuration, cfg.m_timeoutUnit);
+		var qExecBuilder = QueryExecution.create()
+			.query(_query)
+			.timeout(cfg.m_timeoutDuration, cfg.m_timeoutUnit);
+		if (!_query.hasDatasetDescription()) {
+			qExecBuilder.dataset(ModelManager.inst().getDataset());
+		}
+		_qExec = qExecBuilder.build();
 
 		// add a cancel flag to the query execution context. The context is a
 		// copy of the ARQ global context (The constructor for
 		// QueryExecutionBase calls ARQ.getContext().copy()) so this should be
 		// unique for each query execution
-		// _qExec.getContext().set(Constants.CANCEL_QUERY_FLAG_SYMBOL,
-		// _cancelled);
+		// _qExec.getContext().set(Constants.CANCEL_QUERY_FLAG_SYMBOL, _cancelled);
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("Created query execution # {} of type {}", getId(), _qExec
@@ -231,6 +231,26 @@ public class TrackableQuery extends Trackable {
 		public void remove() {
 			try {
 				_base.remove();
+			} catch (RuntimeException e) {
+				setError();
+				throw e;
+			}
+		}
+
+		@Override
+		public void forEachRemaining(Consumer<? super QuerySolution> action) {
+			try {
+				_base.forEachRemaining(action);
+			} catch (RuntimeException e) {
+				setError();
+				throw e;
+			}
+		}
+
+		@Override
+		public void close() {
+			try {
+				_base.close();
 			} catch (RuntimeException e) {
 				setError();
 				throw e;

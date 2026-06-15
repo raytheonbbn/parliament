@@ -46,7 +46,10 @@ public class FileBackedResultSet {
 		String tmpFileName = "resultset_" + UID + "_" + getUniqueId() + ".zip";
 		File tmpFile = new File(tmpDir, tmpFileName);
 
-		_dfos = new DeferredFileOutputStream(threshold, tmpFile);
+		_dfos = DeferredFileOutputStream.builder()
+				.setFile(tmpFile)
+				.setThreshold(threshold)
+				.get();
 
 		try (ZipOutputStream zout = new ZipOutputStream(_dfos)) {
 			zout.putNextEntry(new ZipEntry("ResultSet.xml"));
