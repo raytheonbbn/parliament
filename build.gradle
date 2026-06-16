@@ -1,5 +1,5 @@
 ext {
-	parliamentVersion = '2.8.2'
+	parliamentVersion = '3.0.0'
 	githubOrg = 'raytheonbbn'
 
 	targetDir = file("${rootDir}/target")

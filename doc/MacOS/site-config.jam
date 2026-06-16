@@ -180,7 +180,7 @@ alias JavaJNI
 
 alias rocksdb
 	:	# no sources
-	:	<link>shared:<source>$(rocksdbDir)/lib/librocksdb.10.10.dylib
+	:	<link>shared:<source>$(rocksdbDir)/lib/librocksdb.11.1.dylib
 		<link>static:<source>$(rocksdbDir)/lib/librocksdb.a
 	:	# no default build
 	:	<include>$(rocksdbDir)/include
