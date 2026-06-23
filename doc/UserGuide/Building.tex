@@ -525,8 +525,6 @@ Within your working copy of the \ac{pmnt} repository, in the directories \path|d
 
 The file \path|build.properties|, located in the root of your working copy, controls the \ac{pmnt} build. This file does not exist by default. If the build does not find it, it uses \path|build.properties.default| instead. The latter contains the build options used to create an official release of \ac{pmnt}, which may include several different release builds. To build a single variant, first copy \path|build.properties.default| to \path|build.properties|. Then customize the latter. The file itself contains instructions. Please change \path|build.properties.default| directly \emph{only if you intend to update the official release build options.}
 
-\red{\emph{This next bit about the top-level build doesn't work just yet, but should be working when we get to the next release.}}
-
 You are now ready to build \ac{pmnt}. From the root directory of your \ac{pmnt} working copy, issue this command:
 
 {
@@ -570,9 +568,6 @@ For more targeted builds, gradle can be run from the sub-projects in your workin
 	\item\path|jena/SpatialIndex|: An add-on to KbGraph for processing spatial queries efficiently
 	\item\path|server|: A Spring-based \ac{sparql} endpoint implemented on top of KbGraph.
 \end{itemize}
-
-
-
 
 When working on the native code portions of \ac{pmnt}, it can be useful to run the \path|b2| portion of the build directly. To do so, change directory to \path|KbCore| (for the \ac{pmnt} \ac{dll} itself), \path|AdminClient| (for the command line interface to \ac{pmnt}), or \path|Test| (for the unit tests). These directories are located within the \path|Parliament| sub-directory of your working copy. Then issue the command
 \begin{verbatim}
