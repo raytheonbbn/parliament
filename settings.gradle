@@ -13,11 +13,11 @@ include 'Parliament',
 	'server',
 
 	// Preserved as legacy code:
-	'jena:SparqlQueryBuilderJ3',
-//	'jena:TemporalIndexOld',
-	'jena:JosekiExtensions' //,
-//	'sesame:CSameAsSail',
-//	'sesame:LuceneSail',
 //	'sesame:ParliamentSail',
+//	'sesame:CSameAsSail',
 //	'sesame:SameAsSail',
-//	'sesame:Swrl2Sesame'
+//	'sesame:LuceneSail',
+//	'sesame:Swrl2Sesame',
+//	'jena:TemporalIndexOld',
+	'jena:SparqlQueryBuilderJ3',
+	'jena:JosekiExtensions'
