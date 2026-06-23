@@ -12,6 +12,7 @@ public class KbRdfRepositoryConfig extends SailConfig
 {
 	private static final String PARAM_NAME = "dir";
 
+	@SuppressWarnings("this-escape")
 	public KbRdfRepositoryConfig(boolean useSchemaRepository, String kbDir)
 	{
 		super(useSchemaRepository

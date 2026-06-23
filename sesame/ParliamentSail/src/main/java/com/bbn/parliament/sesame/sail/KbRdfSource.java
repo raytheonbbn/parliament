@@ -92,7 +92,7 @@ public class KbRdfSource implements RdfSource, ValueFactory
 	}
 
 	@Override
-	public void initialize(Map configParams) throws SailInitializationException
+	public void initialize(@SuppressWarnings("rawtypes") Map configParams) throws SailInitializationException
 	{
 		_useTreeOptimization  = "tree".equals(configParams.get(OPTIMIZATION_TYPE_KEY));
 		_dir = (String) configParams.get(DATA_DIR_KEY);
@@ -271,6 +271,7 @@ public class KbRdfSource implements RdfSource, ValueFactory
 				count = _kb.predicateCount(value.getIndex(_kb));
 				break;
 			case 3:
+			default:
 				count = _kb.objectCount(value.getIndex(_kb));
 				break;
 			}
@@ -332,9 +333,9 @@ public class KbRdfSource implements RdfSource, ValueFactory
 			GraphPatternQuery gpquery = (GraphPatternQuery) query;
 			GraphPattern graphPattern = gpquery.getGraphPattern();
 			if (!_useTreeOptimization){
-				orderByCounts(graphPattern, new ArrayList<Var>(), 1);
+				orderByCounts(graphPattern, new ArrayList<>(), 1);
 			}else{
-				treeWidthOrderByCounts(graphPattern, new ArrayList<Constraint>(), new ArrayList<Var>());
+				treeWidthOrderByCounts(graphPattern, new ArrayList<>(), new ArrayList<>());
 			}
 		}
 		else if (query instanceof SetOperator)

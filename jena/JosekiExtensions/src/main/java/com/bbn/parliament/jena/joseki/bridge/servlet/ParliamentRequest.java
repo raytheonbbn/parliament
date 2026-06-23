@@ -39,6 +39,7 @@ public class ParliamentRequest extends Request {
 	private RequestType _requestType;
 	private String _sparqlStmt;
 
+	@SuppressWarnings("this-escape")
 	public ParliamentRequest(HttpServletRequest httpRequest, String uri, String opType)
 		throws IOException {
 		super(uri, null);

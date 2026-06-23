@@ -22,7 +22,7 @@ public class KbSyncRdfRepository extends SyncRdfRepository implements SyncSail
 	private ReadWriteLock _lock = new ReadWriteLock();
 
 	@Override
-	public void initialize(Map configParams)
+	public void initialize(@SuppressWarnings("rawtypes") Map configParams)
 	{
 		Sail sail = getBaseSail();
 		while (sail != null)

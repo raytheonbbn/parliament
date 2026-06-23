@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.Properties;
 
 import org.openrdf.sesame.Sesame;
@@ -110,9 +110,9 @@ public class ConcurrencyTest extends TestCase
 			}
 		}
 
-		_repository.addData(new URL(
-			"http://owl-eclipse.projects.semwebcentral.org/owl/vehicle-ont"), "",
-			RDFFormat.RDFXML, true, new DummyAdminListener());
+		_repository.addData(
+			new URI("http://owl-eclipse.projects.semwebcentral.org/owl/vehicle-ont").toURL(),
+			"", RDFFormat.RDFXML, true, new DummyAdminListener());
 	}
 
 	@Override
@@ -141,7 +141,8 @@ public class ConcurrencyTest extends TestCase
 		@Override
 		public void run()
 		{
-			try (InputStream in = _repository.extractRDF(RDFFormat.RDFXML, true, true, false, true))
+			try (@SuppressWarnings("unused") InputStream in
+				= _repository.extractRDF(RDFFormat.RDFXML, true, true, false, true))
 			{
 				// Do nothing
 			}

@@ -67,7 +67,7 @@ public class SameAsRdfSource implements RdfSource, StackedSail
 	}
 
 	@Override
-	public void initialize(Map configParams) throws SailInitializationException
+	public void initialize(@SuppressWarnings("rawtypes") Map configParams) throws SailInitializationException
 	{
 		// base sail will be initialized separately
 	}

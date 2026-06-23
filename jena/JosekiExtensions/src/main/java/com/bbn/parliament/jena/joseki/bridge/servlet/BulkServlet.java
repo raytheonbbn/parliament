@@ -3,9 +3,6 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
-/**
- *
- */
 
 package com.bbn.parliament.jena.joseki.bridge.servlet;
 
@@ -35,7 +32,7 @@ public class BulkServlet extends HttpServlet {
 	protected static final Logger LOG = LoggerFactory.getLogger(BulkServlet.class);
 
 	private boolean _initAttempted = false;
-	private ServletConfig _servletConfig = null;
+	private transient ServletConfig _servletConfig = null;
 
 	public BulkServlet() {
 		this("BulkServlet");

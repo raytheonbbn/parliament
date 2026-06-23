@@ -20,6 +20,7 @@ public class KbUri extends KbResource implements URI
 	private String            _localName       = null;
 	private String            _namespace       = null;
 
+	@SuppressWarnings("this-escape")
 	public KbUri(KbInstance kb, long index)
 	{
 		super(kb, index);

@@ -30,7 +30,7 @@ public class ParliamentServlet extends Servlet {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ParliamentServlet.class);
 
-	protected ParliamentBridge _server;
+	protected transient ParliamentBridge _server;
 
 	public ParliamentServlet() {
 		this(ParliamentServlet.class.getName());

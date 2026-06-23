@@ -89,7 +89,7 @@ public class WaitingSchemaSail implements StackedSail, RdfSchemaRepository
 	}
 
 	@Override
-	public void initialize(Map configParams) throws SailInitializationException
+	public void initialize(@SuppressWarnings("rawtypes") Map configParams) throws SailInitializationException
 	{
 	}
 

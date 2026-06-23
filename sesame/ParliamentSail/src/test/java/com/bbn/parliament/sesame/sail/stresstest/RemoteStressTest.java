@@ -6,7 +6,7 @@
 
 package com.bbn.parliament.sesame.sail.stresstest;
 
-import java.net.URL;
+import java.net.URI;
 
 import org.openrdf.model.Graph;
 import org.openrdf.sesame.Sesame;
@@ -64,7 +64,7 @@ public class RemoteStressTest extends AbstractStressTest
 	@Override
 	protected SesameRepository prepareTestRepository() throws Exception
 	{
-		URL url = new URL(getProperties().getProperty(PROP_SESAME_URL));
+		var url = new URI(getProperties().getProperty(PROP_SESAME_URL)).toURL();
 		String repo = getProperties().getProperty(PROP_REPOSITORY_NAME,
 			DEFAULT_REPOSITORY_NAME);
 		_repository = (HTTPRepository) Sesame.getService(url).getRepository(repo);

@@ -59,7 +59,7 @@ public class LuceneRdfRepository extends LuceneRdfSource implements RdfRepositor
 	}
 
 	@Override
-	public void initialize(Map configParams) throws SailInitializationException
+	public void initialize(@SuppressWarnings("rawtypes") Map configParams) throws SailInitializationException
 	{
 		super.initialize(configParams);
 	}
@@ -131,9 +131,7 @@ public class LuceneRdfRepository extends LuceneRdfSource implements RdfRepositor
 		if (obj instanceof Literal)
 		{
 			@SuppressWarnings("resource")
-			KbInstance kb = getKb();
-			long index = ((KbValue) obj).getIndex(kb);
-			kb = null;
+			long index = ((KbValue) obj).getIndex(getKb());
 			String indexString = "" + index;
 
 			// look for existing index

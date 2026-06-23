@@ -16,7 +16,7 @@ public class ReadWriteLock
 	@SuppressWarnings("unused")
 	private void dump(String action)
 	{
-		System.out.print(Thread.currentThread().getId() + " " + action);
+		System.out.print(Thread.currentThread().threadId() + " " + action);
 		if (_writingThread == null)
 		{
 			System.out.print(" Wxx:x");
@@ -24,7 +24,7 @@ public class ReadWriteLock
 		else
 		{
 			System.out.print(
-				" W" + _writingThread.getId() + ":" + _writeLockCount);
+				" W" + _writingThread.threadId() + ":" + _writeLockCount);
 		}
 		_readLocks.dump();
 		System.out.println();
@@ -156,7 +156,6 @@ public class ReadWriteLock
 			_writerFlags = new boolean[_numBuckets][_bucketDepth];
 		}
 
-		@SuppressWarnings("unused")
 		public void dump()
 		{
 			System.out.print(" Rx" + _threadCount);
@@ -167,7 +166,7 @@ public class ReadWriteLock
 				{
 					if (_threads[i][j] != null)
 					{
-						System.out.print(" R" + _threads[i][j].getId() + ":"
+						System.out.print(" R" + _threads[i][j].threadId() + ":"
 							+ _lockCounts[i][j]);
 						if (_writerFlags[i][j])
 						{

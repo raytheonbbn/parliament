@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -223,7 +223,7 @@ public class Profiler
 
 		try
 		{
-			URL url = new URL(_kbConfig.getProperty(PROP_SESAME_URL));
+			var url = new URI(_kbConfig.getProperty(PROP_SESAME_URL)).toURL();
 
 			String repo = _kbConfig.getProperty(PROP_REPOSITORY_NAME);
 
@@ -234,22 +234,7 @@ public class Profiler
 
 			_repository = Sesame.getService(url).getRepository(repo);
 		}
-		catch (MalformedURLException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (UnknownRepositoryException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (AccessDeniedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (IOException e)
+		catch (URISyntaxException | UnknownRepositoryException | AccessDeniedException | IOException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -270,15 +255,10 @@ public class Profiler
 
 		try
 		{
-			_repository.addData(new URL(dataURL), "http://www.example.org/ns",
+			_repository.addData(new URI(dataURL).toURL(), "http://www.example.org/ns",
 				format, true, _sesameListener);
 		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (AccessDeniedException e)
+		catch (URISyntaxException | IOException | AccessDeniedException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();

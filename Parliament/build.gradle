@@ -115,9 +115,12 @@ javadoc {
 	}
 }
 
-tasks.named("assemble") {
-	dependsOn(sourcesJar)
-	dependsOn(javadocJar)
+classes {
+	dependsOn 'fixupSharedLibs', 'copyNativeConfig'
+}
+
+assemble {
+	dependsOn 'sourcesJar', 'javadocJar'
 }
 
 testing {
@@ -129,7 +132,7 @@ testing {
 }
 
 test {
-	dependsOn 'fixupSharedLibs', 'copyNativeConfig', 'buildTest'
+	dependsOn 'buildTest', 'fixupSharedLibs', 'copyNativeConfig'
 	systemProperty 'java.library.path', "${deployableDir}/bin"
 }
 

@@ -19,8 +19,8 @@ public class KbStatement implements Statement
 {
 	private static final long serialVersionUID = 1L;
 
-	private KbInstance					_kb;
-	private StmtIterator.Statement	_statement;
+	private transient KbInstance					_kb;
+	private transient StmtIterator.Statement	_statement;
 
 	KbStatement(KbInstance kb, StmtIterator.Statement statement)
 	{

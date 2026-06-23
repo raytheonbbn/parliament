@@ -3,9 +3,6 @@
 //
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
-/**
- *
- */
 
 package com.bbn.parliament.jena.joseki.graph;
 

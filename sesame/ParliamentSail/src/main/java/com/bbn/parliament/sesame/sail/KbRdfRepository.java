@@ -36,7 +36,7 @@ public class KbRdfRepository extends KbRdfSource implements RdfRepository
 	}
 
 	@Override
-	public void initialize(Map configParams) throws SailInitializationException
+	public void initialize(@SuppressWarnings("rawtypes") Map configParams) throws SailInitializationException
 	{
 		super.initialize(configParams);
 	}
@@ -182,6 +182,7 @@ public class KbRdfRepository extends KbRdfSource implements RdfRepository
 		}
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public void changeNamespacePrefix(String namespace, String prefix)
 		throws SailUpdateException
@@ -191,10 +192,11 @@ public class KbRdfRepository extends KbRdfSource implements RdfRepository
 			throw new SailUpdateException("no transaction started.");
 		}
 
-		KbLiteral prefixLiteral = KbLiteral.create(getKb(), prefix);
-		KbUri namespacePrefix = KbUri.create(getKb(), NAMESPACE_ONT + "#prefix");
-		KbUri namespaceURI = KbUri.create(getKb(), namespace);
-		KbUri namespaceNamespace = KbUri.create(getKb(), NAMESPACE_ONT + "#Namespace");
+		var kb = getKb();
+		KbLiteral prefixLiteral = KbLiteral.create(kb, prefix);
+		KbUri namespacePrefix = KbUri.create(kb, NAMESPACE_ONT + "#prefix");
+		KbUri namespaceURI = KbUri.create(kb, namespace);
+		KbUri namespaceNamespace = KbUri.create(kb, NAMESPACE_ONT + "#Namespace");
 
 		// jlerner, 10/27/06 - I'm undoing this temporary syncSail unset because
 		// the new SWMR lock directly supports reading during a write lock,
@@ -229,7 +231,7 @@ public class KbRdfRepository extends KbRdfSource implements RdfRepository
 			iterator.close();
 		}
 
-		KbUri rdfType = KbUri.create(getKb(), "http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+		KbUri rdfType = KbUri.create(kb, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
 		addStatement(namespaceURI, rdfType, namespaceNamespace);
 		addStatement(namespaceURI, namespacePrefix, prefixLiteral);
 	}

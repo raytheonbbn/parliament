@@ -56,6 +56,7 @@ public class KbLiteral extends KbValue implements Literal
 		return null;
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public String getLabel()
 	{

@@ -15,9 +15,9 @@ import com.bbn.parliament.core.jni.KbInstance;
 
 public abstract class KbValue implements Value
 {
-	private static final long serialVersionUID = 1L;
-	private long              _index;
-	private KbInstance        _kb;
+	private static final long    serialVersionUID = 1L;
+	private long                 _index;
+	private transient KbInstance _kb;
 
 	protected KbInstance getKb()
 	{

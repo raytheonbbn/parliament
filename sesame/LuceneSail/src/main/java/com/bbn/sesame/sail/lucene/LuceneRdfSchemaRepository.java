@@ -44,7 +44,7 @@ public class LuceneRdfSchemaRepository extends LuceneRdfRepository implements Rd
 	}
 
 	@Override
-	public void initialize(Map configParams) throws SailInitializationException
+	public void initialize(@SuppressWarnings("rawtypes") Map configParams) throws SailInitializationException
 	{
 		super.initialize(configParams);
 	}

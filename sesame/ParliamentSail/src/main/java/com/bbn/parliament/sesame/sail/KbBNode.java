@@ -27,6 +27,7 @@ public class KbBNode extends KbResource implements BNode
 		return new KbBNode(kb, index);
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public String getID()
 	{

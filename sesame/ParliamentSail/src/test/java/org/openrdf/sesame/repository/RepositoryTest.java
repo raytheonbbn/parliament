@@ -11,7 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URISyntaxException;
 
 import org.openrdf.model.Graph;
 import org.openrdf.model.Resource;
@@ -124,7 +124,7 @@ public abstract class RepositoryTest extends TestCase
 	{
 		try
 		{
-			URL dataURL = new URL(FILE_SERVER + "files/museum/schema1.rdf");
+			var dataURL = new java.net.URI(FILE_SERVER + "files/museum/schema1.rdf").toURL();
 			String baseURI = "http://www.icom.com/schema.rdf";
 
 			_repository.clear(new StdOutAdminListener());
@@ -160,14 +160,14 @@ public abstract class RepositoryTest extends TestCase
 	{
 		try
 		{
-			URL dataURL = new URL(FILE_SERVER + "files/museum/schema1.rdf");
+			var dataURL = new java.net.URI(FILE_SERVER + "files/museum/schema1.rdf").toURL();
 			String baseURI = "http://www.icom.com/schema.rdf";
 
 			_repository.clear(new StdOutAdminListener());
 			_repository.addData(dataURL, baseURI, RDFFormat.RDFXML, true,
 				new StdOutAdminListener());
 		}
-		catch (MalformedURLException e)
+		catch (URISyntaxException | MalformedURLException e)
 		{
 			fail("malformed url: " + e);
 		}
