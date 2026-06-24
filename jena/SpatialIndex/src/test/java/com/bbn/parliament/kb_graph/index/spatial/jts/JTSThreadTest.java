@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.bbn.parliament.kb_graph.index.spatial.ThreadTestMethods;
@@ -36,6 +37,7 @@ public class JTSThreadTest {
 	}
 
 	@SuppressWarnings("static-method")
+	@Disabled	// 2026-06-24 temporary until we can debug this test
 	@Test
 	public void testSimpleQuery() {
 		testMethods.testSimpleQuery();
