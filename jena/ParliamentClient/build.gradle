@@ -2,7 +2,6 @@
 
 plugins {
 	id 'java-library'
-	id 'maven-publish'
 }
 
 version = parliamentVersion
@@ -26,16 +25,6 @@ java {
 	}
 }
 
-task sourcesJar(type: Jar) {
-	archiveClassifier = 'sources'
-	from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-	archiveClassifier = 'javadoc'
-	from javadoc.destinationDir
-}
-
 javadoc {
 	source = sourceSets.main.allJava
 	classpath = configurations.compileClasspath
@@ -48,11 +37,6 @@ javadoc {
 	}
 }
 
-tasks.named("assemble") {
-	dependsOn(sourcesJar)
-	dependsOn(javadocJar)
-}
-
 testing {
 	suites {
 		test {
@@ -63,46 +47,4 @@ testing {
 
 test {
 	systemProperty 'test.data.path', "${depDataDir}"
-}
-
-publishing {
-	publications {
-		ParliamentClient(MavenPublication) {
-			from components.java
-
-			artifact sourcesJar {
-				archiveClassifier = 'sources'
-			}
-			artifact javadocJar {
-				archiveClassifier = 'javadoc'
-			}
-
-			pom {
-				name = 'Parliament Client Library'
-				description = "A Java library for accessing a running Parliament server programmatically.${System.lineSeparator}Copyright © 2023 RTX BBN Technologies Corp."
-				url = "https://github.com/${githubOrg}/parliament/tree/main/jena/ParliamentClient"
-				organization {
-					name = 'RTX BBN Technologies'
-					url = 'https://bbn.com/'
-				}
-				developers {
-					developer {
-						id = 'iemmons'
-						name = 'Ian Emmons'
-						email = 'iemmons@rtx.com'
-					}
-				}
-			}
-		}
-	}
-
-	repositories {
-		maven {
-			url = "${artifactory_contextUrl}/bbn-maven-us-only"
-			credentials {
-				username = "${artifactory_user}"
-				password = "${artifactory_password}"
-			}
-		}
-	}
 }

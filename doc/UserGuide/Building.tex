@@ -63,7 +63,7 @@ and expand it in the \path|dependencies| subdirectory of your clone. (You can fi
 \section{Building RocksDB}
 \label{sec:BuildingRocksDB}
 
-\ac{pmnt} uses RocksDB\urlcite{https://rocksdb.org/}, an embedded persistent key-value store from Meta. RocksDB is dual-licensed under both the GPLv2 and Apache 2.0 Licenses. The following procedures are based on RocksDB version \rocksdbversion.
+\ac{pmnt} uses RocksDB\urlcite{https://rocksdb.org/}, an embedded persistent key-value store from Meta. RocksDB is dual-licensed under both the GPLv2 and Apache 2.0 Licenses. In the following procedures, wherever ``«ver»'' appears, you should substitute the current RocksDB version, which is \rocksdbversion{} as of this writing.
 
 \subsection{Building RocksDB on Windows}
 \label{sec:BuildingRocksDBOnWindows}
@@ -150,7 +150,7 @@ Define the following environment variables so that the builds can find the heade
 {\small\begin{verbatim}
 export GFLAGS_HOME=/opt/gflags-2.3.0
 export LZ4_HOME=/opt/lz4-1.10.0
-export ROCKSDB_HOME=/opt/rocksdb-11.1.1
+export ROCKSDB_HOME=/opt/rocksdb-«ver»
 export ZSTD_HOME=/opt/zstd-1.5.7
 \end{verbatim}}
 
@@ -174,26 +174,26 @@ Comment out lines 355, 356, 360, 363, and 364 of \path|Makefile| by prefixing th
 Execute these commands:
 
 {\small\begin{verbatim}
-make static_lib shared_lib PREFIX=/opt/rocksdb-11.1.1 \
+make static_lib shared_lib PREFIX=/opt/rocksdb-«ver» \
    SKIP_DEPENDS=1 EXTRA_CXXFLAGS="-arch x86_64 -arch arm64 \
    -I${GFLAGS_HOME}/include -I${LZ4_HOME}/include \
    -I${ZSTD_HOME}/include" EXTRA_LDFLAGS="-arch x86_64 -arch arm64 \
    -dynamiclib -L${GFLAGS_HOME}/lib -L${LZ4_HOME}/lib \
    -L${ZSTD_HOME}/lib"
-sudo make install PREFIX=/opt/rocksdb-11.1.1 SKIP_DEPENDS=1
+sudo make install PREFIX=/opt/rocksdb-«ver» SKIP_DEPENDS=1
 \end{verbatim}}
 
 Finally, run this test on the resulting dynamic library to be sure the build worked correctly:
 
 {\small\begin{verbatim}
-otool -L $ROCKSDB_HOME/lib/librocksdb.11.1.1.dylib
+otool -L $ROCKSDB_HOME/lib/librocksdb.«ver».dylib
 \end{verbatim}}
 
 This should result in output like the following:
 
 {\small\begin{verbatim}
-.../librocksdb.11.1.1.dylib (architecture x86_64):
-   librocksdb.10.10.dylib ...
+.../librocksdb.«ver».dylib (architecture x86_64):
+   librocksdb.«ver».dylib ...
    @rpath/libgflags.2.3.dylib ...
    /usr/lib/libz.1.dylib ...
    /usr/lib/libbz2.1.0.dylib ...
@@ -201,8 +201,8 @@ This should result in output like the following:
    /opt/zstd-1.5.7/lib/libzstd.1.dylib ...
    /usr/lib/libc++.1.dylib ...
    /usr/lib/libSystem.B.dylib ...
-.../librocksdb.11.1.1.dylib (architecture arm64):
-   librocksdb.10.10.dylib ...
+.../librocksdb.«ver».dylib (architecture arm64):
+   librocksdb.«ver».dylib ...
    @rpath/libgflags.2.3.dylib ...
    /usr/lib/libz.1.dylib ...
    /usr/lib/libbz2.1.0.dylib ...
@@ -227,20 +227,20 @@ sudo apt install libgflags-dev libsnappy-dev zlib1g-dev libbz2-dev \
 Now execute the following commands from the root directory of the expanded RocksDB release:
 
 {\small\begin{verbatim}
-make static_lib shared_lib PREFIX=/opt/rocksdb-11.1.1 \
+make static_lib shared_lib PREFIX=/opt/rocksdb-«ver» \
    SKIP_DEPENDS=1
-sudo make install PREFIX=/opt/rocksdb-11.1.1 SKIP_DEPENDS=1
+sudo make install PREFIX=/opt/rocksdb-«ver» SKIP_DEPENDS=1
 \end{verbatim}}
 
 Define the following environment variable so that the \ac{pmnt} build can find the headers and libraries:
 {\small\begin{verbatim}
-export ROCKSDB_HOME=/opt/rocksdb-11.1.1
+export ROCKSDB_HOME=/opt/rocksdb-«ver»
 \end{verbatim}}
 
 Finally, run this test on the resulting dynamic library to be sure the build worked correctly:
 
 {\small\begin{verbatim}
-ldd $ROCKSDB_HOME/lib/librocksdb.so.11.1.1
+ldd $ROCKSDB_HOME/lib/librocksdb.so.«ver»
 \end{verbatim}}
 
 This should result in output like the following:
@@ -411,16 +411,15 @@ On Intel-based computers, issue this command to build the boost libraries:
 
 {\small\begin{verbatim}
 b2 -q --disable-icu --ignore-site-config --layout=versioned
---build-dir=build-msvc --stagedir=stage-msvc --with-atomic
---with-chrono --with-container --with-date_time --with-filesystem
---with-log --with-regex --with-serialization --with-test
---with-thread define=BOOST_LOG_USE_STD_REGEX
-define=BOOST_LOG_WITHOUT_EVENT_LOG define=BOOST_LOG_WITHOUT_IPC
-define=BOOST_LOG_WITHOUT_ASIO define=BOOST_LOG_WITHOUT_DEBUG_OUTPUT
-define=BOOST_LOG_WITHOUT_SYSLOG
-define=BOOST_TEST_ALTERNATIVE_INIT_API toolset=msvc
-address-model=64 variant=debug,release link=shared,static
-runtime-link=shared architecture=x86 cxxstd=20 stage
+--build-dir=build-gcc-$LINUX_DISTRO
+--stagedir=stage-gcc-$LINUX_DISTRO --with-atomic --with-chrono
+--with-container --with-date_time --with-filesystem --with-log
+--with-regex --with-serialization --with-test --with-thread
+define=BOOST_LOG_USE_STD_REGEX define=BOOST_LOG_WITHOUT_SYSLOG
+define=BOOST_LOG_WITHOUT_IPC define=BOOST_LOG_WITHOUT_ASIO
+define=BOOST_TEST_ALTERNATIVE_INIT_API toolset=gcc address-model=64
+variant=debug,release link=shared,static runtime-link=shared
+architecture=x86 cxxstd=20 stage
 \end{verbatim}}
 
 If you are using Linux on an ARM-based computer, use the same command, but change \path|architecture=x86| to \path|architecture=arm|.
@@ -434,21 +433,25 @@ tools/build/temp-boost-build build-gcc-$LINUX_DISTRO
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Configuring Boost.Build}
+\section{Configuring the Build}
 
 Next we need to configure Boost.Build so that it can build \ac{pmnt}. Start by defining the following environment variables:
 \begin{itemize}
-	\item\verb|LINUX_DISTRO|: \emph{(Linux only)} The flavor of Linux you are using. See Table~\ref{tbl:SupportedLinuxFlavors} in Section~\ref{sec:BuildingBoostOnLinux} above.
-
-	\item\verb|JAVA_HOME|: The location of your JDK installation, which must be version 25 or higher.
+	\item\verb|BOOST_ARCHITECTURE|: \emph{(Linux only)} Either \texttt{x64} or \texttt{a64}.
 
 	\item\verb|BOOST_VERSION|: The version of Boost (currently \boostversion{\_}).
 
 	\item\verb|BOOST_ROOT|: As described above in Section~\ref{sec:BuildingBoost}.
 
-	\item\verb|BOOST_BUILD_PATH|: The sub-directory \path|tools/build| of \verb|BOOST_ROOT|.
+	\item\verb|BOOST_BUILD_PATH|: The directory \path|$BOOST_ROOT/tools/build|.
 
 	\item\verb|BOOST_TEST_LOG_LEVEL|: Controls the output volume of the C++ unit tests. Possible values and their meanings are listed in Table~\ref{boost-test-log-level-values}.
+
+	\item\verb|JAVA_HOME|: The location of your JDK installation, which must be version 25 or higher.
+
+	\item\verb|LINUX_DISTRO|: \emph{(Linux only)} The flavor of Linux you are using. See Table~\ref{tbl:SupportedLinuxFlavors} in Section~\ref{sec:BuildingBoostOnLinux} above.
+
+	\item\verb|UBUNTU_USR_LIB|: \emph{(Linux only)} The directory under which third party libraries are typically installed. Typically either \path|/usr/lib/x86_64-linux-gnu| or \path|/usr/lib/aarch64-linux-gnu|.
 
 	\begin{table}[htbp]
 		\centering
@@ -477,10 +480,10 @@ On Windows only, define the following environment variables as well:
 
 {\footnotesize\begin{verbatim}
 set VS_ROOT=C:\Program Files\Microsoft Visual Studio\2022\Community\VC\
-set VS_BAT_PATH_X86_64=!VS_ROOT!Auxiliary\Build\vcvars64.bat
-set VS_BAT_PATH_ARM_64=!VS_ROOT!Auxiliary\Build\vcvarsarm64.bat
-set VS_REDIST_PATH_X86_64=!VS_ROOT!Redist\MSVC\v143\vc_redist.x64.exe
-set VS_REDIST_PATH_ARM=!VS_ROOT!Redist\MSVC\v143\vc_redist.arm64.exe
+set VS_BAT_PATH_X86_64=%VS_ROOT%Auxiliary\Build\vcvars64.bat
+set VS_BAT_PATH_ARM_64=%VS_ROOT%Auxiliary\Build\vcvarsarm64.bat
+set VS_REDIST_PATH_X86_64=%VS_ROOT%Redist\MSVC\v143\vc_redist.x64.exe
+set VS_REDIST_PATH_ARM=%VS_ROOT%Redist\MSVC\v143\vc_redist.arm64.exe
 \end{verbatim}}
 
 Note that on Windows, in a command prompt, you will want to run one of the \path|VS_BAT_PATH_«arch»_64| batch files to set up your command prompt for running the C++ compiler.
