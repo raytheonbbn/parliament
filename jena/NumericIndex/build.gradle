@@ -4,8 +4,6 @@ plugins {
 	id 'java-library'
 }
 
-version = parliamentVersion
-
 dependencies {
 	implementation libs.berkeleyDbJe
 	implementation libs.jenaArq
@@ -48,8 +46,8 @@ testing {
 }
 
 test {
-	systemProperty 'java.library.path', "${deployableDir}/bin"
-	systemProperty 'test.data.path', "${depDataDir}"
+	systemProperty 'java.library.path', "${rootProject.ext.deployableDir}/bin"
+	systemProperty 'test.data.path', "${rootProject.ext.depDataDir}"
 }
 
 clean {

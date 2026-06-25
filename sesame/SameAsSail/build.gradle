@@ -4,8 +4,6 @@ plugins {
 	id 'java-library'
 }
 
-version = parliamentVersion
-
 dependencies {
 	api libs.sesame
 }

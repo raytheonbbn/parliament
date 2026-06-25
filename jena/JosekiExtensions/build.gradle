@@ -4,8 +4,6 @@ plugins {
 	id 'java-library'
 }
 
-version = parliamentVersion
-
 ext {
 	genJavaDir = file("$buildDir/generated/sources/java")
 	configVocabFile = "${projectDir}/resources/ontology/config-ont.ttl"
@@ -45,7 +43,7 @@ dependencies {
 	implementation project(':jena:ParliamentClient')
 	implementation project(':jena:KbGraph')
 
-	implementation fileTree(dir: "${depDir}/joseki", include: "joseki-3.4.4.jar")
+	implementation fileTree(dir: "${rootProject.ext.depDir}/joseki", include: "joseki-3.4.4.jar")
 
 	testImplementation libs.logback
 	//testImplementation(testFixtures(project(":jena:KbGraph")))
@@ -126,6 +124,6 @@ testing {
 }
 
 test {
-	systemProperty 'java.library.path', "${deployableDir}/bin"
-	systemProperty 'test.data.path', "${depDataDir}"
+	systemProperty 'java.library.path', "${rootProject.ext.deployableDir}/bin"
+	systemProperty 'test.data.path', "${rootProject.ext.depDataDir}"
 }

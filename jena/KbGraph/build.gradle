@@ -5,8 +5,6 @@ plugins {
 	id 'java-test-fixtures'
 }
 
-version = parliamentVersion
-
 dependencies {
 	api libs.jenaArq
 	implementation libs.slf4jApi
@@ -51,8 +49,8 @@ testing {
 }
 
 test {
-	systemProperty 'java.library.path', "${deployableDir}/bin"
-	systemProperty 'test.data.path', "${depDataDir}"
+	systemProperty 'java.library.path', "${rootProject.ext.deployableDir}/bin"
+	systemProperty 'test.data.path', "${rootProject.ext.depDataDir}"
 }
 
 clean {

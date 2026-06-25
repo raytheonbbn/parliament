@@ -4,8 +4,6 @@ plugins {
 	id 'java-library'
 }
 
-version = parliamentVersion
-
 dependencies {
 	api libs.jenaArq
 	implementation libs.httpClient
@@ -46,5 +44,5 @@ testing {
 }
 
 test {
-	systemProperty 'test.data.path', "${depDataDir}"
+	systemProperty 'test.data.path', "${rootProject.ext.depDataDir}"
 }

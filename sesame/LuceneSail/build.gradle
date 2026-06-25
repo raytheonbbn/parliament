@@ -4,8 +4,6 @@ plugins {
 	id 'java-library'
 }
 
-version = parliamentVersion
-
 dependencies {
 	api libs.sesame
 	implementation 'org.apache.lucene:lucene-core:2.2.0'

@@ -4,13 +4,11 @@ plugins {
 	id 'java-library'
 }
 
-version = parliamentVersion
-
 dependencies {
 	implementation libs.sesame
 	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3'
 	implementation project(':sesame:ParliamentSail')
-	implementation fileTree(dir: "${depDir}/swrl-jaxb", include: "*.jar")
+	implementation fileTree(dir: "${rootProject.ext.depDir}/swrl-jaxb", include: "*.jar")
 }
 
 configurations.all {

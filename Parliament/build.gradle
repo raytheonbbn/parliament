@@ -8,8 +8,6 @@ plugins {
 	id 'java-library'
 }
 
-version = parliamentVersion
-
 ext {
 	jniHeaderIncludeDir = file("$buildDir/generated/sources")
 	jniHeaderGenDir = file("$jniHeaderIncludeDir/parliament/generated")
@@ -118,7 +116,7 @@ testing {
 
 test {
 	dependsOn 'buildTest', 'fixupSharedLibs', 'copyNativeConfig'
-	systemProperty 'java.library.path', "${deployableDir}/bin"
+	systemProperty 'java.library.path', "${rootProject.ext.deployableDir}/bin"
 }
 
 String getToolSet() {
@@ -166,13 +164,13 @@ task buildKbCore(type:Exec, dependsOn: 'compileJava') {
 	commandLine getB2CommandLine()
 	workingDir "$projectDir/KbCore"
 	environment 'GENERATED_JNI_HEADER_DIR', "$jniHeaderIncludeDir"
-	environment 'NATIVE_CODE_INSTALL_DIR', "${deployableDir}/bin"
+	environment 'NATIVE_CODE_INSTALL_DIR', "${rootProject.ext.deployableDir}/bin"
 }
 
 task buildAdminClient(type:Exec, dependsOn: 'buildKbCore') {
 	commandLine getB2CommandLine()
 	workingDir "$projectDir/AdminClient"
-	environment 'NATIVE_CODE_INSTALL_DIR', "${deployableDir}/bin"
+	environment 'NATIVE_CODE_INSTALL_DIR', "${rootProject.ext.deployableDir}/bin"
 }
 
 task fixupSharedLibs(dependsOn: 'createFixupSharedLibsScript', type: Exec) {
@@ -182,7 +180,7 @@ task fixupSharedLibs(dependsOn: 'createFixupSharedLibsScript', type: Exec) {
 	}
 	executable = 'bash'
 	args = ['-c', ". $fixupScript"]
-	workingDir "${deployableDir}/bin"
+	workingDir "${rootProject.ext.deployableDir}/bin"
 	//standardOutput = System.out
 	//errorOutput = System.err
 	//ignoreExitValue = false
@@ -222,12 +220,12 @@ task copyNativeConfig(type: Copy) {
 	from("$projectDir/KbCore") {
 		include '**/Parliament*Config.txt'
 	}
-	into "${deployableDir}"
+	into "${rootProject.ext.deployableDir}"
 	includeEmptyDirs = false
 }
 
 clean {
-	delete "${targetDir}"
+	delete "${rootProject.ext.targetDir}"
 	delete "${projectDir}/kb-data"
 	delete "${projectDir}/Test/kb-data"
 }

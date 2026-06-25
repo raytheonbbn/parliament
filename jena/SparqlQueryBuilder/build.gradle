@@ -43,7 +43,7 @@ publishing {
 			pom {
 				name = 'SPARQL Query Builder'
 				description = "A Java library for manipulating SPARQL queries.${System.lineSeparator}Copyright © 2023 RTX BBN Technologies"
-				url = "https://github.com/${githubOrg}/parliament/tree/jena-update/jena/SparqlQueryBuilder"
+				url = "https://github.com/${rootProject.ext.githubOrg}/parliament/tree/jena-update/jena/SparqlQueryBuilder"
 				packaging = 'jar'
 				licenses {
 					license {
@@ -68,9 +68,9 @@ publishing {
 					}
 				}
 				scm {
-					connection = "scm:git:git@github.com:${githubOrg}/parliament.git"
-					developerConnection = "scm:git:git@github.com:${githubOrg}/parliament.git"
-					url = "https://github.com/${githubOrg}/parliament"
+					connection = "scm:git:git@github.com:${rootProject.ext.githubOrg}/parliament.git"
+					developerConnection = "scm:git:git@github.com:${rootProject.ext.githubOrg}/parliament.git"
+					url = "https://github.com/${rootProject.ext.githubOrg}/parliament"
 				}
 			}
 		}

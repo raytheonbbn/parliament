@@ -51,7 +51,7 @@ ext {
 		A Gradle plugin to package (or bundle) an OWL ontology in a jar
 		to make it easy to use in Java-based software projects.
 		Copyright © 2023, 2024 RTX BBN Technologies'''.stripIndent()
-	projectUrl = "https://github.com/${githubOrg}/parliament/tree/jena-update/jena/OntologyBundle"
+	projectUrl = "https://github.com/${rootProject.ext.githubOrg}/parliament/tree/jena-update/jena/OntologyBundle"
 }
 
 repositories {
@@ -127,9 +127,9 @@ publishing {
 					}
 				}
 				scm {
-					connection = "scm:git:git@github.com:${githubOrg}/parliament.git"
-					developerConnection = "scm:git:git@github.com:${githubOrg}/parliament.git"
-					url = "https://github.com/${githubOrg}/parliament"
+					connection = "scm:git:git@github.com:${rootProject.ext.githubOrg}/parliament.git"
+					developerConnection = "scm:git:git@github.com:${rootProject.ext.githubOrg}/parliament.git"
+					url = "https://github.com/${rootProject.ext.githubOrg}/parliament"
 				}
 			}
 		}

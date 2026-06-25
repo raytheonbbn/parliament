@@ -53,7 +53,7 @@ publishing {
 			pom {
 				name = 'Ontology-Driven Data Access'
 				description = "A Java-centric data access facility for semantic graph stores.${System.lineSeparator}Copyright © 2024 RTX BBN Technologies"
-				url = "https://github.com/${githubOrg}/parliament/tree/jena-update/jena/OntologyDrivenDataAccess"
+				url = "https://github.com/${rootProject.ext.githubOrg}/parliament/tree/jena-update/jena/OntologyDrivenDataAccess"
 				packaging = 'jar'
 				licenses {
 					license {
@@ -73,9 +73,9 @@ publishing {
 					}
 				}
 				scm {
-					connection = "scm:git:git@github.com:${githubOrg}/parliament.git"
-					developerConnection = "scm:git:git@github.com:${githubOrg}/parliament.git"
-					url = "https://github.com/${githubOrg}/parliament"
+					connection = "scm:git:git@github.com:${rootProject.ext.githubOrg}/parliament.git"
+					developerConnection = "scm:git:git@github.com:${rootProject.ext.githubOrg}/parliament.git"
+					url = "https://github.com/${rootProject.ext.githubOrg}/parliament"
 				}
 			}
 		}

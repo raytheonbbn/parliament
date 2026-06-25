@@ -10,7 +10,7 @@ ext {
 
 allprojects {
 	group = 'com.bbn.parliament'
-	version = "${parliamentVersion}-SNAPSHOT"
+	version = "${rootProject.ext.parliamentVersion}-SNAPSHOT"
 
 	tasks.withType(JavaCompile).all {
 		options.compilerArgs.add('-Xlint:all')

@@ -4,8 +4,6 @@ plugins {
 	id 'java-library'
 }
 
-version = parliamentVersion
-
 dependencies {
 	implementation libs.berkeleyDbJe
 	implementation libs.commonsDbcp
@@ -22,8 +20,8 @@ dependencies {
 	implementation libs.slf4jApi
 	implementation project(':jena:ParliamentClient')
 	implementation project(':jena:KbGraph')
-	implementation fileTree(dir: "${depDir}/deegree", include: "*.jar")
-	implementation fileTree(dir: "${depDir}/openmap", include: "*.jar")
+	implementation fileTree(dir: "${rootProject.ext.depDir}/deegree", include: "*.jar")
+	implementation fileTree(dir: "${rootProject.ext.depDir}/openmap", include: "*.jar")
 	testImplementation libs.logback
 	testImplementation(testFixtures(project(":jena:KbGraph")))
 }
@@ -61,8 +59,8 @@ testing {
 }
 
 test {
-	systemProperty 'java.library.path', "${deployableDir}/bin"
-	systemProperty 'test.data.path', "${depDataDir}"
+	systemProperty 'java.library.path', "${rootProject.ext.deployableDir}/bin"
+	systemProperty 'test.data.path', "${rootProject.ext.depDataDir}"
 }
 
 clean {
