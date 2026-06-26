@@ -482,18 +482,18 @@ alias snappy	# dependency of rocksdb
 
 alias z	# dependency of rocksdb
 	:	# no sources
-	:	$(VcPkgA64DbgDllPfx)/zlibd1.dll
-		$(VcPkgA64RlsDllPfx)/zlib1.dll
-		$(VcPkgX64DbgDllPfx)/zlibd1.dll
-		$(VcPkgX64RlsDllPfx)/zlib1.dll
-		$(VcPkgA64DyDbgLibPfx)/zlibd.lib
-		$(VcPkgA64StDbgLibPfx)/zlibd.lib
-		$(VcPkgA64DyRlsLibPfx)/zlib.lib
-		$(VcPkgA64StRlsLibPfx)/zlib.lib
-		$(VcPkgX64DyDbgLibPfx)/zlibd.lib
-		$(VcPkgX64StDbgLibPfx)/zlibd.lib
-		$(VcPkgX64DyRlsLibPfx)/zlib.lib
-		$(VcPkgX64StRlsLibPfx)/zlib.lib
+	:	$(VcPkgA64DbgDllPfx)/zd.dll
+		$(VcPkgA64RlsDllPfx)/z.dll
+		$(VcPkgX64DbgDllPfx)/zd.dll
+		$(VcPkgX64RlsDllPfx)/z.dll
+		$(VcPkgA64DyDbgLibPfx)/zd.lib
+		$(VcPkgA64StDbgLibPfx)/zd.lib
+		$(VcPkgA64DyRlsLibPfx)/z.lib
+		$(VcPkgA64StRlsLibPfx)/z.lib
+		$(VcPkgX64DyDbgLibPfx)/zd.lib
+		$(VcPkgX64StDbgLibPfx)/zd.lib
+		$(VcPkgX64DyRlsLibPfx)/z.lib
+		$(VcPkgX64StRlsLibPfx)/z.lib
 	:	# no default build
 	:	$(VcPkgA64Include)
 		$(VcPkgX64Include)
