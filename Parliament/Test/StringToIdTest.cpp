@@ -40,8 +40,8 @@ using ::std::vector;
 
 static const RsrcString			k_testKey1		= convertToRsrcChar("Hello World!");
 static const RsrcString			k_testKey2		= convertToRsrcChar("Goodbye World!");
-static constexpr ResourceId	k_testValue1	= 37;
-static constexpr ResourceId	k_testValue2	= 43;
+static constexpr ResourceId		k_testValue1	= 37;
+static constexpr ResourceId		k_testValue2	= 43;
 static constexpr string_view	k_fName			= "tempFile.db";
 
 static void reportRocksDBError(rocksdb::Status& status, const char* pFileName, int lineNum)

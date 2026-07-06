@@ -11,14 +11,12 @@
 #include "parliament/Types.h"
 #include "parliament/KbConfig.h"
 
-namespace rocksdb {
-class DB;
-class Iterator;
-}
+typedef struct rocksdb_t rocksdb_t;
+typedef struct rocksdb_iterator_t rocksdb_iterator_t;
 
 namespace bbn::parliament {
 
-using RocksDBPtr = ::std::unique_ptr<::rocksdb::DB>;
+using RocksDBPtr = ::std::unique_ptr<rocksdb_t, void (*)(rocksdb_t*)>;
 
 class StrToIdEntryIterator
 {
@@ -64,7 +62,7 @@ public:
 		{ return !(*this == rhs); }
 
 private:
-	using RocksDBIterPtr = ::std::unique_ptr<::rocksdb::Iterator>;
+	using RocksDBIterPtr = ::std::unique_ptr<rocksdb_iterator_t, void (*)(rocksdb_iterator_t*)>;
 
 	static auto nullValue() -> value_type
 		{ return ::std::make_pair(value_type::first_type{}, k_nullRsrcId); }
@@ -78,8 +76,8 @@ private:
 	auto setCurrentValue() -> void;
 
 	RocksDBPtr::pointer	m_pDb;		// Owned elsewhere -- do not clean up on destruction!
-	value_type				m_curVal;
-	RocksDBIterPtr			m_pIterator;
+	value_type			m_curVal;
+	RocksDBIterPtr		m_pIterator;
 };
 
 class StringToId
@@ -116,10 +114,10 @@ public:
 		{ return StrToIdEntryIterator{}; }
 
 private:
-	static auto createDb(const KbConfig& config) -> RocksDBPtr;
+	static auto createDb(const KbConfig& config) -> RocksDBPtr::pointer;
 	auto checkWritable() const -> void;
 
-	KbConfig		m_config;
+	KbConfig	m_config;
 	RocksDBPtr	m_pDB;
 };
 

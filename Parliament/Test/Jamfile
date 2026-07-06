@@ -52,6 +52,9 @@ run [ glob *.cpp glob $(KbCoreDir)/*.cpp :
 		<visibility>hidden
 		<threading>multi
 		<os>MACOSX:<source>/site-config//BoostCharConv/<link>static
+		<os>NT:<source>/site-config//snappy/<link>static
+		<os>NT:<source>/site-config//rpcrt4
+		<os>NT:<source>/site-config//shlwapi
 		<os>LINUX:<source>/site-config//snappy/<link>static
 		<os>LINUX:<source>/site-config//xxhash/<link>static
 		<os>LINUX:<source>/KB//DynamicLinkLib

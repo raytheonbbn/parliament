@@ -12,6 +12,12 @@ constant BoostVersionDotted : $(BoostVersionComponents:J=.) ;
 constant BoostVersionAbbrvAlternatives : [ MATCH "([0-9]+_[0-9]+)_0" "([0-9]+_[0-9]+_[0-9]+)" : $(BoostVersion) ] ;
 constant BoostVersionAbbrv : $(BoostVersionAbbrvAlternatives[1]) ;
 
+path-constant winSdkDir : [ os.environ UniversalCRTSdkDir ] ;
+constant winSdkVer : [ os.environ UCRTVersion ] ;
+path-constant winSdkLibDir : $(winSdkDir)/Lib/$(winSdkVer)/um ;
+path-constant winSysRoot : [ os.environ SystemRoot ] ;
+path-constant winSys32Dir : $(winSysRoot)/System32 ;
+
 #constant COMPILER : vc145 ;
 constant COMPILER : vc143 ;
 #constant COMPILER : vc142 ;
@@ -451,6 +457,28 @@ alias rocksdb
 		$(VcPkgX64DbgDllPath)
 		$(VcPkgX64RlsDllPath)
 		<link>shared:<define>ROCKSDB_DLL
+	;
+
+alias rpcrt4    # WinSDK dependency of rocksdb
+	:	# no sources
+	:	<source>$(winSys32Dir)/Rpcrt4.dll
+		<architecture>arm,<address-model>64\:<source>$(winSdkLibDir)/arm64/Rpcrt4.lib
+		<architecture>x86,<address-model>64\:<source>$(winSdkLibDir)/x64/Rpcrt4.lib
+	:	# no default build
+	:	<architecture>arm,<address-model>64\:<library-path>$(winSdkLibDir)/arm64
+		<architecture>x86,<address-model>64\:<library-path>$(winSdkLibDir)/x64
+		<dll-path>$(winSys32Dir)
+	;
+
+alias shlwapi   # WinSDK dependency of rocksdb
+	:	# no sources
+	:	<source>$(winSys32Dir)/Shlwapi.dll
+		<architecture>arm,<address-model>64\:<source>$(winSdkLibDir)/arm64/Shlwapi.lib
+		<architecture>x86,<address-model>64\:<source>$(winSdkLibDir)/x64/Shlwapi.lib
+	:	# no default build
+	:	<architecture>arm,<address-model>64\:<library-path>$(winSdkLibDir)/arm64
+		<architecture>x86,<address-model>64\:<library-path>$(winSdkLibDir)/x64
+		<dll-path>$(winSys32Dir)
 	;
 
 alias snappy	# dependency of rocksdb

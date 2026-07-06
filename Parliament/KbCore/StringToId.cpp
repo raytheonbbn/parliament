@@ -11,51 +11,88 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
-#include <rocksdb/db.h>
+#include <rocksdb/c.h>
 #include <string>
 #include <string_view>
 
 namespace pmnt = ::bbn::parliament;
-namespace rdb = ::rocksdb;
 
 using ::boost::format;
 using ::std::string;
 using ::std::string_view;
+using ::std::unique_ptr;
 
 static auto g_log(pmnt::log::getSource("StringToId"));
 
-static auto buildErrorMsg(const rdb::Status& status, string_view msg) -> string
+static auto buildErrorMsg(string_view msg, char* pRocksDbError) -> string
 {
-	return str(format("%1%: %2% (%3%/%4%)")
-		% msg % status.ToString()
-		% static_cast<size_t>(status.code())
-		% static_cast<size_t>(status.subcode()));
+	return str(format("%1%: %2%") % msg % (pRocksDbError == nullptr ? "" : pRocksDbError));
 }
 
-static auto throwOnError(const rdb::Status& status, string_view msg) -> void
+static auto throwOnError(string_view msg, char* pRocksDbError) -> void
 {
-	if (!status.ok())
+	if (pRocksDbError != nullptr)
 	{
-		throw pmnt::Exception(buildErrorMsg(status, msg));
+		throw pmnt::Exception(buildErrorMsg(msg, pRocksDbError));
 	}
 }
+
+// ======================================================================
+
+template<typename OptType, OptType* (*createFxn)(), void (*deleteFxn)(OptType* pOptions)>
+class Options {
+public:
+	Options() : m_pOptions{createFxn()} {}
+	Options(const Options&) = delete;
+	auto operator=(const Options&) -> Options& = delete;
+	Options(Options&&) noexcept = default;
+	auto operator=(Options&&) noexcept -> Options& = default;
+	~Options() = default;
+
+	OptType* get() const { return m_pOptions.get(); }
+
+private:
+	struct Deleter
+	{
+		void operator()(OptType* p) const noexcept
+		{
+			if (p)
+			{
+				deleteFxn(p);
+			}
+		}
+	};
+
+	unique_ptr<OptType, Deleter> m_pOptions;
+};
+
+using DbOptions = Options<rocksdb_options_t,
+	&rocksdb_options_create, &rocksdb_options_destroy>;
+using WaitForCompactOptions = Options<rocksdb_wait_for_compact_options_t,
+	&rocksdb_wait_for_compact_options_create, &rocksdb_wait_for_compact_options_destroy>;
+using CompactOptions = Options<rocksdb_compactoptions_t,
+	&rocksdb_compactoptions_create, &rocksdb_compactoptions_destroy>;
+using ReadOptions = Options<rocksdb_readoptions_t,
+	&rocksdb_readoptions_create, &rocksdb_readoptions_destroy>;
+using WriteOptions = Options<rocksdb_writeoptions_t,
+	&rocksdb_writeoptions_create, &rocksdb_writeoptions_destroy>;
 
 // ======================================================================
 
 pmnt::StrToIdEntryIterator::StrToIdEntryIterator() :
 	m_pDb{nullptr},
 	m_curVal{nullValue()},
-	m_pIterator{}
+	m_pIterator{nullptr, &rocksdb_iter_destroy}
 {
 }
 
 pmnt::StrToIdEntryIterator::StrToIdEntryIterator(RocksDBPtr::pointer pDb) :
 	m_pDb{pDb},
 	m_curVal{nullValue()},
-	m_pIterator{createIterator(m_pDb)}
+	m_pIterator{createIterator(m_pDb), &rocksdb_iter_destroy}
 {
-	m_pIterator->SeekToFirst();
-	if (m_pIterator->Valid())
+	rocksdb_iter_seek_to_first(m_pIterator.get());
+	if (!!rocksdb_iter_valid(m_pIterator.get()))
 	{
 		setCurrentValue();
 	}
@@ -68,7 +105,7 @@ pmnt::StrToIdEntryIterator::StrToIdEntryIterator(RocksDBPtr::pointer pDb) :
 pmnt::StrToIdEntryIterator::StrToIdEntryIterator(const StrToIdEntryIterator& rhs) :
 	m_pDb{rhs.m_pDb},
 	m_curVal{rhs.m_curVal},
-	m_pIterator{(m_pDb != nullptr) ? createIterator(m_pDb) : nullptr}
+	m_pIterator{createIterator(m_pDb), &rocksdb_iter_destroy}
 {
 	if (m_pDb != nullptr)
 	{
@@ -110,15 +147,22 @@ auto pmnt::StrToIdEntryIterator::operator==(const StrToIdEntryIterator& rhs) con
 
 auto pmnt::StrToIdEntryIterator::createIterator(RocksDBPtr::pointer pDb) -> RocksDBIterPtr::pointer
 {
-	rdb::ReadOptions options;
-	return pDb->NewIterator(options);
+	if (pDb == nullptr)
+	{
+		return nullptr;
+	}
+	else
+	{
+		ReadOptions options;
+		return rocksdb_create_iterator(pDb, options.get());
+	}
 }
 
 // Intended to be called only from the copy ctor and the assignment operator
 auto pmnt::StrToIdEntryIterator::setIteratorPosition() -> void
 {
-	m_pIterator->Seek(m_curVal.first);
-	if (m_pIterator->Valid())
+	rocksdb_iter_seek(m_pIterator.get(), m_curVal.first.data(), m_curVal.first.size());
+	if (!!rocksdb_iter_valid(m_pIterator.get()))
 	{
 		setCurrentValue();
 	}
@@ -156,8 +200,8 @@ auto pmnt::StrToIdEntryIterator::advanceIterator() -> void
 {
 	if (m_pDb != nullptr)
 	{
-		m_pIterator->Next();
-		if (m_pIterator->Valid())
+		rocksdb_iter_next(m_pIterator.get());
+		if (!!rocksdb_iter_valid(m_pIterator.get()))
 		{
 			setCurrentValue();
 		}
@@ -178,24 +222,28 @@ auto pmnt::StrToIdEntryIterator::advanceToEnd() -> void
 
 auto pmnt::StrToIdEntryIterator::setCurrentValue() -> void
 {
-	checkKeySizeDivisibleByCharSize(m_pIterator->key().size());
-	checkValueSize(m_pIterator->value().size());
+	size_t keyLength = 0;
+	size_t valueLength = 0;
+	auto pKey = rocksdb_iter_key(m_pIterator.get(), &keyLength);
+	auto pValue = rocksdb_iter_value(m_pIterator.get(), &valueLength);
+
+	checkKeySizeDivisibleByCharSize(keyLength);
+	checkValueSize(valueLength);
 	m_curVal.first = value_type::first_type{
-		reinterpret_cast<const RsrcChar*>(m_pIterator->key().data()),
-		m_pIterator->key().size() / sizeof(value_type::first_type::value_type)};
-	m_curVal.second = *reinterpret_cast<ResourceId*>(const_cast<char*>(
-		m_pIterator->value().data()));
+		reinterpret_cast<const RsrcChar*>(pKey),
+		keyLength / sizeof(value_type::first_type::value_type)};
+	m_curVal.second = *reinterpret_cast<ResourceId*>(const_cast<char*>(pValue));
 }
 
 // ======================================================================
 
 pmnt::StringToId::StringToId(const KbConfig& config) :
 	m_config{config},
-	m_pDB{createDb(config)}
+	m_pDB{createDb(config), &rocksdb_close}
 {
 }
 
-auto pmnt::StringToId::createDb(const KbConfig& config) -> RocksDBPtr
+auto pmnt::StringToId::createDb(const KbConfig& config) -> RocksDBPtr::pointer
 {
 	auto rocksDbPath = config.uriToIntFilePath();
 	if (is_regular_file(rocksDbPath))
@@ -212,32 +260,33 @@ auto pmnt::StringToId::createDb(const KbConfig& config) -> RocksDBPtr
 		create_directories(rocksDbPath);
 	}
 
-	RocksDBPtr pDB;
-	rdb::Options options;
-	options.create_if_missing = true;
-	auto status = rdb::DB::Open(options, pathAsUtf8(rocksDbPath), &pDB);
-	throwOnError(status, "Unable to open RocksDB database");
+	DbOptions options;
+	rocksdb_options_set_create_if_missing(options.get(), true);
+	char* pError = nullptr;
+	auto pDB = rocksdb_open(options.get(), pathAsUtf8(rocksDbPath).c_str(), &pError);
+	throwOnError("Unable to open RocksDB database", pError);
 	return pDB;
 }
 
 pmnt::StringToId::~StringToId()
 {
-	auto syncStatus = m_pDB->SyncWAL();
-	if (!syncStatus.ok())
+	char* pError = nullptr;
+	rocksdb_flush_wal(m_pDB.get(), true, &pError);
+	if (pError != nullptr)
 	{
 		PMNT_LOG(g_log, log::Level::warn)
-			<< buildErrorMsg(syncStatus, "Unable to sync RocksDB database on close");
+			<< buildErrorMsg("Unable to sync RocksDB database on close", pError);
 	}
 
-	rdb::WaitForCompactOptions options;
-	options.close_db = true;
-	options.flush = true;
-	options.timeout = ::std::chrono::seconds{3};
-	auto waitStatus = m_pDB->WaitForCompact(options);
-	if (!waitStatus.ok())
+	WaitForCompactOptions options;
+	rocksdb_wait_for_compact_options_set_close_db(options.get(), true);
+	rocksdb_wait_for_compact_options_set_flush(options.get(), true);
+	rocksdb_wait_for_compact_options_set_timeout(options.get(), 3 * 1000 * 1000);	// 3 sec in microsec
+	rocksdb_wait_for_compact(m_pDB.get(), options.get(), &pError);
+	if (pError != nullptr)
 	{
 		PMNT_LOG(g_log, log::Level::warn)
-			<< buildErrorMsg(waitStatus, "Unable to close RocksDB database");
+			<< buildErrorMsg("Unable to close RocksDB database", pError);
 	}
 }
 
@@ -255,8 +304,9 @@ auto pmnt::StringToId::sync() -> void
 {
 	if (!m_config.readOnly())
 	{
-		auto status = m_pDB->SyncWAL();
-		throwOnError(status, "Unable to sync RocksDB");
+		char* pError = nullptr;
+		rocksdb_flush_wal(m_pDB.get(), true, &pError);
+		throwOnError("Unable to sync RocksDB", pError);
 	}
 }
 
@@ -264,10 +314,9 @@ auto pmnt::StringToId::compact() -> void
 {
 	if (!m_config.readOnly())
 	{
-		rdb::CompactRangeOptions options;
-		options.change_level = true;
-		auto status = m_pDB->CompactRange(options, nullptr, nullptr);
-		throwOnError(status, "Unable to compact RocksDB");
+		CompactOptions options;
+		rocksdb_compactoptions_set_change_level(options.get(), true);
+		rocksdb_compact_range_opt(m_pDB.get(), options.get(), nullptr, 0, nullptr, 0);
 	}
 }
 
@@ -275,26 +324,27 @@ auto pmnt::StringToId::find(RsrcStringView key) const -> ResourceId
 {
 	ResourceId result = k_nullRsrcId;
 
-	rdb::ReadOptions options;
-	auto colFamily = m_pDB->DefaultColumnFamily();
-	auto keySlice = rdb::Slice{reinterpret_cast<const char*>(key.data()),
-		key.size() * sizeof(RsrcStringView::value_type)};
-	rdb::PinnableSlice resultSlice;
-	auto status = m_pDB->Get(options, colFamily, keySlice, &resultSlice);
-	if (status.ok())
+	ReadOptions options;
+	char* pError = nullptr;
+	size_t valueLength = 0;
+
+	// rocksdb_get returns NULL if not found or a malloc()ed array otherwise.
+	// Stores the length of the array in valueLength.
+	unique_ptr<char, decltype(&free)> pResult{
+		rocksdb_get(m_pDB.get(), options.get(), reinterpret_cast<const char*>(key.data()),
+		key.size() * sizeof(RsrcStringView::value_type), &valueLength, &pError),
+		&free};
+	throwOnError("RocksDB lookup failure", pError);
+	if (pResult.get() != nullptr)
 	{
-		if (resultSlice.size() != sizeof(result))
+		if (valueLength != sizeof(result))
 		{
 			throw Exception(format(
 				"Expected RocksDB data value size of %1%, but found %2% instead")
-				% sizeof(result) % resultSlice.size());
+				% sizeof(result) % valueLength);
 		}
 		result = *reinterpret_cast<ResourceId*>(
-			const_cast<char*>(resultSlice.data()));
-	}
-	else if (!status.IsNotFound())
-	{
-		throwOnError(status, "Unable to find key in RocksDB");
+			const_cast<char*>(pResult.get()));
 	}
 	return result;
 }
@@ -311,20 +361,20 @@ auto pmnt::StringToId::insert(RsrcStringView key, ResourceId value) -> ResourceI
 		throw Exception("StringToId::insert called with a null value");
 	}
 
-	rdb::WriteOptions options;
-	//options.sync = true;
-	auto keySlice = rdb::Slice{reinterpret_cast<const char*>(key.data()),
-		key.size() * sizeof(RsrcStringView::value_type)};
-	auto valueSlice = rdb::Slice{const_cast<const char*>(
-		reinterpret_cast<char*>(&value)), sizeof(value)};
-	auto status = m_pDB->Put(options, keySlice, valueSlice);
-	if (status.IsOkOverwritten())
-	{
-		PMNT_LOG(g_log, log::Level::warn) << str(format(
-			"Overwrote the value of StringToId key '%1%' with %2%")
-			% convertFromRsrcChar(key) % value);
-	}
-	throwOnError(status, "Unable to insert key in RocksDB");
+	WriteOptions options;
+	//rocksdb_writeoptions_set_sync(options.get(), true);
+	char* pError = nullptr;
+	rocksdb_put(m_pDB.get(), options.get(),
+		reinterpret_cast<const char*>(key.data()), key.size() * sizeof(RsrcStringView::value_type),
+		const_cast<const char*>(reinterpret_cast<char*>(&value)), sizeof(value),
+		&pError);
+	//if (status.IsOkOverwritten())
+	//{
+	//	PMNT_LOG(g_log, log::Level::warn) << str(format(
+	//		"Overwrote the value of StringToId key '%1%' with %2%")
+	//		% convertFromRsrcChar(key) % value);
+	//}
+	throwOnError("Unable to insert key in RocksDB", pError);
 	return value;
 }
 
