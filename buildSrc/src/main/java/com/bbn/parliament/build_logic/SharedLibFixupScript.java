@@ -22,7 +22,7 @@ public class SharedLibFixupScript {
 			replacement = "callee=($2*) ; install_name_tool -change $3\\$callee @loader_path/\\$callee $1*";
 			matcher = MACOS_PATTERN.matcher(macOsFixups);
 		} else if (os.contains("linux")) {
-			replacement = "patchelf --set-rpath \"\\$ORIGIN\" $1*";
+			replacement = "patchelf --set-rpath '\\$ORIGIN' $1*";
 			matcher = LINUX_PATTERN.matcher(linuxFixups);
 		}
 
@@ -33,6 +33,7 @@ public class SharedLibFixupScript {
 				pwtr.println();
 				pwtr.println(commands);
 			}
+			fixupScript.setExecutable(true, true);
 		}
 	}
 }

@@ -1,4 +1,6 @@
-// Copyright (c) 2023 RTX BBN Technologies Corp.
+// Copyright (c) 2023-2026 RTX BBN Technologies Corp.
+
+import com.bbn.parliament.build_logic.UncPathMapper;
 
 plugins {
 	id 'java-library'
@@ -19,8 +21,8 @@ configurations {
 }
 
 dependencies {
-	schemagen libs.jena3Cmds
-	schemagen 'org.apache.logging.log4j:log4j-slf4j-impl:2.20.0'
+	schemagen libs.jenaCmds
+	schemagen libs.logback
 
 	implementation libs.jena3Arq
 	implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
@@ -75,7 +77,7 @@ task runSchemagen(type: JavaExec) {
 	classpath = configurations.schemagen
 	mainClass = 'jena.schemagen'
 	args = [
-		'-i', configVocabFile,
+		'-i', UncPathMapper.mapUncPath(configVocabFile),
 		'-e', 'TURTLE',
 		'-o', "${genJavaDir}",
 		'--owl',

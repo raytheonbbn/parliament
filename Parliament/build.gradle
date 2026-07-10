@@ -1,4 +1,4 @@
-// Copyright (c) 2023-2024 RTX BBN Technologies Corp.
+// Copyright (c) 2023-2026 RTX BBN Technologies Corp.
 
 import com.bbn.parliament.build_logic.B2CmdLineFinder;
 import com.bbn.parliament.build_logic.SharedLibFixupScript;
@@ -87,7 +87,7 @@ java {
 }
 
 compileJava {
-	options.headerOutputDirectory = jniHeaderGenDir
+	options.headerOutputDirectory = UncPathMapper.mapUncPath("$jniHeaderGenDir")
 }
 
 javadoc {
@@ -127,14 +127,14 @@ task buildTest(type:Exec) {
 task buildKbCore(type:Exec, dependsOn: 'compileJava') {
 	commandLine B2CmdLineFinder.getB2CommandLine(buildProps, defaultBuildProps)
 	workingDir UncPathMapper.mapUncPath("$projectDir/KbCore")
-	environment 'GENERATED_JNI_HEADER_DIR', "$jniHeaderIncludeDir"
-	environment 'NATIVE_CODE_INSTALL_DIR', "${rootProject.ext.deployableDir}/bin"
+	environment 'GENERATED_JNI_HEADER_DIR', UncPathMapper.mapUncPath("$jniHeaderIncludeDir")
+	environment 'NATIVE_CODE_INSTALL_DIR', UncPathMapper.mapUncPath("${rootProject.ext.deployableDir}/bin")
 }
 
 task buildAdminClient(type:Exec, dependsOn: 'buildKbCore') {
 	commandLine B2CmdLineFinder.getB2CommandLine(buildProps, defaultBuildProps)
 	workingDir UncPathMapper.mapUncPath("$projectDir/AdminClient")
-	environment 'NATIVE_CODE_INSTALL_DIR', "${rootProject.ext.deployableDir}/bin"
+	environment 'NATIVE_CODE_INSTALL_DIR', UncPathMapper.mapUncPath("${rootProject.ext.deployableDir}/bin")
 }
 
 task fixupSharedLibs(dependsOn: 'buildAdminClient', type: Exec) {
@@ -146,7 +146,7 @@ task fixupSharedLibs(dependsOn: 'buildAdminClient', type: Exec) {
 		SharedLibFixupScript.create(macOsFixups, linuxFixups, fixupScript)
 	}
 	executable = 'bash'
-	args = ['-c', ". $fixupScript"]
+	args = ['-c', "$fixupScript"]
 	workingDir "${rootProject.ext.deployableDir}/bin"
 	//standardOutput = System.out
 	//errorOutput = System.err
