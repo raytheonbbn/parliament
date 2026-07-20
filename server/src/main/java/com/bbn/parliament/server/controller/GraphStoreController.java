@@ -40,6 +40,10 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 public class GraphStoreController {
 	private static final String ENDPOINT = "/parliament/graphstore";
+	//LINE ADDED BY CODEX CODING AGENT
+	private static final String EXPORT_ENDPOINT = ENDPOINT + "/export";
+	//LINE ADDED BY CODEX CODING AGENT
+	private static final String URL_ENCODED = "application/x-www-form-urlencoded";
 	public static final String DEFAULT_GRAPH = null;
 
 	private final GraphStoreService graphStoreService;
@@ -69,6 +73,29 @@ public class GraphStoreController {
 		HttpServletRequest request) {
 
 		return graphStoreService.doGetGraph(graphUri, format, headers, request);
+	}
+
+	//FUNCTION ADDED BY CODEX CODING AGENT
+	//HEAD mapping automatically supported by GET mapping
+	@GetMapping(value = ENDPOINT, params = "all")
+	public ResponseEntity<StreamingResponseBody> getRepository(
+		@RequestParam(value = "all") @SuppressWarnings("unused") String allGraphs,
+		@RequestParam(value = "format", required = false) String format,
+		@RequestHeader HttpHeaders headers,
+		HttpServletRequest request) {
+
+		return graphStoreService.doGetRepository(format, headers, request);
+	}
+
+	//FUNCTION ADDED BY CODEX CODING AGENT
+	@PostMapping(value = EXPORT_ENDPOINT, consumes = URL_ENCODED)
+	public ResponseEntity<StreamingResponseBody> legacyExport(
+		@RequestParam(value = "graph", required = false, defaultValue = "") String graphUri,
+		@RequestParam(value = "dataFormat", required = false, defaultValue = "RDF/XML") String dataFormat,
+		@RequestParam(value = "exportAll", required = false, defaultValue = "no") String exportAll,
+		HttpServletRequest request) throws DataFormatException {
+
+		return graphStoreService.doLegacyExport(graphUri, dataFormat, exportAll, request);
 	}
 
 	@DeleteMapping(value = ENDPOINT, params = "default")

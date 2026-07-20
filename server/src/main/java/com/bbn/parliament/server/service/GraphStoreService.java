@@ -48,14 +48,54 @@ public class GraphStoreService {
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(GraphStoreService.class);
 
+	//FUNCTION UPDATED BY CODEX CODING AGENT
 	@SuppressWarnings("static-method")
 	public ResponseEntity<StreamingResponseBody> doGetGraph(String graphUri, String format,
 		HttpHeaders headers, HttpServletRequest request) {
 		AcceptableMediaType mediaType = chooseMediaType(format, headers);
+		return createGraphExportResponse(graphUri, mediaType, false, request);
+	}
+
+	//FUNCTION ADDED BY CODEX CODING AGENT
+	@SuppressWarnings("static-method")
+	public ResponseEntity<StreamingResponseBody> doGetRepository(String format,
+		HttpHeaders headers, HttpServletRequest request) {
+		AcceptableMediaType mediaType = chooseMediaType(format, headers,
+			AcceptableMediaType.RDF_XML);
+		return createRepositoryExportResponse(mediaType, request);
+	}
+
+	//FUNCTION ADDED BY CODEX CODING AGENT
+	@SuppressWarnings("static-method")
+	public ResponseEntity<StreamingResponseBody> doLegacyExport(String graphUri,
+		String dataFormat, String exportAll, HttpServletRequest request)
+		throws DataFormatException {
+		AcceptableMediaType mediaType = chooseLegacyExportMediaType(dataFormat);
+		if ("yes".equalsIgnoreCase(exportAll)) {
+			return createRepositoryExportResponse(mediaType, request);
+		}
+		return createGraphExportResponse(graphUri, mediaType, true, request);
+	}
+
+	//FUNCTION ADDED BY CODEX CODING AGENT
+	private static ResponseEntity<StreamingResponseBody> createGraphExportResponse(
+		String graphUri, AcceptableMediaType mediaType, boolean useLegacyFilename,
+		HttpServletRequest request) {
 		String serverName = ServiceUtil.getRequestor(request);
-		GraphExportHandler handler = new GraphExportHandler(mediaType, serverName, graphUri);
+		GraphExportHandler handler = new GraphExportHandler(mediaType, serverName, graphUri,
+			useLegacyFilename);
 		return ResponseEntity.status(HttpStatus.OK)
 			.contentType(ServiceUtil.getSpringMediaType(mediaType))
+			.header("Content-Disposition", handler.getContentDisposition())
+			.body(handler::handleRequest);
+	}
+
+	//FUNCTION ADDED BY CODEX CODING AGENT
+	private static ResponseEntity<StreamingResponseBody> createRepositoryExportResponse(
+		AcceptableMediaType mediaType, HttpServletRequest request) {
+		GraphExportHandler handler = new GraphExportHandler(mediaType, request.getServerName());
+		return ResponseEntity.status(HttpStatus.OK)
+			.contentType(MediaType.parseMediaType("application/zip"))
 			.header("Content-Disposition", handler.getContentDisposition())
 			.body(handler::handleRequest);
 	}
@@ -174,6 +214,26 @@ public class GraphStoreService {
 		return acceptList.stream()
 			.filter(mt -> mt.getCategory() == QueryResultCategory.RDF)
 			.findFirst()
-			.orElseThrow(() -> new NoAcceptableException(QueryResultCategory.RESULT_SET));
+			.orElseThrow(() -> new NoAcceptableException(QueryResultCategory.RDF));
+	}
+
+	//ADDED BY CODEX CODING AGENT
+	private static AcceptableMediaType chooseMediaType(String format, HttpHeaders headers,
+		AcceptableMediaType defaultMediaType) {
+		List<AcceptableMediaType> acceptList = ServiceUtil.getAcceptList(format, headers);
+		return acceptList.stream()
+			.filter(mt -> mt.getCategory() == QueryResultCategory.RDF)
+			.findFirst()
+			.orElse(defaultMediaType);
+	}
+
+	//ADDED BY CODEX CODING AGENT
+	private static AcceptableMediaType chooseLegacyExportMediaType(String dataFormat)
+		throws DataFormatException {
+		String format = StringUtils.isBlank(dataFormat) ? "RDF/XML" : dataFormat;
+		return AcceptableMediaType.find(format)
+			.filter(mt -> mt.getCategory() == QueryResultCategory.RDF)
+			.orElseThrow(() -> new DataFormatException("Unsupported data format \"%1$s\"",
+				format));
 	}
 }

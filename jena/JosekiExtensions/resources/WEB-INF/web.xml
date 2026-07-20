@@ -35,6 +35,13 @@
 		<load-on-startup>20</load-on-startup>
 	</servlet>
 
+	<!-- NODE ADDED BY CODEX CODING AGENT -->
+	<servlet>
+		<servlet-name>AppDataServlet</servlet-name>
+		<servlet-class>com.bbn.parliament.jena.joseki.bridge.servlet.AppDataServlet</servlet-class>
+		<load-on-startup>20</load-on-startup>
+	</servlet>
+
 	<servlet-mapping>
 		<servlet-name>ParliamentServlet</servlet-name>
 		<url-pattern>/sparql/*</url-pattern>
@@ -48,6 +55,12 @@
 	<servlet-mapping>
 		<servlet-name>TrackerServlet</servlet-name>
 		<url-pattern>/tracker</url-pattern>
+	</servlet-mapping>
+
+	<!-- NODE ADDED BY CODEX CODING AGENT -->
+	<servlet-mapping>
+		<servlet-name>AppDataServlet</servlet-name>
+		<url-pattern>/api/*</url-pattern>
 	</servlet-mapping>
 
 	<filter>

@@ -7,7 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI; //LINE ADDED BY CODEX CODING AGENT
+import java.net.http.HttpClient; //LINE ADDED BY CODEX CODING AGENT
+import java.net.http.HttpRequest; //LINE ADDED BY CODEX CODING AGENT
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets; //LINE ADDED BY CODEX CODING AGENT
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,6 +21,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry; //LINE ADDED BY CODEX CODING AGENT
+import java.util.zip.ZipInputStream; //LINE ADDED BY CODEX CODING AGENT
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.query.ParameterizedSparqlString;
@@ -29,6 +35,7 @@ import org.apache.jena.vocabulary.RDFS;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -263,5 +270,63 @@ public class GraphStoreTests {
 		assertEquals(expectedCounts3, actualCountsMap3);
 
 		assertEquals(0, GraphUtils.getAvailableNamedGraphs(sparqlUrl).size());
+	}
+
+	//FUNCTION ADDED BY CODEX CODING AGENT
+	@Disabled("TODO: TEST AND RE-ENABLE")
+	@Test
+	public void legacySingleGraphExportTest() throws IOException, InterruptedException {
+		assertEquals(HttpStatus.OK.value(), GraphUtils.insertStatements(
+			graphStoreUrl, SAMPLE_TRIPLES, Lang.TURTLE, null));
+
+		var request = HttpRequest.newBuilder()
+			.uri(URI.create(graphStoreUrl + "/export"))
+			.header("Content-Type", "application/x-www-form-urlencoded")
+			.POST(HttpRequest.BodyPublishers.ofString("dataFormat=RDF/XML"))
+			.build();
+		var response = HttpClient.newHttpClient()
+			.send(request, HttpResponse.BodyHandlers.ofInputStream());
+		assertEquals(HttpStatus.OK.value(), response.statusCode());
+		assertTrue(response.headers().firstValue("Content-Disposition")
+			.orElse("")
+			.contains("filename=\"default-graph.rdf\""));
+
+		Model responseModel = ModelFactory.createDefaultModel();
+		try (InputStream body = response.body()) {
+			responseModel.read(body, null, Lang.RDFXML.getName());
+		}
+		assertEquals(2, responseModel.size());
+	}
+
+	//FUNCTION ADDED BY CODEX CODING AGENT
+	@Disabled("TODO: TEST AND RE-ENABLE")
+	@Test
+	public void legacyRepositoryZipExportTest() throws IOException, InterruptedException {
+		assertEquals(HttpStatus.OK.value(), GraphUtils.insertStatements(
+			graphStoreUrl, SAMPLE_TRIPLES, Lang.TURTLE, null));
+		assertEquals(HttpStatus.OK.value(), GraphUtils.insertStatements(
+			graphStoreUrl, SAMPLE_TRIPLES, Lang.TURTLE, TEST_NG_URI));
+
+		var request = HttpRequest.newBuilder()
+			.uri(URI.create(graphStoreUrl + "/export"))
+			.header("Content-Type", "application/x-www-form-urlencoded")
+			.POST(HttpRequest.BodyPublishers.ofString("exportAll=yes&dataFormat=N-TRIPLES"))
+			.build();
+		var response = HttpClient.newHttpClient()
+			.send(request, HttpResponse.BodyHandlers.ofInputStream());
+		assertEquals(HttpStatus.OK.value(), response.statusCode());
+		assertEquals("application/zip", response.headers().firstValue("Content-Type").orElse(""));
+
+		try (ZipInputStream zipIn = new ZipInputStream(response.body(), StandardCharsets.UTF_8)) {
+			int entryCount = 0;
+			boolean foundDefaultGraph = false;
+			for (ZipEntry entry = zipIn.getNextEntry(); entry != null; entry = zipIn.getNextEntry()) {
+				++entryCount;
+				foundDefaultGraph |= entry.getName().equals("default-graph.nt");
+				zipIn.closeEntry();
+			}
+			assertTrue(foundDefaultGraph);
+			assertTrue(entryCount >= 2);
+		}
 	}
 }

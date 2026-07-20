@@ -127,9 +127,23 @@ public enum AcceptableMediaType {
 			.findFirst();
 	}
 
+	//FUNCTION UPDATED BY CODEX CODING AGENT
 	public static Optional<AcceptableMediaType> find(String queryStringFormat) {
 		return Stream.of(AcceptableMediaType.values())
-			.filter(amt -> amt.queryStringFormat.equalsIgnoreCase(queryStringFormat))
+			.filter(amt -> amt.matchesQueryStringFormat(queryStringFormat))
 			.findFirst();
+	}
+
+	//FUNCTION ADDED BY CODEX CODING AGENT
+	private boolean matchesQueryStringFormat(String format) {
+		if (format == null) {
+			return false;
+		}
+		var normalized = format.strip()
+			.replace("-", "")
+			.replace("/", "")
+			.replace("_", "");
+		return queryStringFormat.equalsIgnoreCase(normalized)
+			|| name().replace("_", "").equalsIgnoreCase(normalized);
 	}
 }
