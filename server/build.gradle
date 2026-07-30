@@ -96,6 +96,19 @@ tasks.getByName('sourcesJar') {
 	from java.sourceSets.main.allSource
 	dependsOn runSchemagen
 }
+// NODE ADDED BY CODEX CODING AGENT
+processResources {
+	from("${rootProject.projectDir}/jena/JosekiExtensions/www") {
+		include 'index.html'
+		include 'robots.txt'
+		include 'xml-to-*.xsl'
+		include 'javascripts/react-app.js'
+		include 'stylesheets/joseki.css'
+		include 'stylesheets/queryResults.css'
+		include 'stylesheets/react-app.css'
+		into 'static'
+	}
+}
 
 clean {
 	delete "${projectDir}/kb-data"
