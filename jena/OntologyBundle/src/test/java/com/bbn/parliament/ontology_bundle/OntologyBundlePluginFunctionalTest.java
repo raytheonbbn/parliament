@@ -233,7 +233,7 @@ public class OntologyBundlePluginFunctionalTest {
 		BuildResult result = GradleRunner.create()
 			.forwardOutput()
 			.withPluginClasspath()
-			.withArguments(
+			.withArguments("-S",
 				"--configuration-cache",
 				"--warning-mode", "all",
 				"clean", "build")
