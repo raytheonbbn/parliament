@@ -4,7 +4,7 @@ ext {
 
 	targetDir = file("${rootDir}/target")
 	deployableDir = file("${targetDir}/deployableServer")
-	depDir = file("${rootDir}/dependencies")
+	depDir = file(System.getenv().getOrDefault('PARLIAMENT_DEPENDENCIES', "${rootDir}/dependencies"))
 	depDataDir = file("${depDir}/data")
 }
 
