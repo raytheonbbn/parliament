@@ -41,9 +41,10 @@
 
 plugins {
 	id 'java-gradle-plugin'
-	alias(libs.plugins.gradlePluginPublish)
 	id 'signing'
-	//id "com.github.johnrengelman.shadow" version "8.1.1"
+	alias(libs.plugins.gradlePluginPublish)
+	alias(libs.plugins.compatibility)
+	//alias(libs.plugins.shadow)
 }
 
 ext {
@@ -67,7 +68,7 @@ dependencies {
 	testImplementation gradleTestKit()
 }
 
-version = '1.0.6'
+version = '1.0.8'
 
 gradlePlugin {
 	website = projectUrl
@@ -80,6 +81,11 @@ gradlePlugin {
 			description = projectDescription
 			tags = [ 'ontology', 'OWL', 'RDF', 'Knowledge Graph', 'Semantic Graph', 'Semantic Web' ]
 			implementationClass = 'com.bbn.parliament.ontology_bundle.OntologyBundlePlugin'
+			compatibility {
+				features {
+					configurationCache = true
+				}
+			}
 		}
 	}
 }

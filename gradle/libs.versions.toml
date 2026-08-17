@@ -29,7 +29,6 @@ jclOverSlf4j = { module = "org.slf4j:jcl-over-slf4j", version.ref = "slf4jVer" }
 jenaArq = { module = "org.apache.jena:jena-arq", version.ref = "jenaVer" }
 jenaCmds = { module = "org.apache.jena:jena-cmds", version.ref = "jenaVer" }
 jena3Arq = { module = "org.apache.jena:jena-arq", version.ref = "jena3Ver" }
-jena3Cmds = { module = "org.apache.jena:jena-cmds", version.ref = "jena3Ver" }
 jts = "org.locationtech.jts:jts-core:1.20.0"
 jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jupiterVer" }
 logback = "ch.qos.logback:logback-classic:1.5.32"
@@ -42,7 +41,9 @@ slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4jVer" }
 #groovy = ["groovy-core", "groovy-json", "groovy-nio"]
 
 [plugins]
-springBoot = { id = 'org.springframework.boot', version = '4.0.6' }
-springDepMgmt = { id = 'io.spring.dependency-management', version = '1.1.7' }
-gradlePluginPublish = { id = 'com.gradle.plugin-publish', version = '2.1.1' }
-#ontologyBundle = "com.bbn.parliament.OntologyBundle:1.0.6"
+springBoot = "org.springframework.boot:4.1.0"
+springDepMgmt = "io.spring.dependency-management:1.1.7"
+gradlePluginPublish = "com.gradle.plugin-publish:2.1.1"
+compatibility = "org.gradle.plugin-compatibility:1.0.0"
+#shadow = "com.github.johnrengelman.shadow:8.1.1"
+#ontologyBundle = "com.bbn.parliament.OntologyBundle:1.0.8"
