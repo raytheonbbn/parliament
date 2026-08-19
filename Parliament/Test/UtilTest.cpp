@@ -99,8 +99,8 @@ BOOST_AUTO_TEST_CASE(testGetEnv)
 #endif
 }
 
-#if !defined(__cpp_lib_to_chars) || (__cpp_lib_to_chars < 201611L)
-#	warning "__cpp_lib_to_chars not defined -- using boost::charconv instead"
+#if defined(PARLIAMENT_MACOS) && defined(__cpp_lib_to_chars) && (__cpp_lib_to_chars >= 201611L)
+#	warning "NOTICE: Apple clang now supports std numeric conversions -- consider removing boost::charconv"
 #endif
 
 BOOST_AUTO_TEST_CASE(testNumericConversion)
