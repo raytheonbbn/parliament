@@ -126,6 +126,6 @@ testing {
 }
 
 test {
-	systemProperty 'java.library.path', "${rootProject.ext.deployableDir}/bin"
+	systemProperty 'java.library.path', rootProject.ext.distDirBin
 	systemProperty 'test.data.path', "${rootProject.ext.depDataDir}"
 }

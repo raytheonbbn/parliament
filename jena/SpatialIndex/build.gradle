@@ -59,8 +59,8 @@ testing {
 }
 
 test {
-	systemProperty 'java.library.path', "${rootProject.ext.deployableDir}/bin"
-	systemProperty 'test.data.path', "${rootProject.ext.depDataDir}"
+	systemProperty 'java.library.path', rootProject.ext.distDirBin
+	systemProperty 'test.data.path', rootProject.ext.depDataDir
 }
 
 clean {

@@ -2,9 +2,20 @@ ext {
 	parliamentVersion = '3.0.0'
 	githubOrg = 'raytheonbbn'
 
-	targetDir = file("${rootDir}/target")
-	deployableDir = file("${targetDir}/deployableServer")
-	depDir = file(System.getenv().getOrDefault('PARLIAMENT_DEPENDENCIES', "${rootDir}/dependencies"))
+	if (System.getProperty('os.name').toLowerCase().contains('mac')) {
+		parliamentPlatform = 'mac'
+	} else if (System.getProperty('os.name').toLowerCase().contains('win')) {
+		parliamentPlatform = 'win'
+	} else {
+		parliamentPlatform = System.getenv().getOrDefault('LINUX_DISTRO', "unknown")
+	}
+	distName = "parliament-${parliamentVersion}-${parliamentPlatform}"
+
+	settingsDir = layout.settingsDirectory
+	targetDir = settingsDir.dir('target')
+	distDir = targetDir.dir(distName)
+	distDirBin = file(distDir.dir('bin'))
+	depDir = file(System.getenv().getOrDefault('PARLIAMENT_DEPENDENCIES', "${settingsDir}/dependencies"))
 	depDataDir = file("${depDir}/data")
 }
 
@@ -24,5 +35,81 @@ subprojects {
 			url = uri('https://repo.osgeo.org/repository/release/')
 		}
 		mavenCentral()
+	}
+}
+
+task distArchive(type:Zip) {
+	archiveFileName = "${distName}.zip"
+	destinationDirectory = targetDir
+	from(distDir) {
+		include "**/*"
+		into distName
+	}
+
+	dependsOn 'copyDocs',
+		(System.getProperty('os.name').toLowerCase().contains('win')
+			? 'copyStartScriptsWindows'
+			: 'copyStartScriptsPosix'),
+		'copyLicenses',
+		'copyConfigs',
+		'copyJars'
+}
+
+task copyDocs(type:Copy) {
+	into distDir
+	with copySpec {
+		from settingsDir.dir('doc/UserGuide')
+		include 'ParliamentUserGuide.pdf'
+	}
+}
+
+task copyStartScriptsPosix(type:Copy) {
+	into distDir
+	with copySpec {
+		from settingsDir.dir('server/config')
+		include 'parliament', '*.sh'
+	}
+	filePermissions {
+		user.execute = true
+		group.execute = true
+		other.execute = true
+	}
+}
+
+task copyStartScriptsWindows(type:Copy) {
+	into distDir
+	with copySpec {
+		from settingsDir.dir('server/config')
+		include '*.ps1', '*.bat'
+	}
+}
+
+task copyLicenses(type:Copy) {
+	into "${distDir}/license"
+	with copySpec {
+		from settingsDir
+		include 'LICENSE.md'
+		rename 'LICENSE.md', 'parliament-license.md'
+	}
+	with copySpec {
+		from settingsDir.dir('license')
+		include '*.html', '*.md', '*.txt'
+	}
+}
+
+task copyConfigs(type:Copy) {
+	into "${distDir}/config"
+	with copySpec {
+		from settingsDir.dir('server/config')
+		include 'log4j.*.properties', 'parliament-redirect-*.conf'
+	}
+}
+
+task copyJars(type:Copy) {
+	into "${distDir}/lib"
+	with copySpec {
+		from settingsDir.dir('server/build/libs')
+		include 'server-*.jar'
+		exclude '*-javadoc.jar', '*-plain.jar', '*-sources.jar'
 	}
 }

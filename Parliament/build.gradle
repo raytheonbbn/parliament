@@ -9,11 +9,11 @@ plugins {
 }
 
 ext {
-	jniHeaderIncludeDir = file("$buildDir/generated/sources")
-	jniHeaderGenDir = file("$jniHeaderIncludeDir/parliament/generated")
-	fixupScript = file("$buildDir/generated/fixup.sh")
-	buildProps = file("${rootDir}/build.properties")
-	defaultBuildProps = file("${rootDir}/build.properties.default")
+	jniHeaderIncludeDir = file(layout.buildDirectory.dir('generated/sources'))
+	jniHeaderGenDir = file(layout.buildDirectory.dir('generated/sources/parliament/generated'))
+	fixupScript = file(layout.buildDirectory.file('generated/fixup.sh'))
+	buildProps = file(layout.settingsDirectory.file('build.properties'))
+	defaultBuildProps = file(layout.settingsDirectory.file('build.properties.default'))
 }
 
 // caller,callee,calleeDir
@@ -116,7 +116,7 @@ testing {
 
 test {
 	dependsOn 'buildTest', 'fixupSharedLibs', 'copyNativeConfig'
-	systemProperty 'java.library.path', "${rootProject.ext.deployableDir}/bin"
+	systemProperty 'java.library.path', rootProject.ext.distDirBin
 }
 
 task buildTest(type:Exec) {
@@ -128,13 +128,13 @@ task buildKbCore(type:Exec, dependsOn: 'compileJava') {
 	commandLine B2CmdLineFinder.getB2CommandLine(buildProps, defaultBuildProps)
 	workingDir UncPathMapper.mapUncPath("$projectDir/KbCore")
 	environment 'GENERATED_JNI_HEADER_DIR', UncPathMapper.mapUncPath("$jniHeaderIncludeDir")
-	environment 'NATIVE_CODE_INSTALL_DIR', UncPathMapper.mapUncPath("${rootProject.ext.deployableDir}/bin")
+	environment 'NATIVE_CODE_INSTALL_DIR', UncPathMapper.mapUncPath("${rootProject.ext.distDirBin}")
 }
 
 task buildAdminClient(type:Exec, dependsOn: 'buildKbCore') {
 	commandLine B2CmdLineFinder.getB2CommandLine(buildProps, defaultBuildProps)
 	workingDir UncPathMapper.mapUncPath("$projectDir/AdminClient")
-	environment 'NATIVE_CODE_INSTALL_DIR', UncPathMapper.mapUncPath("${rootProject.ext.deployableDir}/bin")
+	environment 'NATIVE_CODE_INSTALL_DIR', UncPathMapper.mapUncPath("${rootProject.ext.distDirBin}")
 }
 
 task fixupSharedLibs(dependsOn: 'buildAdminClient', type: Exec) {
@@ -147,7 +147,7 @@ task fixupSharedLibs(dependsOn: 'buildAdminClient', type: Exec) {
 	}
 	executable = 'bash'
 	args = ['-c', "$fixupScript"]
-	workingDir "${rootProject.ext.deployableDir}/bin"
+	workingDir rootProject.ext.distDirBin
 	//standardOutput = System.out
 	//errorOutput = System.err
 	//ignoreExitValue = false
@@ -157,7 +157,7 @@ task copyNativeConfig(type: Copy) {
 	from("$projectDir/KbCore") {
 		include '**/Parliament*Config.txt'
 	}
-	into "${rootProject.ext.deployableDir}"
+	into rootProject.ext.distDir
 	includeEmptyDirs = false
 }
 
