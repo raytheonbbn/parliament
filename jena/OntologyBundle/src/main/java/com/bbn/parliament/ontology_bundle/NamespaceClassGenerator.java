@@ -105,9 +105,9 @@ class NamespaceClassGenerator extends DefaultTask {
 				System.out.format("Generating %1$s.java%n", clsName);
 				var args = new ArrayList<String>();
 				args.add("-c");
-				args.add(configPath.getPath());
+				args.add(configPath.toURI().toString());
 				args.add("-i");
-				args.add(inputFile.getPath());
+				args.add(inputFile.toURI().toString());
 				args.add("-a");
 				args.add(ns);
 				args.add("-n");

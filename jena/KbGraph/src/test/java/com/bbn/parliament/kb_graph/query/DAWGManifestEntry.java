@@ -89,6 +89,10 @@ public class DAWGManifestEntry {
 		return "%1$s/%2$s".formatted(testDir.getName(), name);
 	}
 
+	public File getTestDir() {
+		return testDir;
+	}
+
 	public String getName() {
 		return name;
 	}

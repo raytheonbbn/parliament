@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryCancelledException;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
@@ -169,6 +170,9 @@ public class TrackableQuery extends Trackable {
 			boolean ret = false;
 			try {
 				ret = base.hasNext();
+			} catch (QueryCancelledException ex) {
+				setCancelled();
+				throw ex;
 			} catch (RuntimeException ex) {
 				setError();
 				throw ex;
@@ -185,6 +189,9 @@ public class TrackableQuery extends Trackable {
 			QuerySolution next = null;
 			try {
 				next = base.next();
+			} catch (QueryCancelledException ex) {
+				setCancelled();
+				throw ex;
 			} catch (RuntimeException ex) {
 				setError();
 				throw ex;
@@ -198,6 +205,9 @@ public class TrackableQuery extends Trackable {
 			Binding next = null;
 			try {
 				next = base.nextBinding();
+			} catch (QueryCancelledException ex) {
+				setCancelled();
+				throw ex;
 			} catch (RuntimeException ex) {
 				setError();
 				throw ex;
@@ -210,6 +220,9 @@ public class TrackableQuery extends Trackable {
 			QuerySolution next = null;
 			try {
 				next = base.nextSolution();
+			} catch (QueryCancelledException ex) {
+				setCancelled();
+				throw ex;
 			} catch (RuntimeException ex) {
 				setError();
 				throw ex;
@@ -221,6 +234,9 @@ public class TrackableQuery extends Trackable {
 		public void remove() {
 			try {
 				base.remove();
+			} catch (QueryCancelledException ex) {
+				setCancelled();
+				throw ex;
 			} catch (RuntimeException ex) {
 				setError();
 				throw ex;
@@ -231,6 +247,9 @@ public class TrackableQuery extends Trackable {
 		public void forEachRemaining(Consumer<? super QuerySolution> action) {
 			try {
 				base.forEachRemaining(action);
+			} catch (QueryCancelledException ex) {
+				setCancelled();
+				throw ex;
 			} catch (RuntimeException ex) {
 				setError();
 				throw ex;
@@ -241,6 +260,9 @@ public class TrackableQuery extends Trackable {
 		public void close() {
 			try {
 				base.close();
+			} catch (QueryCancelledException ex) {
+				setCancelled();
+				throw ex;
 			} catch (RuntimeException ex) {
 				setError();
 				throw ex;

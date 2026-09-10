@@ -1,4 +1,5 @@
 prefix dct:  <http://purl.org/dc/terms/>
+prefix meo:  <https://foundry.ai.mil/ontology/meks/>
 prefix owl:  <http://www.w3.org/2002/07/owl#>
 prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -25,6 +26,7 @@ delete {
 		rdf:first			# for restrictions in lists
 		owl:equivalentClass
 		owl:someValuesFrom
+		owl:annotatedTarget
 	}
 	values ?rPredicate {
 		owl:allValuesFrom
@@ -37,6 +39,23 @@ delete {
 		owl:minQualifiedCardinality
 		owl:maxQualifiedCardinality
 		owl:hasSelf
+		meo:p-0000000011
+		meo:p-0000000013
+		meo:p-0000000014
+		meo:p-0000000016
+		meo:p-0000000017
+		meo:p-0000000022
+		meo:p-0000000023
+		meo:p-0000000026
+		meo:p-0000000031
+		meo:p-0000000032
+		meo:p-0000000035
+		meo:p-0000000036
+		meo:p-0000000038
+		meo:p-0000000042
+		meo:p-0000000049
+		meo:p-0000000080
+		meo:p-0000000099
 	}
 	?restrictionBearer ?incomingPredicate ?r .
 	?r a owl:Restriction ;

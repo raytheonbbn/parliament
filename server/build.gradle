@@ -111,8 +111,8 @@ testing {
 }
 
 test {
-	systemProperty 'java.library.path', "${rootProject.ext.deployableDir}/bin"
-	systemProperty 'test.data.path', "${rootProject.ext.depDataDir}"
+	systemProperty 'java.library.path', rootProject.ext.distDirBin
+	systemProperty 'test.data.path', rootProject.ext.depDataDir
 
 	workingDir = buildDir
 }
@@ -120,5 +120,5 @@ test {
 bootRun {
 	//def distroDir = rootProject.ext.targetDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
 
-	systemProperty 'java.library.path', "${rootProject.ext.deployableDir}/bin"
+	systemProperty 'java.library.path', rootProject.ext.distDirBin
 }

@@ -8,8 +8,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.jena.graph.Node;
+import org.apache.jena.query.QueryCancelledException;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.sparql.engine.ExecutionContext;
 import org.apache.jena.sparql.engine.QueryIterator;
@@ -21,6 +23,8 @@ import org.apache.jena.sparql.util.IterLib;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.parliament.server.exception.DataFormatException;
 import com.bbn.parliament.server.exception.MissingGraphException;
@@ -35,22 +39,49 @@ import com.bbn.parliament.server.tracker.Tracker;
 import com.bbn.parliament.server.tracker.management.TrackableMXBean.Status;
 
 public class TrackerTestCase {
-	private static class Suspend extends PropertyFunctionBase {
+	public static class Suspend extends PropertyFunctionBase {
 		@Override
 		public QueryIterator exec(Binding binding, PropFuncArg argSubject,
 			Node predicate, PropFuncArg argObject, ExecutionContext execCxt) {
-			System.out.println("sleeping");
+			LOG.info("Suspend property function sleeping...");
 			try {
-				Thread.sleep(100000);
+				Thread.sleep(10000);
 			} catch (InterruptedException ex) {
-				ex.printStackTrace();
+				LOG.warn("InterruptedException in Suspend property function");
 			}
-			System.out.println("awake");
+			LOG.info("Suspend property function awake.");
 			return IterLib.noResults(execCxt);
 		}
 	}
 
+	private static class QueryRunnable implements Runnable {
+		private final TrackableQuery tq;
+		private final AtomicBoolean queryThrewUnexpectedException;
+
+		public QueryRunnable(TrackableQuery tq, AtomicBoolean queryThrewUnexpectedException) {
+			this.tq = tq;
+			this.queryThrewUnexpectedException = queryThrewUnexpectedException;
+		}
+
+		@Override
+		public void run() {
+			try {
+				tq.run();
+				ResultSet rs = tq.getResultSet();
+				while (rs.hasNext()) {
+					rs.next();
+				}
+			} catch (QueryCancelledException ex) {
+				LOG.info("QueryCancelledException in QueryRunnable (as expected)");
+			} catch (Throwable ex) {
+				queryThrewUnexpectedException.set(true);
+				LOG.warn("Unexpected exception in QueryRunnable: {}", ex);
+			}
+		}
+	};
+
 	private static final String TEST_RDF_FILE = "University15_20.owl";
+	static private Logger LOG = LoggerFactory.getLogger(TrackerTestCase.class);
 
 	@BeforeAll
 	public static void initialize() {
@@ -62,20 +93,19 @@ public class TrackerTestCase {
 		ModelManager.inst().clearKb();
 	}
 
-	@SuppressWarnings("static-method")
 	@Test
 	public void testTrackerQuery() throws TrackableException, DataFormatException,
 			MissingGraphException, IOException {
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 
 		String query = "select * where { ?a ?b ?c }";
-		TrackableQuery tq1 = Tracker.getInstance().createQuery(query, "TEST");
+		TrackableQuery tq1 = Tracker.getInstance().createQuery(query, "TrackerTestCase.testTrackerQuery #1");
 		tq1.run();
 
 		// should be 1 since the result set isn't processed yet
 		assertEquals(1, Tracker.getInstance().getTrackableIDs().size());
 
-		TrackableQuery tq2 = Tracker.getInstance().createQuery(query, "TEST");
+		TrackableQuery tq2 = Tracker.getInstance().createQuery(query, "TrackerTestCase.testTrackerQuery #2");
 		tq2.run();
 
 		assertEquals(2, Tracker.getInstance().getTrackableIDs().size());
@@ -93,35 +123,21 @@ public class TrackerTestCase {
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 
 		query = "construct where {?a a ?c }";
-		TrackableQuery tq3 = Tracker.getInstance().createQuery(query, "TEST");
+		TrackableQuery tq3 = Tracker.getInstance().createQuery(query, "TrackerTestCase.testTrackerQuery #3");
 		assertEquals(1, Tracker.getInstance().getTrackableIDs().size());
 		tq3.run();
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 	}
 
-	@SuppressWarnings("static-method")
 	@Test
 	public void testCancel() {
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 		PropertyFunctionRegistry.get().put("http://example.org/suspend", Suspend.class);
-		String query = "select * where { ?a <http://example.org/suspend> ?b . }";
-		final TrackableQuery tq = Tracker.getInstance().createQuery(query, "TEST");
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				try {
-					tq.run();
-					ResultSet rs = tq.getResultSet();
-					while (rs.hasNext()) {
-						rs.next();
-					}
-				} catch (Throwable ex) {
-					ex.printStackTrace();
-				}
-			}
-		};
-
-		Thread t = new Thread(r);
+		var query = "select * where { ?a <http://example.org/suspend> ?b . }";
+		final TrackableQuery tq = Tracker.getInstance().createQuery(query, "TrackerTestCase.testCancel");
+		var queryThrewUnexpectedException = new AtomicBoolean(false);
+		var r = new QueryRunnable(tq, queryThrewUnexpectedException);
+		var t = new Thread(r);
 		t.start();
 
 		try {
@@ -131,17 +147,23 @@ public class TrackerTestCase {
 		}
 
 		try {
-			System.out.println("cancel");
+			LOG.info("Cancelling query...");
 			tq.cancel();
 		} catch (TrackableException ex) {
-			ex.printStackTrace();
+			LOG.warn("Exception while cancelling query: {}", ex);
 		}
 
+		try {
+			t.join();
+		} catch (InterruptedException ex) {
+			fail(ex.getMessage());
+		}
+
+		assertEquals(queryThrewUnexpectedException.get(), false);
 		assertEquals(Status.CANCELLED, tq.getStatus());
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 	}
 
-	@SuppressWarnings("static-method")
 	@Test
 	public void testTrackerUpdate() throws TrackableException, DataFormatException,
 			MissingGraphException, IOException {
@@ -161,7 +183,6 @@ public class TrackerTestCase {
 		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
 	}
 
-	@SuppressWarnings("static-method")
 	@Test
 	public void testTrackerInsert() throws TrackableException, DataFormatException,
 			MissingGraphException, IOException {

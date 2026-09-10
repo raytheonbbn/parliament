@@ -1,3 +1,4 @@
+prefix ism:   <https://foundry.ai.mil/ontology/ism/>
 prefix obo:   <http://purl.obolibrary.org/obo/>
 prefix owl:   <http://www.w3.org/2002/07/owl#>
 prefix provo: <http://www.w3.org/ns/prov#>
@@ -14,7 +15,8 @@ delete {
 		provo:dm ?provDataModelSection ;
 		provo:definition ?provDefinition ;
 		rdfs:seeAlso ?seeAlso ;
-		rdfs:comment ?comment .
+		rdfs:comment ?comment ;
+		ism:classification ?classification .
 } insert {
 	?axiomIri a owl:Axiom ;
 		owl:annotatedSource ?annSrc ;
@@ -24,7 +26,8 @@ delete {
 		provo:dm ?provDataModelSection ;
 		provo:definition ?provDefinition ;
 		rdfs:seeAlso ?seeAlso ;
-		rdfs:comment ?comment .
+		rdfs:comment ?comment ;
+		ism:classification ?classification .
 } where {
 	?axiom a owl:Axiom ;
 		owl:annotatedSource ?annSrc ;
@@ -35,6 +38,7 @@ delete {
 	optional { ?axiom provo:definition ?provDefinition . }
 	optional { ?axiom rdfs:seeAlso ?seeAlso . }
 	optional { ?axiom rdfs:comment ?comment . }
+	optional { ?axiom ism:classification ?classification . }
 	filter ( isblank(?axiom)
 		&& !isblank(?annSrc)
 		&& !isblank(?annProp)
@@ -43,13 +47,15 @@ delete {
 		&& (!bound(?provDataModelSection) || !isblank(?provDataModelSection))
 		&& (!bound(?provDefinition) || !isblank(?provDefinition))
 		&& (!bound(?seeAlso) || !isblank(?seeAlso))
-		&& (!bound(?comment) || !isblank(?comment)) )
+		&& (!bound(?comment) || !isblank(?comment))
+		&& (!bound(?classification) || !isblank(?classification)) )
 	bind (?_fillNS as ?fillNS)
 	bind ( concat(str(?annSrc), "\n", str(?annProp), "\n", str(?annTgt), "\n",
 		if(bound(?oboAxiomLabel), str(?oboAxiomLabel), ""), "\n",
 		if(bound(?provDataModelSection), str(?provDataModelSection), ""), "\n",
 		if(bound(?provDefinition), str(?provDefinition), ""), "\n",
 		if(bound(?seeAlso), str(?seeAlso), ""), "\n",
-		if(bound(?comment), str(?comment), "")) as ?toHash )
+		if(bound(?comment), str(?comment), ""), "\n",
+		if(bound(?classification), str(?classification), "")) as ?toHash )
 	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?axiomIri )
 }

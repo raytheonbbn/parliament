@@ -78,7 +78,8 @@ public class QueryTestUtil {
 			throw new IllegalArgumentException("Unrecognized file extension: %1$s".formatted(resource));
 		}
 		try (InputStream in = getResource(resource)) {
-			model.read(in, base, lang.getName());
+			var fixedBase = (base == null) ? null : base.replace('\\', '/');
+			model.read(in, fixedBase, lang.getName());
 		} catch (IOException ex) {
 			throw new UncheckedIOException(ex);
 		}

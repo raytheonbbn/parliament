@@ -260,7 +260,7 @@ public class ParliamentServerTests {
 			long count = stream.count();
 		} catch (QueryParseException ex) {
 			caughtException = true;
-			LOG.info("Query parse error", ex);
+			LOG.info("Caught the expected QueryParseException from parsing the erroneous query: {}", ex.getMessage());
 		}
 		assertTrue(caughtException);
 	}

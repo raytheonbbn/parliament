@@ -4,6 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +56,7 @@ public class KbOpExecutorDAWGTest {
 		"bound",
 		"cast",
 		"construct",
+		//"dataset",
 		"distinct",
 		"expr-builtin",
 		"expr-equals",
@@ -111,7 +117,6 @@ public class KbOpExecutorDAWGTest {
 		""";
 	private static final File DAWG_ROOT_DIR = new File("data/data-r2");
 	private static final Pattern FILE_URI_FIXER = Pattern.compile("^(file:/)([^/].*)$");
-	//private static final Pattern FILE_URI_FIXER_2 = Pattern.compile("^(file:///[A-Za-z]):(.*)$");
 	private static final Logger LOG = LoggerFactory.getLogger(KbOpExecutorDAWGTest.class);
 
 	private TestingDataset dataset = null;
@@ -159,61 +164,102 @@ public class KbOpExecutorDAWGTest {
 
 	@ParameterizedTest
 	@MethodSource
-	public void testDawgTest(DAWGManifestEntry me) {
+	public void testDawgTest(DAWGManifestEntry me) throws IOException {
 		if (INVALID_TESTS.contains(me.getCurrentTest())) {
 			LOG.warn("Skipping DAWG test '{}'", me.getCurrentTest());
 			return;
 		}
+
 		for (File dataFile : me.getData()) {
 			@SuppressWarnings("resource")
 			KbGraph defaultGraph = dataset.getDefaultGraph();
 			QueryTestUtil.loadResource(dataFile.getPath(), defaultGraph);
 		}
+
 		for (File graphDataFile : me.getGraphData()) {
-			//String uri = graphDataFile.toURI().toString();
-			String fileName = graphDataFile.getName();
-			String uri = new File(fileName).toURI().toString();
-			Matcher m = FILE_URI_FIXER.matcher(uri);
-			if (m.matches()) {
-				uri = m.replaceAll("$1//$2");
-			}
-			// Escaping colons (after drive letters on Windows) was once required, but no longer:
-			//Matcher m2 = FILE_URI_FIXER_2.matcher(uri);
-			//if (m2.matches()) {
-			//	uri = m2.replaceAll("$1%3A$2");
-			//}
-			LOG.debug("Graph URI for test '{}' is '{}'", me.getName(), uri);
-			@SuppressWarnings("resource")
-			KbGraph namedGraph = dataset.getNamedGraph(uri);
-			QueryTestUtil.loadResource(graphDataFile.getPath(), namedGraph);
+			loadFileIntoNamedGraph(graphDataFile, me.getName());
 		}
-		try {
-			Query q = QueryFactory.read(me.getQuery().getPath());
-			if (q.isSelectType()) {
-				ResultSetRewindable rs = QueryTestUtil.loadResultSet(me.getResult().getPath());
-				runDAWGTest(q, rs, me);
-			} else if (q.isAskType()) {
-				SPARQLResult expectedResultSet = ResultSetFactory.result(me.getResult().getPath());
-				boolean answer = false;
-				if (expectedResultSet.isBoolean()) {
-					answer = expectedResultSet.getBooleanResult();
-				} else {
-					Model resultsAsModel = expectedResultSet.getModel();
-					StmtIterator sIter = resultsAsModel.listStatements(null, RDF.type,
-						ResultSetGraphVocab.ResultSet);
-					if (!sIter.hasNext()) {
-						fail("Could not find ASK result for '%1$s'".formatted(me.getName()));
-					}
-					Statement s = sIter.next();
-					if (sIter.hasNext()) {
-						fail("More than one ASK result for '%1$s'".formatted(me.getName()));
-					}
-					answer = s.getSubject().getRequiredProperty(ResultSetGraphVocab.p_boolean).getBoolean();
-				}
-				runDAWGTest(q, answer, me);
+
+		// The only DAWG tests with a dataset description are the ones in the dataset
+		// directory, and none of those specify a data file or graph data file, so either
+		// the two for loops above will execute of this one will, but not both.
+		var q = parseQuery(me);
+		if (q.hasDatasetDescription()) {
+			List<File> dataFiles = getDataFileList(me.getTestDir());
+			for (File dataFile : dataFiles) {
+				loadFileIntoNamedGraph(dataFile, me.getName());
 			}
+		}
+
+		if (q.isSelectType()) {
+			ResultSetRewindable rs = QueryTestUtil.loadResultSet(me.getResult().getPath());
+			runDAWGTest(q, rs, me);
+		} else if (q.isAskType()) {
+			SPARQLResult expectedResultSet = ResultSetFactory.result(me.getResult().getPath());
+			boolean answer = false;
+			if (expectedResultSet.isBoolean()) {
+				answer = expectedResultSet.getBooleanResult();
+			} else {
+				Model resultsAsModel = expectedResultSet.getModel();
+				StmtIterator sIter = resultsAsModel.listStatements(null, RDF.type,
+					ResultSetGraphVocab.ResultSet);
+				if (!sIter.hasNext()) {
+					fail("Could not find ASK result for '%1$s'".formatted(me.getName()));
+				}
+				Statement s = sIter.next();
+				if (sIter.hasNext()) {
+					fail("More than one ASK result for '%1$s'".formatted(me.getName()));
+				}
+				answer = s.getSubject().getRequiredProperty(ResultSetGraphVocab.p_boolean).getBoolean();
+			}
+			runDAWGTest(q, answer, me);
+		}
+	}
+
+	private void loadFileIntoNamedGraph(File graphDataFile, String testName) {
+		String fileName = graphDataFile.getName();
+		String uri = new File(fileName).toURI().toString();
+		Matcher m = FILE_URI_FIXER.matcher(uri);
+		if (m.matches()) {
+			uri = m.replaceAll("$1//$2");
+		}
+		LOG.debug("Graph URI for test '{}' is '{}'", testName, uri);
+		@SuppressWarnings("resource")
+		KbGraph namedGraph = dataset.getNamedGraph(uri);
+		QueryTestUtil.loadResource(graphDataFile.getPath(), namedGraph);
+	}
+
+	private static List<File> getDataFileList(File testDir) throws IOException {
+		try (Stream<Path> stream = Files.find(testDir.toPath(),
+			Integer.MAX_VALUE,
+			KbOpExecutorDAWGTest::isDataFile,
+			FileVisitOption.FOLLOW_LINKS)
+		) {
+			return stream
+				.map(Path::toFile)
+				.toList();
+		}
+	}
+
+	private static Pattern DATA_FILE_PATTERN = Pattern.compile("^data-.*\\.ttl$",
+		Pattern.CASE_INSENSITIVE);
+	private static boolean isDataFile(Path p, BasicFileAttributes attrs) {
+		if (attrs.isRegularFile()) {
+			String fileName = p.getFileName().toString();
+			if (fileName.equalsIgnoreCase("data.ttl")
+				|| DATA_FILE_PATTERN.matcher(fileName).matches()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static Query parseQuery(DAWGManifestEntry me) {
+		try {
+			return QueryFactory.read(me.getQuery().getPath());
 		} catch (QueryParseException ex) {
 			fail("'%1$s': query parse exception:  %2$s".formatted(me.getCurrentTest(), ex.getMessage()));
+			return null;
 		}
 	}
 
