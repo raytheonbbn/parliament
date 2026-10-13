@@ -23,6 +23,8 @@ configurations {
 dependencies {
 	schemagen libs.jenaCmds
 	schemagen libs.logback
+	schemagen libs.jclOverSlf4j
+	schemagen libs.slf4jApi
 
 	implementation libs.jena3Arq
 	implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
@@ -74,7 +76,9 @@ task runSchemagen(type: JavaExec) {
 	inputs.file(configVocabFile)
 	outputs.file(configVocabSource)
 
-	classpath = configurations.schemagen
+	classpath = layout.files(
+		configurations.schemagen,
+		layout.projectDirectory.dir('schemagen-classpath'))
 	mainClass = 'jena.schemagen'
 	args = [
 		'-i', UncPathMapper.mapUncPath(configVocabFile),

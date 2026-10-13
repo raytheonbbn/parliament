@@ -10,7 +10,8 @@ plugins {
 
 ext {
 	genJavaDir = file("$buildDir/generated/sources/java")
-	configVocabFile = "${projectDir}/src/main/resources/config-ont.ttl"
+	//genJavaDir = layout.buildDirectory.dir('generated/sources/java')
+	configVocabFile = layout.projectDirectory.file('src/main/resources/config-ont.ttl')
 	configVocabPackage = 'com.bbn.parliament.server.configuration.vocab'
 	configVocabDir = configVocabPackage.replaceAll(/\./, '/')
 	configVocabClassNm = 'ConfigOnt'
@@ -26,6 +27,8 @@ dependencies {
 
 	schemagen libs.jenaCmds
 	schemagen libs.logback
+	schemagen libs.jclOverSlf4j
+	schemagen libs.slf4jApi
 
 	implementation project(':Parliament')
 	implementation project(':jena:ParliamentClient')
@@ -66,10 +69,12 @@ task runSchemagen(type: JavaExec) {
 	inputs.file(configVocabFile)
 	outputs.file(configVocabSource)
 
-	classpath = configurations.schemagen
+	classpath = layout.files(
+		configurations.schemagen,
+		layout.projectDirectory.dir('schemagen-classpath'))
 	mainClass = 'jena.schemagen'
 	args = [
-		'-i', UncPathMapper.mapUncPath(configVocabFile),
+		'-i', UncPathMapper.mapUncPath(configVocabFile.toString()),
 		'-e', 'TURTLE',
 		'-o', "${genJavaDir}",
 		'--owl',
@@ -98,8 +103,8 @@ tasks.getByName('sourcesJar') {
 }
 
 clean {
-	delete "${projectDir}/kb-data"
-	delete "${projectDir}/log"
+	delete layout.projectDirectory.dir('kb-data')
+	delete layout.projectDirectory.dir('log')
 }
 
 testing {
@@ -114,11 +119,93 @@ test {
 	systemProperty 'java.library.path', rootProject.ext.distDirBin
 	systemProperty 'test.data.path', rootProject.ext.depDataDir
 
-	workingDir = buildDir
+	workingDir = layout.buildDirectory
 }
 
 bootRun {
 	//def distroDir = rootProject.ext.targetDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
 
 	systemProperty 'java.library.path', rootProject.ext.distDirBin
+}
+
+task distArchive(type:Zip) {
+	archiveFileName = "${rootProject.ext.distName}.zip"
+	destinationDirectory = rootProject.ext.targetDir
+	from(rootProject.ext.distDir) {
+		include "**/*"
+		into rootProject.ext.distName
+	}
+
+	dependsOn 'assemble',
+		'copyDocs',
+		(System.getProperty('os.name').toLowerCase().contains('win')
+			? 'copyStartScriptsWindows'
+			: 'copyStartScriptsPosix'),
+		'copyLicenses',
+		'copyConfigs',
+		'copyJars'
+}
+
+task copyDocs(type:Copy) {
+	into rootProject.ext.distDir
+	with copySpec {
+		from layout.settingsDirectory.dir('doc/UserGuide')
+		include 'ParliamentUserGuide.pdf'
+	}
+}
+
+task copyStartScriptsPosix(type:Copy) {
+	into rootProject.ext.distDir
+	with copySpec {
+		from layout.projectDirectory.dir('config')
+		include 'parliament', '*.sh'
+	}
+	filePermissions {
+		user.execute = true
+		group.execute = true
+		other.execute = true
+	}
+}
+
+task copyStartScriptsWindows(type:Copy) {
+	into rootProject.ext.distDir
+	with copySpec {
+		from layout.projectDirectory.dir('config')
+		include '*.ps1', '*.bat'
+	}
+}
+
+task copyLicenses(type:Copy) {
+	into "${rootProject.ext.distDir}/license"
+	with copySpec {
+		from layout.settingsDirectory
+		include 'LICENSE.md'
+		rename 'LICENSE.md', 'parliament-license.md'
+	}
+	with copySpec {
+		from layout.settingsDirectory.dir('license')
+		include '*.html', '*.md', '*.txt'
+	}
+}
+
+task copyConfigs(type:Copy) {
+	into "${rootProject.ext.distDir}/config"
+	with copySpec {
+		from layout.projectDirectory.dir('config')
+		include 'log4j.*.properties', 'parliament-redirect-*.conf'
+	}
+}
+
+task copyJars(type:Copy) {
+	into "${rootProject.ext.distDir}/lib"
+	with copySpec {
+		from layout.buildDirectory.dir('libs')
+		include 'server-*.jar'
+		exclude '*-javadoc.jar', '*-plain.jar', '*-sources.jar'
+	}
+	dependsOn 'assemble'
+}
+
+tasks.named('build') {
+	dependsOn(distArchive)
 }
