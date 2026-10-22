@@ -46,8 +46,8 @@ public class QueryController {
 	@Value("${spring.servlet.multipart.location:}")
 	private String multipartLocation;
 
-	@Value("${parliament.bridge.config}")
-	private String parliamentBridgeConfigFile;
+	@Value("${parliament.config-file}")
+	private String parliamentConfigFile;
 
 	@Autowired
 	public QueryController(QueryService service) {
@@ -55,15 +55,15 @@ public class QueryController {
 	}
 
 	@PostConstruct
-	public void initBridge() {
+	public void init() {
 		LOG.info("multipart.location set to '{}'", multipartLocation);
-		LOG.info("parliament.bridge.config set to '{}'", parliamentBridgeConfigFile);
+		LOG.info("parliament.config-file set to '{}'", parliamentConfigFile);
 		try {
-			LOG.info("Initializing Parliament Bridge ...");
+			LOG.info("Initializing ParliamentBridge ...");
 			File tempDir = getTempDir();
 			LOG.info("Temp dir set to '{}'", tempDir.getPath());
-			ParliamentBridge.initialize(parliamentBridgeConfigFile, tempDir);
-			LOG.info("Parliament Bridge initialization finished");
+			ParliamentBridge.initialize(parliamentConfigFile, tempDir);
+			LOG.info("ParliamentBridge initialization finished");
 		} catch (ParliamentBridgeException ex) {
 			LOG.error("Unable to initialize ParliamentBridge:", ex);
 			throw new IllegalStateException("Error while initializing ParliamentBridge", ex);

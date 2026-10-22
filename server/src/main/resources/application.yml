@@ -1,4 +1,4 @@
-# https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html
+# https://docs.spring.io/spring-boot/appendix/application-properties/index.html
 
 spring:
    application:
@@ -9,32 +9,44 @@ spring:
    servlet:
       multipart:
          enabled: true
-         max-file-size: 16MB
-         max-request-size: 64MB
+         max-file-size: 16GB
+         max-request-size: 17GB
          # location: ''
          file-size-threshold: 64KB
          resolve-lazily: true
+      web:
+         error:
+            include-binding-errors: always
+            include-exception: false
+            include-message: always
+            include-path: always
+            include-stacktrace: never
+            whitelabel:
+               enabled: true
 
 server:
-   error:
-      include-binding-errors: always
-      include-message: always
    port: 8089
-#   tomcat:
-#      max-http-post-size: 52428800
-#      max-swallow-size: 52428800
-
-http:
-   mappers:
-      json-pretty-print: false
-      json-sort-keys: false
-
-#multipart:
-#   location: ''
-#   maxFileSize: 16Mb
-#   maxRequestSize: 64Mb
-#   fileSizeThreshold: 64Kb
+   address: 127.0.0.1
+   http2:
+      enabled: false
+   compression:
+      additional-mime-types:           # additional MIME types to be compressed
+         - application/ld+json
+         - application/n-quads
+         - application/n-triples
+         - application/rdf+json
+         - application/rdf+xml
+         - application/sparql-results+json
+         - application/sparql-results+xml
+         - application/trig
+         - text/csv                    # for sparql results
+         - text/tab-separated-values   # for sparql results
+         - text/turtle
+         - text/xml                    # for trix
+      enabled: true
+   # ssl:
+   #   To configure SSL, append this fragment to the URL at the top of the file:
+   #   #application-properties.server.server.ssl.bundle
 
 parliament:
-   bridge:
-      config: parliament-config.ttl
+   config-file: parliament-config.ttl

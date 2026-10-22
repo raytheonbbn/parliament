@@ -64,8 +64,8 @@ public class ParliamentBridgeConfiguration {
 			? new File(System.getProperty("java.io.tmpdir", "."))
 			: tmpDir;
 		if (LOG.isTraceEnabled()) {
-			LOG.trace("Set tmpDir to {} tmpDir:  '{}'",
-				(tmpDir == null) ? "the system" : "Jetty's",
+			LOG.trace("Set tmpDir to the {} tmpDir:  '{}'",
+				(tmpDir == null) ? "system" : "web server's",
 				_tmpDir.getAbsolutePath());
 		}
 	}
