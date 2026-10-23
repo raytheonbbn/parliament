@@ -1,8 +1,8 @@
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix pcfg: <http://parliament.semwebcentral.org/parliament-config#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix pcfg: <http://parliament.semwebcentral.org/parliament-config#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 
 [
 	a pcfg:Configuration ;
@@ -21,109 +21,40 @@
 		] ;
 	] ;
 	pcfg:prefixes (
-		[
-			pcfg:prefix "rdf" ;
-			pcfg:uri rdf: ;
-		]
-		[
-			pcfg:prefix "rdfs" ;
-			pcfg:uri rdfs: ;
-		]
-		[
-			pcfg:prefix "owl" ;
-			pcfg:uri owl: ;
-		]
-		[
-			pcfg:prefix "xsd" ;
-			pcfg:uri xsd: ;
-		]
-		[
-			pcfg:prefix "xml" ;
-			pcfg:uri <http://www.w3.org/XML/1998/namespace> ;
-		]
-		[
-			pcfg:prefix "fn" ;
-			pcfg:uri <http://www.w3.org/2005/xpath-functions#> ;
-		]
-		[
-			pcfg:prefix "afn" ;
-			pcfg:uri <http://jena.hpl.hp.com/ARQ/function#> ;
-		]
-		[
-			pcfg:prefix "par" ;
-			pcfg:uri <http://parliament.semwebcentral.org/parliament#> ;
-		]
-		[
-			pcfg:prefix "parPF" ;
-			pcfg:uri <java:com.bbn.parliament.server.pfunction.> ;
-		]
-		[
-			pcfg:prefix "dc" ;
-			pcfg:uri <http://purl.org/dc/elements/1.1/> ;
-		]
-		[
-			pcfg:prefix "ja" ;
-			pcfg:uri <http://jena.hpl.hp.com/2005/11/Assembler#> ;
-		]
-		[
-			pcfg:prefix "rss" ;
-			pcfg:uri <http://purl.org/rss/1.0/> ;
-		]
-		[
-			pcfg:prefix "vcard" ;
-			pcfg:uri <http://www.w3.org/2001/vcard-rdf/3.0#> ;
-		]
-		[
-			pcfg:prefix "dul" ;
-			pcfg:uri <http://www.loa-cnr.it/ontologies/DUL.owl#> ;
-		]
-		[
-			pcfg:prefix "skos" ;
-			pcfg:uri <http://www.w3.org/2004/02/skos/core#> ;
-		]
-		[
-			pcfg:prefix "ssn" ;
-			pcfg:uri <http://purl.oclc.org/NET/ssnx/ssn#> ;
-		]
-		[
-			pcfg:prefix "time" ;
-			pcfg:uri <http://www.w3.org/2006/time#> ;
-		]
-		[
-			pcfg:prefix "pt" ;
-			pcfg:uri <http://bbn.com/ParliamentTime#> ;
-		]
-		[
-			pcfg:prefix "ogc" ;
-			pcfg:uri <http://www.opengis.net/> ;
-		]
-		[
-			pcfg:prefix "geo" ;
-			pcfg:uri <http://www.opengis.net/ont/geosparql#> ;
-		]
-		[
-			pcfg:prefix "geof" ;
-			pcfg:uri <http://www.opengis.net/def/function/geosparql/> ;
-		]
-		[
-			pcfg:prefix "geor" ;
-			pcfg:uri <http://www.opengis.net/def/rule/geosparql/> ;
-		]
-		[
-			pcfg:prefix "sf" ;
-			pcfg:uri <http://www.opengis.net/ont/sf#> ;
-		]
-		[
-			pcfg:prefix "gml" ;
-			pcfg:uri <http://www.opengis.net/ont/gml#> ;
-		]
-		[
-			pcfg:prefix "units" ;
-			pcfg:uri <http://www.opengis.net/def/uom/OGC/1.0/> ;
-		]
-		[
-			pcfg:prefix "sh" ;
-			pcfg:uri <http://www.w3.org/ns/shacl#> ;
-		]
+		[ pcfg:prefix "afn" ;			pcfg:uri <http://jena.hpl.hp.com/ARQ/function#> ]
+		[ pcfg:prefix "bfo" ;			pcfg:uri <http://purl.obolibrary.org/obo/bfo#> ]
+		[ pcfg:prefix "cco" ;			pcfg:uri <https://www.commoncoreontologies.org/> ]
+		[ pcfg:prefix "dc" ;				pcfg:uri <http://purl.org/dc/elements/1.1/> ]
+		[ pcfg:prefix "dct" ;			pcfg:uri <http://purl.org/dc/terms/> ]
+		[ pcfg:prefix "dul" ;			pcfg:uri <http://www.loa-cnr.it/ontologies/DUL.owl#> ]
+		[ pcfg:prefix "fn" ;				pcfg:uri <http://www.w3.org/2005/xpath-functions#> ]
+		[ pcfg:prefix "foaf" ;			pcfg:uri <http://xmlns.com/foaf/0.1/> ]
+		[ pcfg:prefix "geo" ;			pcfg:uri <http://www.opengis.net/ont/geosparql#> ]
+		[ pcfg:prefix "geof" ;			pcfg:uri <http://www.opengis.net/def/function/geosparql/> ]
+		[ pcfg:prefix "geor" ;			pcfg:uri <http://www.opengis.net/def/rule/geosparql/> ]
+		[ pcfg:prefix "gml" ;			pcfg:uri <http://www.opengis.net/ont/gml#> ]
+		[ pcfg:prefix "ism" ;			pcfg:uri <https://foundry.ai.mil/ontology/ism/> ]
+		[ pcfg:prefix "ja" ;				pcfg:uri <http://jena.hpl.hp.com/2005/11/Assembler#> ]
+		[ pcfg:prefix "meo" ;			pcfg:uri <https://foundry.ai.mil/ontology/meks/> ]
+		[ pcfg:prefix "obo" ;			pcfg:uri <http://purl.obolibrary.org/obo/> ]
+		[ pcfg:prefix "ogc" ;			pcfg:uri <http://www.opengis.net/> ]
+		[ pcfg:prefix "owl" ;			pcfg:uri owl: ]
+		[ pcfg:prefix "par" ;			pcfg:uri <http://parliament.semwebcentral.org/parliament#> ]
+		[ pcfg:prefix "parPF" ;			pcfg:uri <java:com.bbn.parliament.server.pfunction.> ]
+		[ pcfg:prefix "prov" ;			pcfg:uri <http://www.w3.org/ns/prov#> ]
+		[ pcfg:prefix "pt" ;				pcfg:uri <http://bbn.com/ParliamentTime#> ]
+		[ pcfg:prefix "rdf" ;			pcfg:uri rdf: ]
+		[ pcfg:prefix "rdfs" ;			pcfg:uri rdfs: ]
+		[ pcfg:prefix "Relations" ;	pcfg:uri <http://agent.jhuapl.edu/2013/07/23/Relations/Relations#> ]
+		[ pcfg:prefix "rss" ;			pcfg:uri <http://purl.org/rss/1.0/> ]
+		[ pcfg:prefix "sf" ;				pcfg:uri <http://www.opengis.net/ont/sf#> ]
+		[ pcfg:prefix "sh" ;				pcfg:uri <http://www.w3.org/ns/shacl#> ]
+		[ pcfg:prefix "skos" ;			pcfg:uri <http://www.w3.org/2004/02/skos/core#> ]
+		[ pcfg:prefix "ssn" ;			pcfg:uri <http://purl.oclc.org/NET/ssnx/ssn#> ]
+		[ pcfg:prefix "time" ;			pcfg:uri <http://www.w3.org/2006/time#> ]
+		[ pcfg:prefix "units" ;			pcfg:uri <http://www.opengis.net/def/uom/OGC/1.0/> ]
+		[ pcfg:prefix "vcard" ;			pcfg:uri <http://www.w3.org/2001/vcard-rdf/3.0#> ]
+		[ pcfg:prefix "xml" ;			pcfg:uri <http://www.w3.org/XML/1998/namespace> ]
+		[ pcfg:prefix "xsd" ;			pcfg:uri xsd: ]
 	) ;
 ] .
