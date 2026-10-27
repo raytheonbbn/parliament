@@ -60,6 +60,16 @@ public class LegacyUiController {
 		this.trackerService = trackerService;
 	}
 
+	@GetMapping({ "/", "/parliament/" })
+	public String redirectToApplication() {
+		return "redirect:/parliament";
+	}
+
+	@GetMapping("/parliament")
+	public String application() {
+		return "forward:/index.html";
+	}
+
 	@GetMapping(value = "/sparql", params = "query")
 	public ResponseEntity<StreamingResponseBody> sparqlGet(
 			@RequestParam("query") String query,
@@ -230,7 +240,7 @@ public class LegacyUiController {
 				<!doctype html>
 				<html lang="en">
 				<head><meta charset="utf-8"><title>Parliament</title></head>
-				<body><p>%s</p><p><a href="/">Back to Parliament</a></p></body>
+				<body><p>%s</p><p><a href="/parliament">Back to Parliament</a></p></body>
 				</html>
 				""".formatted(message));
 	}

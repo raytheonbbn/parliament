@@ -1,17 +1,18 @@
 // FILE ADDED BY CODEX CODING AGENT
 const routes = [
 	["/", "Home"],
-	["/query", "Query"],
+	["/query", "SPARQL Query"],
 	["/explore", "Explore"],
-	["/update", "SPARQL/Update"],
+	["/update", "SPARQL Update"],
 	["/insert", "Insert Data"],
-	["/export", "Export"],
+	["/export", "Export Data"],
 	["/indexes", "Indexes"],
-	["/admin", "Admin"],
+	["/admin", "Admin Console"],
 ];
 
 const state = {
 	route: readRoute(),
+	queryText: null,
 	metadata: null,
 	loadError: "",
 	memory: null,
@@ -102,7 +103,7 @@ function render() {
 function appShell() {
 	return h("div", { className: "app-shell" },
 		h("aside", { className: "sidebar" },
-			h("div", { className: "brand" }, "Parliament Query Server"),
+			h("div", { className: "brand" }, "Parliament Semantic Graph Store"),
 			h("nav", { className: "nav" }, routes.map(([path, label]) => h("a", {
 				className: state.route.path === path ? "active" : "",
 				href: `#${path}`,
@@ -197,7 +198,7 @@ function messageBody(body) {
 
 function homePage() {
 	return h("div", null,
-		pageHeader("Parliament Query Server"),
+		pageHeader("Parliament Semantic Graph Store"),
 		errorMessage(state.loadError),
 		h("div", { className: "grid" },
 			h("section", { className: "panel" },
@@ -211,12 +212,10 @@ function homePage() {
 		graphsPanel(state.metadata?.graphs),
 		h("section", { className: "panel" },
 			h("h2", null, "SPARQL"),
-			h("p", null, "SPARQL is defined by 3 documents:"),
-			h("ul", { className: "link-list" },
-				h("li", null, h("a", { href: "http://www.w3.org/TR/rdf-sparql-query/" }, "SPARQL query language")),
-				h("li", null, h("a", { href: "http://www.w3.org/TR/rdf-sparql-protocol/" }, "SPARQL protocol")),
-				h("li", null, h("a", { href: "http://www.w3.org/TR/rdf-sparql-XMLres/" }, "SPARQL XML results format")),
-			),
+			h("p", null, "SPARQL is a suite of W3C recommendations (standards). Its primary recommendation is:"),
+			h("p", null, h("a", { href: "https://www.w3.org/TR/rdf-sparql-query/" }, "SPARQL Query Language for RDF")),
+			h("p", null, "Links to the full suite of recommendations are available here:"),
+			h("p", null, h("a", { href: "https://www.w3.org/TR/sparql11-overview/" }, "SPARQL 1.1 Overview")),
 		),
 	);
 }
@@ -255,7 +254,7 @@ function graphTable(graphs) {
 }
 
 function queryPage() {
-	const query = `${prefixLines(state.metadata, "sparql")}
+	const query = state.queryText ?? `${prefixLines(state.metadata, "sparql")}
 
 SELECT DISTINCT
 ?class
@@ -280,8 +279,9 @@ WHERE {
 	);
 	form.addEventListener("submit", (event) => submitQuery(event, form));
 	return h("div", null,
-		pageHeader("Query"),
+		pageHeader("SPARQL Query"),
 		h("section", { className: "panel" }, h("h2", null, "SELECT or CONSTRUCT query"), form),
+		h("section", { className: "panel query-results", id: "query-results", hidden: true }),
 		graphsPanel(state.metadata?.graphs),
 	);
 }
@@ -290,9 +290,9 @@ const displayOptions = [
 	["html", "HTML table"],
 	["count", "Count only"],
 	["csv", "CSV"],
-	["xml", "SPARQL result set"],
-	["custom", "Custom XSLT"],
+	["xml", "XML"],
 	["json", "JSON"],
+	["custom", "Custom XSLT"],
 ];
 
 function setDisplayHiddenFields(form, display) {
@@ -331,9 +331,9 @@ DELETE DATA
 		onSuccess: refreshRepositoryState,
 	}));
 	return h("div", null,
-		pageHeader("SPARQL/Update Query"),
+		pageHeader("SPARQL Update"),
 		h("section", { className: "panel" },
-			h("h2", null, "SPARQL/Update Query"),
+			h("h2", null, "SPARQL Update"),
 			form,
 		),
 	);
@@ -352,15 +352,15 @@ function insertPage() {
 		h("p", null, "Import an entire repository from a previous Parliament export (ZIP file)"),
 		h("input", { type: "file", name: "statements", size: "70" }),
 		h("input", { type: "hidden", name: "import", value: "yes" }),
-		h("div", { className: "form-row" }, h("input", { type: "submit", value: "Import Repository" })),
+		h("div", { className: "form-row" }, h("input", { type: "submit", value: "Restore Repository Backup (Deletes All Prior Content)" })),
 	);
 	importForm.addEventListener("submit", (event) => {
 		event.preventDefault();
 		const request = buildFormRequest(importForm);
 		showConfirm({
-			title: "Import Repository",
+			title: "Restore Repository Backup (Deletes All Prior Content)",
 			body: "This will replace all existing data in the repository.",
-			confirmLabel: "Import Repository",
+			confirmLabel: "Restore Repository Backup (Deletes All Prior Content)",
 			danger: true,
 			onConfirm: () => runPreparedAction(request, {
 				successTitle: "Import Complete",
@@ -399,9 +399,9 @@ function insertPage() {
 
 	return h("div", null,
 		pageHeader("Insert Data"),
-		h("section", { className: "panel" }, h("h2", null, "Import Repository"), importForm),
 		h("section", { className: "panel" }, h("h2", null, "File Insert"), fileForm),
 		h("section", { className: "panel" }, h("h2", null, "Text Insert"), textForm),
+		h("section", { className: "panel" }, h("h2", null, "Restore Repository Backup (Deletes All Prior Content)"), importForm),
 	);
 }
 
@@ -437,7 +437,7 @@ function exportPage() {
 	const repoForm = h("form", { action: "bulk/export", method: "post" },
 		h("label", null, h("input", { type: "radio", name: "exportAll", value: "yes", checked: true }), " Entire Repository (ZIP file)"),
 		exportFormatField(),
-		h("input", { type: "submit", value: "Export Repository" }),
+		h("input", { type: "submit", value: "Backup Repository" }),
 	);
 	repoForm.addEventListener("submit", (event) => downloadExport(event, repoForm, "repository-export.zip"));
 
@@ -458,8 +458,8 @@ function exportPage() {
 
 	return h("div", null,
 		pageHeader("Export Data"),
-		h("section", { className: "panel" }, h("h2", null, "Export Repository"), repoForm),
 		h("section", { className: "panel" }, h("h2", null, "Export Graph"), graphForm),
+		h("section", { className: "panel" }, h("h2", null, "Backup Repository"), repoForm),
 	);
 }
 
@@ -621,7 +621,7 @@ function updateIndexing(graphUri, enabled) {
 
 function adminPage() {
 	return h("div", null,
-		pageHeader("Administrator Console"),
+		pageHeader("Admin Console"),
 		flushPanel(),
 		h("section", { className: "panel" },
 			h("div", { className: "page-header" },
@@ -842,8 +842,10 @@ function normalizeExplorerValue(value) {
 
 function submitQuery(event, form) {
 	event.preventDefault();
+	state.queryText = form.query.value;
 	const display = new FormData(form).get("display");
 	setDisplayHiddenFields(form, display);
+	const stylesheet = form.stylesheet.value;
 	const submitter = event.submitter || form.querySelector("input[type='submit'], button[type='submit']");
 	setSubmitBusy(submitter, true);
 	const request = buildFormRequest(form);
@@ -851,23 +853,99 @@ function submitQuery(event, form) {
 		.then(async (response) => {
 			if (!response.ok) throw new Error(await responseMessage(response) || `${response.status} ${response.statusText}`);
 			const blob = await response.blob();
-			showResultModal(blob, filenameFromResponse(response) || queryFilename(display));
+			await showQueryResult(blob, filenameFromResponse(response) || queryFilename(display), display, stylesheet);
 		})
 		.catch((ex) => showMessage("Query Failed", ex.message, "error"))
 		.finally(() => setSubmitBusy(submitter, false));
 }
 
-function showResultModal(blob, filename) {
-	const url = URL.createObjectURL(blob);
-	showModal({
-		title: "Query Results",
-		body: h("iframe", { className: "result-frame", src: url, title: "Query Results" }),
-		kind: "result",
-		actions: [
-			{ label: "Download", className: "secondary", onClick: () => saveBlob(blob, filename) },
-			{ label: "Close", className: "", onClick: () => { URL.revokeObjectURL(url); closeModal(); } },
-		],
-	});
+async function showQueryResult(blob, filename, display, stylesheet) {
+	const panel = document.getElementById("query-results");
+	const text = await blob.text();
+	const result = await queryResultView(text, display, stylesheet);
+	panel.replaceChildren(
+		h("div", { className: "page-header" },
+			h("h2", null, "Query Results"),
+			h("button", { type: "button", className: "secondary", onClick: () => saveBlob(blob, filename) }, "Download"),
+		),
+		h("div", { className: "query-result-body" }, result),
+	);
+	panel.hidden = false;
+	panel.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function queryResultView(text, display, stylesheet) {
+	if (display === "html" || display === "count") {
+		return sparqlXmlResultView(text, display === "count");
+	}
+	if (display === "custom") {
+		if (!stylesheet) throw new Error("Enter a Custom XSLT stylesheet location.");
+		const response = await fetch(stylesheet);
+		if (!response.ok) throw new Error(`Unable to load the XSLT stylesheet: ${response.status} ${response.statusText}`);
+		const processor = new XSLTProcessor();
+		processor.importStylesheet(parseXml(await response.text(), "XSLT stylesheet"));
+		return processor.transformToFragment(parseXml(text, "query result"), document);
+	}
+	return h("pre", { className: "query-result-text" }, text);
+}
+
+function sparqlXmlResultView(text, countOnly) {
+	const doc = parseXml(text, "query result");
+	const ns = "http://www.w3.org/2005/sparql-results#";
+	const booleanResult = doc.getElementsByTagNameNS(ns, "boolean")[0];
+	if (booleanResult) {
+		return h("p", { className: "query-result-summary" }, `ASK => ${booleanResult.textContent}`);
+	}
+
+	const results = Array.from(doc.getElementsByTagNameNS(ns, "result"));
+	if (countOnly) {
+		return h("p", { className: "query-result-summary" }, `Count: ${results.length}`);
+	}
+
+	const variables = Array.from(doc.getElementsByTagNameNS(ns, "variable"))
+		.map((variable) => variable.getAttribute("name"));
+	if (!variables.length) {
+		return h("pre", { className: "query-result-text" }, text);
+	}
+
+	return h("div", null,
+		h("p", { className: "query-result-summary" }, `${results.length} result${results.length === 1 ? "" : "s"}`),
+		h("div", { className: "table-wrap" },
+			h("table", null,
+				h("thead", null, h("tr", null, variables.map((name) => h("th", null, name)))),
+				h("tbody", null, results.map((result) => {
+					const bindings = new Map(Array.from(result.getElementsByTagNameNS(ns, "binding"))
+						.map((binding) => [binding.getAttribute("name"), binding]));
+					return h("tr", null, variables.map((name) => h("td", null, sparqlBindingView(bindings.get(name)))));
+				})),
+			),
+		),
+	);
+}
+
+function sparqlBindingView(binding) {
+	const value = binding?.firstElementChild;
+	if (!value) return "";
+	const lexical = value.textContent;
+	let display = lexical;
+	let explorerValue = lexical;
+	if (value.localName === "uri") {
+		explorerValue = `<${lexical}>`;
+	} else if (value.localName === "bnode") {
+		display = explorerValue = `_:${lexical}`;
+	} else if (value.localName === "literal") {
+		display = explorerValue = `"${lexical}"`;
+		if (value.hasAttribute("datatype")) display += `^^<${value.getAttribute("datatype")}>`;
+		if (value.hasAttribute("xml:lang")) display += `@${value.getAttribute("xml:lang")}`;
+	}
+	return h("a", { href: `#/explore?value=${encodeURIComponent(explorerValue)}` }, display);
+}
+
+function parseXml(text, label) {
+	const doc = new DOMParser().parseFromString(text, "application/xml");
+	const error = doc.querySelector("parsererror");
+	if (error) throw new Error(`Unable to parse the ${label}: ${error.textContent.trim()}`);
+	return doc;
 }
 
 function queryFilename(display) {

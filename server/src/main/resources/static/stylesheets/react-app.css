@@ -36,6 +36,7 @@ a:hover {
 button,
 input[type="submit"],
 input[type="button"],
+input[type="file"]::file-selector-button,
 .button {
 	min-height: 32px;
 	border: 1px solid var(--accent);
@@ -46,6 +47,16 @@ input[type="button"],
 	font: inherit;
 	padding: 5px 12px;
 	text-decoration: none;
+}
+
+input[type="file"] {
+	max-width: 100%;
+	color: var(--muted);
+	font: inherit;
+}
+
+input[type="file"]::file-selector-button {
+	margin-right: 10px;
 }
 
 button.secondary,
@@ -373,14 +384,28 @@ tr:nth-child(even) td {
 	line-height: 1;
 }
 
-.modal.result {
-	width: min(980px, 100%);
+.query-results[hidden] {
+	display: none;
 }
 
-.result-frame {
-	width: 100%;
-	height: min(620px, 70vh);
-	border: 1px solid var(--border);
-	background: #fff;
+.query-results .page-header {
+	align-items: center;
+	margin-bottom: 12px;
+}
+
+.query-result-body {
+	width: min(980px, 100%);
+	max-height: 70vh;
+	overflow: auto;
+}
+
+.query-result-summary {
+	font-weight: 700;
+}
+
+.query-result-text {
+	margin: 0;
+	white-space: pre-wrap;
+	word-break: break-word;
 }
 

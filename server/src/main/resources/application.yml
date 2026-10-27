@@ -9,8 +9,8 @@ spring:
    servlet:
       multipart:
          enabled: true
-         max-file-size: 16GB
-         max-request-size: 17GB
+         max-file-size: -1
+         max-request-size: -1
          # location: ''
          file-size-threshold: 64KB
          resolve-lazily: true
