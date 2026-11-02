@@ -14,6 +14,7 @@ import com.bbn.parliament.server.configuration.ParliamentBridgeConfiguration;
 import com.bbn.parliament.server.exception.ParliamentBridgeException;
 import com.bbn.parliament.server.graph.ModelManager;
 import com.bbn.parliament.server.tracker.Tracker;
+import com.bbn.parliament.kb_graph.query.PrefixRegistry;
 
 /**
  * A server for Parliament.
@@ -53,9 +54,9 @@ public class ParliamentBridge {
 	private ParliamentBridge(ParliamentBridgeConfiguration config) {
 		_config = config;
 
-		/*
+
 		PrefixRegistry.getInstance().registerPrefixes(config.getPrefixes());
-		*/
+
 
 		// initialize the model
 		ModelManager modelManager = ModelManager.inst();
