@@ -116,6 +116,8 @@ testing {
 }
 
 test {
+	jvmArgs = [ '--enable-native-access=ALL-UNNAMED' ]
+	systemProperty 'logback.configurationFile', "${rootProject.ext.debugLogbackConfig}"
 	systemProperty 'java.library.path', rootProject.ext.distDirBin
 	systemProperty 'test.data.path', rootProject.ext.depDataDir
 
@@ -125,6 +127,8 @@ test {
 bootRun {
 	//def distroDir = rootProject.ext.targetDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
 
+	jvmArgs = [ '--enable-native-access=ALL-UNNAMED' ]
+	systemProperty 'logback.configurationFile', "${rootProject.ext.debugLogbackConfig}"
 	systemProperty 'java.library.path', rootProject.ext.distDirBin
 }
 
@@ -192,7 +196,7 @@ task copyConfigs(type:Copy) {
 	into "${rootProject.ext.distDir}/config"
 	with copySpec {
 		from layout.projectDirectory.dir('config')
-		include 'log4j.*.properties', 'parliament-redirect-*.conf'
+		include 'logback.*.xml', 'parliament-redirect-*.conf'
 	}
 }
 

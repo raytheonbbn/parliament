@@ -47,6 +47,8 @@ testing {
 }
 
 test {
+	jvmArgs = [ '--enable-native-access=ALL-UNNAMED' ]
+	systemProperty 'logback.configurationFile', "${rootProject.ext.debugLogbackConfig}"
 	systemProperty 'java.library.path', rootProject.ext.distDirBin
 	systemProperty 'test.data.path', rootProject.ext.depDataDir
 }

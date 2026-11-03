@@ -15,6 +15,7 @@ ext {
 	targetDir = settingsDir.dir('target')
 	distDir = targetDir.dir(distName)
 	distDirBin = file(distDir.dir('bin'))
+	rootProject.ext.debugLogbackConfig = file(settingsDir.file('logback.debug.xml'))
 	depDir = file(System.getenv().getOrDefault('PARLIAMENT_DEPENDENCIES', "${settingsDir}/dependencies"))
 	depDataDir = file("${depDir}/data")
 }
