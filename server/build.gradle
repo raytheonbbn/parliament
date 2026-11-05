@@ -162,7 +162,7 @@ task copyStartScriptsPosix(type:Copy) {
 	into rootProject.ext.distDir
 	with copySpec {
 		from layout.projectDirectory.dir('config')
-		include 'parliament', '*.sh'
+		include 'parliament'
 	}
 	filePermissions {
 		user.execute = true
