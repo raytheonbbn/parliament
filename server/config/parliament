@@ -5,10 +5,10 @@
 SPRING_BOOT_HOST=localhost
 #SPRING_BOOT_HOST=0.0.0.0
 SPRING_BOOT_PORT=8089
-DEFAULT_JAVA_HEAP_SIZE=512m
+DEFAULT_JAVA_HEAP_SIZE=1g
 
-# Uncomment this line to enable remote debugging:
-#DEBUG_ARG=-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n -Dcom.sun.management.jmxremote
+DEBUG_ARG=-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n
+REMOTE_MGMT=-Dcom.sun.management.jmxremote
 
 
 ######### Find the Parliament installation directory: #########
@@ -69,18 +69,19 @@ EXEC="java -server"
 #EXEC="$EXEC -Djdk.xml.enableExtensionFunctions=true"
 EXEC="$EXEC --enable-native-access=ALL-UNNAMED"
 EXEC="$EXEC -Xmx${PARLIAMENT_JAVA_HEAP_SIZE:=$DEFAULT_JAVA_HEAP_SIZE}"
+#EXEC="$EXEC $DEBUG_ARG"	# Uncomment to enable remote debugging
+#EXEC="$EXEC $REMOTE_MGMT"	# Uncomment to enable remote management
 EXEC="$EXEC -Dlog.path.base=$KB_DIR"
 EXEC="$EXEC -Dlogging.config=$PMNT_DIR/config/logback.$LOG_CONFIG_TYPE.xml"
 EXEC="$EXEC -Djava.library.path=$PMNT_DIR/bin"
-if [ -n "$DEBUG_ARG" ]; then
-	EXEC="$EXEC ""$DEBUG_ARG"""
-fi
 EXEC="$EXEC -jar $SERVER_JAR"
 EXEC="$EXEC --server.address=$SPRING_BOOT_HOST --server.port=$SPRING_BOOT_PORT"
 
 
 ######### Debugging statements: #########
 #echo EXEC = $EXEC
+#echo $EXEC | tr ' ' '\n'
+#exit 1
 
 
 ######### Execute: #########
