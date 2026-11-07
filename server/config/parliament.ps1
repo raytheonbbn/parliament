@@ -7,25 +7,23 @@ store) in the current shell.
 #>
 
 
+######### Set command line parameters: #########
+param (
+	[Parameter(HelpMessage="Starts Parliament in the current shell (this is the default)")]
+	[Alias("f")]
+	[switch]$foreground,
+	[Parameter(HelpMessage="Starts Parliament in a container environment (like Docker)")]
+	[Alias("c")]
+	[switch]$container
+)
+
+
 ######### User-settable configuration parameters: #########
 # Set springBootHost to 0.0.0.0 to make it accessible from other machines on the network:
 $springBootHost = 'localhost'
 #$springBootHost = '0.0.0.0'
 $springBootPort = '8089'
-$defaultJavaHeapSize = '512m'
-
-
-######### Set command line parameters: #########
-param (
-	# (-f) Starts Parliament in the current shell (this is the default)
-	[parameter(ParameterSetName="foregroundParameters")]
-	[Alias("f")]
-	[switch]$foreground,
-	# (-c) Starts Parliament in a container environment (like Docker)
-	[parameter(ParameterSetName="containerParameters")]
-	[Alias("c")]
-	[switch]$container
-)
+$defaultJavaHeapSize = '1g'
 
 
 ######### Find the Parliament installation directory, etc.: #########
@@ -38,10 +36,10 @@ $remoteMgmt = '-Dcom.sun.management.jmxremote'
 
 ######### Validate command line and installation: #########
 if ($foreground -and $container) {
-	echo 'Please choose only one of -foreground or -container.'
-	echo ('(Type "help {0}" for documentation.)' -f [System.IO.Path]::GetFileName($PSCommandPath))
+	echo 'Please choose only one of -foreground (-f) or -container (-c).'
+	echo ('"get-help .\{0} -detailed" for help.' -f [System.IO.Path]::GetFileName($PSCommandPath))
 	exit 1
-} else if (! $foreground -and ! $container) {
+} elseif (! $foreground -and ! $container) {
 	$foreground = $true
 }
 if (!(test-path -pathtype leaf $serverJar)) {
@@ -64,16 +62,18 @@ $kbDirFwdSlash = echo $kbDir | %{$_ -replace '\\', '/'}
 
 
 ######### Set up the command line: #########
-$javaHeapSize = ([string]::IsNullOrEmpty($env:PARLIAMENT_JAVA_HEAP_SIZE)) `
-	? $defaultJavaHeapSize : "$env:PARLIAMENT_JAVA_HEAP_SIZE"
-$logType = $container ? 'container' : 'foreground'
+$javaHeapSize = if ([string]::IsNullOrEmpty($env:PARLIAMENT_JAVA_HEAP_SIZE))
+	{$defaultJavaHeapSize} else {"$env:PARLIAMENT_JAVA_HEAP_SIZE"}
+$logType = if ($container) {'container'} else {'foreground'}
 $argList = @(
 	'-server',
+	#'-Djdk.xml.enableExtensionFunctions=true',
+	'--enable-native-access=ALL-UNNAMED',
 	"-Xmx$javaHeapSize",
 	#$debugArgs,	# Uncomment to enable remote debugging
 	#$remoteMgmt,	# Uncomment to enable remote management
 	"-Dlog.path.base=$kbDirFwdSlash",
-	"-Dlog4j.configuration=file:$pmntDirFwdSlash/config/logback.$logType.xml",
+	"-Dlogging.config=$pmntDirFwdSlash/config/logback.$logType.xml",
 	"-Djava.library.path=$pmntDirFwdSlash/bin",
 	'-jar', $serverJar,
 	"--server.address=$springBootHost",
@@ -81,7 +81,7 @@ $argList = @(
 )
 
 ######### Debugging statements: #########
-#echo Java command line arguments:
+#echo 'Java command line arguments:'
 #echo $argList
 #exit 1
 
