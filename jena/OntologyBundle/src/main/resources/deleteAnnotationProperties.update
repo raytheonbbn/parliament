@@ -1,5 +1,6 @@
 prefix cc:   <http://creativecommons.org/ns#>
-prefix cco:  <http://www.ontologyrepository.com/CommonCoreOntologies/>
+prefix cco:  <https://www.commoncoreontologies.org/>
+prefix cco-old: <http://www.ontologyrepository.com/CommonCoreOntologies/>
 prefix dc:   <http://purl.org/dc/elements/1.1/>
 prefix dct:  <http://purl.org/dc/terms/>
 prefix dul:  <http://www.loa-cnr.it/ontologies/DUL.owl#>
@@ -22,12 +23,12 @@ delete {
 	?s ?annProp ?o .
 } where {
 	values ?annProp {
-		cco:alternative_label
-		cco:definition
-		cco:definition_source
-		cco:elucidation
-		cco:example_of_usage
-		cco:is_curated_in_ontology
+		cco-old:alternative_label
+		cco-old:definition
+		cco-old:definition_source
+		cco-old:elucidation
+		cco-old:example_of_usage
+		cco-old:is_curated_in_ontology
 		cco:ont00001735
 		cco:ont00001737
 		cco:ont00001738
@@ -44,14 +45,11 @@ delete {
 		cco:ont00001749
 		cco:ont00001752
 		cco:ont00001753
-		cco:ont00001753
-		cco:ont00001754
 		cco:ont00001754
 		cco:ont00001756
 		cco:ont00001757
 		cco:ont00001758
 		cco:ont00001759
-		cco:ont00001760
 		cco:ont00001760
 		cco:ont00001761
 		cco:ont00001762
