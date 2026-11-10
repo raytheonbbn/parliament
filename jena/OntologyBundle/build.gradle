@@ -79,7 +79,7 @@ gradlePlugin {
 			id = 'com.bbn.parliament.OntologyBundle'
 			displayName = 'Ontology Bundle'
 			description = projectDescription
-			tags = [ 'ontology', 'OWL', 'RDF', 'Knowledge Graph', 'Semantic Graph', 'Semantic Web' ]
+			tags = [ 'ontology', 'OWL', 'RDF', 'Knowledge_Graph', 'Semantic_Graph', 'Semantic_Web' ]
 			implementationClass = 'com.bbn.parliament.ontology_bundle.OntologyBundlePlugin'
 			compatibility {
 				features {
