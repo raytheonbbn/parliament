@@ -28,6 +28,33 @@ delete {
 		cco:elucidation
 		cco:example_of_usage
 		cco:is_curated_in_ontology
+		cco:ont00001735
+		cco:ont00001737
+		cco:ont00001738
+		cco:ont00001739
+		cco:ont00001740
+		cco:ont00001741
+		cco:ont00001742
+		cco:ont00001743
+		cco:ont00001744
+		cco:ont00001745
+		cco:ont00001746
+		cco:ont00001747
+		cco:ont00001748
+		cco:ont00001749
+		cco:ont00001752
+		cco:ont00001753
+		cco:ont00001753
+		cco:ont00001754
+		cco:ont00001754
+		cco:ont00001756
+		cco:ont00001757
+		cco:ont00001758
+		cco:ont00001759
+		cco:ont00001760
+		cco:ont00001760
+		cco:ont00001761
+		cco:ont00001762
 		dc:contributor
 		dc:creator
 		dc:description
