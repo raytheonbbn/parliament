@@ -224,6 +224,7 @@ td {
 
 th {
 	background: var(--panel-strong);
+	color: var(--ink);
 	font-weight: 700;
 }
 

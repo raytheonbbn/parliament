@@ -8,9 +8,11 @@ package com.bbn.parliament.server.handler;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.jena.query.QueryCancelledException;
 import org.apache.jena.query.QueryParseException;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
@@ -31,6 +33,8 @@ import com.bbn.parliament.server.util.LogUtil;
 import com.bbn.parliament.server.util.SparqlStmtLogger;
 
 public class QueryHandler {
+	public static final String QUERY_CANCELLED_MARKER = "PARLIAMENT_QUERY_CANCELLED";
+	public static final String QUERY_TIMED_OUT_MARKER = "PARLIAMENT_QUERY_TIMED_OUT";
 	private static Logger LOG = LoggerFactory.getLogger(QueryHandler.class);
 
 	private final String query;
@@ -64,6 +68,12 @@ public class QueryHandler {
 				@SuppressWarnings("unused") int intentionallyUnused = lock.hashCode();
 				execQuery(out);
 			}
+		} catch (QueryCancelledException ex) {
+			String marker = trackable.wasCancellationRequested()
+				? QUERY_CANCELLED_MARKER
+				: QUERY_TIMED_OUT_MARKER;
+			LOG.info("Query {}: {}", trackable.getId(), marker);
+			out.write(("\n<!-- " + marker + " -->\n").getBytes(StandardCharsets.UTF_8));
 		} catch (TrackableException | DataFormatException | MissingGraphException | QueryExecutionException ex) {
 			throw new IOException("Error while executing query", ex);
 		} catch (QueryParseException ex) {

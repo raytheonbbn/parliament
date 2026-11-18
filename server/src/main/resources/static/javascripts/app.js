@@ -525,9 +525,9 @@ function explorerDetail(value, useLabels) {
 					" Use resource labels in overview",
 				),
 			),
-			statementPanel("Statements with this value as subject", data.asSubject, true),
-			statementPanel("Statements with this value as predicate", data.asPredicate, true),
-			statementPanel("Statements with this value as object", data.asObject, true),
+			statementPanel("Statements with this value as subject", data.asSubject, true, "subject"),
+			statementPanel("Statements with this value as predicate", data.asPredicate, true, "predicate"),
+			statementPanel("Statements with this value as object", data.asObject, true, "object"),
 			data.inGraph?.length ? statementPanel("Statements in this graph", data.inGraph, false) : null,
 		) : loading(),
 	);
@@ -540,7 +540,7 @@ function resourceList(title, values) {
 	);
 }
 
-function statementPanel(title, statements, graph) {
+function statementPanel(title, statements, graph, repeatedColumn) {
 	return h("section", { className: "panel" },
 		h("h2", null, title),
 		statements?.length ? h("div", { className: "table-wrap" },
@@ -553,9 +553,9 @@ function statementPanel(title, statements, graph) {
 				)),
 				h("tbody", null, statements.map((statement) => h("tr", null,
 					graph ? h("td", { className: "value" }, valueLink(statement.graph)) : null,
-					h("td", { className: "value" }, valueLink(statement.subject)),
-					h("td", { className: "value" }, valueLink(statement.predicate)),
-					h("td", { className: "value" }, valueLink(statement.object)),
+					h("td", { className: "value" }, repeatedColumn === "subject" ? "-" : valueLink(statement.subject)),
+					h("td", { className: "value" }, repeatedColumn === "predicate" ? "-" : valueLink(statement.predicate)),
+					h("td", { className: "value" }, repeatedColumn === "object" ? "-" : valueLink(statement.object)),
 				))),
 			),
 		) : h("div", { className: "empty" }, "-- no statements found --"),
@@ -875,6 +875,12 @@ async function showQueryResult(blob, filename, display, stylesheet) {
 }
 
 async function queryResultView(text, display, stylesheet) {
+	if (text.includes("PARLIAMENT_QUERY_CANCELLED")) {
+		throw new Error("Query cancelled.");
+	}
+	if (text.includes("PARLIAMENT_QUERY_TIMED_OUT")) {
+		throw new Error("Query timed out.");
+	}
 	if (display === "html" || display === "count") {
 		return sparqlXmlResultView(text, display === "count");
 	}
@@ -1024,7 +1030,7 @@ async function responseMessage(response) {
 	if (contentType.includes("application/json")) {
 		try {
 			const json = JSON.parse(text);
-			return json.message || json.error || json.title || JSON.stringify(json, null, 2);
+			return json["exception-message"] || json.message || json.error || json.title || JSON.stringify(json, null, 2);
 		} catch (_ex) {
 			return text.trim();
 		}

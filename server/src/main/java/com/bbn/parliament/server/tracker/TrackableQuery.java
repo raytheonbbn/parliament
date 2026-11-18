@@ -2,6 +2,7 @@ package com.bbn.parliament.server.tracker;
 
 import java.beans.ConstructorProperties;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import org.apache.jena.query.Query;
@@ -28,7 +29,8 @@ public class TrackableQuery extends Trackable {
 	private static final Logger LOG = LoggerFactory.getLogger(TrackableQuery.class);
 
 	private final Query query;
-	private QueryExecution qExec;
+	private final AtomicBoolean cancellationRequested;
+	private volatile QueryExecution qExec;
 	private Object queryResult;
 
 	@ConstructorProperties({ "id", "query", "creator" })
@@ -39,6 +41,7 @@ public class TrackableQuery extends Trackable {
 	TrackableQuery(long id, Query query, String creator) {
 		super(id, creator);
 		this.query = query;
+		cancellationRequested = new AtomicBoolean(false);
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Create query: {}\n{}", _id, query.toString());
 		}
@@ -49,17 +52,13 @@ public class TrackableQuery extends Trackable {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("release query: {}", _id);
 		}
-		if (qExec != null) {
+		QueryExecution execution = qExec;
+		qExec = null;
+		if (execution != null) {
 			if (isRunning()) {
-				try {
-					cancel();
-				} catch (TrackableException ex) {
-					LOG.error("While releasing, error while canceling query.", ex);
-				}
+				execution.abort();
 			}
-			if (!isCancelled()) {
-				qExec.close();
-			}
+			execution.close();
 		}
 	}
 
@@ -81,31 +80,49 @@ public class TrackableQuery extends Trackable {
 
 	@Override
 	protected void doCancel() {
-		if (qExec != null) {
+		cancellationRequested.set(true);
+		QueryExecution execution = qExec;
+		if (execution != null) {
 			LOG.info("Cancel query: {}", _id);
-			qExec.abort();
+			execution.abort();
+		}
+	}
+
+	public boolean wasCancellationRequested() {
+		return cancellationRequested.get();
+	}
+
+	private void throwIfCancellationRequested() {
+		if (wasCancellationRequested()) {
+			throw new QueryCancelledException();
 		}
 	}
 
 	@Override
 	protected void doRun() {
-		createQueryExecution();
+		try {
+			throwIfCancellationRequested();
+			createQueryExecution();
+			throwIfCancellationRequested();
 
-		if (query.isAskType()) {
-			queryResult = qExec.execAsk();
-		} else if (query.isConstructType()) {
-			queryResult = qExec.execConstruct();
-		} else if (query.isSelectType()) {
-			// set finished on run to false as the query returns when the first
-			// match is found. This will cause the website to display a status of
-			// finished even though the query could be iterating over a large
-			// result set
-			_setFinishedOnRun = false;
-
-			queryResult = new TrackableResultSet(qExec.execSelect());
-
-		} else if (query.isDescribeType()) {
-			queryResult = qExec.execDescribe();
+			if (query.isAskType()) {
+				queryResult = qExec.execAsk();
+			} else if (query.isConstructType()) {
+				queryResult = qExec.execConstruct();
+			} else if (query.isSelectType()) {
+				// set finished on run to false as the query returns when the first
+				// match is found. This will cause the website to display a status of
+				// finished even though the query could be iterating over a large
+				// result set
+				_setFinishedOnRun = false;
+				queryResult = new TrackableResultSet(qExec.execSelect());
+			} else if (query.isDescribeType()) {
+				queryResult = qExec.execDescribe();
+			}
+			throwIfCancellationRequested();
+		} catch (QueryCancelledException ex) {
+			setCancelled();
+			throw ex;
 		}
 	}
 
@@ -169,7 +186,9 @@ public class TrackableQuery extends Trackable {
 		public boolean hasNext() {
 			boolean ret = false;
 			try {
+				throwIfCancellationRequested();
 				ret = base.hasNext();
+				throwIfCancellationRequested();
 			} catch (QueryCancelledException ex) {
 				setCancelled();
 				throw ex;

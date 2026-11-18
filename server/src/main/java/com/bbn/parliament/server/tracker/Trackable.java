@@ -47,8 +47,6 @@ public abstract class Trackable implements TrackableMXBean, Comparable<Trackable
 	public void cancel() throws TrackableException {
 		if(isCancellable()) {
 			doCancel();
-			_finishedTime = Calendar.getInstance().getTime();
-			setStatus(Status.CANCELLED);
 		}
 	}
 
@@ -69,7 +67,9 @@ public abstract class Trackable implements TrackableMXBean, Comparable<Trackable
 				 * Note that catching the runtime exceptions here is imperative to ensure we
 				 * catch anything Jena throws. (All Jena's exceptions are runtime exceptions.)
 				 */
-				setError();
+				if (!isCancelled()) {
+					setError();
+				}
 				throw ex;
 			}
 		}
@@ -116,6 +116,7 @@ public abstract class Trackable implements TrackableMXBean, Comparable<Trackable
 	}
 
 	protected void setCancelled() {
+		_finishedTime = Calendar.getInstance().getTime();
 		setStatus(Status.CANCELLED);
 	}
 
