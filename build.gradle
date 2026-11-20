@@ -4,12 +4,29 @@ ext {
 
 	if (System.getProperty('os.name').toLowerCase().contains('mac')) {
 		parliamentPlatform = 'mac'
+		parliamentArch = System.getenv().getOrDefault('BOOST_ARCHITECTURE', "unknown")
+		distName = "parliament-${parliamentVersion}-${parliamentPlatform}"
+		imageName = "parliament-${parliamentVersion}-${parliamentArch}"
 	} else if (System.getProperty('os.name').toLowerCase().contains('win')) {
 		parliamentPlatform = 'win'
+		vsTgtArch = System.getenv().getOrDefault('VSCMD_ARG_TGT_ARCH', "unknown")
+		if (vsTgtArch.equalsIgnoreCase("x64")) {
+			parliamentArch = 'x64'
+		} else if (vsTgtArch.equalsIgnoreCase("x32")) {
+			parliamentArch = 'x32'
+		} else if (vsTgtArch.equalsIgnoreCase("arm64")) {
+			parliamentArch = 'a64'
+		} else {
+			parliamentArch = 'unknown'
+		}
+		distName = "parliament-${parliamentVersion}-${parliamentPlatform}-${parliamentArch}"
+		imageName = "parliament-${parliamentVersion}-${parliamentArch}"
 	} else {
 		parliamentPlatform = System.getenv().getOrDefault('LINUX_DISTRO', "unknown")
+		parliamentArch = System.getenv().getOrDefault('BOOST_ARCHITECTURE', "unknown")
+		distName = "parliament-${parliamentVersion}-${parliamentPlatform}-${parliamentArch}"
+		imageName = "parliament-${parliamentVersion}-${parliamentArch}"
 	}
-	distName = "parliament-${parliamentVersion}-${parliamentPlatform}"
 
 	settingsDir = layout.settingsDirectory
 	targetDir = settingsDir.dir('target')

@@ -7,14 +7,6 @@ SPRING_BOOT_HOST=localhost
 SPRING_BOOT_PORT=8089
 DEFAULT_JAVA_HEAP_SIZE=1g
 
-DEBUG_ARG=-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n
-REMOTE_MGMT=-Dcom.sun.management.jmxremote
-
-
-######### Find the Parliament installation directory: #########
-PMNT_DIR="`dirname \"$0\"`"               # relative
-PMNT_DIR="`( cd \"$PMNT_DIR\" && pwd )`"  # absolutized and normalized
-
 
 ######### Usage of this script: #########
 function printUsage {
@@ -33,13 +25,15 @@ function printUsage {
 }
 
 
-######### Error checking: #########
-if [ ! -d "$JAVA_HOME" ]; then
-	echo The JAVA_HOME environment variable is not set.
-	exit 1
-fi
-
+######### Find the Parliament installation: #########
+PMNT_DIR="`dirname \"$0\"`"               # relative
+PMNT_DIR="`( cd \"$PMNT_DIR\" && pwd )`"  # absolutized and normalized
 SERVER_JAR=`echo "$PMNT_DIR/lib/server-"*.jar`
+DEBUG_ARG=-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n
+REMOTE_MGMT=-Dcom.sun.management.jmxremote
+
+
+######### Error checking: #########
 if [ ! -f "$SERVER_JAR" ]; then
 	echo "$PMNT_DIR does not appear to be a valid Parliament installation."
 	exit 1

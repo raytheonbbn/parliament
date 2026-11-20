@@ -20,6 +20,7 @@ ext {
 
 configurations {
 	schemagen
+	mockitoAgent //LINE ADDED BY CODEX CODING AGENT
 }
 
 dependencies {
@@ -29,6 +30,11 @@ dependencies {
 	schemagen libs.logback
 	schemagen libs.jclOverSlf4j
 	schemagen libs.slf4jApi
+
+	// BLOCK ADDED BY CODEX CODING AGENT
+	mockitoAgent('org.mockito:mockito-core') {
+		transitive = false
+	}
 
 	implementation project(':Parliament')
 	implementation project(':jena:ParliamentClient')
@@ -116,7 +122,17 @@ testing {
 }
 
 test {
-	jvmArgs = [ '--enable-native-access=ALL-UNNAMED' ]
+	jvmArgs = [
+		'--enable-native-access=ALL-UNNAMED',
+
+		// Mockito tries to attach its instrumentation agent while the server tests run.
+		// On Linux, that attachment mechanism sends SIGQUIT, likely because the build
+		// is on a shared file system. When the JVM doesn't recognize the attachment
+		// handshake, it prints a thread dump and continues running. By loading Mockito
+		// at JVM startup using -javaagent, we avoid self-attachment (and the thread
+		// dump) altogether.
+		"-javaagent:${configurations.mockitoAgent.singleFile.absolutePath}" // LINE ADDED BY CODEX CODING AGENT
+	]
 	systemProperty 'logback.configurationFile', "${rootProject.ext.debugLogbackConfig}"
 	systemProperty 'java.library.path', rootProject.ext.distDirBin
 	systemProperty 'test.data.path', rootProject.ext.depDataDir
@@ -131,6 +147,8 @@ bootRun {
 	systemProperty 'logback.configurationFile', "${rootProject.ext.debugLogbackConfig}"
 	systemProperty 'java.library.path', rootProject.ext.distDirBin
 }
+
+// ===============================
 
 task distArchive(type:Zip) {
 	archiveFileName = "${rootProject.ext.distName}.zip"
@@ -212,4 +230,30 @@ task copyJars(type:Copy) {
 
 tasks.named('build') {
 	dependsOn(distArchive)
+}
+
+// ===============================
+
+// See docker.md for instructions:
+task buildDockerImage(type:Exec) {
+	workingDir = rootProject.ext.targetDir
+	commandLine(
+		'docker',
+		'buildx',
+		'build',
+		//'-t', "${rootProject.ext.githubOrg}/parliament:${rootProject.ext.parliamentVersion}",
+		'-t', "${rootProject.ext.imageName}",
+		'--build-arg', "distro_ver=${rootProject.ext.parliamentVersion}",
+		'--build-arg', "distro_arch=${rootProject.ext.parliamentArch}",
+		'.'
+	)
+	dependsOn 'copyDockerFile'
+}
+
+task copyDockerFile(type:Copy) {
+	into "${rootProject.ext.targetDir}"
+	with copySpec {
+		from layout.projectDirectory.dir('config')
+		include 'Dockerfile'
+	}
 }

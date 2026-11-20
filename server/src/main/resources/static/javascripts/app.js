@@ -213,7 +213,7 @@ function homePage() {
 		h("section", { className: "panel" },
 			h("h2", null, "SPARQL"),
 			h("p", null, "SPARQL is a suite of W3C recommendations (standards). Its primary recommendation is:"),
-			h("p", null, h("a", { href: "https://www.w3.org/TR/rdf-sparql-query/" }, "SPARQL Query Language for RDF")),
+			h("p", null, h("a", { href: "https://www.w3.org/TR/sparql11-query/" }, "SPARQL 1.1 Query Language")),
 			h("p", null, "Links to the full suite of recommendations are available here:"),
 			h("p", null, h("a", { href: "https://www.w3.org/TR/sparql11-overview/" }, "SPARQL 1.1 Overview")),
 		),
