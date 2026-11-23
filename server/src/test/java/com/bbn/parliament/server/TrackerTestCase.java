@@ -1,0 +1,239 @@
+package com.bbn.parliament.server;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.jena.graph.Node;
+import org.apache.jena.query.QueryCancelledException;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.pfunction.PropFuncArg;
+import org.apache.jena.sparql.pfunction.PropertyFunctionBase;
+import org.apache.jena.sparql.pfunction.PropertyFunctionRegistry;
+import org.apache.jena.sparql.util.IterLib;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.bbn.parliament.server.exception.DataFormatException;
+import com.bbn.parliament.server.exception.MissingGraphException;
+import com.bbn.parliament.server.exception.TrackableException;
+import com.bbn.parliament.server.graph.ModelManager;
+import com.bbn.parliament.server.handler.Inserter;
+import com.bbn.parliament.server.handler.QueryHandler;
+import com.bbn.parliament.server.handler.VerifyOption;
+import com.bbn.parliament.server.service.AcceptableMediaType;
+import com.bbn.parliament.server.tracker.TrackableInsert;
+import com.bbn.parliament.server.tracker.TrackableQuery;
+import com.bbn.parliament.server.tracker.TrackableUpdate;
+import com.bbn.parliament.server.tracker.Tracker;
+import com.bbn.parliament.server.tracker.management.TrackableMXBean.Status;
+
+public class TrackerTestCase {
+	public static class Suspend extends PropertyFunctionBase {
+		private static final AtomicInteger EXECUTION_COUNT = new AtomicInteger();
+		@Override
+		public QueryIterator exec(Binding binding, PropFuncArg argSubject,
+			Node predicate, PropFuncArg argObject, ExecutionContext execCxt) {
+			int execution = EXECUTION_COUNT.incrementAndGet();
+			LOG.info("Suspend property function execution {} sleeping...", execution);
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException ex) {
+				LOG.warn("InterruptedException in Suspend property function");
+			}
+			LOG.info("Suspend property function awake.");
+			return IterLib.noResults(execCxt);
+		}
+	}
+
+	private static void waitForSuspendExecution(int expectedCount) throws InterruptedException {
+		while (Suspend.EXECUTION_COUNT.get() < expectedCount) {
+			Thread.sleep(10);
+		}
+	}
+
+	private static class QueryRunnable implements Runnable {
+		private final TrackableQuery tq;
+		private final AtomicBoolean queryThrewUnexpectedException;
+
+		public QueryRunnable(TrackableQuery tq, AtomicBoolean queryThrewUnexpectedException) {
+			this.tq = tq;
+			this.queryThrewUnexpectedException = queryThrewUnexpectedException;
+		}
+
+		@Override
+		public void run() {
+			try {
+				tq.run();
+				ResultSet rs = tq.getResultSet();
+				while (rs.hasNext()) {
+					rs.next();
+				}
+			} catch (QueryCancelledException ex) {
+				LOG.info("QueryCancelledException in QueryRunnable (as expected)");
+			} catch (Throwable ex) {
+				queryThrewUnexpectedException.set(true);
+				LOG.warn("Unexpected exception in QueryRunnable: {}", ex);
+			}
+		}
+	};
+
+	private static final String TEST_RDF_FILE = "University15_20.owl";
+	static private Logger LOG = LoggerFactory.getLogger(TrackerTestCase.class);
+
+	@BeforeAll
+	public static void initialize() {
+		ModelManager.inst().initialize();
+	}
+
+	@AfterAll
+	public static void cleanUp() {
+		ModelManager.inst().clearKb();
+	}
+
+	@Test
+	public void testTrackerQuery() throws TrackableException, DataFormatException,
+			MissingGraphException, IOException {
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+
+		String query = "select * where { ?a ?b ?c }";
+		TrackableQuery tq1 = Tracker.getInstance().createQuery(query, "TrackerTestCase.testTrackerQuery #1");
+		tq1.run();
+
+		// should be 1 since the result set isn't processed yet
+		assertEquals(1, Tracker.getInstance().getTrackableIDs().size());
+
+		TrackableQuery tq2 = Tracker.getInstance().createQuery(query, "TrackerTestCase.testTrackerQuery #2");
+		tq2.run();
+
+		assertEquals(2, Tracker.getInstance().getTrackableIDs().size());
+
+		ResultSet rs = tq1.getResultSet();
+		while (rs.hasNext()) {
+			rs.next();
+		}
+		assertEquals(1, Tracker.getInstance().getTrackableIDs().size());
+
+		rs = tq2.getResultSet();
+		while (rs.hasNext()) {
+			rs.next();
+		}
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+
+		query = "construct where {?a a ?c }";
+		TrackableQuery tq3 = Tracker.getInstance().createQuery(query, "TrackerTestCase.testTrackerQuery #3");
+		assertEquals(1, Tracker.getInstance().getTrackableIDs().size());
+		tq3.run();
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+	}
+
+	@Test
+	public void testCancel() throws InterruptedException, TrackableException {
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+		PropertyFunctionRegistry.get().put("http://example.org/suspend", Suspend.class);
+		var query = "select * where { ?a <http://example.org/suspend> ?b . }";
+		int initialExecutionCount = Suspend.EXECUTION_COUNT.get();
+		for (int run = 1; run <= 2; ++run) {
+			TrackableQuery tq = Tracker.getInstance().createQuery(query,
+				"TrackerTestCase.testCancel #" + run);
+			var queryThrewUnexpectedException = new AtomicBoolean(false);
+			var thread = new Thread(new QueryRunnable(tq, queryThrewUnexpectedException));
+			thread.start();
+			waitForSuspendExecution(initialExecutionCount + run);
+
+			LOG.info("Cancelling query run {}...", run);
+			tq.cancel();
+			thread.join();
+
+			assertEquals(false, queryThrewUnexpectedException.get());
+			assertEquals(Status.CANCELLED, tq.getStatus());
+			assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+		}
+	}
+
+	@Test
+	public void testCancellationResponseMarker() throws InterruptedException, TrackableException {
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+		PropertyFunctionRegistry.get().put("http://example.org/suspend", Suspend.class);
+		String query = "select * where { ?a <http://example.org/suspend> ?b . }";
+		int expectedExecutionCount = Suspend.EXECUTION_COUNT.get() + 1;
+		var output = new ByteArrayOutputStream();
+		var queryThrewUnexpectedException = new AtomicBoolean(false);
+		var handler = new QueryHandler(query, List.of(AcceptableMediaType.XML_RESULTS),
+			"TrackerTestCase.testCancellationResponseMarker");
+		var thread = new Thread(() -> {
+			try {
+				handler.handleRequest(output);
+			} catch (Throwable ex) {
+				queryThrewUnexpectedException.set(true);
+				LOG.warn("Unexpected exception while handling cancelled query", ex);
+			}
+		});
+		thread.start();
+		waitForSuspendExecution(expectedExecutionCount);
+		long trackerId = Tracker.getInstance().getTrackableIDs().get(0);
+		Tracker.getInstance().cancel(trackerId);
+		thread.join();
+
+		assertEquals(false, queryThrewUnexpectedException.get());
+		assertTrue(output.toString(StandardCharsets.UTF_8)
+			.contains(QueryHandler.QUERY_CANCELLED_MARKER));
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+	}
+
+	@Test
+	public void testTrackerUpdate() throws TrackableException, DataFormatException,
+			MissingGraphException, IOException {
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+
+		String update = "insert data { <http://example.org/test> a <http://example.org/data> }";
+		TrackableUpdate tu = Tracker.getInstance().createUpdate(update, "TEST");
+
+		assertEquals(1, Tracker.getInstance().getTrackableIDs().size());
+		tu.run();
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+
+		String delete = "delete data { <http://example.org/test> a <http://example.org/data> }";
+		tu = Tracker.getInstance().createUpdate(delete, "TEST");
+		assertEquals(1, Tracker.getInstance().getTrackableIDs().size());
+		tu.run();
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+	}
+
+	@Test
+	public void testTrackerInsert() throws TrackableException, DataFormatException,
+			MissingGraphException, IOException {
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+		Inserter inserter = Inserter.newGraphInserter(
+			null, "RDF/XML", TEST_RDF_FILE, VerifyOption.VERIFY, null,
+			() -> {
+				try {
+					File dataDir = new File(System.getProperty("test.data.path"));
+					File file = new File(dataDir, TEST_RDF_FILE);
+					return new FileInputStream(file);
+				} catch (IOException ex) {
+					throw new UncheckedIOException(ex);
+				}
+			});
+
+		TrackableInsert ti = Tracker.getInstance().createInsert(List.of(inserter), "TEST");
+		assertEquals(1, Tracker.getInstance().getTrackableIDs().size());
+		ti.run();
+		assertEquals(0, Tracker.getInstance().getTrackableIDs().size());
+	}
+}

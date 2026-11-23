@@ -1,0 +1,52 @@
+// Copyright (c) 2023 RTX BBN Technologies Corp.
+
+plugins {
+	id 'java-library'
+}
+
+dependencies {
+	api libs.sesame
+	implementation 'org.apache.lucene:lucene-core:2.2.0'
+	implementation project(':Parliament')
+	implementation project(':sesame:ParliamentSail')
+	implementation project(':sesame:SameAsSail')
+}
+
+configurations.all {
+	exclude group: 'xml-apis'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+task sourcesJar(type: Jar) {
+	archiveClassifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	archiveClassifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+javadoc {
+	source = sourceSets.main.allJava
+	classpath = configurations.compileClasspath
+
+	options
+	{
+		//setMemberLevel JavadocMemberLevel.PUBLIC
+		//setAuthor true
+		addStringOption('Xdoclint:-missing', '-quiet')
+	}
+}
+
+tasks.named("assemble") {
+	dependsOn(sourcesJar)
+	dependsOn(javadocJar)
+}

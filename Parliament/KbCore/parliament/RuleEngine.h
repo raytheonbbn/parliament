@@ -287,7 +287,7 @@ public:
 
 	FwdChainNode(::std::shared_ptr<Rule> pRule) :
 		m_pRule(pRule),
-		m_atomMatchList(m_pRule->getBody().size(), false),
+		m_atomMatchList(size(m_pRule->getBody()), false),
 		m_bindingList(k_maxNumVariables)
 	{}
 
@@ -342,7 +342,7 @@ public:
 	const UriLib& uriLib() const
 		{ return m_pKB->uriLib(); }
 	size_t ruleCount() const
-		{ return m_ruleList.size(); }
+		{ return size(m_ruleList); }
 	void printRules(::std::ostream& s) const;
 	void printTriggers(::std::ostream& s) const;
 

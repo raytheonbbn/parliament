@@ -25,7 +25,7 @@ Early in the Semantic Web's evolution, \ac{bbn} encountered exactly this problem
 
 In addition, \ac{pmnt} includes a high-performance rule engine, which applies a set of inference rules to the directed graph of data in order to derive new facts.  This enables \ac{pmnt} to automatically and transparently infer additional facts and relationships in the data to enrich query results.  \acp{pmnt} rule engine currently implements all of the inference rules of \ac{rdfs} plus selected elements of \ac{owl} RL.
 
-Figure~\ref{figure-parliament-layers} depicts the layered architecture of \ac{pmnt}.  The storage layer of \ac{pmnt} is written in C++, while the remainder is Java code.  Integrated with the Jena query processor are a number of useful extras, such as support for named graphs, accelerated reification support, and temporal, geospatial, and numerical indexes \autocites{Ko:2010}{BaKo:2012}.
+Figure~\ref{figure-parliament-layers} depicts the layered architecture of \ac{pmnt}.  The storage layer of \ac{pmnt} is written in C++, while the remainder is Java code.  Integrated with the Jena query processor are a number of useful extras, such as support for named graphs, accelerated reification support, and indexes for fast geospatial and temporal queries \autocites{Ko:2010}{BaKo:2012}.
 
 \begin{figure}[htbp]
 	\centering

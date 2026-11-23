@@ -1,0 +1,94 @@
+// Copyright (c) 2019, 2020, 2023 RTX BBN Technologies Corp.
+
+plugins {
+	id 'java-library'
+	id 'maven-publish'
+	id 'signing'
+}
+
+version = '2.0.3'
+
+dependencies {
+	api libs.jenaArq
+	implementation libs.slf4jApi
+	testImplementation libs.logback
+}
+
+configurations.all {
+	exclude group: 'xml-apis'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+	withJavadocJar()
+	withSourcesJar()
+}
+
+testing {
+	suites {
+		test {
+			useJUnitJupiter(libs.versions.jupiterVer)
+		}
+	}
+}
+
+publishing {
+	publications {
+		SparqlQueryBuilder(MavenPublication) {
+			from components.java
+			pom {
+				name = 'SPARQL Query Builder'
+				description = "A Java library for manipulating SPARQL queries.${System.lineSeparator}Copyright © 2023 RTX BBN Technologies"
+				url = "https://github.com/${rootProject.ext.githubOrg}/parliament/tree/jena-update/jena/SparqlQueryBuilder"
+				packaging = 'jar'
+				licenses {
+					license {
+						name = 'The 3-Clause BSD License'
+						url = 'https://opensource.org/license/bsd-3-clause/'
+					}
+				}
+				organization {
+					name = 'RTX BBN Technologies'
+					url = 'https://bbn.com/'
+				}
+				developers {
+					developer {
+						id = 'mallen'
+						name = 'Matthew Allen'
+						email = 'matthew.allen@rtx.com'
+					}
+					developer {
+						id = 'iemmons'
+						name = 'Ian Emmons'
+						email = 'iemmons@rtx.com'
+					}
+				}
+				scm {
+					connection = "scm:git:git@github.com:${rootProject.ext.githubOrg}/parliament.git"
+					developerConnection = "scm:git:git@github.com:${rootProject.ext.githubOrg}/parliament.git"
+					url = "https://github.com/${rootProject.ext.githubOrg}/parliament"
+				}
+			}
+		}
+	}
+
+	repositories {
+		maven {
+			name = 'SonatypeOssrhRepo'
+			url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+			credentials {
+				username = project.hasProperty('sonatypeOssrhUser') ? sonatypeOssrhUser : 'Anonymous'
+				password = project.hasProperty('sonatypeOssrhPassword') ? sonatypeOssrhPassword : 'NoPassword'
+			}
+		}
+		//mavenLocal()
+	}
+}
+
+signing {
+	sign publishing.publications.SparqlQueryBuilder
+}

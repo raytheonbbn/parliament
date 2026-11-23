@@ -1,0 +1,84 @@
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix sh:   <http://www.w3.org/ns/shacl#>
+
+delete {
+	?propertyShapeBearer ?incomingPredicate ?blankPropertyShape .
+	?blankPropertyShape a sh:PropertyShape ;
+		sh:path ?path ;
+		sh:node ?nodeShape ;
+		sh:qualifiedValueShape ?qValueShape ;
+		sh:qualifiedMaxCount ?qMaxCount ;
+		sh:qualifiedMinCount ?qMinCount ;
+		sh:qualifiedValueShapesDisjoint ?isDisjoint ;
+		sh:hasValue ?value ;
+		sh:in ?containingSet ;
+		sh:order ?order ;
+		sh:group ?group ;
+		sh:defaultValue ?defaultValue ;
+		sh:name ?name ;
+		sh:description ?description ;
+		rdfs:isDefinedBy ?isDefinedBy .
+} insert {
+	?propertyShapeBearer ?incomingPredicate ?propertyShapeIri .
+	?propertyShapeIri a sh:PropertyShape ;
+		sh:path ?path ;
+		sh:node ?nodeShape ;
+		sh:qualifiedValueShape ?qValueShape ;
+		sh:qualifiedMaxCount ?qMaxCount ;
+		sh:qualifiedMinCount ?qMinCount ;
+		sh:qualifiedValueShapesDisjoint ?isDisjoint ;
+		sh:hasValue ?value ;
+		sh:in ?containingSet ;
+		sh:order ?order ;
+		sh:group ?group ;
+		sh:defaultValue ?defaultValue ;
+		sh:name ?name ;
+		sh:description ?description ;
+		rdfs:isDefinedBy ?isDefinedBy .
+} where {
+	values ?incomingPredicate {
+		sh:property
+	}
+	?propertyShapeBearer ?incomingPredicate ?blankPropertyShape .
+	?blankPropertyShape sh:path ?path .
+	optional { ?blankPropertyShape a sh:PropertyShape . }
+	optional { ?blankPropertyShape sh:node ?nodeShape . }
+	optional { ?blankPropertyShape sh:qualifiedValueShape ?qValueShape . }
+	optional { ?blankPropertyShape sh:qualifiedMaxCount ?qMaxCount . }
+	optional { ?blankPropertyShape sh:qualifiedMinCount ?qMinCount . }
+	optional { ?blankPropertyShape sh:qualifiedValueShapesDisjoint ?isDisjoint . }
+	optional { ?blankPropertyShape sh:hasValue ?value . }
+	optional { ?blankPropertyShape sh:in ?containingSet . }
+	optional { ?blankPropertyShape sh:order ?order . }
+	optional { ?blankPropertyShape sh:group ?group . }
+	optional { ?blankPropertyShape sh:defaultValue ?defaultValue . }
+
+	optional { ?blankPropertyShape sh:name ?name . }
+	optional { ?blankPropertyShape sh:description ?description . }
+	optional { ?blankPropertyShape rdfs:isDefinedBy ?isDefinedBy . }
+
+	filter ( isBlank(?blankPropertyShape) && !isBlank(?path)
+		&& (!bound(?nodeShape) || !isblank(?nodeShape))
+		&& (!bound(?qValueShape) || !isblank(?qValueShape))
+		&& (!bound(?qMaxCount) || !isblank(?qMaxCount))
+		&& (!bound(?qMinCount) || !isblank(?qMinCount))
+		&& (!bound(?isDisjoint) || !isblank(?isDisjoint))
+		&& (!bound(?value) || !isblank(?value))
+		&& (!bound(?containingSet) || !isblank(?containingSet))
+		&& (!bound(?order) || !isblank(?order))
+		&& (!bound(?group) || !isblank(?group))
+		&& (!bound(?defaultValue) || !isblank(?defaultValue)) )
+	bind (?_fillNS as ?fillNS)
+	bind ( concat(str(?path), "\n",
+		if(bound(?nodeShape), str(?nodeShape), ""), "\n",
+		if(bound(?qValueShape), str(?qValueShape), ""), "\n",
+		if(bound(?qMaxCount), str(?qMaxCount), ""), "\n",
+		if(bound(?qMinCount), str(?qMinCount), ""), "\n",
+		if(bound(?isDisjoint), str(?isDisjoint), ""), "\n",
+		if(bound(?value), str(?value), ""), "\n",
+		if(bound(?containingSet), str(?containingSet), ""), "\n",
+		if(bound(?order), str(?order), ""), "\n",
+		if(bound(?group), str(?group), ""), "\n",
+		if(bound(?defaultValue), str(?defaultValue), "") ) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?propertyShapeIri )
+}

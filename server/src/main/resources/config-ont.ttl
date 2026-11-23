@@ -1,158 +1,161 @@
-@prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
-@prefix rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix owl:	<http://www.w3.org/2002/07/owl#> .
-@prefix xsd:	<http://www.w3.org/2001/XMLSchema#> .
-@prefix par:	<http://parliament.semwebcentral.org/parliament-config#> .
+# baseURI: http://parliament.semwebcentral.org/parliament-config
+# prefix: pcfg
+
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix pcfg: <http://parliament.semwebcentral.org/parliament-config#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://parliament.semwebcentral.org/parliament-config>
-	a owl:Ontology ;
-	owl:versionInfo "$Rev$" ;
-	rdfs:label "Parliament Model Configuration Ontology" .
-
-par:Configuration
-	a owl:Class ;
-	rdfs:label "Configuration" ;
-	rdfs:subClassOf [
-		a owl:Restriction ;
-		owl:onProperty par:configurationHandler ;
-		owl:allValuesFrom par:ConfigurationHandler
-	] ;
-	rdfs:subClassOf [
-		a owl:Restriction ;
-		owl:onProperty par:indexHandler ;
-		owl:allValuesFrom par:IndexProcessorConfigurationHandler
-	] ;
-	rdfs:subClassOf [
-		a owl:Restriction ;
-		owl:onProperty par:indexHandler ;
-		owl:maxCardinality "1"^^xsd:int
-	] ;
-	rdfs:subClassOf [
-		a owl:Restriction ;
-		owl:onProperty par:clearDataOnStartup ;
-		owl:allValuesFrom xsd:boolean
-	] ;
-	rdfs:subClassOf [
-		a owl:Restriction ;
-		owl:onProperty par:clearDataOnStartup ;
-		owl:maxCardinality "1"^^xsd:int
-	] ;
-	rdfs:subClassOf [
-		a owl:Restriction ;
-		owl:onProperty par:baselineDir ;
-		owl:allValuesFrom xsd:string
-	] ;
-	rdfs:subClassOf [
-		a owl:Restriction ;
-		owl:onProperty par:deferredFileOutputStreamThreshold ;
-		owl:allValuesFrom xsd:int
-	] ;
-	.
-
-par:implementationClass
-	a owl:DatatypeProperty .
-
-par:configurationHandler
-	a owl:ObjectProperty .
-
-par:indexHandler
-	a owl:ObjectProperty .
-
-par:ConfigurationHandler
-	a owl:Class ;
-	rdfs:label "Configuration Handler" ;
-	rdfs:subClassOf [
-		a owl:Restriction ;
-		owl:onProperty par:implentationClass ;
-		owl:allValuesFrom xsd:string
-	] ;
-	rdfs:subClassOf [
-		a owl:Restriction ;
-		owl:onProperty par:implentationClass ;
-		owl:cardinality "1"^^xsd:int
-	] .
-
-par:processorFactoryClass
-	a owl:DatatypeProperty .
-
-par:index
-	a owl:ObjectProperty .
-
-par:IndexProcessorConfigurationHandler
-	a owl:Class ;
-	rdfs:subClassOf par:ConfigurationHandler ;
-	rdfs:label "Index Processor Configuration Handler" ;
-	rdfs:subClassOf [
-		a owl:Restriction ;
-		owl:onProperty par:index ;
-		owl:allValuesFrom par:IndexProcessorConfiguration
-	] ;
-	rdfs:subClassOf [
-		a owl:Restriction ;
-		owl:onProperty par:index ;
-		owl:minCardinality "1"^^xsd:int
-	] ;
-	par:implementationClass "com.bbn.parliament.jena.bridge.configuration.IndexProcessorConfigurationHandler"^^xsd:string .
-
-par:IndexProcessorConfiguration
-	a owl:Class ;
-	rdfs:label "Index Processor Configuration" ;
-	rdfs:subClassOf [
-		a owl:Restriction ;
-		owl:onProperty par:processorClass ;
-		owl:allValuesFrom xsd:string
-	] ;
-	rdfs:subClassOf [
-		a owl:Restriction ;
-		owl:onProperty par:processorClass ;
-		owl:minCardinality "1"^^xsd:int
-	] .
-
-par:ruleFile
-	a owl:ObjectProperty .
-
-par:RuleConfigurationHandler
-	a owl:Class ;
-	rdfs:subClassOf par:ConfigurationHandler ;
-	rdfs:label "Rule Configuration Handler" ;
-	rdfs:subClassOf [
-		a owl:Restriction ;
-		owl:onProperty par:ruleFile ;
-		owl:minCardinality "1"^^xsd:int
-	] .
-
-par:JenaRuleConfigurationHandler
-	a owl:Class ;
-	rdfs:subClassOf par:RuleConfigurationHandler ;
-	rdfs:label "Jena Rule Configuration Handler" ;
-	par:implementationClass "com.bbn.parliament.jena.bridge.configuration.JenaRuleConfigurationHandler"^^xsd:string .
-
-par:baselineDir
-	a owl:DatatypeProperty .
-
-par:deferredFileOutputStreamThreshold
-	a owl:DatatypeProperty .
-
-par:clearDataOnStartup
-	a owl:DatatypeProperty .
-
-par:MemoryConfigurationHandler
-	a owl:Class ;
-	rdfs:subClassOf par:ConfigurationHandler ;
-	rdfs:label "Memory Configuration Handler" ;
-	par:implementationClass "com.bbn.parliament.jena.bridge.configuration.MemoryConfigurationHandler"^^xsd:string .
-
-par:usageThreshold
-	a owl:DatatypeProperty .
-
-par:enabledByDefault
-	a owl:DatatypeProperty .
-
-par:prefixes
-	a owl:ObjectProperty .
-
-par:prefix
-	a owl:DatatypeProperty .
-
-par:uri
-	a owl:DatatypeProperty .
+  a owl:Ontology ;
+  rdfs:label "Parliament Model Configuration Ontology" ;
+  owl:versionInfo "1.1" ;
+.
+pcfg:Configuration
+  a owl:Class ;
+  rdfs:label "Configuration" ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:allValuesFrom pcfg:ConfigurationHandler ;
+      owl:onProperty pcfg:configurationHandler ;
+    ] ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:allValuesFrom pcfg:IndexProcessorConfigurationHandler ;
+      owl:onProperty pcfg:indexHandler ;
+    ] ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:allValuesFrom xsd:boolean ;
+      owl:onProperty pcfg:clearDataOnStartup ;
+    ] ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:allValuesFrom xsd:integer ;
+      owl:onProperty pcfg:deferredFileOutputStreamThreshold ;
+    ] ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:allValuesFrom xsd:string ;
+      owl:onProperty pcfg:baselineDir ;
+    ] ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:maxCardinality 1 ;
+      owl:onProperty pcfg:clearDataOnStartup ;
+    ] ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:maxCardinality 1 ;
+      owl:onProperty pcfg:indexHandler ;
+    ] ;
+.
+pcfg:ConfigurationHandler
+  a owl:Class ;
+  rdfs:label "Configuration Handler" ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:allValuesFrom xsd:string ;
+      owl:onProperty pcfg:implentationClass ;
+    ] ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:cardinality 1 ;
+      owl:onProperty pcfg:implentationClass ;
+    ] ;
+.
+pcfg:IndexProcessorConfiguration
+  a owl:Class ;
+  rdfs:label "Index Processor Configuration" ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:allValuesFrom xsd:string ;
+      owl:onProperty pcfg:processorClass ;
+    ] ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:minCardinality 1 ;
+      owl:onProperty pcfg:processorClass ;
+    ] ;
+.
+pcfg:IndexProcessorConfigurationHandler
+  a owl:Class ;
+  pcfg:implementationClass "com.bbn.parliament.server.configuration.IndexProcessorConfigurationHandler" ;
+  rdfs:label "Index Processor Configuration Handler" ;
+  rdfs:subClassOf pcfg:ConfigurationHandler ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:allValuesFrom pcfg:IndexProcessorConfiguration ;
+      owl:onProperty pcfg:index ;
+    ] ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:minCardinality 1 ;
+      owl:onProperty pcfg:index ;
+    ] ;
+.
+pcfg:JenaRuleConfigurationHandler
+  a owl:Class ;
+  pcfg:implementationClass "com.bbn.parliament.server.configuration.JenaRuleConfigurationHandler" ;
+  rdfs:label "Jena Rule Configuration Handler" ;
+  rdfs:subClassOf pcfg:RuleConfigurationHandler ;
+.
+pcfg:MemoryConfigurationHandler
+  a owl:Class ;
+  pcfg:implementationClass "com.bbn.parliament.server.configuration.MemoryConfigurationHandler" ;
+  rdfs:label "Memory Configuration Handler" ;
+  rdfs:subClassOf pcfg:ConfigurationHandler ;
+.
+pcfg:RuleConfigurationHandler
+  a owl:Class ;
+  rdfs:label "Rule Configuration Handler" ;
+  rdfs:subClassOf pcfg:ConfigurationHandler ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:minCardinality 1 ;
+      owl:onProperty pcfg:ruleFile ;
+    ] ;
+.
+pcfg:baselineDir
+  a owl:DatatypeProperty ;
+.
+pcfg:clearDataOnStartup
+  a owl:DatatypeProperty ;
+.
+pcfg:configurationHandler
+  a owl:ObjectProperty ;
+.
+pcfg:deferredFileOutputStreamThreshold
+  a owl:DatatypeProperty ;
+.
+pcfg:enabledByDefault
+  a owl:DatatypeProperty ;
+.
+pcfg:implementationClass
+  a owl:DatatypeProperty ;
+.
+pcfg:index
+  a owl:ObjectProperty ;
+.
+pcfg:indexHandler
+  a owl:ObjectProperty ;
+.
+pcfg:prefix
+  a owl:DatatypeProperty ;
+.
+pcfg:prefixes
+  a owl:ObjectProperty ;
+.
+pcfg:processorFactoryClass
+  a owl:DatatypeProperty ;
+.
+pcfg:ruleFile
+  a owl:ObjectProperty ;
+.
+pcfg:uri
+  a owl:DatatypeProperty ;
+.
+pcfg:usageThreshold
+  a owl:DatatypeProperty ;
+.

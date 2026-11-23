@@ -8,11 +8,12 @@
 	<property name="bridgeBinDir" value="${targetDir}/bin/${ant.project.name}-bridge"/>
 	<property name="serverBinDir" value="${targetDir}/bin/${ant.project.name}-server"/>
 	<property name="testBinDir" value="${targetDir}/test-bin/${ant.project.name}"/>
+	<property name="tmpServerDir" value="${testBinDir}/tmp-server"/>
 	<property name="genSrcDir"
 		location="${basedir}/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab"/>
 	<property name="configDir" location="${basedir}/resources/conf"/>
 	<property name="libDir" value="${basedir}/lib"/>
-	<property name="josekiLibDir" value="${parliamentDependenciesDir}/joseki"/>
+	<property name="josekiLib" value="${parliamentDependenciesDir}/joseki/joseki-3.4.4.jar"/>
 	<property name="openMapLibDir" value="${parliamentDependenciesDir}/openmap"/>
 	<property name="deegreeLibDir" value="${parliamentDependenciesDir}/deegree"/>
 	<property name="serverJarFile" value="${artifactsDir}/ParliamentServer.jar"/>
@@ -20,11 +21,11 @@
 	<property name="warFile" value="${artifactsDir}/parliament.war"
 		description="This file name becomes the base URL of the service, so don't add a version number to it!"/>
 
-	<property name="parliamentClientDir" value="${kbRootDir}/jena/JosekiParliamentClient"/>
-	<property name="jenaGraphDir" location="${kbRootDir}/jena/JenaGraph"/>
+	<property name="parliamentClientDir" value="${kbRootDir}/jena/ParliamentClient"/>
+	<property name="kbGraphDir" location="${kbRootDir}/jena/KbGraph"/>
 	<property name="numericIndexDir" location="${kbRootDir}/jena/NumericIndex"/>
-	<property name="spatialIndexDir" location="${kbRootDir}/jena/SpatialIndexProcessor"/>
-	<property name="temporalIndexDir" location="${kbRootDir}/jena/TemporalIndexProcessor"/>
+	<property name="spatialIndexDir" location="${kbRootDir}/jena/SpatialIndex"/>
+	<property name="temporalIndexDir" location="${kbRootDir}/jena/TemporalIndex"/>
 
 	<target name="clean">
 		<delete dir="${serverBinDir}"/>
@@ -39,7 +40,7 @@
 
 	<target name="buildDependencies">
 		<ant dir="${parliamentClientDir}" target="jar" inheritAll="false"/>
-		<ant dir="${jenaGraphDir}" target="jar" inheritAll="false"/>
+		<ant dir="${kbGraphDir}" target="jar" inheritAll="false"/>
 		<ant dir="${numericIndexDir}" target="jar" inheritall="false"/>
 		<ant dir="${spatialIndexDir}" target="jar" inheritall="false"/>
 		<ant dir="${temporalIndexDir}" target="jar" inheritall="false"/>
@@ -73,10 +74,12 @@
 		<mkdir dir="${genSrcDir}"/>
 		<java classname="jena.schemagen" failonerror="true">
 			<classpath>
-				<fileset dir="${libDir}/bridge" includes="**/*.jar"/>
+				<fileset dir="${libDir}/schemagen" includes="**/*.jar"/>
 			</classpath>
 			<arg value="-i"/>
 			<arg value="${basedir}/resources/ontology/config-ont.ttl"/>
+			<arg value="-e"/>
+			<arg value="TURTLE"/>
 			<arg value="-o"/>
 			<arg value="${basedir}/src"/>
 			<arg value="--ontology"/>
@@ -102,10 +105,10 @@
 			<exclude name="com/bbn/parliament/jena/jetty/*.java"/>
 			<classpath>
 				<fileset dir="${libDir}/bridge" includes="**/*.jar"/>
-				<fileset dir="${josekiLibDir}" includes="**/joseki-*.jar"/>
+				<fileset file="${josekiLib}"/>
 				<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
-				<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
-				<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
+				<fileset dir="${artifactsDir}" includes="KbGraph.jar"/>
+				<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 				<fileset file="${serverJarFile}"/>
 			</classpath>
 			<compilerarg value="-Xlint:all"/>
@@ -126,17 +129,17 @@
 				<exclude name="**/slf4j-api-*.jar"/>
 				<exclude name="**/slf4j-log4j12-*.jar"/>
 			</lib>
-			<lib dir="${josekiLibDir}" includes="**/joseki-*.jar"/>
+			<lib file="${josekiLib}"/>
 			<lib dir="${openMapLibDir}" includes="**/*.jar"/>
 			<lib dir="${deegreeLibDir}" includes="**/*.jar"/>
 			<lib file="${bridgeJarFile}"/>
 			<lib dir="${artifactsDir}">
 				<include name="Parliament.jar"/>
-				<include name="JenaGraph.jar"/>
-				<include name="JosekiParliamentClient.jar"/>
+				<include name="KbGraph.jar"/>
+				<include name="ParliamentClient.jar"/>
 				<include name="NumericIndex.jar"/>
-				<include name="SpatialIndexProcessor.jar"/>
-				<include name="TemporalIndexProcessor.jar"/>
+				<include name="SpatialIndex.jar"/>
+				<include name="TemporalIndex.jar"/>
 			</lib>
 			<fileset dir="www"/>
 		</war>
@@ -170,7 +173,7 @@
 
 		<copy todir="${deployableSvrDir}/clientJars">
 			<fileset dir="${parliamentClientDir}/lib/default" includes="*.jar"/>
-			<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
+			<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 		</copy>
 
 		<if>
@@ -208,8 +211,8 @@
 				<fileset dir="${libDir}/test" includes="**/*.jar"/>
 				<fileset file="${bridgeJarFile}"/>
 				<fileset file="${serverJarFile}"/>
-				<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
-				<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
+				<fileset dir="${artifactsDir}" includes="KbGraph.jar"/>
+				<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 			</classpath>
 			<compilerarg value="-Xlint:all"/>
 		</javac>
@@ -224,29 +227,29 @@
 	<!-- Runs unit tests for a specific native directory, which is expected as a parameter -->
 	<target name="runTestsForOneNativeDir">
 		<echo message="nativeArtifactsDir = '${nativeArtifactsDir}'"/>
-		<delete dir="${basedir}/tmp-server"/>
-		<copy todir="${basedir}/tmp-server/webapps">
+		<delete dir="${tmpServerDir}"/>
+		<copy todir="${tmpServerDir}/webapps">
 			<fileset file="${warFile}"/>
 		</copy>
-		<copy todir="${basedir}/tmp-server/conf">
+		<copy todir="${tmpServerDir}/conf">
 			<fileset file="${basedir}/resources/conf/webdefault.xml"/>
 		</copy>
-		<mkdir dir="${basedir}/tmp-server/log"/>
+		<mkdir dir="${tmpServerDir}/log"/>
 
 		<junitlauncher printsummary="yes" haltonfailure="yes">
 			<classpath>
 				<fileset dir="${libDir}/test" includes="**/*.jar"/>
-				<fileset dir="${josekiLibDir}" includes="**/joseki-*.jar"/>
+				<fileset file="${josekiLib}"/>
 				<fileset dir="${openMapLibDir}" includes="**/*.jar"/>
 				<fileset dir="${deegreeLibDir}" includes="**/*.jar"/>
 				<fileset file="${bridgeJarFile}"/>
 				<fileset file="${serverJarFile}"/>
 				<fileset dir="${artifactsDir}" includes="Parliament.jar"/>
-				<fileset dir="${artifactsDir}" includes="JenaGraph.jar"/>
-				<fileset dir="${artifactsDir}" includes="JosekiParliamentClient.jar"/>
+				<fileset dir="${artifactsDir}" includes="KbGraph.jar"/>
+				<fileset dir="${artifactsDir}" includes="ParliamentClient.jar"/>
 				<fileset dir="${artifactsDir}" includes="NumericIndex.jar"/>
-				<fileset dir="${artifactsDir}" includes="SpatialIndexProcessor.jar"/>
-				<fileset dir="${artifactsDir}" includes="TemporalIndexProcessor.jar"/>
+				<fileset dir="${artifactsDir}" includes="SpatialIndex.jar"/>
+				<fileset dir="${artifactsDir}" includes="TemporalIndex.jar"/>
 				<pathelement location="${testBinDir}"/>
 			</classpath>
 			<listener type="legacy-xml" outputdir="${reportsDir}/${ant.project.name}"
@@ -259,7 +262,7 @@
 			which makes Java unhappy.
 			-->
 			<test name="com.bbn.parliament.jena.joseki.bridge.ParliamentServerTestCase">
-				<fork dir="${basedir}/tmp-server">
+				<fork dir="${tmpServerDir}">
 					<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
 					<!-- This used to use jetty-test.xml, but that was written for Jetty 6.  Now
 						that we're using Jetty 9, we'll just use jetty.xml rather than bothering to
@@ -272,12 +275,11 @@
 			<testclasses>
 				<fileset dir="${testBinDir}" includes="**/*TestCase.class"
 					excludes="**/bridge/ParliamentServerTestCase.class"/>
-				<fork>
+				<fork dir="${testBinDir}">
 					<sysproperty key="log4j.configuration" value="file:///${kbRootDir}/log4j.junit.properties"/>
 					<sysproperty key="java.library.path" value="${nativeArtifactsDir}/bin"/>
 				</fork>
 			</testclasses>
 		</junitlauncher>
-		<delete dir="${basedir}/tmp-server"/>
 	</target>
 </project>

@@ -1,0 +1,173 @@
+/*
+** To publish to the Gradle plugin portal:
+**
+**		gw publishPlugins --validate-only
+**		gw publishPlugins
+**
+** To publish to Maven Central:
+**
+**		gw publishOntologyBundlePublicationToSonatypeOssrhRepoRepository
+**		Log into oss.sonatype.org (OSSRH)
+**		Click on Staging Repositories
+**		Inspect the publication
+**		Click Close
+**		Check the email for vulnerabilities
+**		Check under Activity for errors
+**		If none, click Release
+**
+**		Note: We should run this target as well:
+**			publishOntologyBundlePluginMarkerMavenPublicationToSonatypeOssrhRepoRepository
+**		but that fails the oss.sonatype.org validation rules because the additional pom
+**		file has no project URL, license, SCM URL, or developer information. To get around
+**		this, use this task:
+**			publishOntologyBundlePluginMarkerMavenPublicationToMavenLocal
+**		instead, retrieve the POM file from here:
+**			~/.m2/repository/com/bbn/parliament/OntologyBundle/com.bbn.parliament.OntologyBundle.gradle.plugin/1.0.2
+**		and install it into MavenLocal on the target machineusing this command:
+**			mvn install:install-file -Dfile=<path-to-pomfile> -DpomFile=<path-to-pomfile>
+**
+**		Alternate (sneaky) way:
+**
+**		gw publishOntologyBundlePublicationToSonatypeOssrhRepoRepository
+**		Log into oss.sonatype.org (OSSRH)
+**		Click on Staging Repositories
+**		Inspect the publication
+**		Click Close
+**		Check the email for vulnerabilities
+**		Check under Activity for errors
+**		If none, gw publishOntologyBundlePluginMarkerMavenPublicationToSonatypeOssrhRepoRepository
+**		click Release
+*/
+
+plugins {
+	id 'java-gradle-plugin'
+	id 'signing'
+	alias(libs.plugins.gradlePluginPublish)
+	alias(libs.plugins.compatibility)
+	//alias(libs.plugins.shadow)
+}
+
+ext {
+	projectDescription = '''\
+		A Gradle plugin to package (or bundle) an OWL ontology in a jar
+		to make it easy to use in Java-based software projects.
+		Copyright © 2023, 2024 RTX BBN Technologies'''.stripIndent()
+	projectUrl = "https://github.com/${rootProject.ext.githubOrg}/parliament/tree/jena-update/jena/OntologyBundle"
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compileOnly libs.findBugs
+	implementation libs.commonsCsv
+	implementation libs.jenaCmds
+	implementation libs.queryBuilder
+
+	testImplementation gradleTestKit()
+}
+
+version = '1.0.10'
+
+gradlePlugin {
+	website = projectUrl
+	vcsUrl = projectUrl
+
+	plugins {
+		OntologyBundle {
+			id = 'com.bbn.parliament.OntologyBundle'
+			displayName = 'Ontology Bundle'
+			description = projectDescription
+			tags = [ 'ontology', 'OWL', 'RDF', 'Knowledge_Graph', 'Semantic_Graph', 'Semantic_Web' ]
+			implementationClass = 'com.bbn.parliament.ontology_bundle.OntologyBundlePlugin'
+			compatibility {
+				features {
+					configurationCache = true
+				}
+			}
+		}
+	}
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+testing {
+	suites {
+		test {
+			useJUnitJupiter(libs.versions.jupiterVer)
+		}
+	}
+}
+
+publishing {
+	publications {
+		OntologyBundle(MavenPublication) {
+			from components.java
+			pom {
+				name = 'Ontology Bundle'
+				description = projectDescription
+				url = projectUrl
+				packaging = 'jar'
+				licenses {
+					license {
+						name = 'The 3-Clause BSD License'
+						url = 'https://opensource.org/license/bsd-3-clause/'
+					}
+				}
+				organization {
+					name = 'RTX BBN Technologies'
+					url = 'https://bbn.com/'
+				}
+				developers {
+					developer {
+						id = 'iemmons'
+						name = 'Ian Emmons'
+						email = 'iemmons@rtx.com'
+					}
+				}
+				scm {
+					connection = "scm:git:git@github.com:${rootProject.ext.githubOrg}/parliament.git"
+					developerConnection = "scm:git:git@github.com:${rootProject.ext.githubOrg}/parliament.git"
+					url = "https://github.com/${rootProject.ext.githubOrg}/parliament"
+				}
+			}
+		}
+	}
+
+	repositories {
+		maven {
+			name = 'SonatypeOssrhRepo'
+			url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+			credentials {
+				username = project.hasProperty('sonatypeOssrhUser') ? sonatypeOssrhUser : 'Anonymous'
+				password = project.hasProperty('sonatypeOssrhPassword') ? sonatypeOssrhPassword : 'NoPassword'
+			}
+		}
+	}
+}
+
+signing {
+	sign publishing.publications.OntologyBundle
+}
+
+task xlatePrefix(type: JavaExec) {
+	dependsOn compileJava
+	mainClass = 'com.bbn.parliament.ontology_bundle.XlatePrefix'
+	classpath = sourceSets.main.runtimeClasspath
+
+	//systemProperty 'PROP_NAME', "property-value"
+
+	args = [
+		"$projectDir/test-ontology/owl-time.ttl",			// input
+		"$projectDir/test-ontology/owl-time-new.ttl",	// output
+		'',															// old prefix
+		'time',														// new prefix
+	]
+}

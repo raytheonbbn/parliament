@@ -1,0 +1,44 @@
+select distinct ?ent where {
+	bind(?_rootType as ?rootType)
+	bind(?_root as ?root)
+
+	?rootType rdfs:subClassOf dmn:EntityOfInterest .
+	?root a ?rootType .
+
+	{
+		{
+			?root dmn:relationship* ?ent .
+		} union {
+			?association a dmn:Association ;
+				dmn:hasParticipant ?root ;
+				dmn:hasParticipant ?profile .
+			filter ( ?profile != ?root )
+
+			{
+				{
+					?association dmn:relationship* ?ent .
+				} union {
+					?profile dmn:relationship* ?ent .
+				}
+			}
+		} union {
+			?association1 a dmn:Association ;
+				dmn:hasParticipant ?root ;
+				dmn:hasParticipant ?profile1 .
+
+			?association2 a dmn:Association ;
+				dmn:hasParticipant ?root ;
+				dmn:hasParticipant ?profile2 .
+
+			?association3 a dmn:Association ;
+				dmn:hasParticipant ?profile1 ;
+				dmn:hasParticipant ?profile2 .
+
+			filter ( ?profile1 != ?root )
+			filter ( ?profile2 != ?root )
+			filter ( ?profile1 != ?profile2 )
+
+			?association3 dmn:relationship* ?ent .
+		}
+	}
+}

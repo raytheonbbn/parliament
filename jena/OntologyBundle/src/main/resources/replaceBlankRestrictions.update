@@ -1,0 +1,73 @@
+prefix dct:  <http://purl.org/dc/terms/>
+prefix meo:  <https://foundry.ai.mil/ontology/meks/>
+prefix owl:  <http://www.w3.org/2002/07/owl#>
+prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+delete {
+	?restrictionBearer ?incomingPredicate ?r .
+	?r a owl:Restriction ;
+		owl:onProperty ?prop ;
+		?rPredicate ?rValue ;
+		owl:onClass ?class ;
+		owl:onDataRange ?dataRange ;
+		dct:description ?description .
+} insert {
+	?restrictionBearer ?incomingPredicate ?rIri .
+	?rIri a owl:Restriction ;
+		owl:onProperty ?prop ;
+		?rPredicate ?rValue ;
+		owl:onClass ?class ;
+		owl:onDataRange ?dataRange ;
+		dct:description ?description .
+} where {
+	values ?incomingPredicate {
+		rdfs:subClassOf	# the usual case
+		rdf:first			# for restrictions in lists
+		owl:equivalentClass
+		owl:someValuesFrom
+		owl:annotatedTarget
+	}
+	values ?rPredicate {
+		owl:allValuesFrom
+		owl:hasValue
+		owl:cardinality
+		owl:maxCardinality
+		owl:minCardinality
+		owl:someValuesFrom
+		owl:qualifiedCardinality
+		owl:minQualifiedCardinality
+		owl:maxQualifiedCardinality
+		owl:hasSelf
+		meo:p-0000000011
+		meo:p-0000000013
+		meo:p-0000000014
+		meo:p-0000000016
+		meo:p-0000000017
+		meo:p-0000000022
+		meo:p-0000000023
+		meo:p-0000000026
+		meo:p-0000000031
+		meo:p-0000000032
+		meo:p-0000000035
+		meo:p-0000000036
+		meo:p-0000000038
+		meo:p-0000000042
+		meo:p-0000000049
+		meo:p-0000000080
+		meo:p-0000000099
+	}
+	?restrictionBearer ?incomingPredicate ?r .
+	?r a owl:Restriction ;
+		owl:onProperty ?prop ;
+		?rPredicate ?rValue .
+	optional { ?r owl:onClass ?class . }
+	optional { ?r owl:onDataRange ?dataRange . }
+	optional { ?r dct:description ?description . }
+	filter ( isBlank(?r) && !isBlank(?prop) && !isBlank(?rValue) )
+	bind (?_fillNS as ?fillNS)
+	bind ( concat(str(?prop), "\n", str(?rPredicate), "\n", str(?rValue), "\n",
+		if(bound(?class), str(?class), ""), "\n",
+		if(bound(?dataRange), str(?dataRange), "")) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?rIri )
+}

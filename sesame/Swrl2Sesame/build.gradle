@@ -1,0 +1,51 @@
+// Copyright (c) 2023 RTX BBN Technologies Corp.
+
+plugins {
+	id 'java-library'
+}
+
+dependencies {
+	implementation libs.sesame
+	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3'
+	implementation project(':sesame:ParliamentSail')
+	implementation fileTree(dir: "${rootProject.ext.depDir}/swrl-jaxb", include: "*.jar")
+}
+
+configurations.all {
+	exclude group: 'xml-apis'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+task sourcesJar(type: Jar) {
+	archiveClassifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	archiveClassifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+javadoc {
+	source = sourceSets.main.allJava
+	classpath = configurations.compileClasspath
+
+	options
+	{
+		//setMemberLevel JavadocMemberLevel.PUBLIC
+		//setAuthor true
+		addStringOption('Xdoclint:-missing', '-quiet')
+	}
+}
+
+tasks.named("assemble") {
+	dependsOn(sourcesJar)
+	dependsOn(javadocJar)
+}

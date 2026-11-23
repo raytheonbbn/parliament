@@ -1,0 +1,9 @@
+select distinct ?subjectType ?min ?max ?exact where {
+	values ?subjectType { "subjectTypeMarker" }
+	?subjectType rdfs:subClassOf ?restriction .
+	?restriction a owl:Restriction ;
+		owl:onProperty ?_property .
+	optional { ?restriction owl:minCardinality ?min }
+	optional { ?restriction owl:maxCardinality ?max }
+	optional { ?restriction owl:cardinality ?exact }
+}

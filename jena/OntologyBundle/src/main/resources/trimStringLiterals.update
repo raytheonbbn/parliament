@@ -1,0 +1,20 @@
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+
+delete {
+	?s ?p ?str .
+} insert {
+	?s ?p ?trimLit .
+} where {
+	{
+		?s ?p ?str .
+		filter ( isLiteral(?str) && datatype(?str) = xsd:string )
+		bind ( replace(str(?str), "^\\s*(|(?:\\S)|(?:\\S.*\\S))\\s*$", "$1") as ?trimStr )
+		bind ( strdt(?trimStr, xsd:string) as ?trimLit )
+	} union {
+		?s ?p ?str .
+		filter ( isLiteral(?str) && datatype(?str) = rdf:langString )
+		bind ( replace(str(?str), "^\\s*(|(?:\\S)|(?:\\S.*\\S))\\s*$", "$1") as ?trimStr )
+		bind ( strlang(?trimStr, lang(?str)) as ?trimLit )
+	}
+}

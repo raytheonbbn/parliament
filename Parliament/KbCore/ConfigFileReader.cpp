@@ -9,11 +9,9 @@
 #include "parliament/Exceptions.h"
 #include "parliament/Util.h"
 
-#include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/format.hpp>
-#include <charconv>
 #include <regex>
 #include <string>
 
@@ -22,9 +20,6 @@ namespace bfs = ::boost::filesystem;
 namespace pmnt = ::bbn::parliament;
 
 using ::boost::format;
-using ::std::begin;
-using ::std::end;
-using ::std::from_chars;
 using ::std::getline;
 using ::std::ifstream;
 using ::std::make_pair;
@@ -34,8 +29,6 @@ using ::std::string_view;
 using TRegex = ::std::basic_regex<pmnt::TChar>;
 using TSMatch = ::std::match_results<pmnt::TString::const_iterator>;
 
-static constexpr const char*const k_trueBoolValues[] = { "true", "t", "yes", "y", "on", "1" };
-static constexpr const char*const k_falseBoolValues[] = { "false", "f", "no", "n", "off", "0" };
 static constexpr pmnt::TChar k_pmntDirRegExStr[] = _T(
 	"^parliament-[0-9]+\\.[0-9]+\\.[0-9]+-((win)|(mac)|(ubuntu[0-9]+)|(rhel[0-9]+))(-d)?-((32)|(64))$");
 
@@ -167,68 +160,5 @@ pair<string_view, string_view> pmnt::ConfigFileReader::getKeyValueFromLine(
 			(equalsPos == line.length())
 				? string{}
 				: ba::trim_copy(line.substr(equalsPos + 1)));
-	}
-}
-
-size_t pmnt::ConfigFileReader::parseUnsigned(string_view str, uint32 lineNum)
-{
-	// The castSVIter function (defined in Util.h) is needed because Microsoft's
-	// implementation of from_chars doesn't support string_view iterators, even
-	// though the C++17 standard allows it.
-	auto trimmedStr = ba::trim_copy(str);
-	size_t result = 0;
-	auto retCode = from_chars(castSVIter(cbegin(trimmedStr)), castSVIter(cend(trimmedStr)), result);
-	if (trimmedStr.length() == 0 || retCode.ec != std::errc{} || retCode.ptr != castSVIter(cend(trimmedStr)))
-	{
-		throw Exception(format("Ill-formed integer '%1%' on line %2%") % trimmedStr % lineNum);
-	}
-	return result;
-}
-
-double pmnt::ConfigFileReader::parseDouble(string_view str, uint32 lineNum)
-{
-	// from_chars isn't supported by Apple Clang until macOS 26.0
-#ifdef COMPILER_SUPPORTS_FROM_CHARS
-	auto trimmedStr = ba::trim_copy(str);
-	double result = 0;
-	auto retCode = from_chars(cbegin(trimmedStr), cend(trimmedStr), result);
-	if (trimmedStr.length() == 0 || retCode.ec != std::errc{} || retCode.ptr != cend(trimmedStr))
-	{
-		throw Exception(format("Ill-formed number '%1%' on line %2%") % trimmedStr % lineNum);
-	}
-	return result;
-#else
-	auto trimmedStr = string{ba::trim_copy(str)};	// convert so pEnd test will work
-	char* pEnd;
-	double result = strtod(trimmedStr.c_str(), &pEnd);
-	if (trimmedStr.length() == 0 || *pEnd != '\0')
-	{
-		throw Exception(format("Ill-formed number '%1%' on line %2%") % trimmedStr % lineNum);
-	}
-	return result;
-#endif
-}
-
-template<typename T, ::std::size_t N>
-static bool doesAnyMatch(string_view exemplar, T(&matchList)[N])
-{
-	return ::std::any_of(begin(matchList), end(matchList),
-		[&exemplar](const char*const pStr) { return ba::iequals(exemplar, pStr); });
-}
-
-bool pmnt::ConfigFileReader::parseBool(string_view str, uint32 lineNum)
-{
-	auto trimmedStr = ba::trim_copy(str);
-	if (doesAnyMatch(trimmedStr, k_trueBoolValues))
-	{
-		return true;
-	}
-	else if (doesAnyMatch(trimmedStr, k_falseBoolValues))
-	{
-		return false;
-	}
-	else
-	{
-		throw Exception(format("Ill-formed Boolean value '%1%' on line %2%") % str % lineNum);
 	}
 }

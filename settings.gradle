@@ -1,3 +1,23 @@
 rootProject.name = 'kb'
 
-include 'server'
+// In the order in which they should be built:
+include 'Parliament',
+	'jena:ParliamentClient',
+	'jena:SparqlQueryBuilder',
+	'jena:OntologyDrivenDataAccess',
+	'jena:OntologyBundle',
+	'jena:KbGraph',
+	'jena:NumericIndex',
+	'jena:TemporalIndex',
+	'jena:SpatialIndex',
+	'server',
+
+	// Preserved as legacy code:
+//	'sesame:ParliamentSail',
+//	'sesame:CSameAsSail',
+//	'sesame:SameAsSail',
+//	'sesame:LuceneSail',
+//	'sesame:Swrl2Sesame',
+//	'jena:TemporalIndexOld',
+	'jena:SparqlQueryBuilderJ3',
+	'jena:JosekiExtensions'

@@ -1,0 +1,70 @@
+// Copyright (c) 2023 RTX BBN Technologies Corp.
+
+plugins {
+	id 'java-library'
+}
+
+dependencies {
+	implementation libs.berkeleyDbJe
+	implementation libs.commonsDbcp
+	implementation libs.geotoolsEpsgExt
+	implementation libs.geotoolsEpsgHsql
+	implementation libs.geotoolsEpsgWkt
+	implementation libs.geotoolsReferencing
+	implementation libs.geotoolsXsdCore
+	implementation libs.geotoolsXsdGml
+	implementation libs.geotoolsXsdKml
+	implementation libs.jenaArq
+	implementation libs.jts
+	implementation libs.postgresql
+	implementation libs.slf4jApi
+	implementation project(':jena:ParliamentClient')
+	implementation project(':jena:KbGraph')
+	implementation fileTree(dir: "${rootProject.ext.depDir}/deegree", include: "*.jar")
+	implementation fileTree(dir: "${rootProject.ext.depDir}/openmap", include: "*.jar")
+	testImplementation libs.logback
+	testImplementation(testFixtures(project(":jena:KbGraph")))
+}
+
+configurations.all {
+	exclude group: 'xml-apis'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+javadoc {
+	source = sourceSets.main.allJava
+	classpath = configurations.compileClasspath
+
+	options
+	{
+		//setMemberLevel JavadocMemberLevel.PUBLIC
+		//setAuthor true
+		addStringOption('Xdoclint:-missing', '-quiet')
+	}
+}
+
+testing {
+	suites {
+		test {
+			useJUnitJupiter(libs.versions.jupiterVer)
+		}
+	}
+}
+
+test {
+	jvmArgs = [ '--enable-native-access=ALL-UNNAMED' ]
+	systemProperty 'logback.configurationFile', "${rootProject.ext.debugLogbackConfig}"
+	systemProperty 'java.library.path', rootProject.ext.distDirBin
+	systemProperty 'test.data.path', rootProject.ext.depDataDir
+}
+
+clean {
+	delete "${projectDir}/kb-data"
+}

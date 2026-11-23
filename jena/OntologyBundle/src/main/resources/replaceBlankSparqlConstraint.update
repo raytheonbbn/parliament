@@ -1,0 +1,32 @@
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix sh:   <http://www.w3.org/ns/shacl#>
+
+delete {
+	?sparqlConstraintBearer ?incomingPredicate ?blankSparqlConstraint .
+	?blankSparqlConstraint a sh:SPARQLConstraint ;
+		sh:message ?message ;
+		sh:prefixes ?prefixes ;
+		sh:select ?select ;
+		rdfs:comment ?comment .
+} insert {
+	?sparqlConstraintBearer ?incomingPredicate ?sparqlConstraintIri .
+	?sparqlConstraintIri a sh:SPARQLConstraint ;
+		sh:message ?message ;
+		sh:prefixes ?prefixes ;
+		sh:select ?select ;
+		rdfs:comment ?comment .
+} where {
+	values ?incomingPredicate {
+		sh:sparql
+	}
+	?sparqlConstraintBearer ?incomingPredicate ?blankSparqlConstraint .
+	?blankSparqlConstraint a sh:SPARQLConstraint ;
+		sh:message ?message ;
+		sh:prefixes ?prefixes ;
+		sh:select ?select .
+	optional { ?blankSparqlConstraint rdfs:comment ?comment . }
+	filter ( isBlank(?blankSparqlConstraint) && !isBlank(?message) && !isBlank(?prefixes) && !isBlank(?select) )
+	bind (?_fillNS as ?fillNS)
+	bind ( concat(str(?message), "\n", str(?prefixes), "\n", str(?select)) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?sparqlConstraintIri )
+}

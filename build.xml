@@ -22,26 +22,19 @@
 		<echo message="Using java version ${java.version}"/>
 
 		<delete dir="${targetDir}" deleteonexit="true"/>
+
+		<delete dir="${basedir}/jena/KbGraph/lib"/>
+		<delete dir="${basedir}/jena/JosekiExtensions/lib"/>
+		<delete dir="${basedir}/jena/ParliamentClient/lib"/>
+		<delete dir="${basedir}/jena/NumericIndex/lib"/>
+		<delete dir="${basedir}/jena/SpatialIndex/lib"/>
+		<delete dir="${basedir}/jena/TemporalIndex/lib"/>
+		<delete dir="${basedir}/jena/TemporalIndexOld/lib"/>
+		<delete dir="${basedir}/Parliament/lib"/>
+		<delete dir="${basedir}/Parliament/KbCore/parliament/generated"/>
 		<delete file="${basedir}/Parliament/Test/ParliamentKbConfig.txt"/>
 		<delete file="${basedir}/Parliament/Test/ParliamentLogConfig.txt"/>
 		<delete dir="${basedir}/Parliament/Test/kb-data"/>
-		<delete dir="${basedir}/indexes"/>
-		<delete dir="${basedir}/jena/JenaGraph/kb-data"/>
-		<delete dir="${basedir}/jena/JenaGraph" includes="parliament-test.log*"/>
-		<delete dir="${basedir}/jena/TemporalIndexProcessor/log"/>
-		<delete dir="${basedir}/kb-data"/>
-		<delete dir="${basedir}" includes="parliament-test.log*"/>
-
-		<delete dir="${basedir}/jena/JenaGraph/lib"/>
-		<delete dir="${basedir}/jena/JenaGraph/union-test-kb-data"/>
-		<delete dir="${basedir}/jena/JosekiExtensions/lib"/>
-		<delete dir="${basedir}/jena/JosekiParliamentClient/lib"/>
-		<delete dir="${basedir}/jena/NumericIndex/lib"/>
-		<delete dir="${basedir}/jena/SpatialIndexProcessor/lib"/>
-		<delete dir="${basedir}/jena/TemporalIndexProcessor/lib"/>
-		<delete dir="${basedir}/jena/TemporalIndexProcessor_old/lib"/>
-		<delete dir="${basedir}/Parliament/lib"/>
-		<delete dir="${basedir}/Parliament/KbCore/parliament/generated"/>
 		<delete dir="${basedir}/sesame/CSameAsSail/lib"/>
 		<delete dir="${basedir}/sesame/LuceneSail/lib"/>
 		<delete dir="${basedir}/sesame/ParliamentSail/lib"/>
@@ -52,19 +45,28 @@
 	</target>
 
 	<target name="cleanEclipseBuild" description="Cleans up the Eclipse build directories">
-		<delete dir="${basedir}/jena/JenaGraph/bin"/>
+		<delete dir="${basedir}/jena/KbGraph/bin"/>
 		<delete dir="${basedir}/jena/JosekiExtensions/bin"/>
 		<delete file="${basedir}/jena/JosekiExtensions/build.log"/>
-		<delete dir="${basedir}/jena/JosekiParliamentClient/bin"/>
+		<delete dir="${basedir}/jena/OntologyBundle/bin"/>
+		<delete dir="${basedir}/jena/OntologyDrivenDataAccess/bin"/>
+		<delete dir="${basedir}/jena/ParliamentClient/bin"/>
 		<delete dir="${basedir}/jena/NumericIndex/bin"/>
-		<delete dir="${basedir}/jena/SpatialIndexProcessor/bin"/>
-		<delete dir="${basedir}/jena/TemporalIndexProcessor/bin"/>
-		<delete dir="${basedir}/jena/TemporalIndexProcessor_old/bin"/>
+		<delete dir="${basedir}/jena/SparqlQueryBuilder/bin"/>
+		<delete dir="${basedir}/jena/SparqlQueryBuilderJ3/bin"/>
+		<delete dir="${basedir}/jena/SpatialIndex/bin"/>
+		<delete dir="${basedir}/jena/TemporalIndex/bin"/>
+		<delete dir="${basedir}/jena/TemporalIndex/indexes"/>
+		<delete dir="${basedir}/jena/TemporalIndex/kb-data"/>
+		<delete dir="${basedir}/jena/TemporalIndexOld/bin"/>
+		<delete dir="${basedir}/jena/TemporalIndexOld/indexes"/>
+		<delete dir="${basedir}/jena/TemporalIndexOld/kb-data"/>
 		<delete dir="${basedir}/Parliament/bin"/>
 		<delete dir="${basedir}/Parliament/JniAssessments/bin"/>
 		<delete file="${basedir}/Parliament/AdminClient/.settings/language.settings.xml"/>
 		<delete file="${basedir}/Parliament/KbCore/.settings/language.settings.xml"/>
 		<delete file="${basedir}/Parliament/Test/.settings/language.settings.xml"/>
+		<delete dir="${basedir}/server/bin"/>
 		<delete dir="${basedir}/sesame/CSameAsSail/bin"/>
 		<delete dir="${basedir}/sesame/LuceneSail/bin"/>
 		<delete dir="${basedir}/sesame/ParliamentSail/bin"/>
@@ -77,13 +79,31 @@
 		</delete>
 	</target>
 
+	<target name="resolveAllForce" description="Force an Ivy resolve on all sub-projects">
+		<ant dir="${basedir}/Parliament" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/jena/JosekiExtensions" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/jena/KbGraph" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/jena/NumericIndex" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/jena/ParliamentClient" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/jena/SpatialIndex" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/jena/TemporalIndex" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/jena/TemporalIndexOld" target="resolveAlways" inheritAll="false"/>
+		<!--
+		<ant dir="${basedir}/sesame/CSameAsSail" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/LuceneSail" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/ParliamentSail" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/SameAsSail" target="resolveAlways" inheritAll="false"/>
+		<ant dir="${basedir}/sesame/Swrl2Sesame" target="resolveAlways" inheritAll="false"/>
+		-->
+	</target>
+
 	<target name="runTests" depends="createDistro" description="Runs extended unit and integration tests">
-		<ant dir="${basedir}/jena/JosekiParliamentClient" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/jena/JenaGraph" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/jena/JosekiExtensions" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/jena/ParliamentClient" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/jena/KbGraph" target="runTests" inheritAll="false"/>
+		<!-- ant dir="${basedir}/jena/JosekiExtensions" target="runTests" inheritAll="false"/ -->
 		<ant dir="${basedir}/jena/NumericIndex" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="runTests" inheritAll="false"/>
-		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/jena/TemporalIndex" target="runTests" inheritAll="false"/>
+		<ant dir="${basedir}/jena/SpatialIndex" target="runTests" inheritAll="false"/>
 		<!--
 		<ant dir="${basedir}/sesame/CSameAsSail" target="runTests" inheritAll="false"/>
 		<ant dir="${basedir}/sesame/ParliamentSail" target="runTests" inheritAll="false"/>
@@ -129,12 +149,13 @@
 
 	<target name="buildCode" depends="init">
 		<ant dir="${basedir}/Parliament" target="deliverArtifacts" inheritAll="false"/>
-		<ant dir="${basedir}/jena/JosekiParliamentClient" target="jar" inheritAll="false"/>
-		<ant dir="${basedir}/jena/JenaGraph" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/jena/ParliamentClient" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/jena/KbGraph" target="jar" inheritAll="false"/>
 		<ant dir="${basedir}/jena/JosekiExtensions" target="prepareDeployableServers" inheritAll="false"/>
 		<ant dir="${basedir}/jena/NumericIndex" target="jar" inheritAll="false"/>
-		<ant dir="${basedir}/jena/SpatialIndexProcessor" target="jar" inheritAll="false"/>
-		<ant dir="${basedir}/jena/TemporalIndexProcessor" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/jena/SpatialIndex" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/jena/TemporalIndex" target="jar" inheritAll="false"/>
+		<ant dir="${basedir}/jena/TemporalIndexOld" target="resolve" inheritAll="false"/>
 		<ant dir="${basedir}/sesame/CSameAsSail" target="jar" inheritAll="false"/>
 		<ant dir="${basedir}/sesame/ParliamentSail" target="jar" inheritAll="false"/>
 		<ant dir="${basedir}/sesame/LuceneSail" target="jar" inheritAll="false"/>
@@ -177,12 +198,12 @@
 		<include name="Parliament/java/**/*.java"/>
 		<!--include name="Parliament/JniAssessments/**/*.java"/-->
 
-		<include name="jena/JenaGraph/src/**/*.java"/>
+		<include name="jena/KbGraph/src/**/*.java"/>
 		<include name="jena/JosekiExtensions/src/**/*.java"/>
-		<include name="jena/JosekiParliamentClient/src/**/*.java"/>
+		<include name="jena/ParliamentClient/src/**/*.java"/>
 		<include name="jena/NumericIndex/src/**/*.java"/>
-		<include name="jena/SpatialIndexProcessor/src/**/*.java"/>
-		<include name="jena/TemporalIndexProcessor/src/**/*.java"/>
+		<include name="jena/SpatialIndex/src/**/*.java"/>
+		<include name="jena/TemporalIndex/src/**/*.java"/>
 
 		<!-- include name="sesame/CSameAsSail/src/**/*.java"/>
 		<include name="sesame/LuceneSail/src/**/*.java"/>

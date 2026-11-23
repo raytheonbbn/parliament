@@ -1,3 +1,5 @@
+.DS_Store
+.gradle/
 bin/
 build/
 indexes/
@@ -10,6 +12,11 @@ parliament-test.log
 .vscode/
 /build.properties
 /dependencies/
+
+.classpath
+.project
+.settings/
+/jena/OntologyDrivenDataAccess/odda.pdf
 
 /doc/**/missfont.log
 /doc/**/*.acr
@@ -30,7 +37,6 @@ parliament-test.log
 /doc/ImplementationChoices.pdf
 
 /jena/JosekiExtensions/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab/
-/jena/JenaGraph/*.log*
 *.log*
 /jena/JenaGraph/kb-data/
 /jena/JenaGraph/test-kb-data/
@@ -49,3 +55,5 @@ parliament-test.log
 /Parliament/Test/test-kb-data/
 /server/test-kb-data/
 /target/
+/kb-data/
+.idea/

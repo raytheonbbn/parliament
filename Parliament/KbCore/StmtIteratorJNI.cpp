@@ -4,7 +4,7 @@
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
 
-#include "parliament/generated/com_bbn_parliament_jni_StmtIterator.h"
+#include "parliament/generated/com_bbn_parliament_core_jni_StmtIterator.h"
 #include "parliament/Platform.h"
 #include "parliament/KbInstance.h"
 #include "parliament/JNIHelper.h"
@@ -16,17 +16,15 @@ namespace pmnt = ::bbn::parliament;
 
 static auto g_log(pmnt::log::getSource("StmtIteratorJNI"));
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_StmtIterator_dispose(
-	JNIEnv* pEnv, jobject /* obj */, jlong iterPtr)
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_StmtIterator_dispose(
+	JNIEnv* pEnv, jclass /* cls */, jlong nativeObj)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
-		StmtIterator* pIter = reinterpret_cast<StmtIterator*>(
-			static_cast<intPtr>(iterPtr));
-		delete pIter;
+		delete reinterpret_cast<StmtIterator*>(static_cast<intPtr>(nativeObj));
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_jni_StmtIterator_hasNext(
+JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_core_jni_StmtIterator_hasNext(
 	JNIEnv* pEnv, jobject /* obj */, jlong iterPtr)
 {
 	jboolean result = false;
@@ -38,7 +36,7 @@ JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_jni_StmtIterator_hasNext(
 	return result;
 }
 
-JNIEXPORT jobject JNICALL Java_com_bbn_parliament_jni_StmtIterator_nextStatement(
+JNIEXPORT jobject JNICALL Java_com_bbn_parliament_core_jni_StmtIterator_nextStatement(
 	JNIEnv* pEnv, jobject /* obj */, jlong iterPtr)
 {
 	jobject result = 0;
@@ -53,7 +51,7 @@ JNIEXPORT jobject JNICALL Java_com_bbn_parliament_jni_StmtIterator_nextStatement
 		}
 		const Statement& stmt = pIter->statementRef();
 		result = JNIHelper::newObject(pEnv,
-			JNIHelper::findClass(pEnv, "com/bbn/parliament/jni/StmtIterator$Statement"),
+			JNIHelper::findClass(pEnv, "com/bbn/parliament/core/jni/StmtIterator$Statement"),
 			"(JJJZZZ)V",
 			static_cast<uint64>(stmt.getSubjectId()),
 			static_cast<uint64>(stmt.getPredicateId()),

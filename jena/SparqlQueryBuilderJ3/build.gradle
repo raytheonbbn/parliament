@@ -1,0 +1,33 @@
+// Copyright (c) 2019, 2020 RTX BBN Technologies Corp.
+
+plugins {
+	id 'java-library'
+}
+
+version = '1.2.1'
+
+dependencies {
+	api libs.jena3Arq
+	implementation libs.slf4jApi
+	testImplementation libs.logback
+}
+
+configurations.all {
+	exclude group: 'xml-apis'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+testing {
+	suites {
+		test {
+			useJUnitJupiter(libs.versions.jupiterVer)
+		}
+	}
+}

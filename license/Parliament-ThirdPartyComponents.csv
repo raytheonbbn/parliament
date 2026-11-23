@@ -25,8 +25,6 @@ Jetty (jetty-server),Eclipse Foundation,Mixed,org.eclipse.jetty,jetty-server,9.4
 Jetty (jetty-servlet),Eclipse Foundation,Mixed,org.eclipse.jetty,jetty-servlet,9.4.36.v20210114,http://www.eclipse.org/jetty,Apache license 2.0 or Eclipse Public License 1.0,"http://www.apache.org/licenses/, http://www.eclipse.org/legal/epl-v10.html"
 Jetty (jetty-util),Eclipse Foundation,Mixed,org.eclipse.jetty,jetty-util,9.4.36.v20210114,http://www.eclipse.org/jetty,Apache license 2.0 or Eclipse Public License 1.0,"http://www.apache.org/licenses/, http://www.eclipse.org/legal/epl-v10.html"
 Jetty (jetty-webapp),Eclipse Foundation,Mixed,org.eclipse.jetty,jetty-webapp,9.4.36.v20210114,http://www.eclipse.org/jetty,Apache license 2.0 or Eclipse Public License 1.0,"http://www.apache.org/licenses/, http://www.eclipse.org/legal/epl-v10.html"
-Joseki,Andy Seabourne,Foreign (Britain),,,3.4.4,,BSD,
-jsonld-java,Peter Ansell,Foreign (Australia),com.github.jsonld-java,jsonld-java,0.8.3,https://github.com/jsonld-java/jsonld-java,BSD,https://github.com/jsonld-java/jsonld-java/blob/master/LICENCE
 jts-core,Martin Davis,,org.locationtech.jts,jts-core,1.18.0,https://projects.eclipse.org/projects/locationtech.jts,EPL 2.0,https://github.com/locationtech/jts/blob/master/LICENSE_EPLv2.txt
 JUnit 5,JUnit Lambda Project,Foreign,org.junit.jupiter,junit-jupiter,5.8.1,https://junit.org/junit5/,EPL 2.0,https://github.com/junit-team/junit5/blob/master/LICENSE.md
 JUnit 5,JUnit Lambda Project,Foreign,org.junit.platform,junit-platform-launcher,1.8.1,https://junit.org/junit5/,EPL 2.0,https://github.com/junit-team/junit5/blob/master/LICENSE.md

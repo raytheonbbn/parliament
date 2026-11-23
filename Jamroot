@@ -5,7 +5,7 @@
 # All rights reserved.
 
 project /KB
-	: build-dir target/bin/native
+	: build-dir Parliament/build/native
 	: default-build release
 	;
 

@@ -1,0 +1,21 @@
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+delete {
+	?s ?incomingProperty ?blankInverseProp .
+	?blankInverseProp owl:inverseOf ?prop .
+} insert {
+	?s ?incomingProperty ?inversePropIri .
+	?inversePropIri owl:inverseOf ?prop .
+} where {
+	values ?incomingPredicate {
+		owl:onProperty
+		rdf:first
+	}
+	?s ?incomingProperty ?blankInverseProp .
+	?blankInverseProp owl:inverseOf ?prop .
+	filter ( isBlank(?blankInverseProp) && !isBlank(?prop) )
+	bind (?_fillNS as ?fillNS)
+	bind ( concat("inverse-of-property", "\n", str(?prop)) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?inversePropIri )
+}

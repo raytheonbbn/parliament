@@ -1,0 +1,19 @@
+prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+delete {
+	?root ?predicate ?listNode .
+	?listNode rdf:first ?listNodeContent ;
+		rdf:rest ?nextListNode .
+} insert {
+	?root ?predicate ?listNodeIri .
+	?listNodeIri rdf:first ?listNodeContent ;
+		rdf:rest ?nextListNode .
+} where {
+	?root ?predicate ?listNode .
+	?listNode rdf:first ?listNodeContent ;
+		rdf:rest ?nextListNode .
+	filter ( isBlank(?listNode) && !isBlank(?listNodeContent) && !isBlank(?nextListNode) )
+	bind (?_fillNS as ?fillNS)
+	bind ( concat(str(?nextListNode), "\n", str(?listNodeContent)) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?listNodeIri )
+}

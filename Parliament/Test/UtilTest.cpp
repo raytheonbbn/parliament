@@ -8,8 +8,10 @@
 #include <boost/range/iterator_range.hpp>
 #include <boost/range/numeric.hpp>
 #include <boost/test/unit_test.hpp>
+#include <boost/test/data/test_case.hpp>
 #include <algorithm>
 #include <iterator>
+#include <ostream>
 #include <string>
 #include <string_view>
 #include "parliament/Exceptions.h"
@@ -23,11 +25,14 @@
 #	include <unistd.h>
 #endif
 
+namespace bdata = ::boost::unit_test::data;
+
 using namespace ::bbn::parliament;
 using ::boost::filesystem::current_path;
 using ::boost::filesystem::path;
 using ::boost::make_iterator_range;
 using ::std::count;
+using ::std::ostream;
 using ::std::string;
 using ::std::string_view;
 
@@ -94,10 +99,8 @@ BOOST_AUTO_TEST_CASE(testGetEnv)
 #endif
 }
 
-#if !defined(__cpp_lib_to_chars)
-#	warning "__cpp_lib_to_chars not defined -- using boost::lexical_cast instead"
-static constexpr string_view k_badLexicalCastErrMsg = "bad lexical cast: "
-	"source type value could not be interpreted as target";
+#if defined(PARLIAMENT_MACOS) && defined(__cpp_lib_to_chars) && (__cpp_lib_to_chars >= 201611L)
+#	warning "NOTICE: Apple clang now supports std numeric conversions -- consider removing boost::charconv"
 #endif
 
 BOOST_AUTO_TEST_CASE(testNumericConversion)
@@ -129,14 +132,19 @@ BOOST_AUTO_TEST_CASE(testNumericConversion)
 	}
 	catch (const NumericConversionException& ex)
 	{
-#if defined(__cpp_lib_to_chars)
 		BOOST_CHECK_EQUAL("'xyzzy' is not a number", ex.what());
-#else
-		BOOST_CHECK_EQUAL(k_badLexicalCastErrMsg, ex.what());
-#endif
 	}
 
-#if defined(__cpp_lib_to_chars)
+	try
+	{
+		strTo<int>("xyzzy", 3);
+		BOOST_FAIL("Failed to throw");
+	}
+	catch (const NumericConversionException& ex)
+	{
+		BOOST_CHECK_EQUAL("'xyzzy' is not a number (see line number 3)", ex.what());
+	}
+
 	try
 	{
 		strTo<unsigned int>("-1");
@@ -144,12 +152,18 @@ BOOST_AUTO_TEST_CASE(testNumericConversion)
 	}
 	catch (const NumericConversionException& ex)
 	{
-		BOOST_CHECK((string_view{ex.what()} == "Result out of range: '-1'")
-			|| (string_view{ex.what()} == "'-1' is not a number"));
+		BOOST_CHECK_EQUAL("'-1' is not a number", ex.what());
 	}
-#else
-	BOOST_CHECK_EQUAL(static_cast<unsigned int>(-1), strTo<unsigned int>("-1"));
-#endif
+
+	try
+	{
+		strTo<unsigned int>("-1", 3);
+		BOOST_FAIL("Failed to throw");
+	}
+	catch (const NumericConversionException& ex)
+	{
+		BOOST_CHECK_EQUAL("'-1' is not a number (see line number 3)", ex.what());
+	}
 
 	try
 	{
@@ -158,11 +172,17 @@ BOOST_AUTO_TEST_CASE(testNumericConversion)
 	}
 	catch (const NumericConversionException& ex)
 	{
-#if defined(__cpp_lib_to_chars)
 		BOOST_CHECK_EQUAL("Result out of range: '66000'", ex.what());
-#else
-		BOOST_CHECK_EQUAL(k_badLexicalCastErrMsg, ex.what());
-#endif
+	}
+
+	try
+	{
+		strTo<short>("66000", 3);
+		BOOST_FAIL("Failed to throw");
+	}
+	catch (const NumericConversionException& ex)
+	{
+		BOOST_CHECK_EQUAL("Result out of range: '66000' (see line number 3)", ex.what());
 	}
 
 	try
@@ -172,11 +192,73 @@ BOOST_AUTO_TEST_CASE(testNumericConversion)
 	}
 	catch (const NumericConversionException& ex)
 	{
-#if defined(__cpp_lib_to_chars)
 		BOOST_CHECK_EQUAL("String contains non-number at the end: '73 cm'", ex.what());
-#else
-		BOOST_CHECK_EQUAL(k_badLexicalCastErrMsg, ex.what());
-#endif
+	}
+
+	try
+	{
+		strTo<int>("73 cm", 3);
+		BOOST_FAIL("Failed to throw");
+	}
+	catch (const NumericConversionException& ex)
+	{
+		BOOST_CHECK_EQUAL("String contains non-number at the end: '73 cm' (see line number 3)", ex.what());
+	}
+}
+
+// =========================================================================
+
+struct BoolConvTestCase
+{
+	const char*	m_pInputStr;
+	bool		m_shouldThrow;
+	bool		m_expectedResult;
+};
+
+static ostream& operator<<(ostream& os, const BoolConvTestCase& tc)
+{
+	os << "Input string '" << tc.m_pInputStr << "'";
+	return os;
+}
+
+static const BoolConvTestCase k_boolConvTestCases[] =
+	{
+		{ "true",			false,	true },
+		{ "trUe",			false,	true },
+		{ "TRUE",			false,	true },
+		{ "t",				false,	true },
+		{ "T",				false,	true },
+		{ "yes",			false,	true },
+		{ "YES",			false,	true },
+		{ "y",				false,	true },
+		{ "Y",				false,	true },
+		{ "on",				false,	true },
+		{ "1",				false,	true },
+		{ "false",			false,	false },
+		{ "FALSE",			false,	false },
+		{ "faLSe",			false,	false },
+		{ "f",				false,	false },
+		{ "F",				false,	false },
+		{ "no",				false,	false },
+		{ "n",				false,	false },
+		{ "off",			false,	false },
+		{ "0",				false,	false },
+		{ "affirmative",	true,	false },
+		{ "",				true,	false },
+	};
+
+BOOST_DATA_TEST_CASE(
+	testBooleanConversion,
+	bdata::make(k_boolConvTestCases),
+	tc)
+{
+	if (tc.m_shouldThrow)
+	{
+		BOOST_CHECK_THROW(strTo<bool>(tc.m_pInputStr, 1), Exception);
+	}
+	else
+	{
+		BOOST_CHECK_EQUAL(tc.m_expectedResult, strTo<bool>(tc.m_pInputStr, 1));
 	}
 }
 

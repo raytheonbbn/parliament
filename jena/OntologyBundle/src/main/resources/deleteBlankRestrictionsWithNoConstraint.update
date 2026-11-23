@@ -1,0 +1,46 @@
+prefix dct:  <http://purl.org/dc/terms/>
+prefix owl:  <http://www.w3.org/2002/07/owl#>
+prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# QUDT (specifically, qudt.ttl) contains one property restriction that has no value
+# or cardinality constraint. In other words, it has an OnProperty statement, but no
+# allValuesFrom or minCardnality or whatever. This is clearly useless and therefore
+# we delete it.
+
+delete {
+	?restrictionBearer ?incomingPredicate ?r .
+	?r a owl:Restriction ;
+		owl:onProperty ?prop ;
+		owl:onClass ?class ;
+		owl:onDataRange ?dataRange ;
+		dct:description ?description .
+} where {
+	values ?incomingPredicate {
+		rdfs:subClassOf	# the usual case
+		rdf:first			# for restrictions in lists
+		owl:equivalentClass
+	}
+	?restrictionBearer ?incomingPredicate ?r .
+	?r a owl:Restriction ;
+		owl:onProperty ?prop .
+	optional { ?r owl:onClass ?class . }
+	optional { ?r owl:onDataRange ?dataRange . }
+	optional { ?r dct:description ?description . }
+	filter not exists {
+		values ?rPredicate {
+			owl:allValuesFrom
+			owl:hasValue
+			owl:cardinality
+			owl:maxCardinality
+			owl:minCardinality
+			owl:someValuesFrom
+			owl:qualifiedCardinality
+			owl:minQualifiedCardinality
+			owl:maxQualifiedCardinality
+			owl:hasSelf
+		}
+		?r ?rPredicate ?rValue .
+	}
+	filter ( isBlank(?r) && !isBlank(?prop) )
+}

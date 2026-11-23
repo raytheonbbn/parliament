@@ -1,0 +1,16 @@
+prefix owl:   <http://www.w3.org/2002/07/owl#>
+
+delete {
+	?axiom a owl:AllDisjointClasses ;
+		owl:members ?clsList .
+} insert {
+	?newAxiom a owl:AllDisjointClasses ;
+		owl:members ?clsList .
+} where {
+	?axiom a owl:AllDisjointClasses ;
+		owl:members ?clsList .
+	filter ( isblank(?axiom) && !isblank(?clsList) )
+	bind (?_fillNS as ?fillNS)
+	bind ( concat("owl:AllDisjointClasses", "\n", str(?clsList) ) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?newAxiom )
+}

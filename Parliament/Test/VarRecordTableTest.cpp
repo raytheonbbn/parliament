@@ -21,6 +21,7 @@ using namespace ::bbn::parliament;
 using ::std::char_traits;
 using ::std::max;
 using ::std::numeric_limits;
+using ::std::size;
 using ::std::string;
 using ::std::vector;
 
@@ -87,18 +88,18 @@ BOOST_DATA_TEST_CASE(
 		const size_t maxSizeT = numeric_limits<size_t>::max();
 		BOOST_CHECK((maxSizeT - sizeof(MMapMgr::TblHeader)) / sizeof(RsrcChar) <= vrt.maxSize());
 		BOOST_CHECK(vrt.maxSize() <= maxSizeT);
-		BOOST_CHECK_EQUAL(0u, vrt.size());
+		BOOST_CHECK_EQUAL(0u, size(vrt));
 		BOOST_CHECK_EQUAL(k_testData1.length() + 1, vrt.capacity());
 
 		BOOST_CHECK_NO_THROW(firstRecordOffset = vrt.pushBack(k_testData1.c_str()));
 		BOOST_CHECK_EQUAL(0u, firstRecordOffset);
 		BOOST_CHECK(!vrt.isEmpty());
-		BOOST_CHECK_EQUAL(k_testData1.length() + 1, vrt.size());
+		BOOST_CHECK_EQUAL(k_testData1.length() + 1, size(vrt));
 		BOOST_CHECK_EQUAL(k_testData1.length() + 1, vrt.capacity());
 
 		BOOST_CHECK_NO_THROW(secondRecordOffset = vrt.pushBack(k_testData2.c_str()));
 		BOOST_CHECK_EQUAL(k_testData1.length() + 1, secondRecordOffset);
-		BOOST_CHECK_EQUAL(k_testData1.length() + k_testData2.length() + 2, vrt.size());
+		BOOST_CHECK_EQUAL(k_testData1.length() + k_testData2.length() + 2, size(vrt));
 		BOOST_CHECK(vrt.capacity() >= k_testData1.length() + k_testData2.length() + 2);
 
 		BOOST_CHECK_NO_THROW(vrt.sync());
@@ -107,7 +108,7 @@ BOOST_DATA_TEST_CASE(
 	{
 		VarRecordTable vrt(k_fName, true, 4, growthIncrement, growthFactor);
 		BOOST_CHECK(!vrt.isEmpty());
-		BOOST_CHECK_EQUAL(k_testData1.length() + k_testData2.length() + 2, vrt.size());
+		BOOST_CHECK_EQUAL(k_testData1.length() + k_testData2.length() + 2, size(vrt));
 		BOOST_CHECK(vrt.capacity() >= k_testData1.length() + k_testData2.length() + 2);
 
 		const RsrcChar* pFirstRecord = vrt.getRecordAt(firstRecordOffset);
@@ -123,7 +124,7 @@ BOOST_DATA_TEST_CASE(
 
 	vector<uint8> fileContent;
 	readFileContents(k_fName, fileContent);
-	BOOST_CHECK(fileContent.size() >= arrayLen(k_expectedResult));
+	BOOST_CHECK(size(fileContent) >= arrayLen(k_expectedResult));
 	BOOST_CHECK(memcmp(&(fileContent[0]), k_expectedResult, sizeof(k_expectedResult)) == 0);
 }
 

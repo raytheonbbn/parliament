@@ -1,0 +1,33 @@
+prefix owl:  <http://www.w3.org/2002/07/owl#>
+
+# QUDT (specifically, qudt-datatype.ttl) contains several orphaned property restrictions
+# (i.e., restrictions that are not connected to anything) that are clearly useless and
+# therefore we delete them.
+
+delete {
+	?r a owl:Restriction ;
+		owl:onProperty ?prop ;
+		?rPredicate ?rValue ;
+		owl:onClass ?class .
+} where {
+	values ?rPredicate {
+		owl:allValuesFrom
+		owl:hasValue
+		owl:cardinality
+		owl:maxCardinality
+		owl:minCardinality
+		owl:someValuesFrom
+		owl:qualifiedCardinality
+		owl:minQualifiedCardinality
+		owl:maxQualifiedCardinality
+		owl:hasSelf
+	}
+	?r a owl:Restriction ;
+		owl:onProperty ?prop ;
+		?rPredicate ?rValue .
+	optional { ?r owl:onClass ?class . }
+	filter not exists {
+		?restrictionBearer ?incomingPredicate ?r .
+	}
+	filter ( isBlank(?r) && !isBlank(?rValue) )
+}

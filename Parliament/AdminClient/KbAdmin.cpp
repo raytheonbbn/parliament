@@ -34,6 +34,7 @@ using ::std::exception;
 using ::std::format;
 using ::std::ios_base;
 using ::std::setw;
+using ::std::size;
 using ::std::string;
 using ::std::string_view;
 
@@ -252,7 +253,7 @@ pmnt::KbAdmin::KbAdmin(uint32 numArgs, const char*const* argList) :
 		}
 		else if (!isShortIntroducer && !isLongIntroducer)
 		{
-			if (m_exportFilePath.size() > 0)
+			if (size(m_exportFilePath) > 0)
 			{
 				throw UsageException(format("Error:  Two file names specified: {0} and {1}",
 					argList[i], m_exportFilePath.generic_string()));
@@ -304,11 +305,11 @@ pmnt::KbAdmin::KbAdmin(uint32 numArgs, const char*const* argList) :
 	{
 		throw UsageException("Error:  More than one command specified");
 	}
-	else if (m_exportOpt && m_exportFilePath.size() <= 0)
+	else if (m_exportOpt && size(m_exportFilePath) <= 0)
 	{
 		throw UsageException("Error:  Export option requires a file path");
 	}
-	else if (!m_exportOpt && m_exportFilePath.size() > 0)
+	else if (!m_exportOpt && size(m_exportFilePath) > 0)
 	{
 		throw UsageException("Error:  A file path is valid only in "
 			"combination with the export option");

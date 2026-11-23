@@ -158,7 +158,7 @@ pmnt::RsrcString pmnt::DateTimeUtils::getXsdTimeLiteral(const PTime& time)
 
 pmnt::RsrcString pmnt::DateTimeUtils::getTZStrFromXsdDate(const RsrcString& dateStr)
 {
-	return (dateStr.size() > 9)
+	return (size(dateStr) > 9)
 		? dateStr.substr(10)
 		: RsrcString{};
 }
@@ -166,7 +166,7 @@ pmnt::RsrcString pmnt::DateTimeUtils::getTZStrFromXsdDate(const RsrcString& date
 pmnt::RsrcString pmnt::DateTimeUtils::getTZStrFromXsdTime(const RsrcString& timeStr)
 {
 
-	if (timeStr.size() < 8)
+	if (size(timeStr) < 8)
 	{
 		return RsrcString{};
 	}
@@ -201,7 +201,7 @@ pmnt::DateTimeUtils::PTime pmnt::DateTimeUtils::getPTimeFromXsdDateTime(const Rs
 
 pmnt::RsrcString pmnt::DateTimeUtils::getTZStrFromXsdDatetime(const RsrcString& datetimeStr)
 {
-	if (datetimeStr.size() < 19)
+	if (size(datetimeStr) < 19)
 	{
 		return RsrcString{};
 	}

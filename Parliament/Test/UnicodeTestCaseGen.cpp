@@ -214,7 +214,7 @@ int main()
 		Utf8InputList utf8InputList;
 		getUtf8InputStrings(utf8InputList);
 
-		for (size_t i = 0; i < utf8InputList.size(); ++i)
+		for (size_t i = 0; i < size(utf8InputList); ++i)
 		{
 			if (i > 0)
 			{
@@ -225,7 +225,7 @@ int main()
 
 		cout << "\nstatic const TestCase k_testData[] =\n\t{\n";
 		cout << setfill('0');
-		for (size_t i = 0; i < utf8InputList.size(); ++i)
+		for (size_t i = 0; i < size(utf8InputList); ++i)
 		{
 			cout << "\t\t{ k_testCase" << setw(2) << i << "Utf8Input, k_testCase"
 				<< setw(2) << i << "Utf16Input, k_testCase" << setw(2) << i << "ExpectedResult },\n";

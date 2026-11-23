@@ -4,7 +4,7 @@
 // Copyright (c) 2001-2009, BBN Technologies, Inc.
 // All rights reserved.
 
-#include "parliament/generated/com_bbn_parliament_jni_ReificationIterator.h"
+#include "parliament/generated/com_bbn_parliament_core_jni_ReificationIterator.h"
 #include "parliament/Platform.h"
 #include "parliament/KbInstance.h"
 #include "parliament/JNIHelper.h"
@@ -16,17 +16,15 @@ namespace pmnt = ::bbn::parliament;
 
 static auto g_log(pmnt::log::getSource("ReificationIteratorJNI"));
 
-JNIEXPORT void JNICALL Java_com_bbn_parliament_jni_ReificationIterator_dispose(
-	JNIEnv* pEnv, jobject /* obj */, jlong iterPtr)
+JNIEXPORT void JNICALL Java_com_bbn_parliament_core_jni_ReificationIterator_dispose(
+	JNIEnv* pEnv, jclass /* cls */, jlong nativeObj)
 {
 	BEGIN_JNI_EXCEPTION_HANDLER(pEnv)
-		ReificationIterator* pIter = reinterpret_cast<ReificationIterator*>(
-			static_cast<intPtr>(iterPtr));
-		delete pIter;
+		delete reinterpret_cast<ReificationIterator*>(static_cast<intPtr>(nativeObj));
 	END_JNI_EXCEPTION_HANDLER(pEnv)
 }
 
-JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_jni_ReificationIterator_hasNext(
+JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_core_jni_ReificationIterator_hasNext(
 	JNIEnv* pEnv, jobject /* obj */, jlong iterPtr)
 {
 	jboolean result = false;
@@ -38,7 +36,7 @@ JNIEXPORT jboolean JNICALL Java_com_bbn_parliament_jni_ReificationIterator_hasNe
 	return result;
 }
 
-JNIEXPORT jobject JNICALL Java_com_bbn_parliament_jni_ReificationIterator_nextReification(
+JNIEXPORT jobject JNICALL Java_com_bbn_parliament_core_jni_ReificationIterator_nextReification(
 	JNIEnv* pEnv, jobject /* obj */, jlong iterPtr)
 {
 	jobject result = 0;
@@ -57,7 +55,7 @@ JNIEXPORT jobject JNICALL Java_com_bbn_parliament_jni_ReificationIterator_nextRe
 		ResourceId object = pIter->objectId();
 		bool isLiteral = pIter->isLiteral();
 		result = JNIHelper::newObject(pEnv,
-					JNIHelper::findClass(pEnv, "com/bbn/parliament/jni/ReificationIterator$Reification"),
+					JNIHelper::findClass(pEnv, "com/bbn/parliament/core/jni/ReificationIterator$Reification"),
 					"(JJJJZ)V", static_cast<uint64>(statementName), static_cast<uint64>(subject),
 					static_cast<uint64>(predicate), static_cast<uint64>(object), isLiteral);
 		++*pIter;

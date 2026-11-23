@@ -1,0 +1,93 @@
+// Copyright (c) 2024 RTX BBN Technologies Corp.
+
+plugins {
+	id 'java-library'
+	id 'maven-publish'
+	id 'signing'
+}
+
+version = '0.9.0'
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
+dependencies {
+	api libs.jenaArq
+	implementation libs.gson
+	implementation libs.commonsLang
+	implementation libs.queryBuilder
+	//implementation project(':jena:SparqlQueryBuilder')
+	implementation libs.slf4jApi
+
+	testImplementation libs.logback
+}
+
+configurations.all {
+	exclude group: 'xml-apis'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+	//withJavadocJar()
+	withSourcesJar()
+}
+
+testing {
+	suites {
+		test {
+			useJUnitJupiter(libs.versions.jupiterVer)
+		}
+	}
+}
+
+publishing {
+	publications {
+		OntologyDrivenDataAccess(MavenPublication) {
+			from components.java
+			pom {
+				name = 'Ontology-Driven Data Access'
+				description = "A Java-centric data access facility for semantic graph stores.${System.lineSeparator}Copyright © 2024 RTX BBN Technologies"
+				url = "https://github.com/${rootProject.ext.githubOrg}/parliament/tree/jena-update/jena/OntologyDrivenDataAccess"
+				packaging = 'jar'
+				licenses {
+					license {
+						name = 'The 3-Clause BSD License'
+						url = 'https://opensource.org/license/bsd-3-clause/'
+					}
+				}
+				organization {
+					name = 'RTX BBN Technologies'
+					url = 'https://bbn.com/'
+				}
+				developers {
+					developer {
+						id = 'iemmons'
+						name = 'Ian Emmons'
+						email = 'iemmons@rtx.com'
+					}
+				}
+				scm {
+					connection = "scm:git:git@github.com:${rootProject.ext.githubOrg}/parliament.git"
+					developerConnection = "scm:git:git@github.com:${rootProject.ext.githubOrg}/parliament.git"
+					url = "https://github.com/${rootProject.ext.githubOrg}/parliament"
+				}
+			}
+		}
+	}
+
+	repositories {
+		//mavenCentral()
+		mavenLocal()
+	}
+}
+
+signing {
+	//sign publishing.publications.mavenJava
+	sign publishing.publications.OntologyDrivenDataAccess
+}

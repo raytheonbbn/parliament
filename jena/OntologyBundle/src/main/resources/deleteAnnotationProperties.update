@@ -1,0 +1,170 @@
+prefix cc:   <http://creativecommons.org/ns#>
+prefix cco:  <https://www.commoncoreontologies.org/>
+prefix cco-old: <http://www.ontologyrepository.com/CommonCoreOntologies/>
+prefix dc:   <http://purl.org/dc/elements/1.1/>
+prefix dct:  <http://purl.org/dc/terms/>
+prefix dul:  <http://www.loa-cnr.it/ontologies/DUL.owl#>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+prefix iof-av: <https://spec.industrialontologies.org/ontology/core/meta/AnnotationVocabulary/>
+prefix obo:  <http://purl.obolibrary.org/obo/>
+prefix oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+prefix ont-template: <https://ontologyhub.rtx.com/OntologyTemplate#>
+prefix owl:  <http://www.w3.org/2002/07/owl#>
+prefix prov: <http://www.w3.org/ns/prov#>
+prefix qudt: <http://qudt.org/schema/qudt/>
+prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix vann: <http://purl.org/vocab/vann/>
+prefix vs:   <http://www.w3.org/2003/06/sw-vocab-status/ns#>
+prefix wot:  <http://xmlns.com/wot/0.1/>
+
+delete {
+	?s ?annProp ?o .
+} where {
+	values ?annProp {
+		cco-old:alternative_label
+		cco-old:definition
+		cco-old:definition_source
+		cco-old:elucidation
+		cco-old:example_of_usage
+		cco-old:is_curated_in_ontology
+		cco:ont00001735
+		cco:ont00001737
+		cco:ont00001738
+		cco:ont00001739
+		cco:ont00001740
+		cco:ont00001741
+		cco:ont00001742
+		cco:ont00001743
+		cco:ont00001744
+		cco:ont00001745
+		cco:ont00001746
+		cco:ont00001747
+		cco:ont00001748
+		cco:ont00001749
+		cco:ont00001752
+		cco:ont00001753
+		cco:ont00001754
+		cco:ont00001756
+		cco:ont00001757
+		cco:ont00001758
+		cco:ont00001759
+		cco:ont00001760
+		cco:ont00001761
+		cco:ont00001762
+		dc:contributor
+		dc:creator
+		dc:description
+		dc:identifier
+		dc:license
+		dc:member
+		dc:rights
+		dc:source
+		dc:subject
+		dc:title
+		dct:abstract
+		dct:bibliographicCitation
+		dct:contributor
+		dct:created
+		dct:creator
+		dct:date
+		dct:description
+		dct:issued
+		dct:license
+		dct:modified
+		dct:publisher
+		dct:references
+		dct:rights
+		dct:source
+		dct:subject
+		dct:title
+		dul:mappableTo
+		foaf:homepage
+		foaf:mbox
+		foaf:membershipClass
+		iof-av:abbreviation
+		iof-av:acronym
+		iof-av:adaptedFrom
+		iof-av:copyright
+		iof-av:counterExample
+		iof-av:directSource
+		iof-av:elucidation
+		iof-av:excerptedFrom
+		iof-av:explanatoryNote
+		iof-av:firstOrderLogicAxiom
+		iof-av:firstOrderLogicDefinition
+		iof-av:isPrimitive
+		iof-av:logicAxiom
+		iof-av:logicDefinition
+		iof-av:maintainer
+		iof-av:maturity
+		iof-av:naturalLanguageDefinition
+		iof-av:primitiveRationale
+		iof-av:replacedBy
+		iof-av:semiFormalNaturalLanguageAxiom
+		iof-av:semiFormalNaturalLanguageDefinition
+		iof-av:subjectMatterExpertExplanation
+		iof-av:symbol
+		iof-av:synonym
+		iof-av:usageNote
+		obo:BFO_0000179
+		obo:BFO_0000180
+		obo:IAO_0000111
+		obo:IAO_0000112
+		obo:IAO_0000114
+		obo:IAO_0000115
+		obo:IAO_0000116
+		obo:IAO_0000117
+		obo:IAO_0000118
+		obo:IAO_0000119
+		obo:IAO_0000232
+		obo:IAO_0000412
+		obo:IAO_0000600
+		obo:IAO_0000601
+		obo:IAO_0000602
+		obo:IAO_0010000
+		obo:RO_0001900
+		obo:RO_0040042
+		oboInOwl:hasExactSynonym
+		oboInOwl:inSubset
+		ont-template:Publish
+		owl:versionInfo
+		prov:aq
+		prov:category
+		prov:component
+		prov:constraints
+		prov:definition
+		prov:dm
+		prov:editorialNote
+		prov:editorsDefinition
+		prov:inverse
+		prov:n
+		prov:order
+		prov:sharesDefinitionWith
+		prov:specializationOf
+		prov:todo
+		prov:wasRevisionOf
+		qudt:example
+		rdfs:comment
+		rdfs:isDefinedBy
+		#rdfs:label
+		rdfs:seeAlso
+		#skos:altLabel
+		skos:changeNote
+		skos:definition
+		skos:editorialNote
+		skos:example
+		skos:hiddenLabel
+		skos:historyNote
+		skos:note
+		#skos:prefLabel
+		skos:scopeNote
+		vann:preferredNamespacePrefix
+		vann:preferredNamespaceUri
+		vs:term_status
+		wot:assurance
+		wot:src_assurance
+	}
+	?s ?annProp ?o .
+}

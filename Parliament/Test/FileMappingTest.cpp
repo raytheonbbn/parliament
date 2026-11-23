@@ -41,8 +41,8 @@ BOOST_AUTO_TEST_CASE(testFileMapping)
 
 	vector<uint8> fileContent;
 	readFileContents(k_fName, fileContent);
-	BOOST_CHECK_EQUAL(fileContent.size(), strlen(k_testString2) + 1);
-	BOOST_CHECK(memcmp(&(fileContent[0]), k_testString2, fileContent.size()) == 0);
+	BOOST_CHECK_EQUAL(size(fileContent), strlen(k_testString2) + 1);
+	BOOST_CHECK(memcmp(&(fileContent[0]), k_testString2, size(fileContent)) == 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

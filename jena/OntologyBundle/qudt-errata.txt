@@ -1,0 +1,6 @@
+QUDT errata (submitted):
+- Unnecessary equivalentClass
+- Orphaned property restrictions (bottom of qudt-datatype.ttl)
+- Property restriction that has no constraint (owl:onProperty qudt:mySQLName, in qudt.ttl)
+- Some sh:PropertyShape objects are not explicitly typed as such (see the one that has a sh:qualifiedValueShape property in qudt-datatype.ttl)
+

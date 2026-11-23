@@ -56,9 +56,9 @@ void pmnt::KbConfig::unsynchronizedInitConfigEntryMap()
 					"and can be deleted from your configuration file";
 		};
 	g_ceMap["readOnly"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_readOnly = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_readOnly = strTo<bool>(value, lineNum); };
 	g_ceMap["fileSyncTimerDelay"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_fileSyncTimerDelay = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_fileSyncTimerDelay = strTo<size_t>(value, lineNum); };
 	g_ceMap["keepDupStmtIdx"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{
 			PMNT_LOG(g_log, log::Level::warn)
@@ -66,19 +66,19 @@ void pmnt::KbConfig::unsynchronizedInitConfigEntryMap()
 					"and can be deleted from your configuration file";
 		};
 	g_ceMap["initialRsrcCapacity"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_initialRsrcCapacity = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_initialRsrcCapacity = strTo<size_t>(value, lineNum); };
 	g_ceMap["avgRsrcLen"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_avgRsrcLen = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_avgRsrcLen = strTo<size_t>(value, lineNum); };
 	g_ceMap["rsrcGrowthIncrement"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_rsrcGrowthIncrement = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_rsrcGrowthIncrement = strTo<size_t>(value, lineNum); };
 	g_ceMap["rsrcGrowthFactor"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_rsrcGrowthFactor = ConfigFileReader::parseDouble(value, lineNum); };
+		{ c.m_rsrcGrowthFactor = strTo<double>(value, lineNum); };
 	g_ceMap["initialStmtCapacity"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_initialStmtCapacity = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_initialStmtCapacity = strTo<size_t>(value, lineNum); };
 	g_ceMap["stmtGrowthIncrement"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_stmtGrowthIncrement = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_stmtGrowthIncrement = strTo<size_t>(value, lineNum); };
 	g_ceMap["stmtGrowthFactor"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_stmtGrowthFactor = ConfigFileReader::parseDouble(value, lineNum); };
+		{ c.m_stmtGrowthFactor = strTo<double>(value, lineNum); };
 	g_ceMap[k_bdbCacheSizeOptName] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{
 			auto envVarValue = convertTCharToUtf8(tGetEnvVar(k_bdbCacheSizeVarName));
@@ -98,45 +98,45 @@ void pmnt::KbConfig::unsynchronizedInitConfigEntryMap()
 			}
 		};
 	g_ceMap["normalizeTypedStringLiterals"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_normalizeTypedStringLiterals = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_normalizeTypedStringLiterals = strTo<bool>(value, lineNum); };
 	g_ceMap["TimeoutDuration"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_timeoutDuration = ConfigFileReader::parseUnsigned(value, lineNum); };
+		{ c.m_timeoutDuration = strTo<size_t>(value, lineNum); };
 	g_ceMap["TimeoutUnit"] = [](string_view value, uint32 lineNum, KbConfig& c)
 		{ c.timeoutUnit(value); };
 	g_ceMap["runAllRulesAtStartup"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_runAllRulesAtStartup = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_runAllRulesAtStartup = strTo<bool>(value, lineNum); };
 	g_ceMap["enableSWRLRuleEngine"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_enableSWRLRuleEngine = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_enableSWRLRuleEngine = strTo<bool>(value, lineNum); };
 	g_ceMap["SubclassRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_isSubclassRuleOn = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_isSubclassRuleOn = strTo<bool>(value, lineNum); };
 	g_ceMap["SubpropertyRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_isSubpropertyRuleOn = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_isSubpropertyRuleOn = strTo<bool>(value, lineNum); };
 	g_ceMap["DomainRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_isDomainRuleOn = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_isDomainRuleOn = strTo<bool>(value, lineNum); };
 	g_ceMap["RangeRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_isRangeRuleOn = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_isRangeRuleOn = strTo<bool>(value, lineNum); };
 	g_ceMap["EquivalentClassRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_isEquivalentClassRuleOn = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_isEquivalentClassRuleOn = strTo<bool>(value, lineNum); };
 	g_ceMap["EquivalentPropRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_isEquivalentPropRuleOn = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_isEquivalentPropRuleOn = strTo<bool>(value, lineNum); };
 	g_ceMap["InverseOfRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_isInverseOfRuleOn = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_isInverseOfRuleOn = strTo<bool>(value, lineNum); };
 	g_ceMap["SymmetricPropRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_isSymmetricPropRuleOn = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_isSymmetricPropRuleOn = strTo<bool>(value, lineNum); };
 	g_ceMap["FunctionalPropRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_isFunctionalPropRuleOn = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_isFunctionalPropRuleOn = strTo<bool>(value, lineNum); };
 	g_ceMap["InvFunctionalPropRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_isInvFunctionalPropRuleOn = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_isInvFunctionalPropRuleOn = strTo<bool>(value, lineNum); };
 	g_ceMap["TransitivePropRule"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_isTransitivePropRuleOn = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_isTransitivePropRuleOn = strTo<bool>(value, lineNum); };
 	g_ceMap["inferRdfsClass"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_inferRdfsClass = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_inferRdfsClass = strTo<bool>(value, lineNum); };
 	g_ceMap["inferOwlClass"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_inferOwlClass = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_inferOwlClass = strTo<bool>(value, lineNum); };
 	g_ceMap["inferRdfsResource"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_inferRdfsResource = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_inferRdfsResource = strTo<bool>(value, lineNum); };
 	g_ceMap["inferOwlThing"] = [](string_view value, uint32 lineNum, KbConfig& c)
-		{ c.m_inferOwlThing = ConfigFileReader::parseBool(value, lineNum); };
+		{ c.m_inferOwlThing = strTo<bool>(value, lineNum); };
 }
 
 pmnt::KbConfig::KbConfig() :

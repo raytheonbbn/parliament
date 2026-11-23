@@ -8,6 +8,7 @@
 #include "parliament/DateTimeUtils.h"
 #include "parliament/Log.h"
 #include "parliament/UnicodeIterator.h"
+#include "parliament/Util.h"
 #include "parliament/XSDDurations.h"
 
 #include <boost/algorithm/string.hpp>
@@ -17,7 +18,6 @@
 namespace pmnt = ::bbn::parliament;
 
 using ::boost::format;
-using ::boost::lexical_cast;
 
 static const auto k_rsrcQuote = pmnt::convertToRsrcChar("\"");
 static const auto k_rsrcPlus = pmnt::convertToRsrcChar("+");
@@ -139,8 +139,8 @@ bool pmnt::YearMonthDurationBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingLi
 	auto yearsSlot = getAtomSlotList().at(1);
 	auto monthsSlot = getAtomSlotList().at(2);
 
-	auto years = lexical_cast<int64>(convertFromRsrcChar(getLiteralStrFromAtomSlot(yearsSlot, pKB, bindingList)));
-	auto months = lexical_cast<int64>(convertFromRsrcChar(getLiteralStrFromAtomSlot(monthsSlot, pKB, bindingList)));
+	auto years = strTo<int64>(convertFromRsrcChar(getLiteralStrFromAtomSlot(yearsSlot, pKB, bindingList)));
+	auto months = strTo<int64>(convertFromRsrcChar(getLiteralStrFromAtomSlot(monthsSlot, pKB, bindingList)));
 
 	XSDYearMonthDuration resultDuration(years, months);
 
@@ -164,10 +164,10 @@ bool pmnt::DayTimeDurationBuiltinRuleAtom::evalImpl(KbInstance* pKB, BindingList
 	auto minutesSlot = getAtomSlotList().at(3);
 	auto secondsSlot = getAtomSlotList().at(4);
 
-	auto days = lexical_cast<int64>(convertFromRsrcChar(getLiteralStrFromAtomSlot(daysSlot, pKB, bindingList)));
-	auto hours = lexical_cast<int64>(convertFromRsrcChar(getLiteralStrFromAtomSlot(hourSlot, pKB, bindingList)));
-	auto minutes = lexical_cast<int64>(convertFromRsrcChar(getLiteralStrFromAtomSlot(minutesSlot, pKB, bindingList)));
-	auto seconds = lexical_cast<double>(convertFromRsrcChar(getLiteralStrFromAtomSlot(secondsSlot, pKB, bindingList)));
+	auto days = strTo<int64>(convertFromRsrcChar(getLiteralStrFromAtomSlot(daysSlot, pKB, bindingList)));
+	auto hours = strTo<int64>(convertFromRsrcChar(getLiteralStrFromAtomSlot(hourSlot, pKB, bindingList)));
+	auto minutes = strTo<int64>(convertFromRsrcChar(getLiteralStrFromAtomSlot(minutesSlot, pKB, bindingList)));
+	auto seconds = strTo<double>(convertFromRsrcChar(getLiteralStrFromAtomSlot(secondsSlot, pKB, bindingList)));
 
 	XSDDayTimeDuration duration(days, hours, minutes, seconds);
 

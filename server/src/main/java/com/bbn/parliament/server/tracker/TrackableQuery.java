@@ -1,0 +1,291 @@
+package com.bbn.parliament.server.tracker;
+
+import java.beans.ConstructorProperties;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryCancelledException;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.Syntax;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.bbn.parliament.core.jni.KbConfig;
+import com.bbn.parliament.server.exception.TrackableException;
+import com.bbn.parliament.server.graph.ModelManager;
+
+/// A trackable query. Currently the only Trackable object that can be canceled.
+/// Canceling aborts the query execution.
+///
+/// @author rbattle
+public class TrackableQuery extends Trackable {
+	private static final Logger LOG = LoggerFactory.getLogger(TrackableQuery.class);
+
+	private final Query query;
+	private final AtomicBoolean cancellationRequested;
+	private volatile QueryExecution qExec;
+	private Object queryResult;
+
+	@ConstructorProperties({ "id", "query", "creator" })
+	TrackableQuery(long id, String query, String creator) {
+		this(id, QueryFactory.create(query, Syntax.syntaxARQ), creator);
+	}
+
+	TrackableQuery(long id, Query query, String creator) {
+		super(id, creator);
+		this.query = query;
+		cancellationRequested = new AtomicBoolean(false);
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Create query: {}\n{}", _id, query.toString());
+		}
+	}
+
+	@Override
+	public void release() {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("release query: {}", _id);
+		}
+		QueryExecution execution = qExec;
+		qExec = null;
+		if (execution != null) {
+			if (isRunning()) {
+				execution.abort();
+			}
+			execution.close();
+		}
+	}
+
+	private void createQueryExecution() {
+		KbConfig cfg = ModelManager.inst().getDefaultGraphConfig();
+		var qExecBuilder = QueryExecution.create()
+			.query(query)
+			.timeout(cfg.m_timeoutDuration, cfg.m_timeoutUnit);
+		if (!query.hasDatasetDescription()) {
+			qExecBuilder.dataset(ModelManager.inst().getDataset());
+		}
+		qExec = qExecBuilder.build();
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Created query execution # {} of type {}",
+				getId(), qExec.getClass().getName());
+		}
+	}
+
+	@Override
+	protected void doCancel() {
+		cancellationRequested.set(true);
+		QueryExecution execution = qExec;
+		if (execution != null) {
+			LOG.info("Cancel query: {}", _id);
+			execution.abort();
+		}
+	}
+
+	public boolean wasCancellationRequested() {
+		return cancellationRequested.get();
+	}
+
+	private void throwIfCancellationRequested() {
+		if (wasCancellationRequested()) {
+			throw new QueryCancelledException();
+		}
+	}
+
+	@Override
+	protected void doRun() {
+		try {
+			throwIfCancellationRequested();
+			createQueryExecution();
+			throwIfCancellationRequested();
+
+			if (query.isAskType()) {
+				queryResult = qExec.execAsk();
+			} else if (query.isConstructType()) {
+				queryResult = qExec.execConstruct();
+			} else if (query.isSelectType()) {
+				// set finished on run to false as the query returns when the first
+				// match is found. This will cause the website to display a status of
+				// finished even though the query could be iterating over a large
+				// result set
+				_setFinishedOnRun = false;
+				queryResult = new TrackableResultSet(qExec.execSelect());
+			} else if (query.isDescribeType()) {
+				queryResult = qExec.execDescribe();
+			}
+			throwIfCancellationRequested();
+		} catch (QueryCancelledException ex) {
+			setCancelled();
+			throw ex;
+		}
+	}
+
+	public Object getQueryResult() {
+		return queryResult;
+	}
+
+	public ResultSet getResultSet() {
+		return ResultSet.class.cast(queryResult);
+	}
+
+	public Model getModel() {
+		return Model.class.cast(queryResult);
+	}
+
+	public boolean getBoolean() {
+		return Boolean.class.cast(queryResult);
+	}
+
+	public Query getQuery() {
+		return query;
+	}
+
+	@Override
+	public boolean isCancellable() {
+		return true;
+	}
+
+	@Override
+	public String getDisplay() {
+		return query.toString();
+	}
+
+	/// A result set that sets the status of the TrackableQuery to finished when
+	/// there are no more results.
+	///
+	/// @author rbattle
+	private class TrackableResultSet implements ResultSet {
+		private ResultSet base;
+
+		public TrackableResultSet(ResultSet rs) {
+			base = rs;
+		}
+
+		@Override
+		public Model getResourceModel() {
+			return base.getResourceModel();
+		}
+
+		@Override
+		public List<String> getResultVars() {
+			return base.getResultVars();
+		}
+
+		@Override
+		public int getRowNumber() {
+			return base.getRowNumber();
+		}
+
+		@Override
+		public boolean hasNext() {
+			boolean ret = false;
+			try {
+				throwIfCancellationRequested();
+				ret = base.hasNext();
+				throwIfCancellationRequested();
+			} catch (QueryCancelledException ex) {
+				setCancelled();
+				throw ex;
+			} catch (RuntimeException ex) {
+				setError();
+				throw ex;
+			}
+			// if no results, update the status for the website
+			if (!ret) {
+				setFinished();
+			}
+			return ret;
+		}
+
+		@Override
+		public QuerySolution next() {
+			QuerySolution next = null;
+			try {
+				next = base.next();
+			} catch (QueryCancelledException ex) {
+				setCancelled();
+				throw ex;
+			} catch (RuntimeException ex) {
+				setError();
+				throw ex;
+			}
+
+			return next;
+		}
+
+		@Override
+		public Binding nextBinding() {
+			Binding next = null;
+			try {
+				next = base.nextBinding();
+			} catch (QueryCancelledException ex) {
+				setCancelled();
+				throw ex;
+			} catch (RuntimeException ex) {
+				setError();
+				throw ex;
+			}
+			return next;
+		}
+
+		@Override
+		public QuerySolution nextSolution() {
+			QuerySolution next = null;
+			try {
+				next = base.nextSolution();
+			} catch (QueryCancelledException ex) {
+				setCancelled();
+				throw ex;
+			} catch (RuntimeException ex) {
+				setError();
+				throw ex;
+			}
+			return next;
+		}
+
+		@Override
+		public void remove() {
+			try {
+				base.remove();
+			} catch (QueryCancelledException ex) {
+				setCancelled();
+				throw ex;
+			} catch (RuntimeException ex) {
+				setError();
+				throw ex;
+			}
+		}
+
+		@Override
+		public void forEachRemaining(Consumer<? super QuerySolution> action) {
+			try {
+				base.forEachRemaining(action);
+			} catch (QueryCancelledException ex) {
+				setCancelled();
+				throw ex;
+			} catch (RuntimeException ex) {
+				setError();
+				throw ex;
+			}
+		}
+
+		@Override
+		public void close() {
+			try {
+				base.close();
+			} catch (QueryCancelledException ex) {
+				setCancelled();
+				throw ex;
+			} catch (RuntimeException ex) {
+				setError();
+				throw ex;
+			}
+		}
+	}
+}

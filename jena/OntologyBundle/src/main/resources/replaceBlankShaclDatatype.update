@@ -1,0 +1,21 @@
+prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix sh:   <http://www.w3.org/ns/shacl#>
+
+delete {
+	?datatypeBearer ?incomingPredicate ?blankDatatypeNode .
+	?blankDatatypeNode sh:datatype ?datatype .
+} insert {
+	?datatypeBearer ?incomingPredicate ?datatypeNodeIri .
+	?datatypeNodeIri sh:datatype ?datatype .
+} where {
+	values ?incomingPredicate {
+		rdf:first
+		sh:qualifiedValueShape
+	}
+	?datatypeBearer ?incomingPredicate ?blankDatatypeNode .
+	?blankDatatypeNode sh:datatype ?datatype .
+	filter ( isBlank(?blankDatatypeNode) && !isBlank(?datatype) )
+	bind (?_fillNS as ?fillNS)
+	bind ( str(?datatype) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?datatypeNodeIri )
+}

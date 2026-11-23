@@ -362,7 +362,7 @@ bool pmnt::SWRLRuleBuilder::checkAndIndexAtomArg(bool isRuleHead, ResourceId arg
 			}
 			else
 			{
-				varMap[argumentId] = static_cast<uint32>(varMap.size());
+				varMap[argumentId] = static_cast<uint32>(size(varMap));
 			}
 		}
 	}

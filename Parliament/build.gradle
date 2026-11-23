@@ -1,0 +1,170 @@
+// Copyright (c) 2023-2026 RTX BBN Technologies Corp.
+
+import com.bbn.parliament.build_logic.B2CmdLineFinder;
+import com.bbn.parliament.build_logic.SharedLibFixupScript;
+import com.bbn.parliament.build_logic.UncPathMapper;
+
+plugins {
+	id 'java-library'
+}
+
+ext {
+	jniHeaderIncludeDir = file(layout.buildDirectory.dir('generated/sources'))
+	jniHeaderGenDir = file(layout.buildDirectory.dir('generated/sources/parliament/generated'))
+	fixupScript = file(layout.buildDirectory.file('generated/fixup.sh'))
+	buildProps = file(layout.settingsDirectory.file('build.properties'))
+	defaultBuildProps = file(layout.settingsDirectory.file('build.properties.default'))
+}
+
+// caller,callee,calleeDir
+def macOsFixups = """\
+	ParliamentAdmin,libboost_filesystem-,@rpath/
+	ParliamentAdmin,libParliament,@rpath/
+	libParliament,libboost_atomic-,@rpath/
+	libParliament,libboost_charconv-,@rpath/
+	libParliament,libboost_chrono-,@rpath/
+	libParliament,libboost_container-,@rpath/
+	libParliament,libboost_date_time-,@rpath/
+	libParliament,libboost_filesystem-,@rpath/
+	libParliament,libgflags,@rpath/
+	libParliament,libboost_log-,@rpath/
+	libParliament,libboost_log_setup-,@rpath/
+	libParliament,libboost_regex-,@rpath/
+	libParliament,libboost_serialization-,@rpath/
+	libParliament,libboost_thread-,@rpath/
+	libParliament,liblz4,${System.getenv('LZ4_HOME')}/lib/
+	libParliament,librocksdb,
+	libParliament,libzstd,${System.getenv('ZSTD_HOME')}/lib/
+	libboost_log_setup-,libboost_atomic-,@rpath/
+	libboost_log_setup-,libboost_chrono-,@rpath/
+	libboost_log_setup-,libboost_container-,@rpath/
+	libboost_log_setup-,libboost_date_time-,@rpath/
+	libboost_log_setup-,libboost_filesystem-,@rpath/
+	libboost_log_setup-,libboost_log-,@rpath/
+	libboost_log_setup-,libboost_regex-,@rpath/
+	libboost_log_setup-,libboost_serialization-,@rpath/
+	libboost_log_setup-,libboost_thread-,@rpath/
+	libboost_log-,libboost_atomic-,@rpath/
+	libboost_log-,libboost_chrono-,@rpath/
+	libboost_log-,libboost_container-,@rpath/
+	libboost_log-,libboost_date_time-,@rpath/
+	libboost_log-,libboost_filesystem-,@rpath/
+	libboost_log-,libboost_regex-,@rpath/
+	libboost_log-,libboost_thread-,@rpath/
+	libboost_thread-,libboost_atomic-,@rpath/
+	libboost_thread-,libboost_chrono-,@rpath/
+	libboost_thread-,libboost_container-,@rpath/
+	libboost_thread-,libboost_date_time-,@rpath/
+	librocksdb,libgflags,@rpath/
+	librocksdb,liblz4,${System.getenv('LZ4_HOME')}/lib/
+	librocksdb,libzstd,${System.getenv('ZSTD_HOME')}/lib/""".stripIndent()
+
+// caller
+def linuxFixups = """\
+	ParliamentAdmin
+	libParliament
+	libboost_log_setup-
+	libboost_log-
+	librocksdb
+	liblz4""".stripIndent()
+
+dependencies {
+	api libs.jenaArq
+	implementation libs.slf4jApi
+	testImplementation libs.logback
+}
+
+configurations.all {
+	exclude group: 'xml-apis'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+compileJava {
+	options.headerOutputDirectory = UncPathMapper.mapUncPath("$jniHeaderGenDir")
+}
+
+javadoc {
+	source = sourceSets.main.allJava
+	classpath = configurations.compileClasspath
+
+	options
+	{
+		//setMemberLevel JavadocMemberLevel.PUBLIC
+		//setAuthor true
+		addStringOption('Xdoclint:-missing', '-quiet')
+	}
+}
+
+classes {
+	dependsOn 'fixupSharedLibs', 'copyNativeConfig'
+}
+
+testing {
+	suites {
+		test {
+			useJUnitJupiter(libs.versions.jupiterVer)
+		}
+	}
+}
+
+test {
+	dependsOn 'buildTest', 'fixupSharedLibs', 'copyNativeConfig'
+	jvmArgs = [ '--enable-native-access=ALL-UNNAMED' ]
+	systemProperty 'logback.configurationFile', "${rootProject.ext.debugLogbackConfig}"
+	systemProperty 'java.library.path', rootProject.ext.distDirBin
+}
+
+task buildTest(type:Exec) {
+	commandLine B2CmdLineFinder.getB2CommandLine(buildProps, defaultBuildProps)
+	workingDir UncPathMapper.mapUncPath("$projectDir/Test")
+}
+
+task buildKbCore(type:Exec, dependsOn: 'compileJava') {
+	commandLine B2CmdLineFinder.getB2CommandLine(buildProps, defaultBuildProps)
+	workingDir UncPathMapper.mapUncPath("$projectDir/KbCore")
+	environment 'GENERATED_JNI_HEADER_DIR', UncPathMapper.mapUncPath("$jniHeaderIncludeDir")
+	environment 'NATIVE_CODE_INSTALL_DIR', UncPathMapper.mapUncPath("${rootProject.ext.distDirBin}")
+}
+
+task buildAdminClient(type:Exec, dependsOn: 'buildKbCore') {
+	commandLine B2CmdLineFinder.getB2CommandLine(buildProps, defaultBuildProps)
+	workingDir UncPathMapper.mapUncPath("$projectDir/AdminClient")
+	environment 'NATIVE_CODE_INSTALL_DIR', UncPathMapper.mapUncPath("${rootProject.ext.distDirBin}")
+}
+
+task fixupSharedLibs(dependsOn: 'buildAdminClient', type: Exec) {
+	onlyIf("Running on Mac OS or Linux") {
+		def os = System.getProperty('os.name').toLowerCase()
+		os.contains('mac') || os.contains('linux')
+	}
+	doFirst {
+		SharedLibFixupScript.create(macOsFixups, linuxFixups, fixupScript)
+	}
+	executable = 'bash'
+	args = ['-c', "$fixupScript"]
+	workingDir rootProject.ext.distDirBin
+	//standardOutput = System.out
+	//errorOutput = System.err
+	//ignoreExitValue = false
+}
+
+task copyNativeConfig(type: Copy) {
+	from("$projectDir/KbCore") {
+		include '**/Parliament*Config.txt'
+	}
+	into rootProject.ext.distDir
+	includeEmptyDirs = false
+}
+
+clean {
+	delete "${rootProject.ext.targetDir}"
+	delete "${projectDir}/kb-data"
+	delete "${projectDir}/Test/kb-data"
+}

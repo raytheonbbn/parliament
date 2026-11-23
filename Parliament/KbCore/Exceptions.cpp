@@ -62,12 +62,12 @@ pmnt::Exception::Exception(const Exception& rhs) noexcept :
 	exception(),
 	m_msg()
 {
-	copyMsg(rhs.m_msg.data());
+	copyMsg(data(rhs.m_msg));
 }
 
 pmnt::Exception& pmnt::Exception::operator=(const Exception& rhs) noexcept
 {
-	copyMsg(rhs.m_msg.data());
+	copyMsg(data(rhs.m_msg));
 	return *this;
 }
 
@@ -97,10 +97,10 @@ string pmnt::Exception::getSysErrMsg(SysErrCode errCode)
 	{
 		::std::vector<TChar> msgBuffer(bufferSize, _T('\0'));
 		DWORD numChars = ::FormatMessage(k_flags, nullptr, errCode, 0, &(msgBuffer[0]),
-			static_cast<DWORD>(msgBuffer.size()), nullptr);
+			static_cast<DWORD>(size(msgBuffer)), nullptr);
 		auto errCode2 = getSysErrCode();
 		if ((numChars == 0 && errCode2 == ERROR_INSUFFICIENT_BUFFER)
-			|| numChars >= msgBuffer.size())
+			|| numChars >= size(msgBuffer))
 		{
 			// The buffer is too small -- loop around and try again with a bigger buffer
 		}

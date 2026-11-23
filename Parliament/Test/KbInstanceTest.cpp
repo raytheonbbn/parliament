@@ -82,7 +82,7 @@ static KbConfig createTestConfig(bool withInference)
 template<typename T>
 static void checkSetsEqual(const ::std::set<T>& expectedSet, const ::std::set<T>& actualSet)
 {
-	BOOST_CHECK_EQUAL(expectedSet.size(), actualSet.size());
+	BOOST_CHECK_EQUAL(size(expectedSet), size(actualSet));
 	for (auto it1 = cbegin(expectedSet), it2 = cbegin(actualSet);
 		it1 != cend(expectedSet) && it2 != cend(actualSet);
 		++it1, ++it2)

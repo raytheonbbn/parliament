@@ -1,0 +1,21 @@
+prefix sh: <http://www.w3.org/ns/shacl#>
+
+delete {
+	?blankDatatypeBearer ?incomingPredicate ?blankPrefixDeclaration .
+	?blankPrefixDeclaration a sh:PrefixDeclaration ;
+		sh:namespace ?namespace ;
+		sh:prefix ?prefix .
+} insert {
+	?blankDatatypeBearer ?incomingPredicate ?prefixDeclarationIri .
+	?prefixDeclarationIri a sh:PrefixDeclaration ;
+		sh:namespace ?namespace ;
+		sh:prefix ?prefix .
+} where {
+	?blankPrefixDeclaration a sh:PrefixDeclaration ;
+		sh:namespace ?namespace ;
+		sh:prefix ?prefix .
+	filter ( isBlank(?blankPrefixDeclaration) && !isBlank(?namespace) && !isBlank(?prefix) )
+	bind (?_fillNS as ?fillNS)
+	bind ( concat(str(?namespace), "\n", str(?prefix)) as ?toHash )
+	bind ( iri(concat(str(?fillNS), "z", sha256(?toHash))) as ?prefixDeclarationIri )
+}

@@ -1,4 +1,4 @@
-pd test-kb-data ; ../../target/Parliament-v2.8.2-clang/bin/ParliamentAdmin -ds ; popd
+pd test-kb-data ; ../../target/Parliament-v3.0.0-clang/bin/ParliamentAdmin -ds ; popd
 
 
 

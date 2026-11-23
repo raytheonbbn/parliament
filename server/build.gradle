@@ -1,55 +1,73 @@
+// Copyright (c) 2023-2026 RTX BBN Technologies Corp.
+
+import com.bbn.parliament.build_logic.UncPathMapper;
+
 plugins {
-	id 'org.springframework.boot' version '2.7.5'
-	id 'io.spring.dependency-management' version '1.1.0'
-	id 'java'
+	id 'java-library'
+	alias(libs.plugins.springBoot)
+	alias(libs.plugins.springDepMgmt)
 }
 
-sourceCompatibility = '17'
-targetCompatibility = '17'
-defaultTasks 'bootRun'
-
 ext {
-	genJavaDir = file("$buildDir/generated/java")
-	artifactsDir = file("$rootDir/target/artifacts")
-	configVocabFile = "${projectDir}/src/main/resources/config-ont.ttl"
-	configVocabPackage = 'com.bbn.parliament.jena.bridge.configuration.vocab'
+	genJavaDir = file("$buildDir/generated/sources/java")
+	//genJavaDir = layout.buildDirectory.dir('generated/sources/java')
+	configVocabFile = layout.projectDirectory.file('src/main/resources/config-ont.ttl')
+	configVocabPackage = 'com.bbn.parliament.server.configuration.vocab'
 	configVocabDir = configVocabPackage.replaceAll(/\./, '/')
 	configVocabClassNm = 'ConfigOnt'
 	configVocabSource = "${genJavaDir}/${configVocabDir}/${configVocabClassNm}.java"
 }
 
+configurations {
+	schemagen
+	mockitoAgent //LINE ADDED BY CODEX CODING AGENT
+}
+
 dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-	implementation fileTree(dir: artifactsDir, include: [
-		'JenaGraph.jar',
-		'JosekiParliamentClient.jar',
-		'NumericIndex.jar',
-		'Parliament.jar',
-		'SpatialIndexProcessor.jar',
-		'TemporalIndexProcessor.jar'
-	])
+	schemagen libs.jenaCmds
+	schemagen libs.logback
+	schemagen libs.jclOverSlf4j
+	schemagen libs.slf4jApi
 
-	implementation "$commonsFileUpload"
-	implementation "$commonsLangDependency"
-
-	implementation("$jenaArqDependency") {
-		exclude group: 'org.slf4j', module: 'jcl-over-slf4j'
-		exclude group: 'org.slf4j', module: 'slf4j-log4j12'
-		exclude group: 'log4j', module: 'log4j'
+	// BLOCK ADDED BY CODEX CODING AGENT
+	mockitoAgent('org.mockito:mockito-core') {
+		transitive = false
 	}
-	implementation "$jsonLdDependency"
-	implementation "$slf4jApiDependency"
+
+	implementation project(':Parliament')
+	implementation project(':jena:ParliamentClient')
+	implementation project(':jena:KbGraph')
+	implementation project(':jena:NumericIndex')
+	implementation project(':jena:SparqlQueryBuilder')
+	implementation project(':jena:SpatialIndex')
+	implementation project(':jena:TemporalIndex')
+
+	implementation libs.commonsCsv
+	implementation libs.commonsIo
+	implementation libs.commonsLang
+	implementation libs.jenaArq
+	implementation libs.slf4jApi
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
-sourceSets {
-	main {
-		java { srcDir genJavaDir }
+java {
+	sourceSets {
+		main {
+			java { srcDir genJavaDir }
+		}
 	}
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+	withSourcesJar()
+	withJavadocJar()
 }
 
 // See https://jena.apache.org/documentation/tools/schemagen.html
@@ -57,10 +75,13 @@ task runSchemagen(type: JavaExec) {
 	inputs.file(configVocabFile)
 	outputs.file(configVocabSource)
 
-	classpath = sourceSets.main.compileClasspath
+	classpath = layout.files(
+		configurations.schemagen,
+		layout.projectDirectory.dir('schemagen-classpath'))
 	mainClass = 'jena.schemagen'
 	args = [
-		'-i', configVocabFile,
+		'-i', UncPathMapper.mapUncPath(configVocabFile.toString()),
+		'-e', 'TURTLE',
 		'-o', "${genJavaDir}",
 		'--owl',
 		'-n', configVocabClassNm,
@@ -70,26 +91,169 @@ task runSchemagen(type: JavaExec) {
 
 compileJava.dependsOn runSchemagen
 
-test {
-	useJUnitPlatform()
-
-	def distroDir = tgtDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
-
-	systemProperty 'java.library.path', "${distroDir}/bin"
-	//systemProperty 'log4j.configuration', "file:${rootDir}/log4j.junit.properties"
+javadoc {
+	source = java.sourceSets.main.allJava
+	classpath = configurations.compileClasspath
+	dependsOn runSchemagen
+	options
+	{
+		//setMemberLevel JavadocMemberLevel.PUBLIC
+		//setAuthor true
+		addStringOption('Xdoclint:-missing', '-quiet')
+	}
 }
 
-task copyTestResources(type: Copy) {
-	from '${projectDir}/src/test/resources'
-	into '${buildDir}/classes/java/test'
+tasks.getByName('sourcesJar') {
+	from java.sourceSets.main.allSource
+	dependsOn runSchemagen
+}
+
+clean {
+	delete layout.projectDirectory.dir('kb-data')
+	delete layout.projectDirectory.dir('log')
+}
+
+testing {
+	suites {
+		test {
+			useJUnitJupiter(libs.versions.jupiterVer)
+		}
+	}
+}
+
+test {
+	jvmArgs = [
+		'--enable-native-access=ALL-UNNAMED',
+
+		// Mockito tries to attach its instrumentation agent while the server tests run.
+		// On Linux, that attachment mechanism sends SIGQUIT, likely because the build
+		// is on a shared file system. When the JVM doesn't recognize the attachment
+		// handshake, it prints a thread dump and continues running. By loading Mockito
+		// at JVM startup using -javaagent, we avoid self-attachment (and the thread
+		// dump) altogether.
+		"-javaagent:${configurations.mockitoAgent.singleFile.absolutePath}" // LINE ADDED BY CODEX CODING AGENT
+	]
+	systemProperty 'logback.configurationFile', "${rootProject.ext.debugLogbackConfig}"
+	systemProperty 'java.library.path', rootProject.ext.distDirBin
+	systemProperty 'test.data.path', rootProject.ext.depDataDir
+
+	workingDir = layout.buildDirectory
 }
 
 bootRun {
-	def distroDir = tgtDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
+	//def distroDir = rootProject.ext.targetDir.listFiles().find { it.name =~ /^parliament-[.0-9]+-.*$/ }
 
-	systemProperty 'java.library.path', "${distroDir}/bin"
+	jvmArgs = [ '--enable-native-access=ALL-UNNAMED' ]
+	systemProperty 'logback.configurationFile', "${rootProject.ext.debugLogbackConfig}"
+	systemProperty 'java.library.path', rootProject.ext.distDirBin
 }
 
-subprojects {
-	junitPlatformTest.dependsOn copyTestResources
+// ===============================
+
+task distArchive(type:Zip) {
+	archiveFileName = "${rootProject.ext.distName}.zip"
+	destinationDirectory = rootProject.ext.targetDir
+	from(rootProject.ext.distDir) {
+		include "**/*"
+		into rootProject.ext.distName
+	}
+
+	dependsOn 'assemble',
+		'copyDocs',
+		(System.getProperty('os.name').toLowerCase().contains('win')
+			? 'copyStartScriptsWindows'
+			: 'copyStartScriptsPosix'),
+		'copyLicenses',
+		'copyConfigs',
+		'copyJars'
+}
+
+task copyDocs(type:Copy) {
+	into rootProject.ext.distDir
+	with copySpec {
+		from layout.settingsDirectory.dir('doc/UserGuide')
+		include 'ParliamentUserGuide.pdf'
+	}
+}
+
+task copyStartScriptsPosix(type:Copy) {
+	into rootProject.ext.distDir
+	with copySpec {
+		from layout.projectDirectory.dir('config')
+		include 'parliament'
+	}
+	filePermissions {
+		user.execute = true
+		group.execute = true
+		other.execute = true
+	}
+}
+
+task copyStartScriptsWindows(type:Copy) {
+	into rootProject.ext.distDir
+	with copySpec {
+		from layout.projectDirectory.dir('config')
+		include '*.ps1', '*.bat'
+	}
+}
+
+task copyLicenses(type:Copy) {
+	into "${rootProject.ext.distDir}/license"
+	with copySpec {
+		from layout.settingsDirectory
+		include 'LICENSE.md'
+		rename 'LICENSE.md', 'parliament-license.md'
+	}
+	with copySpec {
+		from layout.settingsDirectory.dir('license')
+		include '*.html', '*.md', '*.txt'
+	}
+}
+
+task copyConfigs(type:Copy) {
+	into "${rootProject.ext.distDir}/config"
+	with copySpec {
+		from layout.projectDirectory.dir('config')
+		include 'logback.*.xml', 'parliament-redirect-*.conf'
+	}
+}
+
+task copyJars(type:Copy) {
+	into "${rootProject.ext.distDir}/lib"
+	with copySpec {
+		from layout.buildDirectory.dir('libs')
+		include 'server-*.jar'
+		exclude '*-javadoc.jar', '*-plain.jar', '*-sources.jar'
+	}
+	dependsOn 'assemble'
+}
+
+tasks.named('build') {
+	dependsOn(distArchive)
+}
+
+// ===============================
+
+// See docker.md for instructions:
+task buildDockerImage(type:Exec) {
+	workingDir = rootProject.ext.targetDir
+	commandLine(
+		'docker',
+		'buildx',
+		'build',
+		//'-t', "${rootProject.ext.githubOrg}/parliament:${rootProject.ext.parliamentVersion}",
+		'-t', "${rootProject.ext.imageName}",
+		'--build-arg', "distro_ver=${rootProject.ext.parliamentVersion}",
+		'--build-arg', "distro_arch=${rootProject.ext.parliamentArch}",
+		'.'
+	)
+	dependsOn 'copyDockerFile'
+}
+
+task copyDockerFile(type:Copy) {
+	into "${rootProject.ext.targetDir}"
+	with copySpec {
+		from layout.projectDirectory.dir('config')
+		include 'Dockerfile'
+	}
 }

@@ -53,13 +53,13 @@ static constexpr TChar k_fName[] = _T("tempFile");
 struct TblAlignmentGuide1
 {
 	MMapMgr::TblHeader	m_header;
-	uint8						m_recordArray[k_testData1.size()];
+	uint8						m_recordArray[size(k_testData1)];
 };
 
 struct TblAlignmentGuide2
 {
 	MMapMgr::TblHeader	m_header;
-	uint8						m_recordArray[k_testData1.size() + k_testData2.size()];
+	uint8						m_recordArray[size(k_testData1) + size(k_testData2)];
 };
 
 BOOST_AUTO_TEST_SUITE(MMapMgrTestSuite)
@@ -99,23 +99,23 @@ BOOST_AUTO_TEST_CASE(testMMapMgr)
 
 		BOOST_CHECK_NO_THROW(memcpy(
 			reinterpret_cast<TblAlignmentGuide1*>(mmap.baseAddr())->m_recordArray,
-			k_testData1.data(), k_testData1.size()));
-		BOOST_CHECK_NO_THROW(mmap.header().m_recordCount += k_testData1.size());
+			data(k_testData1), size(k_testData1)));
+		BOOST_CHECK_NO_THROW(mmap.header().m_recordCount += size(k_testData1));
 
 		BOOST_CHECK_NO_THROW(mmap.reallocate(sizeof(TblAlignmentGuide2)));
 		BOOST_CHECK_EQUAL(static_cast<FileHandle::FileSize>(sizeof(TblAlignmentGuide2)), mmap.fileSize());
 
 		BOOST_CHECK_NO_THROW(memcpy(
-			reinterpret_cast<TblAlignmentGuide2*>(mmap.baseAddr())->m_recordArray + k_testData1.size(),
-			k_testData2.data(), k_testData2.size()));
-		BOOST_CHECK_NO_THROW(mmap.header().m_recordCount += k_testData2.size());
+			reinterpret_cast<TblAlignmentGuide2*>(mmap.baseAddr())->m_recordArray + size(k_testData1),
+			data(k_testData2), size(k_testData2)));
+		BOOST_CHECK_NO_THROW(mmap.header().m_recordCount += size(k_testData2));
 
 		BOOST_CHECK_NO_THROW(mmap.sync());
 	} // force the file mapping to be closed before we read it
 
 	vector<uint8> fileContent;
 	readFileContents(k_fName, fileContent);
-	BOOST_CHECK_EQUAL(fileContent.size(), arrayLen(k_expectedResult));
+	BOOST_CHECK_EQUAL(size(fileContent), arrayLen(k_expectedResult));
 	BOOST_CHECK(memcmp(&(fileContent[0]), k_expectedResult, sizeof(k_expectedResult)) == 0);
 }
 

@@ -1,0 +1,15 @@
+select distinct ?subType ?subTypeLbl ?superType ?superTypeLbl where {
+	{
+		{
+			?subType a owl:Class .
+		} union {
+			?subType rdfs:subClassOf ?superType .
+			filter not exists { ?superType a owl:Restriction . }
+			filter ( !isBlank(?superType) )
+			optional { ?superType rdfs:label ?superTypeLbl . }
+		}
+	}
+	filter not exists { ?subType a owl:Restriction . }
+	filter ( !isBlank(?subType) )
+	optional { ?subType rdfs:label ?subTypeLbl . }
+}

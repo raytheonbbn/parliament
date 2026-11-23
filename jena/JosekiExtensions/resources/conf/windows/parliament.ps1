@@ -123,7 +123,7 @@ if ($foreground) {
 		$argList = @(
 			'//US//Parliament',
 			'--DisplayName', 'Parliament',
-			'--Description', '"Parliament triple store and SPARQL endpoint, from Raytheon BBN Technologies"',
+			'--Description', '"Parliament triple store and SPARQL endpoint, from RTX BBN Technologies"',
 			#'--ServiceUser' 'domain\your_user_name_here',
 			#'--ServicePassword' 'your_user_password_here',
 			'--LibraryPath', """$pmntDir\bin""",

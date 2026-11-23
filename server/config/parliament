@@ -1,0 +1,86 @@
+#!/bin/bash
+
+######### User-settable configuration parameters: #########
+# Set SPRING_BOOT_HOST to 0.0.0.0 to make it accessible from other machines on the network:
+SPRING_BOOT_HOST=localhost
+#SPRING_BOOT_HOST=0.0.0.0
+SPRING_BOOT_PORT=8089
+DEFAULT_JAVA_HEAP_SIZE=1g
+
+
+######### Usage of this script: #########
+function printUsage {
+	echo ""
+	echo "Usage: $(basename $0) { -f | --foreground | -c | --container }"
+	echo ""
+	echo "where:"
+	echo ""
+	echo "   -f, --foreground"
+	echo "      Starts Parliament as an attached process in the current shell"
+	echo ""
+	echo "   -c, --container"
+	echo "      Starts Parliament in a container environment like Docker"
+	echo ""
+	exit 3
+}
+
+
+######### Find the Parliament installation: #########
+PMNT_DIR="`dirname \"$0\"`"               # relative
+PMNT_DIR="`( cd \"$PMNT_DIR\" && pwd )`"  # absolutized and normalized
+SERVER_JAR=`echo "$PMNT_DIR/lib/server-"*.jar`
+DEBUG_ARG=-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n
+REMOTE_MGMT=-Dcom.sun.management.jmxremote
+
+
+######### Error checking: #########
+if [ ! -f "$SERVER_JAR" ]; then
+	echo "$PMNT_DIR does not appear to be a valid Parliament installation."
+	exit 1
+fi
+
+
+######### Compute the data file location: #########
+KB_DIR=`grep -v '^[ \t]*#' $PMNT_DIR/ParliamentKbConfig.txt | sed -n 's/kbDirectoryPath[ \t]*=\(.*\)$/\1/p' | tail -n 1 | tr -d '[:space:]'`
+SAVED_DIR=`pwd`
+cd "$PMNT_DIR"
+if [ ! -d "$KB_DIR" ]; then
+	#echo "Creating missing KB directory ""$KB_DIR""."
+	mkdir -p $KB_DIR
+fi
+KB_DIR="`( cd \"$KB_DIR\" && pwd )`"  # normalize and make absolute
+cd "$SAVED_DIR"
+
+
+######### Set up the command line: #########
+if [ "$1" = '-c' -o "$1" = '--container' ]; then
+	LOG_CONFIG_TYPE=container
+else
+	LOG_CONFIG_TYPE=foreground
+fi
+
+EXEC="java -server"
+#EXEC="$EXEC -Djdk.xml.enableExtensionFunctions=true"
+EXEC="$EXEC --enable-native-access=ALL-UNNAMED"
+EXEC="$EXEC -Xmx${PARLIAMENT_JAVA_HEAP_SIZE:=$DEFAULT_JAVA_HEAP_SIZE}"
+#EXEC="$EXEC $DEBUG_ARG"	# Uncomment to enable remote debugging
+#EXEC="$EXEC $REMOTE_MGMT"	# Uncomment to enable remote management
+EXEC="$EXEC -Dlog.path.base=$KB_DIR"
+EXEC="$EXEC -Dlogging.config=$PMNT_DIR/config/logback.$LOG_CONFIG_TYPE.xml"
+EXEC="$EXEC -Djava.library.path=$PMNT_DIR/bin"
+EXEC="$EXEC -jar $SERVER_JAR"
+EXEC="$EXEC --server.address=$SPRING_BOOT_HOST --server.port=$SPRING_BOOT_PORT"
+
+
+######### Debugging statements: #########
+#echo EXEC = $EXEC
+#echo $EXEC | tr ' ' '\n'
+#exit 1
+
+
+######### Execute: #########
+if [ "$1" = '' -o "$1" = '-f' -o "$1" = '--foreground' -o "$1" = '-c' -o "$1" = '--container' ]; then
+	exec $EXEC
+else
+	printUsage
+fi

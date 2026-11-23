@@ -1,0 +1,48 @@
+// Copyright (c) 2023 RTX BBN Technologies Corp.
+
+plugins {
+	id 'java-library'
+}
+
+dependencies {
+	api libs.jenaArq
+	implementation libs.httpClient
+	implementation libs.slf4jApi
+	testImplementation libs.logback
+}
+
+configurations.all {
+	exclude group: 'xml-apis'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+javadoc {
+	source = sourceSets.main.allJava
+	classpath = configurations.compileClasspath
+
+	options
+	{
+		//setMemberLevel JavadocMemberLevel.PUBLIC
+		//setAuthor true
+		addStringOption('Xdoclint:-missing', '-quiet')
+	}
+}
+
+testing {
+	suites {
+		test {
+			useJUnitJupiter(libs.versions.jupiterVer)
+		}
+	}
+}
+
+test {
+	systemProperty 'test.data.path', "${rootProject.ext.depDataDir}"
+}

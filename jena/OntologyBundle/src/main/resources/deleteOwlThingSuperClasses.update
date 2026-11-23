@@ -1,0 +1,8 @@
+prefix owl:  <http://www.w3.org/2002/07/owl#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+delete {
+	?cls rdfs:subClassOf owl:Thing .
+} where {
+	?cls rdfs:subClassOf owl:Thing .
+}

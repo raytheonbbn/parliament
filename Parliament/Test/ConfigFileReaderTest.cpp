@@ -10,14 +10,8 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/test_case.hpp>
-#include <fstream>
-#include <iterator>
-#include <map>
 #include <ostream>
-#include <string>
-#include <system_error>
 #include "parliament/ConfigFileReader.h"
-#include "parliament/Exceptions.h"
 #include "parliament/Windows.h"
 #include "parliament/CharacterLiteral.h"
 #include "parliament/UnicodeIterator.h"
@@ -32,11 +26,7 @@ namespace bfs = ::boost::filesystem;
 
 using namespace ::bbn::parliament;
 using ::std::array;
-using ::std::endl;
-using ::std::equal;
-using ::std::ofstream;
 using ::std::ostream;
-using ::std::string;
 
 // =========================================================================
 
@@ -44,13 +34,13 @@ static bfs::path getRunningDllFilePath()
 {
 #if defined(PARLIAMENT_WINDOWS)
 	array<TChar, 8192> buffer;
-	DWORD errCode = ::GetModuleFileName(0, buffer.data(), static_cast<DWORD>(buffer.size()));
-	if (errCode <= 0 || errCode >= buffer.size())
+	DWORD errCode = ::GetModuleFileName(0, data(buffer), static_cast<DWORD>(size(buffer)));
+	if (errCode <= 0 || errCode >= size(buffer))
 	{
 		throw ::std::system_error(::GetLastError(), ::std::system_category(),
 			"GetModuleFileName failed in unit test");
 	}
-	return buffer.data();
+	return data(buffer);
 #else
 	::Dl_info info;
 	if (::dladdr(reinterpret_cast<const void*>(getRunningDllFilePath), &info) == 0)
@@ -131,138 +121,6 @@ BOOST_DATA_TEST_CASE(
 	tc)
 {
 	BOOST_CHECK(ConfigFileReader::testIsBlankOrCommentLine(tc.m_pInputStr) == tc.m_expectedResult);
-}
-
-// =========================================================================
-
-struct ParseUnsignedTestCase
-{
-	const char*	m_pInputStr;
-	bool			m_shouldThrow;
-	size_t		m_expectedResult;
-};
-
-static ostream& operator<<(ostream& os, const ParseUnsignedTestCase& tc)
-{
-	os << "Input string '" << tc.m_pInputStr << "'";
-	return os;
-}
-
-static const ParseUnsignedTestCase k_parseUnsignedTestCases[] =
-	{
-		{ "a 37",	true,		0u },
-		{ "37 a",	true,		0u },
-		{ "-37",		true,		0u },
-		{ " 37 ",	false,	37u },
-	};
-
-BOOST_DATA_TEST_CASE(
-	parseUnsignedTest,
-	bdata::make(k_parseUnsignedTestCases),
-	tc)
-{
-	if (tc.m_shouldThrow)
-	{
-		BOOST_CHECK_THROW(ConfigFileReader::parseUnsigned(tc.m_pInputStr, 1), Exception);
-	}
-	else
-	{
-		BOOST_CHECK_EQUAL(tc.m_expectedResult, ConfigFileReader::parseUnsigned(tc.m_pInputStr, 1));
-	}
-}
-
-// =========================================================================
-
-struct ParseDoubleTestCase
-{
-	const char*	m_pInputStr;
-	bool			m_shouldThrow;
-	double		m_expectedResult;
-};
-
-static ostream& operator<<(ostream& os, const ParseDoubleTestCase& tc)
-{
-	os << "Input string '" << tc.m_pInputStr << "'";
-	return os;
-}
-
-static const ParseDoubleTestCase k_parseDoubleTestCases[] =
-	{
-		{ "a 37.9",	true,		0.0 },
-		{ "37.9 a",	true,		0.0 },
-		{ "-37.9",	false,	-37.9 },
-		{ " 37.9 ",	false,	37.9 },
-	};
-
-BOOST_DATA_TEST_CASE(
-	parseDoubleTest,
-	bdata::make(k_parseDoubleTestCases),
-	tc)
-{
-	if (tc.m_shouldThrow)
-	{
-		BOOST_CHECK_THROW(ConfigFileReader::parseDouble(tc.m_pInputStr, 1), Exception);
-	}
-	else
-	{
-		BOOST_CHECK_EQUAL(tc.m_expectedResult, ConfigFileReader::parseDouble(tc.m_pInputStr, 1));
-	}
-}
-
-// =========================================================================
-
-struct ParseBoolTestCase
-{
-	const char*	m_pInputStr;
-	bool			m_shouldThrow;
-	bool			m_expectedResult;
-};
-
-static ostream& operator<<(ostream& os, const ParseBoolTestCase& tc)
-{
-	os << "Input string '" << tc.m_pInputStr << "'";
-	return os;
-}
-
-static const ParseBoolTestCase k_parseBoolTestCases[] =
-	{
-		{ "true",			false,	true },
-		{ "trUe",			false,	true },
-		{ "TRUE",			false,	true },
-		{ "t",				false,	true },
-		{ "T",				false,	true },
-		{ "yes",				false,	true },
-		{ "YES",				false,	true },
-		{ "y",				false,	true },
-		{ "Y",				false,	true },
-		{ "on",				false,	true },
-		{ "1",				false,	true },
-		{ " false",			false,	false },
-		{ "FALSE ",			false,	false },
-		{ " \tfaLSe ",		false,	false },
-		{ "f",				false,	false },
-		{ "F",				false,	false },
-		{ "no",				false,	false },
-		{ "n",				false,	false },
-		{ "off",				false,	false },
-		{ "0",				false,	false },
-		{ "affirmative",	true,		false },
-		{ "",					true,		false },
-	};
-
-BOOST_DATA_TEST_CASE(
-	parseBoolTest,
-	bdata::make(k_parseBoolTestCases),
-	tc)
-{
-	if (tc.m_shouldThrow)
-	{
-		BOOST_CHECK_THROW(ConfigFileReader::parseBool(tc.m_pInputStr, 1), Exception);
-	}
-	else
-	{
-		BOOST_CHECK_EQUAL(tc.m_expectedResult, ConfigFileReader::parseBool(tc.m_pInputStr, 1));
-	}
 }
 
 BOOST_AUTO_TEST_SUITE_END()

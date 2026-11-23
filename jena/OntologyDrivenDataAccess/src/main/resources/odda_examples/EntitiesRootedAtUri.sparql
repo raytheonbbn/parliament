@@ -1,0 +1,15 @@
+select distinct ?ent where {
+	bind(?_rootType as ?rootType)
+	bind(?_root as ?root)
+
+	?rootType rdfs:subClassOf dmn:EntityOfInterest .
+	?root a ?rootType .
+
+	{
+		{
+			bind(?root as ?ent)
+		} union {
+			?root dmn:link ?ent .
+		}
+	}
+}

@@ -1,0 +1,407 @@
+// Parliament is licensed under the BSD License from the Open Source
+// Initiative, http://www.opensource.org/licenses/bsd-license.php
+//
+// Copyright (c) 2001-2009, BBN Technologies, Inc.
+// All rights reserved.
+
+package com.bbn.parliament.jena.joseki.handler;
+
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFLanguages;
+import org.apache.jena.vocabulary.RDF;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.bbn.parliament.jena.joseki.bridge.servlet.ServletErrorResponseException;
+import com.bbn.parliament.jena.joseki.graph.ForgetfulGraph;
+import com.bbn.parliament.jena.joseki.graph.ModelManager;
+import com.bbn.parliament.kb_graph.KbGraphStore;
+
+public class Inserter {
+	/** Interface that defines a method for getting an InputStream from some object. */
+	protected interface IInputStreamProvider {
+		public InputStream getInputStream() throws IOException;
+	}
+
+	private static final Logger LOG = LoggerFactory.getLogger(Inserter.class);
+
+	private String graphName;
+	private IInputStreamProvider strmPrvdr;
+	private String dataFormat;
+	private String base;
+	private String filename;
+	private boolean verify;
+	private boolean importRepo;
+	private long numStatements;
+
+	public Inserter(String graphName, IInputStreamProvider strmPrvdr,
+		String dataFormat, String base, String verifyString, String importString,
+		String filename) {
+		this.graphName = graphName;
+		this.strmPrvdr = strmPrvdr;
+		this.dataFormat = dataFormat;
+		this.base = base;
+		this.filename = filename;
+
+		verify = !"no".equalsIgnoreCase(verifyString);
+
+		// Default to false, and only set to true if "yes" is passed
+		importRepo = "yes".equalsIgnoreCase(importString);
+	}
+
+	public long getNumStatements() {
+		return numStatements;
+	}
+
+	public boolean isImport() {
+		return importRepo;
+	}
+
+	public String getGraphName() {
+		return graphName;
+	}
+
+	public String getFileName() {
+		return filename;
+	}
+
+	public void run() throws IOException, ServletErrorResponseException {
+		numStatements = -1;
+		if (importRepo) {
+			if (LOG.isInfoEnabled()) {
+				LOG.info("REPOSITORY IMPORT");
+			}
+			numStatements = importRepository(strmPrvdr, base);
+		} else {
+			if (LOG.isInfoEnabled()) {
+				LOG.info("FILE OR TEXT INSERT");
+			}
+
+			// Determine the RDF serialization format by looking at the file extension:
+			Lang lang = null;
+			if ("auto".equalsIgnoreCase(dataFormat)) {
+				if (null == filename || filename.length() == 0) {
+					throw new ServletErrorResponseException("""
+						The serialization format of the RDF was specified to be determined by \
+						the filename extension, but the filename was not available.  Please \
+						resubmit with the proper data format specified.""");
+				} else {
+					lang = RDFLanguages.pathnameToLang(filename);
+					if (lang == null) {
+						throw new ServletErrorResponseException("""
+							Unable to determine the serialization format of the RDF document \
+							from the filename extension.  Please resubmit with the proper data \
+							format specified.""");
+					} else {
+						LOG.debug("Interpreting input file '{}' as {}", filename, lang);
+					}
+				}
+			} else {
+				lang = RDFLanguages.nameToLang(dataFormat);
+				if (lang == null) {
+					throw new ServletErrorResponseException("Unsupported data format \"%1$s\"",
+						dataFormat);
+				}
+			}
+
+			// Disable this check for now.  Assume the user knows what he's doing if he wants to add stuff to the Master Graph.
+			//checkIfMaster(graphName);
+
+			boolean isDefaultGraph = "".equals(graphName);
+			Model model = isDefaultGraph
+				? ModelManager.inst().getDefaultModel()
+				: ModelManager.inst().getModel(graphName);
+			String graphLabel = isDefaultGraph ? "Default Graph" : graphName;
+
+			if (null == model) {
+				throw new ServletErrorResponseException(
+					"There was no named graph with name \"%1$s\"", graphName);
+			} else {
+				if (verify) {
+					numStatements = verify(strmPrvdr, base, lang);
+				}
+				insert(model, graphLabel, strmPrvdr, lang, base);
+			}
+		}
+	}
+
+	protected long importRepository(IInputStreamProvider inStrmPrvdr, String baseUri)
+		throws IOException, ServletErrorResponseException {
+		long toReturn = 0;
+
+		// First verify that we have a legitimate import
+		Model masterGraph = null;
+		Set<String> dirNamesSeen = new HashSet<>();
+		try (
+			InputStream in = inStrmPrvdr.getInputStream();
+			final ZipInputStream zin = new ZipInputStream(in);
+			) {
+			ZipEntry ze = null;
+			while ((ze = zin.getNextEntry()) != null) {
+				String zipEntryName = ze.getName();
+				FileNameDecomposition decomp = new FileNameDecomposition(zipEntryName);
+				if (decomp.getLang() == null) {
+					throw new ServletErrorResponseException("""
+						Unsupported file extension on "%1$s" -- must be one of 'ttl', 'n3', \
+						'nt', 'rdf', 'owl', or 'xml'""", zipEntryName);
+				}
+
+				IInputStreamProvider entryStrmProvider = getZipStrmProvider(zin);
+
+				// Get the Master Graph separately as a temporary in-memory model
+				if (decomp.isMasterGraph()) {
+					masterGraph = ModelFactory.createDefaultModel();
+					try (InputStream is = entryStrmProvider.getInputStream()) {
+						masterGraph.read(is, baseUri, decomp.getLang().getName());
+					}
+				} else {
+					long num = verify(entryStrmProvider, baseUri, decomp.getLang());
+					if (num > 0) {
+						toReturn += num;
+					}
+
+					if (!decomp.isDefaultGraph()) {
+						dirNamesSeen.add(decomp.getDirName());
+					}
+				}
+
+				zin.closeEntry();
+			}
+		}
+
+		if (masterGraph == null) {
+			throw new ServletErrorResponseException("Archive has no Master Graph");
+		}
+
+		// Verify that all the filenames seen are in the Master Graph, and vice-versa
+		Map<String, String> dirToGraphNameMap = new HashMap<>();
+		StmtIterator it = masterGraph.listStatements(null,
+			ResourceFactory.createProperty(KbGraphStore.GRAPH_DIR_PROPERTY.getURI()),
+			(RDFNode) null);
+		try {
+			while (it.hasNext()) {
+				Statement stmt = it.nextStatement();
+
+				String graphNm = stmt.getSubject().getURI();
+				String dirName = stmt.getObject().toString();
+
+				if (!dirNamesSeen.contains(dirName)) {
+					throw new ServletErrorResponseException("""
+						Master Graph contains a directory name (%1$s) not present in \
+						the zip file""", dirName);
+				}
+
+				dirToGraphNameMap.put(dirName, graphNm);
+			}
+		} finally {
+			if (null != it ) {
+				it.close();
+			}
+		}
+
+		if (dirNamesSeen.size() != dirToGraphNameMap.size()) {
+
+			StringBuilder sb = new StringBuilder();
+			boolean firstTime = true;
+			for (String dirName : dirNamesSeen) {
+				if (!dirToGraphNameMap.containsKey(dirName)) {
+					if (!firstTime) {
+						sb.append(", ");
+					}
+					sb.append(dirName);
+					firstTime = false;
+				}
+			}
+
+			throw new ServletErrorResponseException("""
+				Mismatch between the number of files in the zip file and the number in \
+				the Master Graph.  There are extra directories in the zip file: %1$s""", sb);
+		}
+
+		// Now that we like the input, we can clear the old repo
+		LOG.info("Clearing current repository...");
+		ModelManager.inst().clearKb();
+
+		Set<String> indexGraphs = new HashSet<>(dirToGraphNameMap.size());
+		it = masterGraph.listStatements(null, RDF.type,
+			ResourceFactory.createResource(KbGraphStore.INDEXED_GRAPH.getURI()));
+		try {
+			while (it.hasNext()) {
+				indexGraphs.add(it.next().getSubject().getURI());
+			}
+		} finally {
+			if (null != it) {
+				it.close();
+			}
+		}
+		// Insert the new data
+		try (
+			InputStream in = inStrmPrvdr.getInputStream();
+			final ZipInputStream zin = new ZipInputStream(in);
+			) {
+			ZipEntry ze = null;
+			while ((ze = zin.getNextEntry()) != null) {
+				FileNameDecomposition decomp = new FileNameDecomposition(ze.getName());
+				// We can assume that decomp.getFormat() is not null because that
+				// was checked in the verification loop above.
+
+				IInputStreamProvider entryStrmProvider = getZipStrmProvider(zin);
+
+				if (decomp.isMasterGraph()) {
+					// Do nothing (ignore the Master Graph)
+				} else if (decomp.isDefaultGraph()) {
+					Model model = ModelManager.inst().getDefaultModel();
+					insert(model, "Default Graph", entryStrmProvider, decomp.getLang(), baseUri);
+				} else {
+					String graphDir = decomp.getDirName();
+					String graphNm = dirToGraphNameMap.get(graphDir);
+					Model model = ModelManager.inst().createAndAddNamedModel(graphNm, graphDir, indexGraphs.contains(graphNm));
+					insert(model, graphNm, entryStrmProvider, decomp.getLang(), baseUri);
+				}
+
+				zin.closeEntry();
+			}
+		}
+
+		// Add any KbUnionGraphs
+		it = masterGraph.listStatements(null, RDF.type,
+			ResourceFactory.createResource(KbGraphStore.UNION_GRAPH_CLASS.getURI()));
+		try {
+			while (it.hasNext()) {
+				Resource subject = it.next().getSubject();
+				String graphNm = subject.getURI();
+				String leftGraphName = null;
+				String rightGraphName = null;
+
+				StmtIterator it2 = masterGraph.listStatements(subject, null, (RDFNode) null);
+				try {
+					while (it2.hasNext()) {
+						Statement stmt = it2.next();
+						if (KbGraphStore.LEFT_GRAPH_PROPERTY.getURI().equals(stmt.getPredicate().getURI())) {
+							leftGraphName = ((Resource)stmt.getObject()).getURI();
+						}
+						if (KbGraphStore.RIGHT_GRAPH_PROPERTY.getURI().equals(stmt.getPredicate().getURI())) {
+							rightGraphName = ((Resource)stmt.getObject()).getURI();
+						}
+					}
+				} finally {
+					if (null != it2) {
+						it2.close();
+					}
+				}
+
+				ModelManager.inst().createAndAddKbUnionGraph(graphNm, leftGraphName, rightGraphName);
+			}
+		} finally {
+			if (null != it) {
+				it.close();
+			}
+		}
+
+		return toReturn;
+	}
+
+	private static class FileNameDecomposition {
+		private String dirName;
+		private Lang lang;
+
+		public FileNameDecomposition(String fname) {
+			dirName = null;
+			lang = RDFLanguages.pathnameToLang(fname);
+			int dotIndex = fname.lastIndexOf('.');
+			if (dotIndex >= 0 && (dotIndex + 1) < fname.length()) {
+				dirName = fname.substring(0, dotIndex);
+			}
+		}
+
+		public String getDirName() {
+			return dirName;
+		}
+
+		public boolean isMasterGraph() {
+			return dirName.equalsIgnoreCase(AbstractHandler.MASTER_GRAPH_BASENAME)
+				|| dirName.equalsIgnoreCase(AbstractHandler.OLD_MASTER_GRAPH_BASENAME);
+		}
+
+		public boolean isDefaultGraph() {
+			return dirName.equalsIgnoreCase(AbstractHandler.DEFAULT_GRAPH_BASENAME);
+		}
+
+		public Lang getLang() {
+			return lang;
+		}
+	}
+
+	private static IInputStreamProvider getZipStrmProvider(final ZipInputStream zin) {
+		return new IInputStreamProvider() {
+			@Override
+			public InputStream getInputStream() throws IOException {
+				return new FilterInputStream(zin) {
+					@Override
+					public void close() throws IOException {
+						// Do nothing
+					}
+				};
+			}
+		};
+	}
+
+	/**
+	 * Verifies the statements contained in the IInputStreamProvider. If the statements are
+	 * not valid, we throw a RuntimeException.
+	 *
+	 * @return the number of statements in the stream
+	 */
+	@SuppressWarnings("static-method")
+	protected long verify(IInputStreamProvider inStrmPrvdr, String baseUri, Lang lang)
+		throws IOException {
+		long numStmts = 0;
+		long start = Calendar.getInstance().getTimeInMillis();
+		Model syntaxVerifier = ModelFactory.createModelForGraph(new ForgetfulGraph());
+		try (InputStream in = inStrmPrvdr.getInputStream()) {
+			syntaxVerifier.read(in, baseUri, lang.getName());
+			numStmts = syntaxVerifier.size();
+
+			if (LOG.isInfoEnabled()) {
+				long end = Calendar.getInstance().getTimeInMillis();
+				LOG.info("Verified %1$d statements in %2$.3f seconds"
+					.formatted(numStmts, (end - start) / 1000.0));
+			}
+		}
+		return numStmts;
+	}
+
+	/** Inserts the statements from the InputStream into the given Model. */
+	@SuppressWarnings("static-method")
+	protected void insert(Model model, String graphLabel, IInputStreamProvider inStrmPrvdr,
+		Lang lang, String baseUri) throws IOException {
+		long start = Calendar.getInstance().getTimeInMillis();
+		try (InputStream in = inStrmPrvdr.getInputStream()) {
+			model.read(in, baseUri, lang.getName());
+
+			if (LOG.isInfoEnabled()) {
+				long end = Calendar.getInstance().getTimeInMillis();
+				LOG.info("Added statements to \"%1$s\" in %2$.3f seconds"
+					.formatted(graphLabel, (end - start) / 1000.0));
+			}
+		}
+	}
+}

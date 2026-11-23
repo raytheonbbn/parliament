@@ -1,0 +1,14 @@
+select distinct ?violatedRange where {
+	{
+		{ ?_property rdfs:range ?violatedRange }
+		union
+		{
+			values ?subjectType { "subjectTypeMarker" }
+			?subjectType rdfs:subClassOf ?restriction .
+			?restriction a owl:Restriction ;
+			owl:onProperty ?_property ;
+			owl:allValuesFrom ?violatedRange .
+		}
+	}
+	filter not exists { ?_object a ?violatedRange . }
+}
