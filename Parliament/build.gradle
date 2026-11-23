@@ -166,5 +166,6 @@ task copyNativeConfig(type: Copy) {
 clean {
 	delete "${rootProject.ext.targetDir}"
 	delete "${projectDir}/kb-data"
+	delete "${projectDir}/log"
 	delete "${projectDir}/Test/kb-data"
 }

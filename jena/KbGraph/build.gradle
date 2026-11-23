@@ -57,4 +57,5 @@ test {
 
 clean {
 	delete "${projectDir}/kb-data"
+	delete "${projectDir}/log"
 }
