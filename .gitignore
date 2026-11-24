@@ -7,15 +7,10 @@ lib/
 log/
 parliament-test.log
 .gradle/
-.project
-.settings/
 .vscode/
 /build.properties
 /dependencies/
 
-.classpath
-.project
-.settings/
 /jena/OntologyDrivenDataAccess/odda.pdf
 
 /doc/**/missfont.log
@@ -38,22 +33,10 @@ parliament-test.log
 
 /jena/JosekiExtensions/src/com/bbn/parliament/jena/joseki/bridge/configuration/vocab/
 *.log*
-/jena/JenaGraph/kb-data/
-/jena/JenaGraph/test-kb-data/
-/Parliament/AdminClient/.settings/language.settings.xml
-/Parliament/AdminClient/Debug_with_Linux GCC/
-/Parliament/AdminClient/Debug_with_MacOSX GCC/
-/Parliament/KbCore/.settings/language.settings.xml
-/Parliament/KbCore/Debug_with_Linux GCC/
-/Parliament/KbCore/Debug_with_MacOSX GCC/
 /Parliament/KbCore/parliament/generated/
-/Parliament/Test/.settings/language.settings.xml
-/Parliament/Test/Debug_with_Linux GCC/
-/Parliament/Test/Debug_with_MacOSX GCC/
 /Parliament/Test/ParliamentKbConfig.txt
 /Parliament/Test/ParliamentLogConfig.txt
-/Parliament/Test/test-kb-data/
-/server/test-kb-data/
 /target/
-/kb-data/
+kb-data/
+test-kb-data/
 .idea/

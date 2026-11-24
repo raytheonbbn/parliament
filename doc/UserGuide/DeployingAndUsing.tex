@@ -6,57 +6,55 @@
 \chapter{Deploying and Using \acl{pmnt}}
 \label{chapter-deploying-and-using}
 
-There are several ways to use \ac{pmnt}.  By far the most common is as a server application that exposes a \ac{sparql} endpoint.  \acp{pmnt} Docker image and its more traditional binary distribution directly support this usage, running \ac{pmnt} within the included Jetty servlet engine.  See Sections~\ref{section-std-container-deploy} and~\ref{section-std-server-deploy} for instructions.
+\ac{pmnt} is a server application that exposes a \ac{sparql} endpoint.  \ac{pmnt} can be deployed either using its Docker image (see Section~\ref{section-std-container-deploy}) or a more traditional binary distribution (see Section~\ref{section-std-server-deploy}). Pre-built binaries for common platforms are available on the \ac{pmnt} Web site\urlcite{https://github.com/\githubOrg/parliament/releases}.  You can also build \ac{pmnt} yourself (see Chapter~\ref{chapter-building-parliament}).
 
-\ac{pmnt} can also be used with other servlet engines such as Tomcat and Glassfish (see Section~\ref{section-parliament-with-jena-and-tomcat}) or as an in-process library (Section~\ref{section-parliament-in-process}).
-
-Pre-built binaries for common platforms are available on the \ac{pmnt} Web site\urlcite{https://github.com/\githubOrg/parliament/releases}.  You can also build \ac{pmnt} yourself (see Chapter~\ref{chapter-building-parliament}).
-
-This chapter starts with instructions for running a \ac{pmnt} container (Section~\ref{section-std-container-deploy}) and for installing a \ac{pmnt} server (Section~\ref{section-std-server-deploy}), followed by a discussion of the \ac{pmnt} configuration file (Section~\ref{section-configuring-pmnt}).  Then comes a detailed discussion of each of the less common deployment scenarios.  The chapter concludes with a discussion of \acp{pmnt} utilities and some troubleshooting hints (Sections~\ref{section-parliamentadmin-utility} and~\ref{section-troubleshooting}, respectively).
+In addition to the deployment instructions in Sections~\ref{section-std-container-deploy} and~\ref{section-std-server-deploy}, this chapter discusses \ac{pmnt} configuration files (Section~\ref{section-configuring-pmnt}), \ac{pmnt} utilities (Section~\ref{section-parliamentadmin-utility}), and troubleshooting (Section~\ref{section-troubleshooting}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Deploying a \ac{pmnt} Container}
 \label{section-std-container-deploy}
 
-\acp{pmnt} Docker image can be found on Docker Hub here:
-\begin{quote}
-\texttt{idemmons/parliament:«version»}
-\end{quote}
-
-To run the container, use this command (with line breaks added for readability):
+The following command will run the container (line breaks added for readability). Table~\ref{tbl:DockerTags} lists the Docker Hub tags of \acp{pmnt} Docker images.
 {\small
 \begin{verbatim}
 docker run -d -p 80:8089 --name=parliament-«version»
-   --mount type=volume,src=parliament-data,dst=/var/parliament-data
-   --env PARLIAMENT_JAVA_HEAP_SIZE=512m
-   idemmons/parliament:«version»
+   --mount type=volume,src=kb-data,dst=/var/parliament-data
+   --env PARLIAMENT_JAVA_HEAP_SIZE=1g
+   idemmons/parliament-«arch»:«version»
 \end{verbatim}
 }
-
-As given here, the mount option will create a local Docker volume called \path|parliament-data| to contain \acp{pmnt} data files and logs.  Using variations of this option, you can cause the container to store the data files and logs in a broad variety of locations and file systems, such as on an external storage array.  (See the Docker documentation for more information.)
-
-Alternately, Docker can store \acp{pmnt} data files and logs in a local directory on the container's host with this syntax:
-{\small
-\begin{verbatim}
-docker run -d -p 80:8089 --name=parliament-«version»
-   --mount type=bind,src=/host/directory,dst=/var/parliament-data
-   --env PARLIAMENT_JAVA_HEAP_SIZE=512m
-   idemmons/parliament:«version»
-\end{verbatim}
-}
-
-The two environment variables are optional.  If they are left out, the default values used will be the values shown in the command line above.  (See Sections~\ref{section-pmnt-startup-script} and~\ref{section-main-config} for discussions of these settings.)  Table~\ref{table-pmnt-container-connect-urls} lists the endpoints exposed by the running container, as discussed in Section~\ref{section-std-server-usage}.
 
 \begin{table}[htbp]
 	\centering
 	\begin{tabular}{ll}
-		\acs*{http} interface: & \nolinkurl{http://«host»/parliament}\\
-		\ac{sparql} endpoint: & \nolinkurl{http://«host»/parliament/sparql}\\
-		Bulk loader: & \nolinkurl{http://«host»/parliament/bulk}\\
+		\toprule
+		Architecture & Tag\\
+		\headingrule
+		Intel and AMD 64-bit: & \texttt{idemmons/parliament-x64:«version»}\\
+		ARM-64: & \texttt{idemmons/parliament-a64:«version»}\\
+		\bottomrule
 	\end{tabular}
-	\caption{\acs*{pmnt} Container Connection \acsp*{url}}
-	\label{table-pmnt-container-connect-urls}
+	\caption{\acp*{pmnt} Docker tags}
+	\label{tbl:DockerTags}
 \end{table}
+
+As given here, the mount option will create a local Docker volume called \path|kb-data| to contain \acp{pmnt} data files and logs.  Using variations of this option, you can cause the container to store the data files and logs in a broad variety of locations and file systems, such as on an external storage array.  (See the Docker documentation for more information.)
+
+Another common storage option places \acp{pmnt} data files in a local directory on the container's host like so:
+{\small
+\begin{verbatim}
+docker run -d -p 80:8089 --name=parliament-«version»
+   --mount type=bind,src=/host/directory,dst=/var/parliament-data
+   --env PARLIAMENT_JAVA_HEAP_SIZE=1g
+   idemmons/parliament-«arch»:«version»
+\end{verbatim}
+}
+
+The environment variable in this command is optional. If it is left out, the default value used will be the value shown in the command lines above (see Section~\ref{section-pmnt-startup-script}). Another environment variable that may be useful here is \verb|PARLIAMENT_KB_CONFIG_PATH| (see section~\ref{section-main-config}).
+
+Note that the same effects as the above two command lines can be achieved through the Docker GUI as well. First download the image using its tag, and then press the Run button. Click Optional Settings, and then fill in the container name, port, volume information, and environment variable(s).
+
+See Table~\ref{table-pmnt-connect-urls} in Section~\ref{section-std-server-usage} for a list of the endpoints exposed by the running container and a discussion of how to use them.
 
 
 
@@ -66,28 +64,41 @@ The two environment variables are optional.  If they are left out, the default v
 
 A \ac{pmnt} distribution is a compressed archive containing a ready-to-run \ac{pmnt} server, with the following naming convention:
 \begin{quote}
-	\texttt{parliament-\textbf{\textit{x.y.z}}-\textbf{\textit{platform}}.zip}
+	\texttt{parliament-\textbf{\textit{x.y.z}}-\textbf{\textit{platform}}-\textbf{\textit{architecture}}.zip}
 \end{quote}
-Here \texttt{\textbf{\textit{x.y.z}}} is the \ac{pmnt} version number and \texttt{\textbf{\textit{platform}}} indicates the platform, as shown in Table~\ref{tbl:SupportedPlatforms}\footnote{At present, only Intel/AMD architectures are supported.  We expect to support Apple Silicon and ARM binaries in a future release.}.
+Here \texttt{\textbf{\textit{x.y.z}}} is the \ac{pmnt} version number, \texttt{\textbf{\textit{platform}}} indicates the platform (see Table~\ref{tbl:SupportedPlatforms}), and \texttt{\textbf{\textit{architecture}}} indicates the hardware architecture (see Table~\ref{tbl:SupportedArchitectures}).
+
 \begin{table}[htbp]
 	\centering
-	\begin{tabular}{lll}
+	\begin{tabular}{ll}
 		\toprule
-		\emph{Platform}	& \emph{Description}				& \emph{Binaries}\\
+		\emph{Platform}	& \emph{Description}				\\
 		\headingrule
-		\path|mac|			& Mac OS Catalina and newer	& 64-bit\\
-		\path|rhel8|		& Red Hat Enterprise Linux 8	& 64-bit\\
-		\path|ubuntu20|	& Ubuntu Linux 20, LTS			& 64-bit\\
-		\path|win-64|		& Windows 10 and newer			& 64-bit\\
-		\path|win-32|		& Windows 10 and newer			& 32-bit\\
+		\path|mac|			& Mac OS Catalina and newer	\\
+		\path|ubuntu26|	& Ubuntu Linux 26, LTS			\\
+		\path|win|			& Windows 11						\\
 		\bottomrule
 	\end{tabular}
 	\caption{Supported Platforms}
 	\label{tbl:SupportedPlatforms}
 \end{table}
-If you are building \ac{pmnt} yourself according to the instructions in Chapter~\ref{chapter-building-parliament}, then these archives appear in the \path|target/distro| directory at the end of the build process.
 
-As shown in Table~\ref{tbl:SupportedPlatforms}, on Windows there is a choice between 32-bit and 64-bit builds.  Whenever possible, use the 64-bit version, because 32-bit \ac{pmnt} is limited to 5--10 million statements.
+\begin{table}[htbp]
+	\centering
+	\begin{tabular}{ll}
+		\toprule
+		\emph{Architecture}	& \emph{Description}				\\
+		\headingrule
+		\path|-x64|				& Intel and AMD 64-bit			\\
+		\path|-a64|				& ARM-64								\\
+		\emph{Blank}			& Universal binary (Mac only)	\\
+		\bottomrule
+	\end{tabular}
+	\caption{Supported Hardware Architectures}
+	\label{tbl:SupportedArchitectures}
+\end{table}
+
+If you are building \ac{pmnt} yourself according to the instructions in Chapter~\ref{chapter-building-parliament}, then these archives appear in the \path|target| directory at the end of the build process.
 
 \subsection{Installing for the First Time}
 \label{section-std-server-init-deploy}
@@ -103,145 +114,38 @@ Once you have downloaded a distribution, these steps will yield a functioning \a
 
 	\item On Windows, open a PowerShell, switch to the \path|ParliamentKB| directory, and invoke the startup script to start the \ac{pmnt} server:
 	\begin{quote}
-		\path|.\parliament.ps1 -foreground|
+		\path|parliament.ps1|
 	\end{quote}
-	For backwards compatibility, you may also use a command prompt and type:
+	If you prefer the Command Prompt, type:
 	\begin{quote}
-		\path|StartParliament.bat|
+		\path|parliament.bat|
 	\end{quote}
 
 	On other platforms, open a shell, switch to the \path|ParliamentKB| directory, and start \ac{pmnt} using this command:
 	\begin{quote}
-		\texttt{./parliament foreground}
-	\end{quote}
-	For backwards compatibility, you an also type:
-	\begin{quote}
-		\texttt{./StartParliament.sh}
+		\texttt{./parliament}
 	\end{quote}
 
-	Whatever platform you are using, this starts \ac{pmnt} as a command line process running under the current terminal.  You can shut down the server by typing ``exit'' or ``Ctrl+C''.
+	Whatever platform you are using, this starts \ac{pmnt} as a command line process running under the current terminal.
+
+	\item Shut down the server by typing ``exit'' or ``Ctrl+C''.
 \end{enumerate}
-
-The procedure above directly starts the \acp{pmnt} server.  However, in many cases it is preferable to run \ac{pmnt} as a Windows service or as a Linux/UNIX daemon.
-
-\subsubsection{Installing as a Windows Service}
-
-Use the following procedure to install \ac{pmnt} as a Windows service.
-
-If you want \ac{pmnt} to run under a dedicated account, start by creating that account.  This step is optional.
-
-Next create a data directory in a location of your choice.  One reasonable option is \path|C:\ProgramData\parliament-data|.  \ac{pmnt} will store its content here, as well as logging and temporary files.  Ensure that this directory is writable by the user established above.  (Even if you did not create such a user, you may need to grant access to the ``Local Service'' account.)
-
-Now unzip the \ac{pmnt} distribution to a location of your choice, such as \path|C:\Program Files\ParliamentKB|.  It is fine for this directory to be read-only for the user established above.
-
-It is important to note that neither of the two locations above should be on a mapped network drive.  This is because the mapping is an artifact of your user login, and services run outside that context.
-
-Make the following configuration changes:
-
-\begin{itemize}
-	\item In \path|parliament.ps1|, uncomment the two lines for the user name and password and fill in the user name and password established above, if you created one.  If not, skip this step.
-
-	\item Also in \path|parliament.ps1|, you may wish to edit certain other parameters, such as the host and port or the memory allocated to the JVM (see Section~\ref{section-configuring-pmnt}).  This step is also optional.
-
-	\item In \path|ParliamentKbConfig.txt|, set the \path|kbDirectoryPath| entry to the absolute path of the data directory you created above.
-\end{itemize}
-
-Finally, from the \ac{pmnt} directory, issue this command in PowerShell:
-
-\begin{verbatim}
-     .\parliament.ps1 -install
-\end{verbatim}
-
-Then open the Services management console, select \ac{pmnt}, and click the start button.
-
-At this point, \ac{pmnt} is running in the background, and whenever the system is shut down and restarted, \ac{pmnt} will also properly shut down and restart.  You can monitor and control (start, stop, and restart) \ac{pmnt} via the Services management console as above.
-
-To uninstall \ac{pmnt} as a Windows service, shut it down and then run this command:
-\begin{verbatim}
-     .\parliament.ps1 -uninstall
-\end{verbatim}
-
-If you change any of the parameters in \path|parliament.ps1| after installing as a service, (see Section~\ref{section-configuring-pmnt}) or upgrade your Java installation, you will need to uninstall and re-install the service in order to have those changes reflected in the installed service definition.
-
-\subsubsection{Installing as a Linux Daemon}
-
-This section is focused on variants of Linux that support systemd, such as RHEL and Ubuntu.  For setup on non-systemd Linux, please use the next section.
-
-To install \ac{pmnt} as a systemd service, we begin by establishing a system account (and group) under which \ac{pmnt} will run.  To do this from scratch, use the following command:
-
-\begin{quote}
-	\texttt{sudo adduser --system --group parliament}\hfill (Ubuntu)
-	\texttt{sudo useradd --system -U parliament}\hfill (RHEL)
-\end{quote}
-
-Next we need to create a data directory in a location of your choice, such as \path|/var/parliament-data|.  \ac{pmnt} will store its content here, as well as logging and temporary files.  Ensure that this directory is owned and writable by the group and user established above:
-
-\begin{verbatim}
-     sudo chmod u=rwx,go=rx /var/parliament-data
-     sudo chown -R parliament:parliament /var/parliament-data
-\end{verbatim}
-
-Now unzip the \ac{pmnt} distribution to a location of your choice, such as \path|/opt/ParliamentKB| or \path|/usr/local/ParliamentKB|.  It is fine for this directory to be owned by root and read-only for the group and user established above.
-
-Make the following configuration changes:
-
-\begin{itemize}
-	\item In \path|parliament|, uncomment the line containing \path|DAEMON_USER| and set it to the name of the user created above.
-
-	\item Also in \path|parliament|, you may wish to edit certain other parameters, such as the host and port or the memory allocated to the JVM (see Section~\ref{section-configuring-pmnt}).  This step is optional.
-
-	\item In \path|ParliamentKbConfig.txt|, set the \path|kbDirectoryPath| entry to the absolute path of the data directory you created above.
-\end{itemize}
-
-Finally, from the \ac{pmnt} directory, issue these commands:
-
-\begin{verbatim}
-     sudo ./parliament install
-     sudo systemctl start parliament
-\end{verbatim}
-
-At this point, \ac{pmnt} is running in the background, and whenever the system is shut down and restarted, \ac{pmnt} will also properly shut down and restart.  You control \ac{pmnt} via the \path|systemctl| command:
-\begin{quote}
-	\texttt{sudo systemctl \{ start | stop | restart \} parliament}
-\end{quote}
-
-You can check whether \ac{pmnt} is running with either of these commands:
-
-\begin{verbatim}
-     ps -ef | grep -i parliament | grep -v grep
-     sudo systemctl show parliament
-\end{verbatim}
-
-To uninstall \ac{pmnt} as a systemd service, run this command:
-\begin{verbatim}
-     sudo ./parliament uninstall
-\end{verbatim}
-
-\subsubsection{Installing as a UNIX Daemon}
-
-For UNIX and non-systemd Linux variants, this command will run \ac{pmnt} as a detached process suitable to run as a daemon:
-
-\begin{quote}
-	\texttt{./parliament \{ start | stop | restart \}}
-\end{quote}
-
-However, there is currently no built-in support for wiring this into the operating system's infrastructure for starting and stopping daemon processes, because this infrastructure varies from platform to platform.  In the future, this may be remedied for specific platforms, such as MacOS X.
 
 
 
 \subsection{Upgrading an Existing Installation}
 \label{section-std-server-upgrade}
 
-When upgrading an existing \ac{pmnt} installation to a newer version, the procedures of Section~\ref{section-std-server-init-deploy} are generally not sufficient because they ignore the migration of the data.  The \ac{pmnt} development team strives to maintain compatibility of file formats whenever possible.  In such cases, all that is required is to move the \path|kb-data| subdirectory of your \ac{pmnt} installation into the new \ac{pmnt} installation.  Of course, if you have customized \acp{pmnt} configuration, you will also need to make those changes in the new installation as well.
+When upgrading an existing \ac{pmnt} installation to a newer version, the procedures of Section~\ref{section-std-server-init-deploy} are not sufficient because they ignore the migration of existing data.  The \ac{pmnt} development team strives to maintain compatibility of file formats whenever possible.  In such cases, all that is required is to move the \path|kb-data| subdirectory of your \ac{pmnt} installation into the new \ac{pmnt} installation.  If you have customized \acp{pmnt} configuration, you will also need to make those changes in the new installation as well.
 
 However, from time to time \acp{pmnt} file formats do change, and in such cases a different migration procedure is required.  Following this procedure even in those cases where it is not required has some benefits as well, since it frees up any unused space in the \ac{pmnt} data files.  This is the way to perform such a migration:
 
 \begin{enumerate}
 	\item\label{upgrade-procedure-first-step}\textbf{\emph{Before upgrading,}} point your browser at your \ac{pmnt} server.  The \ac{url} for this is \nolinkurl{http://<host>:<port>/parliament/}.  By default this will be \nolinkurl{http://localhost:8089/parliament/}.
 
-	\item Click on the ``Export'' link.
+	\item Click on the ``Export Data'' link.
 
-	\item\label{item-export-download}Click on the ``Export Repository'' button.  This will start a download whose file name looks like this:
+	\item\label{item-export-download}Click on the ``Backup Repository'' button.  This will start a download whose file name looks like this:
 \begin{quote}\path|parliament-export-localhost-<date>-<time>.zip|\end{quote}
 
 	\item When the download finishes, shut down \ac{pmnt}.  Rename the \ac{pmnt} installation directory if you want your upgraded installation to reside in the same place.
@@ -250,32 +154,33 @@ However, from time to time \acp{pmnt} file formats do change, and in such cases 
 
 	\item Point your browser at the new \ac{pmnt} server.  The \ac{url} is the same as the one in Step~\ref{upgrade-procedure-first-step} above.
 
-	\item Click on the ``Insert Data'' link.  In the ``Import Repository'' section, press the ``Choose File'' button and select the file you downloaded in Step~\ref{item-export-download} above.  Then press the ``Import Repository'' button.
+	\item Click on the ``Insert Data'' link.  In the ``Restore Repository Backup'' section, press the ``Choose File'' button and select the file you downloaded in Step~\ref{item-export-download} above.  Then press the ``Restore Repository Backup'' button.
 \end{enumerate}
 
-Once you see the ``Insert operation successful'' message, your upgraded \ac{pmnt} server is ready for business.
+Once you see the ``Import Complete'' message, your upgraded \ac{pmnt} server is ready for business.
 
 \subsection{Usage}
 \label{section-std-server-usage}
 
 \subsubsection{Shutting \ac{pmnt} Down}
 
-\emph{Important note:}  When you shut down \ac{pmnt}, it is important to shut it down gracefully.  Otherwise, the \ac{pmnt} files may not be flushed to disk before they are closed, and they may be corrupted.  If you run \ac{pmnt} as a Windows service or Linux/UNIX Daemon (see Section~\ref{section-std-server-init-deploy}), this is generally not a problem, because the operating system sends a shutdown message at the appropriate times.  However, if you run \ac{pmnt} explicitly using the command
-\begin{quote}
-	\path|parliament foreground|\hfill(on Linux/UNIX)\\
-	\path|.\parliament.ps1 -foreground|\hfill(on Windows)
-\end{quote}
-then you will need to shut it down yourself by typing the command ``exit'' followed by «return» or «enter».
+\emph{Important note:}  When you shut down \ac{pmnt}, it is important to shut it down gracefully.  Otherwise, there is a small probability that the \ac{pmnt} files may not be flushed to disk before they are closed, and they may be corrupted.  If you run \ac{pmnt} as a Container (see Section~\ref{section-std-server-init-deploy}), this is generally not a problem, because the operating system sends a shutdown message at the appropriate times.  However, if you run \ac{pmnt} from the command line, you will need to shut it down yourself by typing ``exit'' or ``Ctrl+C''.
 
 \subsubsection{\ac{pmnt} Connection \acp{url}}
 
-To use the \ac{pmnt} server, you will need the the connection \acp{url} listed in Table~\ref{table-pmnt-connect-urls}.  (See Section~\ref{section-configuring-pmnt} to configure your server to run on a host name and port other than ``localhost'' and ``8089''.)
+To use the \ac{pmnt} server, you will need the connection \acp{url} listed in Table~\ref{table-pmnt-connect-urls}. Note that these need to be prefixed with \nolinkurl{http://«host»:«port»} (or \nolinkurl{http://localhost:8089} by default).  See Section~\ref{section-configuring-pmnt} to configure your server to run on a host name and port other than ``localhost'' and ``8089.''
 \begin{table}[htbp]
 	\centering\small
 	\begin{tabular}{ll}
-		\acs*{http} interface: & \nolinkurl{http://localhost:8089/parliament}\\
-		\ac{sparql} endpoint: & \nolinkurl{http://localhost:8089/parliament/sparql}\\
-		Bulk loader: & \nolinkurl{http://localhost:8089/parliament/bulk}\\
+		\toprule
+		Endpoint Description & \ac{url} Path\\
+		\headingrule
+		Web interface: & \nolinkurl{/parliament}\\
+		\ac{sparql} endpoint: & \nolinkurl{/parliament/sparql}\\
+		\ac{sparql} Update endpoint: & \nolinkurl{/parliament/update}\\
+		\ac{sparql} Graph Store \acs*{http} Protocol: & \nolinkurl{/parliament/graphstore}\\
+		Legacy bulk insert/export endpoint: & \nolinkurl{/parliament/bulk}\\
+		\bottomrule
 	\end{tabular}
 	\caption{\acs*{pmnt} Server Connection \acsp*{url}}
 	\label{table-pmnt-connect-urls}
@@ -287,79 +192,51 @@ You can use the \ac{pmnt} server interactively by pointing a web browser at the 
 
 \subsubsection{Using \ac{pmnt} Programmatically}
 
-In order to issue queries programmatically, you will need to write some code to send \ac{sparql}-compliant \ac{http} requests.  One library that can send such requests on your behalf is Jena itself.  Figure~\ref{figure-sparql-select-query-with-jena3} shows sample code for issuing a \ac{sparql} select query.
+In order to issue queries programmatically, you will need to write some code to send \ac{sparql}-compliant \ac{http} requests.  One library that can send such requests on your behalf is Jena itself.  Figure~\ref{figure-sparql-select-query-with-jena} shows sample code for issuing a \ac{sparql} select query.
 \begin{figure}[htbp]
 	\footnotesize
-	\VerbatimInput{includes/jena3-select.java}
-	\caption{Issuing a \acs*{sparql} select query with Jena 3}
-	\label{figure-sparql-select-query-with-jena3}
+	\VerbatimInput{includes/jena-select.java}
+	\caption{Issuing a \acs*{sparql} select query with Jena}
+	\label{figure-sparql-select-query-with-jena}
 \end{figure}
 Note that this code uses the \ac{sparql} endpoint \ac{url} from Table~\ref{table-pmnt-connect-urls}.
 
-Similarly, we can also update the content of \ac{pmnt} programmatically using the Jena library to send \ac{sparql}-Update requests.  Figure~\ref{figure-sparql-update-with-jena-3} shows sample code for issuing an update.
+Similarly, we can also update the content of \ac{pmnt} programmatically using the Jena library to send \ac{sparql}-Update requests.  Figure~\ref{figure-sparql-update-with-jena} shows sample code for issuing an update.
 \begin{figure}[htbp]
 	\footnotesize
-	\VerbatimInput{includes/jena3-update.java}
-	\caption{Issuing a \acs*{sparql}-Update request with Jena 3}
-	\label{figure-sparql-update-with-jena-3}
+	\VerbatimInput{includes/jena-update.java}
+	\caption{Issuing a \acs*{sparql}-Update request with Jena}
+	\label{figure-sparql-update-with-jena}
 \end{figure}
 
-Another common update operation is inserting a body of \ac{rdf} into \ac{pmnt}, shown in Figure~\ref{figure-sparql-insert-with-jena-3}.
+Another common update operation is inserting a body of \ac{rdf} into \ac{pmnt}, shown in Figure~\ref{figure-sparql-insert-with-jena}.
 \begin{figure}[htbp]
 	\footnotesize
-	\VerbatimInput{includes/jena3-insert.java}
-	\caption{Inserting \acs*{rdf} with Jena 3}
-	\label{figure-sparql-insert-with-jena-3}
+	\VerbatimInput{includes/jena-insert.java}
+	\caption{Inserting \acs*{rdf} with Jena}
+	\label{figure-sparql-insert-with-jena}
 \end{figure}
 
 \subsubsection{Inserting Data into \ac{pmnt} from the Command Line}
 
-\acp{pmnt} client-side library provides a handy command line utility for inserting a file containing \ac{rdf} into a running \ac{pmnt} instance.  The command here is broken over several lines only to fit the printed page:
+The \path|curl| command line utility can insert an \ac{rdf} file into a running \ac{pmnt} instance via the \ac{sparql} Graph Store \acs*{http} Protocol (line breaks inserted for readability):
 
 \begin{verbatim}
-   java -cp "clientJars/*"
-   com.bbn.parliament.client.jena.RemoteInserter
-   <hostname> <port> <inputfile> [<graph-name>]
+  curl -H 'Content-Type: text/turtle' --data-binary '@file.ttl'
+    'http://localhost:8089/parliament/graphstore?default'
 \end{verbatim}
 
-where \path|clientJars| is the full path name of the directory of that name under your Parliament installation.
+If the command succeeds, \path|curl| will print a response containing the strings ``HTTP OK: 200'' and ``Inserted \emph{N} statements.''
 
-\subsubsection{Using \acp{pmnt} RemoteModel Class}
+To insert into a named graph, replace the \path|?default| portion of the \ac{url} with \path|?graph=«graph-iri»|, where \path|«graph-iri»| is the \ac{iri} of the named graph. For example:
 
-\ac{pmnt} also provides a Java library to help programmers interact with the \ac{pmnt} server, which can be found here:
-\begin{quote}
-	\path|ParliamentKB/lib/ParliamentClient.jar|
-\end{quote}
-This library leverages the Jena functionality shown above, but exposes a few extra features of the \ac{pmnt} server that are not accessible within the bounds of \ac{sparql}.  Note, however, that for common operations, there is no need to use this library.
+\begin{verbatim}
+  curl -H 'Content-Type: text/turtle' --data-binary '@file.ttl'
+    'http://localhost:8089/parliament/graphstore
+    ?graph=http://example.org/graph1'
+\end{verbatim}
 
-To use this approach, first add the above jar file to your class path.  Then create a \verb|RemoteModel| object as shown in Figure~\ref{figure-using-remote-jena-model}.  This object allows you to access and manipulate the \ac{pmnt} repository identified by the \acp{url} passed to the constructor, which are again taken from Table~\ref{table-pmnt-connect-urls}.
-\begin{figure}[htbp]
-	\footnotesize
-	\centering
-	\begin{verbatim}
-import com.bbn.parliament.client.jena.RemoteModel;
-
-void useRemoteParliamentModel()
-{
-  // Create model:
-  RemoteModel rmParliament = new RemoteModel(
-    "http://localhost:8089/parliament/sparql",
-    "http://localhost:8089/parliament/bulk");
-
-  // Insert contents of another Jena Model:
-  rmParliament.insertStatements(myPopulatedJenaModel);
-
-  // Perform SPARQL SELECT query:
-  ResultSet results = rmParliament.selectQuery(myQueryString);
-
-  // Add statements using SPARQL-UPDATE:
-  rmParliament.updateQuery(mySparqlUpdateQueryString);
-}
-	\end{verbatim}
-	\caption{Using \ac{pmnt} Via a Remote Jena Model}
-	\label{figure-using-remote-jena-model}
-\end{figure}
-Note that the query strings passed to the remote model in Figure~\ref{figure-using-remote-jena-model} follow standard \ac{sparql} and \ac{sparql}-UPDATE formats, including support for named graphs.  Also note that the \verb|RemoteModel| class exposes the bulk loading feature of the \ac{pmnt} server, allowing the efficient loading of large bodies of \ac{rdf}.
+This will create the named graph if it does not already exist.
 
 
 
@@ -503,12 +380,7 @@ The section begins with a how-to for common configuration tasks, followed by a m
 	\item The C++ heap (not configurable)
 \end{itemize}
 
-Achieving the right balance between these pools of memory is tricky, but here are a few guidelines:
-\begin{itemize}
-	\item Don't make the Java heap too big. Many Java programmers are accustomed to setting their Java heap as large as possible, but for \ac{pmnt}, the Java heap is not as important as the memory-mapped files.
-
-	\item The Java heap size should be significantly less than the total memory available, in order to leave sufficient memory for the memory-mapped files.
-\end{itemize}
+Achieving the right balance between these pools of memory is tricky, but the key thing to keep in mind is, don't make the Java heap too large. Java programmers are accustomed to setting their Java heap as large as possible, but for \ac{pmnt}, the Java heap is not as important as the memory-mapped files. The Java heap size should be significantly less than the total memory available to leave sufficient memory for the memory-mapped files.
 
 \emph{Concurrency:} \ac{pmnt} has a many readers/single writer model of concurrency.  In other words, if \ac{pmnt} receives several requests at once, and all of them are read-only requests (such as a query), then \ac{pmnt} will execute those requests in parallel.  Whenever \ac{pmnt} receives a request that requires writing (such as an insert, a \ac{sparql} Update, or a graph creation), that request will wait until all other executing requests are finished, and then it will execute. And while it is executing, all other requests (read or write) will wait in the queue until it is finished.
 
@@ -520,11 +392,9 @@ This model works well in most situations, where the number of concurrent request
 
 \acp{pmnt} startup script, located in the root installation directory, contains a few configuration settings.  On Windows it is the PowerShell script \path|parliament.ps1|, while other platforms use the bash script \path|parliament|.
 
-Change the host name (or IP address) and port of the \ac{sparql} endpoint by setting \verb|JETTY_HOST| and \verb|JETTY_PORT| in the startup script (\verb|$jettyHost| and \verb|$jettyPort| on Windows).  These default to \verb|localhost| and 8089, respectively.  To make \ac{pmnt} addressable on any of a host's network interfaces, change \verb|JETTY_HOST| to ``0.0.0.0''.
+Change the host name (or IP address) and port of the \ac{sparql} endpoint by setting \verb|SPRING_BOOT_HOST| and \verb|SPRING_BOOT_PORT| in the startup script (\verb|$springBootHost| and \verb|$springBootPort| on Windows).  These default to \verb|localhost| and 8089, respectively.  To make \ac{pmnt} addressable on any of a host's network interfaces, change \verb|SPRING_BOOT_HOST| to ``0.0.0.0''.
 
-Setting \verb|DEFAULT_JAVA_HEAP_SIZE| (\verb|$defaultJavaHeapSize| on Windows) controls the amount of memory set aside for the Java heap.  A common mistake of people used to Java software is to set this to the total memory on the machine.  While it is certainly important to give the \ac{jvm} sufficient memory, a significant portion of \ac{pmnt} is native code that does not use the Java heap.  Setting this parameter too high will starve the native code of the memory it needs.  The default of 512 MB is reasonable for machines with 4 to 8 GB of total memory.  On Windows, this value must be an integer in units of MB.  On other platforms, it is an integer concatenated with an `m' (MB) or `g' (GB).
-
-If you are running the server as a Windows service, you must re-run the startup script with the install option to make your changes effective.
+Setting \verb|DEFAULT_JAVA_HEAP_SIZE| (\verb|$defaultJavaHeapSize| on Windows) controls the amount of memory set aside for the Java heap. Section~\ref{section-common-config-tasks} above offers guidelines for this setting. The syntax for this setting is an integer concatenated with an `m' (MB) or `g' (GB), and the default is `1g'.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{\acp{pmnt} Main Configuration File}
@@ -554,11 +424,11 @@ The recognized settings are as follows:
 
 	\item[uriTableFileName] The name of the memory-mapped file containing resource strings (URIs and literals). \emph{Default: \path|uris.mem|}
 
-	\item[uriToIntFileName] The name of the file containing the mapping from numeric resource identifiers to resource strings.  This file is managed by RocksDB. \emph{Default: \path|u2i.db|}
+	\item[uriToIntFileName] The name of the directory containing the mapping from numeric resource identifiers to resource strings.  The contents of this directory are managed by RocksDB. \emph{Default: \path|u2i.db|}
 
-	\item[stmtToIdFileName] This obsolete setting is now ignored.  It indicated the name of a file that mapped tuples of numeric resource identifiers to numeric statement identifiers.  This file was omitted by default, and was included only if the setting ``keepDupStmtIdx'' was turned on.  The default value was \path|stmt2id.db|.  If your configuration had ``keepDupStmtIdx'' turned off, then you can safely delete these two settings from your configuration file.  If it was turned on, then delete the file named by this setting and then delete these two settings from your configuration file.
+	\item[stmtToIdFileName] This obsolete setting is now ignored.
 
-	\item[keepDupStmtIdx] This obsolete setting is now ignored.  If set to ``yes'', \ac{pmnt} would maintain an extra file (named by the ``stmtToIdFileName'' option).  It was intended to be a performance optimization, but it rarely helped.  It defaulted to ``no''.  If you had this turned off then you can simply delete this and the ``stmtToIdFileName'' options from your configuration.  If it was turned on, then delete the file named by the ``stmtToIdFileName'' option and then delete these two settings from your configuration file.
+	\item[keepDupStmtIdx] This obsolete setting is now ignored.
 
 	\item[readOnly] When set to ``yes'', prevents \ac{pmnt} from changing the underlying storage files in any way. \emph{Default: ``no''}
 
@@ -667,10 +537,10 @@ where ``IFP'' stands for ``InverseFunctionalProperty''. \emph{Default: ``on''}
 
 These files configure logging for \acp{pmnt} Java code:
 \begin{quote}
-	\path|ParliamentKB/conf/log4j.foreground.properties|\\
-	\path|ParliamentKB/conf/log4j.daemon.properties|
+	\path|ParliamentKB/config/logback.foreground.xml|\\
+	\path|ParliamentKB/config/logback.container.xml|
 \end{quote}
-They are standard Log4J configuration files.  The first applies when running \ac{pmnt} from the command line, and the second is used when running as a daemon or service.
+They are standard Logback configuration files.  The first applies when running \ac{pmnt} from the command line, and the second is used when running as a container.
 
 The file \path|ParliamentLogConfig.txt| controls native code logging.  Its format is similar to \path|ParliamentKbConfig.txt|, and it is located in a similar way (see Section~\ref{section-main-config}), using file name \path|ParliamentLogConfig.txt| and the environment variable \verb|PARLIAMENT_LOG_CONFIG_PATH|.  The recognized settings are:
 \begin{description}
@@ -710,12 +580,6 @@ The file \path|ParliamentLogConfig.txt| controls native code logging.  Its forma
 
 	\item[logChannelLevel] Overrides the global logging level for a single channel.  (Generally a channel is equivalent to a class in the source code.)  The value of this setting takes the form \begin{quote}\emph{«channel-name» = «log-level»}\end{quote} where \emph{«log-level»} takes one of the values listed for the global logging level above.  This option may be repeated to override the level for multiple channels. \emph{Default: None}
 \end{description}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{\acp{pmnt} Servlet Container Configuration}
-\label{section-servlet-container-config}
-
-The file \path|ParliamentKB/conf/jetty.xml| configures the Jetty servlet container.  Generally, there is no need to modify this file.
 
 
 
@@ -771,156 +635,12 @@ This is no longer standards-compliant, and it won't necessarily produce exactly 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{\ac{pmnt} in Other Servlet Containers}
-\label{section-parliament-with-jena-and-tomcat}
-
-The most common way to deploy \ac{pmnt} uses the Jetty servlet container.  This scenario is discussed above in Section~\ref{section-std-server-deploy}.  However, the \ac{pmnt} distribution contains a war file that can be deployed in any servlet container.  This section discusses how to deploy \ac{pmnt} in other servlet containers, such as Apache Tomcat.
-
-\begin{enumerate}
-	\item First acquire and install Apache Tomcat\urlcite{http://tomcat.apache.org/} according to its own installation instructions.  This will result in a directory containing your Tomcat installation, which, in keeping with the customary nomenclature of Tomcat, we will call \path|CATALINA_HOME| here.
-
-	\item Create a directory for the native \ac{pmnt} binaries.  This can reside anywhere on your machine, but the directory \path|CATALINA_HOME/bin/parliament| is a good choice.
-
-	\item Copy the native binaries into this directory from the \path|bin| directory of the \ac{pmnt} binary distribution.
-
-	\item Copy \acp{pmnt} configuration files \path|ParliamentKbConfig.txt| and \path|ParliamentLogConfig.txt| from the root of the \ac{pmnt} distribution into the \path|CATALINA_HOME/bin/parliament| directory.
-
-	\item Copy \path|parliament.war| from the \path|webapps| directory of the \ac{pmnt} distribution into Tomcat's \path|webapps| directory, which by default is the directory \path|CATALINA_HOME/webapps|.
-
-	\item On Windows only, install the run-time libraries by running the installer in the \path|RedistributablePackages| subdirectory of your \ac{pmnt} distribution.
-
-	\item In your favorite text editor, open the file
-{\small\begin{quote}
-\path|CATALINA_HOME/bin/parliament/ParliamentKbConfig.txt|
-\end{quote}}
-	and change the following line:
-\begin{quote}
-\texttt{kbDirectoryPath = kb-data}
-\end{quote}
-	to point to a directory suitable for storing your knowledge base.  In an operational deployment of \ac{pmnt}, this is often set to a large drive dedicated to the storage of the knowledge base, such as a \ac{raid}, \ac{nas}, or \ac{san}.  For testing purposes, the default is fine.  This will store the knowledge base in \path|CATALINA_HOME/bin/parliament/kb-data|.
-
-	\item If you have not already done so while installing Tomcat, create a file called \path|setenv.sh| in \path|CATALINA_HOME/bin| and within it set the environment variable \path|CATALINA_OPTS| like so:
-{\footnotesize\begin{verbatim}
-JAVA_HEAP_SIZE=512m
-PMNT_BIN="$CATALINA_HOME/bin/parliament"
-export CATALINA_OPTS=-Djava.library.path=$PMNT_BIN
-export CATALINA_OPTS="$CATALINA_OPTS -Xmx$JAVA_HEAP_SIZE"
-\end{verbatim}}
-	On Windows, the file name should be \path|setenv.bat| and its content should look like this:
-{\footnotesize\begin{verbatim}
-set JAVA_HEAP_SIZE=512m
-set PMNT_BIN=%CATALINA_HOME%\bin\parliament
-set CATALINA_OPTS=-Djava.library.path=%PMNT_BIN%
-set CATALINA_OPTS=%CATALINA_OPTS% -Xmx%JAVA_HEAP_SIZE%
-\end{verbatim}}
-	Note that you can control the amount of memory set aside for the Java virtual machine by changing \verb|JAVA_HEAP_SIZE| in the scripts above.  While it is important to allow the \ac{jvm} sufficient memory, it is also important to realize that \ac{pmnt} is native code, and therefore does not use the Java heap.  Java programmers are often inclined to set \verb|JAVA_HEAP_SIZE| close to the total memory of the machine, but this will starve \ac{pmnt} of the memory it needs to achieve good performance.  The default values given above, 128 MB and 512 MB, are reasonable values for machines with 4 to 8 GB of total memory.
-
-	\item Start Tomcat according to its documentation.  If you redeploy \ac{pmnt} into a running Tomcat instance, the server will need to be restarted.  For instructions on using your \ac{pmnt} server, see Section~\ref{section-std-server-usage}.
-
-	\item\emph{Please note:}  When you want to shut down the \ac{kb}, it is important to shut it down gracefully.  Otherwise, the \ac{pmnt} files may not be flushed to disk before they are closed, and they may be badly corrupted.  If you run Tomcat as a Windows service or UNIX Daemon, this is generally not a problem, because the operating system sends a shut-down message at the appropriate time.  If, however, you run Tomcat explicitly via its startup script, you will need to shut it down yourself with Tomcat's stop script.
-\end{enumerate}
-
-\subsubsection{Glassfish Notes}
-When deploying \ac{pmnt} to Glassfish, note the following:
-\begin{itemize}
-	\item Glassfish sets it's own \verb|java.library.path| property.  The \ac{pmnt} libraries must either be copied into \path|«Glassfish install dir»/lib| or you must alter the Glassfish configuration such that the libraries are available on \verb|java.library.path|.
-
-	\item By default, \ac{pmnt} stores it's data files in the \path|kb-data| subdirectory of the current working directory.  In the case of Glassfish, this will be \path|«Glassfish install dir»/domains/domain1/config/kb-data|.  To change this, edit \path|ParliamentKbConfig.txt| to change the setting \verb|kbDirectoryPath| to the location (absolute path) where your data files reside.
-
-	\item If \ac{pmnt} is redeployed into a running instance of Glassfish, the server will need to be restarted.
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Using \ac{pmnt} In-Process}
-\label{section-parliament-in-process}
-
-Jena is a popular toolkit for manipulating \ac{rdf} data in Java programs.  The central concept in the Jena class library is the Model interface.  An object of type Model represents a graph of \ac{rdf} data, and features many methods for manipulating that data.  With just a few lines of code, you can create a Jena Model that is backed by an instance of \ac{pmnt}, as demonstrated by Figure~\ref{figure-creating-jena-model}.
-	\begin{figure}[htbp]
-		\footnotesize
-		\centering
-		\begin{verbatim}
-import java.io.File;
-import com.bbn.parliament.kb_graph.KbGraph;
-import com.bbn.parliament.kb_graph.KbGraphFactory;
-import com.bbn.parliament.core.jni.Config;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-
-private Model createParliamentModel()
-{
-  KbGraph baseGraph = KbGraphFactory.createDefaultGraph();
-  return ModelFactory.createModelForGraph(baseGraph);
-}
-		\end{verbatim}
-		\caption{Creating a Jena Model backed by \ac{pmnt}}
-		\label{figure-creating-jena-model}
-	\end{figure}
-The \verb|createParliamentModel| method returns a Jena model backed by a \ac{pmnt} instance.  With this model, you can do any of the things you normally do with a Jena model, such as call \verb|read| on it to load a file into it, or query it.
-
-The \verb|useParliamentModel| method shown in Figure~\ref{figure-using-jena-model} demonstrates how to call \verb|createParliamentModel|.  The important thing to note here is the try-finally construct.  This guarantees that the model is closed properly, even if an exception is thrown.  Closing the model is crucial, because if you don't, the \ac{pmnt} files will not be flushed to disk before they are closed, and they will almost certainly be badly corrupted.
-
-	\begin{figure}[htbp]
-		\footnotesize
-		\centering
-		\begin{verbatim}
-import com.hp.hpl.jena.rdf.model.Model;
-
-void useParliamentModel()
-{
-  Model kbModel = createParliamentModel();
-  try
-  {
-    // Use the model according to the Jena documentation.
-    // For instance, to issue a SPARQL query:
-    QueryExecution exec = QueryExecutionFactory.create(
-      sparqlQueryString, kbModel);
-    for (ResultSet rs = exec.execSelect(); rs.hasNext(); rs.next())
-    {
-      // Do something useful with the result set here
-    }
-  }
-  finally
-  {
-    if (kbModel != null && !kbModel.isClosed())
-    {
-      kbModel.close();
-      kbModel = null;
-    }
-  }
-}
-		\end{verbatim}
-		\caption{Using a Jena Model backed by \ac{pmnt}}
-		\label{figure-using-jena-model}
-	\end{figure}
-
-Naturally, there is some setup required to make this work:
-\begin{enumerate}
-	\item You will need \path|KbGraph.jar| and \path|Parliament.jar| from your binary distribution, along with the Jena jar files, which you can download from the Jena web site\urlcite{https://jena.apache.org/}.  Place all of these jar files in a convenient location and ensure that they are added to your class path.
-
-	\item Copy the following files from the \path|bin| directory of the \ac{pmnt} distribution to a convenient location, such as the directory used for the jar files above:
-	\begin{itemize}[noitemsep]
-		\item All of the \acp{dll}\footnote{Or ``shared libraries'' on UNIX-like systems.  For brevity, we will just use ``\acp{dll}.''}.
-		\item \path|ParliamentAdmin| (\path|ParliamentAdmin.exe| on Windows)
-		\item \path|ParliamentKbConfig.txt|
-		\item \path|ParliamentLogConfig.txt|
-	\end{itemize}
-
-	\item To ensure that the \ac{jvm} can find the \acp{dll} or shared libraries, add their directory to the Java system property \verb|java.library.path|.
-
-	\item On Windows only, install the run-time libraries by running the installer in the \path|RedistributablePackages| subdirectory of your \ac{pmnt} distribution.
-
-	\item Customize the configuration \path|ParliamentKbConfig.txt| as desired.  In particular, the \texttt{kbDirectoryPath} setting defaults to \path|./kb-data|.  To place your \ac{pmnt} \ac{kb} files in a different location, change this setting to the directory of your choice.  This is especially useful for placing the \ac{kb} files on a drive array or for maintaining several \acp{kb} and switching between them.
-\end{enumerate}
-
-If you do not wish to use the \ac{pmnt} configuration file to configure your application, you can replace the first line of the method in Figure~\ref{figure-creating-jena-model}, \verb|createParliamentModel|, with a line that creates a Config instance using the default constructor and then set the Config fields yourself.  This may be useful for centralizing your application's configuration in a single file.
-
-If \verb|createParliamentModel| throws an \verb|UnsatisfiedLinkError| exception, see Section~\ref{section-troubleshooting} for possible resolutions.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The ParliamentAdmin Utility}
 \label{section-parliamentadmin-utility}
 
 \emph{[Yet to be written]}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Troubleshooting}
@@ -947,22 +667,10 @@ Because \ac{pmnt} is most often used within a Java environment, the most common 
 
 	\item Multiple Java installations can confuse the \ac{dll} loading process.  If you invoke \ac{pmnt} using any of the following:
 \begin{quote}
-	\path~parliament {foreground|install}~\hfill(on Linux/UNIX)\\
-	\path|.\parliament.ps1 -foreground|\hfill(on Windows)
+	\path|./parliament|\hfill(on Linux/UNIX)\\
+	\path|.\parliament.ps1|\hfill(on Windows)
 \end{quote}
-	then the Java installation is found by simply invoking the command \path|java| and relying on the operating system to locate the installation.  In these cases, the \verb|JAVA_HOME| environment variable is not used, unless the operating system uses it.
-
-	On Windows, the process by which the \path|java| command finds the \ac{jvm} is quite complex.  The following web page sheds some light on how you can manage this process:
-\begin{quote}\small
-	\url{http://mindprod.com/jgloss/javaexe.html#MULTIPLES}
-\end{quote}
-
-	The following startup commands find Java differently:
-\begin{quote}
-	\path~parliament {start|stop|restart}~\hfill(on Linux/UNIX)\\
-	\path|.\parliament.ps1 -install|\hfill(on Windows)
-\end{quote}
-	Here the \path|java| command is not used at all, and instead the service executable directly loads the \path|jvm.dll| library, located via the \verb|JAVA_HOME| environment variable.  On Windows, this is done at the time the service is installed, so if you upgrade your Java installation after installation, you will have to uninstall and reinstall the service in order for it to find the \path|jvm.dll| library.
+	then the Java installation is found by simply invoking the command \path|java| and relying on the operating system to locate the installation.  The \verb|JAVA_HOME| environment variable is not used, unless the operating system uses it.
 
 	\item The process by which \ac{pmnt} loads its \acp{dll} on Windows is a bit complex:
 
