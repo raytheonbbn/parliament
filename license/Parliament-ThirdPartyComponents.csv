@@ -1,34 +1,27 @@
-﻿Application/Product,Developer/Company,Source (US/Foreign),org,name,rev,Web Site,License,License URL
+Application/Product,Developer/Company,Source (US/Foreign),org,name,rev,Web Site,License,License URL
 Ant-Contrib,Matt Inger and Curt Arnold,US,ant-contrib,ant-contrib,1.0b3,http://ant-contrib.sourceforge.net,Apache license 2.0,http://www.apache.org/licenses/
-Apache Commons Daemon,Apache Commons Project,Foreign?,commons-daemon,commons-daemon,1.2.4,http://commons.apache.org/proper/commons-daemon/,Apache license 2.0,http://www.apache.org/licenses/
+Apache Commons CSV,Apache Commons Project,Foreign?,org.apache.commons,commons-csv,1.14.1,http://commons.apache.org/proper/commons-csv/,Apache license 2.0,http://www.apache.org/licenses/
 Apache Commons DBCP,Apache Commons Project,Foreign?,commons-dbcp,commons-dbcp,1.4,http://commons.apache.org/proper/commons-dbcp/,Apache license 2.0,http://www.apache.org/licenses/
-Apache Commons FileUpload,Apache Commons Project,Foreign?,commons-fileupload,commons-fileupload,1.4,http://commons.apache.org/proper/commons-fileupload/,Apache license 2.0,http://www.apache.org/licenses/
-Berkeley DB,Oracle,US,,,5.3.28,http://www.oracle.com/,Berkeley DB License (BSD-like),
+Apache Commons IO,Apache Commons Project,Foreign?,commons-io,commons-io,2.22.0,http://commons.apache.org/proper/commons-io/,Apache license 2.0,http://www.apache.org/licenses/
+Apache Commons Lang,Apache Commons Project,Foreign?,org.apache.commons,commons-lang3,3.20.0,http://commons.apache.org/proper/commons-lang/,Apache license 2.0,http://www.apache.org/licenses/
 "Berkeley DB, Java Edition",Oracle,US,com.sleepycat,je,18.3.12,http://www.oracle.com/,Apache license 2.0,https://docs.oracle.com/cd/E17277_02/html/LICENSE.txt
-Boost Libraries,Boost Community,"Mixed, US Chair",,,1.77.0,https://www.boost.org/,Boost software license,http://www.boost.org/users/license.html
-GeoTools EPSG Extensions,GeoTools Project,Foreign (Italy),org.geotools,gt-epsg-extension,24.2,http://www.geotools.org/,LGPL,http://www.gnu.org/copyleft/lesser.html
-GeoTools EPSG HSQL Authority,GeoTools Project,Foreign (Italy),org.geotools,gt-epsg-hsql,24.2,http://www.geotools.org/,LGPL,http://www.gnu.org/copyleft/lesser.html
-GeoTools EPSG WKT Authority,GeoTools Project,Foreign (Italy),org.geotools,gt-epsg-wkt,24.2,http://www.geotools.org/,LGPL,http://www.gnu.org/copyleft/lesser.html
-GeoTools Coord. Ref. Systems,GeoTools Project,Foreign (Italy),org.geotools,gt-referencing,24.2,http://www.geotools.org/,LGPL,http://www.gnu.org/copyleft/lesser.html
-GeoTools Core XML Support,GeoTools Project,Foreign (Italy),org.geotools.xsd,gt-xsd-core,24.2,http://www.geotools.org/,LGPL,http://www.gnu.org/copyleft/lesser.html
-GeoTools GML3 XML Support,GeoTools Project,Foreign (Italy),org.geotools.xsd,gt-xsd-gml3,24.2,http://www.geotools.org/,LGPL,http://www.gnu.org/copyleft/lesser.html
-GeoTools KML XML Support,GeoTools Project,Foreign (Italy),org.geotools.xsd,gt-xsd-kml,24.2,http://www.geotools.org/,LGPL,http://www.gnu.org/copyleft/lesser.html
-httpclient,Apache HttpComponents Project,Mixed,org.apache.httpcomponents,httpclient,4.5.2,http://hc.apache.org/,Apache license 2.0,http://www.apache.org/licenses/
-Jena ARQ,Andy Seabourne,Foreign (Britain),org.apache.jena,jena-arq,2.9.4,http://jena.apache.org/,Apache license 2.0,http://www.apache.org/licenses/
-Jetty (apache-jsp),Eclipse Foundation,Mixed,org.eclipse.jetty,apache-jsp,9.4.36.v20210114,http://www.eclipse.org/jetty,Apache license 2.0 or Eclipse Public License 1.0,"http://www.apache.org/licenses/, http://www.eclipse.org/legal/epl-v10.html"
-Jetty (apache-jstl),Eclipse Foundation,Mixed,org.eclipse.jetty,apache-jstl,9.4.36.v20210114,http://www.eclipse.org/jetty,Apache license 2.0 or Eclipse Public License 1.0,"http://www.apache.org/licenses/, http://www.eclipse.org/legal/epl-v10.html"
-Jetty (jetty-annotations),Eclipse Foundation,Mixed,org.eclipse.jetty,jetty-annotations,9.4.36.v20210114,http://www.eclipse.org/jetty,Apache license 2.0 or Eclipse Public License 1.0,"http://www.apache.org/licenses/, http://www.eclipse.org/legal/epl-v10.html"
-Jetty (jetty-deploy),Eclipse Foundation,Mixed,org.eclipse.jetty,jetty-deploy,9.4.36.v20210114,http://www.eclipse.org/jetty,Apache license 2.0 or Eclipse Public License 1.0,"http://www.apache.org/licenses/, http://www.eclipse.org/legal/epl-v10.html"
-Jetty (jetty-jmx),Eclipse Foundation,Mixed,org.eclipse.jetty,jetty-jmx,9.4.36.v20210114,http://www.eclipse.org/jetty,Apache license 2.0 or Eclipse Public License 1.0,"http://www.apache.org/licenses/, http://www.eclipse.org/legal/epl-v10.html"
-Jetty (jetty-security),Eclipse Foundation,Mixed,org.eclipse.jetty,jetty-security,9.4.36.v20210114,http://www.eclipse.org/jetty,Apache license 2.0 or Eclipse Public License 1.0,"http://www.apache.org/licenses/, http://www.eclipse.org/legal/epl-v10.html"
-Jetty (jetty-server),Eclipse Foundation,Mixed,org.eclipse.jetty,jetty-server,9.4.36.v20210114,http://www.eclipse.org/jetty,Apache license 2.0 or Eclipse Public License 1.0,"http://www.apache.org/licenses/, http://www.eclipse.org/legal/epl-v10.html"
-Jetty (jetty-servlet),Eclipse Foundation,Mixed,org.eclipse.jetty,jetty-servlet,9.4.36.v20210114,http://www.eclipse.org/jetty,Apache license 2.0 or Eclipse Public License 1.0,"http://www.apache.org/licenses/, http://www.eclipse.org/legal/epl-v10.html"
-Jetty (jetty-util),Eclipse Foundation,Mixed,org.eclipse.jetty,jetty-util,9.4.36.v20210114,http://www.eclipse.org/jetty,Apache license 2.0 or Eclipse Public License 1.0,"http://www.apache.org/licenses/, http://www.eclipse.org/legal/epl-v10.html"
-Jetty (jetty-webapp),Eclipse Foundation,Mixed,org.eclipse.jetty,jetty-webapp,9.4.36.v20210114,http://www.eclipse.org/jetty,Apache license 2.0 or Eclipse Public License 1.0,"http://www.apache.org/licenses/, http://www.eclipse.org/legal/epl-v10.html"
-jts-core,Martin Davis,,org.locationtech.jts,jts-core,1.18.0,https://projects.eclipse.org/projects/locationtech.jts,EPL 2.0,https://github.com/locationtech/jts/blob/master/LICENSE_EPLv2.txt
-JUnit 5,JUnit Lambda Project,Foreign,org.junit.jupiter,junit-jupiter,5.8.1,https://junit.org/junit5/,EPL 2.0,https://github.com/junit-team/junit5/blob/master/LICENSE.md
-JUnit 5,JUnit Lambda Project,Foreign,org.junit.platform,junit-platform-launcher,1.8.1,https://junit.org/junit5/,EPL 2.0,https://github.com/junit-team/junit5/blob/master/LICENSE.md
-PostgreSQL JDBC Driver,Planet PostgreSQL,Mixed,org.postgresql,postgresql,9.4.1208,https://www.postgresql.org/,BSD- and MIT-like,https://opensource.org/licenses/postgresql
-SLF4J (slf4j-api),"SLF4J Project, Quality Open Software",Foreign (Swiss),org.slf4j,slf4j-api,1.7.21,https://www.slf4j.org/,MIT,https://www.slf4j.org/license.html
-SLF4J (jcl-over-slf4j),"SLF4J Project, Quality Open Software",Foreign (Swiss),org.slf4j,jcl-over-slf4j,1.7.21,https://www.slf4j.org/,MIT,https://www.slf4j.org/license.html
-SLF4J (slf4j-log4j12),"SLF4J Project, Quality Open Software",Foreign (Swiss),org.slf4j,slf4j-log4j12,1.7.21,https://www.slf4j.org/,MIT,https://www.slf4j.org/license.html
+Boost Libraries,Boost Community,"Mixed, US Chair",,,1.91.0,https://www.boost.org/,Boost software license,http://www.boost.org/users/license.html
+FindBugs,FindBugs project,US,com.google.code.findbugs,annotations,3.0.1u2,https://findbugs.sourceforge.net,LGPL,https://www.gnu.org/licenses/lgpl-3.0.html
+GeoTools EPSG Extensions,GeoTools Project,Foreign (Italy),org.geotools,gt-epsg-extension,34.4,http://www.geotools.org/,LGPL,https://www.gnu.org/licenses/lgpl-3.0.html
+GeoTools EPSG HSQL Authority,GeoTools Project,Foreign (Italy),org.geotools,gt-epsg-hsql,34.4,http://www.geotools.org/,LGPL,https://www.gnu.org/licenses/lgpl-3.0.html
+GeoTools EPSG WKT Authority,GeoTools Project,Foreign (Italy),org.geotools,gt-epsg-wkt,34.4,http://www.geotools.org/,LGPL,https://www.gnu.org/licenses/lgpl-3.0.html
+GeoTools Coord. Ref. Systems,GeoTools Project,Foreign (Italy),org.geotools,gt-referencing,34.4,http://www.geotools.org/,LGPL,https://www.gnu.org/licenses/lgpl-3.0.html
+GeoTools Core XML Support,GeoTools Project,Foreign (Italy),org.geotools.xsd,gt-xsd-core,34.4,http://www.geotools.org/,LGPL,https://www.gnu.org/licenses/lgpl-3.0.html
+GeoTools GML3 XML Support,GeoTools Project,Foreign (Italy),org.geotools.xsd,gt-xsd-gml3,34.4,http://www.geotools.org/,LGPL,https://www.gnu.org/licenses/lgpl-3.0.html
+GeoTools KML XML Support,GeoTools Project,Foreign (Italy),org.geotools.xsd,gt-xsd-kml,34.4,http://www.geotools.org/,LGPL,https://www.gnu.org/licenses/lgpl-3.0.html
+gson,"GSON Project, Google",US,com.google.code.gson,gson,2.14.0,https://google.github.io/gson/,Apache license 2.0,http://www.apache.org/licenses/
+httpclient,Apache HttpComponents Project,Mixed,org.apache.httpcomponents,httpclient,4.5.14,http://hc.apache.org/,Apache license 2.0,http://www.apache.org/licenses/
+Jena ARQ,Andy Seabourne,Foreign (Britain),org.apache.jena,jena-arq,4.10.0,http://jena.apache.org/,Apache license 2.0,http://www.apache.org/licenses/
+jts-core,Martin Davis,,org.locationtech.jts,jts-core,1.20.0,https://projects.eclipse.org/projects/locationtech.jts,EPL 2.0,https://github.com/locationtech/jts/blob/master/LICENSE_EPLv2.txt
+JUnit 5,JUnit Lambda Project,Foreign,org.junit.jupiter,junit-jupiter,6.1.0,https://junit.org/junit5/,EPL 2.0,https://github.com/junit-team/junit5/blob/master/LICENSE.md
+Logback,"Logback Project, QOS.ch Sarl",Foreign (Swiss),ch.qos.logback,logback-classic,1.5.34,https://logback.qos.ch,EPL v2.0 and LGPL 2.1,https://logback.qos.ch/license.html
+PostgreSQL JDBC Driver,Planet PostgreSQL,Mixed,org.postgresql,postgresql,42.7.11,https://www.postgresql.org/,BSD- and MIT-like,https://opensource.org/licenses/postgresql
+SLF4J (slf4j-api),"SLF4J Project, Quality Open Software",Foreign (Swiss),org.slf4j,slf4j-api,2.0.20,https://www.slf4j.org/,MIT,https://www.slf4j.org/license.html
+SLF4J (jcl-over-slf4j),"SLF4J Project, Quality Open Software",Foreign (Swiss),org.slf4j,jcl-over-slf4j,2.0.20,https://www.slf4j.org/,MIT,https://www.slf4j.org/license.html
+SLF4J (slf4j-log4j12),"SLF4J Project, Quality Open Software",Foreign (Swiss),org.slf4j,slf4j-log4j12,2.0.20,https://www.slf4j.org/,MIT,https://www.slf4j.org/license.html
+Spring Boot,"Spring Project, Broadcom",US,org.springframework.boot,,4.1.0,https://spring.io/projects/spring-boot,Apache license 2.0,http://www.apache.org/licenses/
